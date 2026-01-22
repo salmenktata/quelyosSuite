@@ -1,0 +1,216 @@
+// ========================================
+// QUELYOS WEBSITE - Frontend/E-commerce
+// Styles pour le site web public
+// ========================================
+
+// --------------------------------------------
+// Header & Navigation
+// --------------------------------------------
+
+#wrapwrap {
+  .navbar {
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .navbar-brand {
+      img {
+        max-height: 50px;
+      }
+    }
+
+    .nav-link {
+      color: var(--quelyos-gray-700);
+      font-weight: 500;
+
+      &:hover {
+        color: var(--quelyos-primary);
+      }
+
+      &.active {
+        color: var(--quelyos-primary);
+        border-bottom: 2px solid var(--quelyos-primary);
+      }
+    }
+  }
+}
+
+// --------------------------------------------
+// Buttons
+// --------------------------------------------
+
+.btn-primary {
+  background-color: var(--quelyos-primary);
+  border-color: var(--quelyos-primary);
+
+  &:hover {
+    background-color: var(--quelyos-primary-hover);
+    border-color: var(--quelyos-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--quelyos-primary-rgb), 0.3);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--quelyos-secondary);
+  border-color: var(--quelyos-secondary);
+
+  &:hover {
+    background-color: var(--quelyos-green-600);
+  }
+}
+
+// --------------------------------------------
+// E-commerce Product Cards
+// --------------------------------------------
+
+.oe_product {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(var(--quelyos-primary-rgb), 0.15);
+  }
+
+  .oe_product_image_link {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(var(--quelyos-primary-rgb), 0.7) 0%,
+        rgba(var(--quelyos-primary-rgb), 0.3) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+// --------------------------------------------
+// Shopping Cart
+// --------------------------------------------
+
+.o_wsale_products_main_row {
+  .btn-primary {
+    background-color: var(--quelyos-primary);
+  }
+}
+
+#cart_products {
+  .btn-link {
+    color: var(--quelyos-primary);
+
+    &:hover {
+      color: var(--quelyos-primary-hover);
+    }
+  }
+}
+
+// --------------------------------------------
+// Checkout
+// --------------------------------------------
+
+.oe_website_sale {
+  .wizard {
+    .nav-link {
+      color: var(--quelyos-gray-700);
+
+      &.active {
+        background-color: var(--quelyos-primary);
+        color: white;
+      }
+
+      &.done {
+        background-color: var(--quelyos-green-500);
+        color: white;
+      }
+    }
+  }
+}
+
+// --------------------------------------------
+// Footer
+// --------------------------------------------
+
+footer {
+  background-color: var(--quelyos-gray-900);
+  color: var(--quelyos-gray-300);
+
+  a {
+    color: var(--quelyos-blue-400);
+
+    &:hover {
+      color: var(--quelyos-blue-200);
+    }
+  }
+
+  .o_footer_copyright {
+    border-top-color: var(--quelyos-gray-700);
+  }
+}
+
+// --------------------------------------------
+// Call to Action Sections
+// --------------------------------------------
+
+.s_call_to_action {
+  background: linear-gradient(135deg,
+    var(--quelyos-primary) 0%,
+    var(--quelyos-primary-hover) 100%
+  );
+
+  .btn-light {
+    &:hover {
+      background-color: var(--quelyos-blue-50);
+      color: var(--quelyos-primary);
+    }
+  }
+}
+
+// --------------------------------------------
+// Breadcrumb
+// --------------------------------------------
+
+.breadcrumb {
+  .breadcrumb-item {
+    a {
+      color: var(--quelyos-blue-700);
+    }
+
+    &.active {
+      color: var(--quelyos-primary);
+    }
+  }
+}
+
+// --------------------------------------------
+// Badges & Labels
+// --------------------------------------------
+
+.badge-primary {
+  background-color: var(--quelyos-primary);
+}
+
+.badge-success {
+  background-color: var(--quelyos-green-500);
+}
+
+// --------------------------------------------
+// Forms
+// --------------------------------------------
+
+.s_website_form {
+  .form-control:focus {
+    border-color: var(--quelyos-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--quelyos-primary-rgb), 0.15);
+  }
+}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Déclaration des bundles d'assets CSS/JS pour Quelyos Branding
+            Ces assets sont chargés dans différents contextes (backend, frontend, POS)
+        -->
+
+        <!-- ========================================
+             BACKEND ASSETS
+             Chargés dans l'interface backend
+        ========================================= -->
+        <template id="quelyos_backend_assets" name="Quelyos Backend Assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <!-- CSS Variables (en premier) -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_variables.scss"/>
+
+                <!-- CSS Principal -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/quelyos_branding.scss"/>
+
+                <!-- CSS Backend spécifique -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_backend.scss"/>
+
+                <!-- CSS Page de connexion -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_login.scss"/>
+
+                <!-- JavaScript de debranding -->
+                <script type="text/javascript" src="/quelyos_branding/static/src/js/remove_odoo_branding.js"/>
+            </xpath>
+        </template>
+
+        <!-- ========================================
+             FRONTEND ASSETS (Website)
+             Chargés sur le site web public
+        ========================================= -->
+        <template id="quelyos_frontend_assets" name="Quelyos Frontend Assets" inherit_id="web.assets_frontend">
+            <xpath expr="." position="inside">
+                <!-- CSS Variables -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_variables.scss"/>
+
+                <!-- CSS Website -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_website.scss"/>
+            </xpath>
+        </template>
+
+        <!-- ========================================
+             POS ASSETS
+             Chargés dans l'interface Point of Sale
+        ========================================= -->
+        <!-- Désactivé temporairement car point_of_sale doit être installé d'abord
+        <template id="quelyos_pos_assets" name="Quelyos POS Assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/quelyos_branding/static/src/scss/_variables.scss"/>
+                <link rel="stylesheet" href="/quelyos_branding/static/src/scss/_pos.scss"/>
+            </xpath>
+        </template>
+        -->
+
+        <!-- ========================================
+             COMMON ASSETS
+             Chargés partout (backend + frontend + POS)
+        ========================================= -->
+        <template id="quelyos_common_assets" name="Quelyos Common Assets" inherit_id="web.assets_common">
+            <xpath expr="." position="inside">
+                <!-- CSS Variables globales -->
+                <link rel="stylesheet" type="text/scss" href="/quelyos_branding/static/src/scss/_variables.scss"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

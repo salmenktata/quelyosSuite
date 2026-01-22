@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override du layout des emails
+        -->
+
+        <!-- ========================================
+             MAIL NOTIFICATION LAYOUT
+        ========================================= -->
+        <template id="mail.mail_notification_layout" name="Quelyos Email Layout" inherit_id="mail.mail_notification_layout" priority="99">
+
+            <!-- Header de l'email avec logo Quelyos -->
+            <xpath expr="//td[hasclass('o_mail_header_top')]" position="replace">
+                <td class="quelyos_mail_header text-center" style="padding: 20px; background-color: #1e40af;">
+                    <img src="/quelyos_branding/static/src/img/logo/quelyos_logo_white.png"
+                         alt="Quelyos"
+                         style="max-width: 180px; height: auto;"/>
+                </td>
+            </xpath>
+
+            <!-- Footer de l'email -->
+            <xpath expr="//td[hasclass('o_mail_footer_links')]" position="replace">
+                <td class="quelyos_mail_footer text-center" style="padding: 20px; background-color: #f3f4f6; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                        Envoyé par <strong style="color: #1e40af;">Quelyos</strong>
+                    </p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px;">
+                        <a href="https://quelyos.com" target="_blank" style="color: #1e40af; text-decoration: none;">
+                            www.quelyos.com
+                        </a>
+                        <span style="color: #9ca3af; margin: 0 5px;">•</span>
+                        <a href="https://support.quelyos.com" target="_blank" style="color: #1e40af; text-decoration: none;">
+                            Support
+                        </a>
+                        <span style="color: #9ca3af; margin: 0 5px;">•</span>
+                        <a href="https://docs.quelyos.com" target="_blank" style="color: #1e40af; text-decoration: none;">
+                            Documentation
+                        </a>
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 11px; color: #9ca3af;">
+                        © 2026 Quelyos - Tous droits réservés
+                    </p>
+                </td>
+            </xpath>
+
+        </template>
+
+    </data>
+</odoo>

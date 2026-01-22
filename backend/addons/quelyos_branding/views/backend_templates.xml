@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override des templates backend pour le branding Quelyos
+            Empty states, pages d'erreur, etc.
+        -->
+
+        <!-- ========================================
+             EMPTY STATES (Vues vides)
+             Remplace le smiley Odoo par une illustration Quelyos
+        ========================================= -->
+        <template id="quelyos_branding.nocontent" name="Quelyos Empty State" inherit_id="web.nocontent" priority="99">
+            <!-- Remplacer le smiley Odoo par une illustration Quelyos -->
+            <xpath expr="//p[hasclass('o_view_nocontent_smiling_face')]" position="replace">
+                <div class="quelyos_empty_state">
+                    <img src="/quelyos_branding/static/src/img/illustrations/empty_state.svg"
+                         alt="Aucun contenu"
+                         class="quelyos_empty_illustration"/>
+                </div>
+            </xpath>
+        </template>
+
+        <!-- ========================================
+             PAGE D'ERREUR 404
+        ========================================= -->
+        <template id="quelyos_branding.404" name="Quelyos 404 Error" inherit_id="http_routing.404" priority="99">
+            <xpath expr="//div[hasclass('o_error_page')]" position="replace">
+                <div class="quelyos_error_page text-center">
+                    <img src="/quelyos_branding/static/src/img/illustrations/error_404.svg"
+                         alt="404"
+                         style="max-width: 400px; margin: 2rem auto;"/>
+                    <h1 style="font-size: 2rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">
+                        Oups ! Page non trouvée
+                    </h1>
+                    <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem;">
+                        La page que vous recherchez n'existe pas sur Quelyos.
+                    </p>
+                    <a href="/web" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

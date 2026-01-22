@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override de la page de connexion Odoo
+            Le debranding est géré par JavaScript (remove_odoo_branding.js)
+            Pas de modification de template nécessaire
+        -->
+
+        <!-- Pas de template XML - Le JavaScript remplace automatiquement tous les textes "Odoo" -->
+
+    </data>
+</odoo>

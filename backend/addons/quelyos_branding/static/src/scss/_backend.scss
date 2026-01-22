@@ -1,0 +1,301 @@
+// ========================================
+// QUELYOS BACKEND - Styles Backend
+// Transformation Purple → Blue
+// ========================================
+
+// --------------------------------------------
+// Navbar Backend
+// --------------------------------------------
+
+.o_main_navbar {
+  background: linear-gradient(135deg, var(--quelyos-primary) 0%, var(--quelyos-primary-hover) 100%) !important;
+
+  .o_menu_brand {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .dropdown-menu {
+    border-color: var(--quelyos-blue-200);
+  }
+
+  // Forcer les tabs de navigation à être bleues
+  .nav-tabs,
+  .o_menu_sections,
+  .o_menu_systray,
+  nav {
+    background-color: transparent !important;
+  }
+
+  // Tabs spécifiques
+  .nav-item,
+  .nav-link {
+    background-color: transparent !important;
+
+    &.active {
+      background-color: var(--quelyos-primary-hover) !important;
+      color: white !important;
+    }
+  }
+}
+
+// --------------------------------------------
+// Control Panel
+// --------------------------------------------
+
+.o_control_panel {
+  background-color: var(--quelyos-gray-50);
+  border-bottom-color: var(--quelyos-blue-200);
+
+  // FORCE: Tous les onglets de navigation dans le control panel
+  .nav-tabs,
+  .o_cp_top,
+  .o_cp_top_left,
+  .o_cp_top_right {
+    background-color: transparent !important;
+
+    .nav-link,
+    .nav-item,
+    a,
+    button {
+      background-color: var(--quelyos-primary) !important;
+      color: white !important;
+      border-color: transparent !important;
+
+      &:hover {
+        background-color: var(--quelyos-primary-hover) !important;
+      }
+
+      &.active {
+        background-color: var(--quelyos-primary-dark) !important;
+        border-bottom: 2px solid white !important;
+      }
+    }
+  }
+
+  .breadcrumb-item {
+    &.active {
+      color: var(--quelyos-primary);
+      font-weight: 600;
+    }
+  }
+
+  .btn-primary {
+    background-color: var(--quelyos-primary);
+
+    &:hover {
+      background-color: var(--quelyos-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(var(--quelyos-primary-rgb), 0.3);
+    }
+  }
+}
+
+// --------------------------------------------
+// Form View
+// --------------------------------------------
+
+.o_form_view {
+  .o_form_statusbar {
+    background-color: var(--quelyos-gray-50);
+
+    .o_arrow_button {
+      color: var(--quelyos-gray-700);
+
+      &.btn-primary {
+        background-color: var(--quelyos-primary);
+        color: white;
+      }
+
+      &:hover {
+        background-color: var(--quelyos-blue-100);
+      }
+    }
+  }
+
+  .o_form_sheet {
+    .o_form_label {
+      color: var(--quelyos-gray-700);
+      font-weight: 600;
+    }
+  }
+
+  // Notebooks (tabs)
+  .o_notebook {
+    .nav-link {
+      color: var(--quelyos-gray-700);
+
+      &.active {
+        color: var(--quelyos-primary);
+        border-bottom-color: var(--quelyos-primary);
+        font-weight: 600;
+      }
+
+      &:hover {
+        color: var(--quelyos-primary-hover);
+      }
+    }
+  }
+}
+
+// --------------------------------------------
+// List View
+// --------------------------------------------
+
+.o_list_view {
+  thead th {
+    background-color: var(--quelyos-gray-50);
+    color: var(--quelyos-gray-900);
+    border-bottom-color: var(--quelyos-blue-200);
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: var(--quelyos-blue-50);
+    }
+
+    &.o_selected_row {
+      background-color: var(--quelyos-blue-100) !important;
+      border-left: 3px solid var(--quelyos-primary);
+    }
+  }
+
+  .o_data_row {
+    &.o_selected {
+      background-color: var(--quelyos-blue-50);
+    }
+  }
+}
+
+// --------------------------------------------
+// Kanban View
+// --------------------------------------------
+
+.o_kanban_view {
+  .o_kanban_group_header {
+    background-color: var(--quelyos-gray-100);
+    border-bottom-color: var(--quelyos-blue-200);
+
+    &:hover {
+      background-color: var(--quelyos-blue-50);
+    }
+  }
+
+  .o_kanban_record {
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-left-color: var(--quelyos-primary);
+      box-shadow: 0 4px 12px rgba(var(--quelyos-primary-rgb), 0.15);
+    }
+  }
+}
+
+// --------------------------------------------
+// Calendar View
+// --------------------------------------------
+
+.o_calendar_view {
+  .fc-event {
+    background-color: var(--quelyos-primary);
+    border-color: var(--quelyos-primary-hover);
+
+    &:hover {
+      background-color: var(--quelyos-primary-hover);
+    }
+  }
+
+  .fc-day-today {
+    background-color: var(--quelyos-blue-50) !important;
+  }
+}
+
+// --------------------------------------------
+// Search Panel
+// --------------------------------------------
+
+.o_search_panel {
+  background-color: var(--quelyos-gray-50);
+  border-right-color: var(--quelyos-blue-200);
+
+  .o_search_panel_section_header {
+    color: var(--quelyos-primary);
+    font-weight: 600;
+  }
+
+  .o_search_panel_category_value {
+    &:hover {
+      background-color: var(--quelyos-blue-50);
+    }
+
+    &.active {
+      background-color: var(--quelyos-blue-100);
+      color: var(--quelyos-primary);
+      font-weight: 600;
+    }
+  }
+}
+
+// --------------------------------------------
+// Chatter
+// --------------------------------------------
+
+.o_chatter {
+  .o_chatter_topbar {
+    background-color: var(--quelyos-gray-50);
+    border-bottom-color: var(--quelyos-blue-200);
+
+    button.btn-link {
+      color: var(--quelyos-blue-700);
+
+      &:hover {
+        color: var(--quelyos-blue-900);
+      }
+    }
+  }
+
+  .o_mail_thread .o_thread_message {
+    &:hover {
+      background-color: var(--quelyos-blue-50);
+    }
+  }
+}
+
+// --------------------------------------------
+// Tags & Pills
+// --------------------------------------------
+
+.o_tag,
+.badge {
+  &.o_tag_color_0 { background-color: var(--quelyos-blue-500); }
+  &.o_tag_color_1 { background-color: var(--quelyos-green-500); }
+  &.o_tag_color_2 { background-color: var(--quelyos-orange-500); }
+}
+
+// --------------------------------------------
+// Buttons Group
+// --------------------------------------------
+
+.btn-group .btn-primary {
+  background-color: var(--quelyos-primary);
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active {
+    background-color: var(--quelyos-primary-dark);
+  }
+}
+
+// --------------------------------------------
+// Tooltips & Popovers
+// --------------------------------------------
+
+.tooltip-inner {
+  background-color: var(--quelyos-gray-900);
+}
+
+.popover-header {
+  background-color: var(--quelyos-blue-50);
+  border-bottom-color: var(--quelyos-blue-200);
+}

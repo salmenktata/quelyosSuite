@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override des templates POS
+        -->
+
+        <!-- ========================================
+             POS INDEX (Interface principale)
+        ========================================= -->
+        <template id="point_of_sale.index" name="Quelyos POS" inherit_id="point_of_sale.index" priority="99">
+            <!-- Remplacer le logo dans l'interface POS -->
+            <xpath expr="//img[hasclass('pos-logo')]" position="replace">
+                <img src="/quelyos_branding/static/src/img/logo/quelyos_logo.png"
+                     alt="Quelyos POS"
+                     class="quelyos_pos_logo"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override du footer du site web
+        -->
+
+        <!-- ========================================
+             WEBSITE FOOTER
+        ========================================= -->
+        <template id="website.footer_custom" name="Quelyos Website Footer" inherit_id="website.footer_custom" priority="99">
+            <!-- Remplacer "Powered by Odoo" -->
+            <xpath expr="//div[contains(@class, 'o_footer_copyright')]" position="replace">
+                <div class="quelyos_footer_copyright text-center text-muted py-3">
+                    <small>© 2026 Quelyos - Tous droits réservés</small>
+                    <br/>
+                    <small class="text-muted">
+                        <a href="https://quelyos.com" target="_blank" class="text-primary">www.quelyos.com</a>
+                    </small>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

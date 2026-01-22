@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Override des templates du webclient Odoo pour le branding Quelyos
+            Modifie: favicon, titre, navbar, menus
+        -->
+
+        <!-- ========================================
+             WEB LAYOUT
+             Favicon, titre de la page, meta tags
+        ========================================= -->
+        <template id="quelyos_branding.layout" name="Quelyos Web Layout" inherit_id="web.layout" priority="99">
+            <!-- Remplacer le favicon -->
+            <xpath expr="//link[@rel='shortcut icon']" position="replace">
+                <link rel="shortcut icon" href="/quelyos_branding/static/src/img/favicon/favicon.ico" type="image/x-icon"/>
+                <link rel="icon" type="image/png" sizes="32x32" href="/quelyos_branding/static/src/img/favicon/favicon-32x32.png"/>
+                <link rel="icon" type="image/png" sizes="16x16" href="/quelyos_branding/static/src/img/favicon/favicon-16x16.png"/>
+                <link rel="apple-touch-icon" sizes="180x180" href="/quelyos_branding/static/src/img/favicon/apple-touch-icon.png"/>
+            </xpath>
+
+            <!-- Ajouter les meta tags Quelyos -->
+            <xpath expr="//head/meta[@http-equiv='X-UA-Compatible']" position="after">
+                <meta name="theme-color" content="#1e40af"/>
+                <meta name="application-name" content="Quelyos ERP"/>
+                <meta name="apple-mobile-web-app-title" content="Quelyos"/>
+            </xpath>
+
+            <!-- Changer le titre de la page -->
+            <xpath expr="//title" position="replace">
+                <title>Quelyos ERP - Plateforme Retail Omnicanal</title>
+            </xpath>
+        </template>
+
+        <!-- ========================================
+             NAVBAR ET HOME MENU
+             Dans Odoo 18.0, ces éléments sont des composants OWL (JavaScript)
+             et ne peuvent pas être modifiés via templates XML.
+             La modification se fait via CSS et JavaScript.
+        ========================================= -->
+        <!-- Les modifications navbar/menu sont gérées par:
+             - static/src/scss/_backend.scss (CSS pour le logo)
+             - static/src/js/remove_odoo_branding.js (JS pour les textes/liens)
+        -->
+
+        <!-- ========================================
+             BRAND PROMOTION MESSAGE - Debranding
+        ========================================= -->
+        <template id="quelyos_branding.brand_promotion_message" name="Quelyos Brand Promotion Message" inherit_id="web.brand_promotion_message" priority="99">
+            <!-- Remplacer tout le contenu du message de branding -->
+            <xpath expr="." position="replace">
+                <t>
+                    Powered by <a href="https://quelyos.com" target="_blank" class="badge text-bg-light">Quelyos</a>
+                </t>
+            </xpath>
+        </template>
+
+
+    </data>
+</odoo>

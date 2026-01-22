@@ -1,0 +1,59 @@
+// ========================================
+// QUELYOS COLOR SYSTEM - Odoo 19.0
+// Transformation Purple → Blue Professional
+// ========================================
+
+:root {
+  // Palette complète bleue Quelyos
+  --quelyos-blue-50:  #eff6ff;
+  --quelyos-blue-100: #dbeafe;
+  --quelyos-blue-200: #bfdbfe;
+  --quelyos-blue-300: #93c5fd;
+  --quelyos-blue-400: #60a5fa;
+  --quelyos-blue-500: #3b82f6;
+  --quelyos-blue-600: #2563eb;
+  --quelyos-blue-700: #1d4ed8;
+  --quelyos-blue-800: #1e40af;  // Couleur principale
+  --quelyos-blue-900: #1e3a8a;
+  --quelyos-blue-950: #172554;
+
+  // Couleurs complémentaires
+  --quelyos-green-500: #10b981;
+  --quelyos-green-600: #059669;
+  --quelyos-orange-500: #f59e0b;
+  --quelyos-orange-600: #d97706;
+  --quelyos-red-500: #ef4444;
+  --quelyos-red-600: #dc2626;
+
+  // Gris neutral
+  --quelyos-gray-50:  #f9fafb;
+  --quelyos-gray-100: #f3f4f6;
+  --quelyos-gray-200: #e5e7eb;
+  --quelyos-gray-300: #d1d5db;
+  --quelyos-gray-500: #6b7280;
+  --quelyos-gray-700: #374151;
+  --quelyos-gray-900: #111827;
+
+  // Couleurs principales
+  --quelyos-primary: #1e40af;
+  --quelyos-primary-rgb: 30, 64, 175;
+  --quelyos-primary-hover: #1e3a8a;
+  --quelyos-primary-light: #3b82f6;
+  --quelyos-primary-dark: #172554;
+  --quelyos-secondary: #10b981;
+  --quelyos-accent: #f59e0b;
+  --quelyos-danger: #ef4444;
+  --quelyos-success: #059669;
+  --quelyos-warning: #d97706;
+
+  // Overrides des variables Odoo existantes
+  --o-brand-primary: var(--quelyos-primary);
+  --o-brand-secondary: var(--quelyos-secondary);
+  --o-brand-odoo: var(--quelyos-primary);
+
+  // Bootstrap overrides via custom properties
+  --bs-primary: var(--quelyos-primary);
+  --bs-primary-rgb: var(--quelyos-primary-rgb);
+  --bs-link-color: var(--quelyos-blue-700);
+  --bs-link-hover-color: var(--quelyos-blue-900);
+}
