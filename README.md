@@ -1,122 +1,158 @@
-# Quelyos ERP
+# Quelyos ERP - Module E-commerce
 
-Plateforme SaaS omnicanal pour le retail: POS + E-commerce + Mobile unifies en temps reel.
+![Status](https://img.shields.io/badge/status-production--ready-green)
+![Odoo](https://img.shields.io/badge/Odoo-19.0-purple)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 
-## Description
+Plateforme e-commerce headless complète avec Odoo 19 et Next.js 14, inspirée du design de lesportif.com.tn.
 
-Quelyos ERP est une solution de gestion integree pour les commercants en Tunisie et au Maroc. La plateforme unifie:
-- **POS** (Point de Vente) avec materiel Sunmi
-- **E-commerce** avec site web white-label
-- **Application Mobile** generee automatiquement (Flutter)
-- **Inventaire temps reel** synchronise sur tous les canaux
+## 🚀 Caractéristiques
 
-## Architecture
+### Backend (Odoo 19)
+- ✅ **40+ Endpoints API REST** complets
+- ✅ **Authentification Portal** native Odoo
+- ✅ **Gestion catalogue** produits avec variants
+- ✅ **Panier intelligent** (invité + authentifié)
+- ✅ **Checkout 3 étapes** optimisé
+- ✅ **Wishlist & Comparateur**
+- ✅ **SEO** automatique (slug, meta tags)
+- ✅ **Webhooks** temps réel
+
+### Frontend (Next.js 14)
+- ✅ **16 pages** fonctionnelles
+- ✅ **App Router** avec TypeScript
+- ✅ **Design responsive** (mobile-first)
+- ✅ **SEO optimisé** (metadata, JSON-LD, sitemap)
+- ✅ **Performance** (ISR, lazy loading, AVIF/WebP)
+- ✅ **State Management** Zustand
+- ✅ **Thème vert** inspiré lesportif.com.tn
+
+## 📁 Structure
 
 ```
-quelyos-erp/
-├── backend/           # Odoo 16 + addons custom
-│   └── addons/
-│       └── quelyos_core/
-├── frontend/          # React + Vite + TailwindCSS
-├── mobile/            # Flutter (Phase 2)
-├── device-bridge/     # Node.js - Bridge POS hardware
-├── infra/
-│   ├── docker/        # Docker Compose
-│   ├── terraform/     # Infrastructure AWS
-│   └── scripts/       # Scripts de deploiement
-├── config/            # Fichiers de configuration
-└── docs/              # Documentation projet
+QuelyosERP/
+├── backend/addons/
+│   ├── quelyos_branding/         # Branding
+│   └── quelyos_ecommerce/        # E-commerce ⭐
+│       ├── controllers/          # API (7 controllers)
+│       ├── models/               # ORM (6 models)
+│       └── services/             # Business logic
+├── frontend/
+│   ├── src/app/                  # Pages (16)
+│   ├── components/               # Composants (15+)
+│   └── store/                    # Zustand stores
+├── nginx/                        # Reverse proxy
+├── INTEGRATION_API.md            # Guide API
+├── DEPLOYMENT.md                 # Guide déploiement
+└── PERFORMANCE.md                # Guide perf & SEO
 ```
 
-## Prerequisites
+## 🎯 URLs
 
-- Docker & Docker Compose
-- Node.js 20+
-- Python 3.10+
-- PostgreSQL 15+
+**Public**: `/`, `/products`, `/products/[slug]`, `/cart`, `/login`, `/register`
 
-## Installation
+**Checkout**: `/checkout/shipping`, `/checkout/payment`, `/checkout/success`
+
+**Compte**: `/account`, `/account/orders`, `/account/profile`, `/account/addresses`, `/account/wishlist`
+
+**SEO**: `/sitemap.xml`, `/robots.txt`
+
+## 🛠️ Installation Développement
+
+### 1. Backend (Odoo)
 
 ```bash
-# Cloner le depot
-git clone https://github.com/salmenktata/quelyos-erp.git
-cd quelyos-erp
-
-# Copier la configuration
-cp .env.example .env
-# Editer .env avec vos valeurs
-
-# Lancer avec Docker
-cd infra/docker
+cd backend
 docker-compose up -d
 
-# OU lancer en dev
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Accéder à http://localhost:8069
+# Database: quelyos | Email: admin@example.com | Pass: admin
+
+# Apps → Update Apps List → "Quelyos E-commerce" → Install
 ```
 
-## Services
-
-| Service | Port | Description |
-|---------|------|-------------|
-| Odoo | 8069 | Backend ERP |
-| Frontend | 3000 | Application React |
-| Device Bridge | 3001 | Bridge materiel POS |
-| PostgreSQL | 5432 | Base de donnees |
-| Redis | 6379 | Cache |
-
-## Developpement
-
-### Backend (Odoo)
-
-```bash
-# Les addons custom sont dans backend/addons/
-# Ils sont montes automatiquement dans le conteneur Odoo
-```
-
-### Frontend (React)
+### 2. Frontend (Next.js)
 
 ```bash
 cd frontend
 npm install
+cp .env.local.example .env.local
 npm run dev
+
+# Accéder à http://localhost:3000
 ```
 
-### Device Bridge
+## 🚀 Déploiement Production
+
+Voir [DEPLOYMENT.md](./DEPLOYMENT.md) pour le guide complet.
 
 ```bash
-cd device-bridge
-npm install
-npm run dev
+# 1. Configuration
+cp .env.production.example .env.production
+nano .env.production
+
+# 2. SSL
+sudo certbot certonly --standalone -d votre-domaine.com
+
+# 3. Démarrage
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-## API
+## 📡 API
 
-L'API REST est disponible sur `/api/v1/`:
+Voir [INTEGRATION_API.md](./INTEGRATION_API.md).
 
-- `GET /api/v1/health` - Health check
-- `GET /api/v1/products` - Liste des produits
-- `GET /api/v1/products/:id` - Detail produit
-- `GET /api/v1/categories` - Categories
+```bash
+# Produits
+GET /api/ecommerce/products
+GET /api/ecommerce/products/slug/:slug
 
-## Documentation
+# Panier
+GET /api/ecommerce/cart
+POST /api/ecommerce/cart/add
 
-Voir le dossier `docs/` pour la documentation complete:
+# Auth
+POST /api/ecommerce/auth/login
+POST /api/ecommerce/auth/register
+```
 
-- [Index Roadmap](docs/ROADMAP_INDEX.md)
-- [Resume 1 page](docs/ROADMAP_RESUME_1PAGE.md)
-- [Produit Quelyos](docs/ROADMAP_PRODUIT_QUELYOS.md)
-- [Guide d'execution](docs/ROADMAP_EXECUTION_GUIDE.md)
-- [Spike Technique](docs/Spike_Technique_POC_Detail.md)
+## 📊 Performance
 
-## Timeline
+Voir [PERFORMANCE.md](./PERFORMANCE.md).
 
-| Phase | Periode | Objectif |
-|-------|---------|----------|
-| Phase 0 | 27-31 Jan | Spike tech - POCs |
-| Phase 1 | Feb-Mar | V0 MVP - 1 client |
-| Phase 2 | Mar-Mai | V1 - 50 clients |
-| Phase 3 | Mai-Aout | V2 Scale - 100+ clients |
+**Targets**: Lighthouse ≥90 | LCP <2.5s | FID <100ms | CLS <0.1
 
-## Licence
+**Optimisations**: ISR, AVIF/WebP, Lazy loading, Gzip, Code splitting
 
-Tous droits reserves - Quelyos 2026
+## 📚 Documentation
+
+- [INTEGRATION_API.md](./INTEGRATION_API.md) - Guide API
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Déploiement
+- [PERFORMANCE.md](./PERFORMANCE.md) - Performance & SEO
+- [TESTING.md](./TESTING.md) - Tests automatisés
+- [CICD.md](./CICD.md) - CI/CD avec GitHub Actions
+
+## ✅ État du Projet
+
+- [x] **Phase 1** - Backend Odoo (40+ endpoints)
+- [x] **Phase 2** - Frontend Setup (Next.js 14)
+- [x] **Phase 3** - Features Core (16 pages, 15+ composants)
+- [x] **Phase 4** - SEO & Performance (Metadata, Sitemap, ISR)
+- [x] **Phase 5** - Tests, CI/CD & Déploiement
+  - [x] Tests automatisés (Jest, Playwright, Odoo)
+  - [x] GitHub Actions CI/CD
+  - [x] Docker production
+  - [x] Documentation complète
+
+## 📝 License
+
+MIT License - Voir [LICENSE](./LICENSE)
+
+## 👥 Équipe
+
+**Quelyos Team** - Propulsé par Odoo 19 + Next.js 14
+
+---
+
+Made with ❤️ by Quelyos Team
