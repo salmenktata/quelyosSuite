@@ -58,3 +58,28 @@ a[href*="/upgrade"] {
 div[data-key*="enterprise"] {
     display: none !important;
 }
+
+// ========================================
+// Masquage des modules non installables dans l'écran Apps
+// ========================================
+
+// Masquer les modules avec état "uninstallable"
+.o_module_card[data-state="uninstallable"],
+.o_kanban_record[data-state="uninstallable"],
+.o_app[data-state="uninstallable"] {
+    display: none !important;
+}
+
+// Masquer les modules entreprise (licence OEEL-1)
+.o_module_card[data-license="OEEL-1"],
+.o_kanban_record[data-license="OEEL-1"],
+.o_app[data-license="OEEL-1"] {
+    display: none !important;
+}
+
+// Masquer les badges "Enterprise" sur les cartes de modules
+.o_kanban_record .badge:contains("Enterprise"),
+.o_module_card .badge-enterprise,
+span.badge.badge-info:contains("Enterprise") {
+    display: none !important;
+}

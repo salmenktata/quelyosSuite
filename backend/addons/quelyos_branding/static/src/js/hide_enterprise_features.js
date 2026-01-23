@@ -76,6 +76,62 @@
     }
 
     // ========================================
+    // Fonction: Masquer les modules non installables
+    // ========================================
+    function hideUninstallableModules() {
+        // Sélectionner tous les modules dans l'écran Apps
+        const moduleCards = document.querySelectorAll(
+            '.o_kanban_record, .o_module_card, .o_app'
+        );
+
+        moduleCards.forEach(card => {
+            // Vérifier l'état du module
+            const state = card.getAttribute('data-state');
+            const license = card.getAttribute('data-license');
+
+            // Masquer si le module est non installable
+            if (state === 'uninstallable') {
+                card.style.display = 'none';
+                card.remove();
+                return;
+            }
+
+            // Masquer si le module a une licence Enterprise (OEEL-1)
+            if (license === 'OEEL-1') {
+                card.style.display = 'none';
+                card.remove();
+                return;
+            }
+
+            // Vérifier aussi dans le contenu de la carte
+            const cardContent = card.textContent || '';
+
+            // Masquer les badges "Enterprise" dans les cartes
+            const enterpriseBadges = card.querySelectorAll(
+                '.badge:contains("Enterprise"), ' +
+                '.badge-enterprise, ' +
+                'span.badge.badge-info'
+            );
+
+            enterpriseBadges.forEach(badge => {
+                if (badge.textContent.includes('Enterprise')) {
+                    badge.remove();
+                }
+            });
+
+            // Si la carte contient "Uninstallable" ou mentionne l'impossibilité d'installer
+            if (cardContent.includes('Uninstallable') ||
+                cardContent.includes('Cannot be installed') ||
+                cardContent.includes('Non installable')) {
+                card.style.display = 'none';
+                card.remove();
+            }
+        });
+
+        console.log('🚫 Quelyos: Modules non installables masqués');
+    }
+
+    // ========================================
     // Fonction: Observer les changements du DOM
     // ========================================
     function observeAndHide() {
@@ -94,6 +150,7 @@
                     hideEnterpriseElements();
                     hideStudioButtons();
                     hideEnterpriseDialogs();
+                    hideUninstallableModules();
                 }, 100); // Debounce de 100ms
             }
         });
@@ -115,6 +172,7 @@
         hideEnterpriseElements();
         hideStudioButtons();
         hideEnterpriseDialogs();
+        hideUninstallableModules();
 
         if (document.body) {
             observeAndHide();
@@ -138,6 +196,7 @@
             hideEnterpriseElements();
             hideStudioButtons();
             hideEnterpriseDialogs();
+            hideUninstallableModules();
         }, 500);
     });
 
@@ -147,6 +206,7 @@
         hideEnterpriseElements();
         hideStudioButtons();
         hideEnterpriseDialogs();
+        hideUninstallableModules();
     }, 3000);
 
     // Vérifier aussi lors d'événements utilisateur
@@ -155,6 +215,7 @@
             setTimeout(function() {
                 hideEnterpriseElements();
                 hideStudioButtons();
+                hideUninstallableModules();
             }, 100);
         }, true);
     });
@@ -163,7 +224,8 @@
     window.quelyosEnterpriseHiding = {
         hideEnterpriseElements: hideEnterpriseElements,
         hideStudioButtons: hideStudioButtons,
-        hideEnterpriseDialogs: hideEnterpriseDialogs
+        hideEnterpriseDialogs: hideEnterpriseDialogs,
+        hideUninstallableModules: hideUninstallableModules
     };
 
 })();
