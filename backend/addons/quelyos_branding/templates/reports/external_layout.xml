@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Quelyos Report External Layout -->
+        <template id="external_layout_quelyos" name="Quelyos Report Layout">
+            <div class="header o_report_layout_quelyos">
+                <div class="quelyos-report-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <!-- Logo -->
+                            <img t-if="company.logo"
+                                 t-att-src="image_data_uri(company.logo)"
+                                 alt="Company Logo"
+                                 style="max-height: 80px;"/>
+                            <img t-else=""
+                                 src="/quelyos_branding/logo/main"
+                                 alt="Quelyos"
+                                 style="max-height: 80px;"/>
+                        </div>
+                        <div class="col-6 text-right">
+                            <!-- Company Info -->
+                            <div class="company-info">
+                                <h3 style="color: #1e40af; margin: 0;">
+                                    <t t-esc="company.name"/>
+                                </h3>
+                                <div class="text-muted" style="font-size: 0.9rem;">
+                                    <div t-if="company.street">
+                                        <t t-esc="company.street"/>
+                                    </div>
+                                    <div>
+                                        <span t-if="company.zip"><t t-esc="company.zip"/></span>
+                                        <span t-if="company.city"><t t-esc="company.city"/></span>
+                                    </div>
+                                    <div t-if="company.country_id">
+                                        <t t-esc="company.country_id.name"/>
+                                    </div>
+                                    <div t-if="company.phone">
+                                        Tél: <t t-esc="company.phone"/>
+                                    </div>
+                                    <div t-if="company.email">
+                                        Email: <t t-esc="company.email"/>
+                                    </div>
+                                    <div t-if="company.website">
+                                        <t t-esc="company.website"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <hr style="border-top: 3px solid #1e40af; margin: 0;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Content -->
+            <div class="article o_report_layout_quelyos">
+                <t t-raw="0"/>
+            </div>
+
+            <!-- Custom Footer -->
+            <div class="footer o_report_layout_quelyos">
+                <div class="quelyos-report-footer">
+                    <div class="row">
+                        <div class="col-12">
+                            <hr style="border-top: 1px solid #e5e7eb; margin: 10px 0;"/>
+                        </div>
+                    </div>
+                    <div class="row" style="font-size: 0.85rem; color: #6b7280;">
+                        <div class="col-6">
+                            <span t-if="company.vat">
+                                TVA: <t t-esc="company.vat"/>
+                            </span>
+                        </div>
+                        <div class="col-6 text-right">
+                            <span>Page </span>
+                            <span class="page"/>
+                            <span> sur </span>
+                            <span class="topage"/>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 text-center" style="font-size: 0.75rem; color: #9ca3af;">
+                            <t t-esc="env['ir.config_parameter'].sudo().get_param('quelyos.branding.powered_by_text', 'Powered by Quelyos')"/>
+                            <span class="mx-2">•</span>
+                            <t t-esc="env['ir.config_parameter'].sudo().get_param('quelyos.branding.copyright_text', '© 2026 Quelyos')"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Override default external layout -->
+        <template id="web.external_layout" inherit_id="web.external_layout" priority="99">
+            <xpath expr="." position="replace">
+                <t t-call="quelyos_branding.external_layout_quelyos">
+                    <t t-raw="0"/>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

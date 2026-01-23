@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Settings Form View -->
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">quelyos.branding.res.config.settings.view.form</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="95"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app name="quelyos_branding" string="Quelyos Branding">
+
+                        <!-- Top Action Buttons -->
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-12 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <i class="fa fa-refresh"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <button name="action_reset_to_defaults"
+                                            type="object"
+                                            string="Réinitialiser aux valeurs par défaut"
+                                            class="btn btn-secondary"
+                                            confirm="Êtes-vous sûr de vouloir réinitialiser tous les paramètres aux valeurs par défaut ?"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-xs-12 col-md-6">
+                                <h2>Paramètres Généraux</h2>
+
+                                <div class="row mt16">
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_company_name"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_company_name" string="Nom de l'entreprise"/>
+                                            <div class="text-muted">
+                                                Nom affiché dans toute l'interface
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_company_url"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_company_url" string="URL du site web"/>
+                                            <div class="text-muted">
+                                                URL de votre site web principal
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_support_url"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_support_url" string="URL du support"/>
+                                            <div class="text-muted">
+                                                Lien vers votre page de support
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_docs_url"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_docs_url" string="URL de la documentation"/>
+                                            <div class="text-muted">
+                                                Lien vers votre documentation
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_slogan"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_slogan" string="Slogan"/>
+                                            <div class="text-muted">
+                                                Affiché sur la page de connexion et le site web
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_contact_email"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_contact_email" string="Email de contact"/>
+                                            <div class="text-muted">
+                                                Email de contact principal
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2>Couleurs et Thème</h2>
+
+                                <div class="row mt16">
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_primary_color" widget="color"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_primary_color" string="Couleur principale"/>
+                                            <div class="text-muted">
+                                                Couleur principale de l'interface (format #RRGGBB)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_secondary_color" widget="color"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_secondary_color" string="Couleur secondaire"/>
+                                            <div class="text-muted">
+                                                Couleur secondaire pour accents (format #RRGGBB)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_right_pane">
+                                            <label string="Thèmes prédéfinis"/>
+                                            <div class="mt8">
+                                                <button name="action_set_blue_theme"
+                                                        type="object"
+                                                        string="Bleu Professionnel"
+                                                        class="btn btn-primary me-2"/>
+                                                <button name="action_set_green_theme"
+                                                        type="object"
+                                                        string="Vert Écologique"
+                                                        class="btn btn-success me-2"/>
+                                                <button name="action_set_purple_theme"
+                                                        type="object"
+                                                        string="Violet Créatif"
+                                                        class="btn me-2"
+                                                        style="background-color: #7c3aed; color: white;"/>
+                                                <button name="action_set_red_theme"
+                                                        type="object"
+                                                        string="Rouge Énergique"
+                                                        class="btn btn-danger"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2>Logos et Images</h2>
+
+                                <div class="row mt16">
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_logo_main"
+                                                   widget="image"
+                                                   options="{'size': [200, 50]}"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_logo_main" string="Logo Principal"/>
+                                            <div class="text-muted">
+                                                Recommandé: 1000x250px, PNG ou SVG (max 2MB)
+                                                <br/>
+                                                Utilisé sur: Page de connexion, rapports PDF, site web
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_logo_white"
+                                                   widget="image"
+                                                   options="{'size': [200, 50]}"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_logo_white" string="Logo Blanc (Navbar)"/>
+                                            <div class="text-muted">
+                                                Recommandé: 1000x250px, PNG ou SVG sur fond transparent
+                                                <br/>
+                                                Utilisé sur: Navbar backend, emails (fond coloré)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_logo_small"
+                                                   widget="image"
+                                                   options="{'size': [150, 38]}"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_logo_small" string="Logo Petit"/>
+                                            <div class="text-muted">
+                                                Recommandé: 180x46px, PNG (max 1MB)
+                                                <br/>
+                                                Utilisé sur: Tickets de caisse, signature email
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_logo_email"
+                                                   widget="image"
+                                                   options="{'size': [200, 50]}"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_logo_email" string="Logo Email"/>
+                                            <div class="text-muted">
+                                                Recommandé: 600x150px, PNG (max 1MB)
+                                                <br/>
+                                                Utilisé sur: En-tête des emails
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_favicon"
+                                                   widget="image"
+                                                   options="{'size': [32, 32]}"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_favicon" string="Favicon"/>
+                                            <div class="text-muted">
+                                                Recommandé: 32x32px, ICO ou PNG (max 500KB)
+                                                <br/>
+                                                Utilisé sur: Onglet du navigateur
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2>Configuration des Emails</h2>
+
+                                <div class="row mt16">
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_show_logo_email"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_show_logo_email" string="Afficher le logo dans les emails"/>
+                                            <div class="text-muted">
+                                                Affiche le logo Quelyos dans l'en-tête des emails
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_email_footer_text"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_email_footer_text" string="Texte du footer des emails"/>
+                                            <div class="text-muted">
+                                                Texte affiché dans le pied de page des emails
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2>Options Avancées</h2>
+
+                                <div class="row mt16">
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_enable_full_debranding"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_enable_full_debranding" string="Activer le debranding complet"/>
+                                            <div class="text-muted">
+                                                Supprime toutes les références à Odoo dans l'interface
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_replace_odoo_text"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_replace_odoo_text" string="Remplacer les textes 'Odoo'"/>
+                                            <div class="text-muted">
+                                                Remplace automatiquement "Odoo" par "Quelyos" dans les textes
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_powered_by_text"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_powered_by_text" string="Texte 'Powered by'"/>
+                                            <div class="text-muted">
+                                                Texte affiché dans le footer "Powered by"
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_left_pane">
+                                            <field name="quelyos_branding_copyright_text"/>
+                                        </div>
+                                        <div class="o_setting_right_pane">
+                                            <label for="quelyos_branding_copyright_text" string="Texte du copyright"/>
+                                            <div class="text-muted">
+                                                Texte du copyright affiché dans le footer
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-12 o_setting_box">
+                                        <div class="o_setting_right_pane">
+                                            <label string="Statistiques d'utilisation"/>
+                                            <div class="mt8">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <strong>Version du module:</strong>
+                                                        <br/>
+                                                        <field name="quelyos_branding_module_version" readonly="1"/>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <strong>Actif depuis:</strong>
+                                                        <br/>
+                                                        <field name="quelyos_branding_active_since" readonly="1"/>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <strong>Logos personnalisés:</strong>
+                                                        <br/>
+                                                        <field name="quelyos_branding_custom_logos" readonly="1"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Help Section -->
+                                <div class="alert alert-info mt16">
+                                    <h4>
+                                        <i class="fa fa-question-circle"/>
+                                        Besoin d'aide ?
+                                    </h4>
+                                    <p>
+                                        Consultez la <a href="https://docs.quelyos.com/branding" target="_blank">documentation complète</a>
+                                        ou contactez le <a href="https://support.quelyos.com" target="_blank">support Quelyos</a>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Settings Action -->
+        <record id="quelyos_branding_config_action" model="ir.actions.act_window">
+            <field name="name">Quelyos Branding</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module': 'quelyos_branding'}</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem
+            id="menu_quelyos_branding_config"
+            name="Quelyos Branding"
+            parent="base.menu_administration"
+            action="quelyos_branding_config_action"
+            sequence="1"/>
+
+    </data>
+</odoo>

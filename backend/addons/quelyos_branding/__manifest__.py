@@ -52,24 +52,31 @@
         # Login & Auth
         'views/login_templates.xml',
 
+        # Settings view
+        'views/res_config_settings_views.xml',
+
         # Les templates ci-dessous sont commentés car ils dépendent de modules optionnels
         # Décommentez-les après avoir installé les modules correspondants
 
         # # Portal (nécessite: portal)
         # 'views/portal_templates.xml',
 
-        # # Templates website (nécessite: website, website_sale)
-        # 'templates/website/layout.xml',
-        # 'templates/website/header.xml',
-        # 'templates/website/footer.xml',
+        # Templates website (nécessite: website, website_sale)
+        'templates/website/layout.xml',
+        'templates/website/header.xml',
+        'templates/website/footer.xml',
 
-        # # Templates POS (nécessite: point_of_sale)
-        # 'templates/pos/pos_templates.xml',
-        # 'templates/pos/pos_receipt.xml',
+        # Templates POS (nécessite: point_of_sale)
+        'templates/pos/pos_templates.xml',
+        'templates/pos/pos_receipt.xml',
 
         # Templates mail (module mail installé)
         'templates/mail/mail_notification_layout.xml',
         'templates/mail/signature.xml',
+
+        # Templates reports (PDF)
+        'templates/reports/external_layout.xml',
+        'templates/reports/report_invoice.xml',
     ],
     'assets': {
         # Backend Assets - Chargés dans l'interface backend
@@ -97,12 +104,17 @@
             'quelyos_branding/static/src/scss/_variables.scss',
         ],
 
-        # POS Assets - Désactivé temporairement (point_of_sale pas installé)
-        # Décommentez après l'installation du module point_of_sale
-        # 'point_of_sale.assets': [
-        #     'static/src/scss/_variables.scss',
-        #     'static/src/scss/_pos.scss',
-        # ],
+        # POS Assets - Activé pour le branding POS
+        'point_of_sale.assets': [
+            'quelyos_branding/static/src/scss/_variables.scss',
+            'quelyos_branding/static/src/scss/_pos.scss',
+        ],
+
+        # Report Assets - PDF styling
+        'web.report_assets_common': [
+            'quelyos_branding/static/src/scss/_variables.scss',
+            'quelyos_branding/static/src/scss/_reports.scss',
+        ],
     },
     'installable': True,
     'application': False,
