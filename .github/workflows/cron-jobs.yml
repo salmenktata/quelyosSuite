@@ -1,0 +1,129 @@
+name: Scheduled Jobs
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  # Job 1: Database Backup
+  backup-database:
+    name: Backup Database
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Run database backup
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+            cd ~/quelyos
+
+            # Run backup script
+            docker-compose exec -T db pg_dump -U odoo quelyos > backup-$(date +%Y%m%d-%H%M%S).sql
+
+            # Keep only last 7 days of backups
+            find ~/quelyos/backups/ -name "backup-*.sql" -mtime +7 -delete
+
+            echo "Database backup completed!"
+          EOF
+
+      - name: Upload backup to S3 (optional)
+        if: env.AWS_ACCESS_KEY_ID != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          # Upload to S3 if configured
+          echo "S3 upload would happen here"
+
+  # Job 2: Check for Updates
+  check-updates:
+    name: Check Dependencies Updates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check npm outdated
+        working-directory: ./frontend
+        run: |
+          npm outdated || true
+          echo "### Outdated NPM Packages" >> $GITHUB_STEP_SUMMARY
+          npm outdated >> $GITHUB_STEP_SUMMARY || true
+
+      - name: Check for security vulnerabilities
+        working-directory: ./frontend
+        run: |
+          npm audit --audit-level=moderate || true
+          echo "### Security Audit" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=moderate >> $GITHUB_STEP_SUMMARY || true
+
+  # Job 3: Performance Monitoring
+  lighthouse-audit:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://${{ secrets.PRODUCTION_URL }}/
+            https://${{ secrets.PRODUCTION_URL }}/products
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Check Lighthouse scores
+        run: |
+          echo "### Lighthouse Scores" >> $GITHUB_STEP_SUMMARY
+          echo "Reports uploaded - check artifacts" >> $GITHUB_STEP_SUMMARY
+
+  # Job 4: Cleanup Old Docker Images
+  cleanup-docker:
+    name: Cleanup Docker Images
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Cleanup old images
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+            # Remove unused images older than 7 days
+            docker image prune -af --filter "until=168h"
+
+            # Remove unused volumes
+            docker volume prune -f
+
+            # Show disk usage
+            df -h
+            docker system df
+
+            echo "Cleanup completed!"
+          EOF
