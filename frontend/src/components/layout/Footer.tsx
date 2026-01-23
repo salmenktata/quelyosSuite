@@ -1,19 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
+import { branding } from '@/lib/config/branding';
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* À propos */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-4">Quelyos</h3>
+            <h3 className="text-white font-bold text-lg mb-4">{branding.name}</h3>
             <p className="text-sm mb-4">
-              Votre boutique en ligne de confiance pour tous vos besoins.
-              Qualité, rapidité et service client exceptionnel.
+              {branding.description}
             </p>
             <div className="flex gap-4">
               <a href="#" className="hover:text-[#c9c18f] transition-colors">
@@ -84,7 +82,7 @@ const Footer: React.FC = () => {
       <div className="border-t border-gray-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p>© {currentYear} Quelyos. Tous droits réservés.</p>
+            <p>{branding.copyright}</p>
             <div className="flex gap-4">
               <img src="/visa.svg" alt="Visa" className="h-6 opacity-70" />
               <img src="/mastercard.svg" alt="Mastercard" className="h-6 opacity-70" />

@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ToastContainer } from "@/components/common/Toast";
+import { branding } from "@/lib/config/branding";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,9 +12,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Quelyos E-commerce - Boutique en ligne",
-  description: "Découvrez nos produits de qualité au meilleur prix",
-  keywords: ["e-commerce", "boutique", "produits", "quelyos"],
+  title: branding.fullTitle,
+  description: branding.description,
+  keywords: ["e-commerce", "boutique", "produits"],
 };
 
 export default function RootLayout({
@@ -30,6 +32,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        <ToastContainer />
       </body>
     </html>
   );

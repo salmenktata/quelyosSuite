@@ -6,17 +6,17 @@ import Image from 'next/image';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/common';
+import { SearchAutocomplete } from '@/components/common/SearchAutocomplete';
+import { branding } from '@/lib/config/branding';
 
 const Header: React.FC = () => {
   const cart = useCartStore((state) => state.cart);
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [searchQuery, setSearchQuery] = React.useState('');
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      window.location.href = `/products?search=${encodeURIComponent(query)}`;
     }
   };
 
@@ -28,11 +28,11 @@ const Header: React.FC = () => {
       <div className="bg-[#01613a] text-white text-sm">
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <a href="tel:+216XXXXXXXX" className="hover:text-[#c9c18f]">
-              📞 +216 XX XXX XXX
+            <a href={`tel:${branding.phone.replace(/\s/g, '')}`} className="hover:text-[#c9c18f]">
+              📞 {branding.phone}
             </a>
-            <a href="mailto:contact@quelyos.com" className="hover:text-[#c9c18f]">
-              ✉️ contact@quelyos.com
+            <a href={`mailto:${branding.email}`} className="hover:text-[#c9c18f]">
+              ✉️ {branding.email}
             </a>
           </div>
           <div className="flex items-center gap-4">
@@ -48,32 +48,19 @@ const Header: React.FC = () => {
           <Link href="/" className="flex-shrink-0">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">Q</span>
+                <span className="text-white font-bold text-xl">{branding.initial}</span>
               </div>
-              <span className="text-2xl font-bold text-[#01613a]">Quelyos</span>
+              <span className="text-2xl font-bold text-[#01613a]">{branding.name}</span>
             </div>
           </Link>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Rechercher des produits..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01613a] focus:border-transparent"
-              />
-              <button
-                type="submit"
-                className="absolute right-0 top-0 bottom-0 px-4 bg-[#01613a] text-white rounded-r-lg hover:bg-[#014d2e] transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-            </div>
-          </form>
+          {/* Search Bar with Autocomplete */}
+          <div className="flex-1 max-w-2xl">
+            <SearchAutocomplete
+              placeholder="Rechercher des produits..."
+              onSearch={handleSearch}
+            />
+          </div>
 
           {/* Right actions */}
           <div className="flex items-center gap-4">
