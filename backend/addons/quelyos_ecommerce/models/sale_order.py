@@ -193,3 +193,29 @@ class SaleOrder(models.Model):
         ])
         old_carts.unlink()
         return len(old_carts)
+
+    def action_confirm(self):
+        """
+        Override action_confirm to send order confirmation email automatically.
+        This is called when an order is confirmed (transitions from draft to sale).
+        """
+        # Call parent method to confirm the order
+        res = super(SaleOrder, self).action_confirm()
+
+        # Send order confirmation email for e-commerce orders
+        for order in self:
+            # Only send for orders that were carts (e-commerce orders)
+            # Skip internal orders or manual orders created in backend
+            if order.session_id or (order.partner_id and order.partner_id.user_ids):
+                try:
+                    # Import email service
+                    from ..services.email_service import get_email_service
+                    email_service = get_email_service(self.env)
+                    email_service.send_order_confirmation(order)
+                except Exception as e:
+                    # Log error but don't block order confirmation
+                    import logging
+                    _logger = logging.getLogger(__name__)
+                    _logger.error(f"Failed to send order confirmation email for {order.name}: {str(e)}")
+
+        return res

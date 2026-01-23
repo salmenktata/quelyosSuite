@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="default_frontend_config" model="quelyos.frontend.config">
+            <field name="name">Configuration Frontend</field>
+            <field name="frontend_url">http://localhost:3000</field>
+            <field name="backend_url">http://localhost:8069</field>
+            <field name="webhook_secret">change_me_in_production</field>
+            <field name="webhook_enabled" eval="True"/>
+            <field name="enable_wishlist" eval="True"/>
+            <field name="enable_comparison" eval="True"/>
+            <field name="enable_reviews" eval="True"/>
+            <field name="enable_guest_checkout" eval="False"/>
+            <field name="products_per_page">24</field>
+            <field name="primary_color">#01613a</field>
+            <field name="secondary_color">#c9c18f</field>
+        </record>
+    </data>
+</odoo>

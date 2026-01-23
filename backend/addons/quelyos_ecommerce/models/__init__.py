@@ -4,6 +4,8 @@ from . import ecommerce_config
 from . import product_template
 from . import product_product
 from . import sale_order
+from . import stock_picking  # Auto-send shipment emails
+from . import account_move  # Auto-send invoice emails
 from . import product_wishlist
 from . import product_comparison
 from . import ecommerce_analytics

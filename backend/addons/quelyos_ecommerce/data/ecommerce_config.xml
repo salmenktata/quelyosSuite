@@ -2,21 +2,15 @@
 <odoo>
     <data noupdate="1">
         <!-- Configuration E-commerce par défaut -->
+        <!-- Remarque: Les champs frontend_url, webhook_secret, enable_wishlist, enable_comparison,
+             products_per_page, webhook_*, et enable_guest_checkout ont été déplacés vers
+             quelyos.frontend.config -->
         <record id="default_ecommerce_config" model="ecommerce.config">
             <field name="name">Configuration E-commerce</field>
-            <field name="frontend_url">http://localhost:3000</field>
-            <field name="webhook_secret">change_me_in_production</field>
-            <field name="products_per_page">24</field>
             <field name="show_out_of_stock" eval="True"/>
-            <field name="enable_wishlist" eval="True"/>
-            <field name="enable_comparison" eval="True"/>
             <field name="cart_session_duration">7</field>
             <field name="min_order_amount">0.0</field>
             <field name="enable_auto_slug" eval="True"/>
-            <field name="webhook_stock_change" eval="True"/>
-            <field name="webhook_order_confirmed" eval="True"/>
-            <field name="webhook_product_updated" eval="True"/>
-            <field name="enable_guest_checkout" eval="False"/>
             <field name="default_meta_description">Découvrez nos produits Quelyos - Qualité et innovation au meilleur prix</field>
         </record>
     </data>

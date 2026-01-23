@@ -28,15 +28,18 @@
     'website': 'https://quelyos.com',
     'license': 'LGPL-3',
     'depends': [
-        # Dépendances minimales
+        # Nouveaux modules Quelyos (REQUIS)
+        'quelyos_core',         # Configuration organisationnelle
+        'quelyos_frontend',     # Configuration frontend
+        # Dépendances minimales Odoo
         'base',                 # Base Odoo
         'web',                  # Interface backend
         # Toutes les autres dépendances sont optionnelles
         # Installer website, website_sale, point_of_sale, mail selon les besoins
     ],
     'data': [
-        # Module Category (charger en tout premier pour que d'autres modules puissent l'utiliser)
-        'data/module_category.xml',
+        # REMOVED: Module Category - maintenant dans quelyos_core
+        # 'data/module_category.xml',
 
         # Sécurité
         'security/ir.model.access.csv',
@@ -133,5 +136,5 @@
     'installable': True,
     'application': False,
     'auto_install': False,
-    'sequence': 1,  # Charger tôt
+    'sequence': 2,  # Après quelyos_core (0) et quelyos_frontend (1)
 }

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Email Template: Order Confirmation -->
+    <record id="email_template_order_confirmation" model="mail.template">
+        <field name="name">E-commerce: Order Confirmation</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="subject">✅ Commande #{{ object.name }} confirmée - Quelyos</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="description">Sent to customer when order is confirmed</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .content { padding: 30px; }
+        .order-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .order-info h2 { margin-top: 0; color: #667eea; font-size: 20px; }
+        .order-items { margin: 20px 0; }
+        .item { display: table; width: 100%; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        .item-name { font-weight: bold; color: #333; }
+        .item-details { color: #666; font-size: 14px; margin-top: 5px; }
+        .totals { margin-top: 20px; padding-top: 20px; border-top: 2px solid #667eea; }
+        .total-row { display: flex; justify-content: space-between; padding: 8px 0; }
+        .total-row.grand { font-size: 20px; font-weight: bold; color: #667eea; }
+        .button { display: inline-block; padding: 15px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+        .button:hover { background: #5568d3; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 14px; }
+        .footer a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Commande Confirmée</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Merci pour votre commande !</p>
+        </div>
+
+        <div class="content">
+            <p>Bonjour <strong>{{ object.partner_id.name }}</strong>,</p>
+
+            <p>Nous avons bien reçu votre commande et elle est en cours de traitement. Vous recevrez un email de confirmation d'expédition dès que votre colis sera envoyé.</p>
+
+            <div class="order-info">
+                <h2>📦 Détails de la commande</h2>
+                <p><strong>Numéro de commande :</strong> {{ object.name }}</p>
+                <p><strong>Date :</strong> {{ format_datetime(object.date_order, dt_format='dd MMMM yyyy', tz=object.partner_id.tz or 'UTC', lang_code=object.partner_id.lang) }}</p>
+                <p><strong>Mode de paiement :</strong> {{ object.payment_term_id.name or 'Paiement en ligne' }}</p>
+            </div>
+
+            <div class="order-items">
+                <h3>🛍️ Articles commandés</h3>
+                {% for line in object.order_line.filtered(lambda l: not l.display_type) %}
+                <div class="item">
+                    <div class="item-name">{{ line.product_id.name }}</div>
+                    <div class="item-details">
+                        Quantité : {{ line.product_uom_qty }} × {{ '%.2f' % line.price_unit }} €
+                        = <strong>{{ '%.2f' % line.price_subtotal }} €</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="totals">
+                <div class="total-row">
+                    <span>Sous-total :</span>
+                    <span>{{ '%.2f' % object.amount_untaxed }} €</span>
+                </div>
+                {% if object.amount_tax > 0 %}
+                <div class="total-row">
+                    <span>TVA :</span>
+                    <span>{{ '%.2f' % object.amount_tax }} €</span>
+                </div>
+                {% endif %}
+                {% if object.carrier_id %}
+                <div class="total-row">
+                    <span>Livraison ({{ object.carrier_id.name }}) :</span>
+                    <span>{{ '%.2f' % (object.amount_delivery or 0) }} €</span>
+                </div>
+                {% endif %}
+                <div class="total-row grand">
+                    <span>TOTAL :</span>
+                    <span>{{ '%.2f' % object.amount_total }} €</span>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ (object.get_portal_url()) }}" class="button">
+                    Suivre ma commande 📋
+                </a>
+            </div>
+
+            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                <p style="margin: 0;"><strong>📍 Adresse de livraison :</strong></p>
+                <p style="margin: 5px 0 0 0;">
+                    {{ object.partner_shipping_id.name }}<br/>
+                    {{ object.partner_shipping_id.street }}<br/>
+                    {% if object.partner_shipping_id.street2 %}{{ object.partner_shipping_id.street2 }}<br/>{% endif %}
+                    {{ object.partner_shipping_id.zip }} {{ object.partner_shipping_id.city }}<br/>
+                    {{ object.partner_shipping_id.country_id.name }}
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Quelyos</strong> - Votre boutique en ligne de confiance</p>
+            <p>
+                Besoin d'aide ? <a href="mailto:support@quelyos.com">Contactez-nous</a>
+            </p>
+            <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <!-- Email Template: Order Shipped -->
+    <record id="email_template_order_shipped" model="mail.template">
+        <field name="name">E-commerce: Order Shipped</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="subject">🚚 Votre commande #{{ object.sale_id.name }} a été expédiée - Quelyos</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="description">Sent when order is shipped</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .content { padding: 30px; }
+        .shipping-info { background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #11998e; }
+        .tracking-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .tracking-number { font-size: 24px; font-weight: bold; color: #11998e; letter-spacing: 2px; margin: 10px 0; }
+        .button { display: inline-block; padding: 15px 30px; background: #11998e; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+        .button:hover { background: #0f8679; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 Colis en Route !</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Votre commande a été expédiée</p>
+        </div>
+
+        <div class="content">
+            <p>Bonjour <strong>{{ object.partner_id.name }}</strong>,</p>
+
+            <p>Bonne nouvelle ! Votre commande <strong>{{ object.sale_id.name }}</strong> a été expédiée et est en route vers vous.</p>
+
+            <div class="shipping-info">
+                <p><strong>📅 Date d'expédition :</strong> {{ format_datetime(object.date_done or object.scheduled_date, dt_format='dd MMMM yyyy', tz=object.partner_id.tz or 'UTC', lang_code=object.partner_id.lang) }}</p>
+                <p><strong>🚚 Transporteur :</strong> {{ object.carrier_id.name if object.carrier_id else 'Standard' }}</p>
+                <p><strong>📦 Nombre de colis :</strong> {{ object.move_ids_without_package|length }} articles</p>
+            </div>
+
+            {% if object.carrier_tracking_ref %}
+            <div class="tracking-box">
+                <p style="margin: 0 0 10px 0; font-weight: bold;">Numéro de suivi :</p>
+                <div class="tracking-number">{{ object.carrier_tracking_ref }}</div>
+                {% if object.carrier_tracking_url %}
+                <a href="{{ object.carrier_tracking_url }}" class="button">
+                    Suivre mon colis 📍
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                <p style="margin: 0;"><strong>📍 Adresse de livraison :</strong></p>
+                <p style="margin: 5px 0 0 0;">
+                    {{ object.partner_id.name }}<br/>
+                    {{ object.partner_id.street }}<br/>
+                    {% if object.partner_id.street2 %}{{ object.partner_id.street2 }}<br/>{% endif %}
+                    {{ object.partner_id.zip }} {{ object.partner_id.city }}<br/>
+                    {{ object.partner_id.country_id.name }}
+                </p>
+            </div>
+
+            <p style="margin-top: 25px;">Si vous avez des questions concernant votre livraison, n'hésitez pas à nous contacter.</p>
+
+            <div style="text-align: center;">
+                <a href="{{ (object.sale_id.get_portal_url() if object.sale_id else '#') }}" class="button">
+                    Voir ma commande 📋
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Quelyos</strong> - Votre boutique en ligne de confiance</p>
+            <p>
+                Besoin d'aide ? <a href="mailto:support@quelyos.com" style="color: #11998e; text-decoration: none;">Contactez-nous</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <!-- Email Template: Invoice -->
+    <record id="email_template_invoice" model="mail.template">
+        <field name="name">E-commerce: Invoice</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="subject">🧾 Facture {{ object.name }} - Quelyos</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="description">Sent when invoice is created</field>
+        <field name="report_template" ref="account.account_invoices"/>
+        <field name="report_name">Facture_{{ (object.name or '').replace('/','-') }}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .content { padding: 30px; }
+        .invoice-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .amount-box { background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; border-left: 4px solid #667eea; }
+        .amount { font-size: 32px; font-weight: bold; color: #667eea; }
+        .button { display: inline-block; padding: 15px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+        .button:hover { background: #5568d3; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧾 Votre Facture</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Facture N° {{ object.name }}</p>
+        </div>
+
+        <div class="content">
+            <p>Bonjour <strong>{{ object.partner_id.name }}</strong>,</p>
+
+            <p>Veuillez trouver ci-joint votre facture pour la commande {{ object.invoice_origin }}.</p>
+
+            <div class="invoice-info">
+                <p><strong>📄 Numéro de facture :</strong> {{ object.name }}</p>
+                <p><strong>📅 Date de facture :</strong> {{ format_date(object.invoice_date, date_format='dd MMMM yyyy', lang_code=object.partner_id.lang) }}</p>
+                <p><strong>📅 Date d'échéance :</strong> {{ format_date(object.invoice_date_due, date_format='dd MMMM yyyy', lang_code=object.partner_id.lang) if object.invoice_date_due else 'Immédiat' }}</p>
+            </div>
+
+            <div class="amount-box">
+                <p style="margin: 0 0 10px 0; font-size: 16px;">Montant total</p>
+                <div class="amount">{{ '%.2f' % object.amount_total }} €</div>
+                {% if object.payment_state == 'paid' %}
+                <p style="margin: 10px 0 0 0; color: #11998e; font-weight: bold;">✅ PAYÉE</p>
+                {% elif object.payment_state == 'partial' %}
+                <p style="margin: 10px 0 0 0; color: #ff9800; font-weight: bold;">⚠️ PARTIELLEMENT PAYÉE</p>
+                {% else %}
+                <p style="margin: 10px 0 0 0; color: #f44336; font-weight: bold;">❌ EN ATTENTE DE PAIEMENT</p>
+                {% endif %}
+            </div>
+
+            {% if object.payment_state != 'paid' and object.amount_residual > 0 %}
+            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                <p style="margin: 0;"><strong>⚠️ Montant restant à payer :</strong> {{ '%.2f' % object.amount_residual }} €</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px;">
+                    Merci de procéder au règlement avant le {{ format_date(object.invoice_date_due, date_format='dd MMMM yyyy', lang_code=object.partner_id.lang) if object.invoice_date_due else 'dès que possible' }}.
+                </p>
+            </div>
+            {% endif %}
+
+            <div style="text-align: center;">
+                <a href="{{ (object.get_portal_url()) }}" class="button">
+                    Voir la facture en ligne 📄
+                </a>
+            </div>
+
+            <p style="margin-top: 25px; font-size: 14px; color: #666;">
+                Votre facture est jointe à cet email au format PDF. Vous pouvez également la télécharger depuis votre espace client.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p><strong>Quelyos</strong> - Votre boutique en ligne de confiance</p>
+            <p>
+                Questions ? <a href="mailto:support@quelyos.com" style="color: #667eea; text-decoration: none;">Contactez notre service comptabilité</a>
+            </p>
+            <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                {{ object.company_id.name }}<br/>
+                {% if object.company_id.vat %}N° TVA : {{ object.company_id.vat }}<br/>{% endif %}
+                {{ object.company_id.street }}, {{ object.company_id.zip }} {{ object.company_id.city }}
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <!-- Auto-send order confirmation when order is confirmed -->
+    <record id="mail_activity_order_confirmation" model="mail.activity.type">
+        <field name="name">Send Order Confirmation Email</field>
+        <field name="summary">Send confirmation email to customer</field>
+        <field name="res_model_id" ref="sale.model_sale_order"/>
+    </record>
+
+</odoo>

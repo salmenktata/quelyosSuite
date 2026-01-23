@@ -8,48 +8,24 @@
             <field name="arch" type="xml">
                 <form string="Avis Produit">
                     <header>
-                        <button name="action_approve" string="Approuver" type="object"
-                                class="oe_highlight" invisible="state != 'pending'"/>
-                        <button name="action_reject" string="Rejeter" type="object"
-                                invisible="state != 'pending'"/>
                         <field name="state" widget="statusbar" statusbar_visible="pending,approved"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button name="action_mark_helpful" type="object" class="oe_stat_button" icon="fa-thumbs-up">
-                                <field name="helpful_count" widget="statinfo" string="Utile"/>
-                            </button>
-                        </div>
-
                         <group>
                             <group>
-                                <field name="product_id" options="{'no_create': True}"/>
-                                <field name="product_tmpl_id" readonly="1"/>
-                                <field name="partner_id" options="{'no_create': True}"/>
-                                <field name="order_id" options="{'no_create': True}"/>
+                                <field name="product_id"/>
+                                <field name="partner_id"/>
+                                <field name="rating" widget="priority"/>
                             </group>
                             <group>
-                                <field name="rating" widget="priority"/>
-                                <field name="is_verified_purchase" readonly="1"/>
-                                <field name="created_date" readonly="1"/>
+                                <field name="verified_purchase" readonly="1"/>
+                                <field name="helpful_count" readonly="1"/>
                             </group>
                         </group>
 
                         <group string="Avis">
                             <field name="title" placeholder="Titre de l'avis"/>
                             <field name="comment" placeholder="Commentaire détaillé" widget="text"/>
-                        </group>
-
-                        <group string="Réponse Vendeur">
-                            <field name="vendor_response" placeholder="Votre réponse..." widget="text"/>
-                            <field name="vendor_response_date" readonly="1"/>
-                        </group>
-
-                        <group string="Modération">
-                            <group>
-                                <field name="approved_date" readonly="1"/>
-                                <field name="approved_by" readonly="1"/>
-                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -61,182 +37,29 @@
             <field name="name">product.review.list</field>
             <field name="model">product.review</field>
             <field name="arch" type="xml">
-                <list string="Avis Produits" default_order="created_date desc" multi_edit="1">
-                    <field name="created_date" optional="show"/>
-                    <field name="product_id"/>
-                    <field name="partner_id"/>
-                    <field name="rating" widget="priority"/>
-                    <field name="title"/>
-                    <field name="is_verified_purchase" optional="show"/>
-                    <field name="helpful_count" optional="hide"/>
-                    <field name="state" widget="badge"
-                           decoration-success="state == 'approved'"
-                           decoration-warning="state == 'pending'"
-                           decoration-danger="state == 'rejected'"/>
-                </list>
-            </field>
-        </record>
-
-        <!-- Vue recherche review -->
-        <record id="view_product_review_search" model="ir.ui.view">
-            <field name="name">product.review.search</field>
-            <field name="model">product.review</field>
-            <field name="arch" type="xml">
-                <search string="Rechercher Avis">
-                    <field name="product_id" string="Produit"/>
-                    <field name="partner_id" string="Client"/>
-                    <field name="title" string="Titre"/>
-                    <field name="comment" string="Commentaire"/>
-
-                    <filter string="En Attente" name="pending"
-                            domain="[('state', '=', 'pending')]"/>
-                    <filter string="Approuvés" name="approved"
-                            domain="[('state', '=', 'approved')]"/>
-                    <filter string="Rejetés" name="rejected"
-                            domain="[('state', '=', 'rejected')]"/>
-
-                    <separator/>
-
-                    <filter string="Achat Vérifié" name="verified"
-                            domain="[('is_verified_purchase', '=', True)]"/>
-                    <filter string="5 Étoiles" name="5_stars"
-                            domain="[('rating', '=', 5)]"/>
-                    <filter string="4 Étoiles" name="4_stars"
-                            domain="[('rating', '=', 4)]"/>
-                    <filter string="3 Étoiles" name="3_stars"
-                            domain="[('rating', '=', 3)]"/>
-                    <filter string="1-2 Étoiles" name="low_rating"
-                            domain="[('rating', '&lt;=', 2)]"/>
-
-                    <separator/>
-
-                    <filter string="Produit" name="group_by_product"
-                            context="{'group_by': 'product_id'}"/>
-                    <filter string="Client" name="group_by_partner"
-                            context="{'group_by': 'partner_id'}"/>
-                    <filter string="Note" name="group_by_rating"
-                            context="{'group_by': 'rating'}"/>
-                    <filter string="Statut" name="group_by_state"
-                            context="{'group_by': 'state'}"/>
-                    <filter string="Date" name="group_by_date"
-                            context="{'group_by': 'created_date:month'}"/>
-                </search>
-            </field>
-        </record>
-
-        <!-- Vue kanban review -->
-        <record id="view_product_review_kanban" model="ir.ui.view">
-            <field name="name">product.review.kanban</field>
-            <field name="model">product.review</field>
-            <field name="arch" type="xml">
-                <kanban default_group_by="state">
-                    <field name="id"/>
+                <list string="Avis Produits">
                     <field name="product_id"/>
                     <field name="partner_id"/>
                     <field name="rating"/>
                     <field name="title"/>
-                    <field name="comment"/>
-                    <field name="is_verified_purchase"/>
-                    <field name="helpful_count"/>
-                    <field name="created_date"/>
                     <field name="state"/>
-                    <templates>
-                        <t t-name="card">
-                            <div class="oe_kanban_global_click">
-                                <div class="o_kanban_record_top">
-                                    <div class="o_kanban_record_headings">
-                                        <strong class="o_kanban_record_title">
-                                            <field name="title"/>
-                                        </strong>
-                                        <div class="o_kanban_record_subtitle">
-                                            <field name="product_id"/>
-                                        </div>
-                                    </div>
-                                    <div class="o_kanban_record_top_right">
-                                        <field name="rating" widget="priority"/>
-                                    </div>
-                                </div>
-                                <div class="o_kanban_record_body">
-                                    <div>
-                                        <i class="fa fa-user"/> <field name="partner_id"/>
-                                        <t t-if="record.is_verified_purchase.raw_value">
-                                            <span class="badge badge-success ms-2">Achat vérifié</span>
-                                        </t>
-                                    </div>
-                                    <div class="text-muted mt-2">
-                                        <field name="comment"/>
-                                    </div>
-                                </div>
-                                <div class="o_kanban_record_bottom">
-                                    <div class="oe_kanban_bottom_left">
-                                        <i class="fa fa-thumbs-up"/> <field name="helpful_count"/> utile
-                                    </div>
-                                    <div class="oe_kanban_bottom_right">
-                                        <field name="created_date" widget="date"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
+                </list>
             </field>
         </record>
 
-        <!-- Action review -->
-        <record id="action_product_review" model="ir.actions.act_window">
+        <!-- Action reviews -->
+        <record id="action_product_reviews" model="ir.actions.act_window">
             <field name="name">Avis Produits</field>
             <field name="res_model">product.review</field>
-            <field name="view_mode">kanban,list,form</field>
-            <field name="search_view_id" ref="view_product_review_search"/>
-            <field name="context">{'search_default_pending': 1}</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Aucun avis produit
-                </p>
-                <p>
-                    Les avis clients sur vos produits apparaîtront ici.
-                    Vous devez approuver les avis avant qu'ils ne soient visibles sur le frontend.
-                </p>
-            </field>
+            <field name="view_mode">list,form</field>
         </record>
 
-        <!-- Extension vue produit pour afficher les avis -->
-        <record id="view_product_template_review_form" model="ir.ui.view">
-            <field name="name">product.template.form.review</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
-            <field name="arch" type="xml">
-                <notebook position="inside">
-                    <page string="Avis Clients" name="reviews">
-                        <group>
-                            <group>
-                                <field name="average_rating" widget="float" digits="[3,2]"/>
-                                <field name="review_count"/>
-                            </group>
-                            <group>
-                                <field name="rating_distribution" readonly="1"/>
-                            </group>
-                        </group>
-                        <field name="review_ids">
-                            <list>
-                                <field name="partner_id"/>
-                                <field name="rating" widget="priority"/>
-                                <field name="title"/>
-                                <field name="state"/>
-                                <field name="created_date"/>
-                            </list>
-                        </field>
-                    </page>
-                </notebook>
-            </field>
-        </record>
-
-        <!-- Menu reviews -->
+        <!-- Menu reviews sous menu_ecommerce_root -->
         <menuitem id="menu_product_reviews"
                   name="Avis Produits"
                   parent="menu_ecommerce_root"
-                  action="action_product_review"
-                  sequence="35"/>
+                  action="action_product_reviews"
+                  sequence="30"/>
 
     </data>
 </odoo>

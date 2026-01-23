@@ -10,17 +10,15 @@ class EcommerceConfig(models.Model):
 
     name = fields.Char('Nom Configuration', required=True, default='Configuration E-commerce')
 
-    # URLs et intégration
-    frontend_url = fields.Char('URL Frontend', required=True, default='http://localhost:3000',
-                                help='URL du frontend Next.js')
-    webhook_secret = fields.Char('Webhook Secret', required=True,
-                                  help='Secret partagé pour authentifier les webhooks')
+    # REMOVED: Champs déplacés vers quelyos.frontend.config
+    # - frontend_url → quelyos.frontend.config
+    # - webhook_secret → quelyos.frontend.config
+    # - webhook_stock_change, webhook_order_confirmed, webhook_product_updated → quelyos.frontend.config
+    # - enable_wishlist, enable_comparison, enable_guest_checkout → quelyos.frontend.config
+    # - products_per_page → quelyos.frontend.config
 
     # Configuration catalogue
-    products_per_page = fields.Integer('Produits par page', default=24)
     show_out_of_stock = fields.Boolean('Afficher produits en rupture', default=True)
-    enable_wishlist = fields.Boolean('Activer wishlist', default=True)
-    enable_comparison = fields.Boolean('Activer comparateur', default=True)
 
     # Configuration panier
     cart_session_duration = fields.Integer('Durée session panier (jours)', default=7)
@@ -30,26 +28,28 @@ class EcommerceConfig(models.Model):
     default_meta_description = fields.Text('Meta description par défaut')
     enable_auto_slug = fields.Boolean('Génération automatique des slugs', default=True)
 
-    # Webhooks activés
-    webhook_stock_change = fields.Boolean('Webhook changement stock', default=True)
-    webhook_order_confirmed = fields.Boolean('Webhook commande confirmée', default=True)
-    webhook_product_updated = fields.Boolean('Webhook produit mis à jour', default=True)
-
-    # Configuration paiement
-    enable_guest_checkout = fields.Boolean('Autoriser achat invité', default=False)
-
     @api.model
     def get_config(self):
-        """Récupère la configuration active."""
+        """Récupère la configuration e-commerce uniquement."""
         config = self.search([], limit=1)
         if not config:
             config = self.create({})
         return {
-            'frontend_url': config.frontend_url,
-            'products_per_page': config.products_per_page,
             'show_out_of_stock': config.show_out_of_stock,
-            'enable_wishlist': config.enable_wishlist,
-            'enable_comparison': config.enable_comparison,
+            'cart_session_duration': config.cart_session_duration,
             'min_order_amount': config.min_order_amount,
-            'enable_guest_checkout': config.enable_guest_checkout,
+            'default_meta_description': config.default_meta_description,
+            'enable_auto_slug': config.enable_auto_slug,
         }
+
+    @api.model
+    def get_frontend_config(self):
+        """Récupère la configuration frontend."""
+        return self.env['quelyos.frontend.config'].get_config()
+
+    @api.model
+    def get_full_config(self):
+        """Récupère la configuration complète (ecommerce + frontend)."""
+        ecommerce_config = self.get_config()
+        frontend_config = self.get_frontend_config()
+        return {**ecommerce_config, **frontend_config}

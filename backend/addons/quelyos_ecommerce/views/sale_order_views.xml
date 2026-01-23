@@ -161,23 +161,7 @@
             </field>
         </record>
 
-        <!-- Menus E-commerce -->
-        <menuitem id="menu_ecommerce_orders_root"
-                  name="Commandes"
-                  parent="menu_ecommerce_root"
-                  sequence="20"/>
-
-        <menuitem id="menu_ecommerce_all_orders"
-                  name="Toutes les Commandes"
-                  parent="menu_ecommerce_orders_root"
-                  action="action_ecommerce_orders"
-                  sequence="10"/>
-
-        <menuitem id="menu_abandoned_carts"
-                  name="Paniers Abandonnés"
-                  parent="menu_ecommerce_orders_root"
-                  action="action_abandoned_carts"
-                  sequence="20"/>
+        <!-- REMARQUE: Les menus sont définis dans views/menu.xml -->
 
     </data>
 </odoo>

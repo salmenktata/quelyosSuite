@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Frontend sous Configuration Quelyos -->
+    <menuitem id="menu_frontend_config"
+              name="Frontend"
+              parent="quelyos_core.menu_quelyos_config"
+              action="action_frontend_config"
+              sequence="10"/>
+</odoo>

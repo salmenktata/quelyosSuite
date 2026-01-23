@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menu principal E-commerce -->
+    <!-- Menu E-commerce sous le menu racine Quelyos -->
     <menuitem id="menu_ecommerce_root"
               name="E-commerce"
-              sequence="50"
-              web_icon="quelyos_ecommerce,static/description/icon.png"/>
+              parent="quelyos_core.menu_quelyos_root"
+              sequence="10"/>
 
     <!-- Catalogue -->
     <menuitem id="menu_ecommerce_catalog"
@@ -24,16 +24,28 @@
               action="product.product_category_action_form"
               sequence="20"/>
 
-    <!-- Commandes (sera complété en Phase 2) -->
+    <!-- Commandes -->
     <menuitem id="menu_ecommerce_orders"
               name="Commandes"
               parent="menu_ecommerce_root"
               sequence="20"/>
 
-    <!-- Configuration -->
+    <menuitem id="menu_ecommerce_all_orders"
+              name="Toutes les Commandes"
+              parent="menu_ecommerce_orders"
+              action="quelyos_ecommerce.action_ecommerce_orders"
+              sequence="10"/>
+
+    <menuitem id="menu_abandoned_carts"
+              name="Paniers Abandonnés"
+              parent="menu_ecommerce_orders"
+              action="quelyos_ecommerce.action_abandoned_carts"
+              sequence="20"/>
+
+    <!-- Configuration E-commerce sous Configuration Quelyos -->
     <menuitem id="menu_ecommerce_config"
-              name="Configuration"
-              parent="menu_ecommerce_root"
+              name="E-commerce"
+              parent="quelyos_core.menu_quelyos_config"
               action="quelyos_ecommerce.action_ecommerce_config"
-              sequence="90"/>
+              sequence="20"/>
 </odoo>

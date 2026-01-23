@@ -12,18 +12,17 @@
                             <field name="name" placeholder="Nom de la configuration"/>
                         </h1>
                     </div>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>Note:</strong> Les paramètres frontend (URLs, webhooks, feature flags) ont été déplacés vers
+                            <a href="/web#model=quelyos.frontend.config&amp;view_type=form" target="_blank">Configuration Frontend</a>
+                        </div>
+                    </group>
                     <notebook>
-                        <page string="Général">
+                        <page string="Catalogue">
                             <group>
-                                <group string="URLs et Intégration">
-                                    <field name="frontend_url"/>
-                                    <field name="webhook_secret" password="True"/>
-                                </group>
-                                <group string="Configuration Catalogue">
-                                    <field name="products_per_page"/>
+                                <group string="Affichage Produits">
                                     <field name="show_out_of_stock"/>
-                                    <field name="enable_wishlist"/>
-                                    <field name="enable_comparison"/>
                                 </group>
                             </group>
                         </page>
@@ -32,7 +31,6 @@
                                 <group string="Panier">
                                     <field name="cart_session_duration"/>
                                     <field name="min_order_amount"/>
-                                    <field name="enable_guest_checkout"/>
                                 </group>
                             </group>
                         </page>
@@ -41,15 +39,6 @@
                                 <group>
                                     <field name="enable_auto_slug"/>
                                     <field name="default_meta_description"/>
-                                </group>
-                            </group>
-                        </page>
-                        <page string="Webhooks">
-                            <group>
-                                <group string="Événements activés">
-                                    <field name="webhook_stock_change"/>
-                                    <field name="webhook_order_confirmed"/>
-                                    <field name="webhook_product_updated"/>
                                 </group>
                             </group>
                         </page>
@@ -66,9 +55,9 @@
         <field name="arch" type="xml">
             <list string="Configurations E-commerce">
                 <field name="name"/>
-                <field name="frontend_url"/>
-                <field name="enable_wishlist"/>
-                <field name="enable_comparison"/>
+                <field name="show_out_of_stock"/>
+                <field name="cart_session_duration"/>
+                <field name="min_order_amount"/>
             </list>
         </field>
     </record>
@@ -83,23 +72,12 @@
                 Configurer votre module e-commerce
             </p>
             <p>
-                Définissez les paramètres de votre boutique en ligne,
-                les URLs du frontend, et activez les fonctionnalités souhaitées.
+                Définissez les paramètres métier de votre boutique en ligne.
             </p>
         </field>
     </record>
 
-    <!-- Menu E-commerce -->
-    <menuitem id="menu_ecommerce_root"
-              name="E-commerce"
-              sequence="100"
-              web_icon="quelyos_ecommerce,static/description/icon.png"/>
-
-    <menuitem id="menu_ecommerce_config"
-              name="Configuration"
-              parent="menu_ecommerce_root"
-              action="action_ecommerce_config"
-              sequence="100"/>
+    <!-- REMARQUE: Les menus sont définis dans menu.xml -->
 
     <!-- Vue formulaire Wishlist -->
     <record id="view_product_wishlist_form" model="ir.ui.view">
@@ -139,9 +117,5 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_product_wishlist"
-              name="Wishlists"
-              parent="menu_ecommerce_root"
-              action="action_product_wishlist"
-              sequence="10"/>
+    <!-- REMARQUE: Le menu wishlist est défini dans wishlist_views.xml -->
 </odoo>

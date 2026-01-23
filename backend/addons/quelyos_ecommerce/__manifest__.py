@@ -33,18 +33,21 @@
         'delivery',
         'product',
         'quelyos_branding',
+        'quelyos_frontend',  # Configuration frontend
     ],
+    'sequence': 10,  # Après tous les modules Quelyos
     'data': [
         'security/ir.model.access.csv',
         'data/ecommerce_config.xml',
+        # 'data/email_templates.xml',  # TODO: Fix XML validation for Odoo 19
+        'views/ecommerce_config_views.xml',
         'views/product_views.xml',
         'views/sale_order_views.xml',
+        'views/menu.xml',  # Charger après les actions de base mais avant les sous-menus
         'views/wishlist_views.xml',
         'views/analytics_views.xml',
         'views/review_views.xml',
         'views/coupon_views.xml',
-        'views/ecommerce_config_views.xml',
-        'views/menu.xml',
     ],
     'demo': [],
     'installable': True,
