@@ -31,8 +31,36 @@
     }
 
     // ========================================
+    // Fonction: Vérifier si un élément est lié à une URL
+    // ========================================
+    // IMPORTANT: Cette fonction protège les URLs contre le remplacement de texte
+    // pour éviter de casser les liens internes d'Odoo ou les liens externes
+    function isUrlRelatedElement(element) {
+        // Ne pas toucher aux éléments avec des attributs d'URL
+        const urlAttributes = [
+            'href',        // Liens <a>
+            'src',         // Images, scripts, iframes
+            'action',      // Formulaires
+            'data-url',    // Attributs data personnalisés
+            'data-href',
+            'data-src',
+            'formaction',  // Boutons de formulaire
+            'cite',        // Citations
+            'content'      // Meta tags avec URLs
+        ];
+        return urlAttributes.some(attr => element.hasAttribute && element.hasAttribute(attr));
+    }
+
+    // ========================================
     // Fonction: Remplacer les textes "Odoo" par "Quelyos"
     // ========================================
+    // SÉCURITÉ: Cette fonction NE TOUCHE JAMAIS aux URLs pour éviter de casser:
+    // - Les liens internes d'Odoo (ex: /web/database/manager)
+    // - Les routes API (ex: /api/odoo/...)
+    // - Les attributs href, src, action, data-url, etc.
+    // - Les éléments contenus dans des balises <a>
+    // - Les inputs de type URL ou avec name contenant 'url'/'href'
+    // - Les meta tags avec des URLs
     function replaceOdooText() {
         // Sélectionner tous les éléments de texte
         const textNodes = [];
@@ -45,8 +73,12 @@
 
         let node;
         while (node = walker.nextNode()) {
-            // Ignorer les scripts et styles
-            if (node.parentNode.tagName !== 'SCRIPT' && node.parentNode.tagName !== 'STYLE') {
+            // Ignorer les scripts, styles, et éléments liés aux URLs
+            const parentTag = node.parentNode.tagName;
+            if (parentTag !== 'SCRIPT' &&
+                parentTag !== 'STYLE' &&
+                parentTag !== 'A' &&  // Ne pas toucher au texte dans les liens
+                !isUrlRelatedElement(node.parentNode)) {
                 if (node.nodeValue && node.nodeValue.match(/Odoo/i)) {
                     textNodes.push(node);
                 }
@@ -61,8 +93,14 @@
         });
 
         // Remplacer dans les attributs HTML (title, placeholder, aria-label, etc.)
+        // IMPORTANT: Ne JAMAIS toucher aux attributs href, src, action, data-url, etc.
         const elementsWithOdoo = document.querySelectorAll('[title*="odoo" i], [placeholder*="odoo" i], [aria-label*="odoo" i], [data-original-title*="odoo" i]');
         elementsWithOdoo.forEach(el => {
+            // Ne pas toucher aux éléments avec des URLs
+            if (isUrlRelatedElement(el)) {
+                return;
+            }
+
             if (el.title) {
                 el.title = el.title.replace(/Odoo/gi, 'Quelyos');
             }
@@ -78,8 +116,18 @@
         });
 
         // Remplacer dans les meta tags
+        // ATTENTION: Ne pas toucher aux meta tags qui contiennent des URLs
         const metaTags = document.querySelectorAll('meta[content*="odoo" i]');
         metaTags.forEach(meta => {
+            // Ne pas toucher aux meta tags avec des URLs (og:url, twitter:url, canonical, etc.)
+            const property = meta.getAttribute('property') || meta.getAttribute('name') || '';
+            if (property.includes('url') ||
+                property.includes('image') ||
+                meta.content?.startsWith('http://') ||
+                meta.content?.startsWith('https://') ||
+                meta.content?.startsWith('/')) {
+                return;
+            }
             if (meta.content) {
                 meta.content = meta.content.replace(/Odoo/gi, 'Quelyos');
             }
@@ -88,6 +136,10 @@
         // Remplacer dans les labels et descriptions (Settings, formulaires, etc.)
         const labels = document.querySelectorAll('label, .o_field_label, .o_form_label, span.text-muted, small, .help-block');
         labels.forEach(el => {
+            // Ne pas toucher aux éléments avec des URLs
+            if (isUrlRelatedElement(el) || el.closest('a')) {
+                return;
+            }
             if (el.textContent && el.textContent.match(/Odoo/i)) {
                 el.textContent = el.textContent.replace(/Odoo/gi, 'Quelyos');
             }
@@ -96,6 +148,10 @@
         // Remplacer dans les boutons
         const buttons = document.querySelectorAll('button, .btn, .o_button');
         buttons.forEach(btn => {
+            // Ne pas toucher aux boutons avec des URLs ou dans des liens
+            if (isUrlRelatedElement(btn) || btn.closest('a')) {
+                return;
+            }
             if (btn.textContent && btn.textContent.match(/Odoo/i)) {
                 btn.textContent = btn.textContent.replace(/Odoo/gi, 'Quelyos');
             }
@@ -104,14 +160,27 @@
         // Remplacer dans les headers et titres
         const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .modal-title, .o_form_label');
         headers.forEach(h => {
+            // Ne pas toucher aux headers avec des URLs ou dans des liens
+            if (isUrlRelatedElement(h) || h.closest('a')) {
+                return;
+            }
             if (h.textContent && h.textContent.match(/Odoo/i)) {
                 h.textContent = h.textContent.replace(/Odoo/gi, 'Quelyos');
             }
         });
 
         // Remplacer dans les valeurs d'attributs value
+        // ATTENTION: Ne jamais toucher aux inputs de type URL ou avec des attributs d'URL
         const inputs = document.querySelectorAll('input[value*="odoo" i], textarea');
         inputs.forEach(input => {
+            // Ne pas toucher aux inputs de type URL, hidden avec URLs, etc.
+            if (input.type === 'url' ||
+                input.type === 'hidden' ||
+                isUrlRelatedElement(input) ||
+                input.name?.includes('url') ||
+                input.name?.includes('href')) {
+                return;
+            }
             if (input.value && input.value.match(/Odoo/i)) {
                 input.value = input.value.replace(/Odoo/gi, 'Quelyos');
             }
