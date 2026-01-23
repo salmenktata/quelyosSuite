@@ -1,11 +1,7 @@
-/**
- * Store Zustand pour la gestion de l'authentification
- */
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { odooClient } from '@/lib/odoo/client';
 import type { User } from '@/types';
+import { odooClient } from '@/lib/odoo/client';
 
 interface AuthState {
   user: User | null;
@@ -16,9 +12,9 @@ interface AuthState {
   // Actions
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  register: (data: { name: string; email: string; phone?: string; password: string }) => Promise<boolean>;
+  register: (data: { name: string; email: string; password: string; phone?: string }) => Promise<boolean>;
   checkSession: () => Promise<void>;
-  clearError: () => void;
+  updateProfile: (data: Partial<User>) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -31,10 +27,8 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
-
         try {
           const response = await odooClient.login(email, password);
-
           if (response.success && response.user) {
             set({
               user: response.user,
@@ -45,14 +39,14 @@ export const useAuthStore = create<AuthState>()(
             return true;
           } else {
             set({
-              error: response.error || 'Échec de connexion',
+              error: response.error || 'Login failed',
               isLoading: false,
             });
             return false;
           }
         } catch (error: any) {
           set({
-            error: error.message || 'Erreur lors de la connexion',
+            error: error.message || 'Login failed',
             isLoading: false,
           });
           return false;
@@ -61,7 +55,6 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         set({ isLoading: true });
-
         try {
           await odooClient.logout();
           set({
@@ -71,40 +64,34 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
         } catch (error: any) {
-          console.error('Logout error:', error);
-          // Forcer la déconnexion même en cas d'erreur
+          // Même en cas d'erreur, on déconnecte localement
           set({
             user: null,
             isAuthenticated: false,
             isLoading: false,
+            error: null,
           });
         }
       },
 
-      register: async (data) => {
+      register: async (data: { name: string; email: string; password: string; phone?: string }) => {
         set({ isLoading: true, error: null });
-
         try {
           const response = await odooClient.register(data);
-
-          if (response.success && response.user) {
-            set({
-              user: response.user,
-              isAuthenticated: true,
-              isLoading: false,
-              error: null,
-            });
-            return true;
+          if (response.success) {
+            // Auto-login après inscription
+            const loginSuccess = await get().login(data.email, data.password);
+            return loginSuccess;
           } else {
             set({
-              error: response.error || 'Échec de l\'inscription',
+              error: response.error || 'Registration failed',
               isLoading: false,
             });
             return false;
           }
         } catch (error: any) {
           set({
-            error: error.message || 'Erreur lors de l\'inscription',
+            error: error.message || 'Registration failed',
             isLoading: false,
           });
           return false;
@@ -113,10 +100,8 @@ export const useAuthStore = create<AuthState>()(
 
       checkSession: async () => {
         set({ isLoading: true });
-
         try {
-          const response = await odooClient.checkSession();
-
+          const response = await odooClient.getSession();
           if (response.authenticated && response.user) {
             set({
               user: response.user,
@@ -130,8 +115,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
             });
           }
-        } catch (error) {
-          console.error('Session check error:', error);
+        } catch (error: any) {
           set({
             user: null,
             isAuthenticated: false,
@@ -140,16 +124,40 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      clearError: () => {
-        set({ error: null });
+      updateProfile: async (data: Partial<User>) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await odooClient.updateProfile(data);
+          if (response.success) {
+            // Rafraîchir le profil
+            const profileResponse = await odooClient.getProfile();
+            if (profileResponse.success && profileResponse.profile) {
+              set({
+                user: profileResponse.profile,
+                isLoading: false,
+              });
+              return true;
+            }
+          }
+          set({
+            error: response.error || 'Profile update failed',
+            isLoading: false,
+          });
+          return false;
+        } catch (error: any) {
+          set({
+            error: error.message || 'Profile update failed',
+            isLoading: false,
+          });
+          return false;
+        }
       },
     }),
     {
-      name: 'auth-storage',
-      // Ne persister que les données essentielles
-      partialize: (state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
+      name: 'quelyos-auth-storage',
+      partialize: (state) => ({ 
+        user: state.user, 
+        isAuthenticated: state.isAuthenticated 
       }),
     }
   )

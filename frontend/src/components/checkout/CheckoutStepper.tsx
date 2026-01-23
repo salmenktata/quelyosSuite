@@ -1,75 +1,63 @@
-/**
- * Stepper pour le processus de checkout
- */
-
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-
-interface Step {
-  number: number;
-  title: string;
-  path: string;
-}
 
 interface CheckoutStepperProps {
   currentStep: number;
 }
 
-const steps: Step[] = [
-  { number: 1, title: 'Panier', path: '/cart' },
-  { number: 2, title: 'Livraison', path: '/checkout/shipping' },
-  { number: 3, title: 'Paiement', path: '/checkout/payment' },
+const steps = [
+  { number: 1, label: 'Panier', icon: '🛒' },
+  { number: 2, label: 'Livraison', icon: '📦' },
+  { number: 3, label: 'Paiement', icon: '💳' },
+  { number: 4, label: 'Confirmation', icon: '✓' },
 ];
 
-export function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
+const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ currentStep }) => {
+  const getStepClass = (stepNum: number) => {
+    if (stepNum < currentStep) return 'bg-green-500 text-white';
+    if (stepNum === currentStep) return 'bg-[#01613a] text-white ring-4 ring-[#01613a]/20';
+    return 'bg-gray-200 text-gray-500';
+  };
+
+  const getLineWidth = (stepNum: number) => {
+    return stepNum < currentStep ? 'w-full' : 'w-0';
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
           <React.Fragment key={step.number}>
-            {/* Step */}
-            <div className="flex items-center">
-              <div className="flex flex-col items-center">
-                {/* Circle */}
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                    currentStep >= step.number
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
-                >
-                  {currentStep > step.number ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    step.number
-                  )}
-                </div>
-                {/* Label */}
-                <span
-                  className={`mt-2 text-sm font-medium ${
-                    currentStep >= step.number ? 'text-primary' : 'text-gray-500'
-                  }`}
-                >
-                  {step.title}
-                </span>
+            <div className="flex flex-col items-center flex-1">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all ${getStepClass(step.number)}`}>
+                {step.number < currentStep ? '✓' : step.icon}
               </div>
+              <span className={`mt-2 text-sm font-medium transition-colors ${step.number <= currentStep ? 'text-gray-900' : 'text-gray-500'}`}>
+                {step.label}
+              </span>
             </div>
-
-            {/* Connector line */}
             {index < steps.length - 1 && (
-              <div
-                className={`flex-1 h-1 mx-4 rounded transition-all ${
-                  currentStep > step.number ? 'bg-primary' : 'bg-gray-200'
-                }`}
-              />
+              <div className="flex-1 h-1 mx-4 -mt-8">
+                <div className="h-full bg-gray-200 rounded-full overflow-hidden">
+                  <div className={`h-full bg-green-500 transition-all duration-500 ${getLineWidth(step.number)}`} />
+                </div>
+              </div>
             )}
           </React.Fragment>
         ))}
       </div>
+      <div className="mt-6 md:hidden">
+        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+          <span>Étape {currentStep} sur {steps.length}</span>
+          <span>{Math.round((currentStep / steps.length) * 100)}%</span>
+        </div>
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className={`h-full bg-[#01613a] transition-all duration-500`} style={{ width: `${(currentStep / steps.length) * 100}%` }} />
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default CheckoutStepper;

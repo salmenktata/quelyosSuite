@@ -1,305 +1,315 @@
 /**
- * Client HTTP pour communiquer avec l'API Odoo E-commerce
+ * Client API Odoo pour Next.js
+ * Gère les appels JSON-RPC vers le backend Odoo E-commerce
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import type {
-  APIResponse,
-  User,
   Product,
-  ProductFilters,
   ProductListResponse,
+  ProductFilters,
   Cart,
   Order,
-  Profile,
+  User,
   Address,
   WishlistItem,
-  PaymentMethod,
-  DeliveryMethod,
-  Category
+  APIResponse,
 } from '@/types';
 
-// Utiliser l'URL du frontend Next.js pour les routes API proxy
-const API_BASE_URL = '/api';
+// Use Next.js API proxy to avoid CORS issues
+// The proxy at /api/odoo/* forwards requests to Odoo server-side
+const API_BASE = '/api/odoo';
+const DB = process.env.ODOO_DATABASE || 'quelyos';
 
-class OdooClient {
-  private client: AxiosInstance;
+export class OdooClient {
+  private api: AxiosInstance;
   private sessionId: string | null = null;
 
   constructor() {
-    this.client = axios.create({
-      baseURL: API_BASE_URL,
+    this.api = axios.create({
+      baseURL: API_BASE,
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true, // Important pour les cookies de session
+      // No need for withCredentials since we're using our own proxy
+      withCredentials: false,
     });
 
-    // Intercepteur pour ajouter le session_id si disponible
-    this.client.interceptors.request.use((config) => {
-      if (this.sessionId && config.headers) {
-        config.headers['X-Session-ID'] = this.sessionId;
+    // Intercepteur pour ajouter automatiquement le session_id
+    this.api.interceptors.request.use((config) => {
+      // Add session_id to request body
+      if (this.sessionId && config.data) {
+        config.data.session_id = this.sessionId;
       }
       return config;
     });
 
-    // Intercepteur pour gérer les erreurs
-    this.client.interceptors.response.use(
+    // Log errors for debugging
+    this.api.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error('API Error:', error.response?.data || error.message);
+        console.error('API Proxy Error:', error);
+        if (error.response?.data?.error) {
+          console.error('Odoo Error:', error.response.data.error);
+        }
         return Promise.reject(error);
       }
     );
   }
 
   /**
-   * Appel générique à l'API JSON-RPC Odoo
+   * Appel JSON-RPC générique vers Odoo via le proxy Next.js
+   * Le proxy ajoute automatiquement le wrapper JSON-RPC
    */
-  private async call<T = any>(
+  private async jsonrpc<T = any>(
     endpoint: string,
-    params: any = {},
-    config?: AxiosRequestConfig
+    params: Record<string, any> = {}
   ): Promise<T> {
-    const response = await this.client.post(
-      endpoint,
-      {
-        jsonrpc: '2.0',
-        method: 'call',
-        params: params,
-        id: Math.random(),
-      },
-      config
-    );
+    try {
+      // The Next.js proxy handles JSON-RPC wrapping, so we send just params
+      const response = await this.api.post(endpoint, params);
 
-    // Odoo retourne les données dans response.data.result
-    return response.data.result || response.data;
+      // The proxy returns the result directly
+      return response.data;
+    } catch (error: any) {
+      console.error(`Odoo API Error [${endpoint}]:`, error);
+
+      // Extract error message from various possible formats
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        'Unknown error';
+
+      throw new Error(errorMessage);
+    }
   }
 
-  // ==================== AUTH ====================
+  /**
+   * Définir le session_id (après login)
+   */
+  setSession(sessionId: string) {
+    this.sessionId = sessionId;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('odoo_session_id', sessionId);
+    }
+  }
 
-  async login(email: string, password: string): Promise<APIResponse<{ user: User; session_id: string }>> {
-    const result = await this.call('/auth/login', {
-      login: email,
-      password: password,
-    });
-
-    if (result.success && result.session_id) {
-      this.sessionId = result.session_id;
-      // Stocker dans localStorage pour persistance
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('odoo_session_id', result.session_id);
+  /**
+   * Récupérer le session_id du localStorage
+   */
+  loadSession() {
+    if (typeof window !== 'undefined') {
+      const sessionId = localStorage.getItem('odoo_session_id');
+      if (sessionId) {
+        this.sessionId = sessionId;
       }
     }
-
-    return result;
   }
 
-  async logout(): Promise<APIResponse> {
-    const result = await this.call('/auth/logout');
-
+  /**
+   * Effacer la session
+   */
+  clearSession() {
     this.sessionId = null;
     if (typeof window !== 'undefined') {
       localStorage.removeItem('odoo_session_id');
     }
+  }
 
-    return result;
+  // ========================================
+  // AUTHENTIFICATION
+  // ========================================
+
+  async login(email: string, password: string): Promise<{ success: boolean; session_id?: string; user?: User; error?: string }> {
+    try {
+      const result = await this.jsonrpc('/auth/login', { email, password });
+
+      if (result.success && result.session_id) {
+        this.setSession(result.session_id);
+      }
+
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async logout(): Promise<{ success: boolean }> {
+    try {
+      await this.jsonrpc('/auth/logout');
+      this.clearSession();
+      return { success: true };
+    } catch (error) {
+      this.clearSession();
+      return { success: false };
+    }
   }
 
   async register(data: {
     name: string;
     email: string;
-    phone?: string;
     password: string;
-  }): Promise<APIResponse<{ user: User }>> {
-    const result = await this.call('/auth/register', data);
+    phone?: string;
+  }): Promise<APIResponse> {
+    return this.jsonrpc('/auth/register', data);
+  }
 
-    if (result.success && result.session_id) {
-      this.sessionId = result.session_id;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('odoo_session_id', result.session_id);
-      }
+  async getSession(): Promise<{ authenticated: boolean; user?: User }> {
+    try {
+      return await this.jsonrpc('/auth/session');
+    } catch (error) {
+      return { authenticated: false };
     }
-
-    return result;
   }
 
-  async checkSession(): Promise<APIResponse<{ authenticated: boolean; user?: User }>> {
-    // Restaurer session_id depuis localStorage
-    if (typeof window !== 'undefined' && !this.sessionId) {
-      this.sessionId = localStorage.getItem('odoo_session_id');
-    }
+  // ========================================
+  // PRODUITS
+  // ========================================
 
-    return await this.call('/auth/session');
+  async getProducts(filters: ProductFilters = {}): Promise<ProductListResponse> {
+    return this.jsonrpc('/products', filters);
   }
 
-  async resetPassword(email: string): Promise<APIResponse> {
-    return await this.call('/auth/reset-password', { email });
+  async getProduct(id: number): Promise<{ success: boolean; product?: Product; error?: string }> {
+    return this.jsonrpc(`/products/${id}`);
   }
 
-  // ==================== PRODUCTS ====================
-
-  async getProducts(filters?: ProductFilters): Promise<ProductListResponse> {
-    return await this.call('/products', filters || {});
+  async getProductBySlug(slug: string): Promise<{ success: boolean; product?: Product; error?: string }> {
+    return this.jsonrpc(`/products/slug/${slug}`);
   }
 
-  async getProduct(id: number): Promise<APIResponse<{ product: Product }>> {
-    return await this.call(`/products/${id}`);
+  // ========================================
+  // CATÉGORIES
+  // ========================================
+
+  async getCategories(filters: { limit?: number; offset?: number } = {}): Promise<{ success: boolean; categories: any[]; error?: string }> {
+    return this.jsonrpc('/categories', filters);
   }
 
-  async getProductBySlug(slug: string): Promise<APIResponse<{ product: Product }>> {
-    return await this.call(`/products/slug/${slug}`);
+  async getCategory(id: number): Promise<{ success: boolean; category?: any; error?: string }> {
+    return this.jsonrpc(`/categories/${id}`);
   }
 
-  async getFeaturedProducts(limit = 8): Promise<APIResponse<{ products: Product[] }>> {
-    return await this.call('/products/featured', { limit });
+  // ========================================
+  // PANIER
+  // ========================================
+
+  async getCart(): Promise<{ success: boolean; cart?: Cart; error?: string }> {
+    return this.jsonrpc('/cart');
   }
 
-  async getCategories(): Promise<APIResponse<{ categories: Category[] }>> {
-    return await this.call('/categories');
+  async addToCart(product_id: number, quantity: number = 1): Promise<APIResponse & { cart?: Cart }> {
+    return this.jsonrpc('/cart/add', { product_id, quantity });
   }
 
-  async getCategoryProducts(categoryId: number, filters?: ProductFilters): Promise<ProductListResponse> {
-    return await this.call(`/categories/${categoryId}/products`, filters || {});
+  async updateCartLine(line_id: number, quantity: number): Promise<APIResponse & { cart?: Cart }> {
+    return this.jsonrpc(`/cart/update/${line_id}`, { quantity });
   }
 
-  // ==================== CART ====================
-
-  async getCart(): Promise<APIResponse<{ cart: Cart }>> {
-    return await this.call('/cart');
-  }
-
-  async addToCart(productId: number, quantity = 1): Promise<APIResponse<{ cart: Cart }>> {
-    return await this.call('/cart/add', {
-      product_id: productId,
-      quantity: quantity,
-    });
-  }
-
-  async updateCartLine(lineId: number, quantity: number): Promise<APIResponse<{ cart: Cart }>> {
-    return await this.call(`/cart/update/${lineId}`, { quantity });
-  }
-
-  async removeCartLine(lineId: number): Promise<APIResponse<{ cart: Cart }>> {
-    return await this.call(`/cart/remove/${lineId}`);
+  async removeCartLine(line_id: number): Promise<APIResponse & { cart?: Cart }> {
+    return this.jsonrpc(`/cart/remove/${line_id}`);
   }
 
   async clearCart(): Promise<APIResponse> {
-    return await this.call('/cart/clear');
+    return this.jsonrpc('/cart/clear');
   }
 
-  async getCartCount(): Promise<APIResponse<{ count: number }>> {
-    return await this.call('/cart/count');
+  // ========================================
+  // CHECKOUT
+  // ========================================
+
+  async validateCart(): Promise<APIResponse> {
+    return this.jsonrpc('/checkout/validate');
   }
 
-  // ==================== CHECKOUT ====================
-
-  async validateCart(): Promise<APIResponse<{ valid: boolean; errors: string[] }>> {
-    return await this.call('/checkout/validate');
-  }
-
-  async calculateShipping(data: {
-    delivery_method_id: number;
-    address?: Partial<Address>;
-  }): Promise<APIResponse<{ shipping_cost: number; delivery_method: DeliveryMethod }>> {
-    return await this.call('/checkout/shipping', data);
+  async calculateShipping(delivery_method_id: number): Promise<APIResponse & { shipping_cost?: number }> {
+    return this.jsonrpc('/checkout/shipping', { delivery_method_id });
   }
 
   async confirmOrder(data: {
+    shipping_address_id?: number;
+    billing_address_id?: number;
     delivery_method_id: number;
     payment_method_id: number;
-    billing_address?: Partial<Address>;
-    shipping_address?: Partial<Address>;
     notes?: string;
-  }): Promise<APIResponse<{ order: Order; payment_url?: string }>> {
-    return await this.call('/checkout/confirm', data);
+  }): Promise<APIResponse & { order?: Order }> {
+    return this.jsonrpc('/checkout/confirm', data);
   }
 
-  async getPaymentMethods(): Promise<APIResponse<{ payment_methods: PaymentMethod[] }>> {
-    return await this.call('/payment-methods');
+  // ========================================
+  // CLIENT
+  // ========================================
+
+  async getProfile(): Promise<APIResponse & { profile?: User }> {
+    return this.jsonrpc('/customer/profile');
   }
 
-  async getDeliveryMethods(): Promise<APIResponse<{ delivery_methods: DeliveryMethod[] }>> {
-    return await this.call('/delivery-methods');
+  async updateProfile(data: Partial<User>): Promise<APIResponse> {
+    return this.jsonrpc('/customer/profile', data);
   }
 
-  // ==================== CUSTOMER ====================
-
-  async getProfile(): Promise<APIResponse<{ profile: Profile }>> {
-    return await this.call('/customer/profile');
+  async getOrders(filters?: { limit?: number; offset?: number }): Promise<APIResponse & { orders?: Order[] }> {
+    return this.jsonrpc('/customer/orders', filters);
   }
 
-  async updateProfile(data: Partial<Profile>): Promise<APIResponse<{ profile: Profile }>> {
-    return await this.call('/customer/profile/update', data);
+  async getOrder(id: number): Promise<APIResponse & { order?: Order }> {
+    return this.jsonrpc(`/customer/orders/${id}`);
   }
 
-  async getOrders(params?: {
-    limit?: number;
-    offset?: number;
-    state?: string;
-  }): Promise<APIResponse<{ orders: Order[]; total: number }>> {
-    return await this.call('/customer/orders', params || {});
+  async getAddresses(): Promise<APIResponse & { addresses?: Address[] }> {
+    return this.jsonrpc('/customer/addresses');
   }
 
-  async getOrder(orderId: number): Promise<APIResponse<{ order: Order }>> {
-    return await this.call(`/customer/orders/${orderId}`);
+  async addAddress(address: Address): Promise<APIResponse> {
+    return this.jsonrpc('/customer/addresses', address);
   }
 
-  async getAddresses(): Promise<APIResponse<{ addresses: Address[] }>> {
-    return await this.call('/customer/addresses');
+  async updateAddress(id: number, address: Partial<Address>): Promise<APIResponse> {
+    return this.jsonrpc(`/customer/addresses/${id}`, address);
   }
 
-  async addAddress(address: Partial<Address>): Promise<APIResponse<{ address: Address }>> {
-    return await this.call('/customer/addresses/add', address);
+  async deleteAddress(id: number): Promise<APIResponse> {
+    return this.jsonrpc(`/customer/addresses/${id}/delete`);
   }
 
-  async updateAddress(addressId: number, data: Partial<Address>): Promise<APIResponse> {
-    return await this.call(`/customer/addresses/${addressId}/update`, data);
+  // ========================================
+  // WISHLIST
+  // ========================================
+
+  async getWishlist(): Promise<APIResponse & { wishlist?: WishlistItem[] }> {
+    return this.jsonrpc('/wishlist');
   }
 
-  async deleteAddress(addressId: number): Promise<APIResponse> {
-    return await this.call(`/customer/addresses/${addressId}/delete`);
+  async addToWishlist(product_id: number): Promise<APIResponse> {
+    return this.jsonrpc('/wishlist/add', { product_id });
   }
 
-  // ==================== WISHLIST ====================
-
-  async getWishlist(): Promise<APIResponse<{ count: number; items: WishlistItem[] }>> {
-    return await this.call('/wishlist');
+  async removeFromWishlist(product_id: number): Promise<APIResponse> {
+    return this.jsonrpc(`/wishlist/remove/${product_id}`);
   }
 
-  async addToWishlist(productId: number): Promise<APIResponse> {
-    return await this.call('/wishlist/add', { product_id: productId });
+  // ========================================
+  // COUPONS
+  // ========================================
+
+  async validateCoupon(code: string, order_id?: number): Promise<APIResponse & { cart?: Cart; discount?: number }> {
+    return this.jsonrpc('/coupon/validate', { code, order_id });
   }
 
-  async removeFromWishlist(productId: number): Promise<APIResponse> {
-    return await this.call(`/wishlist/remove/${productId}`);
+  async removeCoupon(order_id?: number): Promise<APIResponse & { cart?: Cart }> {
+    return this.jsonrpc('/coupon/remove', { order_id });
   }
 
-  async checkInWishlist(productId: number): Promise<APIResponse<{ in_wishlist: boolean }>> {
-    return await this.call(`/wishlist/check/${productId}`);
-  }
-
-  // ==================== COMPARISON ====================
-
-  async getComparison(): Promise<APIResponse<{ count: number; max_items: number; products: Product[] }>> {
-    return await this.call('/comparison');
-  }
-
-  async addToComparison(productId: number): Promise<APIResponse> {
-    return await this.call('/comparison/add', { product_id: productId });
-  }
-
-  async removeFromComparison(productId: number): Promise<APIResponse> {
-    return await this.call(`/comparison/remove/${productId}`);
-  }
-
-  async clearComparison(): Promise<APIResponse> {
-    return await this.call('/comparison/clear');
+  async getAvailableCoupons(): Promise<APIResponse & { coupons?: any[] }> {
+    return this.jsonrpc('/coupons/available');
   }
 }
 
-// Export singleton instance
+// Instance singleton
 export const odooClient = new OdooClient();
 
-// Export class pour tests
-export default OdooClient;
+// Charger la session au démarrage (côté client uniquement)
+if (typeof window !== 'undefined') {
+  odooClient.loadSession();
+}

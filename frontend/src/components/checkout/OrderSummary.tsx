@@ -1,111 +1,105 @@
-/**
- * Résumé de commande pour le checkout
- */
-
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { useCartStore } from '@/store/cartStore';
-import { formatPrice } from '@/lib/utils/formatting';
+import { Loading } from '@/components/common';
 
-export function OrderSummary() {
-  const { cart } = useCartStore();
+const OrderSummary: React.FC = () => {
+  const { cart, isLoading } = useCartStore();
 
-  if (!cart || cart.lines.length === 0) {
-    return null;
+  if (isLoading || !cart) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <Loading size="lg" />
+      </div>
+    );
   }
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-      <h2 className="text-xl font-bold mb-4">Résumé de la commande</h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">
+        Résumé de la commande
+      </h2>
 
-      {/* Articles */}
-      <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+      {/* Products List */}
+      <div className="space-y-4 mb-6 pb-6 border-b border-gray-200">
         {cart.lines.map((line) => (
           <div key={line.id} className="flex gap-3">
-            {/* Image */}
-            <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-              <Image
-                src={line.image_url}
-                alt={line.product_name}
-                fill
-                className="object-cover"
-                sizes="64px"
-              />
+            <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
+              {line.product_image && (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_ODOO_URL}${line.product_image}`}
+                  alt={line.product_name}
+                  className="w-full h-full object-cover rounded"
+                />
+              )}
             </div>
-
-            {/* Info */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+              <p className="text-sm font-medium text-gray-900 truncate">
                 {line.product_name}
-              </h3>
-              <p className="text-sm text-gray-600">Qté: {line.quantity}</p>
-            </div>
-
-            {/* Prix */}
-            <div className="text-right">
+              </p>
+              <p className="text-xs text-gray-500">
+                Qté: {line.quantity}
+              </p>
               <p className="text-sm font-semibold text-gray-900">
-                {formatPrice(line.price_total, cart.currency.symbol)}
+                {line.price_subtotal.toFixed(2)} {line.currency_symbol}
               </p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Totaux */}
-      <div className="border-t pt-4 space-y-3">
-        <div className="flex justify-between text-gray-600">
-          <span>Sous-total ({cart.item_count} articles)</span>
-          <span>{formatPrice(cart.amount_untaxed, cart.currency.symbol)}</span>
+      {/* Totals */}
+      <div className="space-y-3 mb-6">
+        <div className="flex justify-between text-gray-700">
+          <span>Sous-total</span>
+          <span className="font-medium">
+            {cart.amount_untaxed.toFixed(2)} {cart.currency.symbol}
+          </span>
         </div>
 
-        {cart.amount_tax > 0 && (
-          <div className="flex justify-between text-gray-600">
-            <span>TVA</span>
-            <span>{formatPrice(cart.amount_tax, cart.currency.symbol)}</span>
+        {cart.coupon_discount && (
+          <div className="flex justify-between text-green-600">
+            <span>Réduction</span>
+            <span className="font-medium">
+              -{cart.coupon_discount.toFixed(2)} {cart.currency.symbol}
+            </span>
           </div>
         )}
 
-        <div className="flex justify-between text-gray-600">
+        <div className="flex justify-between text-gray-700">
+          <span>TVA</span>
+          <span className="font-medium">
+            {cart.amount_tax.toFixed(2)} {cart.currency.symbol}
+          </span>
+        </div>
+
+        <div className="flex justify-between text-gray-700">
           <span>Livraison</span>
-          <span className="text-primary font-medium">
-            {cart.delivery_amount ? formatPrice(cart.delivery_amount, cart.currency.symbol) : 'À calculer'}
-          </span>
+          <span className="font-medium text-green-600">Gratuite</span>
+        </div>
+
+        <div className="border-t border-gray-300 pt-3">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-bold text-gray-900">Total</span>
+            <span className="text-2xl font-bold text-[#01613a]">
+              {cart.amount_total.toFixed(2)} {cart.currency.symbol}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Total */}
-      <div className="border-t mt-4 pt-4">
-        <div className="flex justify-between items-baseline">
-          <span className="text-lg font-bold text-gray-900">Total</span>
-          <span className="text-2xl font-bold text-primary">
-            {formatPrice(cart.amount_total + (cart.delivery_amount || 0), cart.currency.symbol)}
-          </span>
-        </div>
-      </div>
-
-      {/* Infos rassurantes */}
-      <div className="mt-6 pt-6 border-t space-y-3 text-sm text-gray-600">
-        <div className="flex items-start gap-2">
-          <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      {/* Security Badge */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
           </svg>
           <span>Paiement 100% sécurisé</span>
-        </div>
-        <div className="flex items-start gap-2">
-          <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <span>Livraison gratuite dès 200 TND</span>
-        </div>
-        <div className="flex items-start gap-2">
-          <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <span>Retour gratuit sous 14 jours</span>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default OrderSummary;

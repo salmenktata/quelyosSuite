@@ -1,29 +1,19 @@
-/**
- * Card produit - Style lesportif.com.tn
- */
-
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Product } from '@/types';
-import { formatPrice } from '@/lib/utils/formatting';
+import { Product } from '@/types';
+import { Card, Badge, Button } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { Button } from '@/components/common/Button';
 
 interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCartStore();
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const addToCart = useCartStore((state) => state.addToCart);
   const [isAdding, setIsAdding] = React.useState(false);
-
-  // Calculer le pourcentage de réduction (simulation)
-  const hasDiscount = product.is_featured; // Simulation: featured = en promo
-  const discountPercent = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? product.list_price * 1.25 : product.list_price;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,120 +23,87 @@ export function ProductCard({ product }: ProductCardProps) {
     try {
       await addToCart(product.id, 1);
     } catch (error) {
-      console.error('Erreur ajout panier:', error);
+      console.error('Error adding to cart:', error);
     } finally {
       setIsAdding(false);
     }
   };
 
-  const mainImage = product.images && product.images.length > 0
-    ? product.images[0].url
-    : '/placeholder-product.png';
+  const mainImage = product.images.find(img => img.id === 0) || product.images[0];
+  const imageUrl = mainImage ? mainImage.url : '/placeholder-product.png';
 
   return (
     <Link href={`/products/${product.slug}`}>
-      <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative">
-        {/* Badge promo */}
-        {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
-            -{discountPercent}%
-          </div>
-        )}
-
-        {/* Badge "Nouveau" */}
-        {product.is_new && (
-          <div className="absolute top-2 right-2 bg-secondary text-gray-800 text-xs font-semibold px-2 py-1 rounded-md z-10">
-            NOUVEAU
-          </div>
-        )}
-
-        {/* Image produit */}
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <Card hover className="h-full flex flex-col">
+        {/* Image */}
+        <div className="relative aspect-square bg-gray-100">
           <Image
-            src={mainImage}
+            src={imageUrl}
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
-          {/* Overlay "Aperçu rapide" au survol */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleAddToCart}
-              isLoading={isAdding}
-              className="rounded-full"
-            >
-              {isAdding ? 'Ajout...' : 'Ajouter au panier'}
-            </Button>
+          {/* Badges */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
+            {product.is_new && (
+              <Badge variant="info">Nouveau</Badge>
+            )}
+            {product.is_featured && (
+              <Badge variant="warning">Vedette</Badge>
+            )}
+            {!product.in_stock && (
+              <Badge variant="danger">Épuisé</Badge>
+            )}
           </div>
 
-          {/* Indicateur stock */}
-          {!product.in_stock && (
-            <div className="absolute bottom-2 left-2 right-2 bg-red-100 text-red-800 text-xs font-medium py-1 px-2 rounded text-center">
-              Rupture de stock
-            </div>
-          )}
+          {/* Wishlist button - à implémenter plus tard */}
+          <button
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // TODO: Add to wishlist
+            }}
+          >
+            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
         </div>
 
-        {/* Informations produit */}
-        <div className="p-4">
-          {/* Catégorie */}
-          {product.category && (
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-              {product.category.name}
-            </p>
-          )}
-
-          {/* Titre produit */}
-          <h3 className="font-semibold text-sm text-gray-900 mb-2 line-clamp-2 h-10">
+        {/* Content */}
+        <div className="p-4 flex-1 flex flex-col">
+          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">
             {product.name}
           </h3>
 
-          {/* Prix */}
-          <div className="flex items-baseline gap-2 mb-3">
-            {hasDiscount && (
-              <span className="text-sm text-gray-400 line-through">
-                {formatPrice(originalPrice, product.currency.symbol)}
-              </span>
-            )}
-            <span className="text-lg font-bold text-primary">
-              {formatPrice(product.list_price, product.currency.symbol)}
-            </span>
-          </div>
+          {product.category && (
+            <p className="text-sm text-gray-500 mb-2">{product.category.name}</p>
+          )}
 
-          {/* Bouton sélectionner options (pour variants) */}
-          {product.variants && product.variants.length > 1 ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full rounded-full text-sm"
-            >
-              Sélectionner options
-            </Button>
-          ) : (
+          <div className="mt-auto">
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className="text-2xl font-bold text-[#01613a]">
+                {product.list_price.toFixed(2)} {product.currency.symbol}
+              </span>
+            </div>
+
             <Button
               variant="primary"
-              size="sm"
-              onClick={handleAddToCart}
-              isLoading={isAdding}
+              fullWidth
               disabled={!product.in_stock}
-              className="w-full rounded-full text-sm"
+              isLoading={isAdding}
+              onClick={handleAddToCart}
             >
-              {!product.in_stock ? 'Rupture' : isAdding ? 'Ajout...' : 'Ajouter au panier'}
+              {product.in_stock ? 'Ajouter au panier' : 'Épuisé'}
             </Button>
-          )}
-        </div>
-
-        {/* Badge bestseller */}
-        {product.is_bestseller && (
-          <div className="absolute top-1/2 -right-2 bg-gold text-white text-xs font-bold px-3 py-1 rounded-l-full transform -translate-y-1/2">
-            ⭐ TOP
           </div>
-        )}
-      </div>
+        </div>
+      </Card>
     </Link>
   );
-}
+};
+
+export default ProductCard;

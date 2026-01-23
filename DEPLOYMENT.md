@@ -1,446 +1,563 @@
-# Guide de Déploiement - Quelyos E-commerce
+# 🚀 Guide de Déploiement Production - Quelyos ERP
 
-## 📋 Prérequis
+Ce guide détaille le déploiement complet de la plateforme Quelyos ERP en production.
+
+## 📋 Prérequis Production
 
 - Serveur Linux (Ubuntu 22.04 LTS recommandé)
 - Docker & Docker Compose installés
-- Nom de domaine configuré
-- Minimum 4GB RAM, 2 CPU, 40GB SSD
-- Ports 80 et 443 ouverts
+- Nom de domaine configuré (ex: shop.quelyos.com)
+- Certificat SSL/TLS (Let's Encrypt)
+- Minimum 4GB RAM, 2 vCPU, 50GB SSD
 
-## 🚀 Déploiement Production
+## 🏗️ Architecture Production
 
-### Étape 1: Préparation du Serveur
+```
+                    Internet
+                        ↓
+                  [Load Balancer]
+                        ↓
+            ┌───────────┴───────────┐
+            ↓                       ↓
+    [Nginx Reverse Proxy]    [Nginx Reverse Proxy]
+       (SSL Termination)        (SSL Termination)
+            ↓                       ↓
+    ┌───────┴───────┐       ┌───────┴───────┐
+    ↓               ↓       ↓               ↓
+[Next.js]      [Odoo]  [Next.js]      [Odoo]
+    ↓               ↓       ↓               ↓
+    └───────┬───────┘       └───────┬───────┘
+            ↓                       ↓
+    [PostgreSQL Primary]    [PostgreSQL Replica]
+            ↓
+       [Backup S3]
+```
+
+## 🔧 Configuration Environnement
+
+### 1. Variables d'environnement
+
+Créer `/root/.env.production`:
 
 ```bash
-# Mise à jour système
-sudo apt update && sudo apt upgrade -y
+# Database
+POSTGRES_DB=quelyos_prod
+POSTGRES_USER=odoo
+POSTGRES_PASSWORD=CHANGE_ME_STRONG_PASSWORD
 
-# Installation Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+# Odoo
+ODOO_ADMIN_PASSWD=CHANGE_ME_ADMIN_MASTER_PASSWORD
+ODOO_DB_HOST=db
+ODOO_DB_PORT=5432
+ODOO_DB_USER=odoo
+ODOO_DB_PASSWORD=CHANGE_ME_STRONG_PASSWORD
 
-# Installation Docker Compose
-sudo apt install docker-compose-plugin
+# Frontend
+NEXT_PUBLIC_ODOO_URL=https://api.quelyos.com
+NEXT_PUBLIC_SITE_URL=https://shop.quelyos.com
+ODOO_DATABASE=quelyos_prod
+ODOO_WEBHOOK_SECRET=CHANGE_ME_WEBHOOK_SECRET
 
-# Créer utilisateur pour l'application
-sudo useradd -m -s /bin/bash quelyos
-sudo usermod -aG docker quelyos
+# Security
+SESSION_SECRET=CHANGE_ME_SESSION_SECRET
+CORS_ALLOWED_ORIGINS=https://shop.quelyos.com,https://www.quelyos.com
+
+# Email (SMTP)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=noreply@quelyos.com
+EMAIL_PASSWORD=CHANGE_ME_EMAIL_PASSWORD
+EMAIL_FROM=noreply@quelyos.com
+
+# Monitoring
+SENTRY_DSN=https://your-sentry-dsn
+LOG_LEVEL=INFO
+
+# Backup
+BACKUP_S3_BUCKET=quelyos-backups
+AWS_ACCESS_KEY_ID=YOUR_AWS_KEY
+AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET
 ```
 
-### Étape 2: Configuration DNS
+### 2. Docker Compose Production
 
-Configurer les enregistrements DNS:
+Créer `/root/docker-compose.prod.yml`:
 
+```yaml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  odoo:
+    image: odoo:19.0
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - HOST=db
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+    networks:
+      - backend
+      - frontend
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file:
+      - .env.production
+    networks:
+      - frontend
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - frontend
+    depends_on:
+      - odoo
+      - frontend
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
+
+volumes:
+  postgres-data:
+  odoo-web-data:
+  redis-data:
 ```
-A    @              → IP_DU_SERVEUR
-A    www            → IP_DU_SERVEUR
-AAAA @              → IPv6_DU_SERVEUR (optionnel)
-AAAA www            → IPv6_DU_SERVEUR (optionnel)
+
+### 3. Configuration Nginx
+
+Créer `/root/nginx/nginx.conf`:
+
+```nginx
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 2048;
+    use epoll;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main;
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    client_max_body_size 100M;
+
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript 
+               application/json application/javascript application/xml+rss 
+               application/rss+xml font/truetype font/opentype 
+               application/vnd.ms-fontobject image/svg+xml;
+
+    # Frontend Next.js
+    upstream frontend {
+        least_conn;
+        server frontend:3000 max_fails=3 fail_timeout=30s;
+    }
+
+    # Backend Odoo
+    upstream odoo {
+        least_conn;
+        server odoo:8069 max_fails=3 fail_timeout=30s;
+    }
+
+    # Redirect HTTP to HTTPS
+    server {
+        listen 80;
+        server_name shop.quelyos.com api.quelyos.com;
+        
+        location /.well-known/acme-challenge/ {
+            root /var/www/certbot;
+        }
+
+        location / {
+            return 301 https://$host$request_uri;
+        }
+    }
+
+    # Frontend HTTPS
+    server {
+        listen 443 ssl http2;
+        server_name shop.quelyos.com;
+
+        ssl_certificate /etc/letsencrypt/live/shop.quelyos.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/shop.quelyos.com/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers on;
+
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+
+        location / {
+            proxy_pass http://frontend;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+
+    # Backend Odoo HTTPS
+    server {
+        listen 443 ssl http2;
+        server_name api.quelyos.com;
+
+        ssl_certificate /etc/letsencrypt/live/api.quelyos.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/api.quelyos.com/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+
+        client_max_body_size 100M;
+
+        location / {
+            proxy_pass http://odoo;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_redirect off;
+        }
+
+        location /longpolling {
+            proxy_pass http://odoo;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+        }
+    }
+}
 ```
 
-### Étape 3: Cloner le Projet
+## 🔐 SSL/TLS avec Let's Encrypt
+
+### 1. Installation Certbot
 
 ```bash
-# Se connecter en tant qu'utilisateur quelyos
-su - quelyos
-
-# Cloner le repository
-git clone https://github.com/your-org/QuelyosERP.git
-cd QuelyosERP
+sudo apt update
+sudo apt install certbot python3-certbot-nginx
 ```
 
-### Étape 4: Configuration des Variables d'Environnement
+### 2. Obtenir Certificats
 
 ```bash
-# Copier le fichier d'exemple
+# Frontend
+sudo certbot certonly --nginx -d shop.quelyos.com
+
+# Backend API
+sudo certbot certonly --nginx -d api.quelyos.com
+```
+
+### 3. Auto-renewal
+
+```bash
+# Tester le renouvellement
+sudo certbot renew --dry-run
+
+# Cron pour auto-renewal (déjà configuré par certbot)
+sudo systemctl status certbot.timer
+```
+
+## 📦 Déploiement
+
+### 1. Initial Deployment
+
+```bash
+# 1. SSH sur le serveur
+ssh user@your-server.com
+
+# 2. Cloner le repo
+git clone https://github.com/your-org/QuelyosERP.git /opt/quelyos
+cd /opt/quelyos
+
+# 3. Copier .env
 cp .env.production.example .env.production
+nano .env.production  # Éditer avec vraies valeurs
 
-# Éditer et configurer
-nano .env.production
+# 4. Build & Start
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# 5. Installer modules Odoo
+docker-compose -f docker-compose.prod.yml exec odoo \
+  odoo -d quelyos_prod -i quelyos_branding,quelyos_ecommerce --stop-after-init
+
+# 6. Redémarrer
+docker-compose -f docker-compose.prod.yml restart
 ```
 
-**Configurer**:
-- `DB_PASSWORD`: Mot de passe PostgreSQL sécurisé
-- `REDIS_PASSWORD`: Mot de passe Redis
-- `SITE_URL`: https://votre-domaine.com
-- `WEBHOOK_SECRET`: Générer avec `openssl rand -hex 32`
-- `SESSION_SECRET`: Générer avec `openssl rand -hex 32`
+### 2. Continuous Deployment (CI/CD)
 
-### Étape 5: SSL/TLS avec Let's Encrypt
+Exemple avec GitHub Actions (`.github/workflows/deploy.yml`):
 
-```bash
-# Installer Certbot
-sudo apt install certbot
+```yaml
+name: Deploy Production
 
-# Obtenir le certificat
-sudo certbot certonly --standalone -d votre-domaine.com -d www.votre-domaine.com
+on:
+  push:
+    branches: [main]
 
-# Créer le dossier SSL pour Nginx
-mkdir -p nginx/ssl
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-# Copier les certificats
-sudo cp /etc/letsencrypt/live/votre-domaine.com/fullchain.pem nginx/ssl/
-sudo cp /etc/letsencrypt/live/votre-domaine.com/privkey.pem nginx/ssl/
-sudo chown -R quelyos:quelyos nginx/ssl
-```
-
-**Renouvellement automatique**:
-```bash
-# Ajouter au crontab
-sudo crontab -e
-
-# Ajouter cette ligne (renouvellement tous les jours à 3h)
-0 3 * * * certbot renew --quiet && docker-compose -f /home/quelyos/QuelyosERP/docker-compose.prod.yml restart nginx
-```
-
-### Étape 6: Configuration Nginx
-
-```bash
-# Éditer la configuration
-nano nginx/nginx.conf
-
-# Remplacer 'your-domain.com' par votre domaine
-sed -i 's/your-domain.com/votre-domaine.com/g' nginx/nginx.conf
-```
-
-### Étape 7: Build & Démarrage
-
-```bash
-# Build des images
-docker-compose -f docker-compose.prod.yml build
-
-# Démarrer les services
-docker-compose -f docker-compose.prod.yml up -d
-
-# Vérifier les logs
-docker-compose -f docker-compose.prod.yml logs -f
-
-# Vérifier le statut
-docker-compose -f docker-compose.prod.yml ps
-```
-
-### Étape 8: Installation Odoo
-
-```bash
-# Accéder à l'interface Odoo
-https://votre-domaine.com/web
-
-# Configuration initiale
-- Master Password: choisir un mot de passe fort
-- Database Name: quelyos
-- Email: admin@votre-domaine.com
-- Password: choisir un mot de passe fort
-- Language: Français
-- Country: Tunisie
-```
-
-### Étape 9: Installation Module E-commerce
-
-Dans Odoo:
-1. Aller dans **Apps**
-2. Cliquer sur **Update Apps List**
-3. Rechercher "**Quelyos E-commerce**"
-4. Cliquer sur **Install**
-
-### Étape 10: Configuration E-commerce
-
-Dans Odoo → **E-commerce** → **Configuration**:
-
-```
-Frontend URL: https://votre-domaine.com
-Webhook Secret: (copier depuis .env.production)
-Enable Wishlist: ✓
-Enable Comparison: ✓
-Products per Page: 20
-Cart Session Duration: 7 (jours)
-Minimum Order Amount: 0
-Enable Guest Checkout: ✓
-```
-
-### Étape 11: Vérification
-
-```bash
-# Tester le frontend
-curl https://votre-domaine.com
-
-# Tester l'API
-curl https://votre-domaine.com/api/ecommerce/products
-
-# Tester Odoo admin
-curl https://votre-domaine.com/web
-
-# Vérifier le SSL
-openssl s_client -connect votre-domaine.com:443 -servername votre-domaine.com
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/quelyos
+            git pull origin main
+            docker-compose -f docker-compose.prod.yml up -d --build
+            docker-compose -f docker-compose.prod.yml exec -T odoo \
+              odoo -d quelyos_prod -u quelyos_ecommerce --stop-after-init
+            docker-compose -f docker-compose.prod.yml restart
 ```
 
 ## 📊 Monitoring
 
-### Logs
+### 1. Logs
 
 ```bash
-# Logs frontend
-docker-compose -f docker-compose.prod.yml logs -f frontend
+# Voir logs en temps réel
+docker-compose -f docker-compose.prod.yml logs -f
 
-# Logs Odoo
+# Logs spécifiques
 docker-compose -f docker-compose.prod.yml logs -f odoo
-
-# Logs Nginx
-docker-compose -f docker-compose.prod.yml logs -f nginx
-
-# Logs PostgreSQL
-docker-compose -f docker-compose.prod.yml logs -f db
+docker-compose -f docker-compose.prod.yml logs -f frontend
 ```
 
-### Métriques
+### 2. Métriques
+
+Installer Prometheus + Grafana:
 
 ```bash
-# Usage ressources
-docker stats
+# Prometheus pour Odoo
+docker run -d -p 9090:9090 prom/prometheus
 
-# Espace disque
-df -h
-
-# Mémoire
-free -m
+# Grafana
+docker run -d -p 3001:3000 grafana/grafana
 ```
 
-## 🔒 Sécurité
+### 3. Health Checks
 
-### Firewall
-
-```bash
-# Installer UFW
-sudo apt install ufw
-
-# Configurer
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw allow ssh
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-
-# Activer
-sudo ufw enable
-```
-
-### Fail2Ban
-
-```bash
-# Installer
-sudo apt install fail2ban
-
-# Copier la configuration
-sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-
-# Éditer
-sudo nano /etc/fail2ban/jail.local
-
-# Ajouter pour Nginx
-[nginx-http-auth]
-enabled = true
-port = http,https
-logpath = /var/log/nginx/error.log
-
-# Redémarrer
-sudo systemctl restart fail2ban
-```
-
-### Mises à Jour de Sécurité
-
-```bash
-# Automatiser les mises à jour de sécurité
-sudo apt install unattended-upgrades
-sudo dpkg-reconfigure -plow unattended-upgrades
-```
-
-## 💾 Backup
-
-### Script de Backup Automatique
-
-```bash
-# Créer le script
-nano ~/backup.sh
-```
+Créer `/opt/quelyos/healthcheck.sh`:
 
 ```bash
 #!/bin/bash
 
-BACKUP_DIR="/backups/quelyos"
-DATE=$(date +%Y%m%d_%H%M%S)
+# Check Odoo
+curl -f http://localhost:8069/web/health || exit 1
 
-# Créer le dossier de backup
-mkdir -p $BACKUP_DIR
+# Check Frontend
+curl -f http://localhost:3000/api/health || exit 1
 
-# Backup PostgreSQL
-docker exec quelyos_db_prod pg_dump -U odoo quelyos | gzip > $BACKUP_DIR/db_$DATE.sql.gz
+# Check Database
+docker-compose -f docker-compose.prod.yml exec -T db \
+  pg_isready -U odoo -d quelyos_prod || exit 1
 
-# Backup Odoo filestore
-docker exec quelyos_odoo_prod tar czf /tmp/filestore_$DATE.tar.gz /var/lib/odoo
-docker cp quelyos_odoo_prod:/tmp/filestore_$DATE.tar.gz $BACKUP_DIR/
-
-# Backup Frontend
-tar czf $BACKUP_DIR/frontend_$DATE.tar.gz -C ~/QuelyosERP/frontend .
-
-# Nettoyer les backups > 30 jours
-find $BACKUP_DIR -name "*.gz" -mtime +30 -delete
-
-echo "Backup completed: $DATE"
+echo "All services healthy"
 ```
 
-```bash
-# Rendre exécutable
-chmod +x ~/backup.sh
+## 💾 Backups
 
-# Ajouter au crontab (tous les jours à 2h)
+### 1. Backup Automatique PostgreSQL
+
+Créer `/opt/quelyos/scripts/backup.sh`:
+
+```bash
+#!/bin/bash
+
+BACKUP_DIR="/opt/backups/postgres"
+DATE=$(date +%Y%m%d_%H%M%S)
+DB_NAME="quelyos_prod"
+
+# Créer répertoire backup
+mkdir -p $BACKUP_DIR
+
+# Dump PostgreSQL
+docker-compose -f /opt/quelyos/docker-compose.prod.yml exec -T db \
+  pg_dump -U odoo $DB_NAME | gzip > $BACKUP_DIR/quelyos_$DATE.sql.gz
+
+# Upload vers S3
+aws s3 cp $BACKUP_DIR/quelyos_$DATE.sql.gz \
+  s3://quelyos-backups/database/
+
+# Garder seulement 30 derniers jours localement
+find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
+
+echo "Backup completed: quelyos_$DATE.sql.gz"
+```
+
+### 2. Cron Backup
+
+```bash
+# Éditer crontab
 crontab -e
-0 2 * * * /home/quelyos/backup.sh >> /var/log/quelyos_backup.log 2>&1
+
+# Ajouter backup quotidien à 2h du matin
+0 2 * * * /opt/quelyos/scripts/backup.sh >> /var/log/quelyos-backup.log 2>&1
 ```
 
 ## 🔄 Mise à Jour
 
-### Frontend
-
 ```bash
-# Pull les changements
+# 1. Backup avant mise à jour
+/opt/quelyos/scripts/backup.sh
+
+# 2. Pull dernières modifications
+cd /opt/quelyos
 git pull origin main
 
-# Rebuild
-docker-compose -f docker-compose.prod.yml build frontend
+# 3. Rebuild & Restart
+docker-compose -f docker-compose.prod.yml up -d --build
 
-# Redémarrer
-docker-compose -f docker-compose.prod.yml up -d frontend
+# 4. Mettre à jour modules Odoo
+docker-compose -f docker-compose.prod.yml exec odoo \
+  odoo -d quelyos_prod -u quelyos_ecommerce --stop-after-init
+
+# 5. Restart
+docker-compose -f docker-compose.prod.yml restart
 ```
 
-### Backend (Module Odoo)
+## 🛡️ Sécurité Checklist
 
-```bash
-# Pull les changements
-git pull origin main
+- [ ] Firewall configuré (UFW)
+- [ ] SSH avec clés publiques seulement
+- [ ] Passwords forts dans .env.production
+- [ ] SSL/TLS configuré (Let's Encrypt)
+- [ ] Headers sécurité dans Nginx
+- [ ] Rate limiting actif
+- [ ] Backups automatiques quotidiens
+- [ ] Monitoring actif
+- [ ] Logs centralisés
+- [ ] Mises à jour système automatiques
 
-# Redémarrer Odoo
-docker-compose -f docker-compose.prod.yml restart odoo
-
-# Mettre à jour le module dans Odoo
-# Interface → Apps → Quelyos E-commerce → Upgrade
-```
-
-### Base de Données
-
-```bash
-# Backup avant migration
-~/backup.sh
-
-# Exécuter migrations si nécessaire
-docker exec quelyos_odoo_prod odoo -d quelyos -u quelyos_ecommerce --stop-after-init
-```
-
-## 🚨 Troubleshooting
-
-### Service ne démarre pas
-
-```bash
-# Vérifier les logs
-docker-compose -f docker-compose.prod.yml logs [service_name]
-
-# Vérifier la configuration
-docker-compose -f docker-compose.prod.yml config
-
-# Redémarrer un service
-docker-compose -f docker-compose.prod.yml restart [service_name]
-```
-
-### Problème de mémoire
-
-```bash
-# Vérifier la RAM
-free -m
-
-# Limiter la mémoire des conteneurs
-# Éditer docker-compose.prod.yml et ajouter:
-deploy:
-  resources:
-    limits:
-      memory: 2G
-```
-
-### Erreur 502 Bad Gateway
-
-```bash
-# Vérifier que le backend est up
-docker-compose -f docker-compose.prod.yml ps
-
-# Vérifier les logs Nginx
-docker-compose -f docker-compose.prod.yml logs nginx
-
-# Tester la connexion backend
-curl http://localhost:3000  # Frontend
-curl http://localhost:8069/web/health  # Odoo
-```
-
-### Certificat SSL expiré
-
-```bash
-# Renouveler manuellement
-sudo certbot renew --force-renewal
-
-# Copier les nouveaux certificats
-sudo cp /etc/letsencrypt/live/votre-domaine.com/fullchain.pem nginx/ssl/
-sudo cp /etc/letsencrypt/live/votre-domaine.com/privkey.pem nginx/ssl/
-
-# Redémarrer Nginx
-docker-compose -f docker-compose.prod.yml restart nginx
-```
-
-## 📈 Optimisation Performance
+## 📈 Performance Tuning
 
 ### PostgreSQL
 
-```bash
-# Éditer postgresql.conf
-docker exec -it quelyos_db_prod bash
-vi /var/lib/postgresql/data/postgresql.conf
+Éditer `/etc/postgresql/postgresql.conf`:
 
-# Optimisations recommandées
-shared_buffers = 256MB
-effective_cache_size = 1GB
-maintenance_work_mem = 64MB
+```ini
+shared_buffers = 1GB
+effective_cache_size = 3GB
+maintenance_work_mem = 256MB
 checkpoint_completion_target = 0.9
 wal_buffers = 16MB
 default_statistics_target = 100
 random_page_cost = 1.1
+work_mem = 10MB
+min_wal_size = 1GB
+max_wal_size = 4GB
+max_worker_processes = 4
+max_parallel_workers_per_gather = 2
+max_parallel_workers = 4
 ```
 
-### Redis Cache
+### Odoo
 
-Le Redis est déjà configuré dans `docker-compose.prod.yml` pour améliorer les performances.
+Éditer `/etc/odoo/odoo.conf`:
 
-### Nginx Cache
+```ini
+[options]
+workers = 4
+max_cron_threads = 2
+db_maxconn = 64
+limit_memory_hard = 2684354560
+limit_memory_soft = 2147483648
+limit_request = 8192
+limit_time_cpu = 600
+limit_time_real = 1200
+```
 
-Déjà configuré dans `nginx/nginx.conf` avec cache pour les assets statiques.
+---
 
-## 📞 Support
-
-Pour toute question ou problème:
-- Documentation: `/docs`
-- Issues: https://github.com/your-org/QuelyosERP/issues
-- Email: support@quelyos.com
-
-## ✅ Checklist Post-Déploiement
-
-- [ ] SSL/TLS configuré et fonctionnel
-- [ ] Firewall activé (UFW)
-- [ ] Fail2Ban configuré
-- [ ] Backups automatiques (cron)
-- [ ] Monitoring configuré
-- [ ] Logs accessibles
-- [ ] DNS configuré correctement
-- [ ] Site accessible via HTTPS
-- [ ] API fonctionnelle
-- [ ] Odoo admin accessible
-- [ ] Module e-commerce installé
-- [ ] Produits de test créés
-- [ ] Parcours d'achat testé
-- [ ] Performance acceptable (Lighthouse >90)
-- [ ] Renouvellement SSL automatique
-- [ ] Documentation à jour
+**Documentation version:** 1.0.0
