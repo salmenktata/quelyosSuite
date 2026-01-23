@@ -2,7 +2,7 @@
 {
     'name': 'Quelyos Branding',
     'version': '19.0.1.0.0',
-    'category': 'Technical/Branding',
+    'category': 'Quelyos',
     'summary': 'Debranding complet d\'Odoo avec le branding Quelyos',
     'description': """
         Module de Branding Quelyos
@@ -35,10 +35,13 @@
         # Installer website, website_sale, point_of_sale, mail selon les besoins
     ],
     'data': [
+        # Module Category (charger en tout premier pour que d'autres modules puissent l'utiliser)
+        'data/module_category.xml',
+
         # Sécurité
         'security/ir.model.access.csv',
 
-        # Données de configuration (charger en premier)
+        # Données de configuration
         'data/branding_data.xml',
         'data/remove_odoo_menus.xml',
         'data/hide_enterprise_menus.xml',

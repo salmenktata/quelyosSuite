@@ -2,7 +2,7 @@
 {
     'name': 'Quelyos E-commerce API',
     'version': '19.0.1.0.0',
-    'category': 'Sales',
+    'category': 'Quelyos',
     'summary': 'API REST pour e-commerce headless avec Next.js',
     'description': """
         Module e-commerce Quelyos

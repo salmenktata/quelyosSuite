@@ -1,8 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ecommerce_config_manager,ecommerce.config manager,model_ecommerce_config,base.group_system,1,1,1,1
 access_ecommerce_config_user,ecommerce.config user,model_ecommerce_config,base.group_user,1,0,0,0
+access_product_wishlist_manager,product.wishlist manager,model_product_wishlist,base.group_system,1,1,1,1
+access_product_wishlist_internal,product.wishlist internal,model_product_wishlist,base.group_user,1,1,1,1
 access_product_wishlist_user,product.wishlist user,model_product_wishlist,base.group_portal,1,1,1,1
 access_product_wishlist_public,product.wishlist public,model_product_wishlist,base.group_public,1,0,0,0
+access_product_comparison_manager,product.comparison manager,model_product_comparison,base.group_system,1,1,1,1
+access_product_comparison_internal,product.comparison internal,model_product_comparison,base.group_user,1,1,1,1
 access_product_comparison_user,product.comparison user,model_product_comparison,base.group_portal,1,1,1,1
 access_product_comparison_public,product.comparison public,model_product_comparison,base.group_public,1,0,0,0
 access_ecommerce_analytics_manager,ecommerce.analytics manager,model_ecommerce_analytics,sales_team.group_sale_manager,1,1,1,1

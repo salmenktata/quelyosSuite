@@ -7,6 +7,31 @@
     'use strict';
 
     // ========================================
+    // Fonction: Vérifier si un élément fait partie d'un composant Owl
+    // ========================================
+    // CRITICAL: Ne JAMAIS toucher aux composants Owl pour éviter de casser le lifecycle
+    function isOwlComponent(element) {
+        if (!element || !element.closest) return false;
+
+        // Vérifier si l'élément ou un parent est un composant Owl
+        const owlSelectors = [
+            '[t-name]',                    // Templates QWeb
+            '[data-tooltip-template]',     // Tooltips Owl
+            '.o_kanban_view',              // Vues kanban (utilisent Owl)
+            '.o_kanban_record',            // Enregistrements kanban
+            '.o_kanban_renderer',          // Renderer kanban
+            '.o_list_view',                // Vues liste (utilisent Owl)
+            '.o_view_controller',          // Contrôleurs de vue
+            '.o_renderer',                 // Renderers de vue
+            '.o_field_widget',             // Widgets de champs
+            '.o_form_view',                // Vues formulaire (Owl)
+            '.o_component',                // Composants génériques Owl
+        ];
+
+        return owlSelectors.some(selector => element.closest(selector));
+    }
+
+    // ========================================
     // Fonction: Masquer les éléments entreprise
     // ========================================
     function hideEnterpriseElements() {
@@ -15,7 +40,12 @@
             '.o_enterprise_badge, .badge-enterprise, ' +
             '.o_premium_feature, .o_enterprise_label'
         );
-        badges.forEach(el => el.remove());
+        badges.forEach(el => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (!isOwlComponent(el)) {
+                el.remove();
+            }
+        });
 
         // Boutons de mise à niveau
         const upgradeButtons = document.querySelectorAll(
@@ -25,7 +55,10 @@
             '.o_upgrade_cta'
         );
         upgradeButtons.forEach(el => {
-            el.style.display = 'none';
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (!isOwlComponent(el)) {
+                el.style.display = 'none';
+            }
         });
     }
 
@@ -39,14 +72,24 @@
             'button[data-action="studio"], ' +
             'a[href*="/web_studio/"]'
         );
-        studioButtons.forEach(el => el.remove());
+        studioButtons.forEach(el => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (!isOwlComponent(el)) {
+                el.remove();
+            }
+        });
 
         // Éléments de la navbar Studio
         const studioNavbar = document.querySelectorAll(
             '.o_web_studio_navbar_item, ' +
             '.o_studio_navbar_item'
         );
-        studioNavbar.forEach(el => el.remove());
+        studioNavbar.forEach(el => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (!isOwlComponent(el)) {
+                el.remove();
+            }
+        });
     }
 
     // ========================================
@@ -60,9 +103,14 @@
         );
 
         upgradeDialogs.forEach(dialog => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (isOwlComponent(dialog)) {
+                return;
+            }
+
             // Trouver le modal parent
             const modal = dialog.closest('.modal');
-            if (modal) {
+            if (modal && !isOwlComponent(modal)) {
                 modal.remove();
             }
         });
@@ -72,7 +120,12 @@
             '.o_trial_banner, ' +
             '.o_upgrade_banner'
         );
-        trialBanners.forEach(banner => banner.remove());
+        trialBanners.forEach(banner => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (!isOwlComponent(banner)) {
+                banner.remove();
+            }
+        });
     }
 
     // ========================================
@@ -85,6 +138,13 @@
         );
 
         moduleCards.forEach(card => {
+            // CRITICAL: Ne JAMAIS toucher aux composants Owl pour éviter de casser le lifecycle
+            // Les vues kanban dans Odoo utilisent Owl et modifier leurs éléments pendant le rendering
+            // peut causer l'erreur "ctx.kanban_image is not a function"
+            if (isOwlComponent(card)) {
+                return;
+            }
+
             // Vérifier l'état du module
             const state = card.getAttribute('data-state');
             const license = card.getAttribute('data-license');
@@ -114,7 +174,8 @@
             );
 
             enterpriseBadges.forEach(badge => {
-                if (badge.textContent.includes('Enterprise')) {
+                // Ne pas toucher aux composants Owl
+                if (!isOwlComponent(badge) && badge.textContent.includes('Enterprise')) {
                     badge.remove();
                 }
             });

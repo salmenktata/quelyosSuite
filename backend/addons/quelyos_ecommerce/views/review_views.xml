@@ -210,7 +210,7 @@
                     <page string="Avis Clients" name="reviews">
                         <group>
                             <group>
-                                <field name="avg_rating" widget="float" digits="[3,2]"/>
+                                <field name="average_rating" widget="float" digits="[3,2]"/>
                                 <field name="review_count"/>
                             </group>
                             <group>

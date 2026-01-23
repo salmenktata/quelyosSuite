@@ -52,6 +52,31 @@
     }
 
     // ========================================
+    // Fonction: Vérifier si un élément fait partie d'un composant Owl
+    // ========================================
+    // CRITICAL: Ne JAMAIS toucher aux composants Owl pour éviter de casser le lifecycle
+    function isOwlComponent(element) {
+        if (!element || !element.closest) return false;
+
+        // Vérifier si l'élément ou un parent est un composant Owl
+        const owlSelectors = [
+            '[t-name]',                    // Templates QWeb
+            '[data-tooltip-template]',     // Tooltips Owl
+            '.o_kanban_view',              // Vues kanban (utilisent Owl)
+            '.o_kanban_record',            // Enregistrements kanban
+            '.o_kanban_renderer',          // Renderer kanban
+            '.o_list_view',                // Vues liste (utilisent Owl)
+            '.o_view_controller',          // Contrôleurs de vue
+            '.o_renderer',                 // Renderers de vue
+            '.o_field_widget',             // Widgets de champs
+            '.o_form_view',                // Vues formulaire (Owl)
+            '.o_component',                // Composants génériques Owl
+        ];
+
+        return owlSelectors.some(selector => element.closest(selector));
+    }
+
+    // ========================================
     // Fonction: Remplacer les textes "Odoo" par "Quelyos"
     // ========================================
     // SÉCURITÉ: Cette fonction NE TOUCHE JAMAIS aux URLs pour éviter de casser:
@@ -61,6 +86,7 @@
     // - Les éléments contenus dans des balises <a>
     // - Les inputs de type URL ou avec name contenant 'url'/'href'
     // - Les meta tags avec des URLs
+    // CRITICAL: Ne JAMAIS toucher aux composants Owl pour éviter de casser le lifecycle
     function replaceOdooText() {
         // Sélectionner tous les éléments de texte
         const textNodes = [];
@@ -73,12 +99,13 @@
 
         let node;
         while (node = walker.nextNode()) {
-            // Ignorer les scripts, styles, et éléments liés aux URLs
+            // Ignorer les scripts, styles, éléments liés aux URLs, et composants Owl
             const parentTag = node.parentNode.tagName;
             if (parentTag !== 'SCRIPT' &&
                 parentTag !== 'STYLE' &&
                 parentTag !== 'A' &&  // Ne pas toucher au texte dans les liens
-                !isUrlRelatedElement(node.parentNode)) {
+                !isUrlRelatedElement(node.parentNode) &&
+                !isOwlComponent(node.parentNode)) {  // CRITICAL: Ne pas toucher aux composants Owl
                 if (node.nodeValue && node.nodeValue.match(/Odoo/i)) {
                     textNodes.push(node);
                 }
@@ -96,8 +123,8 @@
         // IMPORTANT: Ne JAMAIS toucher aux attributs href, src, action, data-url, etc.
         const elementsWithOdoo = document.querySelectorAll('[title*="odoo" i], [placeholder*="odoo" i], [aria-label*="odoo" i], [data-original-title*="odoo" i]');
         elementsWithOdoo.forEach(el => {
-            // Ne pas toucher aux éléments avec des URLs
-            if (isUrlRelatedElement(el)) {
+            // Ne pas toucher aux éléments avec des URLs ou composants Owl
+            if (isUrlRelatedElement(el) || isOwlComponent(el)) {
                 return;
             }
 
@@ -136,8 +163,8 @@
         // Remplacer dans les labels et descriptions (Settings, formulaires, etc.)
         const labels = document.querySelectorAll('label, .o_field_label, .o_form_label, span.text-muted, small, .help-block');
         labels.forEach(el => {
-            // Ne pas toucher aux éléments avec des URLs
-            if (isUrlRelatedElement(el) || el.closest('a')) {
+            // Ne pas toucher aux éléments avec des URLs ou composants Owl
+            if (isUrlRelatedElement(el) || el.closest('a') || isOwlComponent(el)) {
                 return;
             }
             if (el.textContent && el.textContent.match(/Odoo/i)) {
@@ -148,8 +175,8 @@
         // Remplacer dans les boutons
         const buttons = document.querySelectorAll('button, .btn, .o_button');
         buttons.forEach(btn => {
-            // Ne pas toucher aux boutons avec des URLs ou dans des liens
-            if (isUrlRelatedElement(btn) || btn.closest('a')) {
+            // Ne pas toucher aux boutons avec des URLs, dans des liens, ou composants Owl
+            if (isUrlRelatedElement(btn) || btn.closest('a') || isOwlComponent(btn)) {
                 return;
             }
             if (btn.textContent && btn.textContent.match(/Odoo/i)) {
@@ -160,8 +187,8 @@
         // Remplacer dans les headers et titres
         const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .modal-title, .o_form_label');
         headers.forEach(h => {
-            // Ne pas toucher aux headers avec des URLs ou dans des liens
-            if (isUrlRelatedElement(h) || h.closest('a')) {
+            // Ne pas toucher aux headers avec des URLs, dans des liens, ou composants Owl
+            if (isUrlRelatedElement(h) || h.closest('a') || isOwlComponent(h)) {
                 return;
             }
             if (h.textContent && h.textContent.match(/Odoo/i)) {
@@ -173,10 +200,11 @@
         // ATTENTION: Ne jamais toucher aux inputs de type URL ou avec des attributs d'URL
         const inputs = document.querySelectorAll('input[value*="odoo" i], textarea');
         inputs.forEach(input => {
-            // Ne pas toucher aux inputs de type URL, hidden avec URLs, etc.
+            // Ne pas toucher aux inputs de type URL, hidden avec URLs, composants Owl, etc.
             if (input.type === 'url' ||
                 input.type === 'hidden' ||
                 isUrlRelatedElement(input) ||
+                isOwlComponent(input) ||
                 input.name?.includes('url') ||
                 input.name?.includes('href')) {
                 return;
@@ -252,11 +280,15 @@
         ];
 
         const blueReplacement = '#1e40af'; // Quelyos blue
-        const blueReplacementRgb = 'rgb(30, 64, 175)';
 
-        // ULTRA AGRESSIF: Forcer tous les onglets de navigation
+        // ULTRA AGRESSIF: Forcer tous les onglets de navigation (mais pas les composants Owl)
         const navTabs = document.querySelectorAll('.nav-link, .nav-item, a[role="tab"], button[role="tab"], .o_cp_top a, .o_cp_top button');
         navTabs.forEach(el => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (isOwlComponent(el)) {
+                return;
+            }
+
             const computedStyle = window.getComputedStyle(el);
             const bgColor = computedStyle.backgroundColor;
 
@@ -268,9 +300,14 @@
             }
         });
 
-        // Remplacer dans tous les éléments avec style inline
+        // Remplacer dans tous les éléments avec style inline (sauf composants Owl)
         const allElements = document.querySelectorAll('*');
         allElements.forEach(el => {
+            // CRITICAL: Ne pas toucher aux composants Owl
+            if (isOwlComponent(el)) {
+                return;
+            }
+
             const style = el.getAttribute('style');
             if (style) {
                 let newStyle = style;
