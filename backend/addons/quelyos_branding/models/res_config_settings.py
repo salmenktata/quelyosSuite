@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+Quelyos Branding Configuration Settings
+REFACTORED: Delegates to specialized services for better maintainability.
+"""
+
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
-import base64
-import io
 
 
 class ResConfigSettings(models.TransientModel):
@@ -232,173 +234,62 @@ class ResConfigSettings(models.TransientModel):
     )
 
     # ========================================
-    # Méthodes de validation des images
+    # Validation des logos (délégué à ImageValidator)
     # ========================================
 
     @api.onchange('quelyos_branding_logo_main', 'quelyos_branding_logo_white')
     def _onchange_logo_main(self):
         """Validate main and white logos."""
+        validator = self.env['quelyos.branding.image.validator']
+
         if self.quelyos_branding_logo_main:
-            self._validate_image(
-                self.quelyos_branding_logo_main,
-                max_size_mb=2,
-                allowed_formats=['png', 'jpg', 'jpeg', 'svg']
-            )
+            validator.validate_logo('logo_main', self.quelyos_branding_logo_main)
+
         if self.quelyos_branding_logo_white:
-            self._validate_image(
-                self.quelyos_branding_logo_white,
-                max_size_mb=2,
-                allowed_formats=['png', 'jpg', 'jpeg', 'svg']
-            )
+            validator.validate_logo('logo_white', self.quelyos_branding_logo_white)
 
     @api.onchange('quelyos_branding_logo_small', 'quelyos_branding_logo_email')
     def _onchange_logo_small_email(self):
         """Validate small and email logos."""
+        validator = self.env['quelyos.branding.image.validator']
+
         if self.quelyos_branding_logo_small:
-            self._validate_image(
-                self.quelyos_branding_logo_small,
-                max_size_mb=1,
-                allowed_formats=['png', 'jpg', 'jpeg']
-            )
+            validator.validate_logo('logo_small', self.quelyos_branding_logo_small)
+
         if self.quelyos_branding_logo_email:
-            self._validate_image(
-                self.quelyos_branding_logo_email,
-                max_size_mb=1,
-                allowed_formats=['png', 'jpg', 'jpeg']
-            )
+            validator.validate_logo('logo_email', self.quelyos_branding_logo_email)
 
     @api.onchange('quelyos_branding_favicon')
     def _onchange_favicon(self):
         """Validate favicon."""
+        validator = self.env['quelyos.branding.image.validator']
+
         if self.quelyos_branding_favicon:
-            self._validate_image(
-                self.quelyos_branding_favicon,
-                max_size_mb=0.5,
-                allowed_formats=['ico', 'png']
-            )
-
-    def _validate_image(self, image_data, max_size_mb=2, allowed_formats=None):
-        """
-        Validate uploaded image - OPTIMISÉ pour performances.
-
-        Args:
-            image_data: Binary image data
-            max_size_mb: Maximum file size in MB
-            allowed_formats: List of allowed extensions
-
-        Raises:
-            ValidationError: If validation fails
-        """
-        if not image_data:
-            return
-
-        # Decode base64 (fast)
-        try:
-            image_bytes = base64.b64decode(image_data)
-        except Exception:
-            raise ValidationError("Format d'image invalide")
-
-        # Check file size (fast - no I/O)
-        size_mb = len(image_bytes) / (1024 * 1024)
-        if size_mb > max_size_mb:
-            raise ValidationError(f"L'image est trop volumineuse (max {max_size_mb}MB, taille: {size_mb:.2f}MB)")
-
-        # Check format - Validation rapide par signatures de fichiers (magic bytes)
-        if allowed_formats:
-            # Détection rapide par magic bytes (plus rapide que PIL)
-            file_signature = image_bytes[:20]  # Lire seulement les premiers bytes
-
-            # SVG detection (fast)
-            is_svg = (file_signature[:5] == b'<?xml' or
-                     file_signature[:4] == b'<svg' or
-                     b'<svg' in image_bytes[:100])
-
-            if 'svg' in allowed_formats and is_svg:
-                return  # SVG is valid
-
-            # PNG detection (fast)
-            is_png = file_signature[:8] == b'\x89PNG\r\n\x1a\n'
-
-            # JPEG detection (fast)
-            is_jpeg = file_signature[:3] == b'\xff\xd8\xff'
-
-            # ICO detection (fast)
-            is_ico = file_signature[:4] == b'\x00\x00\x01\x00'
-
-            # Validation rapide sans PIL
-            valid = False
-            if 'png' in allowed_formats and is_png:
-                valid = True
-            elif ('jpg' in allowed_formats or 'jpeg' in allowed_formats) and is_jpeg:
-                valid = True
-            elif 'ico' in allowed_formats and is_ico:
-                valid = True
-            elif 'svg' in allowed_formats and is_svg:
-                valid = True
-
-            if not valid:
-                # Fallback à PIL seulement si nécessaire (slower)
-                try:
-                    from PIL import Image
-                    img = Image.open(io.BytesIO(image_bytes))
-                    format_lower = img.format.lower() if img.format else ''
-                    if format_lower not in allowed_formats:
-                        raise ValidationError(
-                            f"Format non autorisé. Formats acceptés: {', '.join(allowed_formats).upper()}"
-                        )
-                except ImportError:
-                    # PIL not available, validation déjà faite avec magic bytes
-                    if not valid:
-                        raise ValidationError(
-                            f"Format non autorisé. Formats acceptés: {', '.join(allowed_formats).upper()}"
-                        )
-                except Exception as e:
-                    if 'cannot identify image file' in str(e).lower():
-                        raise ValidationError(
-                            f"Format non autorisé. Formats acceptés: {', '.join(allowed_formats).upper()}"
-                        )
+            validator.validate_logo('favicon', self.quelyos_branding_favicon)
 
     # ========================================
-    # Méthodes computed
+    # Méthodes computed (délégué à StatsManager)
     # ========================================
 
     def _compute_module_info(self):
-        """Compute module installation info - OPTIMISÉ avec cache."""
-        # Recherche une seule fois pour tous les records (batch processing)
-        module = self.env['ir.module.module'].search([
-            ('name', '=', 'quelyos_branding')
-        ], limit=1)
+        """Compute module installation info."""
+        stats_manager = self.env['quelyos.branding.stats.manager']
+        module_info = stats_manager.get_module_info()
 
-        version = module.installed_version or '19.0.1.0.0'
-        active_since = module.write_date.date() if module.write_date else False
-
-        # Assigner à tous les records en une seule fois
         for record in self:
-            record.quelyos_branding_module_version = version
-            record.quelyos_branding_active_since = active_since
+            record.quelyos_branding_module_version = module_info['version']
+            record.quelyos_branding_active_since = module_info['active_since']
 
     def _compute_custom_logos(self):
-        """Count uploaded custom logos - OPTIMISÉ avec batch read."""
-        params = self.env['ir.config_parameter'].sudo()
+        """Count uploaded custom logos."""
+        stats_manager = self.env['quelyos.branding.stats.manager']
+        count = stats_manager.get_custom_logos_count()
 
-        # Récupérer tous les paramètres en une seule requête (batch)
-        logo_params = [
-            'quelyos.branding.logo_main_id',
-            'quelyos.branding.logo_white_id',
-            'quelyos.branding.logo_small_id',
-            'quelyos.branding.logo_email_id',
-            'quelyos.branding.favicon_id',
-        ]
-
-        # Compter une seule fois pour tous les records
-        count = sum(1 for param in logo_params if params.get_param(param))
-
-        # Assigner à tous les records
         for record in self:
             record.quelyos_branding_custom_logos = count
 
     # ========================================
-    # Actions pour theme presets
+    # Actions pour theme presets (délégué à ThemeManager)
     # ========================================
 
     def action_reset_to_defaults(self):
@@ -429,183 +320,74 @@ class ResConfigSettings(models.TransientModel):
         for key, value in default_values.items():
             params.set_param(key, value)
 
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Réinitialisé',
-                'message': 'Les paramètres ont été réinitialisés aux valeurs par défaut.',
-                'type': 'success',
-                'sticky': False,
-            }
-        }
+        theme_manager = self.env['quelyos.branding.theme.manager']
+        return theme_manager.create_notification(
+            'Réinitialisé',
+            'Les paramètres ont été réinitialisés aux valeurs par défaut.'
+        )
 
     def action_set_blue_theme(self):
         """Set blue professional theme."""
-        self.quelyos_branding_primary_color = '#1e40af'
-        self.quelyos_branding_secondary_color = '#10b981'
-        return self._show_theme_notification('Thème bleu professionnel appliqué')
+        theme_manager = self.env['quelyos.branding.theme.manager']
+        theme_manager.apply_theme('blue')
+        return theme_manager.create_notification(
+            'Thème modifié',
+            'Thème bleu professionnel appliqué',
+            'info'
+        )
 
     def action_set_green_theme(self):
         """Set green ecological theme."""
-        self.quelyos_branding_primary_color = '#059669'
-        self.quelyos_branding_secondary_color = '#34d399'
-        return self._show_theme_notification('Thème vert écologique appliqué')
+        theme_manager = self.env['quelyos.branding.theme.manager']
+        theme_manager.apply_theme('green')
+        return theme_manager.create_notification(
+            'Thème modifié',
+            'Thème vert écologique appliqué',
+            'info'
+        )
 
     def action_set_purple_theme(self):
         """Set purple creative theme."""
-        self.quelyos_branding_primary_color = '#7c3aed'
-        self.quelyos_branding_secondary_color = '#a78bfa'
-        return self._show_theme_notification('Thème violet créatif appliqué')
+        theme_manager = self.env['quelyos.branding.theme.manager']
+        theme_manager.apply_theme('purple')
+        return theme_manager.create_notification(
+            'Thème modifié',
+            'Thème violet créatif appliqué',
+            'info'
+        )
 
     def action_set_red_theme(self):
         """Set red energetic theme."""
-        self.quelyos_branding_primary_color = '#dc2626'
-        self.quelyos_branding_secondary_color = '#f59e0b'
-        return self._show_theme_notification('Thème rouge énergique appliqué')
-
-    def _show_theme_notification(self, message):
-        """Show theme change notification."""
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Thème modifié',
-                'message': message,
-                'type': 'info',
-                'sticky': False,
-            }
-        }
-
-    @api.model
-    def get_values(self):
-        """Récupérer les valeurs des paramètres de configuration"""
-        res = super(ResConfigSettings, self).get_values()
-        params = self.env['ir.config_parameter'].sudo()
-
-        res.update(
-            quelyos_branding_company_name=params.get_param('quelyos.branding.company_name', 'Quelyos'),
-            quelyos_branding_company_url=params.get_param('quelyos.branding.company_url', 'https://quelyos.com'),
-            quelyos_branding_support_url=params.get_param('quelyos.branding.support_url', 'https://support.quelyos.com'),
-            quelyos_branding_docs_url=params.get_param('quelyos.branding.docs_url', 'https://docs.quelyos.com'),
-            quelyos_branding_primary_color=params.get_param('quelyos.branding.primary_color', '#1e40af'),
-            quelyos_branding_secondary_color=params.get_param('quelyos.branding.secondary_color', '#10b981'),
-            quelyos_branding_slogan=params.get_param('quelyos.branding.slogan', 'La plateforme SaaS omnicanal pour le retail'),
-            quelyos_branding_contact_email=params.get_param('quelyos.branding.contact_email', 'contact@quelyos.com'),
-            quelyos_branding_show_logo_email=params.get_param('quelyos.branding.show_logo_email', True),
-            quelyos_branding_email_footer_text=params.get_param('quelyos.branding.email_footer_text', 'Envoyé par Quelyos'),
-            quelyos_branding_powered_by_text=params.get_param('quelyos.branding.powered_by_text', 'Powered by Quelyos'),
-            quelyos_branding_copyright_text=params.get_param('quelyos.branding.copyright_text', '© 2026 Quelyos'),
-            quelyos_branding_enable_full_debranding=params.get_param('quelyos.branding.enable_full_debranding', True),
-            quelyos_branding_replace_odoo_text=params.get_param('quelyos.branding.replace_odoo_text', True),
-            quelyos_branding_hide_enterprise_features=params.get_param('quelyos.branding.hide_enterprise_features', True),
-            quelyos_branding_hide_studio=params.get_param('quelyos.branding.hide_studio', True),
-            quelyos_branding_hide_upgrade_prompts=params.get_param('quelyos.branding.hide_upgrade_prompts', True),
-            quelyos_branding_hide_enterprise_menus=params.get_param('quelyos.branding.hide_enterprise_menus', True),
-            quelyos_branding_favicon_path=params.get_param('quelyos.branding.favicon_path', '/quelyos_branding/static/src/img/favicon/favicon.ico'),
-            quelyos_branding_logo_navbar_path=params.get_param('quelyos.branding.logo_navbar_path', '/quelyos_branding/static/src/img/logo/quelyos_logo_white.png'),
-            quelyos_branding_logo_email_path=params.get_param('quelyos.branding.logo_email_path', '/quelyos_branding/static/src/img/logo/quelyos_logo.png'),
-            quelyos_branding_logo_login_path=params.get_param('quelyos.branding.logo_login_path', '/quelyos_branding/static/src/img/logo/quelyos_logo_white.png'),
-            quelyos_branding_login_bg_path=params.get_param('quelyos.branding.login_bg_path', '/quelyos_branding/static/src/img/backgrounds/login_bg.jpg'),
+        theme_manager = self.env['quelyos.branding.theme.manager']
+        theme_manager.apply_theme('red')
+        return theme_manager.create_notification(
+            'Thème modifié',
+            'Thème rouge énergique appliqué',
+            'info'
         )
-        return res
+
+    # ========================================
+    # Sauvegarde des logos (délégué à LogoManager)
+    # ========================================
 
     def set_values(self):
-        """Sauvegarder les valeurs des paramètres de configuration - OPTIMISÉ"""
+        """Sauvegarder les valeurs des paramètres de configuration."""
         super(ResConfigSettings, self).set_values()
-        params = self.env['ir.config_parameter'].sudo()
 
-        # Batch update des paramètres pour réduire les requêtes SQL
-        params_to_set = {
-            'quelyos.branding.company_name': self.quelyos_branding_company_name or 'Quelyos',
-            'quelyos.branding.company_url': self.quelyos_branding_company_url or 'https://quelyos.com',
-            'quelyos.branding.support_url': self.quelyos_branding_support_url or 'https://support.quelyos.com',
-            'quelyos.branding.docs_url': self.quelyos_branding_docs_url or 'https://docs.quelyos.com',
-            'quelyos.branding.primary_color': self.quelyos_branding_primary_color or '#1e40af',
-            'quelyos.branding.secondary_color': self.quelyos_branding_secondary_color or '#10b981',
-            'quelyos.branding.slogan': self.quelyos_branding_slogan or 'La plateforme SaaS omnicanal pour le retail',
-            'quelyos.branding.contact_email': self.quelyos_branding_contact_email or 'contact@quelyos.com',
-            'quelyos.branding.show_logo_email': str(self.quelyos_branding_show_logo_email),
-            'quelyos.branding.email_footer_text': self.quelyos_branding_email_footer_text or 'Envoyé par Quelyos',
-            'quelyos.branding.powered_by_text': self.quelyos_branding_powered_by_text or 'Powered by Quelyos',
-            'quelyos.branding.copyright_text': self.quelyos_branding_copyright_text or '© 2026 Quelyos',
-            'quelyos.branding.enable_full_debranding': str(self.quelyos_branding_enable_full_debranding),
-            'quelyos.branding.replace_odoo_text': str(self.quelyos_branding_replace_odoo_text),
-            'quelyos.branding.hide_enterprise_features': str(self.quelyos_branding_hide_enterprise_features),
-            'quelyos.branding.hide_studio': str(self.quelyos_branding_hide_studio),
-            'quelyos.branding.hide_upgrade_prompts': str(self.quelyos_branding_hide_upgrade_prompts),
-            'quelyos.branding.hide_enterprise_menus': str(self.quelyos_branding_hide_enterprise_menus),
-            'quelyos.branding.favicon_path': self.quelyos_branding_favicon_path or '/quelyos_branding/static/src/img/favicon/favicon.ico',
-            'quelyos.branding.logo_navbar_path': self.quelyos_branding_logo_navbar_path or '/quelyos_branding/static/src/img/logo/quelyos_logo_white.png',
-            'quelyos.branding.logo_email_path': self.quelyos_branding_logo_email_path or '/quelyos_branding/static/src/img/logo/quelyos_logo.png',
-            'quelyos.branding.logo_login_path': self.quelyos_branding_logo_login_path or '/quelyos_branding/static/src/img/logo/quelyos_logo_white.png',
-            'quelyos.branding.login_bg_path': self.quelyos_branding_login_bg_path or '/quelyos_branding/static/src/img/backgrounds/login_bg.jpg',
-        }
+        logo_manager = self.env['quelyos.branding.logo.manager']
 
-        # Batch set params (réduit les requêtes SQL)
-        for key, value in params_to_set.items():
-            params.set_param(key, value)
-
-        # Sauvegarder les logos uploadés comme attachments (OPTIMISÉ - évite les doublons)
-        logos_updated = False
+        # Sauvegarder les logos uploadés
         if self.quelyos_branding_logo_main:
-            self._save_logo_attachment('logo_main', self.quelyos_branding_logo_main, 'quelyos_logo_main.png', 'image/png')
-            logos_updated = True
+            logo_manager.save_logo('logo_main', self.quelyos_branding_logo_main)
+
         if self.quelyos_branding_logo_white:
-            self._save_logo_attachment('logo_white', self.quelyos_branding_logo_white, 'quelyos_logo_white.png', 'image/png')
-            logos_updated = True
+            logo_manager.save_logo('logo_white', self.quelyos_branding_logo_white)
+
         if self.quelyos_branding_logo_small:
-            self._save_logo_attachment('logo_small', self.quelyos_branding_logo_small, 'quelyos_logo_small.png', 'image/png')
-            logos_updated = True
+            logo_manager.save_logo('logo_small', self.quelyos_branding_logo_small)
+
         if self.quelyos_branding_logo_email:
-            self._save_logo_attachment('logo_email', self.quelyos_branding_logo_email, 'quelyos_logo_email.png', 'image/png')
-            logos_updated = True
+            logo_manager.save_logo('logo_email', self.quelyos_branding_logo_email)
+
         if self.quelyos_branding_favicon:
-            self._save_logo_attachment('favicon', self.quelyos_branding_favicon, 'quelyos_favicon.ico', 'image/x-icon')
-            logos_updated = True
-
-        # Invalider le cache du contrôleur de logos après mise à jour (OPTIMISATION)
-        if logos_updated:
-            from odoo.addons.quelyos_branding.controllers.logo_controller import QuelyosLogoController
-            QuelyosLogoController.clear_logo_cache()
-
-    def _save_logo_attachment(self, logo_type, logo_data, filename, mimetype):
-        """
-        Sauvegarde optimisée d'un logo en attachment.
-        Supprime l'ancien attachment avant d'en créer un nouveau pour éviter les doublons.
-
-        Args:
-            logo_type: Type de logo (logo_main, logo_white, etc.)
-            logo_data: Données binaires du logo
-            filename: Nom du fichier
-            mimetype: Type MIME (image/png, image/x-icon, etc.)
-        """
-        if not logo_data:
-            return
-
-        params = self.env['ir.config_parameter'].sudo()
-        IrAttachment = self.env['ir.attachment'].sudo()
-        param_key = f'quelyos.branding.{logo_type}_id'
-
-        # Récupérer l'ancien attachment s'il existe
-        old_attachment_id = params.get_param(param_key)
-
-        # Supprimer l'ancien attachment pour éviter les doublons (OPTIMISATION)
-        if old_attachment_id:
-            old_attachment = IrAttachment.browse(int(old_attachment_id))
-            if old_attachment.exists():
-                old_attachment.unlink()
-
-        # Créer le nouvel attachment
-        attachment = IrAttachment.create({
-            'name': filename,
-            'type': 'binary',
-            'datas': logo_data,
-            'res_model': 'res.config.settings',
-            'res_id': 0,
-            'public': True,
-            'mimetype': mimetype,
-        })
-
-        # Sauvegarder l'ID de l'attachment
-        params.set_param(param_key, attachment.id)
+            logo_manager.save_logo('favicon', self.quelyos_branding_favicon)
