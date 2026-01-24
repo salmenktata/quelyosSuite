@@ -164,22 +164,22 @@ export default function Subscriptions() {
 
           {/* Header */}
           <div className="mb-6 md:mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                Abonnements
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Gérer les abonnements clients
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  Abonnements
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  Gérer les abonnements clients
+                </p>
+              </div>
+              <Link to="/subscriptions/new">
+                <Button variant="primary" icon={<PlusIcon className="w-5 h-5" />}>
+                  Nouvel abonnement
+                </Button>
+              </Link>
             </div>
-            <Link to="/subscriptions/new">
-              <Button variant="primary" icon={PlusIcon}>
-                Nouvel abonnement
-              </Button>
-            </Link>
           </div>
-        </div>
 
         {/* Statistiques */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -238,7 +238,7 @@ export default function Subscriptions() {
               </Button>
               <Button
                 variant="secondary"
-                icon={FunnelIcon}
+                icon={<FunnelIcon className="w-5 h-5" />}
                 onClick={() => setShowFilters(!showFilters)}
               >
                 Filtres
@@ -249,7 +249,7 @@ export default function Subscriptions() {
                 )}
               </Button>
               {hasActiveFilters && (
-                <Button variant="ghost" icon={XMarkIcon} onClick={handleReset}>
+                <Button variant="ghost" icon={<XMarkIcon className="w-5 h-5" />} onClick={handleReset}>
                   Réinitialiser
                 </Button>
               )}
@@ -316,7 +316,7 @@ export default function Subscriptions() {
               </p>
               {!hasActiveFilters && (
                 <Link to="/subscriptions/new">
-                  <Button variant="primary" icon={PlusIcon}>
+                  <Button variant="primary" icon={<PlusIcon className="w-5 h-5" />}>
                     Créer un abonnement
                   </Button>
                 </Link>
