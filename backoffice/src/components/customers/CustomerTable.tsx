@@ -33,7 +33,7 @@ export function CustomerTable({ customers, sortField, sortOrder, onSort }: Custo
   return (
     <>
       {/* Vue Desktop : Tableau */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden lg:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
@@ -106,24 +106,27 @@ export function CustomerTable({ customers, sortField, sortOrder, onSort }: Custo
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {customers.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4">
                   <Link
                     to={`/customers/${customer.id}`}
-                    className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded"
+                    className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded block truncate max-w-xs"
+                    title={customer.name}
                   >
-                    {customer.name}
+                    {customer.name || customer.email || `Client #${customer.id}`}
                   </Link>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm text-gray-900 dark:text-white">{customer.email || '-'}</div>
+                <td className="px-6 py-4">
+                  <div className="max-w-xs">
+                    <div className="text-sm text-gray-900 dark:text-white truncate" title={customer.email || undefined}>
+                      {customer.email || '-'}
+                    </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       {customer.phone || customer.mobile || '-'}
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 dark:text-white">
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-900 dark:text-white max-w-xs truncate" title={customer.city ? `${customer.zip || ''} ${customer.city}${customer.country ? `, ${customer.country}` : ''}`.trim() : undefined}>
                     {customer.city ? (
                       <>
                         {customer.zip && `${customer.zip} `}
@@ -173,7 +176,7 @@ export function CustomerTable({ customers, sortField, sortOrder, onSort }: Custo
       </div>
 
       {/* Vue Mobile : Cards */}
-      <div className="md:hidden space-y-4">
+      <div className="lg:hidden space-y-4 p-4">
         {customers.map((customer) => (
           <div
             key={customer.id}

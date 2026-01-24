@@ -1,29 +1,22 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 
-export function useStockProducts(params?: { limit?: number; offset?: number; search?: string }) {
-  return useQuery({
-    queryKey: ['stock-products', params],
-    queryFn: () => api.getStockProducts(params),
-  })
+export interface LowStockAlert {
+  id: number
+  name: string
+  sku: string
+  current_stock: number
+  threshold: number
+  diff: number
+  image_url: string | null
+  list_price: number
+  category: string
 }
 
-export function useStockMoves(params?: { limit?: number; offset?: number; product_id?: number }) {
+export function useLowStockAlerts(params?: { limit?: number; offset?: number }) {
   return useQuery({
-    queryKey: ['stock-moves', params],
-    queryFn: () => api.getStockMoves(params),
-  })
-}
-
-export function useUpdateProductStock() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) =>
-      api.updateProductStock(productId, quantity),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stock-products'] })
-      queryClient.invalidateQueries({ queryKey: ['stock-moves'] })
-    },
+    queryKey: ['low-stock-alerts', params],
+    queryFn: () => api.getLowStockAlerts(params),
+    refetchInterval: 60000, // Rafraîchir toutes les minutes
   })
 }

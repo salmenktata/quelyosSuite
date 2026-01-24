@@ -1,21 +1,47 @@
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Layout } from '../components/Layout'
-import { useOrder, useUpdateOrderStatus } from '../hooks/useOrders'
+import {
+  useOrder,
+  useUpdateOrderStatus,
+  useOrderTracking,
+  useUpdateOrderTracking,
+  useOrderHistory,
+  useSendQuotation,
+  useCreateInvoice,
+  useUnlockOrder,
+} from '../hooks/useOrders'
 import { Badge, Button, Breadcrumbs, Skeleton, Modal } from '../components/common'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/common/Toast'
+import { api } from '../lib/api'
+import {
+  DocumentArrowDownIcon,
+  TruckIcon,
+  PencilIcon,
+  ClockIcon,
+  EnvelopeIcon,
+  DocumentTextIcon,
+  ArrowUturnLeftIcon,
+} from '@heroicons/react/24/outline'
 
 export default function OrderDetail() {
   const { id } = useParams<{ id: string }>()
   const orderId = parseInt(id || '0', 10)
   const { data, isLoading, error } = useOrder(orderId)
+  const { data: trackingData, isLoading: trackingLoading } = useOrderTracking(orderId)
+  const { data: historyData, isLoading: historyLoading } = useOrderHistory(orderId)
   const updateStatus = useUpdateOrderStatus()
+  const updateTracking = useUpdateOrderTracking()
+  const sendQuotation = useSendQuotation()
+  const createInvoice = useCreateInvoice()
+  const unlockOrder = useUnlockOrder()
   const toast = useToast()
 
   const [actionModal, setActionModal] = useState<{ action: 'confirm' | 'cancel' | 'done'; message: string } | null>(
     null
   )
+  const [editingTracking, setEditingTracking] = useState<{ pickingId: number; trackingRef: string } | null>(null)
 
   const handleUpdateStatusConfirm = async () => {
     if (!orderId || !actionModal) return
@@ -37,6 +63,76 @@ export default function OrderDetail() {
         ? 'annuler'
         : 'marquer comme terminée'
     setActionModal({ action, message })
+  }
+
+  const handleDownloadDeliverySlip = async () => {
+    if (!orderId) return
+
+    try {
+      const blob = await api.getDeliverySlipPDF(orderId)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `bon_livraison_${order?.name.replace('/', '_')}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      toast.success('Bon de livraison téléchargé avec succès')
+    } catch (err) {
+      toast.error('Erreur lors du téléchargement du bon de livraison')
+    }
+  }
+
+  const handleSaveTracking = async () => {
+    if (!editingTracking || !orderId) return
+
+    try {
+      await updateTracking.mutateAsync({
+        orderId,
+        pickingId: editingTracking.pickingId,
+        trackingRef: editingTracking.trackingRef,
+      })
+      setEditingTracking(null)
+      toast.success('Numéro de suivi mis à jour avec succès')
+    } catch (err) {
+      toast.error('Erreur lors de la mise à jour du numéro de suivi')
+    }
+  }
+
+  const handleSendQuotation = async () => {
+    if (!orderId) return
+
+    try {
+      await sendQuotation.mutateAsync(orderId)
+      toast.success('Devis envoyé par email avec succès')
+    } catch (err) {
+      toast.error('Erreur lors de l\'envoi du devis')
+    }
+  }
+
+  const handleCreateInvoice = async () => {
+    if (!orderId) return
+
+    try {
+      const response = await createInvoice.mutateAsync(orderId)
+      toast.success(`Facture ${response.data?.invoice?.name} créée avec succès`)
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.error || 'Erreur lors de la création de la facture'
+      toast.error(errorMsg)
+    }
+  }
+
+  const handleUnlockOrder = async () => {
+    if (!orderId) return
+
+    try {
+      await unlockOrder.mutateAsync(orderId)
+      toast.success('Commande remise en brouillon avec succès')
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.error || 'Erreur lors du déverrouillage de la commande'
+      toast.error(errorMsg)
+    }
   }
 
   const getStatusVariant = (state: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
@@ -198,9 +294,132 @@ export default function OrderDetail() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-500">Aucune information client</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">Aucune information client</p>
               )}
             </div>
+
+            {/* Suivi colis */}
+            {trackingLoading ? (
+              <Skeleton height={150} />
+            ) : trackingData?.data?.tracking_info && trackingData.data.tracking_info.length > 0 ? (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <TruckIcon className="h-5 w-5" />
+                  Suivi colis
+                </h2>
+                <div className="space-y-4">
+                  {trackingData.data.tracking_info.map((tracking: any) => (
+                    <div
+                      key={tracking.picking_id}
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {tracking.picking_name}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {tracking.state_label}
+                          </p>
+                        </div>
+                        <Badge variant={tracking.state === 'done' ? 'success' : 'info'}>
+                          {tracking.state_label}
+                        </Badge>
+                      </div>
+
+                      {editingTracking?.pickingId === tracking.picking_id && editingTracking ? (
+                        <div className="flex items-center gap-2 mt-3">
+                          <input
+                            type="text"
+                            value={editingTracking.trackingRef}
+                            onChange={(e) =>
+                              setEditingTracking({
+                                pickingId: editingTracking.pickingId,
+                                trackingRef: e.target.value,
+                              })
+                            }
+                            placeholder="Numéro de suivi"
+                            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                          />
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={handleSaveTracking}
+                            disabled={updateTracking.isPending}
+                          >
+                            Enregistrer
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setEditingTracking(null)}
+                          >
+                            Annuler
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          {tracking.carrier_tracking_ref ? (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Numéro de suivi :
+                                </p>
+                                {tracking.carrier_tracking_url ? (
+                                  <a
+                                    href={tracking.carrier_tracking_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm font-mono text-indigo-600 dark:text-indigo-400 hover:underline"
+                                  >
+                                    {tracking.carrier_tracking_ref}
+                                  </a>
+                                ) : (
+                                  <p className="text-sm font-mono text-gray-900 dark:text-white">
+                                    {tracking.carrier_tracking_ref}
+                                  </p>
+                                )}
+                                {tracking.carrier_name && (
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    Transporteur : {tracking.carrier_name}
+                                  </p>
+                                )}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                icon={<PencilIcon className="h-4 w-4" />}
+                                onClick={() =>
+                                  setEditingTracking({
+                                    pickingId: tracking.picking_id,
+                                    trackingRef: tracking.carrier_tracking_ref,
+                                  })
+                                }
+                              >
+                                Modifier
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() =>
+                                setEditingTracking({
+                                  pickingId: tracking.picking_id,
+                                  trackingRef: '',
+                                })
+                              }
+                            >
+                              Ajouter un numéro de suivi
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             {/* Lignes de commande */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
@@ -211,16 +430,16 @@ export default function OrderDetail() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Produit
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Prix unitaire
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Quantité
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Total
                     </th>
                   </tr>
@@ -287,6 +506,63 @@ export default function OrderDetail() {
               </div>
             </div>
 
+            {/* Historique */}
+            {historyLoading ? (
+              <Skeleton height={300} />
+            ) : historyData?.data?.history && historyData.data.history.length > 0 ? (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <ClockIcon className="h-5 w-5" />
+                  Historique
+                </h2>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {historyData.data.history.map((item) => (
+                    <div
+                      key={item.id}
+                      className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 pb-4"
+                    >
+                      <div className="flex items-start justify-between mb-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {item.author}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {item.date ? formatDate(item.date) : '-'}
+                        </p>
+                      </div>
+
+                      {item.tracking_values && item.tracking_values.length > 0 ? (
+                        <div className="space-y-1">
+                          {item.tracking_values.map((tracking, idx) => (
+                            <div key={idx} className="text-xs text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">{tracking.field_desc} : </span>
+                              <span className="line-through text-red-600 dark:text-red-400">
+                                {tracking.old_value || '(vide)'}
+                              </span>
+                              {' → '}
+                              <span className="text-green-600 dark:text-green-400">
+                                {tracking.new_value || '(vide)'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : item.body ? (
+                        <div
+                          className="text-xs text-gray-600 dark:text-gray-400 prose prose-sm dark:prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: item.body.replace(/<[^>]*>/g, '').substring(0, 200),
+                          }}
+                        />
+                      ) : (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                          {item.subtype || item.message_type}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             {/* Actions */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h2>
@@ -322,6 +598,60 @@ export default function OrderDetail() {
                     disabled={updateStatus.isPending}
                   >
                     Marquer comme terminée
+                  </Button>
+                )}
+
+                {/* Envoyer devis par email */}
+                {(order.state === 'draft' || order.state === 'sent') && (
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={handleSendQuotation}
+                    disabled={sendQuotation.isPending}
+                    loading={sendQuotation.isPending}
+                    icon={<EnvelopeIcon className="h-5 w-5" />}
+                  >
+                    Envoyer devis par email
+                  </Button>
+                )}
+
+                {/* Créer facture */}
+                {(order.state === 'sale' || order.state === 'done') && (
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={handleCreateInvoice}
+                    disabled={createInvoice.isPending}
+                    loading={createInvoice.isPending}
+                    icon={<DocumentTextIcon className="h-5 w-5" />}
+                  >
+                    Créer facture
+                  </Button>
+                )}
+
+                {/* Télécharger bon de livraison */}
+                {(order.state === 'sale' || order.state === 'done') && (
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={handleDownloadDeliverySlip}
+                    icon={<DocumentArrowDownIcon className="h-5 w-5" />}
+                  >
+                    Télécharger bon de livraison
+                  </Button>
+                )}
+
+                {/* Remettre en brouillon */}
+                {(order.state === 'sent' || order.state === 'sale' || order.state === 'done') && (
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={handleUnlockOrder}
+                    disabled={unlockOrder.isPending}
+                    loading={unlockOrder.isPending}
+                    icon={<ArrowUturnLeftIcon className="h-5 w-5" />}
+                  >
+                    Remettre en brouillon
                   </Button>
                 )}
               </div>

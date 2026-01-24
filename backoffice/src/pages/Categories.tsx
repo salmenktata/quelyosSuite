@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Layout } from '../components/Layout'
 import {
   useCategoriesTree,
@@ -18,50 +18,25 @@ import {
   CategoryTree,
 } from '../components/common'
 import { useToast } from '../hooks/useToast'
+import { useDebounce } from '../hooks/useDebounce'
 import { ToastContainer } from '../components/common/Toast'
 import { Category } from '../types'
 
-/**
- * Hook personnalisé pour débouncer une valeur
- *
- * Retarde la mise à jour d'une valeur jusqu'à ce qu'un délai se soit écoulé
- * sans changement. Utile pour optimiser les recherches en temps réel.
- *
- * @template T - Type de la valeur à débouncer
- * @param {T} value - La valeur à débouncer
- * @param {number} delay - Délai en millisecondes avant mise à jour (ex: 300)
- * @returns {T} La valeur débouncée, mise à jour après le délai
- *
- * @example
- * ```tsx
- * const [search, setSearch] = useState('')
- * const debouncedSearch = useDebounce(search, 300)
- * // debouncedSearch se met à jour 300ms après le dernier changement de search
- * ```
- */
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState(value)
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
-
-  return debouncedValue
+interface CategoryFormData {
+  name: string
+  parent_id: string
 }
 
 export default function Categories() {
+  // Refs
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
   // State
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deleteModal, setDeleteModal] = useState<{ id: number; name: string } | null>(null)
-  const [formData, setFormData] = useState({ name: '', parent_id: '' })
+  const [formData, setFormData] = useState<CategoryFormData>({ name: '', parent_id: '' })
   const [nameError, setNameError] = useState<string | null>(null)
   const [nameValid, setNameValid] = useState(false)
   const [expandAll, setExpandAll] = useState<boolean>(true)
@@ -262,7 +237,7 @@ export default function Categories() {
       // / ou Cmd/Ctrl+K : Focus sur recherche
       if ((e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key === 'k')) && !isCreating && !editingCategory) {
         e.preventDefault()
-        document.querySelector<HTMLInputElement>('input[type="text"]')?.focus()
+        searchInputRef.current?.focus()
       }
     }
 
@@ -306,37 +281,58 @@ export default function Categories() {
         </div>
 
         {/* Statistiques */}
-        <section aria-label="Statistiques des catégories" className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {stats.totalCategories}
+        <section aria-labelledby="stats-heading" className="mb-6">
+          <h2 id="stats-heading" className="sr-only">
+            Statistiques des catégories
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {isLoading ? (
+                  <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                ) : (
+                  stats.totalCategories
+                )}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Catégories totales
+              </div>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Catégories totales
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                {isLoading ? (
+                  <div className="h-8 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                ) : (
+                  stats.rootCategories
+                )}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Catégories racines
+              </div>
             </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-              {stats.rootCategories}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {isLoading ? (
+                  <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                ) : (
+                  stats.totalProducts
+                )}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Produits catégorisés
+              </div>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Catégories racines
-            </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {stats.totalProducts}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Produits catégorisés
-            </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-              {stats.emptyCategories}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Catégories vides
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {isLoading ? (
+                  <div className="h-8 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                ) : (
+                  stats.emptyCategories
+                )}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Catégories vides
+              </div>
             </div>
           </div>
         </section>
@@ -360,6 +356,7 @@ export default function Categories() {
                 />
               </svg>
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Rechercher une catégorie..."
                 value={searchQuery}
@@ -423,6 +420,33 @@ export default function Categories() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <p>Erreur lors du chargement des catégories</p>
+            </div>
+          ) : displayCategories.length === 0 ? (
+            <div className="p-12 text-center animate-fadeIn">
+              <svg className="w-24 h-24 mx-auto mb-6 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {searchQuery ? 'Aucun résultat trouvé' : 'Aucune catégorie'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                {searchQuery
+                  ? `Aucune catégorie ne correspond à "${searchQuery}". Essayez une autre recherche.`
+                  : 'Créez votre première catégorie pour organiser vos produits de manière hiérarchique.'}
+              </p>
+              {!searchQuery && (
+                <Button
+                  variant="primary"
+                  onClick={openCreateModal}
+                  icon={
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  }
+                >
+                  Créer une catégorie
+                </Button>
+              )}
             </div>
           ) : (
             <CategoryTree

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { loadStripe, Stripe, PaymentRequest } from '@stripe/stripe-js';
 import { odooClient } from '@/lib/odoo/client';
 
 interface WalletPaymentButtonProps {
@@ -30,24 +31,33 @@ export function WalletPaymentButton({
   const router = useRouter();
 
   const [canMakePayment, setCanMakePayment] = useState(false);
-  const [paymentRequest, setPaymentRequest] = useState<any>(null);
+  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [stripe, setStripe] = useState<Stripe | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Check if Stripe is loaded
-    if (!window.Stripe || !process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      console.warn('Stripe not loaded or API key missing');
+    // Load Stripe
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      console.warn('Stripe API key missing');
       return;
     }
 
+    loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY).then((stripeInstance) => {
+      setStripe(stripeInstance);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!stripe) return;
     initializePaymentRequest();
-  }, [amount]);
+  }, [stripe, amount]);
 
   const initializePaymentRequest = async () => {
+    if (!stripe) return;
+
     try {
-      const stripe = window.Stripe!(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
       // Create Payment Request
       const pr = stripe.paymentRequest({
@@ -89,7 +99,7 @@ export function WalletPaymentButton({
     }
   };
 
-  const handlePaymentMethod = async (event: any, stripe: any) => {
+  const handlePaymentMethod = async (event: any, stripeInstance: Stripe) => {
     try {
       setProcessing(true);
 
@@ -113,7 +123,7 @@ export function WalletPaymentButton({
       }
 
       // Confirm payment intent
-      const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(
+      const { error: confirmError, paymentIntent } = await stripeInstance.confirmCardPayment(
         response.data.client_secret,
         {
           payment_method: paymentMethod.id,
@@ -198,9 +208,4 @@ export function WalletPaymentButton({
   );
 }
 
-// Type definitions for Stripe (if not using @stripe/stripe-js package)
-declare global {
-  interface Window {
-    Stripe?: (key: string) => any;
-  }
-}
+// Type definitions provided by @stripe/stripe-js package

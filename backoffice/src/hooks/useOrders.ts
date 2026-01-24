@@ -39,7 +39,7 @@ export function useUpdateOrderStatus() {
 export function useOrderTracking(orderId: number) {
   return useQuery({
     queryKey: ['order-tracking', orderId],
-    queryFn: () => api.getOrderTrackingInfo(orderId),
+    queryFn: () => api.getShippingTracking(orderId),
     enabled: !!orderId,
   })
 }
@@ -113,10 +113,10 @@ export function useUnlockOrder() {
   })
 }
 
-export function useOrderTrackingInfo(orderId: number) {
+export function useShippingTracking(orderId: number) {
   return useQuery({
-    queryKey: ['order-tracking-info', orderId],
-    queryFn: () => api.getOrderTrackingInfo(orderId),
+    queryKey: ['shipping-tracking', orderId],
+    queryFn: () => api.getShippingTracking(orderId),
     enabled: !!orderId,
   })
 }

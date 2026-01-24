@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
 
 export interface PaymentTransaction {
@@ -52,5 +52,25 @@ export function usePaymentTransaction(id: number) {
     queryKey: ['payment-transaction', id],
     queryFn: () => api.getPaymentTransaction(id),
     enabled: !!id,
+  })
+}
+
+export function useRefundTransaction() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      transactionId,
+      amount,
+      reason,
+    }: {
+      transactionId: number
+      amount?: number
+      reason?: string
+    }) => api.refundTransaction(transactionId, { amount, reason }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['payment-transaction'] })
+    },
   })
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import { Input, Button } from '../components/common'
@@ -9,6 +9,16 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Rediriger si déjà connecté
+  useEffect(() => {
+    const sessionId = localStorage.getItem('session_id')
+    const user = localStorage.getItem('user')
+
+    if (sessionId && user) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,18 +108,9 @@ export default function Login() {
               Version 0.0.1 - En développement
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-              Identifiants par défaut : admin@quelyos.com
+              Identifiants par défaut : admin / admin
             </p>
           </div>
-        </div>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-          >
-            Retour au tableau de bord
-          </button>
         </div>
       </div>
     </div>

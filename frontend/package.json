@@ -16,6 +16,8 @@
     "test:all": "npm run test && npm run test:e2e"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^5.4.1",
+    "@stripe/stripe-js": "^8.6.4",
     "@tailwindcss/typography": "^0.5.19",
     "axios": "^1.13.2",
     "framer-motion": "^12.29.0",

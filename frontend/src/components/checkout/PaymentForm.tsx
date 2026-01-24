@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/common';
 import { PayPalButton } from './PayPalButton';
+import { StripePaymentForm } from './StripePaymentForm';
 
 export interface PaymentMethod {
   id: string;
@@ -119,8 +120,22 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
       </div>
 
-      {/* PayPal Button (if PayPal is selected) */}
-      {selectedMethod === 'paypal' && orderId && orderAmount ? (
+      {/* Stripe Card Payment (if Card is selected) */}
+      {selectedMethod === 'card' && orderAmount ? (
+        <StripePaymentForm
+          orderAmount={orderAmount}
+          onSuccess={(paymentMethodId) => {
+            console.log('Stripe payment method created:', paymentMethodId);
+            // Soumettre avec l'ID du Payment Method
+            onSubmit('card');
+          }}
+          onError={(error) => {
+            console.error('Stripe payment error:', error);
+          }}
+          onBack={onBack}
+        />
+      ) : selectedMethod === 'paypal' && orderId && orderAmount ? (
+        /* PayPal Button (if PayPal is selected) */
         <div className="space-y-4">
           <PayPalButton
             orderId={orderId}

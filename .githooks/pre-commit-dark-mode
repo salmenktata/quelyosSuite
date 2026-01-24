@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Hook pre-commit pour vérifier le dark mode dans le backoffice
+# Ce hook vérifie que tous les fichiers modifiés respectent les règles du dark mode
+
+# Obtenir la liste des fichiers modifiés (staged)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(backoffice/src/(pages|components)/.*\.tsx)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  # Aucun fichier TypeScript React modifié
+  exit 0
+fi
+
+echo "🌓 Vérification du dark mode sur les fichiers modifiés..."
+
+ERRORS=0
+
+for FILE in $STAGED_FILES; do
+  # Vérifier uniquement si le fichier existe (pas supprimé)
+  if [ ! -f "$FILE" ]; then
+    continue
+  fi
+
+  filename=$(basename "$FILE")
+
+  # Ignorer Login.tsx et certains composants spéciaux
+  if [[ "$filename" == "Login.tsx" ]] || [[ "$filename" == "DarkModeDebug.tsx" ]]; then
+    continue
+  fi
+
+  # Vérifier si le fichier contient bg-white sans dark:bg-
+  if grep -q 'className.*bg-white[^-]' "$FILE"; then
+    if ! grep -q 'dark:bg-' "$FILE"; then
+      echo "❌ $FILE - bg-white sans variante dark"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Vérifier si le fichier contient border-gray sans dark:border-
+  if grep -q 'className.*border-gray-[0-9]' "$FILE"; then
+    if ! grep -q 'dark:border-' "$FILE"; then
+      echo "⚠️  $FILE - Bordures grises sans variante dark (vérifier si nécessaire)"
+    fi
+  fi
+done
+
+if [ $ERRORS -gt 0 ]; then
+  echo ""
+  echo "❌ $ERRORS erreur(s) de dark mode détectée(s)"
+  echo ""
+  echo "Toutes les classes bg-white doivent avoir une variante dark:bg-gray-*"
+  echo "Consultez backoffice/DARK_MODE.md pour les bonnes pratiques"
+  echo ""
+  echo "Pour ignorer cette vérification (non recommandé) : git commit --no-verify"
+  exit 1
+fi
+
+echo "✅ Dark mode OK"
+exit 0

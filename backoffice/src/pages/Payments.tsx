@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { usePaymentTransactions } from '../hooks/usePayments'
-import { Badge, Button, Breadcrumbs, SkeletonTable } from '../components/common'
+import { usePaymentTransactions, useRefundTransaction, PaymentTransaction } from '../hooks/usePayments'
+import { Badge, Button, Breadcrumbs, SkeletonTable, Modal } from '../components/common'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 export default function Payments() {
   const [page, setPage] = useState(0)
   const [stateFilter, setStateFilter] = useState<string>('')
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [refundModalOpen, setRefundModalOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<PaymentTransaction | null>(null)
+  const [refundAmount, setRefundAmount] = useState<string>('')
+  const [refundReason, setRefundReason] = useState<string>('')
   const limit = 20
 
   const { data, isLoading, error } = usePaymentTransactions({
@@ -18,10 +23,43 @@ export default function Payments() {
     search: search || undefined,
   })
 
+  const refundMutation = useRefundTransaction()
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setSearch(searchInput)
     setPage(0)
+  }
+
+  const handleOpenRefundModal = (transaction: PaymentTransaction) => {
+    setSelectedTransaction(transaction)
+    setRefundAmount(transaction.amount.toString())
+    setRefundReason('')
+    setRefundModalOpen(true)
+  }
+
+  const handleCloseRefundModal = () => {
+    setRefundModalOpen(false)
+    setSelectedTransaction(null)
+    setRefundAmount('')
+    setRefundReason('')
+  }
+
+  const handleRefund = async () => {
+    if (!selectedTransaction) return
+
+    try {
+      await refundMutation.mutateAsync({
+        transactionId: selectedTransaction.id,
+        amount: parseFloat(refundAmount) || undefined,
+        reason: refundReason || undefined,
+      })
+
+      alert(`Remboursement de ${formatPrice(parseFloat(refundAmount), selectedTransaction.currency)} effectué avec succès !`)
+      handleCloseRefundModal()
+    } catch (error) {
+      alert("Erreur lors du remboursement : " + (error as Error).message)
+    }
   }
 
   const getStateVariant = (
@@ -220,6 +258,9 @@ export default function Payments() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Commande
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -274,6 +315,20 @@ export default function Payments() {
                             >
                               {transaction.order.name}
                             </Link>
+                          ) : (
+                            <span className="text-sm text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {transaction.state === 'done' ? (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleOpenRefundModal(transaction)}
+                              icon={<ArrowPathIcon className="h-4 w-4" />}
+                            >
+                              Rembourser
+                            </Button>
                           ) : (
                             <span className="text-sm text-gray-400">-</span>
                           )}
@@ -337,6 +392,95 @@ export default function Payments() {
             </div>
           )}
         </div>
+
+        {/* Modal de remboursement */}
+        <Modal
+          isOpen={refundModalOpen}
+          onClose={handleCloseRefundModal}
+          onConfirm={handleRefund}
+          title="Rembourser la transaction"
+          description={
+            selectedTransaction
+              ? `Remboursement de la transaction ${selectedTransaction.reference}`
+              : ''
+          }
+          confirmText="Confirmer le remboursement"
+          cancelText="Annuler"
+          variant="danger"
+          loading={refundMutation.isPending}
+          size="md"
+        >
+          <div className="space-y-4">
+            {selectedTransaction && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Montant à rembourser
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max={selectedTransaction.amount}
+                      value={refundAmount}
+                      onChange={(e) => setRefundAmount(e.target.value)}
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                      placeholder="Montant"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {selectedTransaction.currency}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Montant maximum : {formatPrice(selectedTransaction.amount, selectedTransaction.currency)}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Raison du remboursement
+                  </label>
+                  <textarea
+                    value={refundReason}
+                    onChange={(e) => setRefundReason(e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                    placeholder="Optionnel : expliquez la raison du remboursement..."
+                  />
+                </div>
+
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="w-5 h-5 text-amber-600 dark:text-amber-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
+                        Attention
+                      </p>
+                      <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                        Cette action changera l'état de la transaction à "Annulée" et annulera les commandes associées non terminées. Le remboursement réel doit être effectué manuellement via votre système de paiement.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </Modal>
       </div>
     </Layout>
   )

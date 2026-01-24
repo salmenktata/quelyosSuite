@@ -105,7 +105,7 @@ quelyos_api/
 
 ### Règles API REST
 
-- Préfixe : `/api/v1/`
+- Préfixe : `/api/v1/` (ou `/api/ecommerce/` pour Odoo)
 - Réponses JSON standardisées : `{ data: ..., error: ..., message: ... }`
 - Codes HTTP appropriés : 200, 201, 400, 401, 404, 500
 - CORS activé pour le frontend
@@ -117,6 +117,106 @@ quelyos_api/
 - Docstrings pour les méthodes publiques
 - Type hints pour les fonctions
 - Utiliser `sudo()` avec précaution, documenter pourquoi
+
+---
+
+## 🔄 Workflow de Développement Odoo (CRITIQUE)
+
+### ⚠️ Règle d'Or : Modification de Modèle = Upgrade de Module
+
+**TOUTE modification d'un modèle Odoo NÉCESSITE un upgrade du module pour synchroniser la base de données.**
+
+### Procédure Obligatoire
+
+Quand vous modifiez un fichier dans `backend/addons/quelyos_api/models/` :
+
+#### 1. Modifier le Code
+```python
+# backend/addons/quelyos_api/models/stock_quant.py
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    # ✅ Ajouter le nouveau champ
+    low_stock_threshold = fields.Float(
+        string='Seuil stock bas',
+        default=10.0,
+        help='Seuil en dessous duquel une alerte sera déclenchée'
+    )
+```
+
+#### 2. Incrémenter la Version du Module
+```python
+# backend/addons/quelyos_api/__manifest__.py
+{
+    'name': 'Quelyos API',
+    'version': '19.0.1.0.1',  # ✅ Incrémenter le dernier chiffre
+    ...
+}
+```
+
+#### 3. Upgrader le Module (OBLIGATOIRE)
+```bash
+cd backend
+./upgrade.sh quelyos_api
+
+# OU manuellement :
+# docker-compose exec odoo odoo -d quelyos -u quelyos_api --stop-after-init
+# docker-compose restart odoo
+```
+
+#### 4. Vérifier la Création de la Colonne
+```bash
+cd backend
+./check_fields.sh addons/quelyos_api/models/stock_quant.py product_template
+```
+
+#### 5. Tester l'API
+```bash
+curl -X POST http://localhost:8069/api/ecommerce/products \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"call","params":{"limit":1},"id":1}'
+```
+
+### Types de Changements Nécessitant un Upgrade
+
+✅ **Upgrade OBLIGATOIRE** :
+- Ajout/modification/suppression de champ dans un modèle (`fields.*`)
+- Modification de `__manifest__.py` (dépendances, data files)
+- Ajout/modification de fichiers XML dans `data/`
+- Ajout/modification de fichiers CSV dans `security/`
+- Changement de contraintes SQL (`_sql_constraints`)
+
+⚠️ **Upgrade RECOMMANDÉ** :
+- Modification de la logique métier dans les méthodes
+- Ajout de nouveaux endpoints API dans `controllers/`
+- Modification de computed fields
+
+ℹ️ **Pas d'upgrade nécessaire** :
+- Modification de logs
+- Modification de messages d'erreur (strings statiques)
+- Refactoring sans changement de signature
+
+### Scripts Disponibles
+
+| Script | Usage | Description |
+|--------|-------|-------------|
+| `backend/upgrade.sh` | `./upgrade.sh quelyos_api` | Upgrade du module + redémarrage + vérification santé |
+| `backend/check_fields.sh` | `./check_fields.sh <fichier.py> <table>` | Vérifie que tous les champs du modèle existent en DB |
+
+### Protection Git Hook
+
+Un hook pre-commit vérifie automatiquement :
+- ✅ Si des modèles ont été modifiés
+- ✅ Si la version du module a été incrémentée
+- ❌ Bloque le commit si incohérence détectée
+
+**Bypass (non recommandé)** : `git commit --no-verify`
+
+### Documentation Complète
+
+Pour plus de détails, consulter [backend/DEVELOPMENT.md](backend/DEVELOPMENT.md).
+
+---
 
 ### ⚠️ ALERTE : Modifications structurelles Odoo
 
@@ -1173,12 +1273,38 @@ await AskUserQuestion({
 ## Règles pour Claude
 
 1. **Au début de chaque nouvelle session, lire obligatoirement les fichiers `README.md` et `LOGME.md`** pour comprendre le contexte du projet, son architecture et l'historique récent des étapes réalisées
-2. Toujours lire le code existant avant de modifier
-3. Respecter les patterns déjà en place dans le projet
-4. Préférer les modifications minimales et ciblées
-5. Ne pas sur-ingénier : simple > complexe
-6. Valider avec les tests existants après modification
-7. Si une dépendance est nécessaire, vérifier qu'elle n'existe pas déjà
+
+2. **Toujours lire le code existant avant de modifier**
+
+3. **Respecter les patterns déjà en place dans le projet**
+
+4. **Préférer les modifications minimales et ciblées**
+
+5. **Ne pas sur-ingénier : simple > complexe**
+
+6. **Valider avec les tests existants après modification**
+
+7. **Si une dépendance est nécessaire, vérifier qu'elle n'existe pas déjà**
+
 8. **⚠️ CRITIQUE : TOUJOURS alerter l'utilisateur avec AskUserQuestion avant toute modification du schéma de base de données Odoo, des modèles, ou des endpoints API** (voir section "ALERTE : Modifications structurelles Odoo")
-9. **🎨 UX/UI : Appliquer systématiquement les principes de la section "Principes UX/UI Modernes (2026)" lors du développement d'interfaces** - L'objectif est de créer une expérience utilisateur exceptionnelle qui surpasse largement l'interface Odoo standard
-10. **🎯 PARITÉ FONCTIONNELLE : Avant toute déclaration de "module terminé", TOUJOURS effectuer un audit complet des fonctionnalités Odoo correspondantes et créer/mettre à jour le tableau de correspondance dans README.md** - Suivre les 5 règles de la section "Principe Fondamental : Parité Fonctionnelle Totale avec Odoo" pour garantir 100% de parité fonctionnelle sans modifier le modèle Odoo
+
+9. **🔄 WORKFLOW ODOO OBLIGATOIRE : Quand tu modifies un modèle Odoo (`backend/addons/quelyos_api/models/*.py`), tu DOIS SYSTÉMATIQUEMENT :**
+   - a) Incrémenter la version dans `__manifest__.py`
+   - b) Utiliser `AskUserQuestion` pour **AVERTIR** l'utilisateur qu'il devra upgrader le module :
+     ```
+     "J'ai modifié le modèle [NomModèle] en ajoutant le champ [nom_champ].
+
+      ⚠️ ACTION REQUISE APRÈS COMMIT :
+
+      1. cd backend && ./upgrade.sh quelyos_api
+      2. ./check_fields.sh addons/quelyos_api/models/fichier.py table_name
+      3. Tester l'API : curl http://localhost:8069/api/ecommerce/...
+
+      Souhaitez-vous que je procède avec ces modifications ?"
+     ```
+   - c) **NE JAMAIS** créer un commit avec modification de modèle sans avoir incrémenté la version
+   - d) Documenter le changement dans LOGME.md si c'est une fonctionnalité majeure
+
+10. **🎨 UX/UI : Appliquer systématiquement les principes de la section "Principes UX/UI Modernes (2026)" lors du développement d'interfaces** - L'objectif est de créer une expérience utilisateur exceptionnelle qui surpasse largement l'interface Odoo standard
+
+11. **🎯 PARITÉ FONCTIONNELLE : Avant toute déclaration de "module terminé", TOUJOURS effectuer un audit complet des fonctionnalités Odoo correspondantes et créer/mettre à jour le tableau de correspondance dans README.md** - Suivre les 5 règles de la section "Principe Fondamental : Parité Fonctionnelle Totale avec Odoo" pour garantir 100% de parité fonctionnelle sans modifier le modèle Odoo

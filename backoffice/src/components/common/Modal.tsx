@@ -55,7 +55,35 @@ export function Modal({
         }
       }
 
+      // Focus trap : empêche Tab de sortir du modal
+      const handleFocusTrap = (e: KeyboardEvent) => {
+        if (e.key !== 'Tab' || !modalRef.current) return
+
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+
+        const focusableArray = Array.from(focusableElements)
+        const firstFocusable = focusableArray[0]
+        const lastFocusable = focusableArray[focusableArray.length - 1]
+
+        if (e.shiftKey) {
+          // Shift+Tab : si focus sur premier élément, aller au dernier
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault()
+            lastFocusable?.focus()
+          }
+        } else {
+          // Tab : si focus sur dernier élément, aller au premier
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault()
+            firstFocusable?.focus()
+          }
+        }
+      }
+
       document.addEventListener('keydown', handleEscape)
+      document.addEventListener('keydown', handleFocusTrap)
       document.addEventListener('mousedown', handleClickOutside)
 
       const firstFocusable = modalRef.current?.querySelector<HTMLElement>(
@@ -65,6 +93,7 @@ export function Modal({
 
       return () => {
         document.removeEventListener('keydown', handleEscape)
+        document.removeEventListener('keydown', handleFocusTrap)
         document.removeEventListener('mousedown', handleClickOutside)
         previousActiveElement?.focus()
       }

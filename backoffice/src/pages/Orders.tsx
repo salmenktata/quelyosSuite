@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { useOrders } from '../hooks/useOrders'
 import { Badge, Button, Breadcrumbs, SkeletonTable } from '../components/common'
+import { OrdersKanban } from '../components/OrdersKanban'
+import { Squares2X2Icon, TableCellsIcon } from '@heroicons/react/24/outline'
 
 export default function Orders() {
   const [page, setPage] = useState(0)
@@ -11,6 +13,7 @@ export default function Orders() {
   const [searchInput, setSearchInput] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list')
   const limit = 20
 
   const { data, isLoading, error } = useOrders({
@@ -103,11 +106,126 @@ export default function Orders() {
           ]}
         />
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Commandes</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Gérer et suivre toutes les commandes
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Commandes</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Gérer et suivre toutes les commandes
+            </p>
+          </div>
+
+          {/* Toggle Vue Liste/Kanban */}
+          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                viewMode === 'list'
+                  ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <TableCellsIcon className="h-5 w-5" />
+              Liste
+            </button>
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                viewMode === 'kanban'
+                  ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <Squares2X2Icon className="h-5 w-5" />
+              Kanban
+            </button>
+          </div>
+        </div>
+
+        {/* Filtres rapides par état (Pills) */}
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Filtres rapides :
+            </span>
+            <button
+              onClick={() => {
+                setStatusFilter('')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === ''
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Tous
+            </button>
+            <button
+              onClick={() => {
+                setStatusFilter('draft')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === 'draft'
+                  ? 'bg-gray-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              📝 Brouillons
+            </button>
+            <button
+              onClick={() => {
+                setStatusFilter('sent')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === 'sent'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              📧 Envoyés
+            </button>
+            <button
+              onClick={() => {
+                setStatusFilter('sale')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === 'sale'
+                  ? 'bg-green-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              ✅ Confirmés
+            </button>
+            <button
+              onClick={() => {
+                setStatusFilter('done')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === 'done'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              🎉 Terminés
+            </button>
+            <button
+              onClick={() => {
+                setStatusFilter('cancel')
+                setPage(0)
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                statusFilter === 'cancel'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              ❌ Annulés
+            </button>
+          </div>
         </div>
 
         {/* Filtres avancés */}
@@ -264,17 +382,40 @@ export default function Orders() {
           </div>
         </div>
 
-        {/* Liste des commandes */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          {isLoading ? (
-            <SkeletonTable rows={5} columns={6} />
+        {/* Vue Kanban ou Liste */}
+        {viewMode === 'kanban' ? (
+          /* Vue Kanban */
+          isLoading ? (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
+              <SkeletonTable rows={5} columns={5} />
+            </div>
           ) : error ? (
-            <div className="p-8 text-center text-red-600 dark:text-red-400">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des commandes
             </div>
-          ) : orders.length > 0 ? (
-            <>
-              <div className="overflow-x-auto">
+          ) : (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <OrdersKanban
+                orders={orders}
+                onOrderUpdate={() => {
+                  // Refresh data after order update
+                  window.location.reload()
+                }}
+              />
+            </div>
+          )
+        ) : (
+          /* Vue Liste */
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+            {isLoading ? (
+              <SkeletonTable rows={5} columns={6} />
+            ) : error ? (
+              <div className="p-8 text-center text-red-600 dark:text-red-400">
+                Erreur lors du chargement des commandes
+              </div>
+            ) : orders.length > 0 ? (
+              <>
+                <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -412,7 +553,9 @@ export default function Orders() {
               )}
             </div>
           )}
-        </div>
+          </div>
+        )}
+
       </div>
     </Layout>
   )
