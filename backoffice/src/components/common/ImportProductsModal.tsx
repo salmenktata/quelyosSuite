@@ -53,6 +53,8 @@ export function ImportProductsModal({
   } | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
   const [isImporting, setIsImporting] = useState(false)
+  const [previewPage, setPreviewPage] = useState(0)
+  const previewPageSize = 20
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetModal = useCallback(() => {
@@ -62,6 +64,7 @@ export function ImportProductsModal({
     setImportResult(null)
     setParseError(null)
     setIsImporting(false)
+    setPreviewPage(0)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -327,7 +330,7 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
         {step === 'preview' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-700 dark:text-gray-300">
                 {parsedData.length} produit{parsedData.length > 1 ? 's' : ''} détecté
                 {parsedData.length > 1 ? 's' : ''}
               </p>
@@ -344,48 +347,77 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
               </label>
             </div>
 
-            <div className="max-h-[300px] overflow-auto border border-gray-200 dark:border-gray-700 rounded-lg">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 dark:bg-gray-900 sticky top-0">
-                  <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                      #
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                      Nom
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                      Prix
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                      SKU
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                      Catégorie
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {parsedData.slice(0, 50).map((row, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{idx + 1}</td>
-                      <td className="px-3 py-2 text-gray-900 dark:text-white">{row.name}</td>
-                      <td className="px-3 py-2 text-gray-600 dark:text-gray-400">
-                        {row.price ? `${row.price.toFixed(2)} €` : '—'}
-                      </td>
-                      <td className="px-3 py-2 font-mono text-gray-600 dark:text-gray-400">
-                        {row.default_code || '—'}
-                      </td>
-                      <td className="px-3 py-2 text-gray-600 dark:text-gray-400">
-                        {row.category || '—'}
-                      </td>
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <div className="max-h-80 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 dark:bg-gray-900 sticky top-0">
+                    <tr>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                        #
+                      </th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Nom
+                      </th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Prix
+                      </th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                        SKU
+                      </th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Catégorie
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              {parsedData.length > 50 && (
-                <div className="px-3 py-2 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900">
-                  ... et {parsedData.length - 50} autres produits
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {parsedData
+                      .slice(previewPage * previewPageSize, (previewPage + 1) * previewPageSize)
+                      .map((row, idx) => {
+                        const globalIdx = previewPage * previewPageSize + idx
+                        return (
+                          <tr key={globalIdx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{globalIdx + 1}</td>
+                            <td className="px-3 py-2 text-gray-900 dark:text-white">{row.name}</td>
+                            <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                              {row.price ? `${row.price.toFixed(2)} €` : '—'}
+                            </td>
+                            <td className="px-3 py-2 font-mono text-gray-700 dark:text-gray-300">
+                              {row.default_code || '—'}
+                            </td>
+                            <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                              {row.category || '—'}
+                            </td>
+                          </tr>
+                        )
+                      })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination de la preview */}
+              {parsedData.length > previewPageSize && (
+                <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {previewPage * previewPageSize + 1}-{Math.min((previewPage + 1) * previewPageSize, parsedData.length)} sur {parsedData.length}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreviewPage(Math.max(0, previewPage - 1))}
+                      disabled={previewPage === 0}
+                    >
+                      Précédent
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreviewPage(Math.min(Math.ceil(parsedData.length / previewPageSize) - 1, previewPage + 1))}
+                      disabled={previewPage >= Math.ceil(parsedData.length / previewPageSize) - 1}
+                    >
+                      Suivant
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,10 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
 
-export function useCategories(params?: { limit?: number; offset?: number }) {
+export function useCategories(params?: {
+  limit?: number
+  offset?: number
+  search?: string
+  include_tree?: boolean
+}) {
   return useQuery({
     queryKey: ['categories', params],
     queryFn: () => api.getCategories(params),
+  })
+}
+
+export function useCategoriesTree() {
+  return useQuery({
+    queryKey: ['categories', 'tree'],
+    queryFn: () => api.getCategories({ include_tree: true }),
   })
 }
 
@@ -46,6 +58,18 @@ export function useDeleteCategory() {
 
   return useMutation({
     mutationFn: (id: number) => api.deleteCategory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+  })
+}
+
+export function useMoveCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, newParentId }: { id: number; newParentId: number | null }) =>
+      api.moveCategory(id, newParentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] })
     },

@@ -119,26 +119,39 @@ export default function ProductForm() {
     }
   }, [isEditing, productData])
 
+  // Validation d'un champ individuel (temps réel)
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case 'name':
+        if (!value.trim()) return 'Le nom est obligatoire'
+        if (value.trim().length < 2) return 'Le nom doit contenir au moins 2 caractères'
+        return ''
+      case 'price':
+        if (!value) return 'Le prix est obligatoire'
+        if (isNaN(Number(value)) || Number(value) < 0) return 'Le prix doit être un nombre positif'
+        return ''
+      case 'standard_price':
+        if (value && (isNaN(Number(value)) || Number(value) < 0)) return 'Le prix d\'achat doit être un nombre positif'
+        return ''
+      case 'weight':
+        if (value && (isNaN(Number(value)) || Number(value) < 0)) return 'Le poids doit être un nombre positif'
+        return ''
+      case 'barcode':
+        if (value && !/^\d{8,14}$/.test(value)) return 'Le code-barres doit contenir 8 à 14 chiffres'
+        return ''
+      default:
+        return ''
+    }
+  }
+
   const validate = () => {
     const newErrors: Record<string, string> = {}
+    const fieldsToValidate = ['name', 'price', 'standard_price', 'weight', 'barcode']
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Le nom est obligatoire'
-    }
-
-    if (!formData.price) {
-      newErrors.price = 'Le prix est obligatoire'
-    } else if (isNaN(Number(formData.price)) || Number(formData.price) < 0) {
-      newErrors.price = 'Le prix doit être un nombre positif'
-    }
-
-    if (formData.standard_price && (isNaN(Number(formData.standard_price)) || Number(formData.standard_price) < 0)) {
-      newErrors.standard_price = 'Le prix d\'achat doit être un nombre positif'
-    }
-
-    if (formData.weight && (isNaN(Number(formData.weight)) || Number(formData.weight) < 0)) {
-      newErrors.weight = 'Le poids doit être un nombre positif'
-    }
+    fieldsToValidate.forEach((field) => {
+      const error = validateField(field, formData[field as keyof typeof formData] as string)
+      if (error) newErrors[field] = error
+    })
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -215,15 +228,21 @@ export default function ProductForm() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
-    // Effacer l'erreur du champ modifié
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }))
+    // Marquer comme touché lors de la première modification
+    if (!touched[name]) {
+      setTouched((prev) => ({ ...prev, [name]: true }))
     }
+
+    // Validation temps réel (immédiate)
+    const error = validateField(name, value)
+    setErrors((prev) => ({ ...prev, [name]: error }))
   }
 
   const handleBlur = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }))
-    validate()
+    // Revalider à la perte de focus
+    const error = validateField(field, formData[field as keyof typeof formData] as string)
+    setErrors((prev) => ({ ...prev, [field]: error }))
   }
 
   if (isEditing && isLoadingProduct) {
@@ -271,17 +290,25 @@ export default function ProductForm() {
           </p>
         </div>
 
-        {/* Onglets (en mode édition) */}
+        {/* Onglets (en mode édition) avec animation */}
         {isEditing && (
           <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
-            <nav className="-mb-px flex space-x-8">
+            <nav className="-mb-px flex space-x-8 relative">
+              {/* Indicateur animé */}
+              <div
+                className="absolute bottom-0 h-0.5 bg-indigo-500 transition-all duration-300 ease-out"
+                style={{
+                  left: activeTab === 'general' ? '0%' : activeTab === 'variants' ? '33.33%' : '66.66%',
+                  width: activeTab === 'general' ? '160px' : activeTab === 'variants' ? '90px' : '50px',
+                }}
+              />
               <button
                 type="button"
                 onClick={() => setActiveTab('general')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-2 px-1 font-medium text-sm transition-all duration-200 ${
                   activeTab === 'general'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                    ? 'text-indigo-600 dark:text-indigo-400 scale-105'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
                 Informations générales
@@ -289,10 +316,10 @@ export default function ProductForm() {
               <button
                 type="button"
                 onClick={() => setActiveTab('variants')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-2 px-1 font-medium text-sm transition-all duration-200 ${
                   activeTab === 'variants'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                    ? 'text-indigo-600 dark:text-indigo-400 scale-105'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
                 Variantes
@@ -305,10 +332,10 @@ export default function ProductForm() {
               <button
                 type="button"
                 onClick={() => setActiveTab('stock')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-2 px-1 font-medium text-sm transition-all duration-200 ${
                   activeTab === 'stock'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                    ? 'text-indigo-600 dark:text-indigo-400 scale-105'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
                 Stock
@@ -318,7 +345,7 @@ export default function ProductForm() {
         )}
 
         {/* Contenu */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 transition-all duration-300">
           {/* Onglet Général */}
           {(activeTab === 'general' || !isEditing) && (
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -334,6 +361,7 @@ export default function ProductForm() {
                     onChange={handleChange}
                     onBlur={() => handleBlur('name')}
                     error={touched.name ? errors.name : undefined}
+                    success={touched.name && !errors.name && formData.name.length >= 2}
                     required
                     placeholder="Ex: T-shirt Nike Air"
                   />
@@ -350,6 +378,7 @@ export default function ProductForm() {
                   onChange={handleChange}
                   onBlur={() => handleBlur('price')}
                   error={touched.price ? errors.price : undefined}
+                  success={touched.price && !errors.price && Number(formData.price) > 0}
                   required
                   placeholder="49.99"
                   icon={
@@ -895,7 +924,6 @@ export default function ProductForm() {
           )}
         </div>
 
-        {/* ToastContainer */}
         <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} position="top-right" />
       </div>
     </Layout>

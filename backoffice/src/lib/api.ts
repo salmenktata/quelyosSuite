@@ -563,8 +563,18 @@ class ApiClient {
 
   // ==================== CATEGORIES ====================
 
-  async getCategories(params?: { limit?: number; offset?: number }) {
-    return this.request<ApiResponse<{ categories: Category[] }>>(
+  async getCategories(params?: {
+    limit?: number
+    offset?: number
+    search?: string
+    include_tree?: boolean
+  }) {
+    return this.request<ApiResponse<{
+      categories: Category[]
+      total: number
+      limit: number
+      offset: number
+    }>>(
       '/api/ecommerce/categories',
       params
     )
@@ -592,6 +602,13 @@ class ApiClient {
 
   async deleteCategory(id: number) {
     return this.request<ApiResponse>(`/api/ecommerce/categories/${id}/delete`)
+  }
+
+  async moveCategory(id: number, newParentId: number | null) {
+    return this.request<ApiResponse<{ category: Category }>>(
+      `/api/ecommerce/categories/${id}/move`,
+      { parent_id: newParentId }
+    )
   }
 
   // ==================== ORDERS ====================

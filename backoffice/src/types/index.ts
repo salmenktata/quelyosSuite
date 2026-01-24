@@ -175,8 +175,27 @@ export interface ProductUpdateData {
 export interface Category {
   id: number
   name: string
+  complete_name?: string
   parent_id: number | null
   parent_name: string | null
+  product_count?: number
+  total_product_count?: number
+  child_count?: number
+  children?: Category[]
+}
+
+export interface CategoriesQueryParams {
+  limit?: number
+  offset?: number
+  search?: string
+  include_tree?: boolean
+}
+
+export interface CategoriesResponse {
+  categories: Category[]
+  total: number
+  limit: number
+  offset: number
 }
 
 // ==================== ORDERS ====================

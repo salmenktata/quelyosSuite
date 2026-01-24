@@ -46,7 +46,39 @@ export function useDeleteProduct() {
 
   return useMutation({
     mutationFn: (id: number) => api.deleteProduct(id),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['products'] })
+
+      // Snapshot previous value
+      const previousProducts = queryClient.getQueriesData({ queryKey: ['products'] })
+
+      // Optimistically remove from list
+      queryClient.setQueriesData({ queryKey: ['products'] }, (old: unknown) => {
+        if (!old || typeof old !== 'object') return old
+        const data = old as { data?: { products?: Array<{ id: number }>; total?: number } }
+        if (!data.data?.products) return old
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            products: data.data.products.filter((p) => p.id !== id),
+            total: (data.data.total || 0) - 1,
+          },
+        }
+      })
+
+      return { previousProducts }
+    },
+    onError: (_err, _id, context) => {
+      // Rollback on error
+      if (context?.previousProducts) {
+        context.previousProducts.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data)
+        })
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
     },
   })
@@ -58,7 +90,40 @@ export function useArchiveProduct() {
   return useMutation({
     mutationFn: ({ id, archive }: { id: number; archive: boolean }) =>
       api.archiveProduct(id, archive),
-    onSuccess: () => {
+    onMutate: async ({ id, archive }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['products'] })
+
+      // Snapshot previous value
+      const previousProducts = queryClient.getQueriesData({ queryKey: ['products'] })
+
+      // Optimistically update
+      queryClient.setQueriesData({ queryKey: ['products'] }, (old: unknown) => {
+        if (!old || typeof old !== 'object') return old
+        const data = old as { data?: { products?: Array<{ id: number; active: boolean }> } }
+        if (!data.data?.products) return old
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            products: data.data.products.map((p) =>
+              p.id === id ? { ...p, active: !archive } : p
+            ),
+          },
+        }
+      })
+
+      return { previousProducts }
+    },
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      if (context?.previousProducts) {
+        context.previousProducts.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data)
+        })
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
     },
   })

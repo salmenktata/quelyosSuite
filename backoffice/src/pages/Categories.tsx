@@ -1,25 +1,117 @@
-import { useState } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Layout } from '../components/Layout'
-import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../hooks/useCategories'
-import { Button, Input, Modal, Breadcrumbs, SkeletonTable } from '../components/common'
+import {
+  useCategoriesTree,
+  useCategories,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  useMoveCategory,
+} from '../hooks/useCategories'
+import {
+  Button,
+  Input,
+  Modal,
+  Breadcrumbs,
+  SkeletonTable,
+  Badge,
+  CategoryTree,
+} from '../components/common'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/common/Toast'
+import { Category } from '../types'
+
+// Debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
 
 export default function Categories() {
-  const { data: categoriesData, isLoading, error } = useCategories()
-  const createCategoryMutation = useCreateCategory()
-  const updateCategoryMutation = useUpdateCategory()
-  const deleteCategoryMutation = useDeleteCategory()
+  // State
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<'tree' | 'list'>('tree')
+  const [isCreating, setIsCreating] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [deleteModal, setDeleteModal] = useState<{ id: number; name: string } | null>(null)
+  const [formData, setFormData] = useState({ name: '', parent_id: '' })
+
+  const debouncedSearch = useDebounce(searchQuery, 300)
 
   const toast = useToast()
 
-  const [isCreating, setIsCreating] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [formData, setFormData] = useState({ name: '', parent_id: '' })
-  const [deleteModal, setDeleteModal] = useState<{ id: number; name: string } | null>(null)
+  // Queries
+  const {
+    data: treeData,
+    isLoading: isTreeLoading,
+    error: treeError,
+  } = useCategoriesTree()
 
-  const categories = categoriesData?.data?.categories || []
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+  } = useCategories({
+    search: debouncedSearch || undefined,
+    include_tree: false,
+  })
 
+  // Mutations
+  const createCategoryMutation = useCreateCategory()
+  const updateCategoryMutation = useUpdateCategory()
+  const deleteCategoryMutation = useDeleteCategory()
+  const moveCategoryMutation = useMoveCategory()
+
+  // Computed
+  const isLoading = isTreeLoading || isSearchLoading
+  const error = treeError
+
+  // Catégories à afficher (arbre ou résultats de recherche)
+  const displayCategories = useMemo(() => {
+    if (debouncedSearch) {
+      return searchData?.data?.categories || []
+    }
+    return treeData?.data?.categories || []
+  }, [debouncedSearch, searchData, treeData])
+
+  // Liste plate pour le sélecteur de parent
+  const flatCategories = useMemo(() => {
+    if (!treeData?.data?.categories) return []
+
+    const flatten = (cats: Category[], result: Category[] = []): Category[] => {
+      for (const cat of cats) {
+        result.push(cat)
+        if (cat.children) {
+          flatten(cat.children, result)
+        }
+      }
+      return result
+    }
+
+    return flatten(treeData.data.categories)
+  }, [treeData])
+
+  // Stats
+  const stats = useMemo(() => {
+    const totalCategories = flatCategories.length
+    const rootCategories = (treeData?.data?.categories || []).length
+    const totalProducts = flatCategories.reduce((sum, cat) => sum + (cat.product_count || 0), 0)
+    const emptyCategories = flatCategories.filter((cat) => !cat.product_count || cat.product_count === 0).length
+
+    return { totalCategories, rootCategories, totalProducts, emptyCategories }
+  }, [flatCategories, treeData])
+
+  // Handlers
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name.trim()) return
@@ -37,12 +129,13 @@ export default function Categories() {
     }
   }
 
-  const handleUpdate = async (id: number) => {
-    if (!formData.name.trim()) return
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingCategory || !formData.name.trim()) return
 
     try {
       await updateCategoryMutation.mutateAsync({
-        id,
+        id: editingCategory.id,
         data: {
           name: formData.name,
           parent_id: formData.parent_id ? Number(formData.parent_id) : null,
@@ -50,7 +143,7 @@ export default function Categories() {
       })
       toast.success(`La catégorie "${formData.name}" a été modifiée avec succès`)
       setFormData({ name: '', parent_id: '' })
-      setEditingId(null)
+      setEditingCategory(null)
     } catch (error) {
       toast.error('Erreur lors de la modification de la catégorie')
     }
@@ -68,8 +161,20 @@ export default function Categories() {
     }
   }
 
-  const startEdit = (category: { id: number; name: string; parent_id: number | null }) => {
-    setEditingId(category.id)
+  const handleMove = useCallback(
+    async (categoryId: number, newParentId: number | null) => {
+      try {
+        await moveCategoryMutation.mutateAsync({ id: categoryId, newParentId })
+        toast.success('Catégorie déplacée avec succès')
+      } catch (error) {
+        toast.error('Erreur lors du déplacement de la catégorie')
+      }
+    },
+    [moveCategoryMutation, toast]
+  )
+
+  const startEdit = (category: Category) => {
+    setEditingCategory(category)
     setFormData({
       name: category.name,
       parent_id: category.parent_id?.toString() || '',
@@ -78,9 +183,15 @@ export default function Categories() {
   }
 
   const cancelEdit = () => {
-    setEditingId(null)
+    setEditingCategory(null)
     setIsCreating(false)
     setFormData({ name: '', parent_id: '' })
+  }
+
+  const openCreateModal = () => {
+    setFormData({ name: '', parent_id: '' })
+    setEditingCategory(null)
+    setIsCreating(true)
   }
 
   return (
@@ -95,96 +206,161 @@ export default function Categories() {
         />
 
         {/* En-tête */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Catégories</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              {categories.length} catégorie{categories.length > 1 ? 's' : ''}
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Catégories
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Organisez vos produits en catégories hiérarchiques
             </p>
           </div>
-          {!isCreating && !editingId && (
-            <Button
-              variant="primary"
-              onClick={() => setIsCreating(true)}
-              icon={
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              }
-            >
-              Nouvelle catégorie
-            </Button>
-          )}
+          <Button
+            variant="primary"
+            onClick={openCreateModal}
+            icon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            }
+          >
+            Nouvelle catégorie
+          </Button>
         </div>
 
-        {/* Contenu */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+        {/* Statistiques */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+              {stats.totalCategories}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Catégories totales
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+              {stats.rootCategories}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Catégories racines
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {stats.totalProducts}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Produits catégorisés
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+              {stats.emptyCategories}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Catégories vides
+            </div>
+          </div>
+        </div>
+
+        {/* Barre de recherche et contrôles */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+          <div className="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between border-b border-gray-200 dark:border-gray-700">
+            {/* Recherche */}
+            <div className="relative w-full sm:w-80">
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Rechercher une catégorie..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {/* Contrôles */}
+            <div className="flex items-center gap-2">
+              {/* Toggle vue */}
+              <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('tree')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    viewMode === 'tree'
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </button>
+              </div>
+
+              {searchQuery && (
+                <Badge variant="info">
+                  {displayCategories.length} résultat{displayCategories.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Contenu */}
           {isLoading ? (
-            <SkeletonTable rows={5} columns={3} />
+            <SkeletonTable rows={8} columns={4} />
           ) : error ? (
             <div className="p-8 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des catégories
+              <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p>Erreur lors du chargement des catégories</p>
             </div>
+          ) : viewMode === 'tree' ? (
+            <CategoryTree
+              categories={displayCategories}
+              onEdit={startEdit}
+              onDelete={(cat) => setDeleteModal({ id: cat.id, name: cat.name })}
+              onMove={handleMove}
+              isMoving={moveCategoryMutation.isPending}
+            />
           ) : (
-            <>
-              {/* Formulaire de création */}
-              {isCreating && (
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-indigo-50 dark:bg-indigo-900/20">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Nouvelle catégorie
-                  </h3>
-                  <form onSubmit={handleCreate} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Input
-                        label="Nom"
-                        id="create-name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Ex: Vêtements"
-                        required
-                      />
-                      <div>
-                        <label htmlFor="create-parent" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Catégorie parente
-                        </label>
-                        <select
-                          id="create-parent"
-                          value={formData.parent_id}
-                          onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none"
-                        >
-                          <option value="">Aucune (catégorie racine)</option>
-                          {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
-                              {cat.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="submit"
-                        variant="primary"
-                        loading={createCategoryMutation.isPending}
-                        disabled={createCategoryMutation.isPending}
-                      >
-                        Créer
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={cancelEdit}
-                      >
-                        Annuler
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {/* Liste des catégories */}
-              {categories.length === 0 && !isCreating ? (
+            /* Vue liste simple */
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {displayCategories.length === 0 ? (
                 <div className="p-8 text-center">
                   <svg
                     className="w-16 h-16 mx-auto text-gray-400 mb-4"
@@ -200,120 +376,142 @@ export default function Categories() {
                     />
                   </svg>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Aucune catégorie
+                    {searchQuery ? 'Aucun résultat' : 'Aucune catégorie'}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
-                    Créez votre première catégorie pour organiser vos produits
+                    {searchQuery
+                      ? `Aucune catégorie ne correspond à "${searchQuery}"`
+                      : 'Créez votre première catégorie pour organiser vos produits'}
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => setIsCreating(true)}
-                  >
-                    Créer une catégorie
-                  </Button>
+                  {!searchQuery && (
+                    <Button variant="primary" onClick={openCreateModal}>
+                      Créer une catégorie
+                    </Button>
+                  )}
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {categories.map((category) => (
-                    <div
-                      key={category.id}
-                      className={`p-6 ${
-                        editingId === category.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      } transition-colors`}
-                    >
-                      {editingId === category.id ? (
-                        // Mode édition
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault()
-                            handleUpdate(category.id)
-                          }}
-                          className="space-y-4"
-                        >
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Input
-                              label="Nom"
-                              value={formData.name}
-                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                              required
-                            />
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Catégorie parente
-                              </label>
-                              <select
-                                value={formData.parent_id}
-                                onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none"
-                              >
-                                <option value="">Aucune (catégorie racine)</option>
-                                {categories
-                                  .filter((cat) => cat.id !== category.id)
-                                  .map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                      {cat.name}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="submit"
-                              variant="primary"
-                              loading={updateCategoryMutation.isPending}
-                              disabled={updateCategoryMutation.isPending}
-                            >
-                              Enregistrer
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              onClick={cancelEdit}
-                            >
-                              Annuler
-                            </Button>
-                          </div>
-                        </form>
-                      ) : (
-                        // Mode affichage
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                              {category.name}
-                            </h3>
-                            {category.parent_name && (
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Sous-catégorie de : <span className="font-medium">{category.parent_name}</span>
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => startEdit(category)}
-                            >
-                              Modifier
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => setDeleteModal({ id: category.id, name: category.name })}
-                              disabled={deleteCategoryMutation.isPending}
-                            >
-                              Supprimer
-                            </Button>
-                          </div>
+                displayCategories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-5 h-5 text-yellow-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                      </svg>
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {category.name}
                         </div>
-                      )}
+                        {category.complete_name && category.complete_name !== category.name && (
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {category.complete_name}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="flex items-center gap-3">
+                      {category.product_count !== undefined && category.product_count > 0 && (
+                        <Badge variant="info">
+                          {category.product_count} produit{category.product_count > 1 ? 's' : ''}
+                        </Badge>
+                      )}
+                      <Button variant="ghost" size="sm" onClick={() => startEdit(category)}>
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => setDeleteModal({ id: category.id, name: category.name })}
+                      >
+                        Supprimer
+                      </Button>
+                    </div>
+                  </div>
+                ))
               )}
-            </>
+            </div>
+          )}
+
+          {/* Info drag & drop */}
+          {viewMode === 'tree' && displayCategories.length > 0 && !searchQuery && (
+            <div className="p-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400 text-center">
+              <svg className="w-4 h-4 inline-block mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+              </svg>
+              Glissez-déposez les catégories pour réorganiser la hiérarchie
+            </div>
           )}
         </div>
+
+        {/* Modal de création/édition */}
+        <Modal
+          isOpen={isCreating || !!editingCategory}
+          onClose={cancelEdit}
+          title={editingCategory ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
+          description={
+            editingCategory
+              ? 'Modifiez les informations de la catégorie'
+              : 'Créez une nouvelle catégorie pour organiser vos produits'
+          }
+        >
+          <form onSubmit={editingCategory ? handleUpdate : handleCreate} className="space-y-4">
+            <Input
+              label="Nom de la catégorie"
+              id="category-name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Ex: Vêtements"
+              required
+              autoFocus
+            />
+
+            <div>
+              <label
+                htmlFor="category-parent"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Catégorie parente
+              </label>
+              <select
+                id="category-parent"
+                value={formData.parent_id}
+                onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none"
+              >
+                <option value="">Aucune (catégorie racine)</option>
+                {flatCategories
+                  .filter((cat) => cat.id !== editingCategory?.id)
+                  .map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.complete_name || cat.name}
+                    </option>
+                  ))}
+              </select>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Laissez vide pour créer une catégorie racine
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="secondary" onClick={cancelEdit}>
+                Annuler
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                loading={createCategoryMutation.isPending || updateCategoryMutation.isPending}
+                disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending}
+              >
+                {editingCategory ? 'Enregistrer' : 'Créer'}
+              </Button>
+            </div>
+          </form>
+        </Modal>
 
         {/* Modal de confirmation de suppression */}
         <Modal
@@ -321,7 +519,7 @@ export default function Categories() {
           onClose={() => setDeleteModal(null)}
           onConfirm={handleDeleteConfirm}
           title="Supprimer la catégorie"
-          description={`Êtes-vous sûr de vouloir supprimer la catégorie "${deleteModal?.name}" ? Cette action est irréversible.`}
+          description={`Êtes-vous sûr de vouloir supprimer la catégorie "${deleteModal?.name}" ? Cette action est irréversible et les produits associés seront décatégorisés.`}
           confirmText="Supprimer"
           cancelText="Annuler"
           variant="danger"

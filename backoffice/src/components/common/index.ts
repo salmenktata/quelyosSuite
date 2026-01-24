@@ -8,6 +8,9 @@ export type { BadgeProps } from './Badge'
 export { Input } from './Input'
 export type { InputProps } from './Input'
 
+export { SearchAutocomplete } from './SearchAutocomplete'
+export type { SearchAutocompleteProps, SearchSuggestion } from './SearchAutocomplete'
+
 export { Modal } from './Modal'
 export type { ModalProps } from './Modal'
 
@@ -35,3 +38,5 @@ export { AttributeValueImageGallery } from './AttributeValueImageGallery'
 export { AttributeImageManager } from './AttributeImageManager'
 
 export { ImportProductsModal } from './ImportProductsModal'
+
+export { CategoryTree } from './CategoryTree'

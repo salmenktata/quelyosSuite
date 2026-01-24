@@ -2327,30 +2327,70 @@ class QuelyosAPI(http.Controller):
 
     @http.route('/api/ecommerce/categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_categories_list(self, **kwargs):
-        """Liste des catégories (GET via JSON-RPC)"""
+        """Liste des catégories avec compteur produits, sous-catégories et recherche"""
         try:
             params = self._get_params()
             limit = int(params.get('limit', 100))
             offset = int(params.get('offset', 0))
+            search = params.get('search', '')
+            include_tree = params.get('include_tree', False)
 
-            categories = request.env['product.category'].sudo().search(
-                [],
+            # Construire le domaine de recherche
+            domain = []
+            if search:
+                domain = [('name', 'ilike', search)]
+
+            Category = request.env['product.category'].sudo()
+            Product = request.env['product.template'].sudo()
+
+            # Compter le total pour la pagination
+            total = Category.search_count(domain)
+
+            categories = Category.search(
+                domain,
                 limit=limit,
                 offset=offset,
-                order='name'
+                order='parent_id, name'
             )
 
-            data = [{
-                'id': c.id,
-                'name': c.name,
-                'parent_id': c.parent_id.id if c.parent_id else None,
-                'parent_name': c.parent_id.name if c.parent_id else None,
-            } for c in categories]
+            def get_category_data(c):
+                """Construire les données d'une catégorie"""
+                # Compter les produits directement dans cette catégorie
+                product_count = Product.search_count([('categ_id', '=', c.id)])
+                # Compter tous les produits (incluant sous-catégories)
+                total_product_count = Product.search_count([('categ_id', 'child_of', c.id)])
+
+                data = {
+                    'id': c.id,
+                    'name': c.name,
+                    'complete_name': c.complete_name,
+                    'parent_id': c.parent_id.id if c.parent_id else None,
+                    'parent_name': c.parent_id.name if c.parent_id else None,
+                    'product_count': product_count,
+                    'total_product_count': total_product_count,
+                    'child_count': len(c.child_id),
+                }
+
+                # Inclure les enfants si demandé
+                if include_tree and c.child_id:
+                    data['children'] = [get_category_data(child) for child in c.child_id]
+
+                return data
+
+            # Si on veut l'arbre, ne retourner que les catégories racines
+            if include_tree and not search:
+                root_categories = Category.search([('parent_id', '=', False)], order='name')
+                data = [get_category_data(c) for c in root_categories]
+            else:
+                data = [get_category_data(c) for c in categories]
 
             return {
                 'success': True,
                 'data': {
-                    'categories': data
+                    'categories': data,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset
                 }
             }
 
@@ -2505,6 +2545,75 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Delete category error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/categories/<int:category_id>/move', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def move_category(self, category_id, **kwargs):
+        """Déplacer une catégorie vers un nouveau parent (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            category = request.env['product.category'].sudo().browse(category_id)
+
+            if not category.exists():
+                return {
+                    'success': False,
+                    'error': 'Category not found'
+                }
+
+            params = self._get_params()
+            new_parent_id = params.get('parent_id')
+
+            # Vérifier qu'on ne crée pas de boucle (catégorie ne peut pas être son propre parent)
+            if new_parent_id:
+                new_parent = request.env['product.category'].sudo().browse(int(new_parent_id))
+                if not new_parent.exists():
+                    return {
+                        'success': False,
+                        'error': 'New parent category not found'
+                    }
+                # Vérifier qu'on ne déplace pas vers un de ses enfants
+                if new_parent.id == category_id:
+                    return {
+                        'success': False,
+                        'error': 'Category cannot be its own parent'
+                    }
+                # Vérifier qu'on ne crée pas de boucle dans la hiérarchie
+                current = new_parent
+                while current.parent_id:
+                    if current.parent_id.id == category_id:
+                        return {
+                            'success': False,
+                            'error': 'Cannot create circular reference in category hierarchy'
+                        }
+                    current = current.parent_id
+
+            # Déplacer la catégorie
+            category.write({
+                'parent_id': int(new_parent_id) if new_parent_id else False
+            })
+
+            return {
+                'success': True,
+                'category': {
+                    'id': category.id,
+                    'name': category.name,
+                    'complete_name': category.complete_name,
+                    'parent_id': category.parent_id.id if category.parent_id else None,
+                    'parent_name': category.parent_id.name if category.parent_id else None,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Move category error: {e}")
             return {
                 'success': False,
                 'error': str(e)
