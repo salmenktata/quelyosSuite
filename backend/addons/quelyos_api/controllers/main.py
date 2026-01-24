@@ -20,6 +20,17 @@ class QuelyosAPI(http.Controller):
         """Extrait les paramètres de la requête JSON-RPC"""
         return request.params if hasattr(request, 'params') and request.params else {}
 
+    def _check_session(self):
+        """Vérifie que la session est valide"""
+        if not request.session.uid:
+            _logger.warning("Session expired or invalid")
+            return {
+                'success': False,
+                'error': 'Session expired. Please login again.',
+                'error_code': 'SESSION_EXPIRED'
+            }
+        return None
+
     def _create_session(self, uid):
         """Crée une session pour l'utilisateur et retourne le session_id"""
         return request.session.sid
@@ -2719,6 +2730,11 @@ class QuelyosAPI(http.Controller):
     def get_order_detail(self, order_id, **kwargs):
         """Détail d'une commande"""
         try:
+            # Vérifier la session
+            session_check = self._check_session()
+            if session_check:
+                return session_check
+
             order = request.env['sale.order'].sudo().browse(order_id)
 
             if not order.exists():
@@ -3622,7 +3638,7 @@ class QuelyosAPI(http.Controller):
                     'name': partner.name,
                     'email': partner.email or '',
                     'phone': partner.phone or '',
-                    'mobile': partner.mobile or '',
+                    'mobile': getattr(partner, 'mobile', '') or '',
                     'street': partner.street or '',
                     'city': partner.city or '',
                     'zip': partner.zip or '',
@@ -3703,7 +3719,7 @@ class QuelyosAPI(http.Controller):
                     'name': partner.name,
                     'email': partner.email or '',
                     'phone': partner.phone or '',
-                    'mobile': partner.mobile or '',
+                    'mobile': getattr(partner, 'mobile', '') or '',
                     'street': partner.street or '',
                     'city': partner.city or '',
                     'zip': partner.zip or '',
@@ -3795,7 +3811,7 @@ class QuelyosAPI(http.Controller):
                     'name': partner.name or '',
                     'email': partner.email or '',
                     'phone': partner.phone or '',
-                    'mobile': partner.mobile or '',
+                    'mobile': getattr(partner, 'mobile', '') or '',
                     'street': partner.street or '',
                     'street2': partner.street2 or '',
                     'city': partner.city or '',
@@ -4395,7 +4411,7 @@ class QuelyosAPI(http.Controller):
                 'name': partner.name,
                 'email': partner.email or '',
                 'phone': partner.phone or '',
-                'mobile': partner.mobile or '',
+                'mobile': getattr(partner, 'mobile', '') or '',
                 'street': partner.street or '',
                 'street2': partner.street2 or '',
                 'city': partner.city or '',
