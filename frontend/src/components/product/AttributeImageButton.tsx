@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { isLightColor } from '@/lib/variants';
 
 // SVG CheckIcon inline
 const CheckIcon = ({ className }: { className?: string }) => (
@@ -20,6 +21,7 @@ interface AttributeImageButtonProps {
   selected: boolean;
   disabled: boolean;
   onClick: () => void;
+  colorHex?: string; // Couleur hex si pas d'image
 }
 
 export function AttributeImageButton({
@@ -32,6 +34,7 @@ export function AttributeImageButton({
   selected,
   disabled,
   onClick,
+  colorHex,
 }: AttributeImageButtonProps) {
   return (
     <motion.button
@@ -41,7 +44,7 @@ export function AttributeImageButton({
       onClick={onClick}
       disabled={disabled}
       className={`
-        relative p-4 border-2 rounded-xl transition-all duration-300
+        relative p-3 border-2 rounded-xl transition-all duration-300
         ${selected
           ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
           : !disabled
@@ -52,9 +55,9 @@ export function AttributeImageButton({
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
       `}
     >
-      {/* Image thumbnail 80x80 */}
-      {image && (
-        <div className="w-20 h-20 mb-2 bg-gray-50 rounded-lg overflow-hidden">
+      {/* Image thumbnail 56x56 OU pastille de couleur */}
+      {image ? (
+        <div className="w-14 h-14 mb-2 bg-gray-50 rounded-lg overflow-hidden">
           <img
             src={image}
             alt={label}
@@ -62,7 +65,15 @@ export function AttributeImageButton({
             loading="lazy"
           />
         </div>
-      )}
+      ) : colorHex ? (
+        <div
+          className={`w-14 h-14 mb-2 rounded-lg border-2 ${
+            isLightColor(colorHex) ? 'border-gray-300' : 'border-transparent'
+          }`}
+          style={{ backgroundColor: colorHex }}
+          aria-label={`Couleur ${label}`}
+        />
+      ) : null}
 
       {/* Label */}
       <p className={`text-sm font-semibold mb-1 ${selected ? 'text-primary' : 'text-gray-900'}`}>

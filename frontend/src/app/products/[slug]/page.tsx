@@ -4,11 +4,11 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
-import type { Product, VariantsResponse, ExtendedProductVariant } from '@/types';
+import type { Product } from '@/types';
 import { formatPrice } from '@/lib/utils/formatting';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
@@ -20,6 +20,7 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import ProductCard from '@/components/product/ProductCard';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/utils/seo';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { useProductVariants } from '@/hooks/useProductVariants';
 import { VariantSelector } from '@/components/product/VariantSelector';
 
 export default function ProductDetailPage() {
@@ -28,16 +29,28 @@ export default function ProductDetailPage() {
   const slug = params.slug as string;
 
   const [product, setProduct] = useState<Product | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
-  const [variantsData, setVariantsData] = useState<VariantsResponse | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'shipping'>('description');
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [hoveredImageUrl, setHoveredImageUrl] = useState<string>(''); // Image au survol des couleurs
 
   const { addToCart, isLoading: isAddingToCart } = useCartStore();
   const { isAuthenticated } = useAuthStore();
   const toast = useToast();
+
+  // Hook custom pour gérer les variantes (fetch, sélection, synchronisation)
+  const {
+    variantsData,
+    selectedVariant,
+    selectedVariantId,
+    isLoadingVariants,
+    displayPrice,
+    displayStock,
+    displayStockQty,
+    displayImages,
+    handleVariantChange,
+  } = useProductVariants(product);
 
   // Track recently viewed products
   useRecentlyViewed({ product });
@@ -53,14 +66,6 @@ export default function ProductDetailPage() {
       if (response.success && response.product) {
         setProduct(response.product);
 
-        // Charger les variantes enrichies si le produit a des variantes
-        if (response.product.variant_count && response.product.variant_count > 1) {
-          fetchVariants(response.product.id);
-        } else if (response.product.variants && response.product.variants.length > 0) {
-          // Fallback: sélectionner le premier variant par défaut
-          setSelectedVariant(response.product.variants[0].id);
-        }
-
         // Charger les produits similaires
         fetchRelatedProducts(response.product.id);
       } else {
@@ -74,39 +79,32 @@ export default function ProductDetailPage() {
     }
   };
 
-  const fetchVariants = async (productId: number) => {
-    try {
-      const response = await odooClient.jsonrpc(`/products/${productId}/variants`, {});
-      if (response.success) {
-        setVariantsData(response);
-      }
-    } catch (error) {
-      console.error('Erreur chargement variantes:', error);
-    }
-  };
-
   const fetchRelatedProducts = async (productId: number) => {
     try {
       const response = await odooClient.getUpsellProducts(productId);
       if (response.success && response.products) {
         setRelatedProducts(response.products);
       }
-    } catch (error) {
-      console.error('Erreur chargement produits similaires:', error);
+    } catch (error: any) {
+      // Ignorer silencieusement si endpoint pas encore implémenté (404)
+      if (error?.response?.status !== 404) {
+        console.error('Erreur chargement produits similaires:', error);
+      }
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = useCallback(async () => {
     if (!product) return;
 
-    const productId = selectedVariant || product.id;
+    const productId = selectedVariantId || product.id;
     const success = await addToCart(productId, quantity);
 
     if (success) {
       toast.success('Produit ajouté au panier !');
     }
-  };
+  }, [product, selectedVariantId, quantity, addToCart, toast]);
 
+  // Early returns (garder les mêmes hooks conditionnels que l'original)
   if (isLoading) {
     return <ProductDetailSkeleton />;
   }
@@ -115,31 +113,26 @@ export default function ProductDetailPage() {
     return null;
   }
 
-  // Get the selected variant's data (or default to product data)
-  const selectedVariantData = product.variants?.find(v => v.id === selectedVariant);
-  const currentPrice = selectedVariantData?.price ?? product.list_price ?? product.price ?? 0;
-  const currentStock = selectedVariantData?.in_stock ?? product.in_stock;
-  const currentStockQty = selectedVariantData?.stock_qty ?? product.stock_qty;
+  // Calculs après validation product (comme dans l'original)
+  // Image affichée : priorité au survol > variante sélectionnée > produit
+  const baseImage = displayImages?.find(img => img.is_main)?.url || displayImages?.[0]?.url || '/placeholder-product.svg';
+  const mainImage = hoveredImageUrl || baseImage;
 
-  // Use variant images if available, otherwise use product images
-  const currentImages = (selectedVariantData?.images && selectedVariantData.images.length > 0)
-    ? selectedVariantData.images
-    : product.images;
-
-  const mainImage = currentImages?.find(img => img.is_main)?.url || currentImages?.[0]?.url || '/placeholder-product.svg';
+  // Les miniatures ne changent pas au survol, seule l'image principale change
+  const galleryImages = displayImages || [];
 
   const hasDiscount = product.is_featured;
   const discountPercent = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? currentPrice * 1.25 : currentPrice;
+  const originalPrice = hasDiscount ? displayPrice * 1.25 : displayPrice;
 
   // Structured data
   const productSchema = generateProductSchema({
     name: product.name,
     description: product.description || '',
     image: mainImage,
-    price: product.list_price ?? product.price ?? 0,
+    price: displayPrice,
     currency: product.currency?.name ?? 'TND',
-    availability: currentStock ? 'InStock' : 'OutOfStock',
+    availability: displayStock ? 'InStock' : 'OutOfStock',
     sku: product.id.toString(),
     url: `/products/${product.slug}`,
   });
@@ -209,7 +202,7 @@ export default function ProductDetailPage() {
               )}
             </div>
             <ProductImageGallery
-              images={currentImages || []}
+              images={galleryImages}
               productName={product.name}
             />
           </div>
@@ -263,7 +256,7 @@ export default function ProductDetailPage() {
                 </span>
               )}
               <span className="text-4xl md:text-5xl font-bold text-primary transition-all duration-300">
-                {formatPrice(currentPrice, product.currency?.symbol ?? 'TND')}
+                {formatPrice(displayPrice, product.currency?.symbol ?? 'TND')}
               </span>
               {hasDiscount && (
                 <span className="bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-md">
@@ -278,7 +271,7 @@ export default function ProductDetailPage() {
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               <div>
-                <p className="text-sm font-bold text-gray-900">Gagnez {Math.floor(currentPrice)} points de fidélité</p>
+                <p className="text-sm font-bold text-gray-900">Gagnez {Math.floor(displayPrice)} points de fidélité</p>
                 <p className="text-xs text-gray-600">À utiliser sur votre prochaine commande</p>
               </div>
             </div>
@@ -292,14 +285,14 @@ export default function ProductDetailPage() {
 
             {/* Stock */}
             <div className="mb-6 bg-gray-50 rounded-xl p-4">
-              {currentStock ? (
+              {displayStock ? (
                 <div className="flex items-center text-green-700">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
                   <span className="font-semibold text-lg">
                     En stock
                   </span>
                   <span className="ml-2 text-sm text-gray-600">
-                    ({Math.floor(currentStockQty ?? 0)} disponibles)
+                    ({Math.floor(displayStockQty ?? 0)} disponibles)
                   </span>
                 </div>
               ) : (
@@ -316,8 +309,9 @@ export default function ProductDetailPage() {
                 <VariantSelector
                   productId={product.id}
                   variantsData={variantsData}
-                  selectedVariant={selectedVariantData as ExtendedProductVariant}
-                  onVariantChange={(variant) => setSelectedVariant(variant.id)}
+                  selectedVariant={selectedVariant}
+                  onVariantChange={handleVariantChange}
+                  onImagePreview={(url) => setHoveredImageUrl(url)}
                 />
               </div>
             )}
@@ -342,7 +336,7 @@ export default function ProductDetailPage() {
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  disabled={!currentStock || quantity >= (currentStockQty ?? 0)}
+                  disabled={!displayStock || quantity >= (displayStockQty ?? 0)}
                   className="w-12 h-12 border-2 border-gray-300 rounded-xl text-gray-700 hover:border-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center font-bold text-lg transition-all duration-300"
                 >
                   +
@@ -354,7 +348,7 @@ export default function ProductDetailPage() {
             <div className="flex gap-4 mb-4">
               <button
                 onClick={handleAddToCart}
-                disabled={!currentStock || isAddingToCart}
+                disabled={!displayStock || isAddingToCart}
                 className="flex-1 bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 {isAddingToCart ? (
@@ -365,7 +359,7 @@ export default function ProductDetailPage() {
                     </svg>
                     Ajout en cours...
                   </>
-                ) : !currentStock ? (
+                ) : !displayStock ? (
                   'Rupture de stock'
                 ) : (
                   <>
@@ -594,13 +588,13 @@ export default function ProductDetailPage() {
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Disponibilité:</span>
-                      <span className={`font-bold ${currentStock ? 'text-green-600' : 'text-red-600'}`}>
-                        {currentStock ? 'En stock' : 'Rupture de stock'}
+                      <span className={`font-bold ${displayStock ? 'text-green-600' : 'text-red-600'}`}>
+                        {displayStock ? 'En stock' : 'Rupture de stock'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3">
                       <span className="text-gray-600 font-medium">Stock:</span>
-                      <span className="text-gray-900 font-bold">{Math.floor(currentStockQty ?? 0)} unités</span>
+                      <span className="text-gray-900 font-bold">{Math.floor(displayStockQty ?? 0)} unités</span>
                     </div>
                   </div>
                 )}

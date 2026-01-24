@@ -31,6 +31,7 @@ export interface Product {
   avg_rating?: number;
   review_count?: number;
   variants?: ProductVariant[];
+  variant_count?: number; // Nombre total de variantes
   related_products?: number[];
   default_code?: string;
   image_url?: string;

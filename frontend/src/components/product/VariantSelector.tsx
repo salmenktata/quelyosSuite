@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { VariantsResponse, ExtendedProductVariant } from '@/types';
-import { AttributeImageButton } from './AttributeImageButton';
-import { AttributePill } from './AttributePill';
+import { ColorSwatch } from './ColorSwatch';
+import { SizeButton } from './SizeButton';
 import { getColorHex } from '@/lib/variants';
 
 interface VariantSelectorProps {
@@ -11,6 +11,7 @@ interface VariantSelectorProps {
   variantsData: VariantsResponse;
   selectedVariant: ExtendedProductVariant | null;
   onVariantChange: (variant: ExtendedProductVariant) => void;
+  onImagePreview?: (imageUrl: string) => void; // Callback pour changer l'image au survol
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export function VariantSelector({
   variantsData,
   selectedVariant,
   onVariantChange,
+  onImagePreview,
   className = '',
 }: VariantSelectorProps) {
   // État pour les attributs sélectionnés (ex: {couleur_id: value_id, taille_id: value_id})
@@ -154,38 +156,7 @@ export function VariantSelector({
 
             {/* Rendu conditionnel selon le type d'attribut */}
             {isColorAttribute ? (
-              // Boutons avec thumbnails pour les couleurs
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {attributeLine.values.map((value) => {
-                  const variantForValue = getVariantForAttributeValue(attributeLine.attribute_id, value.id);
-                  const isAvailable = availableValueIds.has(value.id);
-                  const isSelected = selectedAttributes[attributeLine.attribute_id] === value.id;
-                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.qty_available || 0) > 0 : false;
-
-                  // Obtenir l'image de la variante ou une couleur unie
-                  const image = variantForValue?.images?.[0]?.url || variantForValue?.image_url;
-                  const colorHex = value.html_color || getColorHex(value.name);
-
-                  return (
-                    <AttributeImageButton
-                      key={value.id}
-                      image={image}
-                      label={value.name}
-                      price={variantForValue && variantForValue.list_price !== matchingVariant?.list_price
-                        ? variantForValue.list_price
-                        : undefined
-                      }
-                      stock={variantForValue?.qty_available}
-                      inStock={inStock}
-                      selected={isSelected}
-                      disabled={!isAvailable || !inStock}
-                      onClick={() => handleAttributeSelect(attributeLine.attribute_id, value.id)}
-                    />
-                  );
-                })}
-              </div>
-            ) : (
-              // Pills simples pour les autres attributs (taille, matériau, etc.)
+              // Swatches de couleur compacts style Zalando
               <div className="flex flex-wrap gap-2">
                 {attributeLine.values.map((value) => {
                   const variantForValue = getVariantForAttributeValue(attributeLine.attribute_id, value.id);
@@ -193,14 +164,52 @@ export function VariantSelector({
                   const isSelected = selectedAttributes[attributeLine.attribute_id] === value.id;
                   const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.qty_available || 0) > 0 : false;
 
+                  const colorHex = value.html_color || getColorHex(value.name);
+
                   return (
-                    <AttributePill
+                    <ColorSwatch
+                      key={value.id}
+                      color={colorHex}
+                      colorName={value.name}
+                      selected={isSelected}
+                      disabled={!isAvailable || !inStock}
+                      onClick={() => handleAttributeSelect(attributeLine.attribute_id, value.id)}
+                      onHover={() => {
+                        // Changer l'image au survol (comme Zalando)
+                        const imageUrl = variantForValue?.images?.[0]?.url || variantForValue?.image_url;
+                        if (imageUrl) {
+                          onImagePreview?.(imageUrl);
+                        }
+                      }}
+                      onLeave={() => {
+                        // Retour à l'image de la variante sélectionnée
+                        onImagePreview?.('');
+                      }}
+                      size="md"
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              // Boutons de taille/attribut style Zalando
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {attributeLine.values.map((value) => {
+                  const variantForValue = getVariantForAttributeValue(attributeLine.attribute_id, value.id);
+                  const isAvailable = availableValueIds.has(value.id);
+                  const isSelected = selectedAttributes[attributeLine.attribute_id] === value.id;
+                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.qty_available || 0) > 0 : false;
+
+                  return (
+                    <SizeButton
                       key={value.id}
                       label={value.name}
                       selected={isSelected}
                       disabled={!isAvailable || !inStock}
                       onClick={() => handleAttributeSelect(attributeLine.attribute_id, value.id)}
-                      size="md"
+                      stockInfo={{
+                        inStock: inStock,
+                        qty: variantForValue?.qty_available,
+                      }}
                     />
                   );
                 })}
