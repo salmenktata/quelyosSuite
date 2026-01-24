@@ -1,0 +1,841 @@
+================================================================================
+  QUELYOS ERP - Guide Administrateur (Backoffice)
+  Version 1.0.0 - Janvier 2026
+================================================================================
+
+TABLE DES MATIÈRES
+================================================================================
+1. Accès au Backoffice
+2. Tableau de Bord
+3. Gestion des Produits
+4. Gestion des Catégories
+5. Gestion des Commandes
+6. Gestion des Clients
+7. Gestion du Stock
+8. Coupons et Promotions
+9. Méthodes de Livraison
+10. Analytics et Rapports
+11. Paramètres et Configuration
+12. Bonnes Pratiques
+
+================================================================================
+1. ACCÈS AU BACKOFFICE
+================================================================================
+
+URL D'ACCÈS
+-----------
+Backoffice admin: http://votredomaine.com/admin
+Installation locale: http://localhost/admin
+
+CONNEXION
+---------
+1. Ouvrez l'URL du backoffice
+2. Entrez vos identifiants:
+   • Email: configuré lors de l'installation
+   • Mot de passe: configuré lors de l'installation
+3. Cochez "Se souvenir de moi" (optionnel)
+4. Cliquez "Se connecter"
+
+⚠️ SÉCURITÉ:
+• Utilisez un mot de passe fort (min 12 caractères)
+• Changez le mot de passe par défaut immédiatement
+• Ne partagez jamais vos identifiants
+• Déconnectez-vous après chaque session
+
+MOT DE PASSE OUBLIÉ
+-------------------
+1. Cliquez "Mot de passe oublié ?"
+2. Entrez votre email administrateur
+3. Consultez votre boîte mail
+4. Cliquez sur le lien de réinitialisation
+5. Définissez un nouveau mot de passe
+
+NAVIGATION
+----------
+Sidebar gauche (menu principal):
+• Dashboard
+• Produits
+• Catégories
+• Commandes
+• Clients
+• Stock
+• Coupons
+• Livraison
+• Paiements
+• Analytics
+
+Header (barre du haut):
+• Toggle mode sombre/clair
+• Icône utilisateur (profil/déconnexion)
+
+================================================================================
+2. TABLEAU DE BORD
+================================================================================
+
+VUE D'ENSEMBLE
+--------------
+Le Dashboard affiche les indicateurs clés de votre boutique:
+
+CARTES KPI (MÉTRIQUES)
+----------------------
+4 cartes principales:
+
+1. Chiffre d'Affaires
+   • Total des ventes (commandes confirmées)
+   • Période: mois en cours
+   • Évolution vs mois précédent (%)
+
+2. Commandes
+   • Total commandes
+   • En attente (à traiter en priorité)
+   • Lien rapide "Voir toutes les commandes"
+
+3. Clients
+   • Nombre total de clients
+   • Nouveaux ce mois
+   • Lien rapide "Voir tous les clients"
+
+4. Produits
+   • Nombre total de produits
+   • Ruptures de stock (⚠️ à réapprovisionner)
+   • Lien rapide "Voir tous les produits"
+
+DERNIÈRES COMMANDES
+-------------------
+Liste des 5 dernières commandes:
+• Numéro
+• Client
+• Montant
+• État (badge coloré)
+• Actions rapides (voir détail)
+
+TOP PRODUITS
+------------
+5 produits les plus vendus:
+• Image
+• Nom
+• Quantité vendue (ce mois)
+• Chiffre d'affaires généré
+
+ALERTES ET NOTIFICATIONS
+-------------------------
+Bandeau en haut si:
+• ⚠️ Produits en rupture de stock
+• 📦 Commandes en attente de traitement
+• 💳 Paiements en attente de confirmation
+
+================================================================================
+3. GESTION DES PRODUITS
+================================================================================
+
+LISTE DES PRODUITS
+------------------
+Menu "Produits" affiche un tableau avec:
+• Image miniature
+• Nom
+• SKU (référence interne)
+• Catégorie
+• Prix
+• Stock
+• Statut (actif/inactif)
+• Actions
+
+BARRE D'OUTILS
+--------------
+En haut de la liste:
+• Bouton "Nouveau produit" (primaire, vert)
+• Barre de recherche (nom ou SKU)
+• Filtre par catégorie (dropdown)
+• Filtre par statut stock (En stock / Stock faible / Rupture)
+• Boutons Import/Export CSV
+
+PAGINATION
+----------
+20 produits par page, navigation en bas:
+• Total: "Affichage 1-20 sur 156"
+• Boutons Précédent/Suivant
+
+ACTIONS PAR LIGNE
+-----------------
+Icônes à droite de chaque produit:
+• ✏️ Modifier
+• 📋 Dupliquer
+• 🗑️ Supprimer (confirmation demandée)
+
+CRÉER UN PRODUIT
+----------------
+1. Cliquez "Nouveau produit"
+2. Remplissez le formulaire:
+
+Onglet GÉNÉRAL:
+• Nom du produit * (obligatoire)
+• SKU (référence interne, auto-généré si vide)
+• Description (éditeur riche)
+• Catégorie * (sélection dropdown)
+• Prix de vente * (TTC)
+• Prix d'achat (pour calcul marge, optionnel)
+• Code-barres EAN13 (optionnel)
+• Poids (kg, pour frais de port)
+• Actif (toggle oui/non)
+
+Onglet IMAGES:
+• Upload image principale (drag & drop ou clic)
+• Formats acceptés: JPG, PNG, WebP
+• Taille max: 5 MB
+• Upload images secondaires (galerie, max 10 images)
+• Réorganiser par drag & drop
+• Définir image principale
+
+Onglet VARIANTES (si applicable):
+• Ajouter attributs (couleur, taille, etc.)
+• Sélectionner valeurs d'attributs
+• Générer variantes automatiquement
+• Modifier prix/stock par variante
+
+Onglet STOCK:
+• Quantité en stock *
+• Seuil stock bas (alerte si en dessous)
+• Type de produit (Stockable / Consommable / Service)
+• Unité de mesure (unité, kg, litre, etc.)
+
+3. Cliquez "Enregistrer" (en bas)
+
+MODIFIER UN PRODUIT
+-------------------
+1. Cliquez sur l'icône crayon (✏️)
+2. Modifiez les informations
+3. Cliquez "Enregistrer"
+
+DUPLIQUER UN PRODUIT
+--------------------
+1. Cliquez sur l'icône copie (📋)
+2. Entrez un nouveau nom
+3. Le produit est créé avec "(copie)" dans le nom
+4. Modifiez ensuite selon vos besoins
+
+SUPPRIMER UN PRODUIT
+--------------------
+1. Cliquez sur l'icône poubelle (🗑️)
+2. Confirmez la suppression
+3. ⚠️ Attention: Action irréversible !
+
+IMPORT CSV
+----------
+Pour importer plusieurs produits à la fois:
+
+1. Cliquez "Import CSV"
+2. Téléchargez le modèle CSV (lien "Télécharger modèle")
+3. Remplissez le fichier avec vos produits:
+   Colonnes obligatoires:
+   • name (nom)
+   • list_price (prix)
+   • default_code (SKU)
+
+4. Drag & drop ou sélectionnez votre fichier
+5. Aperçu des données importées
+6. Cliquez "Importer"
+7. Résultat affiché (réussis / échoués)
+
+EXPORT CSV
+----------
+1. (Optionnel) Appliquez des filtres
+2. Cliquez "Export CSV"
+3. Sélectionnez les colonnes à exporter
+4. Téléchargement automatique du fichier
+
+================================================================================
+4. GESTION DES CATÉGORIES
+================================================================================
+
+LISTE DES CATÉGORIES
+--------------------
+Menu "Catégories" affiche:
+• Vue arborescente (hiérarchie parent/enfant)
+• Nom de la catégorie
+• Nombre de produits
+• Actions
+
+CRÉER UNE CATÉGORIE
+-------------------
+1. Cliquez "Nouvelle catégorie"
+2. Remplissez:
+   • Nom *
+   • Parent (optionnel, pour créer une sous-catégorie)
+   • Description
+   • Image (optionnel)
+3. Cliquez "Créer"
+
+MODIFIER UNE CATÉGORIE
+----------------------
+1. Cliquez sur le nom ou l'icône crayon
+2. Modifiez les informations
+3. Cliquez "Enregistrer"
+
+RÉORGANISER LES CATÉGORIES
+---------------------------
+Drag & drop pour:
+• Changer l'ordre d'affichage
+• Déplacer une catégorie sous un autre parent
+• Créer/défaire une hiérarchie
+
+SUPPRIMER UNE CATÉGORIE
+-----------------------
+1. Cliquez sur l'icône poubelle
+2. Confirmez
+3. ⚠️ Les produits ne sont PAS supprimés, juste décatégorisés
+
+================================================================================
+5. GESTION DES COMMANDES
+================================================================================
+
+LISTE DES COMMANDES
+-------------------
+Menu "Commandes" affiche toutes les commandes:
+• Numéro (cliquable)
+• Date
+• Client (nom + email)
+• Montant total
+• État (badge):
+  - 🔵 Brouillon (panier non finalisé)
+  - 🟡 Envoyé (devis envoyé, attente paiement)
+  - 🟢 Confirmé (paiement reçu)
+  - 📦 En livraison
+  - ✅ Terminé (livré)
+  - ❌ Annulé
+
+FILTRES RAPIDES
+---------------
+Pills cliquables en haut:
+• Tous
+• Brouillons
+• Envoyés
+• Confirmés
+• Terminés
+• Annulés
+
+RECHERCHE
+---------
+• Par numéro de commande
+• Par nom client
+• Par email client
+
+FILTRES AVANCÉS
+---------------
+• Plage de dates (du / au)
+• État
+• Montant min/max
+
+VUE KANBAN (OPTIONNEL)
+----------------------
+Toggle "Vue Liste / Vue Kanban":
+• Colonnes par état
+• Drag & drop pour changer l'état
+• Cartes commandes déplaçables
+
+DÉTAIL D'UNE COMMANDE
+---------------------
+Cliquez sur une commande pour voir:
+
+Section INFORMATIONS:
+• Numéro et date
+• État actuel
+• Client (nom, email, téléphone)
+• Adresse de livraison complète
+• Mode de livraison choisi
+
+Section LIGNES DE COMMANDE:
+• Tableau des produits commandés:
+  - Image
+  - Nom + variantes
+  - Quantité
+  - Prix unitaire
+  - Total ligne
+
+Section TOTAUX:
+• Sous-total HT
+• TVA
+• Frais de livraison
+• Réduction (si coupon)
+• Total TTC
+
+Section SUIVI:
+• Numéro de tracking (si expédié)
+• URL transporteur
+• Modifier le tracking
+
+Section HISTORIQUE:
+• Chronologie de tous les changements d'état
+• Date et heure de chaque action
+
+ACTIONS SUR UNE COMMANDE
+-------------------------
+Boutons disponibles selon l'état:
+
+• "Confirmer" (brouillon → confirmé)
+• "Envoyer par email" (envoyer devis au client)
+• "Créer facture" (générer la facture)
+• "Télécharger bon de livraison" (PDF)
+• "Ajouter numéro de tracking" (si expédié)
+• "Marquer comme livrée"
+• "Annuler" (avec confirmation)
+• "Remettre en brouillon" (unlock)
+
+WORKFLOW STANDARD
+-----------------
+1. Commande créée (brouillon ou confirmé si paiement direct)
+2. Admin confirme (si nécessaire)
+3. Admin prépare la commande
+4. Admin crée le bon de livraison
+5. Admin expédie et ajoute le tracking
+6. Client reçoit l'email avec tracking
+7. Livraison effectuée → Marquer "Terminé"
+
+================================================================================
+6. GESTION DES CLIENTS
+================================================================================
+
+LISTE DES CLIENTS
+-----------------
+Menu "Clients" affiche:
+• Nom complet
+• Email
+• Téléphone
+• Nombre de commandes
+• Total dépensé
+• Date d'inscription
+• Actions
+
+RECHERCHE
+---------
+Barre de recherche:
+• Par nom
+• Par email
+• Par téléphone
+
+STATISTIQUES PAR CLIENT
+------------------------
+Cartes KPI en haut:
+• Total clients
+• Nouveaux ce mois
+• Clients avec commandes (actifs)
+• Clients sans commandes
+
+DÉTAIL D'UN CLIENT
+------------------
+Cliquez sur un client pour voir:
+
+Section INFORMATIONS:
+• Nom, email, téléphone
+• Date d'inscription
+• Nombre de commandes
+• Total dépensé (historique complet)
+
+Section ADRESSES:
+• Liste de toutes les adresses
+• Adresse par défaut (badge)
+• Boutons modifier/supprimer
+
+Section HISTORIQUE COMMANDES:
+• Tableau de toutes les commandes passées
+• Lien vers le détail de chaque commande
+
+Section NOTES INTERNES:
+• Zone de texte libre
+• Pour garder des notes sur le client (non visible par le client)
+
+MODIFIER UN CLIENT
+------------------
+1. Cliquez "Modifier"
+2. Changez les informations
+3. Cliquez "Enregistrer"
+
+EXPORT CSV CLIENTS
+------------------
+1. (Optionnel) Filtrez les clients
+2. Cliquez "Export CSV"
+3. Fichier téléchargé avec tous les clients filtrés
+
+================================================================================
+7. GESTION DU STOCK
+================================================================================
+
+PAGE STOCK
+----------
+Menu "Stock" affiche 2 onglets:
+
+ONGLET PRODUITS
+---------------
+Tableau de tous les produits avec:
+• Image
+• Nom
+• SKU
+• Catégorie
+• Stock actuel
+• Stock virtuel (actuel + entrant - sortant)
+• Stock entrant (commandes fournisseurs)
+• Stock sortant (commandes clients)
+• Statut (badge couleur)
+• Action éditer stock
+
+MODIFIER LE STOCK
+-----------------
+1. Cliquez sur l'icône crayon (✏️) dans la colonne Stock
+2. Entrez la nouvelle quantité
+3. Cliquez ✓ pour valider ou ✗ pour annuler
+4. Stock mis à jour immédiatement
+
+RECHERCHE PRODUIT
+-----------------
+• Barre de recherche par nom ou SKU
+• Pagination 20/page
+
+ONGLET ALERTES
+--------------
+Affiche uniquement les produits:
+• En rupture (stock = 0)
+• Stock faible (< seuil défini)
+
+Pour chaque alerte:
+• Badge sévérité (rouge si critique, orange si faible)
+• Nom du produit
+• Stock actuel
+• Seuil configuré
+• Différence (ex: "-5 unités")
+• Action rapide "Réapprovisionner"
+
+CONFIGURER SEUILS D'ALERTE
+---------------------------
+Sur la fiche produit:
+• Onglet Stock
+• Champ "Seuil stock bas"
+• Définir la valeur (ex: 10)
+• Alerte déclenchée si stock < seuil
+
+MOUVEMENTS DE STOCK
+-------------------
+Voir l'historique de tous les mouvements:
+• Date
+• Produit
+• Type (Entrée / Sortie / Transfert)
+• Quantité (signée: + ou -)
+• Origine (fournisseur, client, ajustement)
+• Destination
+• Référence (n° commande, n° picking)
+
+================================================================================
+8. COUPONS ET PROMOTIONS
+================================================================================
+
+LISTE DES COUPONS
+-----------------
+Menu "Coupons" affiche:
+• Nom du programme
+• Code (ce que le client tape)
+• Type réduction (% ou €)
+• Valeur (montant ou pourcentage)
+• Date début
+• Date fin
+• Statut (Actif / Expiré / Inactif)
+• Actions
+
+FILTRES
+-------
+• Cochez "Coupons actifs uniquement" pour masquer les expirés
+
+CRÉER UN COUPON
+---------------
+1. Cliquez "Nouveau coupon"
+2. Remplissez le formulaire:
+
+Informations générales:
+• Nom du programme * (interne)
+• Code promo * (ce que le client tape)
+  - Lettres majuscules recommandées
+  - Pas d'espaces
+  - Ex: BIENVENUE10, NOEL2026
+
+Type de réduction:
+• Pourcentage (%) ou Montant fixe (€)
+• Valeur de la réduction *
+
+Conditions:
+• Date de début * (à partir de quand)
+• Date de fin * (jusqu'à quand)
+• Montant minimum commande (optionnel)
+• Limite d'utilisations globales (ex: 100 fois max)
+• Limite par client (ex: 1 fois/client)
+• Produits spécifiques (optionnel, réduction sur certains produits seulement)
+• Catégories spécifiques (optionnel)
+
+Visibilité:
+• Public (tout le monde peut l'utiliser)
+• Privé (envoyé à des clients spécifiques)
+
+3. Cliquez "Créer"
+
+MODIFIER UN COUPON
+------------------
+1. Cliquez sur l'icône crayon
+2. Modifiez les informations
+3. Cliquez "Enregistrer"
+
+⚠️ Si le coupon est déjà utilisé, certains champs ne peuvent plus être modifiés.
+
+DÉSACTIVER UN COUPON
+--------------------
+• Toggle "Actif" sur la ligne du coupon
+• Ou dans le formulaire d'édition
+
+SUPPRIMER UN COUPON
+-------------------
+1. Cliquez sur l'icône poubelle
+2. Confirmez
+3. ⚠️ Impossible si déjà utilisé (désactiver à la place)
+
+STATISTIQUES D'UTILISATION
+---------------------------
+Pour chaque coupon, voir:
+• Nombre d'utilisations
+• Montant total remisé
+• Chiffre d'affaires généré
+
+================================================================================
+9. MÉTHODES DE LIVRAISON
+================================================================================
+
+LISTE DES MÉTHODES
+------------------
+Menu "Livraison" affiche:
+• Nom du transporteur
+• Type (Fixe / Basé sur le montant / Basé sur le poids)
+• Prix (si fixe)
+• Seuil livraison gratuite (si applicable)
+• Statut (Actif / Inactif)
+• Actions
+
+CRÉER UNE MÉTHODE
+-----------------
+1. Cliquez "Nouvelle méthode"
+2. Remplissez:
+
+Informations:
+• Nom * (ex: "Livraison Standard")
+• Description (visible par le client)
+
+Type de tarification:
+• Prix fixe (ex: 5€ toujours)
+• Basé sur le montant (règles selon total panier)
+• Basé sur le poids (règles selon poids total)
+
+Prix:
+• Si fixe: entrer le montant
+• Si règles: cliquer "Ajouter règle"
+
+Livraison gratuite:
+• Cocher "Livraison gratuite au-dessus de X€"
+• Entrer le seuil
+
+Zones de livraison:
+• Sélectionner les pays/régions
+
+Délai:
+• Jours ouvrables (min-max)
+
+3. Cliquez "Créer"
+
+RÈGLES DE TARIFICATION
+-----------------------
+Pour "Basé sur le montant":
+• Si panier < 50€ → 5€
+• Si panier 50-100€ → 3€
+• Si panier > 100€ → Gratuit
+
+Pour "Basé sur le poids":
+• Si poids < 1kg → 4€
+• Si poids 1-5kg → 7€
+• Si poids > 5kg → 10€
+
+MODIFIER UNE MÉTHODE
+--------------------
+1. Cliquez sur l'icône crayon
+2. Modifiez
+3. Cliquez "Enregistrer"
+
+DÉSACTIVER UNE MÉTHODE
+----------------------
+• Toggle "Actif"
+• La méthode n'apparaît plus au checkout
+
+================================================================================
+10. ANALYTICS ET RAPPORTS
+================================================================================
+
+PAGE ANALYTICS
+--------------
+Menu "Analytics" affiche des graphiques et statistiques avancés.
+
+CARTES KPI
+----------
+4 métriques principales:
+• Chiffre d'affaires (période sélectionnée)
+• Nombre de commandes
+• Nombre de clients
+• Nombre de produits
+
+SÉLECTEUR DE PÉRIODE
+---------------------
+Pills cliquables:
+• 7 jours
+• 30 jours
+• 12 mois
+• Personnalisé (sélecteur de dates)
+
+GRAPHIQUE ÉVOLUTION CA
+----------------------
+• Ligne verte montrant l'évolution du CA
+• Axe X: temps (jours/mois selon période)
+• Axe Y: montant en €
+• Hover pour voir valeur exacte
+
+GRAPHIQUE ÉVOLUTION COMMANDES
+------------------------------
+• Graphique empilé (stacked area)
+• 3 courbes:
+  - Confirmées (vert)
+  - En attente (orange)
+  - Annulées (rouge)
+
+TUNNEL DE CONVERSION
+---------------------
+• Graphique en barres horizontales
+• Étapes du parcours client:
+  - Visiteurs (100%)
+  - Paniers créés (X%)
+  - Checkouts initiés (Y%)
+  - Commandes finalisées (Z%)
+• Taux de conversion à chaque étape
+
+TOP 5 CATÉGORIES
+----------------
+• Graphique en barres verticales
+• Catégories les plus vendues
+• Montant en € par catégorie
+
+DERNIÈRES COMMANDES
+-------------------
+Liste des 5 dernières commandes (comme sur le Dashboard).
+
+TOP 5 PRODUITS
+--------------
+Liste des 5 produits les plus vendus (comme sur le Dashboard).
+
+EXPORT RAPPORTS
+---------------
+• Bouton "Exporter" (PDF ou Excel)
+• Inclut tous les graphiques et données de la période
+
+================================================================================
+11. PARAMÈTRES ET CONFIGURATION
+================================================================================
+
+PROFIL ADMINISTRATEUR
+---------------------
+Icône utilisateur (en haut à droite) > Mon profil:
+• Nom
+• Email
+• Changer mot de passe
+• Langue de l'interface
+• Fuseau horaire
+
+MODE SOMBRE/CLAIR
+-----------------
+• Toggle en haut à droite (icône lune/soleil)
+• Préférence sauvegardée localement
+
+PARAMÈTRES GÉNÉRAUX
+-------------------
+(À venir dans une prochaine version)
+• Informations boutique
+• Coordonnées
+• Logo et favicon
+• Configuration emails SMTP
+• Devises et langues
+• CGV et mentions légales
+
+================================================================================
+12. BONNES PRATIQUES
+================================================================================
+
+GESTION DES PRODUITS
+---------------------
+✓ Utilisez des SKU uniques pour chaque produit
+✓ Ajoutez toujours plusieurs images (min 3)
+✓ Rédigez des descriptions détaillées (min 100 mots)
+✓ Définissez des seuils de stock pour les alertes
+✓ Organisez par catégories logiques
+
+GESTION DES COMMANDES
+----------------------
+✓ Traitez les commandes dans les 24h
+✓ Communiquez les retards au client
+✓ Ajoutez systématiquement un numéro de tracking
+✓ Archivez les commandes terminées régulièrement
+
+GESTION DU STOCK
+----------------
+✓ Vérifiez les alertes stock quotidiennement
+✓ Mettez à jour le stock après chaque réception
+✓ Configurez des seuils réalistes (2-3 semaines de vente)
+✓ Utilisez les prévisions de stock virtuel
+
+COUPONS ET PROMOTIONS
+---------------------
+✓ Limitez la durée (sentiment d'urgence)
+✓ Définissez un montant minimum (éviter abus)
+✓ Limitez les utilisations par client
+✓ Suivez les statistiques pour ROI
+
+SÉCURITÉ
+--------
+✓ Changez le mot de passe régulièrement (tous les 3 mois)
+✓ Utilisez un mot de passe fort (12+ caractères)
+✓ Déconnectez-vous après chaque session
+✓ Ne partagez jamais vos accès
+✓ Activez 2FA si disponible
+
+PERFORMANCE
+-----------
+✓ Optimisez les images produits (< 500KB)
+✓ Utilisez le format WebP si possible
+✓ Limitez le nombre de variantes (< 50/produit)
+✓ Archivez les produits obsolètes
+
+SAUVEGARDE
+----------
+✓ Exportez régulièrement vos données (CSV)
+✓ Sauvegardez la base de données (hebdomadaire)
+✓ Testez la restauration (mensuel)
+✓ Conservez 3 copies de sauvegarde
+
+================================================================================
+  Support et Formation
+================================================================================
+
+Documentation complète:
+• https://docs.quelyos.com
+
+Tutoriels vidéo:
+• https://www.youtube.com/quelyos
+
+Formation en ligne:
+• Contactez-nous pour une formation personnalisée
+
+Support technique:
+• Email: support@quelyos.com
+• Réponse sous 24h (jours ouvrables)
+
+Communauté:
+• Forum: https://community.quelyos.com
+• Partagez vos astuces et questions
+
+© 2026 Quelyos. Tous droits réservés.

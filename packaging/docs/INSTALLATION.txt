@@ -1,0 +1,424 @@
+================================================================================
+  QUELYOS ERP - Guide d'Installation
+  Version 1.0.0 - Janvier 2026
+================================================================================
+
+TABLE DES MATIÈRES
+================================================================================
+1. Pré-requis Système
+2. Installation One-Click (Recommandé)
+3. Installation Manuelle
+4. Configuration Initiale
+5. Vérification de l'Installation
+6. Dépannage
+7. Mise à Jour
+
+================================================================================
+1. PRÉ-REQUIS SYSTÈME
+================================================================================
+
+CONFIGURATION MINIMALE
+----------------------
+• OS: Linux (Ubuntu 20.04+, Debian 11+, CentOS 8+) ou macOS
+• RAM: 2 GB minimum, 4 GB recommandé
+• Disque: 10 GB d'espace libre
+• Processeur: 2 cœurs minimum
+• Connexion Internet pour l'installation
+
+LOGICIELS REQUIS
+----------------
+• Docker 20.10+ (installé automatiquement si absent)
+• Docker Compose 2.0+ (inclus avec Docker)
+• curl (généralement pré-installé)
+
+PORTS REQUIS
+------------
+• Port 80 (HTTP) - peut être modifié
+• Port 443 (HTTPS) - pour SSL (optionnel)
+
+COMPATIBILITÉ
+-------------
+✓ Ubuntu 20.04, 22.04, 24.04
+✓ Debian 11, 12
+✓ CentOS 8, 9, Rocky Linux 8+
+✓ macOS 12+ (avec Docker Desktop)
+✗ Windows (utiliser WSL2)
+
+================================================================================
+2. INSTALLATION ONE-CLICK (RECOMMANDÉ)
+================================================================================
+
+L'installation one-click est la méthode la plus simple et rapide pour installer
+Quelyos ERP.
+
+ÉTAPE 1: TÉLÉCHARGER ET EXÉCUTER LE SCRIPT
+-------------------------------------------
+Ouvrez un terminal et exécutez:
+
+    curl -fsSL https://get.quelyos.com | bash
+
+Alternative avec wget:
+
+    wget -qO- https://get.quelyos.com | bash
+
+ÉTAPE 2: SUIVRE LES INSTRUCTIONS À L'ÉCRAN
+-------------------------------------------
+Le script vous demandera:
+
+1. Port d'écoute (défaut: 80)
+   → Appuyez sur Entrée pour accepter le défaut
+
+2. Email administrateur (défaut: admin@quelyos.local)
+   → Entrez votre email ou appuyez sur Entrée
+
+3. Mot de passe administrateur (défaut: admin)
+   → ⚠️ IMPORTANT: Changez ce mot de passe en production
+
+4. Nom de domaine (défaut: localhost)
+   → Entrez votre domaine ou laissez localhost pour test local
+
+5. Confirmation
+   → Tapez 'Y' pour confirmer
+
+ÉTAPE 3: ATTENDRE L'INSTALLATION (2-3 MINUTES)
+-----------------------------------------------
+Le script va automatiquement:
+• Installer Docker si nécessaire
+• Télécharger l'image Quelyos ERP
+• Créer et configurer le conteneur
+• Initialiser la base de données
+• Démarrer tous les services
+
+ÉTAPE 4: ACCÉDER À QUELYOS ERP
+-------------------------------
+Une fois l'installation terminée, vous verrez:
+
+    ✓ Installation terminée avec succès !
+
+    Boutique E-commerce:  http://localhost/
+    Backoffice Admin:     http://localhost/admin
+
+Ouvrez votre navigateur et accédez à ces URLs.
+
+ÉTAPE 5: CONFIGURATION WIZARD (PREMIER DÉMARRAGE)
+--------------------------------------------------
+Au premier accès, un wizard de configuration s'affichera:
+
+1. Bienvenue - Cliquez "Suivant"
+2. Informations Entreprise - Remplissez vos coordonnées
+3. Compte Administrateur - Configurez votre compte admin
+4. Email SMTP (optionnel) - Configurez l'envoi d'emails
+5. Récapitulatif - Vérifiez et lancez la configuration
+
+Attendez 2-3 minutes pour la configuration initiale.
+
+================================================================================
+3. INSTALLATION MANUELLE
+================================================================================
+
+Si vous préférez installer manuellement ou si le script automatique ne
+fonctionne pas:
+
+ÉTAPE 1: INSTALLER DOCKER
+--------------------------
+Sur Ubuntu/Debian:
+
+    sudo apt-get update
+    sudo apt-get install -y docker.io docker-compose
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+
+Sur CentOS/RHEL:
+
+    sudo yum install -y docker docker-compose
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+
+Sur macOS:
+    Téléchargez et installez Docker Desktop:
+    https://www.docker.com/products/docker-desktop
+
+ÉTAPE 2: TÉLÉCHARGER L'IMAGE QUELYOS
+-------------------------------------
+    docker pull ghcr.io/quelyos/quelyos-erp:latest
+
+ÉTAPE 3: CRÉER LE RÉPERTOIRE DE DONNÉES
+----------------------------------------
+    mkdir -p ~/.quelyos
+
+ÉTAPE 4: LANCER LE CONTENEUR
+-----------------------------
+    docker run -d \
+        --name quelyos-erp \
+        --restart unless-stopped \
+        -p 80:80 \
+        -v ~/.quelyos:/var/lib/quelyos \
+        -e "QUELYOS_ADMIN_EMAIL=votre@email.com" \
+        -e "QUELYOS_ADMIN_PASSWORD=VotreMotDePasse" \
+        ghcr.io/quelyos/quelyos-erp:latest
+
+Remplacez:
+• votre@email.com par votre email
+• VotreMotDePasse par un mot de passe sécurisé
+
+ÉTAPE 5: VÉRIFIER QUE LE CONTENEUR EST DÉMARRÉ
+-----------------------------------------------
+    docker ps | grep quelyos-erp
+
+Vous devriez voir le conteneur en cours d'exécution.
+
+ÉTAPE 6: SUIVRE LES LOGS D'INITIALISATION
+------------------------------------------
+    docker logs -f quelyos-erp
+
+Attendez de voir:
+    [SUCCESS] Initialisation terminée avec succès !
+
+Appuyez sur Ctrl+C pour arrêter de suivre les logs.
+
+================================================================================
+4. CONFIGURATION INITIALE
+================================================================================
+
+ACCÈS AU WIZARD
+---------------
+Après l'installation, accédez à:
+
+    http://localhost/wizard
+
+(Remplacez localhost par votre domaine si configuré)
+
+Le wizard vous guide à travers 5 étapes:
+
+ÉTAPE 1: BIENVENUE
+------------------
+• Présentation de Quelyos ERP
+• Fonctionnalités principales
+• Cliquez "Suivant"
+
+ÉTAPE 2: INFORMATIONS ENTREPRISE
+---------------------------------
+Remplissez:
+• Nom de l'entreprise *
+• Email de contact *
+• Téléphone (optionnel)
+• Adresse (optionnel)
+
+* = Obligatoire
+
+ÉTAPE 3: COMPTE ADMINISTRATEUR
+-------------------------------
+Créez votre compte:
+• Nom complet *
+• Email * (utilisé pour la connexion)
+• Mot de passe * (minimum 8 caractères)
+• Confirmation mot de passe *
+
+⚠️ Conseil de sécurité:
+Utilisez un mot de passe fort contenant:
+• Au moins 8 caractères
+• Majuscules et minuscules
+• Chiffres
+• Caractères spéciaux
+
+ÉTAPE 4: CONFIGURATION EMAIL (OPTIONNEL)
+-----------------------------------------
+Pour envoyer des emails (confirmations commandes, etc.):
+
+1. Cochez "Activer l'envoi d'emails"
+2. Remplissez:
+   • Serveur SMTP (ex: smtp.gmail.com)
+   • Port (587 pour TLS, 465 pour SSL)
+   • Chiffrement (TLS recommandé)
+   • Utilisateur (votre email SMTP)
+   • Mot de passe (mot de passe application)
+
+Fournisseurs populaires:
+• Gmail: smtp.gmail.com:587 (TLS)
+• Outlook: smtp-mail.outlook.com:587 (TLS)
+• Office 365: smtp.office365.com:587 (TLS)
+
+Note: Vous pouvez configurer cela plus tard dans le backoffice.
+
+ÉTAPE 5: RÉCAPITULATIF
+-----------------------
+• Vérifiez toutes vos informations
+• Cliquez "Lancer la configuration"
+• Attendez 2-3 minutes
+
+ÉTAPE 6: SUCCÈS
+---------------
+Une fois la configuration terminée:
+• Notez vos identifiants (affichés une seule fois)
+• Cliquez "Accéder au backoffice" pour commencer
+
+================================================================================
+5. VÉRIFICATION DE L'INSTALLATION
+================================================================================
+
+VÉRIFIER QUE TOUS LES SERVICES FONCTIONNENT
+--------------------------------------------
+1. Vérifier le conteneur:
+
+    docker ps | grep quelyos-erp
+
+   Status devrait être "Up"
+
+2. Vérifier le healthcheck:
+
+    curl http://localhost/health
+
+   Devrait retourner: OK
+
+3. Tester la boutique:
+
+    http://localhost/
+
+   Vous devriez voir la page d'accueil de la boutique
+
+4. Tester le backoffice:
+
+    http://localhost/admin
+
+   Vous devriez voir la page de connexion
+
+5. Se connecter au backoffice:
+   • Email: celui configuré dans le wizard
+   • Mot de passe: celui configuré dans le wizard
+
+VÉRIFIER LA BASE DE DONNÉES
+----------------------------
+    docker exec quelyos-erp psql -U quelyos -d quelyos -c "SELECT COUNT(*) FROM res_partner;"
+
+Devrait retourner un nombre (au moins 1).
+
+VÉRIFIER LES LOGS
+-----------------
+Aucune erreur ne devrait apparaître:
+
+    docker logs quelyos-erp | grep ERROR
+
+Si des erreurs apparaissent, consultez la section Dépannage.
+
+================================================================================
+6. DÉPANNAGE
+================================================================================
+
+PROBLÈME: Le conteneur ne démarre pas
+SOLUTION:
+1. Vérifier les logs:
+    docker logs quelyos-erp
+
+2. Vérifier que le port n'est pas déjà utilisé:
+    sudo lsof -i :80
+
+3. Essayer avec un autre port:
+    docker run ... -p 8080:80 ...
+    Puis accéder à http://localhost:8080
+
+PROBLÈME: "Cannot connect to the Docker daemon"
+SOLUTION:
+1. Démarrer Docker:
+    sudo systemctl start docker
+
+2. Ajouter votre utilisateur au groupe docker:
+    sudo usermod -aG docker $USER
+    newgrp docker
+
+PROBLÈME: Le wizard ne s'affiche pas
+SOLUTION:
+1. Attendre 2-3 minutes (initialisation)
+2. Vider le cache du navigateur (Ctrl+Shift+R)
+3. Vérifier les logs:
+    docker logs quelyos-erp
+
+PROBLÈME: Impossible de se connecter au backoffice
+SOLUTION:
+1. Vérifier les identifiants (sensible à la casse)
+2. Réinitialiser le mot de passe:
+    docker exec -it quelyos-erp bash
+    cd /opt/odoo && python3 odoo-bin shell
+    # Dans le shell Python:
+    env['res.users'].browse(2).write({'password': 'nouveau_mdp'})
+
+PROBLÈME: La boutique est lente
+SOLUTION:
+1. Vérifier les ressources:
+    docker stats quelyos-erp
+
+2. Augmenter la mémoire allouée à Docker (dans Docker Desktop)
+
+3. Redémarrer le conteneur:
+    docker restart quelyos-erp
+
+PROBLÈME: Erreur "Database not found"
+SOLUTION:
+1. Réinitialiser l'installation:
+    docker stop quelyos-erp
+    docker rm quelyos-erp
+    rm -rf ~/.quelyos/*
+    # Relancer l'installation
+
+OBTENIR DE L'AIDE
+-----------------
+Si le problème persiste:
+• Documentation: https://docs.quelyos.com
+• Support: support@quelyos.com
+• GitHub Issues: https://github.com/quelyos/QuelyosERP/issues
+
+================================================================================
+7. MISE À JOUR
+================================================================================
+
+METTRE À JOUR QUELYOS ERP
+--------------------------
+1. Sauvegarder vos données:
+    docker exec quelyos-erp /usr/local/bin/backup.sh
+
+2. Arrêter le conteneur actuel:
+    docker stop quelyos-erp
+
+3. Sauvegarder le conteneur actuel (au cas où):
+    docker commit quelyos-erp quelyos-erp-backup
+
+4. Supprimer le conteneur (pas les données):
+    docker rm quelyos-erp
+
+5. Télécharger la nouvelle version:
+    docker pull ghcr.io/quelyos/quelyos-erp:latest
+
+6. Relancer avec les mêmes données:
+    docker run -d \
+        --name quelyos-erp \
+        --restart unless-stopped \
+        -p 80:80 \
+        -v ~/.quelyos:/var/lib/quelyos \
+        ghcr.io/quelyos/quelyos-erp:latest
+
+7. Vérifier que tout fonctionne:
+    docker logs -f quelyos-erp
+
+RESTAURER UNE SAUVEGARDE
+-------------------------
+Si la mise à jour échoue:
+
+1. Arrêter et supprimer le nouveau conteneur:
+    docker stop quelyos-erp && docker rm quelyos-erp
+
+2. Restaurer l'ancien conteneur:
+    docker run quelyos-erp-backup quelyos-erp
+
+3. Démarrer l'ancien conteneur:
+    docker start quelyos-erp
+
+================================================================================
+  Support et Contact
+================================================================================
+
+Documentation complète: https://docs.quelyos.com
+Support technique: support@quelyos.com
+GitHub: https://github.com/quelyos/QuelyosERP
+
+© 2026 Quelyos. Tous droits réservés.

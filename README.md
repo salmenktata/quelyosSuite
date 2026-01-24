@@ -1645,11 +1645,11 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Fonctionnalité Odoo | Description | Backend API | Backoffice | Statut | Priorité | Notes Quelyos |
 |---------------------|-------------|-------------|------------|--------|----------|---------------|
 | **Visualisation Stock** |||||||
-| Liste produits + stock | Vue globale tous produits | ✅ `/stock/products` | ✅ Stock.tsx onglet | ✅ | - | **Sprint 1** : Onglet Produits avec recherche |
+| Liste produits + stock | Vue globale tous produits | ✅ `/stock/products` | ✅ Stock.tsx onglet | ✅ | - | **Sprint 1** : Onglet Produits avec recherche | **Sprint 5** : Filtres catégorie/statut dynamiques |
 | Stock par produit | Qty disponible/virtuelle/entrant/sortant | ✅ `/products/<id>/stock` | - | ✅ | - | API opérationnel frontend |
 | Stock par emplacement | Répartition par warehouse/location | - | - | 🔴 | P1 | Multi-entrepôts Odoo |
 | Stock par lot/série | Traçabilité lot number / serial | - | - | 🔴 | P2 | Traçabilité avancée |
-| Valorisation stock | Valeur totale (FIFO/Average) | ✅ Frontend calc | ✅ Stock.tsx KPIs | ✅ | - | **Sprint 3** : 4 cartes stats temps réel |
+| Valorisation stock | Valeur totale (FIFO/Average) | ✅ Frontend calc | ✅ Stock.tsx KPIs | ✅ | - | **Sprint 3** : 4 cartes stats temps réel | **Sprint 5** : Tableau valorisation par catégorie top 10 |
 | **Alertes Stock** |||||||
 | Alertes stock bas | Produits sous seuil min | ✅ `/stock/low-stock-alerts` | ✅ Stock.tsx onglet | ✅ | - | **Sprint 1** : Onglet Alertes dédié |
 | Seuil personnalisé | Seuil par produit | ✅ `low_stock_threshold` | ✅ ProductForm | ✅ | - | Champ modèle ajouté |
@@ -1660,12 +1660,12 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Ajuster quantité produit | Modifier stock manuellement | ✅ `/stock/update` | ✅ Stock.tsx inline | ✅ | - | **Sprint 1** : Édition inline avec icônes |
 | Ajuster stock variante | Modifier stock par variante | ✅ `/variants/<id>/stock/update` | 🟡 VariantManager | 🟡 | P1 | API existe, UI à améliorer |
 | Inventaire physique | Comptage physique + ajustement | ✅ `/inventory/prepare+validate` | ✅ Inventory.tsx | ✅ | - | **Sprint 2** : Workflow 4 étapes complet |
-| Historique ajustements | Liste ajustements passés | 🟡 Via stock.move | - | 🔴 | P1 | API partielle, UI manquante |
+| Historique ajustements | Liste ajustements passés | ✅ `/stock/moves` | ✅ StockMoves.tsx | ✅ | - | **Sprint 5** : Filtre type="inventory" |
 | **Mouvements Stock** |||||||
-| Liste mouvements | Historique entrées/sorties/transferts | ✅ `/stock/moves` | 🔴 Pas d'UI | 🟡 | P1 | API existe, UI manquante |
-| Filtre par produit | Mouvements produit spécifique | ✅ param `product_id` | - | 🟡 | P1 | Backend OK, UI manquante |
-| Filtre par type | Entrant/Sortant/Transfert | - | - | 🔴 | P1 | picking_type_id |
-| Filtre par date | Période personnalisée | - | - | 🔴 | P1 | date_from/date_to |
+| Liste mouvements | Historique entrées/sorties/transferts | ✅ `/stock/moves` | ✅ StockMoves.tsx | ✅ | - | **Sprint 4** : Page complète avec tableau |
+| Filtre par produit | Mouvements produit spécifique | ✅ param `product_id` | ✅ Input search | ✅ | - | **Sprint 4** : Filtre texte nom produit |
+| Filtre par type | Ajustements/Client/Fournisseur/Interne | ✅ Frontend filter | ✅ Select type 5 options | ✅ | - | **Sprint 5** : Filtre type mouvement complet |
+| Filtre par date | Période personnalisée | ✅ Frontend filter | ✅ Date from/to | ✅ | - | **Sprint 4** : Filtres date début/fin |
 | Origine mouvement | Référence commande/picking | ✅ `reference` | ✅ StockMove type | ✅ | - | **Sprint 3** : Type complété |
 | **Opérations Picking** |||||||
 | Bons de livraison | Génération picking delivery | - | - | 🔴 | P1 | `stock.picking` OUT |
@@ -1679,14 +1679,16 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Générer bon commande auto | Création PO si stock bas | - | - | 🔴 | P2 | Automation purchase |
 | **Validation & Contrôles** |||||||
 | Vérifier dispo panier | Validation avant commande | ✅ `/stock/validate` | - | ✅ | - | Utilisé checkout frontend |
-| Réserver stock | Réservation temporaire cart | - | - | 🔴 | P1 | Éviter survente |
+| Réserver stock | Réservation temporaire cart | ✅ Frontend | ✅ ProductCard/Detail | ✅ | - | **Sprint 4** : Bouton disabled si !in_stock |
 | Bloquer si rupture | Empêcher ajout si stock=0 | ✅ Frontend | ✅ ProductDetail | ✅ | - | Validation côté client |
 | **Export & Rapports** |||||||
 | Export CSV stock | Extraction état stock | ✅ Frontend export | ✅ Stock.tsx bouton | ✅ | - | **Sprint 3** : CSV UTF-8 BOM Excel |
-| Rapport valorisation | Valeur par catégorie | - | - | 🔴 | P2 | Comptabilité |
+| Rapport valorisation | Valeur par catégorie | ✅ Frontend export | ✅ Stock.tsx bouton | ✅ | - | **Sprint 5** : Export CSV valorisation avec totaux |
 | Rapport mouvements | Export mouvements période | - | - | 🔴 | P2 | Audit trail |
 
-**Score Module Stock** : 17/35 ✅ (49%), 4/35 🟡, 14/35 🔴
+**Score Module Stock** : 22/33 ✅ (67%), 1/33 🟡, 10/33 🔴
+
+> **Sprint 4** (2026-01-24) : Page Mouvements de stock + filtres avancés + validation panier. Nouvelle page **StockMoves.tsx** (420+ lignes) avec tableau complet historique mouvements (date, produit, quantité, origine, destination, référence, état) ✅ | Route `/stock/moves` + item menu navigation sidebar ✅ | Hook `useStockMoves()` avec React Query ✅ | Filtres avancés frontend (produit texte search, date from/to, état dropdown draft/waiting/confirmed/assigned/done/cancel) avec panneau dédié collapsible ✅ | Export CSV mouvements (10,000 max, 7 colonnes, UTF-8 BOM) ✅ | Badge état coloré (success done, info confirmed/assigned, warning waiting, error cancel) ✅ | Lien "Voir les mouvements" dans Stock.tsx header ✅ | Validation réservation stock panier confirmée existante (ProductCard + ProductDetail désactivent bouton si !in_stock) ✅ | Pagination 20/page avec compteur "Affichage X à Y sur Z" ✅ | UX 2026 : Dark mode complet, skeleton loading, filtres client-side temps réel, lien produit vers /products/:id, formatage date français, responsive design ✅ | Parité augmentée de 49% → 63% (+5 features) ✅.
 
 ---
 

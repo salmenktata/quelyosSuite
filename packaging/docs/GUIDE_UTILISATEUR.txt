@@ -1,0 +1,592 @@
+================================================================================
+  QUELYOS ERP - Guide Utilisateur (Boutique E-commerce)
+  Version 1.0.0 - Janvier 2026
+================================================================================
+
+TABLE DES MATIÈRES
+================================================================================
+1. Prise en Main
+2. Navigation et Recherche
+3. Parcourir le Catalogue
+4. Fiche Produit
+5. Panier et Commande
+6. Compte Client
+7. Wishlist (Liste de Souhaits)
+8. Suivi des Commandes
+9. Questions Fréquentes
+
+================================================================================
+1. PRISE EN MAIN
+================================================================================
+
+ACCÉDER À LA BOUTIQUE
+----------------------
+Ouvrez votre navigateur et accédez à l'URL de votre boutique:
+    http://votredomaine.com
+
+ou pour une installation locale:
+    http://localhost
+
+STRUCTURE DE LA BOUTIQUE
+-------------------------
+• En-tête (Header)
+  - Logo (retour à l'accueil)
+  - Barre de recherche
+  - Menu catégories
+  - Icônes: Compte, Wishlist, Panier
+
+• Page d'accueil
+  - Slider promotionnel
+  - Catégories principales
+  - Produits mis en avant
+  - Promotions et nouveautés
+
+• Pied de page (Footer)
+  - Liens utiles (CGV, Contact, etc.)
+  - Informations entreprise
+  - Réseaux sociaux
+
+PREMIÈRE VISITE
+---------------
+En tant que visiteur (non connecté), vous pouvez:
+✓ Parcourir le catalogue
+✓ Voir les produits
+✓ Ajouter au panier
+✓ Passer commande (avec compte ou en invité)
+
+Créer un compte vous permet:
+✓ Sauvegarder vos adresses
+✓ Suivre vos commandes
+✓ Créer une wishlist
+✓ Gagner des points de fidélité (si activé)
+
+================================================================================
+2. NAVIGATION ET RECHERCHE
+================================================================================
+
+MENU CATÉGORIES
+---------------
+Cliquez sur une catégorie dans le menu pour voir:
+• Tous les produits de cette catégorie
+• Les sous-catégories disponibles
+• Les filtres applicables
+
+BARRE DE RECHERCHE
+------------------
+1. Cliquez dans la barre de recherche (en haut)
+2. Tapez le nom du produit recherché
+3. Des suggestions apparaissent en temps réel
+4. Cliquez sur un résultat ou appuyez sur Entrée
+
+ASTUCES DE RECHERCHE:
+• Tapez au moins 3 caractères pour voir les suggestions
+• Utilisez des mots-clés simples ("chaussures", "t-shirt")
+• La recherche fonctionne sur le nom et la description
+
+FIL D'ARIANE (BREADCRUMBS)
+---------------------------
+En haut de chaque page, le fil d'Ariane montre votre chemin:
+    Accueil > Vêtements > T-shirts > T-shirt Blanc
+
+Cliquez sur un élément pour revenir en arrière.
+
+================================================================================
+3. PARCOURIR LE CATALOGUE
+================================================================================
+
+PAGE CATALOGUE
+--------------
+Affiche tous les produits d'une catégorie avec:
+• Image du produit
+• Nom et prix
+• Badge "Nouveau" ou "Promo" (si applicable)
+• Badge de stock ("En stock", "Stock faible", "Rupture")
+• Bouton "Aperçu rapide"
+
+FILTRES
+-------
+Utilisez les filtres dans la sidebar gauche:
+
+• Prix
+  - Déplacez les curseurs pour définir une fourchette
+  - Ou entrez min/max manuellement
+
+• Catégories
+  - Cochez les catégories à afficher
+  - Les sous-catégories s'affichent en dessous
+
+• Attributs (couleur, taille, etc.)
+  - Cliquez sur les pastilles de couleur
+  - Ou cochez les tailles disponibles
+
+• Disponibilité
+  - En stock uniquement
+  - Inclure produits en rupture
+
+Cliquez sur "Réinitialiser les filtres" pour tout effacer.
+
+TRI
+---
+Triez les résultats par:
+• Pertinence (défaut)
+• Prix croissant (du moins cher au plus cher)
+• Prix décroissant (du plus cher au moins cher)
+• Nouveautés (produits récents d'abord)
+• Popularité (les plus vendus)
+
+PAGINATION
+----------
+En bas de page:
+• Nombre de produits affichés (ex: "Affichage 1-20 sur 156")
+• Boutons "Précédent" / "Suivant"
+• Numéros de page cliquables
+
+APERÇU RAPIDE (QUICK VIEW)
+---------------------------
+Survolez un produit et cliquez sur l'icône œil:
+• Une fenêtre popup s'ouvre
+• Voir les infos principales sans quitter la page
+• Ajouter directement au panier
+• Ou cliquer "Voir détails" pour la fiche complète
+
+================================================================================
+4. FICHE PRODUIT
+================================================================================
+
+ACCÉDER À UNE FICHE PRODUIT
+----------------------------
+• Cliquez sur un produit dans le catalogue
+• Ou utilisez l'aperçu rapide puis "Voir détails"
+
+INFORMATIONS AFFICHÉES
+----------------------
+Section Principale (au-dessus du pli):
+• Galerie d'images (cliquez pour zoomer)
+• Nom du produit
+• Prix (avec ou sans promotion)
+• Note moyenne (étoiles) et nombre d'avis
+• Disponibilité (en stock / stock faible / rupture)
+• Sélecteurs de variantes (couleur, taille, etc.)
+• Quantité (boutons +/-)
+• Bouton "Ajouter au panier"
+• Icône cœur pour ajouter à la wishlist
+
+GALERIE D'IMAGES
+----------------
+• Image principale en grand
+• Miniatures cliquables en dessous
+• Survolez pour zoomer automatique
+• Cliquez pour ouvrir en plein écran
+
+VARIANTES (ATTRIBUTS)
+---------------------
+Si le produit a des variantes:
+
+1. Couleur:
+   • Pastilles de couleur cliquables
+   • La couleur sélectionnée a un contour
+
+2. Taille:
+   • Boutons avec les tailles disponibles
+   • Les tailles en rupture sont grisées
+
+3. Autres attributs:
+   • Dropdowns ou boutons selon le type
+
+Le prix et le stock se mettent à jour automatiquement selon
+votre sélection.
+
+QUANTITÉ
+--------
+• Bouton "-" pour diminuer (minimum 1)
+• Champ modifiable manuellement
+• Bouton "+" pour augmenter
+• Maximum = quantité en stock
+
+AJOUTER AU PANIER
+-----------------
+1. Sélectionnez vos variantes (si applicable)
+2. Choisissez la quantité
+3. Cliquez "Ajouter au panier"
+4. Une notification "Ajouté au panier ✓" apparaît
+5. Le compteur du panier (en haut) se met à jour
+
+Options après ajout:
+• "Continuer mes achats" → Reste sur la page
+• "Voir mon panier" → Va au panier
+
+ONGLETS D'INFORMATIONS
+-----------------------
+Sous le produit principal, plusieurs onglets:
+
+1. Description:
+   • Texte descriptif du produit
+   • Points forts et caractéristiques
+
+2. Caractéristiques:
+   • Tableau avec toutes les spécifications
+   • Dimensions, poids, matière, etc.
+
+3. Livraison:
+   • Modes de livraison disponibles
+   • Délais et coûts
+   • Zones de livraison
+
+4. Avis Clients (si activé):
+   • Notes et commentaires
+   • Possibilité de laisser un avis
+
+PRODUITS SIMILAIRES
+-------------------
+En bas de page: "Vous aimerez aussi"
+• Sélection de produits similaires ou complémentaires
+• Ajout rapide au panier possible
+
+================================================================================
+5. PANIER ET COMMANDE
+================================================================================
+
+ACCÉDER AU PANIER
+-----------------
+• Cliquez sur l'icône panier en haut à droite
+• Ou sur "Voir mon panier" après ajout
+
+PAGE PANIER
+-----------
+Affiche:
+• Liste de vos articles
+  - Image miniature
+  - Nom et variantes
+  - Prix unitaire
+  - Quantité (modifiable avec +/-)
+  - Total ligne
+  - Bouton supprimer (icône poubelle)
+
+• Résumé commande (sidebar droite)
+  - Sous-total articles
+  - Code promo (si applicable)
+  - Frais de livraison (calculés au checkout)
+  - Total TTC
+
+MODIFIER LE PANIER
+------------------
+• Changer la quantité: Utilisez +/- ou tapez directement
+• Supprimer un article: Cliquez sur l'icône poubelle
+• Vider le panier: Bouton "Vider le panier" en bas
+
+CODE PROMO / COUPON
+--------------------
+1. Cliquez sur "Appliquer un code promo"
+2. Entrez le code
+3. Cliquez "Appliquer"
+4. La réduction s'affiche immédiatement
+
+Si le code est invalide:
+• Message d'erreur explicite
+• Vérifiez la saisie et la date de validité
+
+PASSER COMMANDE
+---------------
+Cliquez sur "Passer commande" pour accéder au checkout.
+
+ÉTAPE 1: LIVRAISON
+------------------
+Adresse de livraison:
+
+Si connecté:
+• Sélectionnez une adresse existante
+• Ou ajoutez une nouvelle adresse
+
+Si invité:
+• Remplissez tous les champs obligatoires:
+  - Nom complet *
+  - Email *
+  - Téléphone *
+  - Adresse postale *
+  - Code postal *
+  - Ville *
+  - Pays *
+
+Mode de livraison:
+• Choisissez parmi les options disponibles:
+  - Standard (2-5 jours)
+  - Express (1-2 jours)
+• Prix et délai affichés clairement
+• Livraison gratuite si montant > seuil (affiché)
+
+Cliquez "Continuer vers le paiement"
+
+ÉTAPE 2: PAIEMENT
+-----------------
+Choisissez votre mode de paiement:
+
+1. Carte Bancaire (Stripe):
+   • Entrez numéro, date, CVC
+   • Formulaire sécurisé
+   • 3D Secure si requis
+
+2. PayPal:
+   • Redirected vers PayPal
+   • Connectez-vous à votre compte
+   • Validez le paiement
+
+3. Virement Bancaire:
+   • Commande créée
+   • Coordonnées bancaires affichées
+   • Commande traitée après réception du virement
+
+4. Paiement à la livraison (si activé):
+   • Payez au livreur
+   • Espèces ou TPE selon région
+
+Récapitulatif final:
+• Vérifiez tous les éléments
+• Cochez "J'accepte les CGV" *
+• Cliquez "Confirmer et payer"
+
+ÉTAPE 3: CONFIRMATION
+---------------------
+Après paiement réussi:
+• Numéro de commande affiché
+• Email de confirmation envoyé
+• Résumé complet de la commande
+• Boutons "Suivre ma commande" et "Continuer mes achats"
+
+⚠️ Conservez votre numéro de commande pour le suivi.
+
+================================================================================
+6. COMPTE CLIENT
+================================================================================
+
+CRÉER UN COMPTE
+---------------
+1. Cliquez sur l'icône compte (en haut)
+2. Cliquez "Créer un compte"
+3. Remplissez le formulaire:
+   • Nom complet *
+   • Email * (sera votre identifiant)
+   • Téléphone (optionnel)
+   • Mot de passe * (min 8 caractères)
+   • Confirmation mot de passe *
+   • Cochez "J'accepte les CGV" *
+4. Cliquez "S'inscrire"
+5. Email de bienvenue envoyé
+
+AVANTAGES D'UN COMPTE
+----------------------
+✓ Commande plus rapide (adresses sauvegardées)
+✓ Suivi de vos commandes en temps réel
+✓ Historique d'achats
+✓ Wishlist pour vos produits préférés
+✓ Points de fidélité (si activé)
+✓ Offres personnalisées
+
+SE CONNECTER
+------------
+1. Cliquez sur l'icône compte
+2. Entrez email et mot de passe
+3. Cochez "Se souvenir de moi" (optionnel)
+4. Cliquez "Se connecter"
+
+MOT DE PASSE OUBLIÉ
+-------------------
+1. Sur la page de connexion, cliquez "Mot de passe oublié ?"
+2. Entrez votre email
+3. Un email de réinitialisation est envoyé
+4. Cliquez sur le lien dans l'email
+5. Définissez un nouveau mot de passe
+
+TABLEAU DE BORD
+---------------
+Une fois connecté, accédez à "Mon compte" pour voir:
+• Statistiques (commandes, montant total)
+• Liens rapides (Commandes, Adresses, Profil)
+• Dernières commandes
+
+MODIFIER LE PROFIL
+------------------
+Section "Mon profil":
+• Nom, prénom
+• Email (identifiant de connexion)
+• Téléphone
+• Changer le mot de passe
+
+1. Cliquez sur "Modifier"
+2. Changez les informations
+3. Cliquez "Enregistrer"
+
+GÉRER LES ADRESSES
+------------------
+Section "Mes adresses":
+• Voir toutes vos adresses
+• Ajouter une nouvelle adresse
+• Modifier une adresse existante
+• Supprimer une adresse (sauf si utilisée)
+• Définir une adresse par défaut
+
+DÉCONNEXION
+-----------
+Cliquez sur l'icône compte puis "Déconnexion".
+
+================================================================================
+7. WISHLIST (LISTE DE SOUHAITS)
+================================================================================
+
+AJOUTER À LA WISHLIST
+----------------------
+Sur une fiche produit ou dans le catalogue:
+• Cliquez sur l'icône cœur
+• Le cœur devient plein (rouge)
+• Notification "Ajouté à la wishlist"
+
+ACCÉDER À LA WISHLIST
+----------------------
+• Cliquez sur l'icône cœur en haut
+• Ou "Ma wishlist" dans votre compte
+
+PAGE WISHLIST
+-------------
+Affiche tous vos produits favoris:
+• Image et nom du produit
+• Prix actuel
+• Disponibilité (en stock / rupture)
+• Date d'ajout
+• Boutons:
+  - "Ajouter au panier" (rapide)
+  - Supprimer de la wishlist
+
+PARTAGER LA WISHLIST
+---------------------
+• Bouton "Partager" génère un lien unique
+• Envoyez ce lien à vos proches
+• Ils verront votre wishlist (lecture seule)
+• Pratique pour les cadeaux !
+
+================================================================================
+8. SUIVI DES COMMANDES
+================================================================================
+
+ACCÉDER À VOS COMMANDES
+------------------------
+• Menu "Mon compte" > "Mes commandes"
+• Ou cliquez sur le numéro de commande dans l'email
+
+LISTE DES COMMANDES
+-------------------
+Affiche toutes vos commandes avec:
+• Numéro de commande
+• Date
+• Montant total
+• État (badge coloré):
+  - 🔵 Brouillon (panier non validé)
+  - 🟡 En attente (paiement en cours)
+  - 🟢 Confirmée (paiement OK)
+  - 🟣 En préparation
+  - 📦 Expédiée
+  - ✅ Livrée
+  - ❌ Annulée
+
+Cliquez sur une commande pour voir les détails.
+
+DÉTAIL D'UNE COMMANDE
+---------------------
+Informations complètes:
+• Numéro et date
+• État actuel avec chronologie
+• Liste des produits commandés
+• Adresse de livraison
+• Mode de livraison
+• Récapitulatif des montants
+• Numéro de tracking (si expédié)
+
+SUIVRE UN COLIS
+---------------
+Si la commande est expédiée:
+• Numéro de suivi affiché
+• Lien vers le site du transporteur
+• Cliquez pour voir où en est votre colis
+
+TÉLÉCHARGER LA FACTURE
+-----------------------
+• Bouton "Télécharger la facture" (PDF)
+• Disponible dès confirmation du paiement
+
+ANNULER UNE COMMANDE
+--------------------
+Possible uniquement si:
+• Commande en brouillon ou en attente
+• Pas encore expédiée
+
+Procédure:
+1. Ouvrez le détail de la commande
+2. Cliquez "Annuler la commande"
+3. Confirmez l'annulation
+4. Remboursement automatique (si déjà payée)
+
+RETOURNER UN ARTICLE
+--------------------
+Si vous souhaitez retourner un produit:
+1. Contactez le service client (formulaire ou email)
+2. Indiquez numéro de commande et produit concerné
+3. Attendez l'accord et les instructions
+4. Renvoyez le produit sous 30 jours
+5. Remboursement après réception et contrôle
+
+================================================================================
+9. QUESTIONS FRÉQUENTES
+================================================================================
+
+Q: Puis-je commander sans créer de compte ?
+R: Oui, le checkout invité est disponible. Vous devez juste fournir
+   un email pour la confirmation.
+
+Q: Comment modifier ma commande ?
+R: Si la commande n'est pas encore expédiée, contactez rapidement
+   le service client avec votre numéro de commande.
+
+Q: Puis-je utiliser plusieurs codes promo ?
+R: Non, un seul code promo par commande.
+
+Q: Comment savoir si un produit est en stock ?
+R: Le badge "En stock" / "Stock faible" / "Rupture" est affiché
+   sur chaque produit.
+
+Q: Les prix incluent-ils la TVA ?
+R: Oui, tous les prix affichés sont TTC (toutes taxes comprises).
+
+Q: Quelle est la politique de retour ?
+R: Vous avez 30 jours pour retourner un produit non utilisé.
+   Voir CGV pour détails.
+
+Q: Combien de temps pour recevoir ma commande ?
+R: 2-5 jours en livraison standard, 1-2 jours en express.
+   Délais indicatifs, peuvent varier selon la région.
+
+Q: Comment contacter le service client ?
+R: Par email, formulaire de contact, ou téléphone (horaires affichés
+   en pied de page).
+
+Q: Mon paiement est-il sécurisé ?
+R: Oui, nous utilisons Stripe (certifié PCI-DSS niveau 1) et PayPal
+   pour garantir la sécurité de vos transactions.
+
+Q: Comment gagner des points de fidélité ?
+R: À chaque achat (si programme activé). 1€ dépensé = X points.
+   Utilisez vos points pour des réductions.
+
+================================================================================
+  Support et Contact
+================================================================================
+
+Service Client:
+• Email: support@quelyos.com
+• Horaires: du lundi au vendredi, 9h-18h
+• Réponse sous 24h maximum
+
+Documentation:
+• https://docs.quelyos.com
+
+Réseaux Sociaux:
+• Suivez-nous pour les offres exclusives et actualités
+
+© 2026 Quelyos. Tous droits réservés.

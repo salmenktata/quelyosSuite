@@ -461,6 +461,103 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
+    @http.route('/api/ecommerce/products/slug/<string:slug>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_by_slug(self, slug, **kwargs):
+        """Détail d'un produit par slug (GET via JSON-RPC)"""
+        try:
+            # Rechercher tous les produits et générer leur slug pour trouver la correspondance
+            products = request.env['product.template'].sudo().search([('active', '=', True)])
+
+            product = None
+            for prod in products:
+                # Générer le slug du produit (même logique que dans get_product_detail)
+                prod_slug = prod.name.lower().replace(' ', '-')
+                if prod_slug == slug:
+                    product = prod
+                    break
+
+            if not product:
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Récupérer toutes les images du produit (product.image)
+            images = []
+            for img in product.product_template_image_ids.sorted('sequence'):
+                images.append({
+                    'id': img.id,
+                    'name': img.name or f'Image {img.sequence}',
+                    'url': f'/web/image/product.image/{img.id}/image_1920',
+                    'sequence': img.sequence,
+                })
+
+            # Calculer le statut de stock
+            qty = product.qty_available
+            if qty <= 0:
+                stock_status = 'out_of_stock'
+            elif qty <= 5:
+                stock_status = 'low_stock'
+            else:
+                stock_status = 'in_stock'
+
+            # Récupérer les taxes applicables
+            taxes = []
+            for tax in product.taxes_id:
+                taxes.append({
+                    'id': tax.id,
+                    'name': tax.name,
+                    'amount': tax.amount,
+                    'amount_type': tax.amount_type,
+                    'price_include': tax.price_include,
+                })
+
+            data = {
+                'id': product.id,
+                'name': product.name,
+                'description': product.description_sale or '',
+                'description_purchase': product.description_purchase or '',
+                'price': product.list_price,
+                'standard_price': product.standard_price,
+                'default_code': product.default_code or '',
+                'barcode': product.barcode or '',
+                'weight': product.weight or 0,
+                'volume': product.volume or 0,
+                'product_length': getattr(product, 'product_length', 0) or 0,
+                'product_width': getattr(product, 'product_width', 0) or 0,
+                'product_height': getattr(product, 'product_height', 0) or 0,
+                'type': product.type or 'consu',
+                'uom_id': product.uom_id.id if product.uom_id else None,
+                'uom_name': product.uom_id.name if product.uom_id else None,
+                'product_tag_ids': [{'id': tag.id, 'name': tag.name, 'color': tag.color if hasattr(tag, 'color') else 0} for tag in product.product_tag_ids] if product.product_tag_ids else [],
+                'image': f'/web/image/product.template/{product.id}/image_1920' if product.image_1920 else None,
+                'images': images,
+                'slug': slug,  # Utiliser le slug passé en paramètre
+                'qty_available': qty,
+                'virtual_available': product.virtual_available,
+                'stock_status': stock_status,
+                'active': product.active,
+                'create_date': product.create_date.isoformat() if product.create_date else None,
+                'variant_count': product.product_variant_count,
+                'category': {
+                    'id': product.categ_id.id,
+                    'name': product.categ_id.name,
+                } if product.categ_id else None,
+                'taxes': taxes,
+            }
+
+            return {
+                'success': True,
+                'product': data  # Format attendu par le frontend
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product by slug error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     @http.route('/api/ecommerce/products/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_product(self, **kwargs):
         """Créer un produit (admin)"""

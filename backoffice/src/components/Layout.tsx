@@ -1,309 +1,433 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
+import {
+  HomeIcon,
+  ShoppingCartIcon,
+  UserGroupIcon,
+  CubeIcon,
+  TagIcon,
+  TicketIcon,
+  CubeTransparentIcon,
+  ArrowsRightLeftIcon,
+  TruckIcon,
+  CreditCardIcon,
+  DocumentTextIcon,
+  SparklesIcon,
+  ChartBarIcon,
+  BuildingStorefrontIcon,
+  Bars3Icon,
+  XMarkIcon,
+  SunIcon,
+  MoonIcon,
+  ArrowLeftOnRectangleIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline'
+import { useAnalyticsStats } from '../hooks/useAnalytics'
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
-function ThemeToggle() {
+interface NavItem {
+  name: string
+  path: string
+  icon: React.ComponentType<{ className?: string }>
+  badge?: number | string
+}
+
+interface NavGroup {
+  name: string
+  items: NavItem[]
+  defaultOpen?: boolean
+}
+
+function ThemeToggle({ compact }: { compact: boolean }) {
   const { theme, toggleTheme } = useTheme()
 
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors w-full"
+      className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full group"
       aria-label={`Passer en mode ${theme === 'light' ? 'sombre' : 'clair'}`}
+      title={compact ? (theme === 'light' ? 'Mode sombre' : 'Mode clair') : undefined}
     >
       {theme === 'light' ? (
-        <>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-          <span className="font-medium">Mode sombre</span>
-        </>
+        <MoonIcon className="w-5 h-5 flex-shrink-0" />
       ) : (
-        <>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <span className="font-medium">Mode clair</span>
-        </>
+        <SunIcon className="w-5 h-5 flex-shrink-0" />
+      )}
+      {!compact && (
+        <span className="font-medium">{theme === 'light' ? 'Mode sombre' : 'Mode clair'}</span>
       )}
     </button>
   )
 }
 
+function NavGroupComponent({
+  group,
+  isActive,
+  compact,
+  onItemClick,
+}: {
+  group: NavGroup
+  isActive: (path: string) => boolean
+  compact: boolean
+  onItemClick?: () => void
+}) {
+  const [isOpen, setIsOpen] = useState(group.defaultOpen ?? true)
+  const location = useLocation()
+
+  // Auto-ouvrir le groupe si un item est actif
+  useEffect(() => {
+    const hasActiveItem = group.items.some((item) => isActive(item.path))
+    if (hasActiveItem && !isOpen) {
+      setIsOpen(true)
+    }
+  }, [location.pathname, group.items, isActive, isOpen])
+
+  if (compact) {
+    // Mode compact : afficher directement les items sans groupe
+    return (
+      <>
+        {group.items.map((item) => (
+          <NavItemComponent
+            key={item.path}
+            item={item}
+            isActive={isActive(item.path)}
+            compact={compact}
+            onClick={onItemClick}
+          />
+        ))}
+      </>
+    )
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+      >
+        <span>{group.name}</span>
+        {isOpen ? (
+          <ChevronDownIcon className="w-4 h-4" />
+        ) : (
+          <ChevronRightIcon className="w-4 h-4" />
+        )}
+      </button>
+      <div
+        className={`space-y-1 overflow-hidden transition-all duration-200 ${
+          isOpen ? 'max-h-[1000px] opacity-100 mb-4' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {group.items.map((item) => (
+          <NavItemComponent
+            key={item.path}
+            item={item}
+            isActive={isActive(item.path)}
+            compact={compact}
+            onClick={onItemClick}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function NavItemComponent({
+  item,
+  isActive,
+  compact,
+  onClick,
+}: {
+  item: NavItem
+  isActive: boolean
+  compact: boolean
+  onClick?: () => void
+}) {
+  const Icon = item.icon
+
+  return (
+    <Link
+      to={item.path}
+      onClick={onClick}
+      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative ${
+        isActive
+          ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium'
+          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+      }`}
+      title={compact ? item.name : undefined}
+    >
+      {/* Indicateur actif à gauche */}
+      {isActive && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-600 dark:bg-indigo-400 rounded-r-full" />
+      )}
+
+      <Icon className={`w-5 h-5 flex-shrink-0 ${compact ? 'mx-auto' : ''}`} />
+      {!compact && (
+        <span className="flex-1 truncate">{item.name}</span>
+      )}
+      {!compact && item.badge && (
+        <span className="flex items-center justify-center min-w-[20px] h-5 px-2 text-xs font-semibold text-white bg-red-500 rounded-full">
+          {item.badge}
+        </span>
+      )}
+    </Link>
+  )
+}
+
 export function Layout({ children }: LayoutProps) {
   const location = useLocation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCompact, setIsCompact] = useState(false)
+  const { data: analyticsData } = useAnalyticsStats()
 
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
-  const navItems = [
+  // Calculer les badges de notifications
+  const stockAlerts = (analyticsData?.data?.totals?.out_of_stock_products || 0) +
+                      (analyticsData?.data?.totals?.low_stock_products || 0)
+
+  const navGroups: NavGroup[] = [
     {
-      name: 'Tableau de bord',
-      path: '/dashboard',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-          />
-        </svg>
-      ),
+      name: 'Vue d\'ensemble',
+      defaultOpen: true,
+      items: [
+        {
+          name: 'Tableau de bord',
+          path: '/dashboard',
+          icon: HomeIcon,
+        },
+        {
+          name: 'Analytics',
+          path: '/analytics',
+          icon: ChartBarIcon,
+        },
+      ],
     },
     {
-      name: 'Commandes',
-      path: '/orders',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-          />
-        </svg>
-      ),
+      name: 'Ventes',
+      defaultOpen: true,
+      items: [
+        {
+          name: 'Commandes',
+          path: '/orders',
+          icon: ShoppingCartIcon,
+        },
+        {
+          name: 'Paniers abandonnés',
+          path: '/abandoned-carts',
+          icon: BuildingStorefrontIcon,
+        },
+        {
+          name: 'Clients',
+          path: '/customers',
+          icon: UserGroupIcon,
+        },
+      ],
     },
     {
-      name: 'Paniers abandonnés',
-      path: '/abandoned-carts',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Clients',
-      path: '/customers',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Produits',
-      path: '/products',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Catégories',
-      path: '/categories',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Codes Promo',
-      path: '/coupons',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      ),
+      name: 'Catalogue',
+      defaultOpen: true,
+      items: [
+        {
+          name: 'Produits',
+          path: '/products',
+          icon: CubeIcon,
+        },
+        {
+          name: 'Catégories',
+          path: '/categories',
+          icon: TagIcon,
+        },
+        {
+          name: 'Produits Vedette',
+          path: '/featured',
+          icon: SparklesIcon,
+        },
+      ],
     },
     {
       name: 'Stock',
-      path: '/stock',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-          />
-        </svg>
-      ),
+      defaultOpen: false,
+      items: [
+        {
+          name: 'Stock',
+          path: '/stock',
+          icon: CubeTransparentIcon,
+          badge: stockAlerts > 0 ? stockAlerts : undefined,
+        },
+        {
+          name: 'Mouvements',
+          path: '/stock/moves',
+          icon: ArrowsRightLeftIcon,
+        },
+      ],
     },
     {
-      name: 'Mouvements',
-      path: '/stock/moves',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-          />
-        </svg>
-      ),
+      name: 'Finance',
+      defaultOpen: false,
+      items: [
+        {
+          name: 'Factures',
+          path: '/invoices',
+          icon: DocumentTextIcon,
+        },
+        {
+          name: 'Paiements',
+          path: '/payments',
+          icon: CreditCardIcon,
+        },
+        {
+          name: 'Codes Promo',
+          path: '/coupons',
+          icon: TicketIcon,
+        },
+      ],
     },
     {
-      name: 'Livraison',
-      path: '/delivery',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Paiements',
-      path: '/payments',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Factures',
-      path: '/invoices',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Produits Vedette',
-      path: '/featured',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Analytics',
-      path: '/analytics',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
-        </svg>
-      ),
-    },
-    {
-      name: 'Abonnements',
-      path: '/subscriptions',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-          />
-        </svg>
-      ),
+      name: 'Configuration',
+      defaultOpen: false,
+      items: [
+        {
+          name: 'Livraison',
+          path: '/delivery',
+          icon: TruckIcon,
+        },
+        {
+          name: 'Abonnements',
+          path: '/subscriptions',
+          icon: DocumentTextIcon,
+        },
+      ],
     },
   ]
 
+  // Fermer le menu mobile lors du changement de route
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
+
+  const sidebarWidth = isCompact ? 'w-20' : 'w-64'
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 fixed h-full">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Quelyos</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Backoffice</p>
+      {/* Overlay mobile */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Desktop + Mobile */}
+      <aside
+        className={`${sidebarWidth} bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 fixed h-full z-50 transition-all duration-300 flex flex-col ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          {!isCompact && (
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                Quelyos
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Backoffice</p>
+            </div>
+          )}
+          {isCompact && (
+            <div className="w-full flex justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">Q</span>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            aria-label="Fermer le menu"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
 
-        <nav className="p-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive(item.path)
-                  ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              {item.icon}
-              <span className="font-medium">{item.name}</span>
-            </Link>
+        {/* Navigation avec scroll */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+          {navGroups.map((group) => (
+            <NavGroupComponent
+              key={group.name}
+              group={group}
+              isActive={isActive}
+              compact={isCompact}
+              onItemClick={() => setIsMobileMenuOpen(false)}
+            />
           ))}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 space-y-1">
-          <ThemeToggle />
+        {/* Footer avec actions */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+          {/* Toggle compact mode (desktop uniquement) */}
+          {!isCompact && (
+            <button
+              onClick={() => setIsCompact(!isCompact)}
+              className="hidden lg:flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full group"
+              aria-label="Mode compact"
+            >
+              <Bars3Icon className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">Mode compact</span>
+            </button>
+          )}
+          {isCompact && (
+            <button
+              onClick={() => setIsCompact(!isCompact)}
+              className="hidden lg:flex items-center justify-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full"
+              aria-label="Mode étendu"
+              title="Mode étendu"
+            >
+              <Bars3Icon className="w-5 h-5" />
+            </button>
+          )}
+
+          <ThemeToggle compact={isCompact} />
 
           <Link
             to="/login"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
+            title={isCompact ? 'Déconnexion' : undefined}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span className="font-medium">Déconnexion</span>
+            <ArrowLeftOnRectangleIcon className="w-5 h-5 flex-shrink-0" />
+            {!isCompact && <span className="font-medium">Déconnexion</span>}
           </Link>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 ml-64">
-        {children}
-      </main>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarWidth} lg:ml-0`}>
+        {/* Header mobile */}
+        <header className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between sticky top-0 z-30">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="text-gray-700 dark:text-gray-300"
+            aria-label="Ouvrir le menu"
+          >
+            <Bars3Icon className="w-6 h-6" />
+          </button>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+            Quelyos
+          </h1>
+          <div className="w-6" /> {/* Spacer pour centrer le titre */}
+        </header>
+
+        {/* Contenu principal */}
+        <main className={`flex-1 ${!isCompact ? 'lg:ml-64' : 'lg:ml-20'}`}>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
-

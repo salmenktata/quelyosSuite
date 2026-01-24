@@ -13,11 +13,32 @@ export interface LowStockAlert {
   category: string
 }
 
+export interface HighStockAlert {
+  id: number
+  name: string
+  sku: string
+  current_stock: number
+  threshold: number
+  diff: number
+  image_url: string | null
+  list_price: number
+  category: string
+}
+
 // Hook pour les alertes de stock bas
 export function useLowStockAlerts(params?: { limit?: number; offset?: number }) {
   return useQuery({
     queryKey: ['low-stock-alerts', params],
     queryFn: () => api.getLowStockAlerts(params),
+    refetchInterval: 60000, // Rafraîchir toutes les minutes
+  })
+}
+
+// Hook pour les alertes de surstock
+export function useHighStockAlerts(params?: { limit?: number; offset?: number }) {
+  return useQuery({
+    queryKey: ['high-stock-alerts', params],
+    queryFn: () => api.getHighStockAlerts(params),
     refetchInterval: 60000, // Rafraîchir toutes les minutes
   })
 }
@@ -67,5 +88,13 @@ export function useValidateInventory() {
       queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
     },
+  })
+}
+
+// Hook pour lister les mouvements de stock
+export function useStockMoves(params?: { limit?: number; offset?: number; product_id?: number }) {
+  return useQuery({
+    queryKey: ['stock-moves', params],
+    queryFn: () => api.getStockMoves(params),
   })
 }

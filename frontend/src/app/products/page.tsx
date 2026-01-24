@@ -483,7 +483,7 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
 
   if (viewMode === 'list') {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex gap-4 hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+      <div data-testid="product-card" className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex gap-4 hover:shadow-xl hover:border-primary/20 transition-all duration-300">
         <div className="w-32 h-32 flex-shrink-0 bg-gray-50 rounded-lg overflow-hidden relative">
           {imageUrl ? (
             <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
@@ -568,7 +568,7 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
   }
 
   return (
-    <div className="group">
+    <div className="group" data-testid="product-card">
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-1">
         {/* Image avec hover button */}
         <div className="relative aspect-square bg-gray-50 overflow-hidden">
