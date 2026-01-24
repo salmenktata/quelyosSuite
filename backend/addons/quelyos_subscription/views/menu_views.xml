@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu principal Abonnements -->
+    <menuitem id="menu_subscription_root"
+              name="Abonnements"
+              sequence="50"
+              web_icon="quelyos_subscription,static/description/icon.png"/>
+
+    <!-- Sous-menu Abonnements -->
+    <menuitem id="menu_subscription_subscriptions"
+              name="Abonnements"
+              parent="menu_subscription_root"
+              action="action_subscription"
+              sequence="10"/>
+
+    <!-- Sous-menu Plans -->
+    <menuitem id="menu_subscription_plans"
+              name="Plans"
+              parent="menu_subscription_root"
+              action="action_subscription_plan"
+              sequence="20"/>
+
+    <!-- Menu Configuration -->
+    <menuitem id="menu_subscription_config"
+              name="Configuration"
+              parent="menu_subscription_root"
+              sequence="100"
+              groups="base.group_system"/>
+
+</odoo>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Plan Starter -->
+        <record id="plan_starter" model="quelyos.subscription.plan">
+            <field name="name">Starter</field>
+            <field name="code">starter</field>
+            <field name="price_monthly">29.0</field>
+            <field name="price_yearly">278.4</field> <!-- 29 * 12 * 0.8 = -20% -->
+            <field name="max_users">1</field>
+            <field name="max_products">1000</field>
+            <field name="max_orders_per_year">5000</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Parfait pour démarrer votre activité e-commerce</field>
+            <field name="is_popular" eval="False"/>
+            <field name="display_order">10</field>
+            <field name="active" eval="True"/>
+            <field name="features">[
+                "1 utilisateur",
+                "Jusqu'à 1 000 produits",
+                "5 000 commandes/an",
+                "Support email (48h)",
+                "Toutes fonctionnalités de base",
+                "Gestion produits et catégories",
+                "Gestion commandes",
+                "Gestion clients",
+                "Gestion stock de base",
+                "Dashboard analytics de base"
+            ]</field>
+        </record>
+
+        <!-- Plan Pro -->
+        <record id="plan_pro" model="quelyos.subscription.plan">
+            <field name="name">Pro</field>
+            <field name="code">pro</field>
+            <field name="price_monthly">79.0</field>
+            <field name="price_yearly">758.4</field> <!-- 79 * 12 * 0.8 = -20% -->
+            <field name="max_users">5</field>
+            <field name="max_products">10000</field>
+            <field name="max_orders_per_year">50000</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">Pour les e-commerçants en croissance</field>
+            <field name="is_popular" eval="True"/>
+            <field name="display_order">20</field>
+            <field name="active" eval="True"/>
+            <field name="features">[
+                "Jusqu'à 5 utilisateurs",
+                "Jusqu'à 10 000 produits",
+                "50 000 commandes/an",
+                "Support email + chat (24h)",
+                "Toutes fonctionnalités Starter +",
+                "Analytics avancés avec graphiques",
+                "Multi-entrepôts",
+                "API complète",
+                "Personnalisation thème",
+                "Exports CSV/Excel",
+                "Gestion coupons avancée",
+                "Gestion livraison multi-méthodes",
+                "Rapports personnalisés"
+            ]</field>
+        </record>
+
+        <!-- Plan Enterprise -->
+        <record id="plan_enterprise" model="quelyos.subscription.plan">
+            <field name="name">Enterprise</field>
+            <field name="code">enterprise</field>
+            <field name="price_monthly">0.0</field> <!-- Sur devis -->
+            <field name="price_yearly">0.0</field>
+            <field name="max_users">0</field> <!-- 0 = illimité -->
+            <field name="max_products">0</field> <!-- 0 = illimité -->
+            <field name="max_orders_per_year">0</field> <!-- 0 = illimité -->
+            <field name="support_level">dedicated_2h</field>
+            <field name="description">Solutions sur-mesure pour grandes entreprises</field>
+            <field name="is_popular" eval="False"/>
+            <field name="display_order">30</field>
+            <field name="active" eval="True"/>
+            <field name="features">[
+                "Utilisateurs illimités",
+                "Produits illimités",
+                "Commandes illimitées",
+                "Support dédié (2h)",
+                "Toutes fonctionnalités Pro +",
+                "Onboarding personnalisé",
+                "SLA 99.9%",
+                "Environnement dédié (optionnel)",
+                "Développements custom",
+                "Formation équipe incluse",
+                "Account manager dédié",
+                "Intégrations sur-mesure",
+                "Audit sécurité",
+                "Backup quotidien dédié"
+            ]</field>
+        </record>
+
+        <!-- Séquence pour les références d'abonnement -->
+        <record id="seq_subscription" model="ir.sequence">
+            <field name="name">Subscription Reference</field>
+            <field name="code">subscription</field>
+            <field name="prefix">SUB-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- Cron job : Vérifier expiration des essais (quotidien à 1h) -->
+        <record id="cron_check_trial_expiry" model="ir.cron">
+            <field name="name">Check Trial Expiry</field>
+            <field name="model_id" ref="model_quelyos_subscription"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_check_trial_expiry()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Cron job : Vérifier quotas et envoyer alertes (quotidien à 2h) -->
+        <record id="cron_check_quota_warnings" model="ir.cron">
+            <field name="name">Check Quota Warnings</field>
+            <field name="model_id" ref="model_quelyos_subscription"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_check_quota_warnings()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

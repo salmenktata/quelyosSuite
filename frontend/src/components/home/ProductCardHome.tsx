@@ -24,8 +24,14 @@ function getProxiedImageUrl(url: string | undefined): string {
 
 export function ProductCardHome({ product }: { product: Product }) {
   const toast = useToast();
-  const discountPercent = product.compare_at_price
-    ? Math.round((1 - product.list_price / product.compare_at_price) * 100)
+
+  // Protéger contre list_price undefined/null
+  // Backend peut retourner 'price' ou 'list_price' selon le contexte
+  const listPrice = product.list_price ?? product.price ?? 0;
+  const comparePrice = product.compare_at_price ?? 0;
+
+  const discountPercent = comparePrice > 0 && listPrice > 0
+    ? Math.round((1 - listPrice / comparePrice) * 100)
     : 0;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
@@ -35,7 +41,7 @@ export function ProductCardHome({ product }: { product: Product }) {
   };
 
   return (
-    <div className="group">
+    <div className="group" data-testid="product-card">
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-1">
         {/* Image */}
         <div className="relative aspect-square bg-gray-50 overflow-hidden">
@@ -102,11 +108,11 @@ export function ProductCardHome({ product }: { product: Product }) {
 
           <div className="flex items-baseline gap-2 mb-2">
             <span className="text-xl font-bold text-primary">
-              {product.list_price.toFixed(2)} <span className="text-sm font-normal">{product.currency?.symbol || 'TND'}</span>
+              {listPrice.toFixed(2)} <span className="text-sm font-normal">{product.currency?.symbol || 'TND'}</span>
             </span>
-            {product.compare_at_price && (
+            {comparePrice > 0 && (
               <span className="text-sm text-gray-400 line-through">
-                {product.compare_at_price.toFixed(2)} {product.currency?.symbol || 'TND'}
+                {comparePrice.toFixed(2)} {product.currency?.symbol || 'TND'}
               </span>
             )}
           </div>

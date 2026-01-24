@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue liste des plans -->
+    <record id="view_subscription_plan_tree" model="ir.ui.view">
+        <field name="name">quelyos.subscription.plan.tree</field>
+        <field name="model">quelyos.subscription.plan</field>
+        <field name="arch" type="xml">
+            <list string="Plans d'abonnement">
+                <field name="display_order" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="price_monthly" widget="monetary"/>
+                <field name="price_yearly" widget="monetary"/>
+                <field name="max_users"/>
+                <field name="max_products"/>
+                <field name="subscription_count"/>
+                <field name="is_popular"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire des plans -->
+    <record id="view_subscription_plan_form" model="ir.ui.view">
+        <field name="name">quelyos.subscription.plan.form</field>
+        <field name="model">quelyos.subscription.plan</field>
+        <field name="arch" type="xml">
+            <form string="Plan d'abonnement">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_subscription_from_plan)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-users">
+                            <field name="subscription_count" widget="statinfo" string="Abonnements"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon" title="Archivé" bg_color="bg-danger" invisible="active == True"/>
+                    <widget name="web_ribbon" title="Le plus populaire" bg_color="bg-success" invisible="is_popular == False"/>
+
+                    <group>
+                        <group name="general">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="display_order"/>
+                            <field name="active"/>
+                            <field name="is_popular"/>
+                        </group>
+                        <group name="pricing">
+                            <field name="price_monthly" widget="monetary"/>
+                            <field name="price_yearly" widget="monetary"/>
+                            <field name="stripe_price_id_monthly"/>
+                            <field name="stripe_price_id_yearly"/>
+                        </group>
+                    </group>
+
+                    <group string="Limites">
+                        <group>
+                            <field name="max_users"/>
+                            <field name="max_products"/>
+                        </group>
+                        <group>
+                            <field name="max_orders_per_year"/>
+                            <field name="support_level"/>
+                        </group>
+                    </group>
+
+                    <group string="Marketing">
+                        <field name="description" placeholder="Description affichée sur la page pricing"/>
+                    </group>
+
+                    <group string="Fonctionnalités">
+                        <field name="features" widget="text" placeholder='["Feature 1", "Feature 2"]'/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue kanban des plans -->
+    <record id="view_subscription_plan_kanban" model="ir.ui.view">
+        <field name="name">quelyos.subscription.plan.kanban</field>
+        <field name="model">quelyos.subscription.plan</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="price_monthly"/>
+                <field name="is_popular"/>
+                <field name="subscription_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <span t-if="record.is_popular.raw_value" class="badge badge-success">Populaire</span>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                <div>
+                                    <t t-if="record.price_monthly.raw_value &gt; 0">
+                                        <field name="price_monthly" widget="monetary"/>€/mois
+                                    </t>
+                                    <t t-else="">
+                                        Sur devis
+                                    </t>
+                                </div>
+                                <div class="text-muted">
+                                    <field name="subscription_count"/> abonnements
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour les plans -->
+    <record id="action_subscription_plan" model="ir.actions.act_window">
+        <field name="name">Plans d'abonnement</field>
+        <field name="res_model">quelyos.subscription.plan</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un nouveau plan d'abonnement
+            </p>
+            <p>
+                Définissez les plans tarifaires pour votre service SaaS.
+            </p>
+        </field>
+    </record>
+
+</odoo>

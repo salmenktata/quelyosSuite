@@ -2421,12 +2421,10 @@ class QuelyosAPI(http.Controller):
 
             return {
                 'success': True,
-                'data': {
-                    'categories': data,
-                    'total': total,
-                    'limit': limit,
-                    'offset': offset
-                }
+                'categories': data,
+                'total': total,
+                'limit': limit,
+                'offset': offset
             }
 
         except Exception as e:

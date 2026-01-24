@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue liste des abonnements -->
+    <record id="view_subscription_tree" model="ir.ui.view">
+        <field name="name">subscription.tree</field>
+        <field name="model">quelyos.subscription</field>
+        <field name="arch" type="xml">
+            <list string="Abonnements" decoration-success="state=='active'" decoration-info="state=='trial'" decoration-warning="state=='past_due'" decoration-muted="state in ['cancelled','expired']">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="state" widget="badge" decoration-success="state=='active'" decoration-info="state=='trial'" decoration-warning="state=='past_due'" decoration-danger="state in ['cancelled','expired']"/>
+                <field name="billing_cycle"/>
+                <field name="current_users_count"/>
+                <field name="max_users"/>
+                <field name="current_products_count"/>
+                <field name="max_products"/>
+                <field name="users_usage_percentage" widget="progressbar"/>
+                <field name="products_usage_percentage" widget="progressbar"/>
+                <field name="start_date"/>
+                <field name="next_billing_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire des abonnements -->
+    <record id="view_subscription_form" model="ir.ui.view">
+        <field name="name">subscription.form</field>
+        <field name="model">quelyos.subscription</field>
+        <field name="arch" type="xml">
+            <form string="Abonnement">
+                <header>
+                    <button name="action_activate" type="object" string="Activer" class="oe_highlight"
+                            invisible="state not in ['trial', 'past_due']"/>
+                    <button name="action_mark_past_due" type="object" string="Marquer en retard"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" type="object" string="Annuler"
+                            invisible="state in ['cancelled', 'expired']"/>
+                    <button name="action_expire" type="object" string="Expirer"
+                            invisible="state == 'expired'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="trial,active,past_due,cancelled,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_title" invisible="not id">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group name="client">
+                            <field name="partner_id"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group name="plan">
+                            <field name="plan_id"/>
+                            <field name="billing_cycle"/>
+                        </group>
+                    </group>
+
+                    <group string="Dates" invisible="not id">
+                        <group>
+                            <field name="start_date"/>
+                            <field name="trial_end_date" invisible="state != 'trial'"/>
+                        </group>
+                        <group>
+                            <field name="next_billing_date"/>
+                            <field name="end_date" invisible="state not in ['cancelled', 'expired']"/>
+                        </group>
+                    </group>
+
+                    <group string="Stripe" invisible="not id">
+                        <group>
+                            <field name="stripe_subscription_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="stripe_customer_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook invisible="not id">
+                        <page string="Utilisation" name="usage">
+                            <group string="Utilisateurs">
+                                <field name="current_users_count"/>
+                                <field name="max_users"/>
+                                <field name="users_usage_percentage" widget="progressbar"/>
+                            </group>
+
+                            <group string="Produits">
+                                <field name="current_products_count"/>
+                                <field name="max_products"/>
+                                <field name="products_usage_percentage" widget="progressbar"/>
+                            </group>
+
+                            <group string="Commandes (année en cours)">
+                                <field name="current_orders_count"/>
+                                <field name="max_orders_per_year"/>
+                                <field name="orders_usage_percentage" widget="progressbar"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue recherche/filtres des abonnements -->
+    <record id="view_subscription_search" model="ir.ui.view">
+        <field name="name">subscription.search</field>
+        <field name="model">quelyos.subscription</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher abonnement">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <filter string="En essai" name="filter_trial" domain="[('state', '=', 'trial')]"/>
+                <filter string="Actifs" name="filter_active" domain="[('state', '=', 'active')]"/>
+                <filter string="En retard" name="filter_past_due" domain="[('state', '=', 'past_due')]"/>
+                <filter string="Annulés" name="filter_cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter string="Mensuel" name="filter_monthly" domain="[('billing_cycle', '=', 'monthly')]"/>
+                <filter string="Annuel" name="filter_yearly" domain="[('billing_cycle', '=', 'yearly')]"/>
+                <separator/>
+                <filter string="Quota users ≥ 80%" name="filter_users_warning" domain="[('users_usage_percentage', '>=', 80)]"/>
+                <filter string="Quota produits ≥ 80%" name="filter_products_warning" domain="[('products_usage_percentage', '>=', 80)]"/>
+                <filter string="Quota commandes ≥ 80%" name="filter_orders_warning" domain="[('orders_usage_percentage', '>=', 80)]"/>
+                <separator/>
+                <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                <filter string="Plan" name="group_plan" context="{'group_by': 'plan_id'}"/>
+                <filter string="Statut" name="group_state" context="{'group_by': 'state'}"/>
+                <filter string="Cycle de facturation" name="group_billing" context="{'group_by': 'billing_cycle'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour les abonnements -->
+    <record id="action_subscription" model="ir.actions.act_window">
+        <field name="name">Abonnements</field>
+        <field name="res_model">quelyos.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun abonnement trouvé
+            </p>
+            <p>
+                Les abonnements clients apparaîtront ici.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action pour voir les abonnements d'un plan -->
+    <record id="action_subscription_from_plan" model="ir.actions.act_window">
+        <field name="name">Abonnements du plan</field>
+        <field name="res_model">quelyos.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('plan_id', '=', active_id)]</field>
+        <field name="context">{'default_plan_id': active_id}</field>
+    </record>
+
+</odoo>

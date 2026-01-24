@@ -93,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   };
 
   return (
-    <Link href={`/products/${product.slug}`}>
+    <Link href={`/products/${product.slug}`} data-testid="product-card">
       <Card hover className="group h-full flex flex-col overflow-hidden card-hover">
         {/* Image Container */}
         <div className="relative aspect-square bg-gray-100 overflow-hidden">
