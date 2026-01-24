@@ -1686,11 +1686,15 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Rapport valorisation | Valeur par catégorie | - | - | 🔴 | P2 | Comptabilité |
 | Rapport mouvements | Export mouvements période | - | - | 🔴 | P2 | Audit trail |
 
-**Score Module Stock** : 11/35 ✅ (31%), 3/35 🟡, 21/35 🔴
+**Score Module Stock** : 14/35 ✅ (40%), 4/35 🟡, 17/35 🔴
 
-**Gaps Critiques (P0)** : 2 - Interface ajustement stock manquante, Inventaire physique inexistant
+**Gaps Critiques (P0)** : 0 - ✅ Tous résolus (Sprint 1 + Sprint 2)
 
-> **Note** : Audit de parité complet réalisé le 2026-01-24 via `/parity http://localhost:5179/stock`. La page Stock.tsx actuelle affiche uniquement les alertes de stock bas. L'ancienne interface avec onglet "Produits" + édition inline a été supprimée.
+> **Note** : Audit de parité complet réalisé le 2026-01-24 via `/parity http://localhost:5179/stock`.
+>
+> **Sprint 1** (2026-01-24) : Refactoring complet Stock.tsx avec architecture onglets (Produits + Alertes), édition inline stock avec icônes check/X, recherche temps réel, pagination. Résolution P0 #1 (interface ajustement stock).
+>
+> **Sprint 2** (2026-01-24) : Création Inventory.tsx avec workflow 4 étapes (Sélection → Comptage → Écarts → Validation), 2 endpoints backend `/inventory/prepare` et `/inventory/validate`, hooks React Query usePrepareInventory/useValidateInventory. Résolution P0 #2 (inventaire physique). Parité augmentée de 31% → 40%.
 
 ---
 
