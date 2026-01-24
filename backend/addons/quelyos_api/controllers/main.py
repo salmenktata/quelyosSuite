@@ -2,8 +2,12 @@
 import logging
 from odoo import http
 from odoo.http import request
+from passlib.context import CryptContext
 
 _logger = logging.getLogger(__name__)
+
+# Context de cryptage pour vérifier les mots de passe
+crypt_context = CryptContext(schemes=['pbkdf2_sha512', 'plaintext'], deprecated=['plaintext'])
 
 
 class QuelyosAPI(http.Controller):
@@ -24,7 +28,7 @@ class QuelyosAPI(http.Controller):
 
     @http.route('/api/ecommerce/auth/login', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def auth_login(self, **kwargs):
-        """Authentification utilisateur - Version simplifiée pour test"""
+        """Authentification utilisateur avec vérification du mot de passe"""
         try:
             params = self._get_params()
             email = params.get('email')
@@ -36,27 +40,64 @@ class QuelyosAPI(http.Controller):
                     'error': 'Email and password are required'
                 }
 
-            # Rechercher l'utilisateur
-            user = request.env['res.users'].sudo().search([
-                ('login', '=', email)
-            ], limit=1)
+            # Authentifier l'utilisateur avec Odoo (vérifie le mot de passe)
+            try:
+                db_name = request.db or 'quelyos'
 
-            if not user:
+                # Rechercher l'utilisateur
+                user = request.env['res.users'].sudo().search([('login', '=', email)], limit=1)
+                if not user:
+                    _logger.warning(f"User not found: {email}")
+                    return {
+                        'success': False,
+                        'error': 'Invalid email or password'
+                    }
+
+                # Vérifier le mot de passe en utilisant le même mécanisme qu'Odoo
+                # Le champ password est protégé par l'ORM, on doit utiliser une requête SQL directe
+                request.env.cr.execute(
+                    "SELECT password FROM res_users WHERE id = %s",
+                    (user.id,)
+                )
+                result = request.env.cr.fetchone()
+                if not result or not result[0]:
+                    _logger.warning(f"User {email} has no password set")
+                    return {
+                        'success': False,
+                        'error': 'Invalid email or password'
+                    }
+
+                user_password = result[0]
+                _logger.info(f"User {email} password hash retrieved successfully")
+
+                # Vérifier le mot de passe avec passlib
+                valid = crypt_context.verify(password, user_password)
+                if not valid:
+                    _logger.warning(f"Invalid password for {email}")
+                    return {
+                        'success': False,
+                        'error': 'Invalid email or password'
+                    }
+
+                uid = user.id
+                _logger.info(f"Authentication successful for {email}, uid={uid}")
+
+                # Mettre à jour la session
+                request.session.uid = uid
+                request.session.login = email
+                request.session.db = db_name
+
+            except Exception as auth_error:
+                _logger.warning(f"Authentication failed for {email}: {auth_error}")
                 return {
                     'success': False,
                     'error': 'Invalid email or password'
                 }
 
-            # TODO: Implémenter vérification du mot de passe avec Odoo 19 API
-            # Pour l'instant, on simule un login réussi pour les tests
-            _logger.warning(f"Login without password verification for {email} - TODO: implement proper auth")
-
-            # Mettre à jour la session
-            request.session.uid = user.id
-            request.session.login = user.login
-
             # Récupérer les infos utilisateur
+            user = request.env['res.users'].sudo().browse(uid)
             partner = user.partner_id
+
             user_data = {
                 'id': partner.id,
                 'name': partner.name,
@@ -65,7 +106,9 @@ class QuelyosAPI(http.Controller):
             }
 
             # Récupérer le session_id
-            session_id = self._create_session(user.id)
+            session_id = request.session.sid
+
+            _logger.info(f"User {email} authenticated successfully")
 
             return {
                 'success': True,
@@ -77,7 +120,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Login error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Authentication failed'
             }
 
     @http.route('/api/ecommerce/auth/logout', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -179,37 +222,107 @@ class QuelyosAPI(http.Controller):
 
     @http.route('/api/ecommerce/products', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_products_list(self, **kwargs):
-        """Liste des produits (GET via JSON-RPC)"""
+        """Liste des produits avec recherche, filtres et tri (GET via JSON-RPC)"""
         try:
             params = self._get_params()
             limit = int(params.get('limit', 20))
             offset = int(params.get('offset', 0))
             category_id = params.get('category_id')
+            search = params.get('search', '').strip()
+            sort_by = params.get('sort_by', 'name')  # name, price, qty_available, create_date
+            sort_order = params.get('sort_order', 'asc')  # asc, desc
+            stock_status = params.get('stock_status')  # in_stock, low_stock, out_of_stock
+            include_archived = params.get('include_archived', False)
+            price_min = params.get('price_min')
+            price_max = params.get('price_max')
+
+            # Context pour inclure les produits archivés si demandé
+            ProductTemplate = request.env['product.template'].sudo()
+            if include_archived:
+                ProductTemplate = ProductTemplate.with_context(active_test=False)
 
             domain = [('sale_ok', '=', True)]
+
+            # Filtre par statut actif/archivé
+            if include_archived and params.get('archived_only'):
+                domain.append(('active', '=', False))
+            elif not include_archived:
+                pass  # Par défaut, Odoo filtre déjà les inactifs
             if category_id:
                 domain.append(('categ_id', '=', int(category_id)))
 
-            products = request.env['product.template'].sudo().search(
+            # Filtres de prix
+            if price_min is not None:
+                domain.append(('list_price', '>=', float(price_min)))
+            if price_max is not None:
+                domain.append(('list_price', '<=', float(price_max)))
+
+            # Recherche textuelle (nom, SKU, description)
+            if search:
+                domain.append('|')
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('default_code', 'ilike', search))
+                domain.append(('description_sale', 'ilike', search))
+
+            # Mapping des champs de tri
+            sort_field_map = {
+                'name': 'name',
+                'price': 'list_price',
+                'qty_available': 'qty_available',
+                'create_date': 'create_date',
+                'default_code': 'default_code',
+            }
+            order_field = sort_field_map.get(sort_by, 'name')
+            order_dir = 'desc' if sort_order == 'desc' else 'asc'
+            order = f'{order_field} {order_dir}'
+
+            products = ProductTemplate.search(
                 domain,
                 limit=limit,
                 offset=offset,
-                order='name'
+                order=order
             )
 
-            total = request.env['product.template'].sudo().search_count(domain)
+            total = ProductTemplate.search_count(domain)
 
-            data = [{
-                'id': p.id,
-                'name': p.name,
-                'price': p.list_price,
-                'image': f'/web/image/product.template/{p.id}/image_1920' if p.image_1920 else None,
-                'slug': p.name.lower().replace(' ', '-'),
-                'category': {
-                    'id': p.categ_id.id,
-                    'name': p.categ_id.name,
-                } if p.categ_id else None,
-            } for p in products]
+            # Construire les données enrichies
+            data = []
+            for p in products:
+                # Calculer le statut de stock
+                qty = p.qty_available
+                if qty <= 0:
+                    p_stock_status = 'out_of_stock'
+                elif qty <= 5:
+                    p_stock_status = 'low_stock'
+                else:
+                    p_stock_status = 'in_stock'
+
+                # Filtrer par statut stock si demandé
+                if stock_status and p_stock_status != stock_status:
+                    continue
+
+                data.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'price': p.list_price,
+                    'standard_price': p.standard_price,
+                    'default_code': p.default_code or '',
+                    'barcode': p.barcode or '',
+                    'image': f'/web/image/product.template/{p.id}/image_1920' if p.image_1920 else None,
+                    'slug': p.name.lower().replace(' ', '-'),
+                    'qty_available': qty,
+                    'virtual_available': p.virtual_available,
+                    'stock_status': p_stock_status,
+                    'weight': p.weight or 0,
+                    'active': p.active,
+                    'create_date': p.create_date.isoformat() if p.create_date else None,
+                    'category': {
+                        'id': p.categ_id.id,
+                        'name': p.categ_id.name,
+                    } if p.categ_id else None,
+                    'variant_count': p.product_variant_count,
+                })
 
             return {
                 'success': True,
@@ -240,22 +353,75 @@ class QuelyosAPI(http.Controller):
                     'error': 'Product not found'
                 }
 
+            # Récupérer toutes les images du produit (product.image)
+            images = []
+            for img in product.product_template_image_ids.sorted('sequence'):
+                images.append({
+                    'id': img.id,
+                    'name': img.name or f'Image {img.sequence}',
+                    'url': f'/web/image/product.image/{img.id}/image_1920',
+                    'sequence': img.sequence,
+                })
+
+            # Calculer le statut de stock
+            qty = product.qty_available
+            if qty <= 0:
+                stock_status = 'out_of_stock'
+            elif qty <= 5:
+                stock_status = 'low_stock'
+            else:
+                stock_status = 'in_stock'
+
+            # Récupérer les taxes applicables
+            taxes = []
+            for tax in product.taxes_id:
+                taxes.append({
+                    'id': tax.id,
+                    'name': tax.name,
+                    'amount': tax.amount,
+                    'amount_type': tax.amount_type,
+                    'price_include': tax.price_include,
+                })
+
             data = {
                 'id': product.id,
                 'name': product.name,
                 'description': product.description_sale or '',
+                'description_purchase': product.description_purchase or '',
                 'price': product.list_price,
+                'standard_price': product.standard_price,
+                'default_code': product.default_code or '',
+                'barcode': product.barcode or '',
+                'weight': product.weight or 0,
+                'volume': product.volume or 0,
+                'product_length': getattr(product, 'product_length', 0) or 0,
+                'product_width': getattr(product, 'product_width', 0) or 0,
+                'product_height': getattr(product, 'product_height', 0) or 0,
+                'detailed_type': product.detailed_type or 'consu',
+                'uom_id': product.uom_id.id if product.uom_id else None,
+                'uom_name': product.uom_id.name if product.uom_id else None,
+                'product_tag_ids': [{'id': tag.id, 'name': tag.name, 'color': tag.color if hasattr(tag, 'color') else 0} for tag in product.product_tag_ids] if product.product_tag_ids else [],
                 'image': f'/web/image/product.template/{product.id}/image_1920' if product.image_1920 else None,
+                'images': images,  # Liste complète des images
                 'slug': product.name.lower().replace(' ', '-'),
+                'qty_available': qty,
+                'virtual_available': product.virtual_available,
+                'stock_status': stock_status,
+                'active': product.active,
+                'create_date': product.create_date.isoformat() if product.create_date else None,
+                'variant_count': product.product_variant_count,
                 'category': {
                     'id': product.categ_id.id,
                     'name': product.categ_id.name,
                 } if product.categ_id else None,
+                'taxes': taxes,  # Taxes de vente applicables
             }
 
             return {
                 'success': True,
-                'product': data
+                'data': {
+                    'product': data
+                }
             }
 
         except Exception as e:
@@ -299,14 +465,68 @@ class QuelyosAPI(http.Controller):
             if category_id:
                 product_data['categ_id'] = int(category_id)
 
+            # Champs avancés optionnels
+            if params.get('default_code'):
+                product_data['default_code'] = params['default_code']
+            if params.get('barcode'):
+                product_data['barcode'] = params['barcode']
+            if params.get('standard_price'):
+                product_data['standard_price'] = float(params['standard_price'])
+            if params.get('weight'):
+                product_data['weight'] = float(params['weight'])
+
+            # Dimensions produit
+            if params.get('product_length'):
+                product_data['product_length'] = float(params['product_length'])
+            if params.get('product_width'):
+                product_data['product_width'] = float(params['product_width'])
+            if params.get('product_height'):
+                product_data['product_height'] = float(params['product_height'])
+
+            # Type de produit (consu, service, product)
+            if params.get('detailed_type'):
+                product_data['detailed_type'] = params['detailed_type']
+
+            # Unité de mesure
+            if params.get('uom_id'):
+                product_data['uom_id'] = int(params['uom_id'])
+                product_data['uom_po_id'] = int(params['uom_id'])  # Même UoM pour achat
+
+            # Tags produit
+            if params.get('product_tag_ids'):
+                tag_ids = params['product_tag_ids']
+                if isinstance(tag_ids, list):
+                    product_data['product_tag_ids'] = [(6, 0, tag_ids)]
+
+            # Description achat (fournisseurs)
+            if params.get('description_purchase'):
+                product_data['description_purchase'] = params['description_purchase']
+
+            # Volume (pour calcul frais livraison)
+            if params.get('volume'):
+                product_data['volume'] = float(params['volume'])
+
+            # Taxes de vente
+            if 'taxes_id' in params:
+                tax_ids = params['taxes_id']
+                if tax_ids:
+                    product_data['taxes_id'] = [(6, 0, tax_ids)]
+                else:
+                    product_data['taxes_id'] = [(5, 0, 0)]  # Supprimer toutes les taxes
+
             product = request.env['product.template'].sudo().create(product_data)
 
             return {
                 'success': True,
-                'product': {
-                    'id': product.id,
-                    'name': product.name,
-                    'price': product.list_price,
+                'data': {
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'price': product.list_price,
+                        'default_code': product.default_code or '',
+                        'standard_price': product.standard_price,
+                        'weight': product.weight or 0,
+                    }
                 }
             }
 
@@ -339,6 +559,7 @@ class QuelyosAPI(http.Controller):
             params = self._get_params()
             update_data = {}
 
+            # Champs de base
             if 'name' in params:
                 update_data['name'] = params['name']
             if 'price' in params:
@@ -346,17 +567,73 @@ class QuelyosAPI(http.Controller):
             if 'description' in params:
                 update_data['description_sale'] = params['description']
             if 'category_id' in params:
-                update_data['categ_id'] = int(params['category_id'])
+                update_data['categ_id'] = int(params['category_id']) if params['category_id'] else False
+
+            # Champs avancés
+            if 'default_code' in params:
+                update_data['default_code'] = params['default_code'] or False
+            if 'barcode' in params:
+                update_data['barcode'] = params['barcode'] or False
+            if 'standard_price' in params:
+                update_data['standard_price'] = float(params['standard_price'])
+            if 'weight' in params:
+                update_data['weight'] = float(params['weight'])
+            if 'product_length' in params:
+                update_data['product_length'] = float(params['product_length']) if params['product_length'] else 0
+            if 'product_width' in params:
+                update_data['product_width'] = float(params['product_width']) if params['product_width'] else 0
+            if 'product_height' in params:
+                update_data['product_height'] = float(params['product_height']) if params['product_height'] else 0
+            if 'active' in params:
+                update_data['active'] = bool(params['active'])
+
+            # Type de produit (consu, service, product)
+            if 'detailed_type' in params:
+                update_data['detailed_type'] = params['detailed_type']
+
+            # Unité de mesure
+            if 'uom_id' in params:
+                uom_id = int(params['uom_id']) if params['uom_id'] else False
+                update_data['uom_id'] = uom_id
+                update_data['uom_po_id'] = uom_id  # Même UoM pour achat
+
+            # Tags produit
+            if 'product_tag_ids' in params:
+                tag_ids = params['product_tag_ids']
+                if isinstance(tag_ids, list):
+                    update_data['product_tag_ids'] = [(6, 0, tag_ids)]
+
+            # Description achat (fournisseurs)
+            if 'description_purchase' in params:
+                update_data['description_purchase'] = params['description_purchase'] or False
+
+            # Volume (pour calcul frais livraison)
+            if 'volume' in params:
+                update_data['volume'] = float(params['volume']) if params['volume'] else 0
+
+            # Taxes de vente
+            if 'taxes_id' in params:
+                tax_ids = params['taxes_id']
+                if tax_ids:
+                    update_data['taxes_id'] = [(6, 0, tax_ids)]
+                else:
+                    update_data['taxes_id'] = [(5, 0, 0)]  # Supprimer toutes les taxes
 
             if update_data:
                 product.write(update_data)
 
             return {
                 'success': True,
-                'product': {
-                    'id': product.id,
-                    'name': product.name,
-                    'price': product.list_price,
+                'data': {
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'price': product.list_price,
+                        'default_code': product.default_code or '',
+                        'standard_price': product.standard_price,
+                        'weight': product.weight or 0,
+                        'active': product.active,
+                    }
                 }
             }
 
@@ -392,6 +669,1655 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Delete product error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/archive', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def archive_product(self, product_id, **kwargs):
+        """Archiver ou désarchiver un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            archive = params.get('archive', True)
+
+            # Inclure les produits archivés dans la recherche
+            product = request.env['product.template'].sudo().with_context(active_test=False).browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            product.write({'active': not archive})
+
+            action = 'archivé' if archive else 'désarchivé'
+            return {
+                'success': True,
+                'data': {
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'active': product.active,
+                    },
+                    'message': f'Produit "{product.name}" {action} avec succès'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Archive product error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/taxes', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_taxes(self, **kwargs):
+        """Récupérer la liste des taxes disponibles"""
+        try:
+            # Rechercher les taxes de vente actives
+            taxes = request.env['account.tax'].sudo().search([
+                ('type_tax_use', '=', 'sale'),
+                ('active', '=', True),
+            ], order='sequence, name')
+
+            taxes_data = []
+            for tax in taxes:
+                taxes_data.append({
+                    'id': tax.id,
+                    'name': tax.name,
+                    'amount': tax.amount,
+                    'amount_type': tax.amount_type,  # 'percent', 'fixed', etc.
+                    'price_include': tax.price_include,
+                    'description': tax.description or '',
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'taxes': taxes_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get taxes error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/uom', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_uom(self, **kwargs):
+        """Récupérer la liste des unités de mesure disponibles"""
+        try:
+            # Rechercher les unités de mesure actives
+            uoms = request.env['uom.uom'].sudo().search([
+                ('active', '=', True),
+            ], order='name')
+
+            uom_data = []
+            for uom in uoms:
+                uom_data.append({
+                    'id': uom.id,
+                    'name': uom.name,
+                    'category_id': uom.category_id.id,
+                    'category_name': uom.category_id.name,
+                    'uom_type': uom.uom_type,  # 'bigger', 'reference', 'smaller'
+                    'factor': uom.factor,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'uom': uom_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get UoM error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/product-tags', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_product_tags(self, **kwargs):
+        """Récupérer la liste des tags produits disponibles"""
+        try:
+            # Rechercher les tags produits
+            ProductTag = request.env['product.tag'].sudo()
+            tags = ProductTag.search([], order='name')
+
+            tag_data = []
+            for tag in tags:
+                tag_data.append({
+                    'id': tag.id,
+                    'name': tag.name,
+                    'color': tag.color if hasattr(tag, 'color') else 0,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'tags': tag_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product tags error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/product-tags/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_product_tag(self, **kwargs):
+        """Créer un nouveau tag produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            name = params.get('name')
+
+            if not name:
+                return {
+                    'success': False,
+                    'error': 'Tag name is required'
+                }
+
+            # Créer le tag
+            ProductTag = request.env['product.tag'].sudo()
+            tag_data = {'name': name}
+
+            if params.get('color'):
+                tag_data['color'] = int(params['color'])
+
+            tag = ProductTag.create(tag_data)
+
+            return {
+                'success': True,
+                'data': {
+                    'id': tag.id,
+                    'name': tag.name,
+                    'color': tag.color if hasattr(tag, 'color') else 0,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create product tag error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/product-types', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_types(self, **kwargs):
+        """Récupérer la liste des types de produits disponibles"""
+        try:
+            # Types de produits Odoo standard
+            product_types = [
+                {'value': 'consu', 'label': 'Consommable', 'description': 'Pas de gestion de stock'},
+                {'value': 'service', 'label': 'Service', 'description': 'Prestation immatérielle'},
+                {'value': 'product', 'label': 'Stockable', 'description': 'Avec gestion de stock'},
+            ]
+
+            return {
+                'success': True,
+                'data': {
+                    'product_types': product_types
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product types error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def duplicate_product(self, product_id, **kwargs):
+        """Dupliquer un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Dupliquer avec la méthode copy() d'Odoo
+            params = self._get_params()
+            new_name = params.get('name', f"{product.name} (copie)")
+
+            new_product = product.copy({
+                'name': new_name,
+                'default_code': f"{product.default_code or ''}-COPY" if product.default_code else False,
+            })
+
+            return {
+                'success': True,
+                'data': {
+                    'product': {
+                        'id': new_product.id,
+                        'name': new_product.name,
+                        'price': new_product.list_price,
+                        'default_code': new_product.default_code or '',
+                        'image': f'/web/image/product.template/{new_product.id}/image_1920' if new_product.image_1920 else None,
+                        'slug': new_product.name.lower().replace(' ', '-'),
+                        'category': {
+                            'id': new_product.categ_id.id,
+                            'name': new_product.categ_id.name,
+                        } if new_product.categ_id else None,
+                    },
+                    'message': f'Produit "{new_product.name}" créé avec succès'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Duplicate product error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/export', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def export_products(self, **kwargs):
+        """Exporter les produits en CSV (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            category_id = params.get('category_id')
+            search = params.get('search', '').strip()
+
+            domain = [('sale_ok', '=', True)]
+            if category_id:
+                domain.append(('categ_id', '=', int(category_id)))
+            if search:
+                domain.append('|')
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('default_code', 'ilike', search))
+                domain.append(('description_sale', 'ilike', search))
+
+            products = request.env['product.template'].sudo().search(domain, order='name')
+
+            # Construire les données CSV
+            csv_data = []
+            for p in products:
+                qty = p.qty_available
+                if qty <= 0:
+                    stock_status = 'Rupture'
+                elif qty <= 5:
+                    stock_status = 'Stock faible'
+                else:
+                    stock_status = 'En stock'
+
+                csv_data.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'default_code': p.default_code or '',
+                    'barcode': p.barcode or '',
+                    'price': p.list_price,
+                    'standard_price': p.standard_price,
+                    'qty_available': qty,
+                    'stock_status': stock_status,
+                    'weight': p.weight or 0,
+                    'category': p.categ_id.name if p.categ_id else '',
+                    'active': 'Oui' if p.active else 'Non',
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'products': csv_data,
+                    'total': len(csv_data),
+                    'columns': [
+                        {'key': 'id', 'label': 'ID'},
+                        {'key': 'name', 'label': 'Nom'},
+                        {'key': 'default_code', 'label': 'Référence (SKU)'},
+                        {'key': 'barcode', 'label': 'Code-barres'},
+                        {'key': 'price', 'label': 'Prix de vente'},
+                        {'key': 'standard_price', 'label': 'Prix d\'achat'},
+                        {'key': 'qty_available', 'label': 'Stock'},
+                        {'key': 'stock_status', 'label': 'Statut stock'},
+                        {'key': 'weight', 'label': 'Poids (kg)'},
+                        {'key': 'category', 'label': 'Catégorie'},
+                        {'key': 'active', 'label': 'Actif'},
+                    ]
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Export products error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/import', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def import_products(self, **kwargs):
+        """Importer des produits depuis CSV (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            products_data = params.get('products', [])
+            update_existing = params.get('update_existing', False)
+
+            if not products_data:
+                return {
+                    'success': False,
+                    'error': 'No products data provided'
+                }
+
+            ProductTemplate = request.env['product.template'].sudo()
+            ProductCategory = request.env['product.category'].sudo()
+
+            created = []
+            updated = []
+            errors = []
+
+            for idx, row in enumerate(products_data, start=1):
+                try:
+                    name = row.get('name', '').strip()
+                    if not name:
+                        errors.append({'row': idx, 'error': 'Nom obligatoire'})
+                        continue
+
+                    # Chercher catégorie par nom
+                    category_id = False
+                    category_name = row.get('category', '').strip()
+                    if category_name:
+                        category = ProductCategory.search([('name', '=ilike', category_name)], limit=1)
+                        if category:
+                            category_id = category.id
+                        else:
+                            # Créer la catégorie si elle n'existe pas
+                            category = ProductCategory.create({'name': category_name})
+                            category_id = category.id
+
+                    # Construire les données produit
+                    product_vals = {
+                        'name': name,
+                        'list_price': float(row.get('price', 0) or 0),
+                        'standard_price': float(row.get('standard_price', 0) or 0),
+                        'description_sale': row.get('description', '') or False,
+                        'default_code': row.get('default_code', row.get('sku', '')) or False,
+                        'barcode': row.get('barcode', '') or False,
+                        'weight': float(row.get('weight', 0) or 0),
+                        'sale_ok': True,
+                        'purchase_ok': True,
+                    }
+                    if category_id:
+                        product_vals['categ_id'] = category_id
+
+                    # Chercher produit existant par SKU ou code-barres
+                    existing_product = None
+                    if update_existing:
+                        sku = product_vals.get('default_code')
+                        barcode = product_vals.get('barcode')
+                        if sku:
+                            existing_product = ProductTemplate.search([('default_code', '=', sku)], limit=1)
+                        if not existing_product and barcode:
+                            existing_product = ProductTemplate.search([('barcode', '=', barcode)], limit=1)
+
+                    if existing_product:
+                        existing_product.write(product_vals)
+                        updated.append({
+                            'id': existing_product.id,
+                            'name': existing_product.name,
+                            'row': idx
+                        })
+                    else:
+                        new_product = ProductTemplate.create(product_vals)
+                        created.append({
+                            'id': new_product.id,
+                            'name': new_product.name,
+                            'row': idx
+                        })
+
+                except Exception as row_error:
+                    errors.append({'row': idx, 'error': str(row_error)})
+
+            return {
+                'success': True,
+                'data': {
+                    'created': created,
+                    'updated': updated,
+                    'errors': errors,
+                    'summary': {
+                        'total_rows': len(products_data),
+                        'created_count': len(created),
+                        'updated_count': len(updated),
+                        'error_count': len(errors)
+                    }
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Import products error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== PRODUCT IMAGES ====================
+
+    @http.route('/api/ecommerce/products/<int:product_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_images(self, product_id, **kwargs):
+        """Liste toutes les images d'un produit"""
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            images = []
+            for img in product.product_template_image_ids.sorted('sequence'):
+                images.append({
+                    'id': img.id,
+                    'name': img.name or f'Image {img.sequence}',
+                    'url': f'/web/image/product.image/{img.id}/image_1920',
+                    'url_medium': f'/web/image/product.image/{img.id}/image_512',
+                    'url_small': f'/web/image/product.image/{img.id}/image_128',
+                    'sequence': img.sequence,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'images': images
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def upload_product_images(self, product_id, **kwargs):
+        """Upload une ou plusieurs images pour un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            params = self._get_params()
+            images_data = params.get('images', [])
+
+            if not images_data:
+                return {
+                    'success': False,
+                    'error': 'No images provided'
+                }
+
+            # Créer les images
+            ProductImage = request.env['product.image'].sudo()
+            created_images = []
+
+            # Récupérer la séquence max actuelle
+            max_sequence = max([img.sequence for img in product.product_template_image_ids], default=0)
+
+            for idx, image_data in enumerate(images_data):
+                # image_data doit contenir: {name: str, image_1920: str (base64)}
+                if not image_data.get('image_1920'):
+                    continue
+
+                img_values = {
+                    'name': image_data.get('name', f'Image {idx + 1}'),
+                    'image_1920': image_data['image_1920'],  # Base64
+                    'product_tmpl_id': product.id,
+                    'sequence': max_sequence + idx + 1,
+                }
+
+                new_image = ProductImage.create(img_values)
+                created_images.append({
+                    'id': new_image.id,
+                    'name': new_image.name,
+                    'url': f'/web/image/product.image/{new_image.id}/image_1920',
+                    'sequence': new_image.sequence,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'images': created_images,
+                    'message': f'{len(created_images)} image(s) uploaded successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Upload product images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_product_image(self, product_id, image_id, **kwargs):
+        """Supprimer une image d'un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Chercher l'image
+            image = request.env['product.image'].sudo().browse(image_id)
+
+            if not image.exists():
+                return {
+                    'success': False,
+                    'error': 'Image not found'
+                }
+
+            # Vérifier que l'image appartient bien au produit
+            if image.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Image does not belong to this product'
+                }
+
+            image.unlink()
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Image deleted successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete product image error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_product_images(self, product_id, **kwargs):
+        """Réorganiser l'ordre des images d'un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            params = self._get_params()
+            image_ids_order = params.get('image_ids', [])  # Liste d'IDs dans le nouvel ordre
+
+            if not image_ids_order:
+                return {
+                    'success': False,
+                    'error': 'No image order provided'
+                }
+
+            # Mettre à jour les séquences
+            ProductImage = request.env['product.image'].sudo()
+
+            for idx, image_id in enumerate(image_ids_order):
+                image = ProductImage.browse(image_id)
+                if image.exists() and image.product_tmpl_id.id == product_id:
+                    image.write({'sequence': idx + 1})
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Images reordered successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Reorder product images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== ATTRIBUTE VALUE IMAGES (V2) ====================
+    # Images associées aux valeurs d'attributs (ex: images pour la couleur "Rouge")
+    # Approche optimisée : une seule copie des images par valeur, partagée par toutes les variantes
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_attribute_images(self, product_id, **kwargs):
+        """
+        Récupère les lignes d'attributs du produit avec le compteur d'images par valeur.
+        Utilisé pour afficher l'interface de gestion des images par attribut.
+        """
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            ProductImage = request.env['product.image'].sudo()
+            attribute_lines = []
+
+            for line in product.attribute_line_ids:
+                values_data = []
+                for ptav in line.product_template_value_ids:
+                    # Compter les images pour cette valeur d'attribut
+                    images = ProductImage.search([
+                        ('product_tmpl_id', '=', product_id),
+                        ('product_template_attribute_value_id', '=', ptav.id)
+                    ]).sorted('sequence')
+
+                    first_image_url = None
+                    if images:
+                        first_image_url = f'/web/image/product.image/{images[0].id}/image_128'
+
+                    values_data.append({
+                        'ptav_id': ptav.id,
+                        'name': ptav.name,
+                        'html_color': ptav.product_attribute_value_id.html_color if ptav.product_attribute_value_id else None,
+                        'image_count': len(images),
+                        'first_image_url': first_image_url,
+                    })
+
+                attribute_lines.append({
+                    'id': line.id,
+                    'attribute_id': line.attribute_id.id,
+                    'attribute_name': line.attribute_id.name,
+                    'display_type': line.attribute_id.display_type,
+                    'values': values_data,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'attribute_lines': attribute_lines
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product attribute images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_attribute_value_images(self, product_id, ptav_id, **kwargs):
+        """Récupère les images associées à une valeur d'attribut spécifique"""
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Vérifier que le PTAV existe et appartient à ce produit
+            ptav = request.env['product.template.attribute.value'].sudo().browse(ptav_id)
+            if not ptav.exists() or ptav.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute value not found or does not belong to this product'
+                }
+
+            ProductImage = request.env['product.image'].sudo()
+            images = ProductImage.search([
+                ('product_tmpl_id', '=', product_id),
+                ('product_template_attribute_value_id', '=', ptav_id)
+            ]).sorted('sequence')
+
+            images_data = []
+            for img in images:
+                images_data.append({
+                    'id': img.id,
+                    'name': img.name or f'Image {img.sequence}',
+                    'url': f'/web/image/product.image/{img.id}/image_1920',
+                    'url_medium': f'/web/image/product.image/{img.id}/image_512',
+                    'url_small': f'/web/image/product.image/{img.id}/image_128',
+                    'sequence': img.sequence,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'images': images_data,
+                    'ptav_id': ptav_id,
+                    'ptav_name': ptav.name,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get attribute value images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def upload_attribute_value_images(self, product_id, ptav_id, **kwargs):
+        """Upload des images pour une valeur d'attribut (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Vérifier que le PTAV existe et appartient à ce produit
+            ptav = request.env['product.template.attribute.value'].sudo().browse(ptav_id)
+            if not ptav.exists() or ptav.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute value not found or does not belong to this product'
+                }
+
+            params = self._get_params()
+            images_data = params.get('images', [])
+
+            if not images_data:
+                return {
+                    'success': False,
+                    'error': 'No images provided'
+                }
+
+            # Limite de 10 images par valeur d'attribut
+            ProductImage = request.env['product.image'].sudo()
+            existing_count = ProductImage.search_count([
+                ('product_tmpl_id', '=', product_id),
+                ('product_template_attribute_value_id', '=', ptav_id)
+            ])
+
+            if existing_count + len(images_data) > 10:
+                return {
+                    'success': False,
+                    'error': f'Maximum 10 images par valeur d\'attribut. Actuellement {existing_count} images.'
+                }
+
+            # Récupérer la séquence max actuelle
+            existing_images = ProductImage.search([
+                ('product_tmpl_id', '=', product_id),
+                ('product_template_attribute_value_id', '=', ptav_id)
+            ])
+            max_sequence = max([img.sequence for img in existing_images], default=0)
+
+            created_images = []
+            for idx, image_data in enumerate(images_data):
+                if not image_data.get('image_1920'):
+                    continue
+
+                img_values = {
+                    'name': image_data.get('name', f'Image {idx + 1}'),
+                    'image_1920': image_data['image_1920'],  # Base64
+                    'product_tmpl_id': product.id,
+                    'product_template_attribute_value_id': ptav_id,
+                    'sequence': max_sequence + idx + 1,
+                }
+
+                new_image = ProductImage.create(img_values)
+                created_images.append({
+                    'id': new_image.id,
+                    'name': new_image.name,
+                    'url': f'/web/image/product.image/{new_image.id}/image_1920',
+                    'url_medium': f'/web/image/product.image/{new_image.id}/image_512',
+                    'url_small': f'/web/image/product.image/{new_image.id}/image_128',
+                    'sequence': new_image.sequence,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'images': created_images,
+                    'message': f'{len(created_images)} image(s) uploadée(s) avec succès'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Upload attribute value images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_attribute_value_image(self, product_id, ptav_id, image_id, **kwargs):
+        """Supprimer une image d'une valeur d'attribut (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Vérifier que le PTAV existe
+            ptav = request.env['product.template.attribute.value'].sudo().browse(ptav_id)
+            if not ptav.exists() or ptav.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute value not found or does not belong to this product'
+                }
+
+            # Chercher l'image
+            image = request.env['product.image'].sudo().browse(image_id)
+            if not image.exists():
+                return {
+                    'success': False,
+                    'error': 'Image not found'
+                }
+
+            # Vérifier que l'image appartient bien à cette valeur d'attribut
+            if image.product_template_attribute_value_id.id != ptav_id:
+                return {
+                    'success': False,
+                    'error': 'Image does not belong to this attribute value'
+                }
+
+            image.unlink()
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Image supprimée avec succès'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete attribute value image error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_attribute_value_images(self, product_id, ptav_id, **kwargs):
+        """Réorganiser l'ordre des images d'une valeur d'attribut (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Vérifier que le PTAV existe
+            ptav = request.env['product.template.attribute.value'].sudo().browse(ptav_id)
+            if not ptav.exists() or ptav.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute value not found or does not belong to this product'
+                }
+
+            params = self._get_params()
+            image_ids_order = params.get('image_ids', [])
+
+            if not image_ids_order:
+                return {
+                    'success': False,
+                    'error': 'No image order provided'
+                }
+
+            # Mettre à jour les séquences
+            ProductImage = request.env['product.image'].sudo()
+
+            for idx, image_id in enumerate(image_ids_order):
+                image = ProductImage.browse(image_id)
+                if image.exists() and image.product_template_attribute_value_id.id == ptav_id:
+                    image.write({'sequence': idx + 1})
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Ordre des images mis à jour avec succès'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Reorder attribute value images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== PRODUCT VARIANTS ====================
+
+    @http.route('/api/ecommerce/attributes', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_all_attributes(self, **kwargs):
+        """Liste tous les attributs disponibles (couleur, taille, etc.)"""
+        try:
+            Attribute = request.env['product.attribute'].sudo()
+            attributes = Attribute.search([])
+
+            result = []
+            for attr in attributes:
+                result.append({
+                    'id': attr.id,
+                    'name': attr.name,
+                    'display_type': attr.display_type,  # 'radio', 'pills', 'select', 'color'
+                    'create_variant': attr.create_variant,  # 'always', 'dynamic', 'no_variant'
+                    'values': [{
+                        'id': val.id,
+                        'name': val.name,
+                        'html_color': val.html_color if hasattr(val, 'html_color') else None,
+                        'sequence': val.sequence,
+                    } for val in attr.value_ids.sorted('sequence')]
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'attributes': result
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get attributes error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_variants(self, product_id, **kwargs):
+        """Obtenir les variantes et attributs d'un produit"""
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Récupérer les lignes d'attributs
+            attribute_lines = []
+            for line in product.attribute_line_ids:
+                attribute_lines.append({
+                    'id': line.id,
+                    'attribute_id': line.attribute_id.id,
+                    'attribute_name': line.attribute_id.name,
+                    'display_type': line.attribute_id.display_type,
+                    'values': [{
+                        'id': val.id,
+                        'name': val.name,
+                        'html_color': val.html_color if hasattr(val, 'html_color') else None,
+                    } for val in line.value_ids]
+                })
+
+            # Récupérer les variantes (product.product)
+            ProductImage = request.env['product.image'].sudo()
+            base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            variants = []
+            for variant in product.product_variant_ids:
+                # Récupérer les PTAV de cette variante
+                variant_ptav_ids = variant.product_template_attribute_value_ids.ids
+
+                # Récupérer les images depuis les valeurs d'attributs (PTAV)
+                # Une image associée à "Rouge" sera partagée par toutes les variantes Rouge
+                ptav_images = ProductImage.search([
+                    ('product_tmpl_id', '=', product_id),
+                    ('product_template_attribute_value_id', 'in', variant_ptav_ids)
+                ]).sorted('sequence') if variant_ptav_ids else ProductImage.browse([])
+
+                # Récupérer aussi les images spécifiques à cette variante
+                variant_specific_images = ProductImage.search([
+                    ('product_variant_id', '=', variant.id)
+                ]).sorted('sequence')
+
+                # Combiner les images (variante spécifique en premier, puis PTAV)
+                all_images = variant_specific_images | ptav_images
+
+                images_data = [{
+                    'id': img.id,
+                    'url': f'{base_url}/web/image/product.image/{img.id}/image_1920',
+                    'url_small': f'{base_url}/web/image/product.image/{img.id}/image_128',
+                    'sequence': img.sequence,
+                    'ptav_id': img.product_template_attribute_value_id.id if img.product_template_attribute_value_id else None,
+                    'variant_specific': img.product_variant_id.id == variant.id if img.product_variant_id else False,
+                } for img in all_images]
+
+                variants.append({
+                    'id': variant.id,
+                    'name': variant.name,
+                    'display_name': variant.display_name,
+                    'default_code': variant.default_code or '',
+                    'barcode': variant.barcode or '',
+                    'list_price': variant.list_price,
+                    'standard_price': variant.standard_price,
+                    'qty_available': variant.qty_available,
+                    'image': f'/web/image/product.product/{variant.id}/image_128' if variant.image_128 else None,
+                    'images': images_data,
+                    'image_count': len(images_data),
+                    'attribute_values': [{
+                        'id': val.id,
+                        'name': val.name,
+                        'attribute_id': val.attribute_id.id,
+                        'attribute_name': val.attribute_id.name,
+                    } for val in variant.product_template_attribute_value_ids.mapped('product_attribute_value_id')]
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'attribute_lines': attribute_lines,
+                    'variants': variants,
+                    'variant_count': len(variants)
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product variants error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def add_product_attribute(self, product_id, **kwargs):
+        """Ajouter un attribut à un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            params = self._get_params()
+            attribute_id = params.get('attribute_id')
+            value_ids = params.get('value_ids', [])  # Liste des IDs de valeurs
+
+            if not attribute_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute ID is required'
+                }
+
+            if not value_ids:
+                return {
+                    'success': False,
+                    'error': 'At least one value is required'
+                }
+
+            # Vérifier que l'attribut n'est pas déjà sur ce produit
+            existing = product.attribute_line_ids.filtered(
+                lambda l: l.attribute_id.id == int(attribute_id)
+            )
+            if existing:
+                return {
+                    'success': False,
+                    'error': 'This attribute is already on this product'
+                }
+
+            # Créer la ligne d'attribut
+            AttributeLine = request.env['product.template.attribute.line'].sudo()
+            line = AttributeLine.create({
+                'product_tmpl_id': product.id,
+                'attribute_id': int(attribute_id),
+                'value_ids': [(6, 0, [int(v) for v in value_ids])],
+            })
+
+            return {
+                'success': True,
+                'data': {
+                    'attribute_line': {
+                        'id': line.id,
+                        'attribute_id': line.attribute_id.id,
+                        'attribute_name': line.attribute_id.name,
+                        'values': [{
+                            'id': val.id,
+                            'name': val.name
+                        } for val in line.value_ids]
+                    },
+                    'message': 'Attribute added successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Add product attribute error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_product_attribute(self, product_id, line_id, **kwargs):
+        """Modifier les valeurs d'un attribut sur un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            line = request.env['product.template.attribute.line'].sudo().browse(line_id)
+
+            if not line.exists() or line.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute line not found'
+                }
+
+            params = self._get_params()
+            value_ids = params.get('value_ids', [])
+
+            if not value_ids:
+                return {
+                    'success': False,
+                    'error': 'At least one value is required'
+                }
+
+            # Mettre à jour les valeurs
+            line.write({
+                'value_ids': [(6, 0, [int(v) for v in value_ids])],
+            })
+
+            return {
+                'success': True,
+                'data': {
+                    'attribute_line': {
+                        'id': line.id,
+                        'attribute_id': line.attribute_id.id,
+                        'attribute_name': line.attribute_id.name,
+                        'values': [{
+                            'id': val.id,
+                            'name': val.name
+                        } for val in line.value_ids]
+                    },
+                    'message': 'Attribute updated successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update product attribute error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_product_attribute(self, product_id, line_id, **kwargs):
+        """Supprimer un attribut d'un produit (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            line = request.env['product.template.attribute.line'].sudo().browse(line_id)
+
+            if not line.exists() or line.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Attribute line not found'
+                }
+
+            line.unlink()
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Attribute removed successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete product attribute error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_product_variant(self, product_id, variant_id, **kwargs):
+        """Modifier une variante spécifique (prix, code, etc.) (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            variant = request.env['product.product'].sudo().browse(variant_id)
+
+            if not variant.exists() or variant.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Variant not found'
+                }
+
+            params = self._get_params()
+            update_data = {}
+
+            if 'list_price' in params:
+                # Prix de la variante (surcharge)
+                update_data['lst_price'] = float(params['list_price'])
+
+            if 'standard_price' in params:
+                update_data['standard_price'] = float(params['standard_price'])
+
+            if 'default_code' in params:
+                update_data['default_code'] = params['default_code']
+
+            if 'barcode' in params:
+                update_data['barcode'] = params['barcode']
+
+            if update_data:
+                variant.write(update_data)
+
+            return {
+                'success': True,
+                'data': {
+                    'variant': {
+                        'id': variant.id,
+                        'name': variant.name,
+                        'display_name': variant.display_name,
+                        'default_code': variant.default_code or '',
+                        'barcode': variant.barcode or '',
+                        'list_price': variant.list_price,
+                        'standard_price': variant.standard_price,
+                    },
+                    'message': 'Variant updated successfully'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update product variant error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_variant_stock(self, product_id, variant_id, **kwargs):
+        """Modifier le stock d'une variante spécifique (admin)"""
+        try:
+            # Vérifier les permissions
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            product = request.env['product.template'].sudo().browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            variant = request.env['product.product'].sudo().browse(variant_id)
+
+            if not variant.exists() or variant.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Variant not found'
+                }
+
+            params = self._get_params()
+            new_qty = params.get('quantity')
+
+            if new_qty is None:
+                return {
+                    'success': False,
+                    'error': 'Quantity is required'
+                }
+
+            # Créer un ajustement de stock
+            location = request.env['stock.location'].sudo().search([
+                ('usage', '=', 'internal')
+            ], limit=1)
+
+            if not location:
+                return {
+                    'success': False,
+                    'error': 'No internal location found'
+                }
+
+            # Créer ou mettre à jour le stock
+            quant = request.env['stock.quant'].sudo().search([
+                ('product_id', '=', variant_id),
+                ('location_id', '=', location.id)
+            ], limit=1)
+
+            if quant:
+                quant.sudo().write({'quantity': float(new_qty)})
+            else:
+                request.env['stock.quant'].sudo().create({
+                    'product_id': variant_id,
+                    'location_id': location.id,
+                    'quantity': float(new_qty),
+                })
+
+            # Recharger la variante pour avoir la nouvelle quantité
+            variant.invalidate_recordset(['qty_available'])
+
+            return {
+                'success': True,
+                'data': {
+                    'variant': {
+                        'id': variant.id,
+                        'name': variant.name,
+                        'qty_available': variant.qty_available,
+                    },
+                    'message': f'Stock mis à jour à {new_qty} unités'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update variant stock error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== VARIANT IMAGES ====================
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_variant_images(self, product_id, variant_id, **kwargs):
+        """Récupérer les images d'une variante spécifique"""
+        try:
+            variant = request.env['product.product'].sudo().browse(variant_id)
+
+            if not variant.exists() or variant.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Variant not found'
+                }
+
+            # Récupérer les images de la variante depuis product.image
+            images = request.env['product.image'].sudo().search([
+                ('product_variant_id', '=', variant_id)
+            ], order='sequence')
+
+            base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+
+            images_data = []
+            for img in images:
+                images_data.append({
+                    'id': img.id,
+                    'name': img.name or f'Image {img.id}',
+                    'url': f'{base_url}/web/image/product.image/{img.id}/image_1920',
+                    'url_medium': f'{base_url}/web/image/product.image/{img.id}/image_512',
+                    'url_small': f'{base_url}/web/image/product.image/{img.id}/image_128',
+                    'sequence': img.sequence,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'images': images_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get variant images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def upload_variant_images(self, product_id, variant_id, **kwargs):
+        """Uploader des images pour une variante"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            variant = request.env['product.product'].sudo().browse(variant_id)
+
+            if not variant.exists() or variant.product_tmpl_id.id != product_id:
+                return {
+                    'success': False,
+                    'error': 'Variant not found'
+                }
+
+            params = self._get_params()
+            images = params.get('images', [])
+
+            if not images:
+                return {
+                    'success': False,
+                    'error': 'No images provided'
+                }
+
+            # Trouver la séquence max actuelle
+            existing = request.env['product.image'].sudo().search([
+                ('product_variant_id', '=', variant_id)
+            ], order='sequence desc', limit=1)
+            next_seq = (existing.sequence + 1) if existing else 1
+
+            base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            created_images = []
+
+            for img_data in images:
+                img = request.env['product.image'].sudo().create({
+                    'name': img_data.get('name', f'Image {next_seq}'),
+                    'image_1920': img_data.get('image_1920'),
+                    'product_tmpl_id': product_id,
+                    'product_variant_id': variant_id,
+                    'sequence': next_seq,
+                })
+                created_images.append({
+                    'id': img.id,
+                    'name': img.name,
+                    'url': f'{base_url}/web/image/product.image/{img.id}/image_1920',
+                    'url_medium': f'{base_url}/web/image/product.image/{img.id}/image_512',
+                    'url_small': f'{base_url}/web/image/product.image/{img.id}/image_128',
+                    'sequence': img.sequence,
+                })
+                next_seq += 1
+
+            return {
+                'success': True,
+                'data': {
+                    'images': created_images,
+                    'message': f'{len(created_images)} image(s) uploadée(s)'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Upload variant images error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_variant_image(self, product_id, variant_id, image_id, **kwargs):
+        """Supprimer une image de variante"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            image = request.env['product.image'].sudo().browse(image_id)
+
+            if not image.exists() or image.product_variant_id.id != variant_id:
+                return {
+                    'success': False,
+                    'error': 'Image not found'
+                }
+
+            image.unlink()
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Image supprimée'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete variant image error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_variant_images(self, product_id, variant_id, **kwargs):
+        """Réordonner les images d'une variante"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            image_ids = params.get('image_ids', [])
+
+            if not image_ids:
+                return {
+                    'success': False,
+                    'error': 'No image IDs provided'
+                }
+
+            for seq, img_id in enumerate(image_ids, 1):
+                img = request.env['product.image'].sudo().browse(img_id)
+                if img.exists() and img.product_variant_id.id == variant_id:
+                    img.write({'sequence': seq})
+
+            return {
+                'success': True,
+                'data': {
+                    'message': 'Ordre mis à jour'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Reorder variant images error: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -601,10 +2527,23 @@ class QuelyosAPI(http.Controller):
             limit = int(params.get('limit', 20))
             offset = int(params.get('offset', 0))
             status = params.get('status')  # draft, sent, sale, done, cancel
+            search = params.get('search')  # recherche par nom commande ou client
+            date_from = params.get('date_from')  # date debut (YYYY-MM-DD)
+            date_to = params.get('date_to')  # date fin (YYYY-MM-DD)
 
             domain = []
             if status:
                 domain.append(('state', '=', status))
+
+            if search:
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('partner_id.name', 'ilike', search))
+
+            if date_from:
+                domain.append(('date_order', '>=', date_from))
+            if date_to:
+                domain.append(('date_order', '<=', date_to + ' 23:59:59'))
 
             orders = request.env['sale.order'].sudo().search(
                 domain,
@@ -939,6 +2878,111 @@ class QuelyosAPI(http.Controller):
                 'success': False,
                 'error': str(e)
             }
+
+    @http.route('/api/ecommerce/customers/<int:customer_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_customer_detail(self, customer_id, **kwargs):
+        """Detail d'un client avec historique commandes (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            partner = request.env['res.partner'].sudo().browse(customer_id)
+            if not partner.exists():
+                return {'success': False, 'error': 'Customer not found'}
+
+            # Commandes du client
+            orders = request.env['sale.order'].sudo().search([
+                ('partner_id', '=', partner.id)
+            ], order='date_order desc', limit=20)
+
+            orders_data = [{
+                'id': o.id,
+                'name': o.name,
+                'date_order': o.date_order.isoformat() if o.date_order else None,
+                'state': o.state,
+                'amount_total': o.amount_total,
+            } for o in orders]
+
+            # Statistiques
+            confirmed_orders = request.env['sale.order'].sudo().search([
+                ('partner_id', '=', partner.id),
+                ('state', 'in', ['sale', 'done'])
+            ])
+            total_spent = sum(confirmed_orders.mapped('amount_total'))
+
+            # Adresses
+            addresses = request.env['res.partner'].sudo().search([
+                ('parent_id', '=', partner.id),
+                ('type', 'in', ['delivery', 'invoice'])
+            ])
+
+            addresses_data = [{
+                'id': a.id,
+                'type': a.type,
+                'name': a.name,
+                'street': a.street or '',
+                'city': a.city or '',
+                'zip': a.zip or '',
+                'country': a.country_id.name if a.country_id else '',
+            } for a in addresses]
+
+            return {
+                'success': True,
+                'customer': {
+                    'id': partner.id,
+                    'name': partner.name,
+                    'email': partner.email or '',
+                    'phone': partner.phone or '',
+                    'mobile': partner.mobile or '',
+                    'street': partner.street or '',
+                    'city': partner.city or '',
+                    'zip': partner.zip or '',
+                    'country': partner.country_id.name if partner.country_id else '',
+                    'create_date': partner.create_date.isoformat() if partner.create_date else None,
+                    'orders_count': len(confirmed_orders),
+                    'total_spent': total_spent,
+                    'orders': orders_data,
+                    'addresses': addresses_data,
+                }
+            }
+        except Exception as e:
+            _logger.error(f"Get customer detail error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_customer(self, customer_id, **kwargs):
+        """Modifier un client (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            partner = request.env['res.partner'].sudo().browse(customer_id)
+            if not partner.exists():
+                return {'success': False, 'error': 'Customer not found'}
+
+            params = self._get_params()
+            update_vals = {}
+
+            for field in ['name', 'email', 'phone', 'mobile', 'street', 'city', 'zip']:
+                if field in params:
+                    update_vals[field] = params[field]
+
+            if update_vals:
+                partner.write(update_vals)
+
+            return {
+                'success': True,
+                'customer': {
+                    'id': partner.id,
+                    'name': partner.name,
+                    'email': partner.email or '',
+                    'phone': partner.phone or '',
+                },
+                'message': 'Customer updated successfully'
+            }
+        except Exception as e:
+            _logger.error(f"Update customer error: {e}")
+            return {'success': False, 'error': str(e)}
 
     # ==================== CART ====================
 
@@ -1875,6 +3919,176 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
+    @http.route('/api/ecommerce/delivery/methods/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_delivery_method(self, **kwargs):
+        """Creer une methode de livraison (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            name = params.get('name')
+            fixed_price = float(params.get('fixed_price', 0))
+            free_over = params.get('free_over')
+
+            if not name:
+                return {
+                    'success': False,
+                    'error': 'Name is required'
+                }
+
+            carrier_vals = {
+                'name': name,
+                'delivery_type': 'fixed',
+                'fixed_price': fixed_price,
+                'active': True,
+            }
+
+            if free_over:
+                carrier_vals['free_over'] = float(free_over)
+
+            carrier = request.env['delivery.carrier'].sudo().create(carrier_vals)
+
+            return {
+                'success': True,
+                'delivery_method': {
+                    'id': carrier.id,
+                    'name': carrier.name,
+                    'fixed_price': carrier.fixed_price,
+                    'delivery_type': carrier.delivery_type,
+                    'active': carrier.active,
+                },
+                'message': 'Methode de livraison creee avec succes'
+            }
+
+        except Exception as e:
+            _logger.error(f"Create delivery method error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_delivery_method_detail(self, method_id, **kwargs):
+        """Detail d'une methode de livraison (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            carrier = request.env['delivery.carrier'].sudo().browse(method_id)
+            if not carrier.exists():
+                return {
+                    'success': False,
+                    'error': 'Delivery method not found'
+                }
+
+            return {
+                'success': True,
+                'delivery_method': {
+                    'id': carrier.id,
+                    'name': carrier.name,
+                    'delivery_type': carrier.delivery_type,
+                    'fixed_price': carrier.fixed_price,
+                    'free_over': carrier.free_over if hasattr(carrier, 'free_over') else 0,
+                    'active': carrier.active,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get delivery method detail error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_delivery_method(self, method_id, **kwargs):
+        """Mettre a jour une methode de livraison (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            carrier = request.env['delivery.carrier'].sudo().browse(method_id)
+            if not carrier.exists():
+                return {
+                    'success': False,
+                    'error': 'Delivery method not found'
+                }
+
+            params = self._get_params()
+            update_vals = {}
+
+            if 'name' in params:
+                update_vals['name'] = params['name']
+            if 'fixed_price' in params:
+                update_vals['fixed_price'] = float(params['fixed_price'])
+            if 'free_over' in params:
+                update_vals['free_over'] = float(params['free_over']) if params['free_over'] else False
+            if 'active' in params:
+                update_vals['active'] = params['active']
+
+            if update_vals:
+                carrier.write(update_vals)
+
+            return {
+                'success': True,
+                'delivery_method': {
+                    'id': carrier.id,
+                    'name': carrier.name,
+                    'fixed_price': carrier.fixed_price,
+                    'active': carrier.active,
+                },
+                'message': 'Methode de livraison mise a jour'
+            }
+
+        except Exception as e:
+            _logger.error(f"Update delivery method error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_delivery_method(self, method_id, **kwargs):
+        """Supprimer une methode de livraison (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            carrier = request.env['delivery.carrier'].sudo().browse(method_id)
+            if not carrier.exists():
+                return {
+                    'success': False,
+                    'error': 'Delivery method not found'
+                }
+
+            carrier_name = carrier.name
+            carrier.unlink()
+
+            return {
+                'success': True,
+                'message': f'Methode de livraison "{carrier_name}" supprimee'
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete delivery method error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     @http.route('/api/ecommerce/delivery/calculate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def calculate_delivery_cost(self, **kwargs):
         """Calculer les frais de livraison"""
@@ -2185,6 +4399,162 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
+    @http.route('/api/ecommerce/payment/transactions', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_payment_transactions(self, **kwargs):
+        """Liste des transactions de paiement (admin uniquement)"""
+        try:
+            # Vérifier les permissions admin
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            limit = int(params.get('limit', 20))
+            offset = int(params.get('offset', 0))
+            state_filter = params.get('state', '')
+            search = params.get('search', '').strip()
+
+            # Construire le domaine de recherche
+            domain = []
+
+            if state_filter:
+                domain.append(('state', '=', state_filter))
+
+            if search:
+                domain.append('|')
+                domain.append(('reference', 'ilike', search))
+                domain.append(('partner_id.name', 'ilike', search))
+
+            # Rechercher les transactions
+            transactions = request.env['payment.transaction'].sudo().search(
+                domain,
+                limit=limit,
+                offset=offset,
+                order='create_date desc'
+            )
+
+            total = request.env['payment.transaction'].sudo().search_count(domain)
+
+            data = []
+            for t in transactions:
+                # Récupérer la commande liée
+                order = t.sale_order_ids[0] if t.sale_order_ids else None
+
+                data.append({
+                    'id': t.id,
+                    'reference': t.reference or f'TX-{t.id}',
+                    'provider_reference': t.provider_reference or '',
+                    'amount': t.amount,
+                    'currency': t.currency_id.name if t.currency_id else 'EUR',
+                    'state': t.state,
+                    'state_label': dict(t._fields['state'].selection).get(t.state, t.state),
+                    'provider': {
+                        'id': t.provider_id.id if t.provider_id else None,
+                        'name': t.provider_id.name if t.provider_id else 'Manuel',
+                    },
+                    'partner': {
+                        'id': t.partner_id.id if t.partner_id else None,
+                        'name': t.partner_id.name if t.partner_id else 'Anonyme',
+                        'email': t.partner_id.email if t.partner_id else '',
+                    },
+                    'order': {
+                        'id': order.id if order else None,
+                        'name': order.name if order else None,
+                    } if order else None,
+                    'create_date': t.create_date.isoformat() if t.create_date else None,
+                    'last_state_change': t.last_state_change.isoformat() if hasattr(t, 'last_state_change') and t.last_state_change else None,
+                })
+
+            # Statistiques
+            all_transactions = request.env['payment.transaction'].sudo().search([])
+            stats = {
+                'total': len(all_transactions),
+                'done': len(all_transactions.filtered(lambda t: t.state == 'done')),
+                'pending': len(all_transactions.filtered(lambda t: t.state == 'pending')),
+                'error': len(all_transactions.filtered(lambda t: t.state == 'error')),
+                'canceled': len(all_transactions.filtered(lambda t: t.state == 'cancel')),
+                'total_amount': sum(all_transactions.filtered(lambda t: t.state == 'done').mapped('amount')),
+            }
+
+            return {
+                'success': True,
+                'data': {
+                    'transactions': data,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset,
+                    'stats': stats,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get payment transactions error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_payment_transaction_detail(self, transaction_id, **kwargs):
+        """Détail d'une transaction de paiement (admin uniquement)"""
+        try:
+            # Vérifier les permissions admin
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            transaction = request.env['payment.transaction'].sudo().browse(transaction_id)
+
+            if not transaction.exists():
+                return {
+                    'success': False,
+                    'error': 'Transaction not found'
+                }
+
+            order = transaction.sale_order_ids[0] if transaction.sale_order_ids else None
+
+            return {
+                'success': True,
+                'transaction': {
+                    'id': transaction.id,
+                    'reference': transaction.reference or f'TX-{transaction.id}',
+                    'provider_reference': transaction.provider_reference or '',
+                    'amount': transaction.amount,
+                    'currency': transaction.currency_id.name if transaction.currency_id else 'EUR',
+                    'state': transaction.state,
+                    'state_label': dict(transaction._fields['state'].selection).get(transaction.state, transaction.state),
+                    'provider': {
+                        'id': transaction.provider_id.id if transaction.provider_id else None,
+                        'name': transaction.provider_id.name if transaction.provider_id else 'Manuel',
+                        'code': transaction.provider_id.code if transaction.provider_id else '',
+                    },
+                    'partner': {
+                        'id': transaction.partner_id.id if transaction.partner_id else None,
+                        'name': transaction.partner_id.name if transaction.partner_id else 'Anonyme',
+                        'email': transaction.partner_id.email if transaction.partner_id else '',
+                        'phone': transaction.partner_id.phone if transaction.partner_id else '',
+                    },
+                    'order': {
+                        'id': order.id if order else None,
+                        'name': order.name if order else None,
+                        'amount_total': order.amount_total if order else 0,
+                        'state': order.state if order else None,
+                    } if order else None,
+                    'create_date': transaction.create_date.isoformat() if transaction.create_date else None,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get payment transaction detail error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     # ===========================
     # PHASE 5: MARKETING (COUPONS)
     # ===========================
@@ -2339,6 +4709,153 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Create coupon error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_coupon_detail(self, coupon_id, **kwargs):
+        """Détail d'un coupon (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            program = request.env['loyalty.program'].sudo().browse(coupon_id)
+            if not program.exists():
+                return {
+                    'success': False,
+                    'error': 'Coupon not found'
+                }
+
+            reward = program.reward_ids[0] if program.reward_ids else None
+            codes = program.coupon_ids.mapped('code')
+
+            return {
+                'success': True,
+                'coupon': {
+                    'id': program.id,
+                    'name': program.name,
+                    'program_type': program.program_type,
+                    'trigger': program.trigger,
+                    'active': program.active,
+                    'date_from': program.date_from.isoformat() if program.date_from else None,
+                    'date_to': program.date_to.isoformat() if program.date_to else None,
+                    'codes': codes,
+                    'reward': {
+                        'id': reward.id if reward else None,
+                        'discount': reward.discount if reward else 0,
+                        'discount_mode': reward.discount_mode if reward else 'percent',
+                        'discount_fixed_amount': reward.discount_fixed_amount if reward else 0,
+                    } if reward else None,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get coupon detail error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_coupon(self, coupon_id, **kwargs):
+        """Mettre à jour un coupon (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            program = request.env['loyalty.program'].sudo().browse(coupon_id)
+            if not program.exists():
+                return {
+                    'success': False,
+                    'error': 'Coupon not found'
+                }
+
+            params = self._get_params()
+
+            # Mise à jour des champs du programme
+            update_vals = {}
+            if 'name' in params:
+                update_vals['name'] = params['name']
+            if 'active' in params:
+                update_vals['active'] = params['active']
+            if 'date_from' in params:
+                update_vals['date_from'] = params['date_from'] if params['date_from'] else False
+            if 'date_to' in params:
+                update_vals['date_to'] = params['date_to'] if params['date_to'] else False
+
+            if update_vals:
+                program.write(update_vals)
+
+            # Mise à jour de la récompense si fournie
+            if 'discount_type' in params or 'discount_value' in params:
+                reward = program.reward_ids[0] if program.reward_ids else None
+                if reward:
+                    reward_vals = {}
+                    discount_type = params.get('discount_type', reward.discount_mode)
+                    discount_value = float(params.get('discount_value', reward.discount or reward.discount_fixed_amount))
+
+                    reward_vals['discount_mode'] = discount_type
+                    if discount_type == 'percent':
+                        reward_vals['discount'] = discount_value
+                        reward_vals['discount_fixed_amount'] = 0
+                    else:
+                        reward_vals['discount'] = 0
+                        reward_vals['discount_fixed_amount'] = discount_value
+
+                    reward.write(reward_vals)
+
+            return {
+                'success': True,
+                'coupon': {
+                    'id': program.id,
+                    'name': program.name,
+                    'active': program.active,
+                },
+                'message': 'Coupon mis à jour avec succès'
+            }
+
+        except Exception as e:
+            _logger.error(f"Update coupon error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_coupon(self, coupon_id, **kwargs):
+        """Supprimer un coupon (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            program = request.env['loyalty.program'].sudo().browse(coupon_id)
+            if not program.exists():
+                return {
+                    'success': False,
+                    'error': 'Coupon not found'
+                }
+
+            coupon_name = program.name
+            program.unlink()
+
+            return {
+                'success': True,
+                'message': f'Coupon "{coupon_name}" supprimé avec succès'
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete coupon error: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -2588,6 +5105,39 @@ class QuelyosAPI(http.Controller):
                 reverse=True
             )[:5]
 
+            # Alertes de stock (produits en rupture ou stock faible)
+            stock_alert_products = request.env['product.template'].sudo().search([
+                ('sale_ok', '=', True),
+                ('qty_available', '<=', 5),
+            ], limit=10, order='qty_available asc')
+
+            stock_alerts = []
+            for p in stock_alert_products:
+                qty = p.qty_available
+                if qty <= 0:
+                    alert_level = 'critical'
+                    alert_message = 'Rupture de stock'
+                else:
+                    alert_level = 'warning'
+                    alert_message = f'Stock faible ({int(qty)} restants)'
+
+                stock_alerts.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'default_code': p.default_code or '',
+                    'qty_available': qty,
+                    'alert_level': alert_level,
+                    'alert_message': alert_message,
+                    'image': f'/web/image/product.template/{p.id}/image_128' if p.image_128 else None,
+                })
+
+            # Compter les alertes par niveau
+            low_stock_count = request.env['product.template'].sudo().search_count([
+                ('sale_ok', '=', True),
+                ('qty_available', '>', 0),
+                ('qty_available', '<=', 5),
+            ])
+
             return {
                 'success': True,
                 'data': {
@@ -2598,10 +5148,12 @@ class QuelyosAPI(http.Controller):
                         'confirmed_orders': confirmed_orders,
                         'pending_orders': pending_orders,
                         'out_of_stock_products': out_of_stock_products,
+                        'low_stock_products': low_stock_count,
                         'revenue': total_revenue,
                     },
                     'recent_orders': recent_orders_data,
                     'top_products': top_products,
+                    'stock_alerts': stock_alerts,
                 }
             }
 
@@ -2611,3 +5163,394 @@ class QuelyosAPI(http.Controller):
                 'success': False,
                 'error': str(e)
             }
+
+    # ===========================
+    # PHASE 7: FACTURATION
+    # ===========================
+
+    @http.route('/api/ecommerce/invoices', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_invoices_list(self, **kwargs):
+        """Liste des factures (admin uniquement)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            limit = int(params.get('limit', 20))
+            offset = int(params.get('offset', 0))
+            state_filter = params.get('state', '')
+            search = params.get('search', '').strip()
+
+            domain = [('move_type', 'in', ['out_invoice', 'out_refund'])]
+            if state_filter:
+                domain.append(('state', '=', state_filter))
+            if search:
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('partner_id.name', 'ilike', search))
+
+            invoices = request.env['account.move'].sudo().search(
+                domain, limit=limit, offset=offset, order='invoice_date desc, id desc'
+            )
+            total = request.env['account.move'].sudo().search_count(domain)
+
+            data = [{
+                'id': inv.id,
+                'name': inv.name or 'Brouillon',
+                'move_type': inv.move_type,
+                'move_type_label': 'Facture' if inv.move_type == 'out_invoice' else 'Avoir',
+                'state': inv.state,
+                'partner': {
+                    'id': inv.partner_id.id if inv.partner_id else None,
+                    'name': inv.partner_id.name if inv.partner_id else 'Anonyme',
+                },
+                'invoice_date': inv.invoice_date.isoformat() if inv.invoice_date else None,
+                'amount_total': inv.amount_total,
+                'amount_residual': inv.amount_residual,
+                'currency': inv.currency_id.name if inv.currency_id else 'EUR',
+                'payment_state': inv.payment_state,
+                'invoice_origin': inv.invoice_origin or '',
+            } for inv in invoices]
+
+            all_inv = request.env['account.move'].sudo().search([('move_type', 'in', ['out_invoice', 'out_refund'])])
+            stats = {
+                'total': len(all_inv),
+                'draft': len(all_inv.filtered(lambda i: i.state == 'draft')),
+                'posted': len(all_inv.filtered(lambda i: i.state == 'posted')),
+                'paid': len(all_inv.filtered(lambda i: i.payment_state == 'paid')),
+                'total_amount': sum(all_inv.filtered(lambda i: i.state == 'posted' and i.move_type == 'out_invoice').mapped('amount_total')),
+            }
+
+            return {'success': True, 'data': {'invoices': data, 'total': total, 'stats': stats}}
+        except Exception as e:
+            _logger.error(f"Get invoices list error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_invoice_detail(self, invoice_id, **kwargs):
+        """Detail d'une facture"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            invoice = request.env['account.move'].sudo().browse(invoice_id)
+            if not invoice.exists():
+                return {'success': False, 'error': 'Invoice not found'}
+
+            lines = [{
+                'id': l.id,
+                'name': l.name or '',
+                'product': {'id': l.product_id.id, 'name': l.product_id.name} if l.product_id else None,
+                'quantity': l.quantity,
+                'price_unit': l.price_unit,
+                'price_total': l.price_total,
+            } for l in invoice.invoice_line_ids if l.display_type not in ['line_section', 'line_note']]
+
+            return {
+                'success': True,
+                'invoice': {
+                    'id': invoice.id,
+                    'name': invoice.name or 'Brouillon',
+                    'move_type': invoice.move_type,
+                    'state': invoice.state,
+                    'partner': {
+                        'id': invoice.partner_id.id if invoice.partner_id else None,
+                        'name': invoice.partner_id.name if invoice.partner_id else 'Anonyme',
+                        'email': invoice.partner_id.email if invoice.partner_id else '',
+                    },
+                    'invoice_date': invoice.invoice_date.isoformat() if invoice.invoice_date else None,
+                    'amount_untaxed': invoice.amount_untaxed,
+                    'amount_tax': invoice.amount_tax,
+                    'amount_total': invoice.amount_total,
+                    'amount_residual': invoice.amount_residual,
+                    'payment_state': invoice.payment_state,
+                    'invoice_origin': invoice.invoice_origin or '',
+                    'lines': lines,
+                }
+            }
+        except Exception as e:
+            _logger.error(f"Get invoice detail error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_invoice_from_order(self, order_id, **kwargs):
+        """Creer une facture depuis une commande"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            order = request.env['sale.order'].sudo().browse(order_id)
+            if not order.exists():
+                return {'success': False, 'error': 'Order not found'}
+
+            if order.state not in ['sale', 'done']:
+                return {'success': False, 'error': 'Order must be confirmed before invoicing'}
+
+            existing = order.invoice_ids.filtered(lambda i: i.state != 'cancel')
+            if existing:
+                return {'success': False, 'error': 'Order already has invoices', 'invoice_ids': existing.ids}
+
+            invoice = order._create_invoices()
+            return {
+                'success': True,
+                'invoice': {'id': invoice.id, 'name': invoice.name or 'Brouillon', 'amount_total': invoice.amount_total},
+                'message': 'Invoice created successfully'
+            }
+        except Exception as e:
+            _logger.error(f"Create invoice error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def post_invoice(self, invoice_id, **kwargs):
+        """Valider une facture brouillon"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            invoice = request.env['account.move'].sudo().browse(invoice_id)
+            if not invoice.exists():
+                return {'success': False, 'error': 'Invoice not found'}
+            if invoice.state != 'draft':
+                return {'success': False, 'error': 'Invoice is not in draft state'}
+
+            invoice.action_post()
+            return {
+                'success': True,
+                'invoice': {'id': invoice.id, 'name': invoice.name, 'state': invoice.state},
+                'message': 'Invoice posted successfully'
+            }
+        except Exception as e:
+            _logger.error(f"Post invoice error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== FEATURED PRODUCTS ====================
+
+    @http.route('/api/ecommerce/featured', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_featured_products(self, **kwargs):
+        """Liste des produits vedettes (website_sequence > 0)"""
+        try:
+            params = self._get_params()
+            limit = int(params.get('limit', 20))
+            offset = int(params.get('offset', 0))
+
+            ProductTemplate = request.env['product.template'].sudo()
+
+            # Produits vedettes = website_sequence > 0, tries par sequence
+            domain = [
+                ('sale_ok', '=', True),
+                ('active', '=', True),
+                ('website_sequence', '>', 0),
+            ]
+
+            products = ProductTemplate.search(
+                domain,
+                limit=limit,
+                offset=offset,
+                order='website_sequence asc'
+            )
+
+            total = ProductTemplate.search_count(domain)
+
+            data = []
+            for p in products:
+                qty = p.qty_available
+                if qty <= 0:
+                    stock_status = 'out_of_stock'
+                elif qty <= 5:
+                    stock_status = 'low_stock'
+                else:
+                    stock_status = 'in_stock'
+
+                data.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'price': p.list_price,
+                    'image': f'/web/image/product.template/{p.id}/image_1920' if p.image_1920 else None,
+                    'sequence': p.website_sequence,
+                    'qty_available': qty,
+                    'stock_status': stock_status,
+                    'category': {
+                        'id': p.categ_id.id,
+                        'name': p.categ_id.name,
+                    } if p.categ_id else None,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'products': data,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get featured products error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/featured/available', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_available_products_for_featured(self, **kwargs):
+        """Liste des produits non vedettes pour ajout (admin)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            limit = int(params.get('limit', 50))
+            offset = int(params.get('offset', 0))
+            search = params.get('search', '').strip()
+
+            ProductTemplate = request.env['product.template'].sudo()
+
+            # Produits non vedettes (website_sequence = 0 ou pas defini)
+            domain = [
+                ('sale_ok', '=', True),
+                ('active', '=', True),
+                '|',
+                ('website_sequence', '=', 0),
+                ('website_sequence', '=', False),
+            ]
+
+            if search:
+                domain.insert(0, '&')
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('default_code', 'ilike', search))
+
+            products = ProductTemplate.search(
+                domain,
+                limit=limit,
+                offset=offset,
+                order='name asc'
+            )
+
+            total = ProductTemplate.search_count(domain)
+
+            data = []
+            for p in products:
+                data.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'price': p.list_price,
+                    'image': f'/web/image/product.template/{p.id}/image_1920' if p.image_1920 else None,
+                    'default_code': p.default_code or '',
+                    'category': {
+                        'id': p.categ_id.id,
+                        'name': p.categ_id.name,
+                    } if p.categ_id else None,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'products': data,
+                    'total': total,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get available products error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/featured/add', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def add_featured_product(self, **kwargs):
+        """Ajouter un produit aux vedettes (admin)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            product_id = params.get('product_id')
+
+            if not product_id:
+                return {'success': False, 'error': 'Product ID required'}
+
+            ProductTemplate = request.env['product.template'].sudo()
+            product = ProductTemplate.browse(int(product_id))
+
+            if not product.exists():
+                return {'success': False, 'error': 'Product not found'}
+
+            # Trouver la sequence max actuelle
+            max_seq = ProductTemplate.search_read(
+                [('website_sequence', '>', 0)],
+                ['website_sequence'],
+                order='website_sequence desc',
+                limit=1
+            )
+            new_seq = (max_seq[0]['website_sequence'] + 1) if max_seq else 1
+
+            product.write({'website_sequence': new_seq})
+
+            return {
+                'success': True,
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'sequence': new_seq,
+                },
+                'message': 'Produit ajoute aux vedettes'
+            }
+
+        except Exception as e:
+            _logger.error(f"Add featured product error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/featured/remove', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def remove_featured_product(self, **kwargs):
+        """Retirer un produit des vedettes (admin)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            product_id = params.get('product_id')
+
+            if not product_id:
+                return {'success': False, 'error': 'Product ID required'}
+
+            product = request.env['product.template'].sudo().browse(int(product_id))
+
+            if not product.exists():
+                return {'success': False, 'error': 'Product not found'}
+
+            product.write({'website_sequence': 0})
+
+            return {
+                'success': True,
+                'message': 'Produit retire des vedettes'
+            }
+
+        except Exception as e:
+            _logger.error(f"Remove featured product error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/featured/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_featured_products(self, **kwargs):
+        """Reordonner les produits vedettes (admin)"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            product_ids = params.get('product_ids', [])
+
+            if not product_ids:
+                return {'success': False, 'error': 'Product IDs required'}
+
+            ProductTemplate = request.env['product.template'].sudo()
+
+            for idx, pid in enumerate(product_ids):
+                product = ProductTemplate.browse(int(pid))
+                if product.exists():
+                    product.write({'website_sequence': idx + 1})
+
+            return {
+                'success': True,
+                'message': f'{len(product_ids)} produits reordonnes'
+            }
+
+        except Exception as e:
+            _logger.error(f"Reorder featured products error: {e}")
+            return {'success': False, 'error': str(e)}

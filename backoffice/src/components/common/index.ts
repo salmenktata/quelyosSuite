@@ -22,3 +22,16 @@ export type { TableProps, Column, SortDirection } from './Table'
 
 export { Breadcrumbs } from './Breadcrumbs'
 export type { BreadcrumbsProps, BreadcrumbItem } from './Breadcrumbs'
+
+export { OdooImage } from './OdooImage'
+
+export { ImageGallery } from './ImageGallery'
+export type { ProductImage, ImageGalleryProps } from './ImageGallery'
+
+export { VariantManager } from './VariantManager'
+
+export { AttributeValueImageGallery } from './AttributeValueImageGallery'
+
+export { AttributeImageManager } from './AttributeImageManager'
+
+export { ImportProductsModal } from './ImportProductsModal'

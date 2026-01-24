@@ -12,16 +12,162 @@ export interface Product {
   id: number
   name: string
   price: number
+  standard_price?: number
+  default_code: string
+  barcode?: string
   image: string | null
   slug: string
+  qty_available: number
+  virtual_available?: number
+  stock_status: 'in_stock' | 'low_stock' | 'out_of_stock'
+  weight?: number
+  active?: boolean
+  create_date?: string | null
+  variant_count?: number
   category: {
     id: number
     name: string
   } | null
 }
 
+export interface ProductTax {
+  id: number
+  name: string
+  amount: number
+  amount_type: 'percent' | 'fixed' | 'group' | 'division'
+  price_include: boolean
+}
+
+export interface ProductTag {
+  id: number
+  name: string
+  color: number
+}
+
 export interface ProductDetail extends Product {
   description: string
+  description_purchase?: string
+  volume?: number
+  product_length?: number
+  product_width?: number
+  product_height?: number
+  detailed_type?: 'consu' | 'service' | 'product'
+  uom_id?: number | null
+  uom_name?: string | null
+  images?: ProductImage[]
+  taxes?: ProductTax[]
+  product_tag_ids?: ProductTag[]
+}
+
+export interface UnitOfMeasure {
+  id: number
+  name: string
+  category_id: number
+  category_name: string
+  uom_type: 'bigger' | 'reference' | 'smaller'
+  factor: number
+}
+
+export interface ProductType {
+  value: 'consu' | 'service' | 'product'
+  label: string
+  description: string
+}
+
+export interface ProductImage {
+  id: number
+  name: string
+  url: string
+  sequence: number
+}
+
+export interface ProductAttribute {
+  id: number
+  name: string
+  display_type: string
+  create_variant: string
+  values: ProductAttributeValue[]
+}
+
+export interface ProductAttributeValue {
+  id: number
+  name: string
+  html_color?: string | null
+  sequence: number
+}
+
+export interface ProductAttributeLine {
+  id: number
+  attribute_id: number
+  attribute_name: string
+  display_type: string
+  values: Array<{ id: number; name: string; html_color?: string | null }>
+}
+
+export interface ProductVariant {
+  id: number
+  name: string
+  display_name: string
+  default_code: string
+  barcode: string
+  list_price: number
+  standard_price: number
+  qty_available: number
+  image: string | null
+  images?: Array<{ id: number; name: string; url: string; sequence: number }>
+  image_count?: number
+  attribute_values: Array<{
+    id: number
+    name: string
+    attribute_id: number
+    attribute_name: string
+  }>
+}
+
+export interface ProductsQueryParams {
+  limit?: number
+  offset?: number
+  category_id?: number
+  search?: string
+  sort_by?: 'name' | 'price' | 'qty_available' | 'create_date' | 'default_code'
+  sort_order?: 'asc' | 'desc'
+  stock_status?: 'in_stock' | 'low_stock' | 'out_of_stock'
+  include_archived?: boolean
+  price_min?: number
+  price_max?: number
+}
+
+export interface ProductCreateData {
+  name: string
+  price: number
+  description?: string
+  category_id?: number
+  default_code?: string
+  barcode?: string
+  standard_price?: number
+  weight?: number
+  product_length?: number
+  product_width?: number
+  product_height?: number
+  taxes_id?: number[]
+  product_tag_ids?: number[]
+}
+
+export interface ProductUpdateData {
+  name?: string
+  price?: number
+  description?: string
+  category_id?: number | null
+  default_code?: string
+  barcode?: string
+  standard_price?: number
+  weight?: number
+  product_length?: number
+  product_width?: number
+  product_height?: number
+  active?: boolean
+  taxes_id?: number[]
+  product_tag_ids?: number[]
 }
 
 // ==================== CATEGORIES ====================
@@ -200,6 +346,20 @@ export interface StockProduct {
   category: string
 }
 
+export interface StockMove {
+  id: number
+  product: {
+    id: number
+    name: string
+  }
+  quantity: number
+  location_src: string
+  location_dest: string
+  date: string | null
+  state: string
+  reference: string
+}
+
 // ==================== DELIVERY ====================
 
 export interface DeliveryMethod {
@@ -208,6 +368,7 @@ export interface DeliveryMethod {
   delivery_type: string
   fixed_price: number
   free_over: boolean | number
+  active?: boolean
 }
 
 // ==================== ANALYTICS ====================
@@ -220,6 +381,7 @@ export interface AnalyticsStats {
     confirmed_orders: number
     pending_orders: number
     out_of_stock_products: number
+    low_stock_products: number
     revenue: number
   }
   recent_orders: Array<{
@@ -239,17 +401,28 @@ export interface AnalyticsStats {
     qty_sold: number
     revenue: number
   }>
+  stock_alerts: Array<{
+    id: number
+    name: string
+    default_code: string
+    qty_available: number
+    alert_level: 'critical' | 'warning'
+    alert_message: string
+    image: string | null
+  }>
 }
 
 // ==================== PAGINATION ====================
 
+export interface PaginatedData<T> {
+  total: number
+  limit: number
+  offset: number
+  [key: string]: T[] | number
+}
+
 export interface PaginatedResponse<T> {
   success: boolean
-  data: {
-    [key: string]: T[]
-    total: number
-    limit: number
-    offset: number
-  }
+  data: PaginatedData<T>
   error?: string
 }

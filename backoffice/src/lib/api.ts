@@ -10,11 +10,15 @@ import type {
   Address,
   Product,
   ProductDetail,
+  ProductsQueryParams,
+  ProductCreateData,
+  ProductUpdateData,
   Category,
   Cart,
   Coupon,
   CouponCreate,
   StockProduct,
+  StockMove,
   DeliveryMethod,
   AnalyticsStats,
 } from '../types'
@@ -107,7 +111,7 @@ class ApiClient {
 
   // ==================== PRODUCTS ====================
 
-  async getProducts(params?: { limit?: number; offset?: number; category_id?: number }) {
+  async getProducts(params?: ProductsQueryParams) {
     return this.request<PaginatedResponse<Product>>('/api/ecommerce/products', params)
   }
 
@@ -117,19 +121,14 @@ class ApiClient {
     )
   }
 
-  async createProduct(data: {
-    name: string
-    price: number
-    description?: string
-    category_id?: number
-  }) {
+  async createProduct(data: ProductCreateData) {
     return this.request<ApiResponse<{ product: Product }>>(
       '/api/ecommerce/products/create',
       data
     )
   }
 
-  async updateProduct(id: number, data: Partial<Product>) {
+  async updateProduct(id: number, data: ProductUpdateData) {
     return this.request<ApiResponse<{ product: Product }>>(
       `/api/ecommerce/products/${id}/update`,
       data
@@ -138,6 +137,428 @@ class ApiClient {
 
   async deleteProduct(id: number) {
     return this.request<ApiResponse>(`/api/ecommerce/products/${id}/delete`)
+  }
+
+  async archiveProduct(id: number, archive: boolean = true) {
+    return this.request<
+      ApiResponse<{
+        product: { id: number; name: string; active: boolean }
+        message: string
+      }>
+    >(`/api/ecommerce/products/${id}/archive`, { archive })
+  }
+
+  async duplicateProduct(id: number, name?: string) {
+    return this.request<ApiResponse<{ product: Product; message: string }>>(
+      `/api/ecommerce/products/${id}/duplicate`,
+      name ? { name } : {}
+    )
+  }
+
+  async exportProducts(params?: { category_id?: number; search?: string }) {
+    return this.request<
+      ApiResponse<{
+        products: Array<{
+          id: number
+          name: string
+          default_code: string
+          barcode: string
+          price: number
+          standard_price: number
+          qty_available: number
+          stock_status: string
+          weight: number
+          category: string
+          active: string
+        }>
+        total: number
+        columns: Array<{ key: string; label: string }>
+      }>
+    >('/api/ecommerce/products/export', params)
+  }
+
+  async importProducts(data: {
+    products: Array<{
+      name: string
+      price?: number
+      standard_price?: number
+      description?: string
+      default_code?: string
+      barcode?: string
+      weight?: number
+      category?: string
+    }>
+    update_existing?: boolean
+  }) {
+    return this.request<
+      ApiResponse<{
+        created: Array<{ id: number; name: string; row: number }>
+        updated: Array<{ id: number; name: string; row: number }>
+        errors: Array<{ row: number; error: string }>
+        summary: {
+          total_rows: number
+          created_count: number
+          updated_count: number
+          error_count: number
+        }
+      }>
+    >('/api/ecommerce/products/import', data)
+  }
+
+  // Taxes
+  async getTaxes() {
+    return this.request<
+      ApiResponse<{
+        taxes: Array<{
+          id: number
+          name: string
+          amount: number
+          amount_type: 'percent' | 'fixed' | 'group' | 'division'
+          price_include: boolean
+          description: string
+        }>
+      }>
+    >('/api/ecommerce/taxes')
+  }
+
+  // Unités de mesure
+  async getUom() {
+    return this.request<
+      ApiResponse<{
+        uom: Array<{
+          id: number
+          name: string
+          category_id: number
+          category_name: string
+          uom_type: 'bigger' | 'reference' | 'smaller'
+          factor: number
+        }>
+      }>
+    >('/api/ecommerce/uom')
+  }
+
+  // Types de produits
+  async getProductTypes() {
+    return this.request<
+      ApiResponse<{
+        product_types: Array<{
+          value: 'consu' | 'service' | 'product'
+          label: string
+          description: string
+        }>
+      }>
+    >('/api/ecommerce/product-types')
+  }
+
+  // Tags produits
+  async getProductTags() {
+    return this.request<
+      ApiResponse<{
+        tags: Array<{
+          id: number
+          name: string
+          color: number
+        }>
+      }>
+    >('/api/ecommerce/product-tags')
+  }
+
+  async createProductTag(name: string, color?: number) {
+    return this.request<
+      ApiResponse<{
+        id: number
+        name: string
+        color: number
+      }>
+    >('/api/ecommerce/product-tags/create', { name, color })
+  }
+
+  // Product Images
+  async getProductImages(productId: number) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{ id: number; name: string; url: string; sequence: number }>
+      }>
+    >(`/api/ecommerce/products/${productId}/images`)
+  }
+
+  async uploadProductImages(
+    productId: number,
+    images: Array<{ name: string; image_1920: string }>
+  ) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{ id: number; name: string; url: string; sequence: number }>
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/images/upload`, { images })
+  }
+
+  async deleteProductImage(productId: number, imageId: number) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/images/${imageId}/delete`
+    )
+  }
+
+  async reorderProductImages(productId: number, imageIds: number[]) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/images/reorder`,
+      { image_ids: imageIds }
+    )
+  }
+
+  // Variant Images (product.product specific)
+  async getVariantImages(productId: number, variantId: number) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{
+          id: number
+          name: string
+          url: string
+          url_medium: string
+          url_small: string
+          sequence: number
+        }>
+      }>
+    >(`/api/ecommerce/products/${productId}/variants/${variantId}/images`)
+  }
+
+  async uploadVariantImages(
+    productId: number,
+    variantId: number,
+    images: Array<{ name: string; image_1920: string }>
+  ) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{
+          id: number
+          name: string
+          url: string
+          url_medium: string
+          url_small: string
+          sequence: number
+        }>
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/variants/${variantId}/images/upload`, { images })
+  }
+
+  async deleteVariantImage(productId: number, variantId: number, imageId: number) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/variants/${variantId}/images/${imageId}/delete`
+    )
+  }
+
+  async reorderVariantImages(productId: number, variantId: number, imageIds: number[]) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/variants/${variantId}/images/reorder`,
+      { image_ids: imageIds }
+    )
+  }
+
+  // Product Variants
+  async getAllAttributes() {
+    return this.request<
+      ApiResponse<{
+        attributes: Array<{
+          id: number
+          name: string
+          display_type: string
+          create_variant: string
+          values: Array<{
+            id: number
+            name: string
+            html_color?: string | null
+            sequence: number
+          }>
+        }>
+      }>
+    >('/api/ecommerce/attributes')
+  }
+
+  async getProductVariants(productId: number) {
+    return this.request<
+      ApiResponse<{
+        attribute_lines: Array<{
+          id: number
+          attribute_id: number
+          attribute_name: string
+          display_type: string
+          values: Array<{ id: number; name: string; html_color?: string | null }>
+        }>
+        variants: Array<{
+          id: number
+          name: string
+          display_name: string
+          default_code: string
+          barcode: string
+          list_price: number
+          standard_price: number
+          qty_available: number
+          image: string | null
+          attribute_values: Array<{
+            id: number
+            name: string
+            attribute_id: number
+            attribute_name: string
+          }>
+        }>
+        variant_count: number
+      }>
+    >(`/api/ecommerce/products/${productId}/variants`)
+  }
+
+  async addProductAttribute(
+    productId: number,
+    data: { attribute_id: number; value_ids: number[] }
+  ) {
+    return this.request<
+      ApiResponse<{
+        attribute_line: {
+          id: number
+          attribute_id: number
+          attribute_name: string
+          values: Array<{ id: number; name: string }>
+        }
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/attributes/add`, data)
+  }
+
+  async updateProductAttribute(
+    productId: number,
+    lineId: number,
+    data: { value_ids: number[] }
+  ) {
+    return this.request<
+      ApiResponse<{
+        attribute_line: {
+          id: number
+          attribute_id: number
+          attribute_name: string
+          values: Array<{ id: number; name: string }>
+        }
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/attributes/${lineId}/update`, data)
+  }
+
+  async deleteProductAttribute(productId: number, lineId: number) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/attributes/${lineId}/delete`
+    )
+  }
+
+  async updateProductVariant(
+    productId: number,
+    variantId: number,
+    data: {
+      list_price?: number
+      standard_price?: number
+      default_code?: string
+      barcode?: string
+    }
+  ) {
+    return this.request<
+      ApiResponse<{
+        variant: {
+          id: number
+          name: string
+          display_name: string
+          default_code: string
+          barcode: string
+          list_price: number
+          standard_price: number
+        }
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/variants/${variantId}/update`, data)
+  }
+
+  async updateVariantStock(productId: number, variantId: number, quantity: number) {
+    return this.request<
+      ApiResponse<{
+        variant: {
+          id: number
+          name: string
+          qty_available: number
+        }
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/variants/${variantId}/stock/update`, { quantity })
+  }
+
+  // ==================== ATTRIBUTE VALUE IMAGES (V2) ====================
+  // Images associées aux valeurs d'attributs (ex: images pour la couleur "Rouge")
+
+  async getProductAttributeImages(productId: number) {
+    return this.request<
+      ApiResponse<{
+        attribute_lines: Array<{
+          id: number
+          attribute_id: number
+          attribute_name: string
+          display_type: string
+          values: Array<{
+            ptav_id: number
+            name: string
+            html_color: string | null
+            image_count: number
+            first_image_url: string | null
+          }>
+        }>
+      }>
+    >(`/api/ecommerce/products/${productId}/attribute-images`)
+  }
+
+  async getAttributeValueImages(productId: number, ptavId: number) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{
+          id: number
+          name: string
+          url: string
+          url_medium: string
+          url_small: string
+          sequence: number
+        }>
+        ptav_id: number
+        ptav_name: string
+      }>
+    >(`/api/ecommerce/products/${productId}/attribute-values/${ptavId}/images`)
+  }
+
+  async uploadAttributeValueImages(
+    productId: number,
+    ptavId: number,
+    images: Array<{ name: string; image_1920: string }>
+  ) {
+    return this.request<
+      ApiResponse<{
+        images: Array<{
+          id: number
+          name: string
+          url: string
+          url_medium: string
+          url_small: string
+          sequence: number
+        }>
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/attribute-values/${ptavId}/images/upload`, { images })
+  }
+
+  async deleteAttributeValueImage(productId: number, ptavId: number, imageId: number) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/attribute-values/${ptavId}/images/${imageId}/delete`
+    )
+  }
+
+  async reorderAttributeValueImages(productId: number, ptavId: number, imageIds: number[]) {
+    return this.request<ApiResponse<{ message: string }>>(
+      `/api/ecommerce/products/${productId}/attribute-values/${ptavId}/images/reorder`,
+      { image_ids: imageIds }
+    )
   }
 
   // ==================== CATEGORIES ====================
@@ -175,7 +596,14 @@ class ApiClient {
 
   // ==================== ORDERS ====================
 
-  async getOrders(params?: { limit?: number; offset?: number; status?: string }) {
+  async getOrders(params?: {
+    limit?: number
+    offset?: number
+    status?: string
+    search?: string
+    date_from?: string
+    date_to?: string
+  }) {
     return this.request<PaginatedResponse<Order>>('/api/ecommerce/orders', params)
   }
 
@@ -210,6 +638,68 @@ class ApiClient {
     return this.request<PaginatedResponse<CustomerListItem>>('/api/ecommerce/customers', params)
   }
 
+  async getCustomer(id: number) {
+    return this.request<{
+      success: boolean
+      customer: {
+        id: number
+        name: string
+        email: string
+        phone: string
+        mobile: string
+        street: string
+        street2: string
+        city: string
+        zip: string
+        country: string
+        create_date: string
+        orders_count: number
+        total_spent: number
+        orders: Array<{
+          id: number
+          name: string
+          date_order: string
+          state: string
+          amount_total: number
+        }>
+        addresses: Array<{
+          id: number
+          name: string
+          street: string
+          city: string
+          zip: string
+          country: string
+          type: string
+        }>
+      }
+    }>(`/api/ecommerce/customers/${id}`)
+  }
+
+  async updateCustomer(id: number, data: {
+    name?: string
+    email?: string
+    phone?: string
+    mobile?: string
+    street?: string
+    city?: string
+    zip?: string
+  }) {
+    return this.request<{
+      success: boolean
+      customer: {
+        id: number
+        name: string
+        email: string
+        phone: string
+        mobile: string
+        street: string
+        city: string
+        zip: string
+      }
+      message: string
+    }>(`/api/ecommerce/customers/${id}/update`, data)
+  }
+
   // ==================== STOCK ====================
 
   async getStockProducts(params?: { limit?: number; offset?: number; search?: string }) {
@@ -223,12 +713,140 @@ class ApiClient {
     )
   }
 
+  async getStockMoves(params?: { limit?: number; offset?: number; product_id?: number }) {
+    return this.request<ApiResponse<{ moves: StockMove[]; total: number; limit: number; offset: number }>>(
+      '/api/ecommerce/stock/moves',
+      params
+    )
+  }
+
   // ==================== DELIVERY ====================
 
   async getDeliveryMethods() {
     return this.request<ApiResponse<{ delivery_methods: DeliveryMethod[] }>>(
       '/api/ecommerce/delivery/methods'
     )
+  }
+
+  async getDeliveryMethod(id: number) {
+    return this.request<{
+      success: boolean
+      delivery_method: {
+        id: number
+        name: string
+        delivery_type: string
+        fixed_price: number
+        free_over: number
+        active: boolean
+      }
+    }>(`/api/ecommerce/delivery/methods/${id}`)
+  }
+
+  async createDeliveryMethod(data: {
+    name: string
+    fixed_price: number
+    free_over?: number
+  }) {
+    return this.request<{
+      success: boolean
+      delivery_method: {
+        id: number
+        name: string
+        fixed_price: number
+        delivery_type: string
+        active: boolean
+      }
+      message: string
+    }>('/api/ecommerce/delivery/methods/create', data)
+  }
+
+  async updateDeliveryMethod(
+    id: number,
+    data: {
+      name?: string
+      fixed_price?: number
+      free_over?: number | null
+      active?: boolean
+    }
+  ) {
+    return this.request<{
+      success: boolean
+      delivery_method: {
+        id: number
+        name: string
+        fixed_price: number
+        active: boolean
+      }
+      message: string
+    }>(`/api/ecommerce/delivery/methods/${id}/update`, data)
+  }
+
+  async deleteDeliveryMethod(id: number) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/ecommerce/delivery/methods/${id}/delete`)
+  }
+
+  // ==================== FEATURED PRODUCTS ====================
+
+  async getFeaturedProducts(params?: { limit?: number; offset?: number }) {
+    return this.request<
+      ApiResponse<{
+        products: Array<{
+          id: number
+          name: string
+          price: number
+          image: string | null
+          sequence: number
+          qty_available: number
+          stock_status: 'in_stock' | 'low_stock' | 'out_of_stock'
+          category: { id: number; name: string } | null
+        }>
+        total: number
+      }>
+    >('/api/ecommerce/featured', params)
+  }
+
+  async getAvailableProductsForFeatured(params?: {
+    limit?: number
+    offset?: number
+    search?: string
+  }) {
+    return this.request<
+      ApiResponse<{
+        products: Array<{
+          id: number
+          name: string
+          price: number
+          image: string | null
+          default_code: string
+          category: { id: number; name: string } | null
+        }>
+        total: number
+      }>
+    >('/api/ecommerce/featured/available', params)
+  }
+
+  async addFeaturedProduct(productId: number) {
+    return this.request<
+      ApiResponse<{
+        product: { id: number; name: string; sequence: number }
+        message: string
+      }>
+    >('/api/ecommerce/featured/add', { product_id: productId })
+  }
+
+  async removeFeaturedProduct(productId: number) {
+    return this.request<ApiResponse<{ message: string }>>('/api/ecommerce/featured/remove', {
+      product_id: productId,
+    })
+  }
+
+  async reorderFeaturedProducts(productIds: number[]) {
+    return this.request<ApiResponse<{ message: string }>>('/api/ecommerce/featured/reorder', {
+      product_ids: productIds,
+    })
   }
 
   // ==================== ANALYTICS ====================
@@ -329,6 +947,53 @@ class ApiClient {
     )
   }
 
+  async getCoupon(id: number) {
+    return this.request<{
+      success: boolean
+      coupon: {
+        id: number
+        name: string
+        program_type: string
+        trigger: string
+        active: boolean
+        date_from: string | null
+        date_to: string | null
+        codes: string[]
+        reward: {
+          id: number | null
+          discount: number
+          discount_mode: string
+          discount_fixed_amount: number
+        } | null
+      }
+    }>(`/api/ecommerce/coupons/${id}`)
+  }
+
+  async updateCoupon(
+    id: number,
+    data: {
+      name?: string
+      active?: boolean
+      date_from?: string | null
+      date_to?: string | null
+      discount_type?: string
+      discount_value?: number
+    }
+  ) {
+    return this.request<{
+      success: boolean
+      coupon: { id: number; name: string; active: boolean }
+      message: string
+    }>(`/api/ecommerce/coupons/${id}/update`, data)
+  }
+
+  async deleteCoupon(id: number) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/ecommerce/coupons/${id}/delete`)
+  }
+
   async applyCouponToCart(code: string, guestEmail?: string) {
     return this.request<ApiResponse<{ cart: Partial<Cart>; discount_amount?: number }>>(
       '/api/ecommerce/cart/coupon/apply',
@@ -341,6 +1006,141 @@ class ApiClient {
       '/api/ecommerce/cart/coupon/remove',
       { guest_email: guestEmail }
     )
+  }
+
+  // ==================== PAYMENT TRANSACTIONS ====================
+
+  async getPaymentTransactions(params?: {
+    limit?: number
+    offset?: number
+    state?: string
+    search?: string
+  }) {
+    return this.request<{
+      success: boolean
+      data: {
+        transactions: Array<{
+          id: number
+          reference: string
+          provider_reference: string
+          amount: number
+          currency: string
+          state: string
+          state_label: string
+          provider: { id: number | null; name: string }
+          partner: { id: number | null; name: string; email: string }
+          order: { id: number; name: string } | null
+          create_date: string | null
+          last_state_change: string | null
+        }>
+        total: number
+        limit: number
+        offset: number
+        stats: {
+          total: number
+          done: number
+          pending: number
+          error: number
+          canceled: number
+          total_amount: number
+        }
+      }
+    }>('/api/ecommerce/payment/transactions', params)
+  }
+
+  async getPaymentTransaction(id: number) {
+    return this.request<{
+      success: boolean
+      transaction: {
+        id: number
+        reference: string
+        provider_reference: string
+        amount: number
+        currency: string
+        state: string
+        state_label: string
+        provider: { id: number | null; name: string; code: string }
+        partner: { id: number | null; name: string; email: string; phone: string }
+        order: { id: number; name: string; amount_total: number; state: string } | null
+        create_date: string | null
+      }
+    }>(`/api/ecommerce/payment/transactions/${id}`)
+  }
+
+  // ==================== INVOICES ====================
+
+  async getInvoices(params?: { limit?: number; offset?: number; state?: string; search?: string }) {
+    return this.request<{
+      success: boolean
+      data: {
+        invoices: Array<{
+          id: number
+          name: string
+          move_type: string
+          move_type_label: string
+          state: string
+          partner: { id: number | null; name: string }
+          invoice_date: string | null
+          amount_total: number
+          amount_residual: number
+          currency: string
+          payment_state: string
+          invoice_origin: string
+        }>
+        total: number
+        stats: {
+          total: number
+          draft: number
+          posted: number
+          paid: number
+          total_amount: number
+        }
+      }
+    }>('/api/ecommerce/invoices', params)
+  }
+
+  async getInvoice(id: number) {
+    return this.request<{
+      success: boolean
+      invoice: {
+        id: number
+        name: string
+        move_type: string
+        state: string
+        partner: { id: number | null; name: string; email: string }
+        invoice_date: string | null
+        amount_untaxed: number
+        amount_tax: number
+        amount_total: number
+        amount_residual: number
+        payment_state: string
+        invoice_origin: string
+        lines: Array<{
+          id: number
+          name: string
+          product: { id: number; name: string } | null
+          quantity: number
+          price_unit: number
+          price_total: number
+        }>
+      }
+    }>(`/api/ecommerce/invoices/${id}`)
+  }
+
+  async createInvoiceFromOrder(orderId: number) {
+    return this.request<{
+      success: boolean
+      invoice: { id: number; name: string; amount_total: number }
+      message: string
+    }>(`/api/ecommerce/orders/${orderId}/create-invoice`)
+  }
+
+  async postInvoice(invoiceId: number) {
+    return this.request<{
+      success: boolean
+      invoice: { id: number; name: string; state: string }
+      message: string
+    }>(`/api/ecommerce/invoices/${invoiceId}/post`)
   }
 }
 
