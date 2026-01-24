@@ -78,7 +78,7 @@ export async function GET() {
         const result = productsData.result || productsData;
         if (result.success && result.products) {
           productURLs = result.products.map((product: any) => ({
-            loc: `${SITE_URL}/product/${product.slug || product.id}`,
+            loc: `${SITE_URL}/products/${product.slug || product.id}`,
             lastmod: product.write_date ? new Date(product.write_date).toISOString().split('T')[0] : undefined,
             changefreq: 'weekly' as const,
             priority: 0.8,

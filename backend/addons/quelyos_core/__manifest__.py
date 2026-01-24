@@ -11,6 +11,7 @@
         nécessaires pour le projet Quelyos :
 
         - Gestion des ventes (sale_management)
+        - Gestion des coupons et promotions (sale_coupon)
         - Gestion du stock (stock)
         - Gestion des contacts (contacts)
         - Gestion des livraisons (delivery)
@@ -23,6 +24,7 @@
     'depends': [
         'base',
         'sale_management',
+        'sale_coupon',
         'stock',
         'contacts',
         'delivery',

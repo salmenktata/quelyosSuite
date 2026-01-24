@@ -7,6 +7,7 @@ import { ToastContainer } from "@/components/common/Toast";
 import { SiteConfigProvider } from "@/lib/config/SiteConfigProvider";
 import { siteConfig } from "@/lib/config/site";
 import { ThemeProvider } from "@/lib/theme";
+import { generateOrganizationSchema } from "@/lib/utils/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,6 +28,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Generate Organization schema for SEO
+  const organizationSchema = generateOrganizationSchema();
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
@@ -40,6 +44,12 @@ export default function RootLayout({
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+
+        {/* Organization Schema.org JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
         <SiteConfigProvider>
