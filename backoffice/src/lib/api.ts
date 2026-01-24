@@ -1307,6 +1307,42 @@ class ApiClient {
     }>(`/api/ecommerce/payment/transactions/${transactionId}/refund`, data)
   }
 
+  // ==================== STOCK INVENTORY ====================
+
+  async prepareInventory(params?: { category_id?: number; search?: string }) {
+    return this.request<
+      ApiResponse<{
+        inventory_lines: Array<{
+          product_id: number
+          product_name: string
+          sku: string
+          image_url: string
+          category: string
+          theoretical_qty: number
+          counted_qty: number | null
+        }>
+        total_products: number
+      }>
+    >('/api/ecommerce/stock/inventory/prepare', params)
+  }
+
+  async validateInventory(adjustments: Array<{ product_id: number; new_qty: number }>) {
+    return this.request<
+      ApiResponse<{
+        adjusted_products: Array<{
+          product_id: number
+          product_name: string
+          old_qty: number
+          new_qty: number
+          difference: number
+        }>
+        total_adjusted: number
+        errors: Array<{ error: string; product_id?: number }>
+        error_count: number
+      }>
+    >('/api/ecommerce/stock/inventory/validate', { adjustments })
+  }
+
   // ==================== STOCK ALERTS ====================
 
   async getLowStockAlerts(params?: { limit?: number; offset?: number }) {

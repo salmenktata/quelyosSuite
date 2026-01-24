@@ -45,3 +45,27 @@ export function useUpdateProductStock() {
     },
   })
 }
+
+// Hook pour préparer un inventaire physique
+export function usePrepareInventory() {
+  return useMutation({
+    mutationFn: (params?: { category_id?: number; search?: string }) =>
+      api.prepareInventory(params),
+  })
+}
+
+// Hook pour valider un inventaire physique (ajustements en masse)
+export function useValidateInventory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (adjustments: Array<{ product_id: number; new_qty: number }>) =>
+      api.validateInventory(adjustments),
+    onSuccess: () => {
+      // Invalider toutes les requêtes stock après validation inventaire
+      queryClient.invalidateQueries({ queryKey: ['stock-products'] })
+      queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] })
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+}

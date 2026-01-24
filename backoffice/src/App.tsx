@@ -16,6 +16,7 @@ import Categories from './pages/Categories'
 import Coupons from './pages/Coupons'
 import CouponForm from './pages/CouponForm'
 import Stock from './pages/Stock'
+import Inventory from './pages/Inventory'
 import DeliveryMethods from './pages/DeliveryMethods'
 import Payments from './pages/Payments'
 import Featured from './pages/Featured'
@@ -143,6 +144,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Stock />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute>
+                    <Inventory />
                   </ProtectedRoute>
                 }
               />
