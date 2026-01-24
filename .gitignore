@@ -143,3 +143,4 @@ monitoring/alertmanager/data/
 backoffice/tsconfig*.tsbuildinfo
 backoffice/vite.config.js
 backoffice/vite.config.d.ts
+backoffice/.env

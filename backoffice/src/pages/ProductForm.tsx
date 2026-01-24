@@ -3,11 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { useProduct, useCreateProduct, useUpdateProduct } from '../hooks/useProducts'
 import { useCategories } from '../hooks/useCategories'
+import { Button, Input, Breadcrumbs, Skeleton } from '../components/common'
+import { useToast } from '../hooks/useToast'
+import { ToastContainer } from '../components/common/Toast'
 
 export default function ProductForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEditing = !!id
+
+  const toast = useToast()
 
   const { data: productData, isLoading: isLoadingProduct } = useProduct(Number(id))
   const { data: categoriesData } = useCategories()
@@ -21,6 +26,7 @@ export default function ProductForm() {
     category_id: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   const categories = categoriesData?.data?.categories || []
 
@@ -57,7 +63,11 @@ export default function ProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Marquer tous les champs comme touchés
+    setTouched({ name: true, price: true, description: true, category_id: true })
+
     if (!validate()) {
+      toast.error('Veuillez corriger les erreurs du formulaire')
       return
     }
 
@@ -71,32 +81,50 @@ export default function ProductForm() {
     try {
       if (isEditing) {
         await updateProductMutation.mutateAsync({ id: Number(id), data })
+        toast.success(`Le produit "${formData.name}" a été modifié avec succès`)
       } else {
         await createProductMutation.mutateAsync(data)
+        toast.success(`Le produit "${formData.name}" a été créé avec succès`)
       }
       navigate('/products')
     } catch (error) {
+      toast.error(`Erreur lors de ${isEditing ? 'la modification' : 'la création'} du produit`)
       console.error('Error saving product:', error)
-      alert(`Erreur lors de ${isEditing ? 'la modification' : 'la création'} du produit`)
     }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
     // Effacer l'erreur du champ modifié
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
     }
   }
 
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    validate()
+  }
+
   if (isEditing && isLoadingProduct) {
     return (
       <Layout>
         <div className="p-8">
-          <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400 dark:text-gray-400">Chargement du produit...</p>
+          <Breadcrumbs
+            items={[
+              { label: 'Tableau de bord', href: '/dashboard' },
+              { label: 'Produits', href: '/products' },
+              { label: 'Chargement...' },
+            ]}
+          />
+          <div className="space-y-4 mt-8">
+            <Skeleton variant="text" width="40%" height={36} />
+            <Skeleton variant="text" width="60%" height={20} />
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6 mt-8">
+              <Skeleton count={4} height={80} />
+            </div>
           </div>
         </div>
       </Layout>
@@ -106,62 +134,71 @@ export default function ProductForm() {
   return (
     <Layout>
       <div className="p-8">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Produits', href: '/products' },
+            { label: isEditing ? 'Modifier' : 'Nouveau produit' },
+          ]}
+        />
+
         {/* En-tête */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             {isEditing ? 'Modifier le produit' : 'Nouveau produit'}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 mt-2">
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             {isEditing ? 'Modifier les informations du produit' : 'Créer un nouveau produit dans le catalogue'}
           </p>
         </div>
 
         {/* Formulaire */}
-        <div className="bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Nom */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
-                Nom du produit <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border ${
-                  errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600 dark:border-gray-600'
-                } dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none`}
-                placeholder="Ex: T-shirt Nike Air"
-              />
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
-            </div>
+            <Input
+              label="Nom du produit"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              onBlur={() => handleBlur('name')}
+              error={touched.name ? errors.name : undefined}
+              required
+              placeholder="Ex: T-shirt Nike Air"
+            />
 
             {/* Prix */}
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
-                Prix (€) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                className={`w-full px-4 py-2 border ${
-                  errors.price ? 'border-red-500' : 'border-gray-300 dark:border-gray-600 dark:border-gray-600'
-                } dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none`}
-                placeholder="49.99"
-              />
-              {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
-            </div>
+            <Input
+              label="Prix (€)"
+              type="number"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              onBlur={() => handleBlur('price')}
+              error={touched.price ? errors.price : undefined}
+              required
+              placeholder="49.99"
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              }
+            />
 
             {/* Catégorie */}
             <div>
-              <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="category_id"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Catégorie
               </label>
               <select
@@ -169,7 +206,7 @@ export default function ProductForm() {
                 name="category_id"
                 value={formData.category_id}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all"
               >
                 <option value="">Sans catégorie</option>
                 {categories.map((category) => (
@@ -182,7 +219,10 @@ export default function ProductForm() {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Description
               </label>
               <textarea
@@ -191,17 +231,17 @@ export default function ProductForm() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all"
                 placeholder="Description du produit..."
               />
             </div>
 
             {/* Image (placeholder pour le moment) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Image du produit
               </label>
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg p-6 text-center">
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center transition-colors hover:border-indigo-400">
                 <svg
                   className="w-12 h-12 mx-auto text-gray-400 mb-2"
                   fill="none"
@@ -215,34 +255,35 @@ export default function ProductForm() {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Upload d'images disponible prochainement
                 </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700 dark:border-gray-700">
-              <button
+            <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={() => navigate('/products')}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:border-gray-600 dark:bg-gray-800 text-gray-700 dark:text-gray-300 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Annuler
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                variant="primary"
+                loading={createProductMutation.isPending || updateProductMutation.isPending}
                 disabled={createProductMutation.isPending || updateProductMutation.isPending}
-                className="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                {(createProductMutation.isPending || updateProductMutation.isPending) && (
-                  <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-r-transparent"></div>
-                )}
                 {isEditing ? 'Modifier' : 'Créer'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
+
+        {/* ToastContainer */}
+        <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} position="top-right" />
       </div>
     </Layout>
   )

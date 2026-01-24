@@ -19,7 +19,9 @@ import type {
   AnalyticsStats,
 } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8069'
+// En développement, utiliser le proxy Vite (pas de CORS)
+// En production, utiliser l'URL complète
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 class ApiClient {
   private baseUrl: string
