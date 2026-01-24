@@ -211,7 +211,7 @@ export function UpsellModal({
                       <div className="mt-2 flex items-center justify-between">
                         <div>
                           <p className="text-2xl font-bold text-primary">
-                            {formatPrice(product.list_price)}
+                            {formatPrice(product.list_price ?? product.price ?? 0)}
                           </p>
                         </div>
 

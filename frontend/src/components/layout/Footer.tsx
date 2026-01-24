@@ -256,29 +256,33 @@ const NewsletterForm = memo(() => {
 NewsletterForm.displayName = 'NewsletterForm';
 
 const ContactInfo = memo(({ phone, phoneFormatted, email }: {
-  phone: string;
+  phone?: string;
   phoneFormatted?: string;
-  email: string;
+  email?: string;
 }) => (
   <div className="space-y-3">
-    <a
-      href={`tel:${phone.replace(/\s/g, '')}`}
-      className="flex items-center gap-3 text-gray-400 hover:text-secondary transition-colors group"
-    >
-      <span className="w-9 h-9 rounded-lg bg-gray-800/50 border border-gray-700/50 flex items-center justify-center group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all">
-        <Icons.Phone className="w-4 h-4" />
-      </span>
-      <span className="text-sm">{phoneFormatted || phone}</span>
-    </a>
-    <a
-      href={`mailto:${email}`}
-      className="flex items-center gap-3 text-gray-400 hover:text-secondary transition-colors group"
-    >
-      <span className="w-9 h-9 rounded-lg bg-gray-800/50 border border-gray-700/50 flex items-center justify-center group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all">
-        <Icons.Email className="w-4 h-4" />
-      </span>
-      <span className="text-sm">{email}</span>
-    </a>
+    {phone && (
+      <a
+        href={`tel:${phone.replace(/\s/g, '')}`}
+        className="flex items-center gap-3 text-gray-400 hover:text-secondary transition-colors group"
+      >
+        <span className="w-9 h-9 rounded-lg bg-gray-800/50 border border-gray-700/50 flex items-center justify-center group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all">
+          <Icons.Phone className="w-4 h-4" />
+        </span>
+        <span className="text-sm">{phoneFormatted || phone}</span>
+      </a>
+    )}
+    {email && (
+      <a
+        href={`mailto:${email}`}
+        className="flex items-center gap-3 text-gray-400 hover:text-secondary transition-colors group"
+      >
+        <span className="w-9 h-9 rounded-lg bg-gray-800/50 border border-gray-700/50 flex items-center justify-center group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all">
+          <Icons.Email className="w-4 h-4" />
+        </span>
+        <span className="text-sm">{email}</span>
+      </a>
+    )}
   </div>
 ));
 ContactInfo.displayName = 'ContactInfo';
@@ -341,17 +345,17 @@ const Footer: React.FC = () => {
               <Link href="/" className="inline-flex items-center gap-3 group">
                 <div className="w-11 h-11 bg-gradient-to-br from-primary via-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all duration-300 group-hover:scale-105">
                   <span className="text-white font-bold text-lg">
-                    {brand.name.charAt(0).toUpperCase()}
+                    {(brand?.name || 'Quelyos').charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div>
-                  <span className="text-xl font-bold text-white block leading-tight">{brand.name}</span>
+                  <span className="text-xl font-bold text-white block leading-tight">{brand?.name || 'Quelyos'}</span>
                   <span className="text-xs text-gray-500">Votre boutique en ligne</span>
                 </div>
               </Link>
 
               <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
-                {brand.description}
+                {brand?.description || 'Votre boutique en ligne de confiance'}
               </p>
 
               <div>
@@ -361,7 +365,7 @@ const Footer: React.FC = () => {
                 <NewsletterForm />
               </div>
 
-              <SocialLinks social={social} whatsapp={brand.whatsapp} />
+              <SocialLinks social={social} whatsapp={brand?.whatsapp} />
             </div>
 
             {/* Quick Links */}
@@ -396,16 +400,16 @@ const Footer: React.FC = () => {
             <div className="lg:col-span-2">
               <FooterColumn title="Contact">
                 <ContactInfo
-                  phone={brand.phone}
-                  phoneFormatted={brand.phoneFormatted}
-                  email={brand.email}
+                  phone={brand?.phone}
+                  phoneFormatted={brand?.phoneFormatted}
+                  email={brand?.email}
                 />
               </FooterColumn>
             </div>
           </div>
         </div>
 
-        <BottomBar brandName={brand.name} year={year} />
+        <BottomBar brandName={brand?.name || 'Quelyos'} year={year} />
       </footer>
     </>
   );

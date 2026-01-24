@@ -96,11 +96,14 @@ export default function Products() {
   const importProductsMutation = useImportProducts()
   const archiveProductMutation = useArchiveProduct()
 
-  const products = (productsData?.data?.products || []) as import('../types').Product[]
-  const total = (productsData?.data?.total || 0) as number
+  // Support des deux formats de réponse API (data.products ou products directement)
+  const productsResponse = productsData as unknown as { data?: { products?: Product[]; total?: number }; products?: Product[]; total?: number }
+  const products = (productsResponse?.data?.products || productsResponse?.products || []) as import('../types').Product[]
+  const total = (productsResponse?.data?.total || productsResponse?.total || 0) as number
   const totalPages = Math.ceil(total / limit)
 
-  const categories = (categoriesData?.data?.categories || []) as import('../types').Category[]
+  const categoriesResponse = categoriesData as unknown as { data?: { categories?: import('../types').Category[] }; categories?: import('../types').Category[] }
+  const categories = (categoriesResponse?.data?.categories || categoriesResponse?.categories || []) as import('../types').Category[]
 
   const navigate = useNavigate()
 
@@ -108,9 +111,10 @@ export default function Products() {
   const fetchProductSuggestions = useCallback(
     async (query: string): Promise<SearchSuggestion<Product>[]> => {
       try {
-        const response = await api.getProducts({ search: query, limit: 8 })
-        if (response.success && response.data?.products && Array.isArray(response.data.products)) {
-          return (response.data.products as Product[]).map((product) => ({
+        const response = await api.getProducts({ search: query, limit: 8 }) as unknown as { success: boolean; data?: { products?: Product[] }; products?: Product[] }
+        const productsList = response.data?.products || response.products
+        if (response.success && productsList && Array.isArray(productsList)) {
+          return (productsList as Product[]).map((product) => ({
             id: product.id,
             label: product.name,
             data: product,

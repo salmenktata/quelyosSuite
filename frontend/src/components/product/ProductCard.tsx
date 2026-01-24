@@ -36,13 +36,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     onQuickView?.(product.id);
   };
 
-  const mainImage = product.images.find(img => img.id === 0) || product.images[0];
-  const imageUrl = mainImage ? mainImage.url : '/placeholder-product.png';
+  const mainImage = product.images?.find(img => img.id === 0) || product.images?.[0];
+  const imageUrl = mainImage?.url || '/placeholder-product.png';
 
   // Calculate discount percentage
-  const hasDiscount = product.compare_at_price && product.compare_at_price > product.list_price;
+  const listPrice = product.list_price ?? product.price ?? 0;
+  const hasDiscount = product.compare_at_price && product.compare_at_price > listPrice;
   const discountPercent = hasDiscount
-    ? Math.round(((product.compare_at_price! - product.list_price) / product.compare_at_price!) * 100)
+    ? Math.round(((product.compare_at_price! - listPrice) / product.compare_at_price!) * 100)
     : 0;
 
   // Extract unique colors from variants
@@ -196,11 +197,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
           <div className="mt-auto">
             <div className="flex items-baseline gap-2 mb-3">
               <span className="text-xl font-bold text-primary">
-                {product.list_price.toFixed(2)} {product.currency.symbol}
+                {listPrice.toFixed(2)} {product.currency?.symbol ?? 'TND'}
               </span>
               {hasDiscount && (
                 <span className="text-sm text-gray-400 line-through">
-                  {product.compare_at_price!.toFixed(2)} {product.currency.symbol}
+                  {product.compare_at_price!.toFixed(2)} {product.currency?.symbol ?? 'TND'}
                 </span>
               )}
             </div>

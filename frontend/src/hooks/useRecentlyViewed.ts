@@ -40,7 +40,7 @@ export const useRecentlyViewed = ({
         id: product.id,
         slug: product.slug || String(product.id),
         name: product.name,
-        price: product.list_price,
+        price: product.list_price ?? product.price ?? 0,
         image_url: mainImage?.url || '',
       });
     }, delay);

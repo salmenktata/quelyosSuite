@@ -47,6 +47,47 @@ nginx/             → Config production
 
 ---
 
+## 🚀 Démarrage Rapide
+
+### Prérequis
+- Docker & Docker Compose
+- Node.js 18+ (frontend/backoffice)
+- Git
+
+### Installation
+
+```bash
+# Cloner le projet
+git clone https://github.com/votre-compte/QuelyosERP.git
+cd QuelyosERP
+
+# Backend Odoo (démarrage complet)
+cd backend
+docker-compose up -d
+./reset.sh  # Installation complète (Odoo + module quelyos_api + données démo)
+
+# Frontend (boutique e-commerce)
+cd ../frontend
+npm install
+npm run dev  # http://localhost:3000
+
+# Backoffice (administration)
+cd ../backoffice
+npm install
+npm run dev  # http://localhost:5175
+```
+
+### Accès
+
+- **Frontend** : http://localhost:3000
+- **Backoffice** : http://localhost:5175
+- **API Odoo** : http://localhost:8069/api/ecommerce/*
+- **Interface Odoo** : http://localhost:8069 (admin / admin)
+
+**Documentation complète** : Voir [backend/DEVELOPMENT.md](backend/DEVELOPMENT.md) pour les détails techniques et workflows Odoo.
+
+---
+
 ## 🚀 Roadmap Produit Commercial
 
 > **Objectif** : Transformer Quelyos en une solution ERP e-commerce complète et autonome, commercialisable sous sa propre marque, avec Odoo Community comme moteur backend invisible.

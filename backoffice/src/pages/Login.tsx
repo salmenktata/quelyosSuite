@@ -10,8 +10,13 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Rediriger si déjà connecté
+  // Rediriger si déjà connecté (seulement en production)
   useEffect(() => {
+    // En mode DEV, ne pas rediriger automatiquement car l'auth est désactivée
+    if (import.meta.env.DEV) {
+      return
+    }
+
     const sessionId = localStorage.getItem('session_id')
     const user = localStorage.getItem('user')
 
@@ -25,19 +30,30 @@ export default function Login() {
     setError('')
     setLoading(true)
 
+    console.log('========== LOGIN SUBMIT ==========')
+    console.log('Email:', email)
+    console.log('Password length:', password.length)
+
     try {
+      console.log('Calling api.login...')
       const result = await api.login(email, password)
+      console.log('Login result:', result)
 
       if (result.success) {
+        console.log('Login successful, navigating to /dashboard')
+        console.log('localStorage session_id:', localStorage.getItem('session_id'))
+        console.log('localStorage user:', localStorage.getItem('user'))
         navigate('/dashboard')
       } else {
+        console.log('Login failed:', result.error)
         setError(result.error || 'Échec de la connexion')
       }
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('Login exception:', err)
       setError('Erreur de connexion. Vérifiez vos identifiants.')
     } finally {
       setLoading(false)
+      console.log('========== LOGIN END ==========')
     }
   }
 

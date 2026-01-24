@@ -5,13 +5,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const sessionId = localStorage.getItem('session_id')
-  const user = localStorage.getItem('user')
-
-  // Si pas de session ou pas d'utilisateur, rediriger vers login
-  if (!sessionId || !user) {
-    return <Navigate to="/login" replace />
-  }
-
+  // TEMPORAIRE : Authentification complètement désactivée
+  // TODO PRODUCTION : Implémenter JWT (voir TODO_AUTH.md)
   return <>{children}</>
 }

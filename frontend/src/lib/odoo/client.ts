@@ -18,7 +18,16 @@ import type {
 
 // Use Next.js API proxy to avoid CORS issues
 // The proxy at /api/odoo/* forwards requests to Odoo server-side
-const API_BASE = '/api/odoo';
+const getApiBase = () => {
+  // Côté serveur (SSR), utiliser l'URL complète
+  if (typeof window === 'undefined') {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    return `${baseUrl}/api/odoo`;
+  }
+  // Côté client, utiliser le chemin relatif
+  return '/api/odoo';
+};
+
 const DB = process.env.ODOO_DATABASE || 'quelyos';
 
 export class OdooClient {
@@ -27,7 +36,7 @@ export class OdooClient {
 
   constructor() {
     this.api = axios.create({
-      baseURL: API_BASE,
+      baseURL: getApiBase(),
       headers: {
         'Content-Type': 'application/json',
       },

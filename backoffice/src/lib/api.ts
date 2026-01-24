@@ -38,26 +38,36 @@ class ApiClient {
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl
-    // Récupérer le session_id du localStorage
-    this.sessionId = localStorage.getItem('session_id')
+    // Récupérer le session_id du localStorage et nettoyer les valeurs invalides
+    const storedSession = localStorage.getItem('session_id')
+    // Ne garder que les sessions valides (pas "null", "undefined", ou vide)
+    if (storedSession && storedSession !== 'null' && storedSession !== 'undefined' && storedSession.trim() !== '') {
+      this.sessionId = storedSession
+    } else {
+      this.sessionId = null
+      localStorage.removeItem('session_id')
+    }
   }
 
   private async request<T>(endpoint: string, data?: unknown): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
+    console.log('[API] request() ->', endpoint, 'URL:', url)
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     }
 
-    // Ajouter le session_id si disponible
-    if (this.sessionId) {
+    // Ajouter le session_id si disponible et valide (ne pas envoyer "null" ou chaîne vide)
+    if (this.sessionId && this.sessionId !== 'null' && this.sessionId !== 'undefined') {
       headers['X-Session-Id'] = this.sessionId
     }
 
+    console.log('[API] Sending fetch to:', url)
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      credentials: 'include',
+      // Ne pas envoyer de cookies pour éviter les conflits avec les sessions Odoo invalides
+      credentials: 'omit',
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'call',
@@ -65,10 +75,11 @@ class ApiClient {
         id: Math.random(),
       }),
     })
+    console.log('[API] Response status:', response.status, response.statusText)
 
     if (!response.ok) {
-      if (response.status === 401) {
-        // Session expirée, nettoyer et rediriger
+      if (response.status === 401 && !import.meta.env.DEV) {
+        // Session expirée, nettoyer et rediriger (seulement en production)
         this.sessionId = null
         localStorage.removeItem('session_id')
         localStorage.removeItem('user')
@@ -83,7 +94,8 @@ class ApiClient {
     if (json.error) {
       // Vérifier si c'est une erreur d'authentification
       const errorMessage = json.error.data?.message || json.error.message || 'API Error'
-      if (errorMessage.toLowerCase().includes('session') || errorMessage.toLowerCase().includes('authentication')) {
+      if (!import.meta.env.DEV && (errorMessage.toLowerCase().includes('session') || errorMessage.toLowerCase().includes('authentication'))) {
+        // Rediriger vers login seulement en production
         this.sessionId = null
         localStorage.removeItem('session_id')
         localStorage.removeItem('user')
@@ -93,9 +105,11 @@ class ApiClient {
       throw new Error(errorMessage)
     }
 
-    // Vérifier si le résultat est null (peut indiquer session expirée)
-    if (json.result === null && !endpoint.includes('/logout')) {
-      // Si le résultat est null et que ce n'est pas un logout, c'est probablement une session expirée
+    // Vérifier si le résultat est null UNIQUEMENT si on a une session
+    // (les endpoints publics peuvent retourner null légitimement)
+    // TEMPORAIRE DEV : Désactiver la redirection automatique
+    if (json.result === null && !endpoint.includes('/logout') && this.sessionId && !import.meta.env.DEV) {
+      // Si le résultat est null et qu'on a une session, c'est probablement une session expirée
       this.sessionId = null
       localStorage.removeItem('session_id')
       localStorage.removeItem('user')
@@ -109,17 +123,23 @@ class ApiClient {
   // ==================== AUTH ====================
 
   async login(email: string, password: string): Promise<LoginResponse> {
+    console.log('[API] login() called with email:', email)
     const result = await this.request<LoginResponse>('/api/ecommerce/auth/login', {
       email,
       password,
     })
+    console.log('[API] login() result:', result)
 
     if (result.success && result.session_id) {
+      console.log('[API] Login successful, storing session')
       this.sessionId = result.session_id
       localStorage.setItem('session_id', result.session_id)
       if (result.user) {
         localStorage.setItem('user', JSON.stringify(result.user))
       }
+      console.log('[API] Session stored:', this.sessionId?.substring(0, 20) + '...')
+    } else {
+      console.log('[API] Login failed or no session_id:', result)
     }
 
     return result
@@ -518,6 +538,34 @@ class ApiClient {
         message: string
       }>
     >(`/api/ecommerce/products/${productId}/variants/${variantId}/stock/update`, { quantity })
+  }
+
+  async regenerateProductVariants(productId: number) {
+    return this.request<
+      ApiResponse<{
+        variants_before: number
+        variants_after: number
+        variants_created: number
+        variants: Array<{
+          id: number
+          name: string
+          display_name: string
+          default_code: string
+          barcode: string
+          list_price: number
+          standard_price: number
+          qty_available: number
+          active: boolean
+          attributes: Array<{
+            attribute: string
+            value: string
+            attribute_id: number
+            value_id: number
+          }>
+        }>
+        message: string
+      }>
+    >(`/api/ecommerce/products/${productId}/variants/regenerate`)
   }
 
   // ==================== ATTRIBUTE VALUE IMAGES (V2) ====================

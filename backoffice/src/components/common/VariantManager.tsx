@@ -7,10 +7,13 @@ import {
   useAllAttributes,
   useProductVariants,
   useAddProductAttribute,
+  useUpdateProductAttribute,
   useDeleteProductAttribute,
   useUpdateProductVariant,
   useUpdateVariantStock,
+  useRegenerateVariants,
   type ProductVariant,
+  type AttributeLine,
 } from '../../hooks/useProductVariants'
 
 interface VariantManagerProps {
@@ -41,14 +44,19 @@ export function VariantManager({
   // État pour l'édition du stock
   const [editingStockVariantId, setEditingStockVariantId] = useState<number | null>(null)
   const [stockEditValue, setStockEditValue] = useState<string>('')
+  // État pour l'édition d'attribut existant
+  const [editingAttributeLine, setEditingAttributeLine] = useState<AttributeLine | null>(null)
+  const [editingAttributeValueIds, setEditingAttributeValueIds] = useState<number[]>([])
 
   // Hooks de données
   const { data: allAttributes, isLoading: loadingAttributes } = useAllAttributes()
   const { data: variantData, isLoading: loadingVariants } = useProductVariants(productId)
   const addAttributeMutation = useAddProductAttribute(productId)
+  const updateAttributeMutation = useUpdateProductAttribute(productId)
   const deleteAttributeMutation = useDeleteProductAttribute(productId)
   const updateVariantMutation = useUpdateProductVariant(productId)
   const updateVariantStockMutation = useUpdateVariantStock(productId)
+  const regenerateVariantsMutation = useRegenerateVariants(productId)
 
   const attributeLines = variantData?.attributeLines || []
   const variants = variantData?.variants || []
@@ -88,6 +96,52 @@ export function VariantManager({
       onSuccess?.('Attribut supprimé avec succès')
     } catch (error) {
       onError?.(error instanceof Error ? error.message : 'Erreur lors de la suppression')
+    }
+  }
+
+  // Éditer un attribut existant
+  const startEditAttribute = (line: AttributeLine) => {
+    setEditingAttributeLine(line)
+    setEditingAttributeValueIds(line.values.map((v) => v.id))
+  }
+
+  const cancelEditAttribute = () => {
+    setEditingAttributeLine(null)
+    setEditingAttributeValueIds([])
+  }
+
+  const saveEditAttribute = async () => {
+    if (!editingAttributeLine || editingAttributeValueIds.length === 0) return
+
+    try {
+      await updateAttributeMutation.mutateAsync({
+        line_id: editingAttributeLine.id,
+        value_ids: editingAttributeValueIds,
+      })
+      onSuccess?.('Attribut mis à jour avec succès')
+      cancelEditAttribute()
+    } catch (error) {
+      onError?.(error instanceof Error ? error.message : "Erreur lors de la mise à jour")
+    }
+  }
+
+  const toggleEditAttributeValue = (valueId: number) => {
+    setEditingAttributeValueIds((prev) =>
+      prev.includes(valueId) ? prev.filter((id) => id !== valueId) : [...prev, valueId]
+    )
+  }
+
+  // Régénérer les variantes
+  const handleRegenerateVariants = async () => {
+    try {
+      const result = await regenerateVariantsMutation.mutateAsync()
+      if (result.variants_created > 0) {
+        onSuccess?.(`${result.variants_created} nouvelles variantes créées (total: ${result.variants_after})`)
+      } else {
+        onSuccess?.('Toutes les variantes sont déjà créées')
+      }
+    } catch (error) {
+      onError?.(error instanceof Error ? error.message : 'Erreur lors de la régénération')
     }
   }
 
@@ -233,12 +287,26 @@ export function VariantManager({
             {attributeLines.map((line) => (
               <div
                 key={line.id}
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                className={`flex items-center justify-between p-3 rounded-lg ${
+                  line.create_variant === 'no_variant'
+                    ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'
+                    : 'bg-gray-50 dark:bg-gray-700'
+                }`}
               >
                 <div>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {line.attribute_name}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {line.attribute_name}
+                    </span>
+                    {line.create_variant === 'no_variant' && (
+                      <span
+                        className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 rounded"
+                        title="Cet attribut ne génère pas de variantes. Modifiez sa configuration dans Odoo pour activer les variantes."
+                      >
+                        ⚠️ Sans variantes
+                      </span>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {line.values.map((val) => (
                       <span
@@ -255,25 +323,116 @@ export function VariantManager({
                       </span>
                     ))}
                   </div>
+                  {line.create_variant === 'no_variant' && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                      Pour générer des variantes, modifiez cet attribut dans Odoo (Configuration &gt; Attributs &gt; Mode de création: "Instantanément")
+                    </p>
+                  )}
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteAttribute(line.id)}
-                  disabled={disabled || deleteAttributeMutation.isPending}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => startEditAttribute(line)}
+                    disabled={disabled || updateAttributeMutation.isPending}
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                    title="Modifier les valeurs"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      />
+                    </svg>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteAttribute(line.id)}
+                    disabled={disabled || deleteAttributeMutation.isPending}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    title="Supprimer l'attribut"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </Button>
+                </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Formulaire édition attribut */}
+        {editingAttributeLine && (
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h5 className="font-medium text-gray-900 dark:text-white mb-3">
+              Modifier "{editingAttributeLine.attribute_name}"
+            </h5>
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Sélectionnez les valeurs à conserver
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {allAttributes
+                  ?.find((a) => a.id === editingAttributeLine.attribute_id)
+                  ?.values.map((val) => (
+                    <button
+                      key={val.id}
+                      type="button"
+                      onClick={() => toggleEditAttributeValue(val.id)}
+                      className={`inline-flex items-center px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                        editingAttributeValueIds.includes(val.id)
+                          ? 'bg-indigo-100 border-indigo-500 text-indigo-700 dark:bg-indigo-900 dark:border-indigo-400 dark:text-indigo-200'
+                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300'
+                      }`}
+                    >
+                      {val.html_color && (
+                        <span
+                          className="w-4 h-4 rounded-full mr-2 border border-gray-300"
+                          style={{ backgroundColor: val.html_color }}
+                        />
+                      )}
+                      {val.name}
+                      {editingAttributeValueIds.includes(val.id) && (
+                        <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Les variantes seront automatiquement régénérées après la modification.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" size="sm" onClick={cancelEditAttribute}>
+                Annuler
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={saveEditAttribute}
+                disabled={editingAttributeValueIds.length === 0}
+                loading={updateAttributeMutation.isPending}
+              >
+                Enregistrer
+              </Button>
+            </div>
           </div>
         )}
 
@@ -372,12 +531,39 @@ export function VariantManager({
       </div>
 
       {/* Section Variantes (sans colonne Images - gérées via AttributeImageManager) */}
-      {variants.length > 0 && (
+      {attributeLines.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-            Variantes ({variants.length})
-          </h4>
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Variantes ({variants.length})
+            </h4>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleRegenerateVariants}
+              disabled={disabled || regenerateVariantsMutation.isPending}
+              loading={regenerateVariantsMutation.isPending}
+              title="Régénérer toutes les combinaisons de variantes"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Régénérer variantes
+            </Button>
+          </div>
 
+          {variants.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p className="text-gray-500 dark:text-gray-400">
+                Aucune variante générée. Cliquez sur "Régénérer variantes" pour créer toutes les combinaisons.
+              </p>
+            </div>
+          ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -675,6 +861,7 @@ export function VariantManager({
               </tbody>
             </table>
           </div>
+          )}
         </div>
       )}
     </div>

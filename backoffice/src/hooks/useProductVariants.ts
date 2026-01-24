@@ -21,6 +21,7 @@ export interface AttributeLine {
   attribute_id: number
   attribute_name: string
   display_type: string
+  create_variant: 'always' | 'dynamic' | 'no_variant'
   values: AttributeValue[]
 }
 
@@ -179,6 +180,33 @@ export function useUpdateVariantStock(productId: number | undefined) {
         throw new Error(response.error || 'Failed to update variant stock')
       }
       return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['productVariants', productId] })
+      queryClient.invalidateQueries({ queryKey: ['product', productId] })
+    },
+  })
+}
+
+export interface RegenerateVariantsResult {
+  variants_before: number
+  variants_after: number
+  variants_created: number
+  variants: ProductVariant[]
+  message: string
+}
+
+export function useRegenerateVariants(productId: number | undefined) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!productId) throw new Error('Product ID required')
+      const response = await api.regenerateProductVariants(productId)
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to regenerate variants')
+      }
+      return response.data as RegenerateVariantsResult
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productVariants', productId] })

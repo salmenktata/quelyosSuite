@@ -119,25 +119,27 @@ export default function ContactPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-6">Nos coordonnees</h2>
 
               {/* Email */}
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
+              {config.brand?.email && (
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Email</h3>
+                    <a
+                      href={`mailto:${config.brand.email}`}
+                      className="text-primary hover:underline"
+                    >
+                      {config.brand.email}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Email</h3>
-                  <a
-                    href={`mailto:${config.brand.email}`}
-                    className="text-primary hover:underline"
-                  >
-                    {config.brand.email}
-                  </a>
-                </div>
-              </div>
+              )}
 
               {/* Telephone */}
-              {config.brand.phone && (
+              {config.brand?.phone && (
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +159,7 @@ export default function ContactPage() {
               )}
 
               {/* WhatsApp */}
-              {config.brand.whatsapp && (
+              {config.brand?.whatsapp && (
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
@@ -179,20 +181,22 @@ export default function ContactPage() {
               )}
 
               {/* Horaires */}
-              <div className="flex items-start gap-4 pt-6 border-t">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+              {config.customerService && (
+                <div className="flex items-start gap-4 pt-6 border-t">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Horaires</h3>
+                    <p className="text-gray-600">
+                      {config.customerService.days || 'Lundi au vendredi'}<br />
+                      {config.customerService.hoursStart || 9}h - {config.customerService.hoursEnd || 18}h
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Horaires</h3>
-                  <p className="text-gray-600">
-                    {config.customerService.days}<br />
-                    {config.customerService.hoursStart}h - {config.customerService.hoursEnd}h
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 

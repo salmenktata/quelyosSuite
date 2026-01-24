@@ -37,7 +37,13 @@ const queryClient = new QueryClient({
   },
 })
 
+// TEMPORAIRE : SessionManager désactivé en DEV (voir TODO_AUTH.md)
 function SessionManager() {
+  // Ne rien faire en mode développement
+  if (import.meta.env.DEV) {
+    return null
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useSessionManager({
     enableAutoRefresh: true,
     enableWarning: true,

@@ -61,7 +61,7 @@
         <!-- Abonnements de démonstration -->
 
         <!-- Abonnement 1 : Tech Startup - Plan Starter (trial) -->
-        <record id="demo_subscription_1" model="subscription">
+        <record id="demo_subscription_1" model="quelyos.subscription">
             <field name="partner_id" ref="demo_partner_1"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="plan_id" ref="plan_starter"/>
@@ -73,7 +73,7 @@
         </record>
 
         <!-- Abonnement 2 : E-commerce Pro - Plan Pro (active, mensuel) -->
-        <record id="demo_subscription_2" model="subscription">
+        <record id="demo_subscription_2" model="quelyos.subscription">
             <field name="partner_id" ref="demo_partner_2"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="plan_id" ref="plan_pro"/>
@@ -86,7 +86,7 @@
         </record>
 
         <!-- Abonnement 3 : Grande Distribution - Plan Enterprise (active, annuel) -->
-        <record id="demo_subscription_3" model="subscription">
+        <record id="demo_subscription_3" model="quelyos.subscription">
             <field name="partner_id" ref="demo_partner_3"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="plan_id" ref="plan_enterprise"/>
@@ -99,7 +99,7 @@
         </record>
 
         <!-- Abonnement 4 : Boutique Bio - Plan Starter (active, annuel) -->
-        <record id="demo_subscription_4" model="subscription">
+        <record id="demo_subscription_4" model="quelyos.subscription">
             <field name="partner_id" ref="demo_partner_4"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="plan_id" ref="plan_starter"/>
@@ -112,7 +112,7 @@
         </record>
 
         <!-- Abonnement 5 : Fashion Store - Plan Pro (past_due) -->
-        <record id="demo_subscription_5" model="subscription">
+        <record id="demo_subscription_5" model="quelyos.subscription">
             <field name="partner_id" ref="demo_partner_5"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="plan_id" ref="plan_pro"/>

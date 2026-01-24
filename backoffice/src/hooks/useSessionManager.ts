@@ -21,7 +21,15 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
   const lastActivityRef = useRef<number>(Date.now())
   const warningShownRef = useRef<boolean>(false)
 
+  // TEMPORAIRE DEV : Désactiver la gestion de session en développement
+  // car l'authentification est désactivée (voir ProtectedRoute.tsx et TODO_AUTH.md)
+  const isDevMode = import.meta.env.DEV
+
   const checkSession = useCallback(async () => {
+    // Ne pas vérifier la session en mode DEV
+    if (isDevMode) {
+      return true
+    }
     try {
       const result = await api.checkSession()
 
@@ -51,9 +59,14 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
       console.error('Session check error:', error)
       return false
     }
-  }, [navigate, toast, enableWarning])
+  }, [navigate, toast, enableWarning, isDevMode])
 
   const refreshSession = useCallback(async () => {
+    // Ne pas rafraîchir la session en mode DEV
+    if (isDevMode) {
+      return
+    }
+
     try {
       const result = await api.checkSession()
 
@@ -71,7 +84,7 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
     } catch (error) {
       console.error('Session refresh error:', error)
     }
-  }, [navigate, toast])
+  }, [navigate, toast, isDevMode])
 
   const updateActivity = useCallback(() => {
     lastActivityRef.current = Date.now()
@@ -79,6 +92,11 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
   }, [])
 
   useEffect(() => {
+    // Ne pas démarrer les timers en mode DEV
+    if (isDevMode) {
+      return
+    }
+
     // Ne démarrer que si une session existe
     const sessionId = localStorage.getItem('session_id')
     if (!sessionId) {
@@ -111,7 +129,7 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
         window.removeEventListener(event, updateActivity)
       })
     }
-  }, [checkSession, refreshSession, updateActivity, enableAutoRefresh])
+  }, [checkSession, refreshSession, updateActivity, enableAutoRefresh, isDevMode])
 
   return {
     checkSession,

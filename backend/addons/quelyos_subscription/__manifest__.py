@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos Subscription',
-    'version': '19.0.1.0.13',
+    'version': '19.0.1.0.14',
     'category': 'Sales/Subscription',
     'summary': 'Gestion des abonnements SaaS Quelyos',
     'description': """

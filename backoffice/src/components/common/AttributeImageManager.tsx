@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Badge } from './Badge'
-import { Button } from './Button'
 import { Skeleton } from './Skeleton'
 import { OdooImage } from './OdooImage'
 import { AttributeValueImageGallery } from './AttributeValueImageGallery'
@@ -273,14 +272,17 @@ function AttributeValueCard({ value, displayType, disabled, onClick }: Attribute
         <span className="text-xs text-gray-500 dark:text-gray-400">
           {value.image_count} image{value.image_count !== 1 ? 's' : ''}
         </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="!px-2 !py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-          disabled={disabled}
+        {/* Span stylé comme bouton (pas <Button> pour éviter button > button invalid DOM) */}
+        <span
+          className={`
+            px-2 py-1 text-xs rounded font-medium
+            text-indigo-600 dark:text-indigo-400
+            opacity-0 group-hover:opacity-100 transition-opacity
+            ${disabled ? '' : 'group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20'}
+          `}
         >
           {hasImages ? 'Gérer' : 'Ajouter'}
-        </Button>
+        </span>
       </div>
 
       {/* Badge compteur en haut à droite si images présentes */}
