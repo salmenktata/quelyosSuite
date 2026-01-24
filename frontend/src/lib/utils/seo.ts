@@ -14,7 +14,7 @@ export interface SEOData {
   keywords?: string;
   image?: string;
   url?: string;
-  type?: 'website' | 'product' | 'article';
+  type?: 'website' | 'article';
   noIndex?: boolean;
 }
 

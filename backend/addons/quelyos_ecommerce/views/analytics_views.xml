@@ -103,12 +103,7 @@
             </field>
         </record>
 
-        <!-- Menu Analytics -->
-        <menuitem id="menu_ecommerce_analytics"
-                  name="Analytics"
-                  parent="menu_ecommerce_root"
-                  action="action_ecommerce_analytics"
-                  sequence="10"/>
+        <!-- Menu Analytics - Moved to menu.xml -->
 
         <!-- Vue graph des ventes par produit -->
         <record id="view_sale_report_product_graph" model="ir.ui.view">
@@ -157,17 +152,7 @@
             </field>
         </record>
 
-        <!-- Sous-menu Rapports -->
-        <menuitem id="menu_ecommerce_reports"
-                  name="Rapports"
-                  parent="menu_ecommerce_root"
-                  sequence="40"/>
-
-        <menuitem id="menu_ecommerce_sales_report"
-                  name="Rapport Ventes"
-                  parent="menu_ecommerce_reports"
-                  action="action_ecommerce_sales_report"
-                  sequence="10"/>
+        <!-- Sous-menu Rapports - Moved to menu.xml -->
 
     </data>
 </odoo>

@@ -31,61 +31,94 @@ ${urls
 
 export async function GET() {
   try {
+    const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+
     // URLs statiques
     const staticURLs: SitemapURL[] = [
       {
         loc: `${SITE_URL}/`,
         changefreq: 'daily',
         priority: 1.0,
+        lastmod: new Date().toISOString().split('T')[0],
       },
       {
         loc: `${SITE_URL}/products`,
         changefreq: 'daily',
         priority: 0.9,
+        lastmod: new Date().toISOString().split('T')[0],
       },
       {
-        loc: `${SITE_URL}/cart`,
-        changefreq: 'weekly',
-        priority: 0.7,
-      },
-      {
-        loc: `${SITE_URL}/login`,
+        loc: `${SITE_URL}/about`,
         changefreq: 'monthly',
         priority: 0.5,
       },
       {
-        loc: `${SITE_URL}/register`,
+        loc: `${SITE_URL}/contact`,
         changefreq: 'monthly',
         priority: 0.5,
       },
     ];
 
-    // TODO: Récupérer les produits depuis l'API
-    // const productsResponse = await fetch(`${ODOO_URL}/api/ecommerce/products?limit=1000`);
-    // const { products } = await productsResponse.json();
+    let productURLs: SitemapURL[] = [];
+    let categoryURLs: SitemapURL[] = [];
 
-    // const productURLs: SitemapURL[] = products.map((product: any) => ({
-    //   loc: `${SITE_URL}/products/${product.slug}`,
-    //   lastmod: product.write_date,
-    //   changefreq: 'weekly',
-    //   priority: 0.8,
-    // }));
+    // Récupérer les produits depuis l'API
+    try {
+      const productsResponse = await fetch(`${ODOO_URL}/api/ecommerce/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ params: { limit: 1000, filters: { website_published: true } } }),
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      });
 
-    // TODO: Récupérer les catégories depuis l'API
-    // const categoriesResponse = await fetch(`${ODOO_URL}/api/ecommerce/categories`);
-    // const { categories } = await categoriesResponse.json();
+      if (productsResponse.ok) {
+        const productsData = await productsResponse.json();
 
-    // const categoryURLs: SitemapURL[] = categories.map((category: any) => ({
-    //   loc: `${SITE_URL}/categories/${category.slug}`,
-    //   changefreq: 'weekly',
-    //   priority: 0.7,
-    // }));
+        // JSON-RPC retourne les données dans result
+        const result = productsData.result || productsData;
+        if (result.success && result.products) {
+          productURLs = result.products.map((product: any) => ({
+            loc: `${SITE_URL}/product/${product.slug || product.id}`,
+            lastmod: product.write_date ? new Date(product.write_date).toISOString().split('T')[0] : undefined,
+            changefreq: 'weekly' as const,
+            priority: 0.8,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching products for sitemap:', error);
+    }
+
+    // Récupérer les catégories depuis l'API (si disponible)
+    // Note: Désactivé temporairement car product.public.category nécessite website_sale
+    // try {
+    //   const categoriesResponse = await fetch(`${ODOO_URL}/api/ecommerce/categories`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({}),
+    //     next: { revalidate: 3600 },
+    //   });
+
+    //   if (categoriesResponse.ok) {
+    //     const categoriesData = await categoriesResponse.json();
+
+    //     if (categoriesData.success && categoriesData.data?.categories) {
+    //       categoryURLs = categoriesData.data.categories.map((category: any) => ({
+    //         loc: `${SITE_URL}/category/${category.slug || category.id}`,
+    //         changefreq: 'weekly' as const,
+    //         priority: 0.7,
+    //       }));
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching categories for sitemap:', error);
+    // }
 
     // Combiner toutes les URLs
     const allURLs = [
       ...staticURLs,
-      // ...productURLs,
-      // ...categoryURLs,
+      ...productURLs,
+      ...categoryURLs,
     ];
 
     const sitemap = generateSitemapXML(allURLs);

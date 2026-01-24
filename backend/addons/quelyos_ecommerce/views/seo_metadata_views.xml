@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SEO Metadata Form View -->
+    <record id="view_seo_metadata_form" model="ir.ui.view">
+        <field name="name">seo.metadata.form</field>
+        <field name="model">seo.metadata</field>
+        <field name="arch" type="xml">
+            <form string="SEO Metadata">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="model_name"/>
+                            <field name="res_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Meta Tags Tab -->
+                        <page string="Meta Tags">
+                            <group>
+                                <group>
+                                    <field name="meta_title" placeholder="Max 60 caractères"/>
+                                    <field name="meta_description" placeholder="Max 160 caractères"/>
+                                    <field name="meta_keywords" placeholder="mot-clé1, mot-clé2, ..."/>
+                                    <field name="canonical_url" placeholder="/product/slug-produit"/>
+                                </group>
+                                <group>
+                                    <field name="robots_index"/>
+                                    <field name="robots_follow"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Open Graph Tab -->
+                        <page string="Open Graph">
+                            <group>
+                                <group>
+                                    <field name="og_title" placeholder="Titre pour Facebook"/>
+                                    <field name="og_description" placeholder="Description pour Facebook"/>
+                                    <field name="og_image" placeholder="URL de l'image"/>
+                                    <field name="og_type"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Twitter Cards Tab -->
+                        <page string="Twitter Cards">
+                            <group>
+                                <group>
+                                    <field name="twitter_card"/>
+                                    <field name="twitter_title" placeholder="Titre pour Twitter"/>
+                                    <field name="twitter_description" placeholder="Description pour Twitter"/>
+                                    <field name="twitter_image" placeholder="URL de l'image"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Structured Data Tab -->
+                        <page string="Structured Data">
+                            <group>
+                                <group>
+                                    <field name="schema_type"/>
+                                    <field name="custom_schema_json" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Sitemap Tab -->
+                        <page string="Sitemap">
+                            <group>
+                                <group>
+                                    <field name="sitemap_priority"/>
+                                    <field name="sitemap_changefreq"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEO Metadata List View -->
+    <record id="view_seo_metadata_tree" model="ir.ui.view">
+        <field name="name">seo.metadata.list</field>
+        <field name="model">seo.metadata</field>
+        <field name="arch" type="xml">
+            <list string="SEO Metadata">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="res_id"/>
+                <field name="meta_title"/>
+                <field name="canonical_url"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SEO Metadata Search View -->
+    <record id="view_seo_metadata_search" model="ir.ui.view">
+        <field name="name">seo.metadata.search</field>
+        <field name="model">seo.metadata</field>
+        <field name="arch" type="xml">
+            <search string="SEO Metadata">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="meta_title"/>
+                <separator/>
+                <filter string="Products" name="products" domain="[('model_name', '=', 'product.template')]"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Model" name="group_model" context="{'group_by': 'model_name'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- SEO Metadata Action -->
+    <record id="action_seo_metadata" model="ir.actions.act_window">
+        <field name="name">SEO Metadata</field>
+        <field name="res_model">seo.metadata</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un SEO Metadata
+            </p>
+            <p>
+                Gérez les métadonnées SEO pour vos produits et catégories.
+            </p>
+        </field>
+    </record>
+
+    <!-- Add SEO Tab to Product Template -->
+    <record id="view_product_template_seo_form" model="ir.ui.view">
+        <field name="name">product.template.seo.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="SEO" name="seo">
+                    <group>
+                        <p>Gérez les métadonnées SEO pour ce produit en cliquant sur le bouton ci-dessous.</p>
+                        <button name="%(action_seo_metadata)d"
+                                type="action"
+                                string="Gérer le SEO"
+                                class="oe_highlight"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- TODO: Re-enable if website_sale module is installed -->
+    <!-- Add SEO Tab to Category -->
+    <!-- <record id="view_category_seo_form" model="ir.ui.view">
+        <field name="name">product.public.category.seo.form</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="product.product_public_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="inside">
+                <notebook>
+                    <page string="SEO" name="seo">
+                        <group>
+                            <button name="%(action_seo_metadata)d"
+                                    type="action"
+                                    string="Gérer le SEO"
+                                    class="oe_highlight"
+                                    context="{'default_model_name': 'product.public.category', 'default_res_id': active_id, 'default_name': name}"/>
+                        </group>
+                        <field name="seo_metadata_id" context="{'default_model_name': 'product.public.category', 'default_res_id': active_id}">
+                            <list>
+                                <field name="meta_title"/>
+                                <field name="meta_description"/>
+                                <field name="canonical_url"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record> -->
+
+</odoo>

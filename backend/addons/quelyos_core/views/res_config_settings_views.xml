@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menu Configuration Quelyos Core -->
+    <!-- Action pour ouvrir les paramètres généraux (qui inclut les champs Core) -->
     <record id="action_quelyos_core_config" model="ir.actions.act_window">
-        <field name="name">Configuration Core</field>
+        <field name="name">Configuration Générale</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="context">{'module': 'quelyos_core'}</field>
     </record>
 
+    <!-- Menu racine Quelyos -->
     <menuitem id="menu_quelyos_root"
               name="Quelyos"
               sequence="1"/>
 
+    <!-- Menu Configuration -->
     <menuitem id="menu_quelyos_config"
               name="Configuration"
               parent="menu_quelyos_root"
               sequence="100"/>
 
+    <!-- Menu Configuration Core -->
     <menuitem id="menu_quelyos_core_config"
               name="Core"
               parent="menu_quelyos_config"

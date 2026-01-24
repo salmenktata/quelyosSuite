@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Products -->
+        <record id="product_demo_laptop" model="product.template">
+            <field name="name">Ordinateur Portable HP ProBook 450</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">899.00</field>
+            <field name="standard_price">650.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Ordinateur portable professionnel avec processeur Intel Core i5, 8GB RAM, 256GB SSD. Idéal pour le travail et les études.</field>
+        </record>
+
+        <record id="product_demo_mouse" model="product.template">
+            <field name="name">Souris Sans Fil Logitech MX Master 3</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">99.99</field>
+            <field name="standard_price">65.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Souris ergonomique sans fil avec capteur haute précision et batterie rechargeable. Compatible Windows et Mac.</field>
+        </record>
+
+        <record id="product_demo_keyboard" model="product.template">
+            <field name="name">Clavier Mécanique Corsair K95 RGB</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">179.99</field>
+            <field name="standard_price">120.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Clavier mécanique gaming avec rétroéclairage RGB personnalisable, touches macro programmables et repose-poignet.</field>
+        </record>
+
+        <record id="product_demo_monitor" model="product.template">
+            <field name="name">Écran Dell UltraSharp 27 pouces 4K</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">549.00</field>
+            <field name="standard_price">380.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Écran professionnel 27 pouces 4K UHD, dalle IPS, couverture couleur 99% sRGB, pivot et réglage en hauteur.</field>
+        </record>
+
+        <record id="product_demo_headset" model="product.template">
+            <field name="name">Casque Audio Sony WH-1000XM4</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">349.99</field>
+            <field name="standard_price">240.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Casque sans fil avec réduction de bruit active, autonomie 30h, audio haute résolution et commandes tactiles.</field>
+        </record>
+
+        <record id="product_demo_webcam" model="product.template">
+            <field name="name">Webcam Logitech C920 HD Pro</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">79.99</field>
+            <field name="standard_price">50.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Webcam Full HD 1080p avec correction automatique de la lumière, double microphone stéréo et autofocus rapide.</field>
+        </record>
+
+        <record id="product_demo_ssd" model="product.template">
+            <field name="name">SSD Samsung 970 EVO Plus 1TB</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">129.99</field>
+            <field name="standard_price">85.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">SSD NVMe M.2 1TB avec vitesses de lecture jusqu'à 3500 MB/s, idéal pour gaming et création de contenu.</field>
+        </record>
+
+        <record id="product_demo_router" model="product.template">
+            <field name="name">Routeur WiFi 6 TP-Link Archer AX50</field>
+            <field name="type">consu</field>
+            <field name="categ_id" ref="product.product_category_goods"/>
+            <field name="list_price">149.99</field>
+            <field name="standard_price">95.00</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <field name="description_sale">Routeur WiFi 6 dual-band avec technologie OFDMA et MU-MIMO, couverture jusqu'à 200m², sécurité WPA3.</field>
+        </record>
+
+        <!-- Demo Coupons -->
+        <record id="coupon_demo_welcome" model="ecommerce.coupon">
+            <field name="code">BIENVENUE10</field>
+            <field name="name">Coupon de bienvenue</field>
+            <field name="discount_type">percent</field>
+            <field name="discount_value">10.0</field>
+            <field name="date_start" eval="(datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="date_end" eval="(datetime.now() + timedelta(days=60)).strftime('%Y-%m-%d')"/>
+            <field name="active" eval="True"/>
+            <field name="minimum_amount">50.0</field>
+            <field name="usage_limit">100</field>
+            <field name="description">10% de réduction sur votre première commande (min. 50€)</field>
+        </record>
+
+        <record id="coupon_demo_summer" model="ecommerce.coupon">
+            <field name="code">ETE2026</field>
+            <field name="name">Soldes d'été</field>
+            <field name="discount_type">percent</field>
+            <field name="discount_value">15.0</field>
+            <field name="date_start" eval="(datetime.now() - timedelta(days=10)).strftime('%Y-%m-%d')"/>
+            <field name="date_end" eval="(datetime.now() + timedelta(days=50)).strftime('%Y-%m-%d')"/>
+            <field name="active" eval="True"/>
+            <field name="minimum_amount">100.0</field>
+            <field name="usage_limit">500</field>
+            <field name="description">15% de réduction sur tout le site (min. 100€)</field>
+        </record>
+
+        <record id="coupon_demo_fixed" model="ecommerce.coupon">
+            <field name="code">CADEAU20</field>
+            <field name="name">Bon d'achat 20€</field>
+            <field name="discount_type">fixed</field>
+            <field name="discount_value">20.0</field>
+            <field name="date_start" eval="(datetime.now() - timedelta(days=5)).strftime('%Y-%m-%d')"/>
+            <field name="date_end" eval="(datetime.now() + timedelta(days=25)).strftime('%Y-%m-%d')"/>
+            <field name="active" eval="True"/>
+            <field name="minimum_amount">150.0</field>
+            <field name="usage_limit">50</field>
+            <field name="description">20€ de réduction sur les commandes de 150€ et plus</field>
+        </record>
+
+        <!-- Demo Loyalty Program -->
+        <record id="loyalty_program_default" model="loyalty.program">
+            <field name="name">Programme Fidélité Quelyos</field>
+            <field name="active" eval="True"/>
+            <field name="points_per_euro">1.0</field>
+            <field name="points_to_euro_rate">0.01</field>
+            <field name="min_order_amount">0.0</field>
+        </record>
+
+        <!-- Demo Loyalty Tiers -->
+        <record id="loyalty_tier_bronze" model="loyalty.tier">
+            <field name="name">Bronze</field>
+            <field name="program_id" ref="loyalty_program_default"/>
+            <field name="points_threshold">0</field>
+            <field name="discount_percentage">0.0</field>
+            <field name="color">#CD7F32</field>
+        </record>
+
+        <record id="loyalty_tier_silver" model="loyalty.tier">
+            <field name="name">Argent</field>
+            <field name="program_id" ref="loyalty_program_default"/>
+            <field name="points_threshold">1000</field>
+            <field name="discount_percentage">5.0</field>
+            <field name="color">#C0C0C0</field>
+        </record>
+
+        <record id="loyalty_tier_gold" model="loyalty.tier">
+            <field name="name">Or</field>
+            <field name="program_id" ref="loyalty_program_default"/>
+            <field name="points_threshold">5000</field>
+            <field name="discount_percentage">10.0</field>
+            <field name="color">#FFD700</field>
+        </record>
+
+    </data>
+</odoo>

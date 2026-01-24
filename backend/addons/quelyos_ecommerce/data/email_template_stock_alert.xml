@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Email Template: Stock Alert - Back in Stock -->
+        <record id="email_template_stock_alert" model="mail.template">
+            <field name="name">E-commerce: Stock Alert - Back in Stock</field>
+            <field name="model_id" ref="model_stock_alert_subscription"/>
+            <field name="subject">✅ {{ object.product_id.name }} est de nouveau disponible - Quelyos</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f4f7fa;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">
+                                ✅ Bonne nouvelle !
+                            </h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">
+                                Le produit que vous attendiez est de retour en stock
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                                Bonjour {{ object.partner_id.name if object.partner_id else 'cher client' }},
+                            </p>
+
+                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                                Le produit <strong>{{ object.product_id.name }}</strong> que vous aviez demandé est maintenant disponible !
+                            </p>
+
+                            <!-- Product Card -->
+                            <div style="background-color: #f8f9fa; border: 2px solid #667eea; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <!-- Product Image -->
+                                        {% if object.product_id.image_1920 %}
+                                        <td style="width: 120px; vertical-align: top;">
+                                            <img src="/web/image/product.template/{{ object.product_id.id }}/image_256"
+                                                 alt="{{ object.product_id.name }}"
+                                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;"/>
+                                        </td>
+                                        {% endif %}
+
+                                        <!-- Product Info -->
+                                        <td style="vertical-align: top; padding-left: 20px;">
+                                            <h2 style="color: #333333; margin: 0 0 10px 0; font-size: 20px;">
+                                                {{ object.product_id.name }}
+                                            </h2>
+
+                                            {% if object.product_id.description_sale %}
+                                            <p style="color: #666666; margin: 0 0 15px 0; font-size: 14px; line-height: 1.5;">
+                                                {{ object.product_id.description_sale[:150] }}{% if object.product_id.description_sale|length > 150 %}...{% endif %}
+                                            </p>
+                                            {% endif %}
+
+                                            <div style="margin-top: 15px;">
+                                                <span style="display: inline-block; background-color: #667eea; color: #ffffff; padding: 8px 16px; border-radius: 6px; font-size: 18px; font-weight: bold;">
+                                                    {{ '%.2f' % object.product_id.list_price }} €
+                                                </span>
+
+                                                <span style="display: inline-block; margin-left: 10px; background-color: #10b981; color: #ffffff; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                                    ✓ En stock
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="{{ request.env['ir.config_parameter'].sudo().get_param('web.base.url').replace(':8069', ':3000') }}/products/{{ object.product_id.slug if hasattr(object.product_id, 'slug') else object.product_id.name.lower().replace(' ', '-') }}"
+                                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 18px; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                                    Commander maintenant
+                                </a>
+                            </div>
+
+                            <!-- Urgency Message -->
+                            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 30px; border-radius: 4px;">
+                                <p style="color: #856404; margin: 0; font-size: 14px; font-weight: 600;">
+                                    ⚡ Stock limité ! Ne manquez pas cette opportunité.
+                                </p>
+                            </div>
+
+                            <!-- Additional Info -->}
+                            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e9ecef;">
+                                <p style="color: #666666; font-size: 14px; margin: 0 0 15px 0; font-weight: 600;">
+                                    Pourquoi choisir Quelyos ?
+                                </p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="padding: 8px 0; vertical-align: top; width: 50%;">
+                                            <span style="color: #667eea; font-size: 18px; margin-right: 8px;">✓</span>
+                                            <span style="color: #666666; font-size: 14px;">Livraison rapide</span>
+                                        </td>
+                                        <td style="padding: 8px 0; vertical-align: top; width: 50%;">
+                                            <span style="color: #667eea; font-size: 18px; margin-right: 8px;">✓</span>
+                                            <span style="color: #666666; font-size: 14px;">Garantie satisfait</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; vertical-align: top;">
+                                            <span style="color: #667eea; font-size: 18px; margin-right: 8px;">✓</span>
+                                            <span style="color: #666666; font-size: 14px;">Retours gratuits</span>
+                                        </td>
+                                        <td style="padding: 8px 0; vertical-align: top;">
+                                            <span style="color: #667eea; font-size: 18px; margin-right: 8px;">✓</span>
+                                            <span style="color: #666666; font-size: 14px;">Support 7j/7</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-radius: 0 0 8px 8px;">
+                            <p style="color: #999999; font-size: 12px; margin: 0 0 10px 0;">
+                                Vous recevez cet email car vous avez demandé à être alerté quand ce produit serait disponible.
+                            </p>
+                            <p style="color: #999999; font-size: 12px; margin: 0;">
+                                © {{ datetime.datetime.now().year }} Quelyos. Tous droits réservés.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -7,14 +7,14 @@ export const LoadingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
         {/* Logo animé */}
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-[#01613a] rounded-full mb-6 animate-pulse">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-full mb-6 animate-pulse">
           <span className="text-white font-bold text-3xl">Q</span>
         </div>
 
         {/* Spinner */}
         <div className="relative w-16 h-16 mx-auto mb-4">
           <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-[#01613a] border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
 
         {/* Text */}
@@ -34,7 +34,7 @@ export const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size =
   return (
     <div className={`relative ${sizeClasses[size]}`}>
       <div className="absolute inset-0 border-gray-200 rounded-full"></div>
-      <div className="absolute inset-0 border-[#01613a] border-t-transparent rounded-full animate-spin"></div>
+      <div className="absolute inset-0 border-primary border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 };

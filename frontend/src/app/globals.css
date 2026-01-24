@@ -4,24 +4,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-
-  /* Couleurs Quelyos (inspiré lesportif.com.tn) */
+  /* Theme colors - overridden dynamically by ThemeProvider */
   --primary: #01613a;
   --primary-dark: #004d2e;
   --primary-light: #028a52;
   --secondary: #c9c18f;
   --secondary-dark: #b4ac7a;
   --secondary-light: #ddd5a4;
-  --gold: #f59e0b;
+  --accent: #f59e0b;
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --border: #e5e5e5;
+  --ring: #01613a;
+
+  /* Design tokens - Inspired by lesportif.com.tn */
+  --transition-default: 0.3s ease;
+  --transition-fast: 0.15s ease;
+  --transition-slow: 0.5s ease;
+  --border-radius-button: 20px;
+  --border-radius-card: 16px;
+  --border-radius-badge: 9999px;
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --gradient-discount: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --gradient-hot: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Fonts */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+
+  /* Colors - Le Sportif theme (lesportif.com.tn) */
+  --color-primary: #01613a;
+  --color-primary-dark: #004d2e;
+  --color-primary-light: #028a52;
+  --color-secondary: #c9c18f;
+  --color-secondary-dark: #b4ac7a;
+  --color-secondary-light: #ddd5a4;
+  --color-accent: #f59e0b;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+  --color-ring: #01613a;
+
+  /* Gray palette */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  /* White and Black */
+  --color-white: #ffffff;
+  --color-black: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -117,14 +164,19 @@ h1, h2, h3, h4, h5, h6 {
   background: #a8a8a8;
 }
 
-/* Transitions douces globales */
+/* Transitions douces globales - Style lesportif.com.tn */
 a, button {
-  transition: all 0.2s ease;
+  transition: all var(--transition-default);
+}
+
+/* Transition smooth utility */
+.transition-smooth {
+  transition: all var(--transition-default);
 }
 
 /* Focus visible pour accessibilité */
 :focus-visible {
-  outline: 2px solid #01613a;
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -142,4 +194,369 @@ a, button {
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* ========================================
+   UTILITAIRES STYLE LESPORTIF.COM.TN
+   ======================================== */
+
+/* Gradient text utility */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-discount {
+  background: var(--gradient-discount);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover scale effect */
+.hover-scale {
+  transition: transform var(--transition-default);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Hover lift effect - for cards and buttons */
+.hover-lift {
+  transition: transform var(--transition-default), box-shadow var(--transition-default);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Button hover with shadow */
+.btn-hover-shadow {
+  transition: all var(--transition-default);
+}
+
+.btn-hover-shadow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(1, 97, 58, 0.3);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all var(--transition-default);
+  box-shadow: var(--shadow-card);
+}
+
+.card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+/* Image zoom on hover */
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.5s ease;
+}
+
+.img-zoom:hover img {
+  transform: scale(1.08);
+}
+
+/* Badge gradient discount */
+.badge-discount {
+  background: var(--gradient-discount);
+  color: white;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-badge);
+  font-size: 12px;
+}
+
+.badge-hot {
+  background: var(--gradient-hot);
+  color: white;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-badge);
+  font-size: 12px;
+}
+
+.badge-new {
+  background: var(--gradient-primary);
+  color: white;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-badge);
+  font-size: 12px;
+}
+
+/* Quick view overlay */
+.quick-view-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity var(--transition-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group:hover .quick-view-overlay {
+  opacity: 1;
+}
+
+/* Price styling */
+.price-current {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.price-original {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+}
+
+/* Rounded button style */
+.btn-rounded {
+  border-radius: var(--border-radius-button);
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all var(--transition-default);
+}
+
+.btn-rounded:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(1, 97, 58, 0.25);
+}
+
+/* Newsletter input style */
+.newsletter-input {
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  padding-right: 8rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: white;
+  width: 100%;
+  transition: border-color var(--transition-default);
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.newsletter-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Trust badge icon container */
+.trust-icon {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(1, 97, 58, 0.15);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trust-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--primary);
+}
+
+/* Progress bar animation */
+@keyframes progress-bar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-animate {
+  animation: progress-bar 5s linear;
+}
+
+/* Slide indicator dots */
+.slide-dot {
+  height: 0.5rem;
+  border-radius: 9999px;
+  transition: all var(--transition-default);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.slide-dot.active {
+  width: 2rem;
+  background: white;
+}
+
+.slide-dot:not(.active) {
+  width: 0.5rem;
+}
+
+.slide-dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ========================================
+   TYPOGRAPHY PLUGIN - PROSE STYLES
+   Fix pour Tailwind 4 + @tailwindcss/typography
+   ======================================== */
+
+/* Prose base - Assure que le texte est visible */
+.prose {
+  color: #374151; /* gray-700 */
+}
+
+.prose p {
+  color: #374151; /* gray-700 */
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: #111827; /* gray-900 */
+  font-weight: 700;
+}
+
+.prose h1 {
+  font-size: 2.25em;
+  margin-top: 0;
+  margin-bottom: 0.8888889em;
+  line-height: 1.1111111;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3333333;
+}
+
+.prose h3 {
+  font-size: 1.25em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+
+.prose strong {
+  color: #111827; /* gray-900 */
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  color: var(--primary-dark);
+}
+
+.prose ul {
+  list-style-type: disc;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose li {
+  color: #374151; /* gray-700 */
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose blockquote {
+  font-weight: 500;
+  font-style: italic;
+  color: #111827;
+  border-left-width: 0.25rem;
+  border-left-color: #e5e7eb;
+  quotes: "\\201C""\\201D""\\2018""\\2019";
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+
+.prose code {
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  color: #e5e7eb;
+  background-color: #1f2937;
+  overflow-x: auto;
+  font-weight: 400;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+  margin-top: 1.7142857em;
+  margin-bottom: 1.7142857em;
+  border-radius: 0.375rem;
+  padding: 0.8571429em 1.1428571em;
+}
+
+.prose hr {
+  border-color: #e5e7eb;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+
+.prose table {
+  width: 100%;
+  table-layout: auto;
+  text-align: left;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.prose thead th {
+  color: #111827;
+  font-weight: 600;
+  padding-bottom: 0.5714286em;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.prose tbody td {
+  padding: 0.5714286em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Prose-lg variant */
+.prose-lg {
+  font-size: 1.125rem;
+  line-height: 1.7777778;
+}
+
+.prose-lg p {
+  margin-top: 1.3333333em;
+  margin-bottom: 1.3333333em;
 }

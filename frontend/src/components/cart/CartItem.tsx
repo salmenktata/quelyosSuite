@@ -14,7 +14,7 @@ interface CartItemProps {
     quantity: number;
     price_unit: number;
     price_subtotal: number;
-    currency_symbol: string;
+    currency_symbol?: string;
   };
   showRemove?: boolean;
   compact?: boolean;
@@ -28,6 +28,8 @@ const CartItem: React.FC<CartItemProps> = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const { updateQuantity, removeItem } = useCartStore();
+
+  const currencySymbol = item.currency_symbol || 'TND';
 
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -75,7 +77,7 @@ const CartItem: React.FC<CartItemProps> = ({
             Qté: {item.quantity}
           </p>
           <p className="text-sm font-semibold text-gray-900">
-            {item.price_subtotal.toFixed(2)} {item.currency_symbol}
+            {item.price_subtotal.toFixed(2)} {currencySymbol}
           </p>
         </div>
       </div>
@@ -100,7 +102,7 @@ const CartItem: React.FC<CartItemProps> = ({
           {item.product_name}
         </h3>
         <p className="text-sm text-gray-600 mb-2">
-          Prix unitaire: {item.price_unit.toFixed(2)} {item.currency_symbol}
+          Prix unitaire: {item.price_unit.toFixed(2)} {currencySymbol}
         </p>
 
         {/* Quantity Controls */}
@@ -142,7 +144,7 @@ const CartItem: React.FC<CartItemProps> = ({
       {/* Subtotal */}
       <div className="text-right flex-shrink-0">
         <p className="text-lg font-bold text-gray-900">
-          {item.price_subtotal.toFixed(2)} {item.currency_symbol}
+          {item.price_subtotal.toFixed(2)} {currencySymbol}
         </p>
       </div>
     </div>

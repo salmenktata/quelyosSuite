@@ -174,8 +174,8 @@ class ProductService(models.AbstractModel):
         total = Product.search_count(domain)
         products = Product.search(domain, limit=limit, offset=offset, order=order)
 
-        # Format products for API
-        products_data = [self.format_product_for_api(p, include_variants=False) for p in products]
+        # Format products for API (include variants for product cards)
+        products_data = [self.format_product_for_api(p, include_variants=True) for p in products]
 
         # Calculate facets (only if not too many products to avoid performance issues)
         facets = self._calculate_facets(domain)

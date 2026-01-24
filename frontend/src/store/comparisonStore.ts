@@ -1,20 +1,31 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useToastStore } from './toastStore';
 
-interface Product {
+// Type simplifié pour la comparaison (ne nécessite que les champs essentiels)
+export interface ComparisonProduct {
   id: number;
   name: string;
   slug: string;
   list_price: number;
   image_url?: string;
+  images?: { id: string | number; url: string; alt: string }[];
+  currency?: { id: number; name: string; symbol: string };
+  // Autres champs optionnels peuvent être ajoutés si nécessaire
+  category?: { id: number; name: string } | null;
+  in_stock?: boolean;
+  avg_rating?: number;
+  review_count?: number;
+  description?: string;
+  compare_at_price?: number;
 }
 
 interface ComparisonState {
-  products: Product[];
+  products: ComparisonProduct[];
   maxProducts: number;
 
   // Actions
-  addProduct: (product: Product) => boolean;
+  addProduct: (product: ComparisonProduct) => boolean;
   removeProduct: (productId: number) => void;
   clearComparison: () => void;
   isInComparison: (productId: number) => boolean;
@@ -27,15 +38,15 @@ export const useComparisonStore = create<ComparisonState>()(
       products: [],
       maxProducts: 4,
 
-      addProduct: (product: Product) => {
+      addProduct: (product: ComparisonProduct) => {
         const { products, maxProducts, isInComparison } = get();
-        
+
         if (isInComparison(product.id)) {
           return false;
         }
 
         if (products.length >= maxProducts) {
-          alert(\`Vous ne pouvez comparer que \${maxProducts} produits maximum\`);
+          useToastStore.getState().addToast('warning', `Vous ne pouvez comparer que ${maxProducts} produits maximum`, 4000);
           return false;
         }
 

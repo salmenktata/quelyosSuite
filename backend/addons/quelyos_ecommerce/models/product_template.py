@@ -48,6 +48,18 @@ class ProductTemplate(models.Model):
     view_count = fields.Integer('Nombre de vues', default=0, readonly=True)
     wishlist_count = fields.Integer('Dans wishlists', compute='_compute_wishlist_count', store=True)
 
+    # Gallery images
+    image_ids = fields.One2many(
+        'product.product.image',
+        'product_tmpl_id',
+        string='Gallery Images',
+        help='Product image gallery (multiple images with ordering)'
+    )
+    image_count = fields.Integer(
+        string='Number of Images',
+        compute='_compute_image_count'
+    )
+
     @api.depends('name')
     def _compute_slug(self):
         """Génère un slug SEO-friendly depuis le nom du produit."""
@@ -79,6 +91,12 @@ class ProductTemplate(models.Model):
         for product in self:
             product.wishlist_count = len(product.wishlist_ids)
 
+    @api.depends('image_ids')
+    def _compute_image_count(self):
+        """Compte le nombre d'images dans la galerie."""
+        for product in self:
+            product.image_count = len(product.image_ids)
+
     def increment_view_count(self):
         """Incrémente le compteur de vues."""
         self.ensure_one()
@@ -102,27 +120,27 @@ class ProductTemplate(models.Model):
         """
         self.ensure_one()
 
+        # Get base URL for absolute image URLs
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', 'http://localhost:8069')
+
         # Currency (use company currency if not set)
         currency = self.currency_id or self.env.company.currency_id
 
-        # Images (main + gallery)
+        # Images - Use new gallery system with fallback
         images = []
-        if self.image_1920:
-            images.append({
-                'id': 0,
-                'url': f'/web/image/product.template/{self.id}/image_1920',
-                'alt': self.name,
-                'is_main': True
-            })
 
-        # Add gallery images from product_template_image_ids if field exists (requires product_images module)
-        if hasattr(self, 'product_template_image_ids'):
-            for idx, img in enumerate(self.product_template_image_ids, start=1):
+        if self.image_ids:
+            # New gallery system - sorted by sequence
+            for img in self.image_ids.sorted('sequence'):
+                images.append(img.get_api_data())
+        else:
+            # Fallback: Old single image system (backward compatibility)
+            if self.image_1920:
                 images.append({
-                    'id': img.id,
-                    'url': f'/web/image/product.image/{img.id}/image_1920',
-                    'alt': img.name or self.name,
-                    'is_main': False
+                    'id': 0,
+                    'url': f'{base_url}/web/image/product.template/{self.id}/image_1920',
+                    'alt': self.name,
+                    'is_main': True
                 })
 
         data = {
@@ -141,6 +159,7 @@ class ProductTemplate(models.Model):
             'is_new': self.is_new,
             'is_bestseller': self.is_bestseller,
             'images': images,
+            'image_url': images[0]['url'] if images else None,  # Convenience field for main image
             'category': {
                 'id': self.categ_id.id,
                 'name': self.categ_id.name,
@@ -148,24 +167,24 @@ class ProductTemplate(models.Model):
             } if self.categ_id else None,
             'in_stock': self.qty_available > 0,
             'stock_qty': self.qty_available,
-            'seo': self.get_seo_data(),
+            'seo': {
+                'slug': self.slug,
+                'meta_title': self.meta_title or self.name,
+                'meta_description': self.meta_description or self.description_sale or '',
+                'meta_keywords': self.meta_keywords or '',
+                'canonical_url': f'/products/{self.slug}',
+            },
             'view_count': self.view_count,
             'wishlist_count': self.wishlist_count,
         }
 
-        # Variants
+        # Variants (with variant-specific images)
         if include_variants and self.product_variant_count > 1:
-            data['variants'] = [{
-                'id': variant.id,
-                'name': variant.display_name,
-                'price': variant.lst_price,
-                'in_stock': variant.qty_available > 0,
-                'stock_qty': variant.qty_available,
-                'attributes': [{
-                    'name': attr.attribute_id.name,
-                    'value': attr.name,
-                } for attr in variant.product_template_attribute_value_ids],
-            } for variant in self.product_variant_ids]
+            data['variants'] = []
+            for variant in self.product_variant_ids:
+                # Use variant's get_api_data() which includes variant-specific images
+                variant_data = variant.get_api_data()
+                data['variants'].append(variant_data)
 
         # Related products (return full object with id, name, slug, image)
         if self.related_product_ids:
@@ -173,7 +192,7 @@ class ProductTemplate(models.Model):
                 'id': p.id,
                 'name': p.name,
                 'slug': p.slug,
-                'image': f'/web/image/product.template/{p.id}/image_256',
+                'image': f'{base_url}/web/image/product.template/{p.id}/image_256',
                 'list_price': p.list_price,
             } for p in self.related_product_ids[:4]]  # Limit to 4 products
 

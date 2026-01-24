@@ -40,7 +40,7 @@ services:
       - ./addons:/mnt/extra-addons
     ports:
       - "8069:8069"
-    command: --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d ${DB_NAME:-quelyos} -i base --without-demo=all
+    command: --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d ${DB_NAME:-quelyos}
     networks:
       - quelyos-network
 

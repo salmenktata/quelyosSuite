@@ -36,7 +36,7 @@ export default function ComparePage() {
   // Extraire les attributs communs pour la comparaison
   const attributes = [
     { key: 'category', label: 'Catégorie', getValue: (p: typeof products[0]) => p.category?.name || '-' },
-    { key: 'price', label: 'Prix', getValue: (p: typeof products[0]) => formatPrice(p.list_price, p.currency.symbol) },
+    { key: 'price', label: 'Prix', getValue: (p: typeof products[0]) => formatPrice(p.list_price, p.currency?.symbol || 'TND') },
     { key: 'stock', label: 'Disponibilité', getValue: (p: typeof products[0]) => p.in_stock ? 'En stock' : 'Rupture' },
     { key: 'rating', label: 'Note', getValue: (p: typeof products[0]) => p.avg_rating ? p.avg_rating.toFixed(1) + ' ⭐' : '-' },
     { key: 'reviews', label: 'Nombre d\'avis', getValue: (p: typeof products[0]) => p.review_count?.toString() || '0' },
@@ -47,7 +47,7 @@ export default function ComparePage() {
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Breadcrumb */}
         <nav className="text-sm mb-6 text-gray-600">
-          <Link href="/" className="hover:text-[#01613a]">Accueil</Link>
+          <Link href="/" className="hover:text-primary">Accueil</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-900 font-medium">Comparaison de produits</span>
         </nav>
@@ -107,7 +107,7 @@ export default function ComparePage() {
 
                         {/* Nom */}
                         <Link href={`/products/${product.slug}`}>
-                          <h3 className="font-bold text-gray-900 text-center hover:text-[#01613a] transition-colors mb-2">
+                          <h3 className="font-bold text-gray-900 text-center hover:text-primary transition-colors mb-2">
                             {product.name}
                           </h3>
                         </Link>

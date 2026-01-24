@@ -6,16 +6,18 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
 import type { Product } from '@/types';
 import { formatPrice } from '@/lib/utils/formatting';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/store/toastStore';
 import { Button } from '@/components/common/Button';
-import { LoadingPage } from '@/components/common/Loading';
+import { ProductDetailSkeleton } from '@/components/common/Skeleton';
+import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/utils/seo';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -26,12 +28,14 @@ export default function ProductDetailPage() {
   const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [showImageModal, setShowImageModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'shipping'>('description');
 
   const { addToCart, isLoading: isAddingToCart } = useCartStore();
   const { isAuthenticated } = useAuthStore();
+  const toast = useToast();
+
+  // Track recently viewed products
+  useRecentlyViewed({ product });
 
   useEffect(() => {
     fetchProduct();
@@ -65,23 +69,34 @@ export default function ProductDetailPage() {
     const success = await addToCart(productId, quantity);
 
     if (success) {
-      // Optionnel: afficher un toast de succès
-      alert('Produit ajouté au panier !');
+      toast.success('Produit ajouté au panier !');
     }
   };
 
   if (isLoading) {
-    return <LoadingPage />;
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
     return null;
   }
 
-  const mainImage = product.images[selectedImage]?.url || product.images[0]?.url || '/placeholder-product.png';
+  // Get the selected variant's data (or default to product data)
+  const selectedVariantData = product.variants?.find(v => v.id === selectedVariant);
+  const currentPrice = selectedVariantData?.price ?? product.list_price;
+  const currentStock = selectedVariantData?.in_stock ?? product.in_stock;
+  const currentStockQty = selectedVariantData?.stock_qty ?? product.stock_qty;
+
+  // Use variant images if available, otherwise use product images
+  const currentImages = (selectedVariantData?.images && selectedVariantData.images.length > 0)
+    ? selectedVariantData.images
+    : product.images;
+
+  const mainImage = currentImages?.find(img => img.is_main)?.url || currentImages?.[0]?.url || '/placeholder-product.svg';
+
   const hasDiscount = product.is_featured;
   const discountPercent = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? product.list_price * 1.25 : product.list_price;
+  const originalPrice = hasDiscount ? currentPrice * 1.25 : currentPrice;
 
   // Structured data
   const productSchema = generateProductSchema({
@@ -90,7 +105,7 @@ export default function ProductDetailPage() {
     image: mainImage,
     price: product.list_price,
     currency: product.currency.name,
-    availability: product.in_stock ? 'InStock' : 'OutOfStock',
+    availability: currentStock ? 'InStock' : 'OutOfStock',
     sku: product.id.toString(),
     url: `/products/${product.slug}`,
   });
@@ -121,11 +136,11 @@ export default function ProductDetailPage() {
         <div className="container mx-auto px-4 max-w-7xl py-8">
         {/* Breadcrumb */}
         <nav className="text-sm mb-6">
-          <Link href="/" className="text-gray-600 hover:text-[#01613a] transition-colors">
+          <Link href="/" className="text-gray-600 hover:text-primary transition-colors">
             Accueil
           </Link>
           <span className="mx-2 text-gray-400">/</span>
-          <Link href="/products" className="text-gray-600 hover:text-[#01613a] transition-colors">
+          <Link href="/products" className="text-gray-600 hover:text-primary transition-colors">
             Produits
           </Link>
           {product.category && (
@@ -133,7 +148,7 @@ export default function ProductDetailPage() {
               <span className="mx-2 text-gray-400">/</span>
               <Link
                 href={`/products?category_id=${product.category.id}`}
-                className="text-gray-600 hover:text-[#01613a] transition-colors"
+                className="text-gray-600 hover:text-primary transition-colors"
               >
                 {product.category.name}
               </Link>
@@ -144,64 +159,25 @@ export default function ProductDetailPage() {
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          {/* Images produit */}
-          <div>
-            {/* Image principale */}
-            <div
-              className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50 mb-4 shadow-lg cursor-zoom-in group"
-              onClick={() => setShowImageModal(true)}
-            >
+          {/* Images produit - Galerie avancée avec swipe et zoom */}
+          <div className="relative">
+            {/* Badges sur l'image */}
+            <div className="absolute top-4 left-4 flex flex-col gap-2 z-20 pointer-events-none">
               {hasDiscount && (
-                <div className="absolute top-4 left-4 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-md shadow-lg z-10">
+                <div className="bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-md shadow-lg">
                   -{discountPercent}%
                 </div>
               )}
               {product.is_new && (
-                <div className="absolute top-4 right-4 bg-[#01613a] text-white text-sm font-bold px-3 py-1.5 rounded-md shadow-lg z-10">
+                <div className="bg-primary text-white text-sm font-bold px-3 py-1.5 rounded-md shadow-lg">
                   NOUVEAU
                 </div>
               )}
-              <Image
-                src={mainImage}
-                alt={product.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              {/* Hint "Cliquez pour agrandir" */}
-              <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
-                Cliquez pour agrandir
-              </div>
             </div>
-
-            {/* Miniatures */}
-            {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-3">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-300 ${
-                      selectedImage === index
-                        ? 'border-[#01613a] shadow-md scale-105'
-                        : 'border-gray-200 hover:border-[#01613a]/50 hover:shadow-sm'
-                    }`}
-                  >
-                    <Image
-                      src={image.url}
-                      alt={`${product.name} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="150px"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+            <ProductImageGallery
+              images={currentImages || []}
+              productName={product.name}
+            />
           </div>
 
           {/* Informations produit */}
@@ -209,7 +185,7 @@ export default function ProductDetailPage() {
             {/* Badges */}
             <div className="flex gap-2 mb-4">
               {product.is_new && (
-                <span className="bg-gradient-to-r from-[#01613a] to-[#028a52] text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md">
+                <span className="bg-gradient-to-r from-primary to-primary-light text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md">
                   🆕 NOUVEAU
                 </span>
               )}
@@ -227,7 +203,7 @@ export default function ProductDetailPage() {
 
             {/* Catégorie */}
             {product.category && (
-              <p className="text-sm text-[#c9c18f] font-bold uppercase tracking-wide mb-2">
+              <p className="text-sm text-secondary font-bold uppercase tracking-wide mb-2">
                 {product.category.name}
               </p>
             )}
@@ -252,8 +228,8 @@ export default function ProductDetailPage() {
                   {formatPrice(originalPrice, product.currency.symbol)}
                 </span>
               )}
-              <span className="text-4xl md:text-5xl font-bold text-[#01613a]">
-                {formatPrice(product.list_price, product.currency.symbol)}
+              <span className="text-4xl md:text-5xl font-bold text-primary transition-all duration-300">
+                {formatPrice(currentPrice, product.currency.symbol)}
               </span>
               {hasDiscount && (
                 <span className="bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-md">
@@ -268,7 +244,7 @@ export default function ProductDetailPage() {
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               <div>
-                <p className="text-sm font-bold text-gray-900">Gagnez {Math.floor(product.list_price)} points de fidélité</p>
+                <p className="text-sm font-bold text-gray-900">Gagnez {Math.floor(currentPrice)} points de fidélité</p>
                 <p className="text-xs text-gray-600">À utiliser sur votre prochaine commande</p>
               </div>
             </div>
@@ -282,14 +258,14 @@ export default function ProductDetailPage() {
 
             {/* Stock */}
             <div className="mb-6 bg-gray-50 rounded-xl p-4">
-              {product.in_stock ? (
+              {currentStock ? (
                 <div className="flex items-center text-green-700">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
                   <span className="font-semibold text-lg">
                     En stock
                   </span>
                   <span className="ml-2 text-sm text-gray-600">
-                    ({Math.floor(product.stock_qty)} disponibles)
+                    ({Math.floor(currentStockQty)} disponibles)
                   </span>
                 </div>
               ) : (
@@ -300,40 +276,78 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {/* Variants (tailles, couleurs, etc.) */}
+            {/* Variants (tailles, couleurs, etc.) - Version améliorée touch-friendly */}
             {product.variants && product.variants.length > 1 && (
               <div className="mb-6">
-                <h3 className="font-bold text-lg mb-3">Sélectionnez une option:</h3>
-                <div className="flex flex-wrap gap-3">
-                  {product.variants.map((variant) => (
-                    <button
-                      key={variant.id}
-                      onClick={() => setSelectedVariant(variant.id)}
-                      disabled={!variant.in_stock}
-                      className={`px-5 py-3 border-2 rounded-xl font-semibold transition-all duration-300 ${
-                        selectedVariant === variant.id
-                          ? 'border-[#01613a] bg-[#01613a] text-white shadow-lg scale-105'
-                          : variant.in_stock
-                          ? 'border-gray-300 hover:border-[#01613a] hover:shadow-md'
-                          : 'border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                      }`}
-                    >
-                      {variant.attributes.map((attr) => attr.value).join(' - ')}
-                      {!variant.in_stock && <span className="text-xs ml-2">(Indisponible)</span>}
-                    </button>
-                  ))}
+                <h3 className="font-bold text-lg mb-3 text-gray-900">Sélectionnez une option:</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {product.variants.map((variant) => {
+                    const isSelected = selectedVariant === variant.id;
+                    const variantLabel = variant.attributes.map((attr) => attr.value).join(' - ');
+                    const priceDifference = variant.price !== product.list_price;
+
+                    return (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedVariant(variant.id)}
+                        disabled={!variant.in_stock}
+                        className={`
+                          relative px-4 py-4 min-h-15
+                          border-2 rounded-xl font-semibold
+                          transition-all duration-300
+                          flex flex-col items-start justify-center
+                          ${
+                            isSelected
+                              ? 'border-primary bg-primary text-white shadow-lg scale-[1.02]'
+                              : variant.in_stock
+                              ? 'border-gray-300 text-gray-900 hover:border-primary hover:shadow-md active:scale-95 bg-white'
+                              : 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50'
+                          }
+                        `}
+                        aria-label={`${variantLabel}${!variant.in_stock ? ' - Indisponible' : ''}`}
+                      >
+                        {/* Checkmark pour variant sélectionné */}
+                        {isSelected && (
+                          <div className="absolute top-2 right-2">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
+
+                        {/* Badge "Épuisé" pour variants indisponibles */}
+                        {!variant.in_stock && (
+                          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                            Épuisé
+                          </div>
+                        )}
+
+                        {/* Label du variant */}
+                        <span className={`text-sm ${isSelected ? 'font-bold' : 'font-semibold'}`}>
+                          {variantLabel}
+                        </span>
+
+                        {/* Prix si différent */}
+                        {priceDifference && variant.in_stock && (
+                          <span className={`text-xs mt-1 ${isSelected ? 'text-white/90' : 'text-gray-600'}`}>
+                            {formatPrice(variant.price, product.currency.symbol)}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {/* Quantité */}
             <div className="mb-6">
-              <label className="block font-bold text-lg mb-3">Quantité:</label>
+              <label className="block font-bold text-lg mb-3 text-gray-900">Quantité:</label>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
-                  className="w-12 h-12 border-2 border-gray-300 rounded-xl hover:border-[#01613a] hover:bg-[#01613a] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center font-bold text-lg transition-all duration-300"
+                  className="w-12 h-12 border-2 border-gray-300 rounded-xl text-gray-700 hover:border-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center font-bold text-lg transition-all duration-300"
                 >
                   -
                 </button>
@@ -341,13 +355,13 @@ export default function ProductDetailPage() {
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-24 text-center border-2 border-gray-300 rounded-xl py-3 font-bold text-lg focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20"
+                  className="w-24 text-center border-2 border-gray-300 rounded-xl py-3 font-bold text-lg text-gray-900 focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20"
                   min="1"
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  disabled={!product.in_stock || quantity >= product.stock_qty}
-                  className="w-12 h-12 border-2 border-gray-300 rounded-xl hover:border-[#01613a] hover:bg-[#01613a] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center font-bold text-lg transition-all duration-300"
+                  disabled={!currentStock || quantity >= currentStockQty}
+                  className="w-12 h-12 border-2 border-gray-300 rounded-xl text-gray-700 hover:border-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center font-bold text-lg transition-all duration-300"
                 >
                   +
                 </button>
@@ -358,18 +372,18 @@ export default function ProductDetailPage() {
             <div className="flex gap-4 mb-4">
               <button
                 onClick={handleAddToCart}
-                disabled={!product.in_stock || isAddingToCart}
-                className="flex-1 bg-[#01613a] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#024d2e] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                disabled={!currentStock || isAddingToCart}
+                className="flex-1 bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 {isAddingToCart ? (
                   <>
                     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     Ajout en cours...
                   </>
-                ) : !product.in_stock ? (
+                ) : !currentStock ? (
                   'Rupture de stock'
                 ) : (
                   <>
@@ -382,7 +396,7 @@ export default function ProductDetailPage() {
               </button>
 
               {isAuthenticated && (
-                <button className="w-14 h-14 border-2 border-[#01613a] text-[#01613a] rounded-xl hover:bg-[#01613a] hover:text-white transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105">
+                <button className="w-14 h-14 border-2 border-primary text-primary rounded-xl hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -412,7 +426,7 @@ export default function ProductDetailPage() {
             <div className="mb-8 bg-gray-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
                 <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <svg className="w-5 h-5 text-[#01613a]" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   <span className="font-semibold">Plus de 600 avis clients</span>
@@ -440,7 +454,7 @@ export default function ProductDetailPage() {
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 mb-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
@@ -451,7 +465,7 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
@@ -462,7 +476,7 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                     </svg>
@@ -473,7 +487,7 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
@@ -525,7 +539,7 @@ export default function ProductDetailPage() {
               onClick={() => setActiveTab('description')}
               className={`flex-1 px-6 py-4 font-bold text-sm sm:text-base transition-all duration-300 ${
                 activeTab === 'description'
-                  ? 'bg-[#01613a] text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -535,7 +549,7 @@ export default function ProductDetailPage() {
               onClick={() => setActiveTab('specs')}
               className={`flex-1 px-6 py-4 font-bold text-sm sm:text-base transition-all duration-300 border-l border-gray-200 ${
                 activeTab === 'specs'
-                  ? 'bg-[#01613a] text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -545,7 +559,7 @@ export default function ProductDetailPage() {
               onClick={() => setActiveTab('shipping')}
               className={`flex-1 px-6 py-4 font-bold text-sm sm:text-base transition-all duration-300 border-l border-gray-200 ${
                 activeTab === 'shipping'
-                  ? 'bg-[#01613a] text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -558,7 +572,7 @@ export default function ProductDetailPage() {
             {activeTab === 'description' && (
               <div className="animate-fadeIn">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <svg className="w-6 h-6 text-[#01613a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Description du produit
@@ -576,7 +590,7 @@ export default function ProductDetailPage() {
             {activeTab === 'specs' && (
               <div className="animate-fadeIn">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <svg className="w-6 h-6 text-[#01613a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Spécifications techniques
@@ -598,13 +612,13 @@ export default function ProductDetailPage() {
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Disponibilité:</span>
-                      <span className={`font-bold ${product.in_stock ? 'text-green-600' : 'text-red-600'}`}>
-                        {product.in_stock ? 'En stock' : 'Rupture de stock'}
+                      <span className={`font-bold ${currentStock ? 'text-green-600' : 'text-red-600'}`}>
+                        {currentStock ? 'En stock' : 'Rupture de stock'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3">
                       <span className="text-gray-600 font-medium">Stock:</span>
-                      <span className="text-gray-900 font-bold">{Math.floor(product.stock_qty)} unités</span>
+                      <span className="text-gray-900 font-bold">{Math.floor(currentStockQty)} unités</span>
                     </div>
                   </div>
                 )}
@@ -614,35 +628,35 @@ export default function ProductDetailPage() {
             {activeTab === 'shipping' && (
               <div className="animate-fadeIn">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <svg className="w-6 h-6 text-[#01613a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                   </svg>
                   Livraison et Retours
                 </h3>
                 <div className="space-y-6">
                   {/* Livraison */}
-                  <div className="bg-gradient-to-r from-[#01613a]/5 to-[#028a52]/5 rounded-xl p-5 border border-[#01613a]/20">
+                  <div className="bg-gradient-to-r from-primary/5 to-primary-light/5 rounded-xl p-5 border border-primary/20">
                     <h4 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
-                      <svg className="w-5 h-5 text-[#01613a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
                       </svg>
                       Livraison
                     </h4>
                     <ul className="space-y-2 text-gray-700">
                       <li className="flex items-start gap-2">
-                        <span className="text-[#01613a] mt-1">•</span>
+                        <span className="text-primary mt-1">•</span>
                         <span>Livraison standard: <strong>2-5 jours ouvrables</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-[#01613a] mt-1">•</span>
+                        <span className="text-primary mt-1">•</span>
                         <span>Livraison express: <strong>1-2 jours ouvrables</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-[#01613a] mt-1">•</span>
+                        <span className="text-primary mt-1">•</span>
                         <span>Frais de port: <strong>Gratuit dès 150 DT d'achat</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-[#01613a] mt-1">•</span>
+                        <span className="text-primary mt-1">•</span>
                         <span>Suivi de commande disponible</span>
                       </li>
                     </ul>
@@ -683,7 +697,7 @@ export default function ProductDetailPage() {
                       Notre service client est à votre disposition du lundi au vendredi de 9h à 18h.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <a href="tel:+21600000000" className="flex-1 bg-[#01613a] text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-[#024d2e] transition-colors">
+                      <a href="tel:+21600000000" className="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-primary-dark transition-colors">
                         📞 Appelez-nous
                       </a>
                       <a href="mailto:contact@quelyos.com" className="flex-1 bg-gray-200 text-gray-900 px-4 py-2 rounded-lg font-semibold text-center hover:bg-gray-300 transition-colors">
@@ -706,62 +720,6 @@ export default function ProductDetailPage() {
         )}
         </div>
       </div>
-
-      {/* Modal Zoom Image */}
-      {showImageModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-fadeIn"
-          onClick={() => setShowImageModal(false)}
-        >
-          <button
-            onClick={() => setShowImageModal(false)}
-            className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-xl z-10"
-          >
-            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <div className="relative max-w-6xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
-            {/* Image zoom */}
-            <div className="relative aspect-square w-full bg-white rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src={mainImage}
-                alt={product.name}
-                fill
-                className="object-contain"
-                sizes="(max-width: 1536px) 90vw, 1400px"
-                priority
-              />
-            </div>
-
-            {/* Navigation images */}
-            {product.images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/70 backdrop-blur-sm rounded-xl p-2">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === index
-                        ? 'border-white scale-110'
-                        : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
-                  >
-                    <Image
-                      src={image.url}
-                      alt={`${product.name} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }

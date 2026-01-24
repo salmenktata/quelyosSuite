@@ -14,31 +14,113 @@
                     </div>
                     <group>
                         <div class="alert alert-info" role="alert">
-                            <strong>Note:</strong> Les paramètres frontend (URLs, webhooks, feature flags) ont été déplacés vers
+                            <strong>Note:</strong> Les paramètres frontend techniques (URLs, webhooks, feature flags) sont dans
                             <a href="/web#model=quelyos.frontend.config&amp;view_type=form" target="_blank">Configuration Frontend</a>
                         </div>
                     </group>
                     <notebook>
-                        <page string="Catalogue">
+                        <page string="Marque" name="brand">
+                            <group>
+                                <group string="Informations de la marque">
+                                    <field name="brand_name"/>
+                                    <field name="brand_slogan"/>
+                                    <field name="brand_description"/>
+                                </group>
+                                <group string="Contact">
+                                    <field name="brand_email"/>
+                                    <field name="brand_phone"/>
+                                    <field name="brand_whatsapp"/>
+                                    <field name="contact_form_recipients"
+                                           widget="char"
+                                           placeholder="contact@quelyos.com, support@quelyos.com"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Réseaux sociaux" name="social">
+                            <group>
+                                <group string="Liens réseaux sociaux">
+                                    <field name="social_facebook" placeholder="https://facebook.com/..."/>
+                                    <field name="social_instagram" placeholder="https://instagram.com/..."/>
+                                    <field name="social_twitter" placeholder="https://twitter.com/..."/>
+                                </group>
+                                <group>
+                                    <field name="social_youtube" placeholder="https://youtube.com/..."/>
+                                    <field name="social_linkedin" placeholder="https://linkedin.com/..."/>
+                                    <field name="social_tiktok" placeholder="https://tiktok.com/..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Livraison" name="shipping">
+                            <group>
+                                <group string="Livraison standard">
+                                    <field name="free_shipping_threshold"/>
+                                    <field name="shipping_days_min"/>
+                                    <field name="shipping_days_max"/>
+                                </group>
+                                <group string="Livraison express">
+                                    <field name="express_shipping_days_min"/>
+                                    <field name="express_shipping_days_max"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Retours et garantie" name="returns">
+                            <group>
+                                <group string="Politique de retour">
+                                    <field name="return_window_days"/>
+                                    <field name="refund_days_min"/>
+                                    <field name="refund_days_max"/>
+                                </group>
+                                <group string="Garantie">
+                                    <field name="warranty_years"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Service client" name="customer_service">
+                            <group>
+                                <group string="Horaires du service client">
+                                    <field name="cs_hours_start"/>
+                                    <field name="cs_hours_end"/>
+                                    <field name="cs_days"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Devise et fidélité" name="currency_loyalty">
+                            <group>
+                                <group string="Devise par défaut">
+                                    <field name="default_currency_code"/>
+                                    <field name="default_currency_symbol"/>
+                                </group>
+                                <group string="Programme de fidélité">
+                                    <field name="loyalty_points_ratio"/>
+                                    <field name="default_discount_percent"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="SEO" name="seo">
+                            <group>
+                                <group string="Configuration SEO">
+                                    <field name="site_url"/>
+                                    <field name="site_title"/>
+                                    <field name="site_description"/>
+                                </group>
+                                <group string="Options">
+                                    <field name="enable_auto_slug"/>
+                                    <field name="default_meta_description"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Catalogue" name="catalogue">
                             <group>
                                 <group string="Affichage Produits">
                                     <field name="show_out_of_stock"/>
                                 </group>
                             </group>
                         </page>
-                        <page string="Panier et Commandes">
+                        <page string="Panier" name="cart">
                             <group>
-                                <group string="Panier">
+                                <group string="Configuration panier">
                                     <field name="cart_session_duration"/>
                                     <field name="min_order_amount"/>
-                                </group>
-                            </group>
-                        </page>
-                        <page string="SEO">
-                            <group>
-                                <group>
-                                    <field name="enable_auto_slug"/>
-                                    <field name="default_meta_description"/>
                                 </group>
                             </group>
                         </page>

@@ -15,6 +15,7 @@ export interface Product {
   description: string;
   technical_description?: string;
   list_price: number;
+  compare_at_price?: number;
   currency: Currency;
   is_featured: boolean;
   is_new: boolean;
@@ -26,8 +27,12 @@ export interface Product {
   seo: SEOData;
   view_count: number;
   wishlist_count: number;
+  avg_rating?: number;
+  review_count?: number;
   variants?: ProductVariant[];
   related_products?: number[];
+  default_code?: string;
+  image_url?: string;
 }
 
 export interface ProductVariant {
@@ -37,6 +42,8 @@ export interface ProductVariant {
   in_stock: boolean;
   stock_qty: number;
   attributes: ProductAttribute[];
+  images?: ProductImage[];
+  image_url?: string;
 }
 
 export interface ProductAttribute {
@@ -50,6 +57,7 @@ export interface ProductImage {
   id: string | number;
   url: string;
   alt: string;
+  is_main?: boolean;
 }
 
 export interface Category {
@@ -59,6 +67,7 @@ export interface Category {
   parent_name?: string;
   child_count?: number;
   product_count?: number;
+  image_url?: string;
 }
 
 export interface Currency {
@@ -87,6 +96,7 @@ export interface Cart {
   line_count: number;
   item_count: number;
   cart_last_update?: string;
+  coupon_code?: string;
 }
 
 export interface CartLine {
@@ -100,6 +110,7 @@ export interface CartLine {
   price_subtotal: number;
   price_total: number;
   discount: number;
+  currency_symbol?: string;
 }
 
 export interface Order {
@@ -213,3 +224,6 @@ export interface ProductListResponse {
     price_range: { min: number; max: number };
   };
 }
+
+// Re-export CMS types
+export * from './cms';

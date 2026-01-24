@@ -179,12 +179,46 @@ export class OdooClient {
     return this.jsonrpc(`/products/slug/${slug}`);
   }
 
+  async getUpsellProducts(productId: number, limit: number = 3): Promise<{ success: boolean; products?: Product[]; error?: string }> {
+    return this.jsonrpc(`/products/${productId}/upsell`, { limit });
+  }
+
+  async getRecommendations(productId: number, limit: number = 8): Promise<APIResponse & { data?: { products: Product[] } }> {
+    return this.jsonrpc(`/products/${productId}/recommendations`, { limit });
+  }
+
+  // ========================================
+  // SEARCH
+  // ========================================
+
+  async searchAutocomplete(query: string, limit: number = 8, includeCategories: boolean = true): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/search/autocomplete', {
+      query,
+      limit,
+      include_categories: includeCategories
+    });
+  }
+
+  async getPopularSearches(limit: number = 5): Promise<APIResponse & { data?: { popular_searches: Array<{ query: string; type: string; count: number; category_id?: number }> } }> {
+    return this.jsonrpc('/search/popular', { limit });
+  }
+
   // ========================================
   // CATÉGORIES
   // ========================================
 
-  async getCategories(filters: { limit?: number; offset?: number } = {}): Promise<{ success: boolean; categories: any[]; error?: string }> {
-    return this.jsonrpc('/categories', filters);
+  async getCategories(filters: {
+    limit?: number;
+    offset?: number;
+    include_featured_products?: boolean;
+    featured_limit?: number;
+  } = {}): Promise<{ success: boolean; data?: { categories: any[] }; categories?: any[]; error?: string }> {
+    const result = await this.jsonrpc('/categories', filters);
+    // Support both response formats
+    if (result.data?.categories) {
+      return { ...result, categories: result.data.categories };
+    }
+    return result;
   }
 
   async getCategory(id: number): Promise<{ success: boolean; category?: any; error?: string }> {
@@ -227,6 +261,14 @@ export class OdooClient {
     return this.jsonrpc('/checkout/shipping', { delivery_method_id });
   }
 
+  async getDeliveryMethods(): Promise<APIResponse & { data?: { delivery_methods: any[] } }> {
+    return this.jsonrpc('/checkout/delivery-methods');
+  }
+
+  async completeCheckout(data: any): Promise<APIResponse & { order?: Order }> {
+    return this.jsonrpc('/checkout/complete', data);
+  }
+
   async confirmOrder(data: {
     shipping_address_id?: number;
     billing_address_id?: number;
@@ -235,6 +277,30 @@ export class OdooClient {
     notes?: string;
   }): Promise<APIResponse & { order?: Order }> {
     return this.jsonrpc('/checkout/confirm', data);
+  }
+
+  // ========================================
+  // PAYMENT
+  // ========================================
+
+  async createPayPalOrder(orderId: number): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/payment/paypal/create-order', { order_id: orderId });
+  }
+
+  async capturePayPalOrder(paypalOrderId: string, orderId: number): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/payment/paypal/capture-order', {
+      paypal_order_id: paypalOrderId,
+      order_id: orderId
+    });
+  }
+
+  async createWalletPayment(data: {
+    amount: number;
+    payment_method_id: number;
+    shipping_address: any;
+    order_id?: number;
+  }): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/payment/wallet/create', data);
   }
 
   // ========================================
@@ -289,6 +355,22 @@ export class OdooClient {
     return this.jsonrpc(`/wishlist/remove/${product_id}`);
   }
 
+  async getPublicWishlist(token: string): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc(`/wishlist/public/${token}`);
+  }
+
+  // ========================================
+  // MARKETING
+  // ========================================
+
+  async getActivePopups(pageUrl: string): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/popups/active', { page_url: pageUrl });
+  }
+
+  async trackPopupClick(popupId: number): Promise<APIResponse> {
+    return this.jsonrpc(`/popups/${popupId}/click`);
+  }
+
   // ========================================
   // COUPONS
   // ========================================
@@ -303,6 +385,91 @@ export class OdooClient {
 
   async getAvailableCoupons(): Promise<APIResponse & { coupons?: any[] }> {
     return this.jsonrpc('/coupons/available');
+  }
+
+  // Analytics
+  async getAnalyticsDashboard(period: string = '30d'): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/analytics/dashboard', { period });
+  }
+
+  // Cart recovery
+  async recoverCart(token: string): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc(`/cart/recover/${token}`, {});
+  }
+
+  // Product facets (filters)
+  async getProductFacets(categoryId?: number): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/products/facets', { category_id: categoryId });
+  }
+
+  // Stock alerts
+  async getStockAlertStatus(productId: number): Promise<APIResponse & { data?: { subscribed: boolean; subscription_id?: number } }> {
+    return this.jsonrpc(`/products/${productId}/stock-alert-status`);
+  }
+
+  async subscribeToStockAlert(productId: number, email: string): Promise<APIResponse & { data?: { message: string; subscription_id: number } }> {
+    return this.jsonrpc(`/products/${productId}/notify-restock`, { email });
+  }
+
+  async unsubscribeFromStockAlert(subscriptionId: number): Promise<APIResponse> {
+    return this.jsonrpc(`/stock-alerts/unsubscribe/${subscriptionId}`);
+  }
+
+  // SEO metadata
+  async getProductSeoMetadata(productId: number): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc(`/seo/product/${productId}`);
+  }
+
+  async getBreadcrumbsData(productId: number): Promise<APIResponse & { data?: { breadcrumbs: any[]; structured_data?: any } }> {
+    return this.jsonrpc(`/seo/breadcrumbs/${productId}`);
+  }
+
+  async getOrganizationSeoData(): Promise<APIResponse & { data?: { structured_data?: any } }> {
+    return this.jsonrpc('/seo/organization');
+  }
+
+  // Site configuration
+  async getSiteConfig(): Promise<APIResponse & { data?: { config: any } }> {
+    return this.jsonrpc('/site-config');
+  }
+
+  async getBrandConfig(): Promise<APIResponse & { data?: { brand: any; social: any } }> {
+    return this.jsonrpc('/site-config/brand');
+  }
+
+  async getShippingConfig(): Promise<APIResponse & { data?: { shipping: any; returns: any } }> {
+    return this.jsonrpc('/site-config/shipping');
+  }
+
+  // ========================================
+  // CONTACT
+  // ========================================
+
+  async submitContactForm(data: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject: string;
+    message: string;
+  }): Promise<APIResponse & { message?: string }> {
+    return this.jsonrpc('/contact', data);
+  }
+
+  // Loyalty program
+  async getLoyaltyBalance(): Promise<APIResponse & { data?: any }> {
+    return this.jsonrpc('/loyalty/balance');
+  }
+
+  async getLoyaltyTiers(): Promise<APIResponse & { data?: { tiers: any[] } }> {
+    return this.jsonrpc('/loyalty/tiers');
+  }
+
+  async redeemLoyaltyPoints(points: number, orderId?: number): Promise<APIResponse & { data?: { discount_amount: number; new_balance: number; message: string } }> {
+    return this.jsonrpc('/loyalty/redeem', { points, order_id: orderId });
+  }
+
+  async calculateLoyaltyPoints(amount: number): Promise<APIResponse & { data?: { points: number; program_active: boolean } }> {
+    return this.jsonrpc('/loyalty/calculate-points', { amount });
   }
 }
 

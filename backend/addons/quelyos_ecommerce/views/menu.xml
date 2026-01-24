@@ -24,6 +24,12 @@
               action="product.product_category_action_form"
               sequence="20"/>
 
+    <menuitem id="menu_ecommerce_seo"
+              name="SEO Metadata"
+              parent="menu_ecommerce_catalog"
+              action="quelyos_ecommerce.action_seo_metadata"
+              sequence="30"/>
+
     <!-- Commandes -->
     <menuitem id="menu_ecommerce_orders"
               name="Commandes"
@@ -42,10 +48,80 @@
               action="quelyos_ecommerce.action_abandoned_carts"
               sequence="20"/>
 
-    <!-- Configuration E-commerce sous Configuration Quelyos -->
+    <!-- Customer Features -->
+    <menuitem id="menu_wishlist"
+              name="Wishlists"
+              parent="menu_ecommerce_root"
+              action="quelyos_ecommerce.action_wishlist"
+              sequence="30"/>
+
+    <!-- Reviews -->
+    <menuitem id="menu_product_reviews"
+              name="Avis Produits"
+              parent="menu_ecommerce_root"
+              action="quelyos_ecommerce.action_product_reviews"
+              sequence="35"/>
+
+    <!-- Contenu CMS -->
+    <menuitem id="menu_ecommerce_content"
+              name="Contenu"
+              parent="menu_ecommerce_root"
+              sequence="37"/>
+
+    <menuitem id="menu_cms_pages"
+              name="Pages"
+              parent="menu_ecommerce_content"
+              action="quelyos_ecommerce.action_cms_page"
+              sequence="10"/>
+
+    <menuitem id="menu_cms_menus"
+              name="Menus"
+              parent="menu_ecommerce_content"
+              action="quelyos_ecommerce.action_cms_menu"
+              sequence="20"/>
+
+    <menuitem id="menu_cms_blocks"
+              name="Blocs"
+              parent="menu_ecommerce_content"
+              action="quelyos_ecommerce.action_cms_block"
+              sequence="30"/>
+
+    <!-- Analytics -->
+    <menuitem id="menu_ecommerce_analytics"
+              name="Analytics"
+              parent="menu_ecommerce_root"
+              action="quelyos_ecommerce.action_ecommerce_analytics"
+              sequence="40"/>
+
+    <!-- Reports -->
+    <menuitem id="menu_ecommerce_reports"
+              name="Rapports"
+              parent="menu_ecommerce_root"
+              sequence="50"/>
+
+    <menuitem id="menu_ecommerce_sales_report"
+              name="Rapport Ventes"
+              parent="menu_ecommerce_reports"
+              action="quelyos_ecommerce.action_ecommerce_sales_report"
+              sequence="10"/>
+
+    <!-- Marketing -->
+    <menuitem id="menu_ecommerce_coupons"
+              name="Coupons"
+              parent="menu_ecommerce_root"
+              action="quelyos_ecommerce.action_ecommerce_coupon"
+              sequence="60"/>
+
+    <!-- Configuration -->
     <menuitem id="menu_ecommerce_config"
               name="E-commerce"
               parent="quelyos_core.menu_quelyos_config"
               action="quelyos_ecommerce.action_ecommerce_config"
               sequence="20"/>
+
+    <menuitem id="menu_cache_management"
+              name="Gestion Cache"
+              parent="quelyos_core.menu_quelyos_config"
+              action="quelyos_ecommerce.action_redis_config"
+              sequence="30"/>
 </odoo>

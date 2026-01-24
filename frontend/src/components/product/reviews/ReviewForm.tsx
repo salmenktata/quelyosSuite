@@ -110,9 +110,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit, onCancel }
           placeholder="Partagez votre expérience avec ce produit..."
           rows={5}
           maxLength={1000}
-          className={\`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01613a] \${
+          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring \${
             errors.comment ? 'border-red-500' : 'border-gray-300'
-          }\`}
+          }`}
         />
         {errors.comment && (
           <p className="mt-1 text-sm text-red-600">{errors.comment}</p>

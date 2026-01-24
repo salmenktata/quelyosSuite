@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- CMS MENU VIEWS                               -->
+    <!-- ============================================ -->
+
+    <!-- Formulaire Menu -->
+    <record id="view_cms_menu_form" model="ir.ui.view">
+        <field name="name">cms.menu.form</field>
+        <field name="model">cms.menu</field>
+        <field name="arch" type="xml">
+            <form string="Menu">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du menu"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="header, footer_quick, mobile..."/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="item_count"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description de l'emplacement de ce menu..."/>
+                    <notebook>
+                        <page string="Items du menu" name="items">
+                            <field name="item_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Liste Menus -->
+    <record id="view_cms_menu_tree" model="ir.ui.view">
+        <field name="name">cms.menu.tree</field>
+        <field name="model">cms.menu</field>
+        <field name="arch" type="xml">
+            <list string="Menus">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="item_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Recherche Menus -->
+    <record id="view_cms_menu_search" model="ir.ui.view">
+        <field name="name">cms.menu.search</field>
+        <field name="model">cms.menu</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un menu">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Actifs" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactifs" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Menus -->
+    <record id="action_cms_menu" model="ir.actions.act_window">
+        <field name="name">Menus du site</field>
+        <field name="res_model">cms.menu</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier menu
+            </p>
+            <p>
+                Les menus permettent de définir la navigation sur votre site.<br/>
+                Codes recommandés : header, footer_quick, footer_service, mobile
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- CMS MENU ITEM VIEWS                          -->
+    <!-- ============================================ -->
+
+    <!-- Liste Menu Items -->
+    <record id="view_cms_menu_item_tree" model="ir.ui.view">
+        <field name="name">cms.menu.item.tree</field>
+        <field name="model">cms.menu.item</field>
+        <field name="arch" type="xml">
+            <list string="Items de menu" editable="bottom" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="link_type"/>
+                <field name="resolved_url" readonly="1"/>
+                <field name="parent_id" optional="show"/>
+                <field name="visibility"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Formulaire Menu Item (pour édition popup) -->
+    <record id="view_cms_menu_item_form" model="ir.ui.view">
+        <field name="name">cms.menu.item.form</field>
+        <field name="model">cms.menu.item</field>
+        <field name="arch" type="xml">
+            <form string="Item de menu">
+                <sheet>
+                    <group>
+                        <group string="Informations">
+                            <field name="name"/>
+                            <field name="menu_id"/>
+                            <field name="parent_id" domain="[('menu_id', '=', menu_id)]"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Lien">
+                            <field name="link_type"/>
+                            <field name="url" invisible="link_type != 'url'"/>
+                            <field name="internal_route" invisible="link_type != 'internal'"/>
+                            <field name="page_id" invisible="link_type != 'page'"/>
+                            <field name="category_id" invisible="link_type != 'category'"/>
+                            <field name="product_id" invisible="link_type != 'product'"/>
+                            <field name="resolved_url" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Affichage">
+                            <field name="icon" placeholder="fa-home, heroicon-outline-phone..."/>
+                            <field name="css_class"/>
+                            <field name="highlight"/>
+                            <field name="open_in_new_tab"/>
+                        </group>
+                        <group string="Visibilité">
+                            <field name="visibility"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

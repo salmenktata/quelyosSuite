@@ -1,26 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ProductGrid } from '@/components/product';
+import { ProductGrid, ProductCard } from '@/components/product';
 import { Loading } from '@/components/common';
 import { odooClient } from '@/lib/odoo/client';
-
-interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  list_price: number;
-  currency: {
-    symbol: string;
-  };
-  images: Array<{
-    url: string;
-    alt: string;
-  }>;
-  is_featured?: boolean;
-  is_new?: boolean;
-  in_stock: boolean;
-}
+import type { Product } from '@/types';
 
 interface ProductRecommendationsProps {
   productId?: number;
@@ -63,7 +47,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
           if (productId) {
             // Get similar products based on category or tags
             const response = await odooClient.getProducts({
-              filters: { category_id: productId },
+              category_id: productId,
               limit,
             });
             if (response.success) {
@@ -75,8 +59,8 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
         case 'complementary':
           // In a real app, this would use purchase history data
           const compResponse = await odooClient.getProducts({
-            filters: { is_featured: true },
-            limit,
+              is_featured: true,
+              limit,
           });
           if (compResponse.success) {
             setProducts(compResponse.products.filter(p => !excludeIds.includes(p.id)));
@@ -88,18 +72,18 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
           const recentlyViewed = getRecentlyViewedProducts();
           if (recentlyViewed.length > 0) {
             const viewedResponse = await odooClient.getProducts({
-              filters: { ids: recentlyViewed },
               limit,
             });
             if (viewedResponse.success) {
-              setProducts(viewedResponse.products);
+              // Filter products by IDs from recently viewed
+              setProducts(viewedResponse.products.filter(p => recentlyViewed.includes(p.id)));
             }
           }
           break;
 
         case 'popular':
           const popularResponse = await odooClient.getProducts({
-            filters: { is_bestseller: true },
+            is_bestseller: true,
             limit,
           });
           if (popularResponse.success) {
@@ -125,7 +109,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayTitle}</h2>
         <div className="flex justify-center py-12">
-          <Loading size="lg" />
+          <Loading />
         </div>
       </div>
     );
@@ -143,7 +127,11 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
           <span className="text-sm text-gray-500">{products.length} produit{products.length > 1 ? 's' : ''}</span>
         )}
       </div>
-      <ProductGrid products={products} columns={4} />
+      <ProductGrid>
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </ProductGrid>
     </div>
   );
 };

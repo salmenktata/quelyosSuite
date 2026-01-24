@@ -250,11 +250,11 @@
         </record>
 
         <!-- Menu coupons -->
-        <menuitem id="menu_ecommerce_coupons"
-                  name="Coupons"
-                  parent="menu_ecommerce_root"
-                  action="action_ecommerce_coupon"
-                  sequence="45"/>
+<!--         <menuitem id="menu_ecommerce_coupons" (moved to menu.xml) -->
+<!--                   name="Coupons" (moved to menu.xml) -->
+<!--                   parent="menu_ecommerce_root" (moved to menu.xml) -->
+<!--                   action="action_ecommerce_coupon" (moved to menu.xml) -->
+<!--                   sequence="45"/> (moved to menu.xml) -->
 
     </data>
 </odoo>

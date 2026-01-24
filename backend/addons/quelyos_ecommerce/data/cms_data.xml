@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================ -->
+        <!-- MENUS PAR DÉFAUT                             -->
+        <!-- ============================================ -->
+
+        <!-- Menu Header -->
+        <record id="menu_header" model="cms.menu">
+            <field name="name">Menu Header</field>
+            <field name="code">header</field>
+            <field name="description">Menu de navigation principal affiché dans le header du site</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Menu Footer - Liens Rapides -->
+        <record id="menu_footer_quick" model="cms.menu">
+            <field name="name">Footer - Liens Rapides</field>
+            <field name="code">footer_quick</field>
+            <field name="description">Colonne de liens rapides dans le footer</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Menu Footer - Service Client -->
+        <record id="menu_footer_service" model="cms.menu">
+            <field name="name">Footer - Service Client</field>
+            <field name="code">footer_service</field>
+            <field name="description">Colonne service client dans le footer</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- Menu Mobile -->
+        <record id="menu_mobile" model="cms.menu">
+            <field name="name">Menu Mobile</field>
+            <field name="code">mobile</field>
+            <field name="description">Menu hamburger pour la version mobile</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- PAGES CMS PAR DÉFAUT                         -->
+        <!-- ============================================ -->
+
+        <!-- Page À propos -->
+        <record id="page_about" model="cms.page">
+            <field name="name">À propos</field>
+            <field name="slug">about</field>
+            <field name="template">standard</field>
+            <field name="state">published</field>
+            <field name="excerpt">Découvrez l'histoire et les valeurs de notre entreprise.</field>
+            <field name="content"><![CDATA[
+                <h2>Notre histoire</h2>
+                <p>Bienvenue chez Quelyos ! Nous sommes une entreprise passionnée par l'excellence et l'innovation.</p>
+
+                <h2>Notre mission</h2>
+                <p>Offrir à nos clients les meilleurs produits avec un service de qualité exceptionnelle.</p>
+
+                <h2>Nos valeurs</h2>
+                <ul>
+                    <li><strong>Qualité</strong> - Nous sélectionnons rigoureusement nos produits</li>
+                    <li><strong>Service</strong> - Votre satisfaction est notre priorité</li>
+                    <li><strong>Innovation</strong> - Nous évoluons constamment pour vous</li>
+                </ul>
+            ]]></field>
+            <field name="meta_title">À propos - Quelyos</field>
+            <field name="meta_description">Découvrez l'histoire, la mission et les valeurs de Quelyos. Une entreprise engagée pour votre satisfaction.</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Page Contact -->
+        <record id="page_contact" model="cms.page">
+            <field name="name">Contact</field>
+            <field name="slug">contact</field>
+            <field name="template">contact</field>
+            <field name="state">published</field>
+            <field name="excerpt">Contactez-nous pour toute question ou demande.</field>
+            <field name="content"><![CDATA[
+                <h2>Contactez-nous</h2>
+                <p>Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
+
+                <h3>Nos coordonnées</h3>
+                <ul>
+                    <li><strong>Email :</strong> contact@quelyos.com</li>
+                    <li><strong>Téléphone :</strong> +33 1 23 45 67 89</li>
+                    <li><strong>Adresse :</strong> 123 Rue du Commerce, 75001 Paris</li>
+                </ul>
+
+                <h3>Horaires d'ouverture</h3>
+                <p>Du lundi au vendredi : 9h00 - 18h00<br/>
+                Samedi : 10h00 - 16h00</p>
+            ]]></field>
+            <field name="meta_title">Contactez-nous - Quelyos</field>
+            <field name="meta_description">Contactez l'équipe Quelyos pour toute question. Nous sommes disponibles par email, téléphone ou en boutique.</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Page FAQ -->
+        <record id="page_faq" model="cms.page">
+            <field name="name">FAQ</field>
+            <field name="slug">faq</field>
+            <field name="template">faq</field>
+            <field name="state">published</field>
+            <field name="excerpt">Questions fréquemment posées sur nos produits et services.</field>
+            <field name="content"><![CDATA[
+                <h2>Questions Fréquentes</h2>
+                <p>Retrouvez les réponses aux questions les plus courantes.</p>
+            ]]></field>
+            <field name="meta_title">FAQ - Questions Fréquentes - Quelyos</field>
+            <field name="meta_description">Trouvez rapidement les réponses à vos questions sur nos produits, la livraison, les retours et plus encore.</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Page Politique de confidentialité -->
+        <record id="page_privacy" model="cms.page">
+            <field name="name">Politique de confidentialité</field>
+            <field name="slug">privacy</field>
+            <field name="template">standard</field>
+            <field name="state">published</field>
+            <field name="excerpt">Comment nous protégeons vos données personnelles.</field>
+            <field name="content"><![CDATA[
+                <h2>Politique de confidentialité</h2>
+                <p>Dernière mise à jour : janvier 2024</p>
+
+                <h3>1. Collecte des données</h3>
+                <p>Nous collectons les informations que vous nous fournissez lors de votre inscription, de vos commandes ou de vos contacts avec notre service client.</p>
+
+                <h3>2. Utilisation des données</h3>
+                <p>Vos données sont utilisées pour :</p>
+                <ul>
+                    <li>Traiter vos commandes</li>
+                    <li>Vous contacter concernant votre compte</li>
+                    <li>Améliorer nos services</li>
+                    <li>Vous envoyer des communications marketing (avec votre consentement)</li>
+                </ul>
+
+                <h3>3. Protection des données</h3>
+                <p>Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données personnelles.</p>
+
+                <h3>4. Vos droits</h3>
+                <p>Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous pour exercer ces droits.</p>
+            ]]></field>
+            <field name="meta_title">Politique de confidentialité - Quelyos</field>
+            <field name="meta_description">Découvrez comment Quelyos collecte, utilise et protège vos données personnelles conformément au RGPD.</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- Page Conditions générales -->
+        <record id="page_terms" model="cms.page">
+            <field name="name">Conditions générales de vente</field>
+            <field name="slug">terms</field>
+            <field name="template">standard</field>
+            <field name="state">published</field>
+            <field name="excerpt">Conditions générales régissant vos achats sur notre site.</field>
+            <field name="content"><![CDATA[
+                <h2>Conditions Générales de Vente</h2>
+                <p>Dernière mise à jour : janvier 2024</p>
+
+                <h3>Article 1 - Objet</h3>
+                <p>Les présentes conditions générales régissent les ventes de produits effectuées sur le site quelyos.com.</p>
+
+                <h3>Article 2 - Prix</h3>
+                <p>Les prix sont indiqués en euros TTC. Nous nous réservons le droit de modifier nos prix à tout moment.</p>
+
+                <h3>Article 3 - Commande</h3>
+                <p>La validation de votre commande implique l'acceptation des présentes conditions générales de vente.</p>
+
+                <h3>Article 4 - Paiement</h3>
+                <p>Le paiement est exigible immédiatement à la commande. Les moyens de paiement acceptés sont : carte bancaire, PayPal.</p>
+
+                <h3>Article 5 - Livraison</h3>
+                <p>Les délais de livraison sont indiqués lors de la commande. Ils sont donnés à titre indicatif.</p>
+            ]]></field>
+            <field name="meta_title">Conditions Générales de Vente - Quelyos</field>
+            <field name="meta_description">Consultez les conditions générales de vente régissant vos achats sur le site Quelyos.</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Page Livraison -->
+        <record id="page_shipping" model="cms.page">
+            <field name="name">Livraison</field>
+            <field name="slug">shipping</field>
+            <field name="template">standard</field>
+            <field name="state">published</field>
+            <field name="excerpt">Informations sur nos modes et délais de livraison.</field>
+            <field name="content"><![CDATA[
+                <h2>Informations Livraison</h2>
+
+                <h3>Modes de livraison</h3>
+                <ul>
+                    <li><strong>Livraison standard</strong> : 3-5 jours ouvrés - 4,90€</li>
+                    <li><strong>Livraison express</strong> : 24-48h - 9,90€</li>
+                    <li><strong>Point relais</strong> : 3-5 jours ouvrés - 3,90€</li>
+                </ul>
+
+                <h3>Livraison gratuite</h3>
+                <p>La livraison est offerte à partir de 50€ d'achat.</p>
+
+                <h3>Suivi de commande</h3>
+                <p>Un email de confirmation avec votre numéro de suivi vous est envoyé dès l'expédition de votre colis.</p>
+
+                <h3>Zones de livraison</h3>
+                <p>Nous livrons en France métropolitaine, Belgique, Suisse et Luxembourg.</p>
+            ]]></field>
+            <field name="meta_title">Livraison - Quelyos</field>
+            <field name="meta_description">Découvrez nos options de livraison : standard, express ou point relais. Livraison gratuite dès 50€ d'achat.</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- Page Retours -->
+        <record id="page_returns" model="cms.page">
+            <field name="name">Retours et remboursements</field>
+            <field name="slug">returns</field>
+            <field name="template">standard</field>
+            <field name="state">published</field>
+            <field name="excerpt">Notre politique de retours et remboursements.</field>
+            <field name="content"><![CDATA[
+                <h2>Politique de Retours</h2>
+
+                <h3>Délai de rétractation</h3>
+                <p>Vous disposez de 30 jours après réception de votre commande pour retourner un article.</p>
+
+                <h3>Conditions de retour</h3>
+                <ul>
+                    <li>Article non utilisé et dans son emballage d'origine</li>
+                    <li>Étiquettes intactes</li>
+                    <li>Accompagné du bon de retour</li>
+                </ul>
+
+                <h3>Procédure de retour</h3>
+                <ol>
+                    <li>Connectez-vous à votre compte client</li>
+                    <li>Accédez à vos commandes et sélectionnez "Retourner un article"</li>
+                    <li>Imprimez l'étiquette de retour</li>
+                    <li>Déposez votre colis en point relais</li>
+                </ol>
+
+                <h3>Remboursement</h3>
+                <p>Le remboursement est effectué sous 14 jours après réception et vérification de l'article retourné.</p>
+            ]]></field>
+            <field name="meta_title">Retours et Remboursements - Quelyos</field>
+            <field name="meta_description">Retour gratuit sous 30 jours. Découvrez notre politique de retours et la procédure simple pour retourner un article.</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ITEMS DE MENU - HEADER                       -->
+        <!-- ============================================ -->
+
+        <record id="menu_item_header_products" model="cms.menu.item">
+            <field name="name">Tous les Produits</field>
+            <field name="menu_id" ref="menu_header"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/products</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_item_header_new" model="cms.menu.item">
+            <field name="name">Nouveautés</field>
+            <field name="menu_id" ref="menu_header"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/products?new=true</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_item_header_bestsellers" model="cms.menu.item">
+            <field name="name">Meilleures Ventes</field>
+            <field name="menu_id" ref="menu_header"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/products?bestseller=true</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_item_header_contact" model="cms.menu.item">
+            <field name="name">Contact</field>
+            <field name="menu_id" ref="menu_header"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_contact"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ITEMS DE MENU - FOOTER QUICK                 -->
+        <!-- ============================================ -->
+
+        <record id="menu_item_footer_products" model="cms.menu.item">
+            <field name="name">Produits</field>
+            <field name="menu_id" ref="menu_footer_quick"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/products</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_item_footer_about" model="cms.menu.item">
+            <field name="name">À propos</field>
+            <field name="menu_id" ref="menu_footer_quick"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_about"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_item_footer_contact" model="cms.menu.item">
+            <field name="name">Contact</field>
+            <field name="menu_id" ref="menu_footer_quick"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_contact"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_item_footer_account" model="cms.menu.item">
+            <field name="name">Mon Compte</field>
+            <field name="menu_id" ref="menu_footer_quick"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/account</field>
+            <field name="visibility">authenticated</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ITEMS DE MENU - FOOTER SERVICE               -->
+        <!-- ============================================ -->
+
+        <record id="menu_item_footer_faq" model="cms.menu.item">
+            <field name="name">FAQ</field>
+            <field name="menu_id" ref="menu_footer_service"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_faq"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_item_footer_shipping" model="cms.menu.item">
+            <field name="name">Livraison</field>
+            <field name="menu_id" ref="menu_footer_service"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_shipping"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_item_footer_returns" model="cms.menu.item">
+            <field name="name">Retours</field>
+            <field name="menu_id" ref="menu_footer_service"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_returns"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_item_footer_privacy" model="cms.menu.item">
+            <field name="name">Confidentialité</field>
+            <field name="menu_id" ref="menu_footer_service"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_privacy"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_item_footer_terms" model="cms.menu.item">
+            <field name="name">CGV</field>
+            <field name="menu_id" ref="menu_footer_service"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_terms"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ITEMS DE MENU - MOBILE                       -->
+        <!-- ============================================ -->
+
+        <record id="menu_item_mobile_home" model="cms.menu.item">
+            <field name="name">Accueil</field>
+            <field name="menu_id" ref="menu_mobile"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/</field>
+            <field name="icon">fa-home</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <record id="menu_item_mobile_products" model="cms.menu.item">
+            <field name="name">Produits</field>
+            <field name="menu_id" ref="menu_mobile"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/products</field>
+            <field name="icon">fa-shopping-bag</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_item_mobile_cart" model="cms.menu.item">
+            <field name="name">Panier</field>
+            <field name="menu_id" ref="menu_mobile"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/cart</field>
+            <field name="icon">fa-shopping-cart</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_item_mobile_account" model="cms.menu.item">
+            <field name="name">Mon Compte</field>
+            <field name="menu_id" ref="menu_mobile"/>
+            <field name="link_type">internal</field>
+            <field name="internal_route">/account</field>
+            <field name="icon">fa-user</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_item_mobile_contact" model="cms.menu.item">
+            <field name="name">Contact</field>
+            <field name="menu_id" ref="menu_mobile"/>
+            <field name="link_type">page</field>
+            <field name="page_id" ref="page_contact"/>
+            <field name="icon">fa-envelope</field>
+            <field name="sequence">40</field>
+        </record>
+
+    </data>
+</odoo>

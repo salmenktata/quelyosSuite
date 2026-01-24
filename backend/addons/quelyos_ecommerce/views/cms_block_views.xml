@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- CMS BLOCK VIEWS                              -->
+    <!-- ============================================ -->
+
+    <!-- Formulaire Bloc CMS -->
+    <record id="view_cms_block_form" model="ir.ui.view">
+        <field name="name">cms.block.form</field>
+        <field name="model">cms.block</field>
+        <field name="arch" type="xml">
+            <form string="Bloc CMS">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du bloc"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="hero_banner, newsletter_signup..."/>
+                            <field name="block_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="css_class" placeholder="my-class another-class"/>
+                            <field name="background_color" placeholder="#ffffff"/>
+                            <field name="text_color" placeholder="#000000"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contenu" name="content">
+                            <!-- Contenu HTML (pour types html, text) -->
+                            <group invisible="block_type not in ('html', 'text', 'cta', 'hero', 'banner')">
+                                <field name="content" widget="html" nolabel="1"/>
+                            </group>
+
+                            <!-- Contenu JSON (pour types structurés) -->
+                            <group invisible="block_type not in ('accordion', 'gallery', 'testimonial', 'features', 'stats', 'team', 'pricing')">
+                                <field name="content_json" widget="ace" options="{'mode': 'json'}"
+                                       placeholder='[{"title": "Question 1", "content": "Réponse 1"}]'/>
+                            </group>
+                        </page>
+
+                        <page string="Médias" name="media">
+                            <group>
+                                <group string="Image">
+                                    <field name="image" widget="image"/>
+                                    <field name="image_url" placeholder="https://..."/>
+                                </group>
+                                <group string="Vidéo">
+                                    <field name="video_url" placeholder="https://youtube.com/watch?v=..."/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Bouton" name="button" invisible="block_type not in ('button', 'cta', 'hero', 'banner')">
+                            <group>
+                                <group>
+                                    <field name="button_text" placeholder="En savoir plus"/>
+                                    <field name="button_url" placeholder="/products"/>
+                                    <field name="button_style"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Produits" name="products" invisible="block_type not in ('product_carousel', 'category_grid')">
+                            <group>
+                                <group>
+                                    <field name="product_filter"/>
+                                    <field name="product_limit"/>
+                                </group>
+                            </group>
+                            <group invisible="product_filter != 'manual'">
+                                <field name="product_ids" widget="many2many_tags"/>
+                            </group>
+                            <group invisible="block_type != 'category_grid'">
+                                <field name="category_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Style avancé" name="style">
+                            <group>
+                                <group>
+                                    <field name="padding" placeholder="20px, 2rem 1rem"/>
+                                    <field name="margin" placeholder="0 auto, 20px 0"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Liste Blocs -->
+    <record id="view_cms_block_tree" model="ir.ui.view">
+        <field name="name">cms.block.tree</field>
+        <field name="model">cms.block</field>
+        <field name="arch" type="xml">
+            <list string="Blocs CMS">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="block_type"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Recherche Blocs -->
+    <record id="view_cms_block_search" model="ir.ui.view">
+        <field name="name">cms.block.search</field>
+        <field name="model">cms.block</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un bloc">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Actifs" name="active" domain="[('active', '=', True)]"/>
+                <filter string="HTML" name="html" domain="[('block_type', '=', 'html')]"/>
+                <filter string="Image" name="image" domain="[('block_type', '=', 'image')]"/>
+                <filter string="Vidéo" name="video" domain="[('block_type', '=', 'video')]"/>
+                <filter string="CTA" name="cta" domain="[('block_type', '=', 'cta')]"/>
+                <filter string="Produits" name="products" domain="[('block_type', 'in', ['product_carousel', 'category_grid'])]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Blocs -->
+    <record id="action_cms_block" model="ir.actions.act_window">
+        <field name="name">Blocs réutilisables</field>
+        <field name="res_model">cms.block</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier bloc
+            </p>
+            <p>
+                Les blocs sont des éléments de contenu réutilisables :<br/>
+                Bannières, Call-to-action, Carrousels de produits, FAQ, etc.
+            </p>
+        </field>
+    </record>
+
+</odoo>

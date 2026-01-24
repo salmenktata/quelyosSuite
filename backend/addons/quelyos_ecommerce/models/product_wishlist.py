@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import uuid
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -76,12 +77,25 @@ class ResPartner(models.Model):
         string='Wishlist Count',
         compute='_compute_wishlist_count'
     )
+    wishlist_share_token = fields.Char(
+        string='Wishlist Share Token',
+        copy=False,
+        index=True,
+        help='Token for sharing wishlist publicly'
+    )
 
     @api.depends('wishlist_ids')
     def _compute_wishlist_count(self):
         """Count wishlist items"""
         for partner in self:
             partner.wishlist_count = len(partner.wishlist_ids)
+
+    def generate_wishlist_share_token(self):
+        """Generate or return existing share token for wishlist"""
+        self.ensure_one()
+        if not self.wishlist_share_token:
+            self.wishlist_share_token = str(uuid.uuid4())
+        return self.wishlist_share_token
 
     def add_to_wishlist(self, product_id):
         """Add product to wishlist"""

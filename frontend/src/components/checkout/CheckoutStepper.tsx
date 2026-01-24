@@ -13,10 +13,10 @@ const steps = [
   { number: 4, label: 'Confirmation', icon: '✓' },
 ];
 
-const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ currentStep }) => {
+export const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ currentStep }) => {
   const getStepClass = (stepNum: number) => {
     if (stepNum < currentStep) return 'bg-green-500 text-white';
-    if (stepNum === currentStep) return 'bg-[#01613a] text-white ring-4 ring-[#01613a]/20';
+    if (stepNum === currentStep) return 'bg-primary text-white ring-4 ring-primary/20';
     return 'bg-gray-200 text-gray-500';
   };
 
@@ -53,7 +53,7 @@ const CheckoutStepper: React.FC<CheckoutStepperProps> = ({ currentStep }) => {
           <span>{Math.round((currentStep / steps.length) * 100)}%</span>
         </div>
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div className={`h-full bg-[#01613a] transition-all duration-500`} style={{ width: `${(currentStep / steps.length) * 100}%` }} />
+          <div className={`h-full bg-primary transition-all duration-500`} style={{ width: `${(currentStep / steps.length) * 100}%` }} />
         </div>
       </div>
     </div>

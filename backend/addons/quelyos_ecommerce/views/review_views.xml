@@ -55,11 +55,11 @@
         </record>
 
         <!-- Menu reviews sous menu_ecommerce_root -->
-        <menuitem id="menu_product_reviews"
-                  name="Avis Produits"
-                  parent="menu_ecommerce_root"
-                  action="action_product_reviews"
-                  sequence="30"/>
+<!--         <menuitem id="menu_product_reviews" (moved to menu.xml) -->
+<!--                   name="Avis Produits" (moved to menu.xml) -->
+<!--                   parent="menu_ecommerce_root" (moved to menu.xml) -->
+<!--                   action="action_product_reviews" (moved to menu.xml) -->
+<!--                   sequence="30"/> (moved to menu.xml) -->
 
     </data>
 </odoo>

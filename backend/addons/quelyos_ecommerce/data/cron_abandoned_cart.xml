@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Cron Job: Detect Abandoned Carts -->
+        <record id="cron_detect_abandoned_carts" model="ir.cron">
+            <field name="name">E-commerce: Detect Abandoned Carts</field>
+            <field name="model_id" ref="model_abandoned_cart"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_detect_abandoned_carts()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- Cron Job: Send Recovery Emails -->
+        <record id="cron_send_recovery_emails" model="ir.cron">
+            <field name="name">E-commerce: Send Cart Recovery Emails</field>
+            <field name="model_id" ref="model_abandoned_cart"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_send_recovery_emails()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- Cron Job: Expire Old Carts -->
+        <record id="cron_expire_old_carts" model="ir.cron">
+            <field name="name">E-commerce: Expire Old Abandoned Carts</field>
+            <field name="model_id" ref="model_abandoned_cart"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_expire_old_carts()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

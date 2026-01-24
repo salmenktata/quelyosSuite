@@ -108,7 +108,7 @@ export default function RegisterPage() {
       <div className="max-w-md w-full">
         {/* Logo et titre */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-linear-to-br from-[#01613a] to-[#028a52] rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl">
+          <div className="w-20 h-20 bg-linear-to-br from-primary to-primary-light rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                   required
                   autoComplete="name"
                   autoFocus
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
               {errors.name && (
@@ -185,7 +185,7 @@ export default function RegisterPage() {
                   placeholder="exemple@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
               {errors.email && (
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                   placeholder="+216 XX XXX XXX"
                   required
                   autoComplete="tel"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
               {errors.phone && (
@@ -251,7 +251,7 @@ export default function RegisterPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="new-password"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
               {errors.password && (
@@ -290,7 +290,7 @@ export default function RegisterPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="new-password"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
               {errors.confirmPassword && (
@@ -316,15 +316,15 @@ export default function RegisterPage() {
                       setErrors((prev) => ({ ...prev, terms: '' }));
                     }
                   }}
-                  className="h-4 w-4 text-[#01613a] border-gray-300 rounded focus:ring-[#01613a] mt-0.5"
+                  className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-ring mt-0.5"
                 />
                 <label htmlFor="accept-terms" className="ml-2 text-sm text-gray-700">
                   J'accepte les{' '}
-                  <Link href="/terms" className="text-[#01613a] hover:text-[#024d2e] font-semibold transition-colors">
+                  <Link href="/terms" className="text-primary hover:text-primary-dark font-semibold transition-colors">
                     conditions générales
                   </Link>
                   {' '}et la{' '}
-                  <Link href="/privacy" className="text-[#01613a] hover:text-[#024d2e] font-semibold transition-colors">
+                  <Link href="/privacy" className="text-primary hover:text-primary-dark font-semibold transition-colors">
                     politique de confidentialité
                   </Link>
                 </label>
@@ -343,7 +343,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#01613a] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#024d2e] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3"
+              className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <>
@@ -380,7 +380,7 @@ export default function RegisterPage() {
               Vous avez déjà un compte?{' '}
               <Link
                 href="/login"
-                className="text-[#01613a] hover:text-[#024d2e] font-bold transition-colors"
+                className="text-primary hover:text-primary-dark font-bold transition-colors"
               >
                 Se connecter
               </Link>
@@ -391,14 +391,14 @@ export default function RegisterPage() {
         {/* Avantages */}
         <div className="mt-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <svg className="w-8 h-8 text-[#01613a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
             Avantages membre
           </h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-              <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
@@ -410,7 +410,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-              <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -422,7 +422,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-              <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
@@ -434,7 +434,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-              <div className="w-10 h-10 bg-[#01613a] rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>

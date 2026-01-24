@@ -3,7 +3,8 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, Loading, Input } from '@/components/common';
+import { Button, Input } from '@/components/common';
+import { LoadingSpinner } from '@/components/common/Loading';
 import { CartItem, CartSummary } from '@/components/cart';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
@@ -65,7 +66,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-7xl">
         <nav className="text-sm mb-6 text-gray-600">
-          <Link href="/" className="hover:text-[#01613a]">Accueil</Link>
+          <Link href="/" className="hover:text-primary">Accueil</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-900 font-medium">Panier</span>
         </nav>
@@ -90,7 +91,7 @@ export default function CartPage() {
 
         {isLoading && !cart && (
           <div className="flex justify-center items-center py-20">
-            <Loading size="lg" />
+            <LoadingSpinner size="lg" />
           </div>
         )}
 

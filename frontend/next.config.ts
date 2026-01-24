@@ -8,9 +8,15 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '8069',
-        pathname: '/web/image/**',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.odoo.com',
+        pathname: '/**',
       },
     ],
+    unoptimized: process.env.NODE_ENV === 'development', // Désactive l'optimisation en dev pour debug
     formats: ['image/avif', 'image/webp'], // Formats modernes optimisés
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

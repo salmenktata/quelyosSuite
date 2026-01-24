@@ -327,3 +327,204 @@ class EcommerceCheckoutController(BaseEcommerceController):
 
         except Exception as e:
             return self._handle_error(e, "récupération des méthodes de livraison")
+
+    @http.route('/api/ecommerce/checkout/complete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    @rate_limit(limit=5, window=300)
+    def complete_checkout(self, **kwargs):
+        """
+        Complete checkout in a single atomic transaction (One-Page Checkout)
+
+        Accepts all checkout data at once:
+        - Shipping address
+        - Delivery method
+        - Payment method
+        - Order notes
+
+        Args:
+            shipping_address: dict with address fields
+            delivery_method_id: int
+            payment_method_id: int (or payment_method: 'stripe', 'paypal', etc.)
+            notes: str (optional)
+            save_address: bool (optional)
+
+        Returns:
+            dict: Complete order with payment info
+        """
+        try:
+            params = kwargs or {}
+
+            # Get user
+            user = request.env.user
+            if not user or user._is_public():
+                return self._error_response("Authentication required", 401)
+
+            partner = user.partner_id
+            input_validator = request.env['input.validator']
+
+            # Get cart
+            cart = self._get_cart()
+
+            if not cart or not cart.order_line:
+                return self._error_response("Cart is empty", 400)
+
+            # Start transaction (will rollback if any error occurs)
+            with request.env.cr.savepoint():
+
+                # STEP 1: Process Shipping Address
+                shipping_address = params.get('shipping_address', {})
+                shipping_partner = None
+
+                if shipping_address:
+                    # Validate and sanitize address fields
+                    address_data = {
+                        'name': input_validator.validate_string(
+                            shipping_address.get('name', partner.name),
+                            'name', max_length=100
+                        ),
+                        'street': input_validator.validate_string(
+                            shipping_address.get('street', ''),
+                            'street', max_length=200
+                        ),
+                        'street2': input_validator.validate_string(
+                            shipping_address.get('street2', ''),
+                            'street2', max_length=200, required=False
+                        ),
+                        'city': input_validator.validate_string(
+                            shipping_address.get('city', ''),
+                            'city', max_length=100
+                        ),
+                        'zip': input_validator.validate_string(
+                            shipping_address.get('zip', ''),
+                            'zip', max_length=20
+                        ),
+                        'phone': input_validator.validate_string(
+                            shipping_address.get('phone', partner.phone or ''),
+                            'phone', max_length=50
+                        ),
+                        'email': input_validator.validate_email(
+                            shipping_address.get('email', partner.email or '')
+                        ),
+                        'type': 'delivery',
+                        'parent_id': partner.id,
+                    }
+
+                    # Country
+                    country_id = shipping_address.get('country_id')
+                    if country_id:
+                        address_data['country_id'] = input_validator.validate_id(country_id, 'country_id')
+
+                    # State (optional)
+                    state_id = shipping_address.get('state_id')
+                    if state_id:
+                        address_data['state_id'] = input_validator.validate_id(state_id, 'state_id')
+
+                    # Create or update shipping address
+                    shipping_partner = request.env['res.partner'].sudo().create(address_data)
+                    cart.partner_shipping_id = shipping_partner.id
+
+                    _logger.info(f"Shipping address created: {shipping_partner.id}")
+
+                # STEP 2: Apply Delivery Method
+                delivery_method_id = params.get('delivery_method_id')
+                if delivery_method_id:
+                    delivery_method_id = input_validator.validate_id(delivery_method_id, 'delivery_method_id')
+                    delivery_carrier = request.env['delivery.carrier'].sudo().browse(delivery_method_id)
+
+                    if delivery_carrier.exists():
+                        shipping_cost = delivery_carrier.get_shipping_price_from_so(cart)[0]
+                        cart.set_delivery_line(delivery_carrier, shipping_cost)
+                        _logger.info(f"Delivery method applied: {delivery_carrier.name}")
+
+                # STEP 3: Add Order Notes
+                notes = params.get('notes')
+                if notes:
+                    notes_str = input_validator.validate_string(notes, field_name='notes', max_length=500)
+                    cart.frontend_notes = notes_str
+
+                # STEP 4: Confirm Order
+                cart.action_confirm()
+                _logger.info(f"Order confirmed: {cart.name} (id={cart.id})")
+
+                # STEP 5: Handle Payment
+                payment_method = params.get('payment_method')  # 'stripe', 'paypal', 'bank_transfer', etc.
+                payment_method_id = params.get('payment_method_id')  # Alternative: provider ID
+
+                payment_info = {}
+
+                if payment_method == 'stripe' or (payment_method_id and 'stripe' in str(payment_method_id).lower()):
+                    # Stripe payment - return client secret for frontend
+                    payment_provider = request.env['payment.provider'].sudo().search([
+                        ('code', '=', 'stripe'),
+                        ('state', '=', 'enabled')
+                    ], limit=1)
+
+                    if payment_provider:
+                        # Create payment transaction
+                        tx = request.env['payment.transaction'].sudo().create({
+                            'provider_id': payment_provider.id,
+                            'amount': cart.amount_total,
+                            'currency_id': cart.currency_id.id,
+                            'partner_id': partner.id,
+                            'sale_order_ids': [(6, 0, [cart.id])],
+                            'reference': cart.name,
+                        })
+
+                        payment_info = {
+                            'payment_method': 'stripe',
+                            'transaction_id': tx.id,
+                            'amount': cart.amount_total,
+                            'currency': cart.currency_id.name,
+                            # Client should use existing Stripe integration
+                        }
+                        _logger.info(f"Stripe transaction created: {tx.id}")
+
+                elif payment_method == 'paypal':
+                    # PayPal - order will be created separately via PayPal controller
+                    payment_info = {
+                        'payment_method': 'paypal',
+                        'amount': cart.amount_total,
+                        'currency': cart.currency_id.name,
+                        'order_id': cart.id,
+                    }
+
+                elif payment_method == 'bank_transfer' or payment_method == 'cod':
+                    # Cash on delivery or bank transfer - no immediate payment
+                    payment_info = {
+                        'payment_method': payment_method,
+                        'amount': cart.amount_total,
+                        'currency': cart.currency_id.name,
+                        'instructions': 'Payment instructions will be sent by email',
+                    }
+
+                # STEP 6: Save address for future (if requested)
+                save_address = params.get('save_address', False)
+                if save_address and shipping_partner:
+                    # Address is already created and linked to partner
+                    pass
+
+                # Return complete order info
+                return self._success_response({
+                    'order': {
+                        'id': cart.id,
+                        'name': cart.name,
+                        'state': cart.state,
+                        'amount_total': cart.amount_total,
+                        'amount_tax': cart.amount_tax,
+                        'amount_untaxed': cart.amount_untaxed,
+                        'currency': cart.currency_id.name,
+                        'date_order': cart.date_order.isoformat() if cart.date_order else None,
+                    },
+                    'payment': payment_info,
+                    'shipping_address': {
+                        'name': shipping_partner.name if shipping_partner else partner.name,
+                        'street': shipping_partner.street if shipping_partner else partner.street,
+                        'city': shipping_partner.city if shipping_partner else partner.city,
+                        'zip': shipping_partner.zip if shipping_partner else partner.zip,
+                        'country': shipping_partner.country_id.name if shipping_partner and shipping_partner.country_id else (partner.country_id.name if partner.country_id else None),
+                    },
+                    'message': 'Order completed successfully',
+                })
+
+        except Exception as e:
+            _logger.error(f"Error completing checkout: {str(e)}", exc_info=True)
+            return self._handle_error(e, "completion du checkout")

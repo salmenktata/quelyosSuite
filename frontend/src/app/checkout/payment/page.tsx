@@ -23,6 +23,12 @@ const paymentMethods: PaymentMethod[] = [
     icon: 'card',
   },
   {
+    id: 'paypal',
+    name: 'PayPal',
+    description: 'Paiement sécurisé via PayPal',
+    icon: 'paypal',
+  },
+  {
     id: 'cash_on_delivery',
     name: 'Paiement à la livraison',
     description: 'Payez en espèces lors de la réception',
@@ -150,6 +156,8 @@ export default function CheckoutPaymentPage() {
                 onSubmit={handleSubmit}
                 onBack={handleBack}
                 isLoading={isSubmitting}
+                orderId={cart?.id ?? undefined}
+                orderAmount={cart?.amount_total}
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos E-commerce API',
-    'version': '19.0.1.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Quelyos',
     'summary': 'API REST pour e-commerce headless avec Next.js',
     'description': """
@@ -25,6 +25,7 @@
     'depends': [
         'base',
         'web',
+        'mail',  # Pour cms.page (mail.thread)
         'sale',
         'sale_management',
         'stock',
@@ -32,24 +33,38 @@
         'payment',
         'delivery',
         'product',
-        'quelyos_branding',
-        'quelyos_frontend',  # Configuration frontend
+        'quelyos_core',  # Configuration de base
     ],
     'sequence': 10,  # Après tous les modules Quelyos
     'data': [
         'security/ir.model.access.csv',
         'data/ecommerce_config.xml',
+        'data/cms_data.xml',  # Menus et pages CMS par défaut
         # 'data/email_templates.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/email_template_cart_abandoned.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/email_template_stock_alert.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/email_template_contact.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/cron_abandoned_cart.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/cron_stock_alert.xml',  # TODO: Fix XML validation for Odoo 19
+        # 'data/cron_stock_reservation.xml',  # TODO: Fix XML validation for Odoo 19
         'views/ecommerce_config_views.xml',
         'views/product_views.xml',
         'views/sale_order_views.xml',
-        'views/menu.xml',  # Charger après les actions de base mais avant les sous-menus
         'views/wishlist_views.xml',
         'views/analytics_views.xml',
         'views/review_views.xml',
         'views/coupon_views.xml',
+        'views/seo_metadata_views.xml',
+        'views/redis_config_views.xml',
+        # CMS Views
+        'views/cms_menu_views.xml',
+        'views/cms_page_views.xml',
+        'views/cms_block_views.xml',
+        'views/menu.xml',  # Charger EN DERNIER après toutes les actions
     ],
-    'demo': [],
+    'demo': [
+        'data/demo_data.xml',
+    ],
     'installable': True,
     'application': True,
     'auto_install': False,

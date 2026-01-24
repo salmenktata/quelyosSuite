@@ -1,5 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Vues pour product.product.image - UX simplifiée -->
+
+    <!-- Vue Kanban: Interface visuelle pour gérer les images -->
+    <record id="view_product_product_image_kanban" model="ir.ui.view">
+        <field name="name">product.product.image.kanban</field>
+        <field name="model">product.product.image</field>
+        <field name="arch" type="xml">
+            <kanban default_order="sequence" class="o_kanban_mobile" quick_create="false">
+                <field name="id"/>
+                <field name="sequence"/>
+                <field name="image"/>
+                <field name="is_main"/>
+                <field name="is_promo"/>
+                <field name="alt_text"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_image">
+                                <img t-if="record.image.raw_value"
+                                     t-att-src="'data:image/png;base64,' + record.image.raw_value"
+                                     alt="Product Image"
+                                     class="o_attachment_image"/>
+                                <div t-else="" class="o_kanban_image_placeholder">
+                                    <i class="fa fa-image fa-3x text-muted"/>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong><field name="alt_text"/></strong>
+                                <div>
+                                    <span t-if="record.is_main.raw_value" class="badge bg-primary">Main</span>
+                                    <span t-if="record.is_promo.raw_value" class="badge bg-warning">Promo</span>
+                                </div>
+                                <div class="text-muted">
+                                    Ordre: <field name="sequence"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue Form: Formulaire simplifié pour upload -->
+    <record id="view_product_product_image_form" model="ir.ui.view">
+        <field name="name">product.product.image.form</field>
+        <field name="model">product.product.image</field>
+        <field name="arch" type="xml">
+            <form string="Ajouter une Image">
+                <sheet>
+                    <!-- Hidden field to receive auto-filled product_tmpl_id -->
+                    <field name="product_tmpl_id" invisible="1"/>
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-info-circle"/>
+                        <strong>Glissez-déposez une image ou cliquez pour parcourir</strong>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="image" widget="image" options="{'size': [200, 200]}"/>
+                        </group>
+                        <group>
+                            <field name="alt_text"
+                                   placeholder="Ex: T-Shirt Rouge vue de face"
+                                   help="Description pour SEO et accessibilité"/>
+                            <field name="sequence" help="Ordre d'affichage (plus petit = premier)"/>
+                            <separator string="Options"/>
+                            <field name="is_main" help="Image principale du produit"/>
+                            <field name="is_promo" help="Image pour promotions/publicités"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Tree: Fallback simple (SANS widget handle pour éviter erreurs JS) -->
+    <record id="view_product_product_image_tree" model="ir.ui.view">
+        <field name="name">product.product.image.tree</field>
+        <field name="model">product.product.image</field>
+        <field name="arch" type="xml">
+            <list default_order="sequence">
+                <field name="sequence"/>
+                <field name="image" widget="image"/>
+                <field name="alt_text"/>
+                <field name="is_main"/>
+                <field name="is_promo"/>
+            </list>
+        </field>
+    </record>
+
     <!-- Vue formulaire produit e-commerce -->
     <record id="view_product_template_ecommerce_form" model="ir.ui.view">
         <field name="name">product.template.ecommerce.form</field>
@@ -66,12 +158,13 @@
                 <field name="is_featured"/>
                 <field name="is_new"/>
                 <field name="qty_available"/>
-                <field name="image_128"/>
                 <templates>
                     <t t-name="card">
                         <div class="oe_kanban_global_click">
                             <div class="o_kanban_image">
-                                <img t-att-src="record.image_128.value" alt="Product" class="o_image_64_cover"/>
+                                <img t-attf-src="/web/image/product.template/#{record.id.raw_value}/image_128"
+                                     alt="Product"
+                                     class="o_image_64_cover"/>
                             </div>
                             <div class="oe_kanban_details">
                                 <strong><field name="name"/></strong>
@@ -79,15 +172,98 @@
                                     <field name="list_price" widget="monetary"/>
                                 </div>
                                 <div>
-                                    <span t-if="record.is_featured.raw_value" class="badge badge-success">Featured</span>
-                                    <span t-if="record.is_new.raw_value" class="badge badge-info">New</span>
-                                    <span t-if="record.qty_available.raw_value == 0" class="badge badge-danger">Rupture</span>
+                                    <span t-if="record.is_featured.raw_value" class="badge bg-success">Featured</span>
+                                    <span t-if="record.is_new.raw_value" class="badge bg-info">New</span>
+                                    <span t-if="record.qty_available.raw_value == 0" class="badge bg-danger">Rupture</span>
                                 </div>
                             </div>
                         </div>
                     </t>
                 </templates>
             </kanban>
+        </field>
+    </record>
+
+    <!-- Vue formulaire pour product.product (variants) avec onglet images -->
+    <record id="view_product_product_variant_form" model="ir.ui.view">
+        <field name="name">product.product.variant.ecommerce.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Images du Variant" name="variant_images">
+                    <group string="Images de ce variant">
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-lightbulb-o"/>
+                            <strong>Gestion intelligente des images par attributs:</strong>
+                            <ul>
+                                <li>Les images sont assignées aux <strong>valeurs d'attributs</strong> (ex: Couleur Rouge, Taille L)</li>
+                                <li>Ce variant hérite automatiquement des images de ses attributs</li>
+                                <li>Pour ajouter des images:
+                                    <ul>
+                                        <li>Allez sur le template produit → Onglet E-commerce → Images Gallery</li>
+                                        <li>Uploadez les images et sélectionnez les valeurs d'attributs (ex: Rouge)</li>
+                                        <li>Toutes les variantes avec cette valeur afficheront ces images</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            Si aucune image d'attribut, les images du template sont utilisées (fallback).
+                        </div>
+
+                        <!-- Display readonly images inherited from attribute values -->
+                        <field name="image_ids"
+                               nolabel="1"
+                               mode="kanban"
+                               readonly="1"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Vue formulaire pour product.template.attribute.value (ex: Couleur: Rouge) -->
+    <record id="view_product_template_attribute_value_images_form" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.images.form</field>
+        <field name="model">product.template.attribute.value</field>
+        <field name="inherit_id" ref="product.product_template_attribute_value_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="inside">
+                <field name="product_tmpl_id" invisible="1"/>
+                <notebook>
+                    <page string="Images" name="images">
+                        <group string="Images pour cette valeur d'attribut">
+                            <div class="alert alert-success" role="alert">
+                                <i class="fa fa-check-circle"/>
+                                <strong>Upload intelligent par valeur d'attribut</strong>
+                                <ul>
+                                    <li>Les images uploadées ici s'appliqueront à <strong>toutes les variantes</strong> ayant cette valeur d'attribut</li>
+                                    <li>Exemple: Si vous êtes sur "Couleur: Rouge", ces images s'afficheront pour:
+                                        <ul>
+                                            <li>T-Shirt Rouge S</li>
+                                            <li>T-Shirt Rouge M</li>
+                                            <li>T-Shirt Rouge L</li>
+                                            <li>etc.</li>
+                                        </ul>
+                                    </li>
+                                    <li>Glissez-déposez plusieurs images d'un coup</li>
+                                    <li>Formats: PNG, JPG, JPEG (max 2MB)</li>
+                                </ul>
+                            </div>
+
+                            <!-- Display images assigned to this attribute value -->
+                            <field name="image_ids"
+                                   nolabel="1"
+                                   mode="list"
+                                   context="{
+                                       'default_attribute_value_ids': [(4, id)],
+                                       'default_product_tmpl_id': product_tmpl_id,
+                                       'list_view_ref': 'quelyos_ecommerce.view_product_product_image_tree',
+                                       'form_view_ref': 'quelyos_ecommerce.view_product_product_image_form'
+                                   }"/>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
         </field>
     </record>
 

@@ -66,11 +66,11 @@ const StarRating: React.FC<StarRatingProps> = ({
             onMouseEnter={() => handleMouseEnter(value)}
             onMouseLeave={handleMouseLeave}
             disabled={!interactive}
-            className={\`\${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform\`}
-            aria-label={\`Rate \${value} stars\`}
+            className={`\${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+            aria-label={`Rate \${value} stars`}
           >
             <svg
-              className={\`\${sizes[size]} \${getStarColor(value)} transition-colors\`}
+              className={`\${sizes[size]} \${getStarColor(value)} transition-colors`}
               fill="currentColor"
               viewBox="0 0 20 20"
             >

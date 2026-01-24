@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="quelyos_ecommerce.ImageUploadWidget">
+        <div class="o_field_image_upload_widget"
+             t-on-dragover.prevent="onDragOver"
+             t-on-dragleave="onDragLeave"
+             t-on-drop.prevent="onDrop"
+             t-att-class="state.isDragging ? 'dragging' : ''">
+
+            <div class="upload-zone">
+                <i class="fa fa-cloud-upload fa-3x text-muted"/>
+                <p class="text-muted mb-2">Glissez-déposez des images ou cliquez pour parcourir</p>
+                <input type="file"
+                       multiple="true"
+                       accept="image/png,image/jpeg,image/jpg"
+                       t-on-change="onFileSelect"
+                       class="d-none"
+                       t-ref="fileInput"/>
+                <button class="btn btn-primary"
+                        t-on-click="() => this.$refs.fileInput.click()"
+                        type="button">
+                    <i class="fa fa-upload"/> Sélectionner Images
+                </button>
+                <p class="text-muted small mt-2 mb-0">
+                    PNG, JPG, JPEG (max 2MB par image)
+                </p>
+            </div>
+
+            <div t-if="state.uploading" class="upload-progress mt-3">
+                <div class="alert alert-info">
+                    <i class="fa fa-spinner fa-spin"/> Upload en cours...
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

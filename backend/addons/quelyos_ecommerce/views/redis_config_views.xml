@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Redis Configuration in System Parameters -->
+    <record id="action_redis_config" model="ir.actions.act_window">
+        <field name="name">Redis Configuration</field>
+        <field name="res_model">ir.config_parameter</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('key', 'like', 'redis.%')]</field>
+        <field name="context">{'search_default_redis': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configurer Redis Cache
+            </p>
+            <p>
+                Configurez les paramètres de connexion Redis pour améliorer les performances.
+            </p>
+            <ul>
+                <li><b>redis.host</b>: Hôte Redis (défaut: localhost)</li>
+                <li><b>redis.port</b>: Port Redis (défaut: 6379)</li>
+                <li><b>redis.db</b>: Base de données Redis (défaut: 0)</li>
+                <li><b>redis.password</b>: Mot de passe Redis (optionnel)</li>
+            </ul>
+        </field>
+    </record>
+
+    <!-- Cache Management Dashboard (Transient Model) -->
+    <record id="view_cache_management_form" model="ir.ui.view">
+        <field name="name">cache.management.form</field>
+        <field name="model">ir.config_parameter</field>
+        <field name="arch" type="xml">
+            <form string="Cache Management">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Redis Cache Management</h1>
+                    </div>
+                    <group>
+                        <group>
+                            <div class="alert alert-info" role="alert">
+                                <p><b>Cache Status:</b> Vérifiez via API: /api/ecommerce/cache/stats</p>
+                                <p><b>Clear Cache:</b> Utilisez l'API: /api/ecommerce/cache/clear</p>
+                                <p><b>Warm Up:</b> Utilisez l'API: /api/ecommerce/cache/warmup</p>
+                            </div>
+                        </group>
+                    </group>
+
+                    <group string="Configuration Redis">
+                        <p>Les paramètres Redis sont configurés via les Paramètres Système:</p>
+                        <ul>
+                            <li>redis.host (défaut: localhost)</li>
+                            <li>redis.port (défaut: 6379)</li>
+                            <li>redis.db (défaut: 0)</li>
+                            <li>redis.password (optionnel)</li>
+                        </ul>
+                    </group>
+
+                    <group string="Cache Patterns">
+                        <p>Patterns de cache utilisés:</p>
+                        <ul>
+                            <li><b>product:api:*</b> - Détails produits pour API</li>
+                            <li><b>product:seo:*</b> - Métadonnées SEO produits</li>
+                            <li><b>products:list:*</b> - Listes de produits</li>
+                            <li><b>products:facets:*</b> - Facettes de recherche</li>
+                            <li><b>analytics:*</b> - Données analytiques</li>
+                            <li><b>search:*</b> - Résultats de recherche</li>
+                            <li><b>recommendations:*</b> - Recommandations produits</li>
+                        </ul>
+                    </group>
+
+                    <group string="Installation Redis">
+                        <p>Pour installer Redis:</p>
+                        <ol>
+                            <li>Installer Redis: <code>apt-get install redis-server</code> (Ubuntu/Debian)</li>
+                            <li>Installer la bibliothèque Python: <code>pip install redis</code></li>
+                            <li>Démarrer Redis: <code>systemctl start redis</code></li>
+                            <li>Configurer les paramètres système ci-dessus</li>
+                            <li>Redémarrer Odoo</li>
+                        </ol>
+                    </group>
+
+                    <group string="Endpoints API">
+                        <p>Endpoints disponibles (admin uniquement):</p>
+                        <ul>
+                            <li><b>POST /api/ecommerce/cache/stats</b> - Statistiques cache</li>
+                            <li><b>POST /api/ecommerce/cache/clear</b> - Vider le cache</li>
+                            <li><b>POST /api/ecommerce/cache/warmup</b> - Pré-charger le cache</li>
+                        </ul>
+                        <p>Endpoints avec cache automatique:</p>
+                        <ul>
+                            <li><b>POST /api/ecommerce/products/list/cached</b> - Liste produits (cache 5min)</li>
+                            <li><b>POST /api/ecommerce/products/&lt;id&gt;/cached</b> - Détails produit (cache 1h)</li>
+                        </ul>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu for Cache Management -->
+<!--     <menuitem id="menu_cache_management" (moved to menu.xml) -->
+<!--               name="Redis Cache" (moved to menu.xml) -->
+<!--               parent="quelyos_core.menu_quelyos_config" (moved to menu.xml) -->
+<!--               action="action_redis_config" (moved to menu.xml) -->
+<!--               sequence="50"/> (moved to menu.xml) -->
+
+</odoo>

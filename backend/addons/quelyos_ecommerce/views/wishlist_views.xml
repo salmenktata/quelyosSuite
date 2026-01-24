@@ -162,12 +162,7 @@
             </field>
         </record>
 
-        <!-- Menu wishlist sous E-commerce -->
-        <menuitem id="menu_wishlist"
-                  name="Wishlists"
-                  parent="menu_ecommerce_root"
-                  action="action_wishlist"
-                  sequence="30"/>
+        <!-- Menu wishlist moved to menu.xml to fix load order -->
 
     </data>
 </odoo>

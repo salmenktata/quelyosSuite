@@ -63,7 +63,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
   if (isLoading) {
     return (
       <section className="container mx-auto px-4 max-w-7xl py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center">Explorez nos catégories</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-gray-900">Explorez nos catégories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
@@ -82,7 +82,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
   return (
     <section className="container mx-auto px-4 max-w-7xl py-12">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold mb-3">Explorez nos catégories</h2>
+        <h2 className="text-3xl font-bold mb-3 text-gray-900">Explorez nos catégories</h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Trouvez l'équipement parfait pour votre activité sportive
         </p>
@@ -109,7 +109,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
                 {/* Nombre de produits badge */}
                 {category.product_count !== undefined && (
                   <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                    <span className="text-sm font-bold text-[#01613a]">
+                    <span className="text-sm font-bold text-primary">
                       {category.product_count}
                     </span>
                   </div>
@@ -118,7 +118,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
 
               {/* Info */}
               <div className="p-4 text-center">
-                <h3 className="font-bold text-gray-900 group-hover:text-[#01613a] transition-colors mb-1">
+                <h3 className="font-bold text-gray-900 group-hover:text-primary transition-colors mb-1">
                   {category.name}
                 </h3>
                 {category.product_count !== undefined && (
@@ -135,7 +135,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
       {/* Lien voir toutes les catégories */}
       <div className="text-center mt-10">
         <Link href="/categories">
-          <button className="inline-flex items-center gap-2 text-[#01613a] font-semibold hover:gap-3 transition-all">
+          <button className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
             <span>Voir toutes les catégories</span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

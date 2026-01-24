@@ -4,14 +4,14 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
@@ -54,7 +54,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         {/* Logo et titre */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-[#01613a] to-[#028a52] rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl">
+          <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary-light rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -97,7 +97,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   autoFocus
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#01613a] focus:ring-2 focus:ring-[#01613a]/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all"
                 />
               </div>
             </div>
@@ -134,7 +134,7 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#01613a] border-gray-300 rounded focus:ring-[#01613a]"
+                  className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-ring"
                 />
                 <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700 font-medium">
                   Se souvenir de moi
@@ -143,7 +143,7 @@ export default function LoginPage() {
 
               <Link
                 href="/forgot-password"
-                className="text-sm text-[#01613a] hover:text-[#024d2e] font-semibold transition-colors"
+                className="text-sm text-primary hover:text-primary-dark font-semibold transition-colors"
               >
                 Mot de passe oublié?
               </Link>
@@ -153,7 +153,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#01613a] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#024d2e] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3"
+              className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <>
@@ -190,7 +190,7 @@ export default function LoginPage() {
               Vous n'avez pas de compte?{' '}
               <Link
                 href="/register"
-                className="text-[#01613a] hover:text-[#024d2e] font-bold transition-colors"
+                className="text-primary hover:text-primary-dark font-bold transition-colors"
               >
                 Créer un compte
               </Link>
@@ -203,7 +203,7 @@ export default function LoginPage() {
           <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="flex flex-col items-center gap-2">
-                <div className="w-12 h-12 bg-[#01613a] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
@@ -211,7 +211,7 @@ export default function LoginPage() {
                 <span className="text-xs font-semibold text-gray-700">Sécurisé SSL</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <div className="w-12 h-12 bg-[#01613a] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -219,7 +219,7 @@ export default function LoginPage() {
                 <span className="text-xs font-semibold text-gray-700">Protégé</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <div className="w-12 h-12 bg-[#01613a] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
@@ -231,5 +231,21 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function LoginLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginContent />
+    </Suspense>
   );
 }

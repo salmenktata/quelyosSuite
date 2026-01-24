@@ -77,7 +77,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
   if (isLoading) {
     return (
       <div className="py-12 flex justify-center">
-        <Loading size="lg" />
+        <Loading />
       </div>
     );
   }
@@ -118,7 +118,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
               <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-yellow-400 transition-all"
-                  style={{ width: \`\${getRatingPercentage(stars)}%\` }}
+                  style={{ width: `\${getRatingPercentage(stars)}%` }}
                 />
               </div>
               <span className="text-sm text-gray-600 w-12 text-right">
@@ -163,7 +163,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#01613a]"
+              className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="recent">Plus récents</option>
               <option value="helpful">Plus utiles</option>

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/common';
+import { PayPalButton } from './PayPalButton';
 
 export interface PaymentMethod {
   id: string;
@@ -15,6 +16,8 @@ interface PaymentFormProps {
   onSubmit: (methodId: string) => void;
   onBack: () => void;
   isLoading?: boolean;
+  orderId?: number;  // For PayPal
+  orderAmount?: number;  // For PayPal
 }
 
 const PaymentForm: React.FC<PaymentFormProps> = ({
@@ -22,6 +25,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   onSubmit,
   onBack,
   isLoading = false,
+  orderId,
+  orderAmount,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string>(methods[0]?.id || '');
 
@@ -38,6 +43,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         return (
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        );
+      case 'paypal':
+        return (
+          <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.16a.804.804 0 01-.794.68H7.72a.483.483 0 01-.477-.558L9.22 8.3a.946.946 0 01.934-.8h4.776c.815 0 1.596.098 2.32.28 1.06.267 1.93.735 2.518 1.425.39.46.67 1.01.785 1.643z"/>
+            <path d="M7.5 8.3c0-.177.143-.32.32-.32h5.956c.98 0 1.913.12 2.778.36 2.28.63 3.596 2.455 3.086 5.53-.51 3.076-2.916 4.93-5.795 4.93h-.906a.8.8 0 00-.79.68l-.85 5.39a.48.48 0 01-.476.4H7.32a.32.32 0 01-.316-.372L7.5 8.3z" opacity=".7"/>
           </svg>
         );
       case 'cash':
@@ -69,7 +81,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             key={method.id}
             className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
               selectedMethod === method.id
-                ? 'border-[#01613a] bg-[#01613a]/5'
+                ? 'border-primary bg-primary/5'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -79,10 +91,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               value={method.id}
               checked={selectedMethod === method.id}
               onChange={(e) => setSelectedMethod(e.target.value)}
-              className="mt-1 text-[#01613a] focus:ring-[#01613a]"
+              className="mt-1 text-primary focus:ring-ring"
             />
             <div className="ml-4 flex-1 flex items-start gap-4">
-              <div className={`flex-shrink-0 text-gray-600 ${selectedMethod === method.id ? 'text-[#01613a]' : ''}`}>
+              <div className={`flex-shrink-0 text-gray-600 ${selectedMethod === method.id ? 'text-primary' : ''}`}>
                 {getIcon(method.icon)}
               </div>
               <div className="flex-1">
@@ -107,29 +119,61 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          disabled={isLoading}
-          className="flex-1"
-        >
-          ← Retour
-        </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={!selectedMethod || isLoading}
-          isLoading={isLoading}
-          className="flex-1"
-        >
-          Confirmer la commande
-        </Button>
-      </div>
+      {/* PayPal Button (if PayPal is selected) */}
+      {selectedMethod === 'paypal' && orderId && orderAmount ? (
+        <div className="space-y-4">
+          <PayPalButton
+            orderId={orderId}
+            amount={orderAmount}
+            onSuccess={(transactionId) => {
+              console.log('PayPal payment successful:', transactionId);
+              onSubmit('paypal');
+            }}
+            onError={(error) => {
+              console.error('PayPal payment error:', error);
+              alert(`Erreur PayPal: ${error.message}`);
+            }}
+            onCancel={() => {
+              console.log('PayPal payment cancelled');
+            }}
+          />
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            disabled={isLoading}
+            className="w-full"
+          >
+            ← Retour
+          </Button>
+        </div>
+      ) : (
+        /* Actions for other payment methods */
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            disabled={isLoading}
+            className="flex-1"
+          >
+            ← Retour
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={!selectedMethod || isLoading}
+            isLoading={isLoading}
+            className="flex-1"
+          >
+            Confirmer la commande
+          </Button>
+        </div>
+      )}
     </form>
   );
 };
 
+export { PaymentForm };
 export default PaymentForm;

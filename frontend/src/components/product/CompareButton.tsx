@@ -40,15 +40,15 @@ const CompareButton: React.FC<CompareButtonProps> = ({ product, size = 'md' }) =
   return (
     <button
       onClick={handleClick}
-      className={\`
-        \${sizeClasses[size]}
+      className={`
+        ${sizeClasses[size]}
         rounded-lg font-medium transition-all
-        \${inComparison
-          ? 'bg-[#01613a] text-white hover:bg-[#014d2e]'
+        ${inComparison
+          ? 'bg-primary text-white hover:bg-primary-dark'
           : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
         }
         flex items-center gap-2
-      \`}
+      `}
       title={inComparison ? 'Retirer de la comparaison' : 'Ajouter à la comparaison'}
     >
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- CMS PAGE VIEWS                               -->
+    <!-- ============================================ -->
+
+    <!-- Formulaire Page CMS -->
+    <record id="view_cms_page_form" model="ir.ui.view">
+        <field name="name">cms.page.form</field>
+        <field name="model">cms.page</field>
+        <field name="arch" type="xml">
+            <form string="Page CMS">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
+                    <button name="action_publish" string="Publier" type="object"
+                            invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_unpublish" string="Dépublier" type="object"
+                            invisible="state != 'published'"/>
+                    <button name="action_archive" string="Archiver" type="object"
+                            invisible="state != 'published'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-eye" disabled="1">
+                            <field name="view_count" widget="statinfo" string="Vues"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archivé" bg_color="text-bg-danger"
+                            invisible="state != 'archived'"/>
+                    <widget name="web_ribbon" title="Brouillon" bg_color="text-bg-secondary"
+                            invisible="state != 'draft'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Titre de la page"/>
+                        </h1>
+                        <div class="text-muted">
+                            <span>URL: /pages/</span>
+                            <field name="slug" class="oe_inline" placeholder="slug-url"/>
+                        </div>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="template"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <group>
+                            <field name="publish_date"/>
+                            <field name="unpublish_date"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contenu" name="content">
+                            <field name="excerpt" placeholder="Extrait court pour les aperçus et listes..."/>
+                            <separator string="Contenu principal"/>
+                            <field name="content" widget="html"/>
+                        </page>
+                        <page string="Blocs" name="blocks">
+                            <field name="block_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="block_id"/>
+                                    <field name="block_type" readonly="1"/>
+                                    <field name="zone"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="SEO" name="seo">
+                            <group>
+                                <group string="Meta Tags">
+                                    <field name="meta_title" placeholder="Titre SEO (60 caractères max)"/>
+                                    <field name="meta_description" placeholder="Description (160 caractères max)"/>
+                                    <field name="meta_keywords" placeholder="mot1, mot2, mot3"/>
+                                    <field name="canonical_url" placeholder="/pages/ma-page"/>
+                                </group>
+                                <group string="Indexation">
+                                    <field name="robots_index"/>
+                                    <field name="robots_follow"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Open Graph (Réseaux sociaux)">
+                                    <field name="og_title" placeholder="Titre pour Facebook/Twitter"/>
+                                    <field name="og_description" placeholder="Description pour partage social"/>
+                                </group>
+                                <group string="Image OG">
+                                    <field name="og_image" widget="image" class="oe_avatar"/>
+                                    <field name="og_image_url" placeholder="https://..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Affichage" name="display">
+                            <group>
+                                <group string="Options">
+                                    <field name="show_title"/>
+                                    <field name="show_breadcrumb"/>
+                                    <field name="active"/>
+                                </group>
+                                <group string="Image Header">
+                                    <field name="header_image" widget="image"/>
+                                    <field name="header_image_url" placeholder="https://..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Sous-pages" name="children" invisible="not child_ids">
+                            <field name="child_ids" readonly="1">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="slug"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Liste Pages -->
+    <record id="view_cms_page_tree" model="ir.ui.view">
+        <field name="name">cms.page.tree</field>
+        <field name="model">cms.page</field>
+        <field name="arch" type="xml">
+            <list string="Pages CMS" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="template"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'published'"
+                       decoration-warning="state == 'scheduled'"
+                       decoration-info="state == 'draft'"
+                       decoration-danger="state == 'archived'"/>
+                <field name="view_count"/>
+                <field name="publish_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Kanban Pages -->
+    <record id="view_cms_page_kanban" model="ir.ui.view">
+        <field name="name">cms.page.kanban</field>
+        <field name="model">cms.page</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="state"/>
+                <field name="template"/>
+                <field name="view_count"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="text-muted">
+                                /pages/<field name="slug"/>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span class="badge text-bg-secondary">
+                                        <field name="template"/>
+                                    </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <span title="Vues">
+                                        <i class="fa fa-eye"/> <field name="view_count"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Recherche Pages -->
+    <record id="view_cms_page_search" model="ir.ui.view">
+        <field name="name">cms.page.search</field>
+        <field name="model">cms.page</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une page">
+                <field name="name"/>
+                <field name="slug"/>
+                <filter string="Publiées" name="published" domain="[('state', '=', 'published')]"/>
+                <filter string="Brouillons" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Archivées" name="archived" domain="[('state', '=', 'archived')]"/>
+                <filter string="Standard" name="standard" domain="[('template', '=', 'standard')]"/>
+                <filter string="Landing" name="landing" domain="[('template', '=', 'landing')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Pages -->
+    <record id="action_cms_page" model="ir.actions.act_window">
+        <field name="name">Pages CMS</field>
+        <field name="res_model">cms.page</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre première page
+            </p>
+            <p>
+                Les pages CMS permettent de créer du contenu statique pour votre site :<br/>
+                À propos, Contact, FAQ, Conditions générales, etc.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_quelyos_branding_user,quelyos_branding.user,base.model_res_config_settings,base.group_user,1,0,0,0
-access_quelyos_branding_admin,quelyos_branding.admin,base.model_res_config_settings,base.group_system,1,1,1,1

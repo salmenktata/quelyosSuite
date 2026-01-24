@@ -2,7 +2,8 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { Button, Loading } from '@/components/common';
+import { Button } from '@/components/common';
+import { LoadingSpinner } from '@/components/common/Loading';
 import CartItem from './CartItem';
 import CartSummary from './CartSummary';
 import { useCartStore } from '@/store/cartStore';
@@ -87,7 +88,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           {/* Loading State */}
           {isLoading && !cart && (
             <div className="flex-1 flex items-center justify-center">
-              <Loading size="lg" />
+              <LoadingSpinner size="lg" />
             </div>
           )}
 

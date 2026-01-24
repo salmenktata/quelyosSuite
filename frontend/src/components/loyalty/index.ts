@@ -1,0 +1,1 @@
+export { LoyaltyBadge } from './LoyaltyBadge';

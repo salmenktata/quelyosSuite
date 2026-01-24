@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { Loading } from '@/components/common';
+import { LoadingSpinner } from '@/components/common/Loading';
 
 const OrderSummary: React.FC = () => {
   const { cart, isLoading } = useCartStore();
@@ -10,7 +10,7 @@ const OrderSummary: React.FC = () => {
   if (isLoading || !cart) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <Loading size="lg" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
@@ -26,9 +26,9 @@ const OrderSummary: React.FC = () => {
         {cart.lines.map((line) => (
           <div key={line.id} className="flex gap-3">
             <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
-              {line.product_image && (
+              {line.image_url && (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_ODOO_URL}${line.product_image}`}
+                  src={line.image_url}
                   alt={line.product_name}
                   className="w-full h-full object-cover rounded"
                 />
@@ -58,15 +58,6 @@ const OrderSummary: React.FC = () => {
           </span>
         </div>
 
-        {cart.coupon_discount && (
-          <div className="flex justify-between text-green-600">
-            <span>Réduction</span>
-            <span className="font-medium">
-              -{cart.coupon_discount.toFixed(2)} {cart.currency.symbol}
-            </span>
-          </div>
-        )}
-
         <div className="flex justify-between text-gray-700">
           <span>TVA</span>
           <span className="font-medium">
@@ -82,7 +73,7 @@ const OrderSummary: React.FC = () => {
         <div className="border-t border-gray-300 pt-3">
           <div className="flex justify-between items-center">
             <span className="text-lg font-bold text-gray-900">Total</span>
-            <span className="text-2xl font-bold text-[#01613a]">
+            <span className="text-2xl font-bold text-primary">
               {cart.amount_total.toFixed(2)} {cart.currency.symbol}
             </span>
           </div>
@@ -102,4 +93,5 @@ const OrderSummary: React.FC = () => {
   );
 };
 
+export { OrderSummary };
 export default OrderSummary;

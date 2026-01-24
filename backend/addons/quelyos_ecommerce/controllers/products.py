@@ -179,9 +179,13 @@ class EcommerceProductsController(BaseEcommerceController):
 
     @http.route('/api/ecommerce/categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
     @rate_limit(limit=100, window=60)
-    def get_categories(self, **kwargs):
+    def get_categories(self, include_featured_products=False, featured_limit=4, **kwargs):
         """
         Liste toutes les catégories de produits avec comptage optimisé.
+
+        Args:
+            include_featured_products: Include featured products for each category (for mega menu)
+            featured_limit: Number of featured products per category (default: 4)
 
         Returns:
         {
@@ -191,20 +195,22 @@ class EcommerceProductsController(BaseEcommerceController):
                     "name": "Electronics",
                     "parent_id": null,
                     "child_count": 3,
-                    "product_count": 25
+                    "product_count": 25,
+                    "image_url": "...",
+                    "subcategories": [...],
+                    "featured_products": [...]
                 }
             ]
         }
         """
         try:
+            # Get all categories
             categories = request.env['product.category'].sudo().search([])
 
             # Optimisation: Compter tous les produits par catégorie en 1 requête SQL (read_group)
-            # Avant: 1 + N requêtes (51 requêtes pour 50 catégories)
-            # Après: 2 requêtes totales = 25x plus rapide
             product_counts = {}
             if categories:
-                domain = [('sale_ok', '=', True), ('categ_id', 'in', categories.ids)]
+                domain = [('sale_ok', '=', True), ('active', '=', True), ('categ_id', 'in', categories.ids)]
                 groups = request.env['product.template'].sudo().read_group(
                     domain,
                     ['categ_id'],
@@ -212,16 +218,61 @@ class EcommerceProductsController(BaseEcommerceController):
                 )
                 product_counts = {g['categ_id'][0]: g['categ_id_count'] for g in groups}
 
+            # Build categories data
             categories_data = []
             for cat in categories:
-                categories_data.append({
+                cat_data = {
                     'id': cat.id,
                     'name': cat.name,
                     'parent_id': cat.parent_id.id if cat.parent_id else None,
                     'parent_name': cat.parent_id.name if cat.parent_id else None,
                     'child_count': len(cat.child_id),
                     'product_count': product_counts.get(cat.id, 0),
-                })
+                    'image_url': None,
+                    'subcategories': [],
+                }
+
+                # Get category image (if exists)
+                # Note: Odoo product.category doesn't have image by default
+                # You may need to add image field to product.category model
+                # For now, we'll use the first product's image from this category
+                if include_featured_products:
+                    first_product = request.env['product.template'].sudo().search([
+                        ('categ_id', '=', cat.id),
+                        ('sale_ok', '=', True),
+                        ('active', '=', True),
+                    ], limit=1)
+                    if first_product and first_product.image_1920:
+                        cat_data['image_url'] = f"/web/image/product.template/{first_product.id}/image_1920"
+
+                # Get subcategories
+                if cat.child_id:
+                    for child in cat.child_id:
+                        cat_data['subcategories'].append({
+                            'id': child.id,
+                            'name': child.name,
+                            'product_count': product_counts.get(child.id, 0),
+                        })
+
+                # Get featured products (best-selling or newest)
+                if include_featured_products and product_counts.get(cat.id, 0) > 0:
+                    featured_products = request.env['product.template'].sudo().search([
+                        ('categ_id', '=', cat.id),
+                        ('sale_ok', '=', True),
+                        ('active', '=', True),
+                    ], limit=featured_limit, order='create_date desc')
+
+                    cat_data['featured_products'] = []
+                    for product in featured_products:
+                        cat_data['featured_products'].append({
+                            'id': product.id,
+                            'name': product.name,
+                            'slug': product.slug if hasattr(product, 'slug') else product.name.lower().replace(' ', '-'),
+                            'price': product.list_price,
+                            'image_url': f"/web/image/product.template/{product.id}/image_128" if product.image_1920 else None,
+                        })
+
+                categories_data.append(cat_data)
 
             return self._success_response({
                 'categories': categories_data

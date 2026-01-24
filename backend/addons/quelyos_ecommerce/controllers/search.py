@@ -117,16 +117,16 @@ class SearchController(BaseEcommerceController):
 
     def _search_categories(self, query, limit=5):
         """
-        Search categories by name
+        Search categories by name using product.category (standard Odoo model)
 
         Args:
             query: Search query
             limit: Max results
 
         Returns:
-            list: Category data
+            list: Category data with product counts
         """
-        Category = request.env['product.public.category'].sudo()
+        Category = request.env['product.category'].sudo()
 
         domain = [
             ('name', 'ilike', query),
@@ -136,25 +136,23 @@ class SearchController(BaseEcommerceController):
 
         results = []
         for category in categories:
-            # Count products in category
+            # Count products in category (including child categories)
             product_count = request.env['product.template'].sudo().search_count([
-                ('public_categ_ids', 'in', [category.id]),
+                ('categ_id', 'child_of', category.id),
                 ('sale_ok', '=', True),
                 ('active', '=', True),
             ])
 
-            # Get category image (if available)
-            image_url = None
-            if category.image_128:
-                image_url = f'/web/image/product.public.category/{category.id}/image_128'
-
-            results.append({
-                'id': category.id,
-                'name': category.name,
-                'highlight': self._get_highlight(category.name, query),
-                'product_count': product_count,
-                'image': image_url,
-            })
+            # Only include categories with products
+            if product_count > 0:
+                results.append({
+                    'id': category.id,
+                    'name': category.name,
+                    'highlight': self._get_highlight(category.name, query),
+                    'product_count': product_count,
+                    'image': None,  # product.category has no image by default
+                    'parent_name': category.parent_id.name if category.parent_id else None,
+                })
 
         return results
 
@@ -275,4 +273,63 @@ class SearchController(BaseEcommerceController):
 
         except Exception as e:
             _logger.error(f"Error in search: {str(e)}")
+            return self._error_response(str(e), 500)
+
+    @http.route('/api/ecommerce/search/popular', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_popular_searches(self, limit=5):
+        """
+        Get popular/trending search suggestions
+
+        Returns category names as popular search suggestions.
+        In production, this could be enhanced with actual search tracking.
+
+        Args:
+            limit: Maximum number of suggestions (default: 5)
+
+        Returns:
+            dict: Popular search suggestions
+        """
+        try:
+            limit = min(int(limit), 10)
+            Category = request.env['product.category'].sudo()
+            ProductTemplate = request.env['product.template'].sudo()
+
+            # Get categories with the most products as "popular" suggestions
+            # Using read_group for performance
+            product_counts = ProductTemplate.read_group(
+                domain=[
+                    ('sale_ok', '=', True),
+                    ('active', '=', True),
+                ],
+                fields=['categ_id'],
+                groupby=['categ_id'],
+                orderby='categ_id_count desc',
+                limit=limit * 2  # Get more to filter
+            )
+
+            suggestions = []
+            for item in product_counts:
+                if len(suggestions) >= limit:
+                    break
+
+                if item['categ_id']:
+                    category_id = item['categ_id'][0]
+                    category_name = item['categ_id'][1]
+                    product_count = item['categ_id_count']
+
+                    # Skip generic categories like "All" or very small ones
+                    if product_count >= 1:
+                        suggestions.append({
+                            'query': category_name,
+                            'type': 'category',
+                            'count': product_count,
+                            'category_id': category_id,
+                        })
+
+            return self._success_response({
+                'popular_searches': suggestions,
+            })
+
+        except Exception as e:
+            _logger.error(f"Error getting popular searches: {str(e)}")
             return self._error_response(str(e), 500)

@@ -300,3 +300,88 @@ class EcommerceCartController(BaseEcommerceController):
 
         except Exception as e:
             return self._handle_error(e, "comptage du panier")
+
+    @http.route('/api/ecommerce/cart/recover/<string:token>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @rate_limit(limit=10, window=60)
+    def recover_cart(self, token, **kwargs):
+        """
+        Recover abandoned cart from recovery token
+
+        Args:
+            token: Recovery token from email link
+
+        Returns:
+            dict: Cart data or error
+        """
+        try:
+            # Find abandoned cart by token
+            abandoned_cart = request.env['abandoned.cart'].sudo().search([
+                ('recovery_token', '=', token),
+                ('state', 'in', ['pending', 'email_sent', 'reminded']),
+            ], limit=1)
+
+            if not abandoned_cart:
+                return self._error_response("Invalid or expired recovery link", 404)
+
+            # Get or create cart for current session
+            cart = self._get_cart()
+
+            # Parse cart data
+            import json
+            cart_data = json.loads(abandoned_cart.cart_data)
+
+            # Add products back to cart
+            products_added = 0
+            for product_data in cart_data.get('products', []):
+                product_id = product_data.get('id')
+                quantity = product_data.get('quantity', 1)
+
+                # Find product
+                product = request.env['product.template'].sudo().browse(product_id)
+
+                if product.exists() and product.sale_ok and product.active:
+                    # Add to cart
+                    cart_line = cart.order_line.filtered(lambda l: l.product_id.product_tmpl_id.id == product_id)
+
+                    if cart_line:
+                        # Update quantity if already in cart
+                        cart_line[0].product_uom_qty += quantity
+                    else:
+                        # Add new line
+                        request.env['sale.order.line'].sudo().create({
+                            'order_id': cart.id,
+                            'product_id': product.product_variant_id.id,
+                            'product_uom_qty': quantity,
+                            'price_unit': product.list_price,
+                        })
+
+                    products_added += 1
+
+            # Apply coupon if available
+            coupon_applied = False
+            if abandoned_cart.coupon_code and abandoned_cart.coupon_id:
+                try:
+                    # Apply coupon to cart
+                    cart.apply_coupon_code(abandoned_cart.coupon_code)
+                    coupon_applied = True
+                except Exception as e:
+                    _logger.warning(f"Could not apply recovery coupon: {str(e)}")
+
+            # Mark cart as recovered (will be fully marked when order is confirmed)
+            # For now, just update the tracking
+            abandoned_cart.write({
+                'email_opened_date': request.env['ir.fields'].sudo().browse([]).now(),
+            })
+
+            _logger.info(f"Cart recovered: {abandoned_cart.id}, {products_added} products added")
+
+            return self._success_response({
+                'cart': cart.get_api_data(),
+                'products_restored': products_added,
+                'coupon_applied': coupon_applied,
+                'coupon_code': abandoned_cart.coupon_code if coupon_applied else None,
+                'message': f'{products_added} produit(s) restauré(s) dans votre panier',
+            })
+
+        except Exception as e:
+            return self._handle_error(e, "récupération du panier")
