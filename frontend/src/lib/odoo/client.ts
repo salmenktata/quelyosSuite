@@ -394,7 +394,7 @@ export class OdooClient {
 
   // Cart recovery
   async recoverCart(token: string): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc(`/cart/recover/${token}`, {});
+    return this.jsonrpc('/cart/recover', { token });
   }
 
   // Product facets (filters)

@@ -7008,6 +7008,172 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Reorder featured products error: {e}")
             return {'success': False, 'error': str(e)}
 
+    # ==================== STOCK INVENTORY ====================
+
+    @http.route('/api/ecommerce/stock/inventory/prepare', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def prepare_inventory(self, **kwargs):
+        """Préparer un inventaire physique - Récupérer liste produits avec stock actuel"""
+        try:
+            # Vérifier les permissions admin
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            category_id = params.get('category_id')  # Filtrer par catégorie (optionnel)
+            search = params.get('search', '').strip()  # Recherche par nom/SKU (optionnel)
+
+            # Construire domaine de recherche
+            domain = []
+
+            if category_id:
+                domain.append(('categ_id', '=', int(category_id)))
+
+            if search:
+                domain.extend([
+                    '|', ('name', 'ilike', search),
+                    ('default_code', 'ilike', search)
+                ])
+
+            # Récupérer les produits
+            Product = request.env['product.product'].sudo()
+            products = Product.search(domain, order='name asc')
+
+            # Préparer les données pour l'inventaire
+            inventory_lines = []
+            for product in products:
+                inventory_lines.append({
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'sku': product.default_code or '',
+                    'image_url': f'/web/image/product.product/{product.id}/image_128',
+                    'category': product.categ_id.name if product.categ_id else '',
+                    'theoretical_qty': product.qty_available,  # Stock théorique (actuel)
+                    'counted_qty': None,  # À saisir par l'utilisateur
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'inventory_lines': inventory_lines,
+                    'total_products': len(inventory_lines),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Prepare inventory error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/stock/inventory/validate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def validate_inventory(self, **kwargs):
+        """Valider un inventaire physique - Appliquer les ajustements de stock en masse"""
+        try:
+            # Vérifier les permissions admin
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
+
+            params = self._get_params()
+            adjustments = params.get('adjustments', [])  # Liste des ajustements : [{'product_id': int, 'new_qty': float}, ...]
+
+            if not adjustments:
+                return {
+                    'success': False,
+                    'error': 'No adjustments provided'
+                }
+
+            Product = request.env['product.product'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+            Location = request.env['stock.location'].sudo()
+
+            # Récupérer l'emplacement stock principal (WH/Stock)
+            location = Location.search([
+                ('usage', '=', 'internal')
+            ], limit=1)
+
+            if not location:
+                return {
+                    'success': False,
+                    'error': 'No internal location found'
+                }
+
+            adjusted_products = []
+            errors = []
+
+            for adjustment in adjustments:
+                try:
+                    product_id = adjustment.get('product_id')
+                    new_qty = float(adjustment.get('new_qty', 0))
+
+                    if product_id is None:
+                        errors.append({'error': 'Missing product_id', 'adjustment': adjustment})
+                        continue
+
+                    product = Product.browse(int(product_id))
+
+                    if not product.exists():
+                        errors.append({'error': 'Product not found', 'product_id': product_id})
+                        continue
+
+                    # Récupérer le quant pour ce produit dans l'emplacement
+                    quant = StockQuant.search([
+                        ('product_id', '=', product.id),
+                        ('location_id', '=', location.id)
+                    ], limit=1)
+
+                    old_qty = product.qty_available
+
+                    if quant:
+                        # Mettre à jour le quant existant
+                        quant.write({'inventory_quantity': new_qty})
+                        quant.action_apply_inventory()
+                    else:
+                        # Créer un nouveau quant
+                        quant = StockQuant.create({
+                            'product_id': product.id,
+                            'location_id': location.id,
+                            'inventory_quantity': new_qty,
+                        })
+                        quant.action_apply_inventory()
+
+                    adjusted_products.append({
+                        'product_id': product.id,
+                        'product_name': product.name,
+                        'old_qty': old_qty,
+                        'new_qty': new_qty,
+                        'difference': new_qty - old_qty,
+                    })
+
+                except Exception as product_error:
+                    errors.append({
+                        'error': str(product_error),
+                        'product_id': adjustment.get('product_id')
+                    })
+
+            return {
+                'success': True,
+                'data': {
+                    'adjusted_products': adjusted_products,
+                    'total_adjusted': len(adjusted_products),
+                    'errors': errors,
+                    'error_count': len(errors),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Validate inventory error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     # ==================== STOCK ALERTS ====================
 
     @http.route('/api/ecommerce/stock/low-stock-alerts', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
