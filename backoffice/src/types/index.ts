@@ -135,6 +135,7 @@ export interface ProductsQueryParams {
   include_archived?: boolean
   price_min?: number
   price_max?: number
+  attribute_value_ids?: number[]  // Filtrer par valeurs d'attributs (couleur, taille, etc.)
 }
 
 export interface ProductCreateData {

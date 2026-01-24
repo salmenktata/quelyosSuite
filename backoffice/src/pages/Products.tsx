@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Layout } from '../components/Layout'
 import {
   useProducts,
@@ -20,7 +21,9 @@ import {
   Input,
   ImportProductsModal,
   SearchAutocomplete,
+  AttributeFilter,
   type SearchSuggestion,
+  type Attribute,
 } from '../components/common'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/common/Toast'
@@ -50,6 +53,8 @@ export default function Products() {
   const [includeArchived, setIncludeArchived] = useState(false)
   const [priceMin, setPriceMin] = useState<string>('')
   const [priceMax, setPriceMax] = useState<string>('')
+  const [selectedAttributeValues, setSelectedAttributeValues] = useState<number[]>([])
+  const [showAttributeFilters, setShowAttributeFilters] = useState(false)
   // Bulk selection
   const [selectedProductIds, setSelectedProductIds] = useState<Set<number>>(new Set())
   const [bulkActionLoading, setBulkActionLoading] = useState(false)
@@ -68,7 +73,20 @@ export default function Products() {
     include_archived: includeArchived,
     price_min: priceMin ? Number(priceMin) : undefined,
     price_max: priceMax ? Number(priceMax) : undefined,
+    attribute_value_ids: selectedAttributeValues.length > 0 ? selectedAttributeValues : undefined,
   }
+
+  // Récupérer les attributs disponibles pour les filtres
+  const { data: attributesData, isLoading: attributesLoading } = useQuery({
+    queryKey: ['attributes'],
+    queryFn: () => api.getAllAttributes(),
+  })
+
+  const attributes: Attribute[] = useMemo(() => {
+    if (!attributesData?.data?.attributes) return []
+    // Ne garder que les attributs qui ont des valeurs
+    return attributesData.data.attributes.filter((attr) => attr.values.length > 0)
+  }, [attributesData])
 
   const { data: productsData, isLoading, error } = useProducts(queryParams)
   const { data: categoriesData } = useCategories()
@@ -248,10 +266,11 @@ export default function Products() {
     setSortOrder('asc')
     setPriceMin('')
     setPriceMax('')
+    setSelectedAttributeValues([])
     setPage(0)
   }
 
-  const hasActiveFilters = categoryFilter || stockStatusFilter || searchQuery || priceMin || priceMax
+  const hasActiveFilters = categoryFilter || stockStatusFilter || searchQuery || priceMin || priceMax || selectedAttributeValues.length > 0
 
   // Bulk actions helpers
   const isAllSelected = useMemo(() => {
@@ -616,7 +635,73 @@ export default function Products() {
                 Inclure les produits archivés
               </span>
             </label>
+
+            {/* Bouton pour afficher/masquer les filtres d'attributs */}
+            {attributes.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowAttributeFilters(!showAttributeFilters)}
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
+                  transition-colors duration-150
+                  ${showAttributeFilters
+                    ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  }
+                `}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Filtrer par attributs
+                {selectedAttributeValues.length > 0 && (
+                  <span className="bg-indigo-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                    {selectedAttributeValues.length}
+                  </span>
+                )}
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${showAttributeFilters ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            )}
           </div>
+
+          {/* Panneau des filtres d'attributs */}
+          {showAttributeFilters && attributes.length > 0 && (
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  Filtrer par attributs
+                </h3>
+                {selectedAttributeValues.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedAttributeValues([])
+                      setPage(0)
+                    }}
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                  >
+                    Effacer tout ({selectedAttributeValues.length})
+                  </button>
+                )}
+              </div>
+              <AttributeFilter
+                attributes={attributes}
+                selectedValues={selectedAttributeValues}
+                onChange={(values) => {
+                  setSelectedAttributeValues(values)
+                  setPage(0)
+                }}
+                loading={attributesLoading}
+              />
+            </div>
+          )}
 
           {/* Filtres actifs */}
           {hasActiveFilters && (
@@ -640,6 +725,11 @@ export default function Products() {
               )}
               {priceMax && (
                 <Badge variant="info">Prix max: {priceMax} €</Badge>
+              )}
+              {selectedAttributeValues.length > 0 && (
+                <Badge variant="info">
+                  {selectedAttributeValues.length} attribut{selectedAttributeValues.length > 1 ? 's' : ''}
+                </Badge>
               )}
               <Button variant="ghost" size="sm" onClick={resetFilters}>
                 Réinitialiser

@@ -235,6 +235,7 @@ class QuelyosAPI(http.Controller):
             include_archived = params.get('include_archived', False)
             price_min = params.get('price_min')
             price_max = params.get('price_max')
+            attribute_value_ids = params.get('attribute_value_ids')  # Liste d'IDs de valeurs d'attributs
 
             # Context pour inclure les produits archivés si demandé
             ProductTemplate = request.env['product.template'].sudo()
@@ -264,6 +265,22 @@ class QuelyosAPI(http.Controller):
                 domain.append(('name', 'ilike', search))
                 domain.append(('default_code', 'ilike', search))
                 domain.append(('description_sale', 'ilike', search))
+
+            # Filtre par valeurs d'attributs
+            # Les attribute_value_ids sont des IDs de product.attribute.value
+            if attribute_value_ids:
+                # Convertir en liste d'entiers si nécessaire
+                if isinstance(attribute_value_ids, str):
+                    attribute_value_ids = [int(x) for x in attribute_value_ids.split(',') if x.strip()]
+                elif not isinstance(attribute_value_ids, list):
+                    attribute_value_ids = [int(attribute_value_ids)]
+                else:
+                    attribute_value_ids = [int(x) for x in attribute_value_ids]
+
+                if attribute_value_ids:
+                    # Filtrer les produits qui ont ces valeurs d'attributs dans leurs lignes d'attributs
+                    # attribute_line_ids.value_ids contient les product.attribute.value liées
+                    domain.append(('attribute_line_ids.value_ids', 'in', attribute_value_ids))
 
             # Mapping des champs de tri
             sort_field_map = {

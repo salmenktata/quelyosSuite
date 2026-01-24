@@ -40,3 +40,6 @@ export { AttributeImageManager } from './AttributeImageManager'
 export { ImportProductsModal } from './ImportProductsModal'
 
 export { CategoryTree } from './CategoryTree'
+
+export { AttributeFilter } from './AttributeFilter'
+export type { Attribute, AttributeValue, AttributeFilterProps } from './AttributeFilter'
