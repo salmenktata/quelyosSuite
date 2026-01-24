@@ -55,16 +55,16 @@ nginx/             → Config production
 
 | Métrique | Valeur | Évolution |
 |----------|--------|-----------|
-| Parité fonctionnelle Odoo | **~85%** | ⬆️ +3% (vs 82% avant Sprint 1) |
+| Parité fonctionnelle Odoo | **~80%** | ⬇️ -5% (audit Stock révèle gaps réels) |
 | Endpoints API Backend | **102** | ⬆️ +4 (Analytics charts) |
 | Pages Backoffice | **17** | ⬆️ +1 (Invoices.tsx) |
 | Pages Frontend | **33+** | ⬆️ +19 (boutique + espace client complets) |
-| Gaps P0 (Bloquants) | **0** | ✅ TOUS RÉSOLUS |
-| Gaps P1 (Importants) | **8** | ⬇️ -2 (Factures + Analytics résolus) |
+| Gaps P0 (Bloquants) | **2** | ⚠️ +2 (Stock : UI ajustement + inventaire) |
+| Gaps P1 (Importants) | **16** | ⬆️ +8 (Stock : audit révèle 8 P1) |
 | Composants UI modernes | **17** | Mode sombre, WCAG 2.1 AA |
 | Hooks React Query | **16** | State management optimisé |
 
-**🏆 Statut** : **Production-ready** pour fonctionnalités critiques (E-commerce complet)
+**🏆 Statut** : **Fonctionnel** mais 2 gaps P0 bloquent gestion stock quotidienne (E-commerce complet OK)
 
 ### Planning Global
 
@@ -96,12 +96,12 @@ Parité     Packaging  Légal          Commercial  Lancement
 | **Panier** | **90%** ✅ | 🟡 1 P1 (panier abandonné) | |
 | **Factures** | **85%** ✅ | ✅ COMPLÉTÉ | 0 P0, 0 P1 (UI backoffice) |
 | **Clients** | **85%** | 🟡 1 P1 (export CSV) | |
-| **Stock** | **85%** | 🟡 1 P1 (alertes auto) | |
+| **Stock** | **31%** | 🔴 2 P0 (UI ajustement + inventaire) + 8 P1 | Audit `/parity` révèle gaps réels |
 | **Commandes** | **75%** | 🟡 3 P1 (bon livraison, tracking, historique) | |
 | **Paiement** | **65%** | 🟡 2 P1 (Stripe Elements, remboursements UI) | |
 
-**Score global** : **85%** (vs 82% avant Sprint 1, +3%)
-**Production-ready** : ✅ Oui pour e-commerce complet (tous gaps P0 résolus)
+**Score global** : **~80%** (audit `/parity` Stock révèle gaps réels)
+**Production-ready** : 🟡 E-commerce complet OK, mais 2 gaps P0 Stock bloquent gestion quotidienne
 
 ### Phase 2 : Packaging Produit (3-4 semaines)
 
@@ -113,19 +113,536 @@ Parité     Packaging  Légal          Commercial  Lancement
 
 ### Phase 3 : Conformité Légale (1-2 semaines)
 
-| Élément | Statut |
-|---------|--------|
-| Licence propriétaire (Frontend/Backoffice) | À créer |
-| Mentions LGPL (module API + Odoo) | À ajouter |
-| Page `/legal` avec attributions | À créer |
-| Dépôt marque "Quelyos" (INPI) | À faire |
-| CGU / CGV / RGPD | À rédiger |
+**Objectif** : Sécuriser juridiquement le projet Quelyos pour une commercialisation légale et transparente, en respectant les licences open-source (LGPL v3 pour Odoo) tout en protégeant la propriété intellectuelle du frontend/backoffice.
 
-**Note légale** : Utilisation commerciale d'Odoo Community 100% légale sous LGPL v3. Le frontend et backoffice peuvent être propriétaires car ils communiquent via API.
+---
 
-### Phase 4 : Modèle Commercial (2-3 semaines)
+#### 📋 Checklist Complète
 
-#### Option recommandée : SaaS
+| Élément | Statut | Priorité | Effort | Responsable |
+|---------|--------|----------|--------|-------------|
+| **1. Licences** |||||
+| Licence propriétaire Frontend | À créer | P0 | 1h | Juridique |
+| Licence propriétaire Backoffice | À créer | P0 | 1h | Juridique |
+| Mentions LGPL module API | À ajouter | P0 | 30min | Dev |
+| Fichier LICENSE racine | À créer | P0 | 15min | Dev |
+| **2. Mentions Légales** |||||
+| Page `/legal` frontend | À créer | P0 | 2h | Dev |
+| Attributions open-source | À lister | P0 | 1h | Dev |
+| Crédits Odoo Community | À ajouter | P0 | 30min | Dev |
+| Liens vers licences tierces | À documenter | P1 | 1h | Dev |
+| **3. Marque** |||||
+| Dépôt marque "Quelyos" INPI | À faire | P1 | 3h | Juridique |
+| Recherche antériorité | À effectuer | P1 | 1h | Juridique |
+| Classes INPI (9, 35, 42) | À définir | P1 | 30min | Juridique |
+| **4. Conditions Générales** |||||
+| CGU (Conditions d'Utilisation) | À rédiger | P0 | 4h | Juridique |
+| CGV (Conditions de Vente) | À rédiger | P0 | 4h | Juridique |
+| Politique de confidentialité (RGPD) | À rédiger | P0 | 3h | Juridique |
+| Politique cookies | À rédiger | P1 | 2h | Juridique |
+| Mentions obligatoires e-commerce | À ajouter | P0 | 1h | Juridique |
+| **5. Conformité RGPD** |||||
+| Registre des traitements | À créer | P0 | 2h | DPO |
+| Consentement cookies | À implémenter | P0 | 3h | Dev |
+| Droit à l'effacement | À coder | P1 | 2h | Dev |
+| Export données utilisateur | À coder | P1 | 2h | Dev |
+| DPO (si > 250 employés) | N/A | - | - | - |
+| **6. Validation Juridique** |||||
+| Revue avocat spécialisé | Recommandé | P1 | - | Juridique |
+| Conformité CNIL | À vérifier | P0 | 1h | DPO |
+| Conformité LCE (e-commerce) | À vérifier | P0 | 1h | Juridique |
+
+---
+
+#### 🔐 1. Stratégie de Licences
+
+##### Modèle Dual Licensing
+
+**Architecture légale** :
+```
+┌─────────────────────────────────────────────────────────┐
+│              QUELYOS ERP (Produit complet)              │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌───────────────────┐      ┌──────────────────────┐  │
+│  │ Frontend Next.js  │      │ Backoffice React     │  │
+│  │ (Propriétaire)    │      │ (Propriétaire)       │  │
+│  └─────────┬─────────┘      └──────────┬───────────┘  │
+│            │                            │              │
+│            └────────────┬───────────────┘              │
+│                         │ API REST                     │
+│                         ▼                              │
+│            ┌────────────────────────┐                  │
+│            │  quelyos_api (LGPL v3) │                  │
+│            │  + Odoo 19 Community   │                  │
+│            └────────────────────────┘                  │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+##### Légalité du modèle
+
+**Odoo Community (LGPL v3)** :
+- ✅ **Autorise** : Utilisation commerciale, liaison via API, distribution binaires
+- ✅ **Permet** : Code propriétaire si communication via API (pas de linkage direct)
+- ⚠️ **Exige** : Mention LGPL, accès au code source du module API, pas de modification licence Odoo
+
+**Code propriétaire (Frontend/Backoffice)** :
+- ✅ **Autorisé** : Communication avec Odoo via API REST (pas de linkage dynamique)
+- ✅ **Protection** : Copyright Quelyos, source non publique, licence commerciale
+- ✅ **Commercialisation** : Vente SaaS ou on-premise sans contrainte open-source
+
+##### Fichiers à créer
+
+1. **`LICENSE`** (racine du projet) :
+   ```
+   Quelyos ERP - Licence Propriétaire
+   Copyright (c) 2026 Quelyos
+
+   Le code source de ce projet est divisé en deux parties :
+
+   1. Frontend (frontend/) et Backoffice (backoffice/) :
+      - Licence propriétaire
+      - Tous droits réservés
+      - Distribution et modification interdites sans autorisation
+
+   2. Module API (backend/addons/quelyos_api/) :
+      - Licence LGPL v3
+      - Voir backend/addons/quelyos_api/LICENSE
+   ```
+
+2. **`backend/addons/quelyos_api/LICENSE`** :
+   ```
+   GNU LESSER GENERAL PUBLIC LICENSE Version 3
+
+   Ce module Odoo est distribué sous LGPL v3 en conformité avec
+   Odoo Community Edition.
+
+   Copyright (c) 2026 Quelyos
+   Copyright (c) Odoo S.A. (framework Odoo)
+   ```
+
+3. **`frontend/LICENSE`** et **`backoffice/LICENSE`** :
+   ```
+   Copyright (c) 2026 Quelyos. Tous droits réservés.
+
+   Ce logiciel est la propriété exclusive de Quelyos.
+   Toute utilisation, reproduction, distribution ou modification
+   sans autorisation écrite est strictement interdite.
+   ```
+
+---
+
+#### ⚖️ 2. Mentions Légales et Attributions
+
+##### Page `/legal` (Frontend)
+
+**Créer** : `frontend/app/legal/page.tsx`
+
+**Contenu obligatoire** :
+- Éditeur du site (raison sociale, adresse, SIRET, capital, RCS)
+- Directeur de publication
+- Hébergeur (nom, adresse, téléphone)
+- Attributions open-source (Odoo, Next.js, React, etc.)
+- Licence LGPL v3 pour le module API
+- Crédits icônes/images (si tiers)
+- Lien vers CGU, CGV, Politique de confidentialité
+
+**Structure** :
+```tsx
+export default function LegalPage() {
+  return (
+    <div className="max-w-4xl mx-auto p-8">
+      <h1>Mentions Légales</h1>
+
+      <section>
+        <h2>1. Éditeur</h2>
+        {/* Raison sociale, SIRET, adresse, etc. */}
+      </section>
+
+      <section>
+        <h2>2. Hébergement</h2>
+        {/* Informations hébergeur */}
+      </section>
+
+      <section>
+        <h2>3. Propriété Intellectuelle</h2>
+        {/* Copyright Quelyos */}
+      </section>
+
+      <section>
+        <h2>4. Attributions Open Source</h2>
+        <h3>Odoo Community Edition</h3>
+        <p>Ce projet utilise Odoo Community Edition sous licence LGPL v3.</p>
+        <a href="https://github.com/odoo/odoo/blob/19.0/LICENSE">
+          Licence LGPL v3
+        </a>
+
+        <h3>Bibliothèques tierces</h3>
+        <ul>
+          <li>Next.js (MIT) - <a href="...">Licence</a></li>
+          <li>React (MIT) - <a href="...">Licence</a></li>
+          <li>Tailwind CSS (MIT) - <a href="...">Licence</a></li>
+          {/* ... */}
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Données Personnelles</h2>
+        <Link href="/privacy">Politique de confidentialité</Link>
+      </section>
+    </div>
+  );
+}
+```
+
+##### Fichier ATTRIBUTIONS.md
+
+**Créer** : `ATTRIBUTIONS.md` (racine)
+
+**Lister toutes les dépendances** :
+```bash
+# Générer automatiquement
+cd frontend && npm list --all > ../ATTRIBUTIONS_FRONTEND.txt
+cd backoffice && npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
+```
+
+---
+
+#### 🏢 3. Dépôt de Marque INPI
+
+##### Démarche complète
+
+**Étape 1 : Recherche d'antériorité** (obligatoire)
+- Base INPI : [https://bases-marques.inpi.fr](https://bases-marques.inpi.fr)
+- Recherche "Quelyos" + similaires phonétiques (Kelyos, Quelios, etc.)
+- Bases internationales (EUIPO, WIPO) si export prévu
+- **Coût** : Gratuit (recherche manuelle) ou 50-200€ (cabinet spécialisé)
+
+**Étape 2 : Définir les classes INPI** (classification de Nice)
+- **Classe 9** : Logiciels, applications téléchargeables (ERP, e-commerce)
+- **Classe 35** : Services administratifs commerciaux, gestion informatisée
+- **Classe 42** : Services SaaS, hébergement, maintenance logicielle
+
+**Étape 3 : Dépôt en ligne** [https://procedures.inpi.fr](https://procedures.inpi.fr)
+- Durée protection : 10 ans (renouvelable indéfiniment)
+- **Coût** : 190€ (1 classe) + 40€ par classe supplémentaire
+  - Exemple : 3 classes = 190 + 80 = **270€**
+- Délai : 5-6 mois (publication, opposition, enregistrement)
+
+**Étape 4 : Publication et opposition**
+- Publication BOPI (Bulletin Officiel Propriété Industrielle)
+- Délai opposition : 2 mois
+- Surveillance des oppositions
+
+**Étape 5 : Certificat d'enregistrement**
+- Réception certificat INPI (officiel)
+- Début de la protection juridique
+
+##### Alternatives
+
+**Marque européenne (EUIPO)** :
+- Protection 27 pays UE
+- Coût : ~850€ (1 classe), ~1000€ (3 classes)
+- Dépôt : [https://euipo.europa.eu](https://euipo.europa.eu)
+
+**Conseils** :
+- ✅ Recommandé : Passer par un conseil en propriété industrielle (500-1000€ de frais d'accompagnement)
+- ⚠️ Vérifier que "Quelyos" n'existe pas déjà (risque contentieux)
+- 📅 Faire le dépôt AVANT le lancement public (antériorité)
+
+---
+
+#### 📜 4. Conditions Générales (CGU/CGV/RGPD)
+
+##### 4.1 CGU (Conditions Générales d'Utilisation)
+
+**Créer** : `legal/CGU.md`
+
+**Sections obligatoires** :
+1. **Objet** : Définir les conditions d'utilisation de Quelyos ERP
+2. **Accès au service** : Inscription, compte utilisateur, mot de passe
+3. **Propriété intellectuelle** : Quelyos propriétaire, usage limité
+4. **Responsabilités** :
+   - Utilisateur : Données saisies, utilisation conforme
+   - Quelyos : Disponibilité 99.5%, support, mises à jour
+5. **Garanties** : Conformité RGPD, sécurité données, sauvegardes
+6. **Suspension/Résiliation** : Conditions d'arrêt de service
+7. **Loi applicable** : Droit français, tribunaux compétents
+8. **Modifications** : Droit de modifier les CGU (notification 30j)
+
+**Template minimal** : Voir ci-dessous (création fichier).
+
+##### 4.2 CGV (Conditions Générales de Vente)
+
+**Créer** : `legal/CGV.md`
+
+**Sections obligatoires e-commerce** (LCE - Loi pour la Confiance dans l'Économie Numérique) :
+1. **Vendeur** : Identité complète (SIRET, RCS, TVA, adresse)
+2. **Offres et prix** : Tarifs HT/TTC, modalités de facturation
+3. **Commande** : Processus de commande, validation
+4. **Paiement** : Moyens acceptés (CB, virement, etc.), sécurité (PCI-DSS)
+5. **Livraison** : Délais, modes (pour produits physiques - N/A pour SaaS)
+6. **Droit de rétractation** : 14 jours (directive européenne 2011/83/UE)
+   - ⚠️ Exception SaaS : Renonciation possible si service activé immédiatement
+7. **Garanties** : Conformité, vices cachés (pour produits - adapter pour SaaS)
+8. **Responsabilité** : Limitations, force majeure
+9. **Résolution des litiges** : Médiation de la consommation (obligatoire UE)
+10. **Données personnelles** : Renvoi vers Politique de confidentialité
+
+##### 4.3 Politique de Confidentialité (RGPD)
+
+**Créer** : `legal/PRIVACY.md`
+
+**Sections obligatoires RGPD** (Règlement UE 2016/679) :
+1. **Responsable de traitement** : Identité, contact, DPO (si applicable)
+2. **Données collectées** :
+   - Compte : nom, email, téléphone, adresse
+   - Commandes : historique, paiements
+   - Techniques : cookies, logs, IP
+3. **Finalités** : Pourquoi chaque donnée est collectée
+   - Gestion compte, traitement commandes, support, analytics
+4. **Base légale** :
+   - Consentement (cookies marketing)
+   - Contrat (exécution commandes)
+   - Intérêt légitime (sécurité, fraude)
+   - Obligation légale (facturation, comptabilité)
+5. **Destinataires** : Qui accède aux données (Stripe, hébergeur, etc.)
+6. **Durée de conservation** :
+   - Compte actif : Durée du contrat + 3 ans
+   - Données comptables : 10 ans (obligation légale)
+   - Cookies : 13 mois max
+7. **Droits RGPD** :
+   - Accès, rectification, effacement (droit à l'oubli)
+   - Portabilité, limitation du traitement
+   - Opposition, décisions automatisées
+   - **Contact** : email DPO ou formulaire dédié
+8. **Cookies** : Liste complète (essentiels, analytics, marketing)
+   - Bannière consentement conforme (opt-in pour non-essentiels)
+9. **Sécurité** : Mesures techniques (HTTPS, encryption, sauvegardes)
+10. **Transferts hors UE** : Si applicable (clauses contractuelles types)
+11. **Réclamation CNIL** : Droit de porter plainte
+
+##### 4.4 Politique Cookies
+
+**Créer** : `legal/COOKIES.md`
+
+**Tableau des cookies** :
+| Cookie | Type | Finalité | Durée | Base légale |
+|--------|------|----------|-------|-------------|
+| `session_id` | Essentiel | Authentification | Session | Contrat |
+| `quelyos_cart` | Essentiel | Panier e-commerce | 30j | Contrat |
+| `theme` | Préférence | Dark/Light mode | 1 an | Consentement |
+| `_ga` | Analytics | Google Analytics | 13 mois | Consentement |
+| `_fbp` | Marketing | Facebook Pixel | 90j | Consentement |
+
+**Bannière consentement** : Implémenter avec bibliothèque (ex: `react-cookie-consent`)
+
+---
+
+#### 🛡️ 5. Conformité RGPD - Actions Techniques
+
+##### 5.1 Registre des Traitements (obligatoire)
+
+**Créer** : `legal/REGISTRE_TRAITEMENTS_RGPD.md`
+
+**Format** : Tableau recensant chaque traitement de données
+
+| Traitement | Finalité | Données | Base légale | Durée | Destinataires |
+|------------|----------|---------|-------------|-------|---------------|
+| Gestion comptes clients | Création compte utilisateur | Nom, email, mot de passe (hashé), téléphone | Contrat | Durée contrat + 3 ans | Quelyos, Hébergeur |
+| Traitement commandes | Exécution ventes | Nom, adresse, historique achats, CB (tokenisée) | Contrat | 10 ans (compta) | Quelyos, Stripe, Hébergeur |
+| Support client | Assistance utilisateurs | Email, messages support | Intérêt légitime | 3 ans | Quelyos |
+| Analytics | Amélioration service | IP, pages visitées, device | Consentement | 13 mois | Google Analytics |
+| Newsletter | Marketing | Email | Consentement | Jusqu'à désinscription | Quelyos, Mailchimp |
+
+##### 5.2 Bannière Cookies (Frontend)
+
+**Implémenter** : Composant React avec sauvegarde consentement
+
+```tsx
+// frontend/components/CookieConsent.tsx
+import { useState, useEffect } from 'react';
+
+export function CookieConsent() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const consent = localStorage.getItem('cookie-consent');
+    if (!consent) setShow(true);
+  }, []);
+
+  const accept = (type: 'all' | 'essential') => {
+    localStorage.setItem('cookie-consent', type);
+    if (type === 'all') {
+      // Activer Google Analytics, Facebook Pixel, etc.
+      enableAnalytics();
+    }
+    setShow(false);
+  };
+
+  return show ? (
+    <div className="fixed bottom-0 w-full bg-gray-900 text-white p-4 z-50">
+      <p>
+        Nous utilisons des cookies pour améliorer votre expérience.{' '}
+        <a href="/cookies" className="underline">En savoir plus</a>
+      </p>
+      <div className="flex gap-4 mt-2">
+        <button onClick={() => accept('essential')}>
+          Cookies essentiels uniquement
+        </button>
+        <button onClick={() => accept('all')}>
+          Tout accepter
+        </button>
+      </div>
+    </div>
+  ) : null;
+}
+```
+
+##### 5.3 Droit à l'Effacement (Backend)
+
+**Endpoint** : `POST /api/ecommerce/customers/me/delete`
+
+**Implémentation Odoo** :
+```python
+@http.route('/api/ecommerce/customers/me/delete', type='json', auth='user', methods=['POST'])
+def delete_account(self):
+    """Droit à l'oubli RGPD - Suppression compte client"""
+    partner = request.env.user.partner_id
+
+    # Anonymiser au lieu de supprimer (historique commandes légal 10 ans)
+    partner.write({
+        'name': f'Utilisateur supprimé {partner.id}',
+        'email': f'deleted_{partner.id}@quelyos.local',
+        'phone': False,
+        'street': False,
+        'active': False,
+    })
+
+    # Supprimer session
+    request.session.logout(keep_db=True)
+
+    return {'success': True, 'message': 'Compte supprimé'}
+```
+
+##### 5.4 Export Données (Portabilité RGPD)
+
+**Endpoint** : `GET /api/ecommerce/customers/me/export`
+
+**Retourne** : JSON avec toutes les données utilisateur
+
+```python
+@http.route('/api/ecommerce/customers/me/export', type='json', auth='user', methods=['GET'])
+def export_data(self):
+    """Portabilité RGPD - Export données utilisateur"""
+    partner = request.env.user.partner_id
+    orders = request.env['sale.order'].search([('partner_id', '=', partner.id)])
+
+    data = {
+        'profile': {
+            'name': partner.name,
+            'email': partner.email,
+            'phone': partner.phone,
+            'addresses': [{...} for addr in partner.child_ids],
+        },
+        'orders': [{...} for order in orders],
+        'export_date': fields.Datetime.now().isoformat(),
+    }
+
+    return data
+```
+
+---
+
+#### 📅 Planning et Jalons
+
+| Semaine | Tâches | Livrables | Validation |
+|---------|--------|-----------|------------|
+| **S1** | Licences + Mentions légales | LICENSE (×3), page /legal, ATTRIBUTIONS.md | Review juridique |
+| **S1-S2** | Dépôt marque INPI | Recherche antériorité, dépôt en ligne | Certificat dépôt |
+| **S2** | CGU + CGV + RGPD | 3 documents légaux, registre traitements | Review avocat |
+| **S2** | Implémentations techniques | Bannière cookies, endpoints RGPD (export, effacement) | Tests fonctionnels |
+| **Validation finale** | Audit conformité | Checklist complète validée | Avocat + CNIL (si nécessaire) |
+
+---
+
+#### 💰 Budget Estimé
+
+| Poste | Coût | Obligatoire |
+|-------|------|-------------|
+| Dépôt marque INPI (3 classes) | 270€ | Recommandé |
+| Recherche antériorité professionnelle | 150€ | Optionnel |
+| Conseil en propriété industrielle | 500-1000€ | Recommandé |
+| Rédaction CGU/CGV/RGPD (avocat) | 800-2000€ | Recommandé |
+| Audit RGPD | 500-1500€ | Optionnel |
+| **Total minimum** | **270€** | - |
+| **Total recommandé** | **2500-5000€** | - |
+
+**Alternative low-cost** : Templates légaux gratuits + validation avocat ponctuelle (500-800€).
+
+---
+
+#### ✅ Critères de Validation Phase 3
+
+**Critères obligatoires (P0)** :
+- [ ] 3 fichiers LICENSE créés et placés correctement
+- [ ] Page `/legal` accessible et complète
+- [ ] CGU rédigées et accessibles (`/cgu`)
+- [ ] CGV rédigées et accessibles (`/cgv`)
+- [ ] Politique confidentialité RGPD rédigée (`/privacy`)
+- [ ] Registre des traitements RGPD créé
+- [ ] Bannière cookies fonctionnelle (frontend)
+- [ ] Endpoints RGPD implémentés (export, effacement)
+- [ ] Mentions LGPL dans module quelyos_api
+
+**Critères recommandés (P1)** :
+- [ ] Dépôt marque INPI effectué (certificat obtenu)
+- [ ] Relecture avocat spécialisé (validation)
+- [ ] Politique cookies détaillée
+- [ ] Conformité CNIL vérifiée
+
+**Documentation** :
+- [ ] README.md mis à jour (Phase 3 détaillée)
+- [ ] LOGME.md entrée "Phase 3 complétée"
+
+---
+
+#### 🔗 Ressources Utiles
+
+**Licences** :
+- [LGPL v3 officielle](https://www.gnu.org/licenses/lgpl-3.0.html)
+- [Compatibilité LGPL](https://www.gnu.org/licenses/gpl-faq.html#LinkingWithGPL)
+
+**INPI / Marques** :
+- [INPI - Dépôt marque](https://www.inpi.fr/proteger-vos-creations/la-marque)
+- [Recherche antériorité](https://bases-marques.inpi.fr)
+- [Classification de Nice](https://www.inpi.fr/sites/default/files/classification_de_nice.pdf)
+
+**RGPD / CNIL** :
+- [CNIL - Guide conformité](https://www.cnil.fr/fr/rgpd-passer-a-laction)
+- [Modèle registre traitements](https://www.cnil.fr/fr/RGDP-le-registre-des-activites-de-traitement)
+- [Générateur politique confidentialité](https://www.cnil.fr/fr/modeles/politique-de-confidentialite)
+
+**CGU/CGV** :
+- [Légifrance - LCE](https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000801164/)
+- [DGCCRF - E-commerce](https://www.economie.gouv.fr/dgccrf/Publications/Vie-pratique/Fiches-pratiques/E-commerce)
+
+**Modèles gratuits** :
+- [CGU/CGV SaaS - Substra](https://www.substra.fr/modeles-contrats-cgu-cgv/)
+- [Privacy Policy Generator](https://www.freeprivacypolicy.com/)
+
+---
+
+**🎯 Objectif Final Phase 3** : Quelyos juridiquement irréprochable, marque protégée, conformité RGPD totale, prêt pour commercialisation en France et UE.
+
+### Phase 4 : Modèle Commercial SaaS (5 semaines)
+
+> **📋 Documentation complète** : Voir [PHASE4_SAAS.md](PHASE4_SAAS.md) pour la spécification technique détaillée
+
+**Objectif** : Transformer Quelyos ERP en solution SaaS commercialisable avec abonnements, quotas et facturation automatique.
+
+#### Modèle Tarifaire
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -139,6 +656,65 @@ Parité     Packaging  Légal          Commercial  Lancement
 │ Email       │ Email + Chat    │ Support dédié           │
 └─────────────┴─────────────────┴─────────────────────────┘
 ```
+
+#### Plan d'Implémentation (5 sprints)
+
+**Sprint 1 - Backend** (1 semaine)
+- [x] Documentation complète créée ✅
+- [ ] Modèles Odoo (`quelyos.subscription.plan`, `quelyos.subscription`)
+- [ ] 6 endpoints API (plans, current, create, upgrade, cancel, check-quota)
+- [ ] Système de quotas avec mixin
+
+**Sprint 2 - Stripe** (1 semaine)
+- [ ] Configuration Stripe Subscriptions (products + prices)
+- [ ] Webhooks handler (5 événements)
+- [ ] Intégration création abonnement
+- [ ] Gestion paiements failed/past_due
+
+**Sprint 3 - Frontend** (1 semaine)
+- [ ] Page `/pricing` publique (3 plans)
+- [ ] Page espace client `/account/subscription`
+- [ ] Dashboard quotas avec progress bars
+- [ ] Modal upgrade + Stripe Elements
+
+**Sprint 4 - Backoffice** (1 semaine)
+- [ ] Page admin Subscriptions (liste tous abonnements)
+- [ ] Page admin Plans (gestion plans)
+- [ ] Dashboard analytics SaaS (MRR, churn)
+- [ ] Notifications email automatiques
+
+**Sprint 5 - Legal & Launch** (1 semaine)
+- [ ] CGV/CGU SaaS complètes
+- [ ] Page `/legal` avec attributions
+- [ ] Politique confidentialité RGPD
+- [ ] Documentation utilisateur
+- [ ] Mise en production
+
+#### Fonctionnalités Clés
+
+**Gestion Quotas**
+- Vérification automatique avant création ressources (users, produits, commandes)
+- Notification email à 80% de la limite
+- Blocage à 100% avec invitation à upgrader
+
+**Facturation Stripe**
+- Paiement mensuel ou annuel (-20%)
+- Prélèvement automatique récurrent
+- Prorata sur changement de plan
+- Gestion échecs de paiement avec relances
+
+**Période d'Essai**
+- 14 jours gratuits sans carte bancaire
+- Accès complet au plan choisi
+- Conversion automatique ou annulation
+
+**KPIs Business**
+- MRR (Monthly Recurring Revenue)
+- Churn Rate < 5% (cible)
+- Trial-to-Paid Conversion > 20%
+- LTV/CAC Ratio > 3
+
+📄 **Détails complets** : Architecture, code backend/frontend, documentation légale → [PHASE4_SAAS.md](PHASE4_SAAS.md)
 
 ### Phase 5 : Go-to-Market (4-6 semaines)
 
@@ -1064,31 +1640,57 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 
 ### Module Stock (`stock.quant`)
 
-**Modèle Odoo** : `stock.quant` (quantités) et `stock.move` (mouvements)
+**Modèle Odoo** : `stock.quant` (quantités), `stock.move` (mouvements), `stock.picking` (opérations), `stock.warehouse` (entrepôts)
 
-| Fonctionnalité Odoo | Backend API | Backoffice | Statut | Priorité | Notes |
-|---------------------|-------------|------------|--------|----------|-------|
-| **Visualisation** ||||||
-| Liste produits + stock | ✅ `/stock/products` | ✅ Stock.tsx | ✅ | - | Tableau complet |
-| Stock actuel (qty_available) | ✅ | ✅ Colonne | ✅ | - | Quantité physique |
-| Stock virtuel | ✅ virtual_available | ✅ Colonne | ✅ | - | Prévisionnel |
-| Entrant/Sortant | ✅ incoming/outgoing | ✅ Sous-texte | ✅ | - | +X entrant / -X sortant |
-| Statut stock | ✅ stock_status | ✅ Badge couleur | ✅ | - | in_stock/low_stock/out_of_stock |
-| Compteurs par statut | - | ✅ Indicateurs | ✅ | - | Résumé en haut de page |
-| Recherche produit | ✅ param search | ✅ Barre | ✅ | - | Nom ou SKU |
-| **Édition** ||||||
-| Ajuster quantité | ✅ `/stock/update` | ✅ Édition inline | ✅ | - | Input + Sauvegarder |
-| Validation stock panier | ✅ `/stock/validate` | - | ✅ | - | Vérif avant commande |
-| **Fonctionnalités manquantes** ||||||
-| Historique mouvements (UI) | ✅ `/stock/moves` | 🔴 Pas d'UI | 🟡 | P1 | API existe |
-| Alertes stock bas | - | 🔴 | 🔴 | P1 | Notifications seuil |
-| Stock par variante (UI) | 🟡 | 🔴 | 🟡 | P1 | Affichage par variante |
-| Inventaire physique | - | - | 🔴 | P2 | Comptage réel |
-| Import ajustements masse | - | - | 🔴 | P2 | CSV stock |
-| Export stock | - | - | 🔴 | P1 | Extraction Excel |
-| Emplacements stock | - | - | 🔴 | P2 | Multi-entrepôts |
+| Fonctionnalité Odoo | Description | Backend API | Backoffice | Statut | Priorité | Notes Quelyos |
+|---------------------|-------------|-------------|------------|--------|----------|---------------|
+| **Visualisation Stock** |||||||
+| Liste produits + stock | Vue globale tous produits | ✅ `/stock/products` | 🔴 UI obsolète | 🔴 | P0 | **BLOQUANT** : Ancienne UI supprimée |
+| Stock par produit | Qty disponible/virtuelle/entrant/sortant | ✅ `/products/<id>/stock` | - | ✅ | - | API opérationnel frontend |
+| Stock par emplacement | Répartition par warehouse/location | - | - | 🔴 | P1 | Multi-entrepôts Odoo |
+| Stock par lot/série | Traçabilité lot number / serial | - | - | 🔴 | P2 | Traçabilité avancée |
+| Valorisation stock | Valeur totale (FIFO/Average) | - | - | 🔴 | P2 | Comptabilité stock |
+| **Alertes Stock** |||||||
+| Alertes stock bas | Produits sous seuil min | ✅ `/stock/low-stock-alerts` | ✅ Stock.tsx | ✅ | - | Page dédiée alertes |
+| Seuil personnalisé | Seuil par produit | ✅ `low_stock_threshold` | ✅ ProductForm | ✅ | - | Champ modèle ajouté |
+| Notifications email auto | Email admins si stock bas | ✅ Cron job | ✅ Backend | ➕ | - | **Amélioration** : `_cron_check_low_stock` |
+| Alertes surstockage | Produits au-dessus seuil max | - | - | 🔴 | P2 | Détection surstock |
+| Dashboard alertes | Vue résumé total alertes | ✅ Total count | ✅ Badge | ✅ | - | Compteur + pagination |
+| **Ajustements Stock** |||||||
+| Ajuster quantité produit | Modifier stock manuellement | ✅ `/stock/update` | 🔴 UI manquante | 🔴 | P0 | **BLOQUANT** : Pas d'interface |
+| Ajuster stock variante | Modifier stock par variante | ✅ `/variants/<id>/stock/update` | 🟡 VariantManager | 🟡 | P1 | API existe, UI à améliorer |
+| Inventaire physique | Comptage physique + ajustement | - | - | 🔴 | P0 | **BLOQUANT** : Workflow manquant |
+| Historique ajustements | Liste ajustements passés | 🟡 Via stock.move | - | 🔴 | P1 | API partielle, UI manquante |
+| **Mouvements Stock** |||||||
+| Liste mouvements | Historique entrées/sorties/transferts | ✅ `/stock/moves` | 🔴 Pas d'UI | 🟡 | P1 | API existe, UI manquante |
+| Filtre par produit | Mouvements produit spécifique | ✅ param `product_id` | - | 🟡 | P1 | Backend OK, UI manquante |
+| Filtre par type | Entrant/Sortant/Transfert | - | - | 🔴 | P1 | picking_type_id |
+| Filtre par date | Période personnalisée | - | - | 🔴 | P1 | date_from/date_to |
+| Origine mouvement | Référence commande/picking | ✅ `reference` | - | 🟡 | P2 | Donnée API, UI manquante |
+| **Opérations Picking** |||||||
+| Bons de livraison | Génération picking delivery | - | - | 🔴 | P1 | `stock.picking` OUT |
+| Bons de réception | Génération picking receipt | - | - | 🔴 | P2 | `stock.picking` IN |
+| Transferts internes | Déplacements entre emplacements | - | - | 🔴 | P2 | `stock.picking` INT |
+| Validation picking | Confirmer opération (draft → done) | - | - | 🔴 | P1 | Workflow picking |
+| **Emplacements & Entrepôts** |||||||
+| Stock par emplacement | Quantités par location | - | - | 🔴 | P1 | Vue stock.quant par location |
+| **Réapprovisionnement** |||||||
+| Règles réappro min/max | Seuils automatiques | - | - | 🔴 | P1 | `stock.warehouse.orderpoint` |
+| Générer bon commande auto | Création PO si stock bas | - | - | 🔴 | P2 | Automation purchase |
+| **Validation & Contrôles** |||||||
+| Vérifier dispo panier | Validation avant commande | ✅ `/stock/validate` | - | ✅ | - | Utilisé checkout frontend |
+| Réserver stock | Réservation temporaire cart | - | - | 🔴 | P1 | Éviter survente |
+| Bloquer si rupture | Empêcher ajout si stock=0 | ✅ Frontend | ✅ ProductDetail | ✅ | - | Validation côté client |
+| **Export & Rapports** |||||||
+| Export CSV stock | Extraction état stock | - | - | 🔴 | P1 | Rapport Excel/CSV |
+| Rapport valorisation | Valeur par catégorie | - | - | 🔴 | P2 | Comptabilité |
+| Rapport mouvements | Export mouvements période | - | - | 🔴 | P2 | Audit trail |
 
-**Score Module Stock** : 9/16 ✅ (56%), 2/16 🟡, 5/16 🔴
+**Score Module Stock** : 11/35 ✅ (31%), 3/35 🟡, 21/35 🔴
+
+**Gaps Critiques (P0)** : 2 - Interface ajustement stock manquante, Inventaire physique inexistant
+
+> **Note** : Audit de parité complet réalisé le 2026-01-24 via `/parity http://localhost:5179/stock`. La page Stock.tsx actuelle affiche uniquement les alertes de stock bas. L'ancienne interface avec onglet "Produits" + édition inline a été supprimée.
 
 ---
 
@@ -1211,7 +1813,7 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | **Livraison** | 7 endpoints ✅ | ✅ Complet | ✅ Complet | **90%** ✅ | 0 | 0 | Production-ready |
 | **Panier** | 5 endpoints ✅ | ✅ Complet | - | **90%** ✅ | 0 | 1 | Très bon |
 | **Clients** | 10 endpoints ✅ | ✅ Complet | ✅ Complet | **85%** ✅ | 0 | 1 | Très bon |
-| **Stock** | 5 endpoints ✅ | ✅ Badges | ✅ Complet | **85%** ✅ | 0 | 1 | Très bon |
+| **Stock** | 6 endpoints ✅ | ✅ Badges | 🔴 UI partielle | **31%** | 2 | 8 | À améliorer |
 | **Commandes** | 5 endpoints ✅ | ✅ Complet | ✅ Complet | **75%** | 0 | 3 | Bon |
 | **Analytics** | 1 endpoint ✅ | - | ✅ Dashboard | **70%** | 0 | 1 | Bon |
 | **Paiement** | 6 endpoints ✅ | 🟡 Partiel | ✅ Complet | **65%** | 0 | 2 | À améliorer |
