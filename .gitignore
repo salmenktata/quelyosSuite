@@ -61,6 +61,7 @@ tmp/
 temp/
 *.tmp
 *.bak
+**/TODO_*.md
 
 # ===========================================
 # Odoo
@@ -105,6 +106,9 @@ coverage/
 htmlcov/
 .pytest_cache/
 .nyc_output/
+**/test-results/
+**/playwright-report/
+**/test-*.html
 
 # ===========================================
 # Secrets (never commit!)
