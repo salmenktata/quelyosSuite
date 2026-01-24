@@ -5290,6 +5290,318 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
+    @http.route('/api/ecommerce/analytics/revenue-chart', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_revenue_chart(self, **kwargs):
+        """Graphique évolution du chiffre d'affaires par période"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            period = params.get('period', '30d')  # 7d, 30d, 12m, custom
+
+            from datetime import datetime, timedelta
+            from dateutil.relativedelta import relativedelta
+
+            today = datetime.now().date()
+
+            if period == '7d':
+                start_date = today - timedelta(days=7)
+                group_by = 'day'
+            elif period == '30d':
+                start_date = today - timedelta(days=30)
+                group_by = 'day'
+            elif period == '12m':
+                start_date = today - relativedelta(months=12)
+                group_by = 'month'
+            elif period == 'custom':
+                start_date = datetime.strptime(params.get('start_date'), '%Y-%m-%d').date()
+                end_date = datetime.strptime(params.get('end_date', today.isoformat()), '%Y-%m-%d').date()
+                group_by = params.get('group_by', 'day')
+            else:
+                start_date = today - timedelta(days=30)
+                group_by = 'day'
+
+            # Récupérer les commandes confirmées sur la période
+            orders = request.env['sale.order'].sudo().search([
+                ('state', 'in', ['sale', 'done']),
+                ('date_order', '>=', start_date.isoformat()),
+            ])
+
+            # Grouper par période
+            chart_data = {}
+            for order in orders:
+                if not order.date_order:
+                    continue
+
+                date = order.date_order.date()
+                if group_by == 'day':
+                    key = date.isoformat()
+                elif group_by == 'month':
+                    key = date.strftime('%Y-%m')
+                else:
+                    key = date.isoformat()
+
+                if key not in chart_data:
+                    chart_data[key] = {'revenue': 0, 'orders': 0}
+
+                chart_data[key]['revenue'] += order.amount_total
+                chart_data[key]['orders'] += 1
+
+            # Convertir en liste triée
+            data = [
+                {
+                    'period': key,
+                    'revenue': round(values['revenue'], 2),
+                    'orders': values['orders']
+                }
+                for key, values in sorted(chart_data.items())
+            ]
+
+            return {
+                'success': True,
+                'data': data,
+                'period': period,
+                'group_by': group_by
+            }
+
+        except Exception as e:
+            _logger.error(f"Get revenue chart error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/analytics/orders-chart', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_orders_chart(self, **kwargs):
+        """Graphique évolution du nombre de commandes par période et par état"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            period = params.get('period', '30d')
+
+            from datetime import datetime, timedelta
+            from dateutil.relativedelta import relativedelta
+
+            today = datetime.now().date()
+
+            if period == '7d':
+                start_date = today - timedelta(days=7)
+                group_by = 'day'
+            elif period == '30d':
+                start_date = today - timedelta(days=30)
+                group_by = 'day'
+            elif period == '12m':
+                start_date = today - relativedelta(months=12)
+                group_by = 'month'
+            else:
+                start_date = today - timedelta(days=30)
+                group_by = 'day'
+
+            # Récupérer toutes les commandes sur la période
+            orders = request.env['sale.order'].sudo().search([
+                ('date_order', '>=', start_date.isoformat()),
+            ])
+
+            # Grouper par période et par état
+            chart_data = {}
+            for order in orders:
+                if not order.date_order:
+                    continue
+
+                date = order.date_order.date()
+                if group_by == 'day':
+                    key = date.isoformat()
+                elif group_by == 'month':
+                    key = date.strftime('%Y-%m')
+                else:
+                    key = date.isoformat()
+
+                if key not in chart_data:
+                    chart_data[key] = {
+                        'total': 0,
+                        'draft': 0,
+                        'sent': 0,
+                        'sale': 0,
+                        'done': 0,
+                        'cancel': 0
+                    }
+
+                chart_data[key]['total'] += 1
+                if order.state in chart_data[key]:
+                    chart_data[key][order.state] += 1
+
+            # Convertir en liste triée
+            data = [
+                {
+                    'period': key,
+                    'total': values['total'],
+                    'confirmed': values['sale'] + values['done'],
+                    'pending': values['draft'] + values['sent'],
+                    'cancelled': values['cancel']
+                }
+                for key, values in sorted(chart_data.items())
+            ]
+
+            return {
+                'success': True,
+                'data': data,
+                'period': period,
+                'group_by': group_by
+            }
+
+        except Exception as e:
+            _logger.error(f"Get orders chart error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/analytics/conversion-funnel', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_conversion_funnel(self, **kwargs):
+        """Funnel de conversion : visiteurs → panier → commande → paiement"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            period = params.get('period', '30d')
+
+            from datetime import datetime, timedelta
+            today = datetime.now().date()
+
+            if period == '7d':
+                start_date = today - timedelta(days=7)
+            elif period == '30d':
+                start_date = today - timedelta(days=30)
+            elif period == '12m':
+                start_date = today - timedelta(days=365)
+            else:
+                start_date = today - timedelta(days=30)
+
+            # Total commandes créées (paniers)
+            total_carts = request.env['sale.order'].sudo().search_count([
+                ('date_order', '>=', start_date.isoformat()),
+            ])
+
+            # Commandes avec au moins 1 ligne (panier rempli)
+            carts_with_items = request.env['sale.order'].sudo().search_count([
+                ('date_order', '>=', start_date.isoformat()),
+                ('order_line', '!=', False),
+            ])
+
+            # Commandes confirmées
+            confirmed_orders = request.env['sale.order'].sudo().search_count([
+                ('date_order', '>=', start_date.isoformat()),
+                ('state', 'in', ['sale', 'done']),
+            ])
+
+            # Commandes payées (factures payées)
+            paid_orders = request.env['sale.order'].sudo().search([
+                ('date_order', '>=', start_date.isoformat()),
+                ('state', 'in', ['sale', 'done']),
+            ])
+
+            paid_count = 0
+            for order in paid_orders:
+                # Vérifier si la facture existe et est payée
+                invoices = request.env['account.move'].sudo().search([
+                    ('invoice_origin', '=', order.name),
+                    ('payment_state', '=', 'paid'),
+                ])
+                if invoices:
+                    paid_count += 1
+
+            # Calculer les taux de conversion
+            funnel_data = [
+                {
+                    'stage': 'Paniers créés',
+                    'count': total_carts,
+                    'percentage': 100.0,
+                    'color': '#6366f1'
+                },
+                {
+                    'stage': 'Paniers remplis',
+                    'count': carts_with_items,
+                    'percentage': round((carts_with_items / total_carts * 100) if total_carts > 0 else 0, 1),
+                    'color': '#8b5cf6'
+                },
+                {
+                    'stage': 'Commandes confirmées',
+                    'count': confirmed_orders,
+                    'percentage': round((confirmed_orders / total_carts * 100) if total_carts > 0 else 0, 1),
+                    'color': '#10b981'
+                },
+                {
+                    'stage': 'Commandes payées',
+                    'count': paid_count,
+                    'percentage': round((paid_count / total_carts * 100) if total_carts > 0 else 0, 1),
+                    'color': '#059669'
+                }
+            ]
+
+            return {
+                'success': True,
+                'data': funnel_data,
+                'period': period
+            }
+
+        except Exception as e:
+            _logger.error(f"Get conversion funnel error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/analytics/top-categories', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_top_categories(self, **kwargs):
+        """Top catégories les plus vendues avec graphique"""
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
+
+            params = self._get_params()
+            limit = int(params.get('limit', 10))
+
+            # Récupérer toutes les lignes de commandes confirmées
+            order_lines = request.env['sale.order.line'].sudo().search([
+                ('order_id.state', 'in', ['sale', 'done'])
+            ])
+
+            # Compter les ventes par catégorie
+            category_sales = {}
+            for line in order_lines:
+                if not line.product_id or not line.product_id.categ_id:
+                    continue
+
+                category = line.product_id.categ_id
+                category_id = category.id
+
+                if category_id not in category_sales:
+                    category_sales[category_id] = {
+                        'id': category_id,
+                        'name': category.complete_name or category.name,
+                        'qty_sold': 0,
+                        'revenue': 0,
+                    }
+
+                category_sales[category_id]['qty_sold'] += line.product_uom_qty
+                category_sales[category_id]['revenue'] += line.price_total
+
+            # Trier et prendre les top N
+            top_categories = sorted(
+                category_sales.values(),
+                key=lambda x: x['revenue'],
+                reverse=True
+            )[:limit]
+
+            # Arrondir les revenues
+            for cat in top_categories:
+                cat['revenue'] = round(cat['revenue'], 2)
+                cat['qty_sold'] = int(cat['qty_sold'])
+
+            return {
+                'success': True,
+                'data': top_categories
+            }
+
+        except Exception as e:
+            _logger.error(f"Get top categories error: {e}")
+            return {'success': False, 'error': str(e)}
+
     # ===========================
     # PHASE 7: FACTURATION
     # ===========================

@@ -339,6 +339,7 @@ export default function Coupons() {
           isOpen={editModalOpen}
           onClose={() => setEditModalOpen(false)}
           title="Modifier le coupon"
+          hideDefaultActions={true}
         >
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>

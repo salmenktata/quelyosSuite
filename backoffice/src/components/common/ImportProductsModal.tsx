@@ -227,7 +227,7 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Importer des produits">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Importer des produits" hideDefaultActions={true}>
       <div className="min-w-[500px]">
         {step === 'upload' && (
           <div className="space-y-6">

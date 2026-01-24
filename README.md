@@ -827,7 +827,7 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Recherche textuelle | Recherche par nom, ref, description | ✅ `GET /api/v1/products?search=` | ✅ Barre recherche | ✅ Filtres `Products.tsx` | ➕ | - | **Amélioration** : Recherche temps réel avec debounce |
 | Filtres catégorie | Filtrer par catégorie | ✅ `GET /api/v1/products?category_id=` | ✅ Sidebar filtres | ✅ Dropdown catégorie | ✅ | - | - |
 | Filtres prix | Plage de prix min/max | ✅ `GET /products?price_min&price_max` | - | ✅ `Products.tsx` | ✅ | - | Inputs prix min/max dans filtres |
-| Filtres attributs | Filtrer par couleur, taille, etc. | - | - | - | 🔴 | P1 | Crucial pour variantes |
+| Filtres attributs | Filtrer par couleur, taille, etc. | ✅ `?attribute_value_ids` | - | ✅ `AttributeFilter.tsx` | ✅ | - | Pastilles couleur + pills taille |
 | Tri | Prix, nom, popularité, nouveautés | ✅ `GET /products?sort=` | ✅ Frontend catalogue | ✅ `Table.tsx` headers | ✅ | - | Tri par colonne cliquable |
 | **Import/Export** ||||||||
 | Import CSV masse | Importer 100+ produits d'un coup | ✅ `POST /products/import` | - | ✅ `ImportProductsModal.tsx` | ✅ | - | Upload CSV avec mapping colonnes |
@@ -851,16 +851,16 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 
 **Statistiques** :
 - **Total fonctionnalités Odoo** : 50
-- **Implémentées (✅)** : 40 (80%)
+- **Implémentées (✅)** : 41 (82%)
 - **Partielles (🟡)** : 3 (6%)
-- **Manquantes (🔴)** : 7 (14%)
+- **Manquantes (🔴)** : 6 (12%)
   - **P0 (Bloquant)** : 0 ✅
   - **P1 (Important)** : 0 ✅
-  - **P2 (Nice-to-have)** : 7
+  - **P2 (Nice-to-have)** : 6
 
 **Améliorations Quelyos (➕)** : 5 fonctionnalités avec valeur ajoutée UX
 
-> **Note** : Mise à jour 2026-01-24 - Tous les gaps P0 et P1 résolus. Score passé de 44% à 80%.
+> **Note** : Mise à jour 2026-01-24 - Tous les gaps P0 et P1 résolus. Score passé de 44% à 82% (filtres attributs ajoutés).
 
 ---
 
@@ -930,7 +930,6 @@ Cette section documente la **parité fonctionnelle totale** entre Odoo natif et 
 | Multi-catégories | Produit dans plusieurs catégories | Moyen |
 | Tags produits | Étiquettes libres ("Bio", "Nouveau", "Promo") | Faible |
 | Import images ZIP | Upload masse images par ZIP | Moyen |
-| Filtres attributs | Filtrer par couleur, taille dans catalogue | Moyen |
 | Dimensions L/l/H | Longueur, largeur, hauteur individuels | Faible |
 
 ---

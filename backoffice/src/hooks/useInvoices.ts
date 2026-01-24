@@ -5,6 +5,7 @@ export function useInvoices(params?: {
   limit?: number
   offset?: number
   state?: string
+  payment_state?: string
   search?: string
 }) {
   return useQuery({
@@ -41,6 +42,34 @@ export function usePostInvoice() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] })
       queryClient.invalidateQueries({ queryKey: ['invoice'] })
+    },
+  })
+}
+
+export function useSendInvoiceEmail() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (invoiceId: number) => api.sendInvoiceEmail(invoiceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['invoice'] })
+    },
+  })
+}
+
+export function useDownloadInvoicePDF() {
+  return useMutation({
+    mutationFn: async (data: { invoiceId: number; invoiceName: string }) => {
+      const blob = await api.getInvoicePDF(data.invoiceId)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${data.invoiceName}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
     },
   })
 }

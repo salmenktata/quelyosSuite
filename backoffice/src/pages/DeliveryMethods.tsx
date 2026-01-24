@@ -257,6 +257,7 @@ export default function DeliveryMethods() {
           isOpen={createModalOpen}
           onClose={() => setCreateModalOpen(false)}
           title="Nouvelle methode de livraison"
+          hideDefaultActions={true}
         >
           <form onSubmit={handleCreate} className="space-y-4">
             <div>
@@ -325,6 +326,7 @@ export default function DeliveryMethods() {
           isOpen={editModalOpen}
           onClose={() => setEditModalOpen(false)}
           title="Modifier la methode de livraison"
+          hideDefaultActions={true}
         >
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
@@ -404,6 +406,7 @@ export default function DeliveryMethods() {
           isOpen={deleteModalOpen}
           onClose={() => setDeleteModalOpen(false)}
           title="Supprimer la methode de livraison"
+          hideDefaultActions={true}
         >
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">

@@ -398,6 +398,7 @@ export default function CustomerDetail() {
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           title="Modifier le client"
+          hideDefaultActions={true}
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

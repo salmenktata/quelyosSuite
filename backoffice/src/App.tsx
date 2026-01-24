@@ -17,6 +17,7 @@ import DeliveryMethods from './pages/DeliveryMethods'
 import Payments from './pages/Payments'
 import Featured from './pages/Featured'
 import Analytics from './pages/Analytics'
+import Invoices from './pages/Invoices'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/payments" element={<Payments />} />
             <Route path="/featured" element={<Featured />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/invoices" element={<Invoices />} />
           </Routes>
         </div>
       </ThemeProvider>

@@ -13,6 +13,7 @@ export interface ModalProps {
   variant?: 'default' | 'danger'
   loading?: boolean
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  hideDefaultActions?: boolean
 }
 
 const sizeClasses = {
@@ -34,6 +35,7 @@ export function Modal({
   variant = 'default',
   loading = false,
   size = 'md',
+  hideDefaultActions = false,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
 
@@ -122,22 +124,24 @@ export function Modal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
-          <Button variant="secondary" onClick={onClose} disabled={loading}>
-            {cancelText}
-          </Button>
-
-          {onConfirm && (
-            <Button
-              variant={variant === 'danger' ? 'danger' : 'primary'}
-              onClick={onConfirm}
-              loading={loading}
-              disabled={loading}
-            >
-              {confirmText}
+        {!hideDefaultActions && (
+          <div className="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
+            <Button variant="secondary" onClick={onClose} disabled={loading}>
+              {cancelText}
             </Button>
-          )}
-        </div>
+
+            {onConfirm && (
+              <Button
+                variant={variant === 'danger' ? 'danger' : 'primary'}
+                onClick={onConfirm}
+                loading={loading}
+                disabled={loading}
+              >
+                {confirmText}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

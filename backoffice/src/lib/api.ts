@@ -872,6 +872,39 @@ class ApiClient {
     return this.request<ApiResponse<AnalyticsStats>>('/api/ecommerce/analytics/stats')
   }
 
+  async getRevenueChart(params?: { period?: string; start_date?: string; end_date?: string; group_by?: string }) {
+    return this.request<{
+      success: boolean
+      data: Array<{ period: string; revenue: number; orders: number }>
+      period: string
+      group_by: string
+    }>('/api/ecommerce/analytics/revenue-chart', params)
+  }
+
+  async getOrdersChart(params?: { period?: string }) {
+    return this.request<{
+      success: boolean
+      data: Array<{ period: string; total: number; confirmed: number; pending: number; cancelled: number }>
+      period: string
+      group_by: string
+    }>('/api/ecommerce/analytics/orders-chart', params)
+  }
+
+  async getConversionFunnel(params?: { period?: string }) {
+    return this.request<{
+      success: boolean
+      data: Array<{ stage: string; count: number; percentage: number; color: string }>
+      period: string
+    }>('/api/ecommerce/analytics/conversion-funnel', params)
+  }
+
+  async getTopCategories(params?: { limit?: number }) {
+    return this.request<{
+      success: boolean
+      data: Array<{ id: number; name: string; qty_sold: number; revenue: number }>
+    }>('/api/ecommerce/analytics/top-categories', params)
+  }
+
   // ==================== CART ====================
 
   async getCart(guestEmail?: string) {
@@ -1158,6 +1191,34 @@ class ApiClient {
       invoice: { id: number; name: string; state: string }
       message: string
     }>(`/api/ecommerce/invoices/${invoiceId}/post`)
+  }
+
+  async sendInvoiceEmail(invoiceId: number) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/ecommerce/invoices/${invoiceId}/send-email`)
+  }
+
+  async getInvoicePDF(invoiceId: number): Promise<Blob> {
+    const url = `${this.baseUrl}/api/ecommerce/invoices/${invoiceId}/pdf`
+
+    const headers: HeadersInit = {}
+    if (this.sessionId) {
+      headers['X-Session-Id'] = this.sessionId
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    return response.blob()
   }
 }
 

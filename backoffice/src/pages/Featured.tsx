@@ -331,6 +331,7 @@ export default function Featured() {
             setSearchInput('')
           }}
           title="Ajouter un produit vedette"
+          hideDefaultActions={true}
         >
           <div className="min-w-[500px]">
             {/* Recherche */}

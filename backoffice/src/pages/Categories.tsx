@@ -46,6 +46,8 @@ export default function Categories() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deleteModal, setDeleteModal] = useState<{ id: number; name: string } | null>(null)
   const [formData, setFormData] = useState({ name: '', parent_id: '' })
+  const [nameError, setNameError] = useState<string | null>(null)
+  const [nameValid, setNameValid] = useState(false)
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
@@ -110,6 +112,38 @@ export default function Categories() {
 
     return { totalCategories, rootCategories, totalProducts, emptyCategories }
   }, [flatCategories, treeData])
+
+  // Validation
+  const validateName = (name: string) => {
+    if (!name.trim()) {
+      setNameError('Le nom est requis')
+      setNameValid(false)
+      return false
+    }
+    if (name.trim().length < 2) {
+      setNameError('Le nom doit contenir au moins 2 caractères')
+      setNameValid(false)
+      return false
+    }
+    if (name.trim().length > 100) {
+      setNameError('Le nom ne peut pas dépasser 100 caractères')
+      setNameValid(false)
+      return false
+    }
+    setNameError(null)
+    setNameValid(true)
+    return true
+  }
+
+  const handleNameChange = (name: string) => {
+    setFormData({ ...formData, name })
+    if (name.length > 0) {
+      validateName(name)
+    } else {
+      setNameError(null)
+      setNameValid(false)
+    }
+  }
 
   // Handlers
   const handleCreate = async (e: React.FormEvent) => {
@@ -180,19 +214,44 @@ export default function Categories() {
       parent_id: category.parent_id?.toString() || '',
     })
     setIsCreating(false)
+    setNameError(null)
+    setNameValid(true)
   }
 
   const cancelEdit = () => {
     setEditingCategory(null)
     setIsCreating(false)
     setFormData({ name: '', parent_id: '' })
+    setNameError(null)
+    setNameValid(false)
   }
 
   const openCreateModal = () => {
     setFormData({ name: '', parent_id: '' })
     setEditingCategory(null)
     setIsCreating(true)
+    setNameError(null)
+    setNameValid(false)
   }
+
+  // Raccourcis clavier
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl+N : Nouvelle catégorie
+      if ((e.metaKey || e.ctrlKey) && e.key === 'n' && !isCreating && !editingCategory) {
+        e.preventDefault()
+        openCreateModal()
+      }
+      // / ou Cmd/Ctrl+K : Focus sur recherche
+      if ((e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key === 'k')) && !isCreating && !editingCategory) {
+        e.preventDefault()
+        document.querySelector<HTMLInputElement>('input[type="text"]')?.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isCreating, editingCategory])
 
   return (
     <Layout>
@@ -218,8 +277,9 @@ export default function Categories() {
           <Button
             variant="primary"
             onClick={openCreateModal}
+            aria-label="Créer une nouvelle catégorie (Cmd+N)"
             icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             }
@@ -287,12 +347,15 @@ export default function Categories() {
                 placeholder="Rechercher une catégorie..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+                aria-label="Rechercher une catégorie"
                 className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="Effacer la recherche"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -304,28 +367,34 @@ export default function Categories() {
             {/* Contrôles */}
             <div className="flex items-center gap-2">
               {/* Toggle vue */}
-              <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1" role="tablist" aria-label="Mode d'affichage">
                 <button
                   onClick={() => setViewMode('tree')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  role="tab"
+                  aria-selected={viewMode === 'tree'}
+                  aria-label="Vue arborescente"
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                     viewMode === 'tree'
                       ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                   </svg>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  role="tab"
+                  aria-selected={viewMode === 'list'}
+                  aria-label="Vue liste"
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                     viewMode === 'list'
                       ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </button>
@@ -458,17 +527,51 @@ export default function Categories() {
               ? 'Modifiez les informations de la catégorie'
               : 'Créez une nouvelle catégorie pour organiser vos produits'
           }
+          hideDefaultActions={true}
         >
           <form onSubmit={editingCategory ? handleUpdate : handleCreate} className="space-y-4">
-            <Input
-              label="Nom de la catégorie"
-              id="category-name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Ex: Vêtements"
-              required
-              autoFocus
-            />
+            <div>
+              <Input
+                label="Nom de la catégorie"
+                id="category-name"
+                value={formData.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="Ex: Vêtements"
+                required
+                autoFocus
+                className={`${
+                  nameError
+                    ? 'border-red-500 focus:ring-red-500'
+                    : nameValid
+                    ? 'border-green-500 focus:ring-green-500'
+                    : ''
+                }`}
+              />
+              {nameError && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {nameError}
+                </p>
+              )}
+              {nameValid && !nameError && (
+                <p className="mt-1 text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Nom valide
+                </p>
+              )}
+            </div>
 
             <div>
               <label

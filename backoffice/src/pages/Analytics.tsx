@@ -1,10 +1,37 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { useAnalyticsStats } from '../hooks/useAnalytics'
+import {
+  useAnalyticsStats,
+  useRevenueChart,
+  useOrdersChart,
+  useConversionFunnel,
+  useTopCategories,
+} from '../hooks/useAnalytics'
 import { Breadcrumbs, Skeleton } from '../components/common'
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
 
 export default function Analytics() {
+  const [period, setPeriod] = useState<'7d' | '30d' | '12m'>('30d')
+
   const { data, isLoading, error } = useAnalyticsStats()
+  const { data: revenueData, isLoading: revenueLoading } = useRevenueChart({ period })
+  const { data: ordersData, isLoading: ordersLoading } = useOrdersChart({ period })
+  const { data: funnelData, isLoading: funnelLoading } = useConversionFunnel({ period })
+  const { data: topCategoriesData, isLoading: topCategoriesLoading } = useTopCategories({ limit: 5 })
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -200,6 +227,256 @@ export default function Analytics() {
                 <p className="text-xs text-red-500 dark:text-red-400 mt-2">
                   {data.data.totals.out_of_stock_products} en rupture
                 </p>
+              </div>
+            </div>
+
+            {/* Period Selector */}
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Évolution & Tendances
+              </h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setPeriod('7d')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === '7d'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  7 jours
+                </button>
+                <button
+                  onClick={() => setPeriod('30d')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === '30d'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  30 jours
+                </button>
+                <button
+                  onClick={() => setPeriod('12m')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    period === '12m'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  12 mois
+                </button>
+              </div>
+            </div>
+
+            {/* Charts Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+              {/* Revenue Chart */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Évolution du chiffre d'affaires
+                </h3>
+                {revenueLoading ? (
+                  <Skeleton height={300} />
+                ) : revenueData?.data && revenueData.data.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={revenueData.data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                      <XAxis
+                        dataKey="period"
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                        tickFormatter={(value?: number) => value ? `${(value / 1000).toFixed(0)}k€` : ''}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: '#F9FAFB',
+                        }}
+                        formatter={(value?: number) =>
+                          value ? new Intl.NumberFormat('fr-FR', {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }).format(value) : '-'
+                        }
+                      />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        name="Chiffre d'affaires"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                        dot={{ fill: '#10B981', r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    Aucune donnée disponible
+                  </div>
+                )}
+              </div>
+
+              {/* Orders Chart */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Évolution des commandes
+                </h3>
+                {ordersLoading ? (
+                  <Skeleton height={300} />
+                ) : ordersData?.data && ordersData.data.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={ordersData.data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                      <XAxis
+                        dataKey="period"
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: '#F9FAFB',
+                        }}
+                      />
+                      <Legend />
+                      <Area
+                        type="monotone"
+                        dataKey="confirmed"
+                        stackId="1"
+                        name="Confirmées"
+                        stroke="#10B981"
+                        fill="#10B981"
+                        fillOpacity={0.6}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="pending"
+                        stackId="1"
+                        name="En attente"
+                        stroke="#F59E0B"
+                        fill="#F59E0B"
+                        fillOpacity={0.6}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="cancelled"
+                        stackId="1"
+                        name="Annulées"
+                        stroke="#EF4444"
+                        fill="#EF4444"
+                        fillOpacity={0.6}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    Aucune donnée disponible
+                  </div>
+                )}
+              </div>
+
+              {/* Conversion Funnel */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Tunnel de conversion
+                </h3>
+                {funnelLoading ? (
+                  <Skeleton height={300} />
+                ) : funnelData?.data && funnelData.data.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={funnelData.data} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                      <XAxis type="number" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                      <YAxis
+                        dataKey="stage"
+                        type="category"
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                        width={150}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: '#F9FAFB',
+                        }}
+                        formatter={(value?: number, _name?: string, props?: any) => [
+                          value && props ? `${value} (${props.payload.percentage}%)` : '-',
+                          'Nombre',
+                        ]}
+                      />
+                      <Bar dataKey="count" radius={[0, 8, 8, 0]}>
+                        {funnelData.data.map((entry, index) => (
+                          <Bar key={index} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    Aucune donnée disponible
+                  </div>
+                )}
+              </div>
+
+              {/* Top Categories */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Top 5 catégories
+                </h3>
+                {topCategoriesLoading ? (
+                  <Skeleton height={300} />
+                ) : topCategoriesData?.data && topCategoriesData.data.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={topCategoriesData.data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                      <XAxis
+                        dataKey="name"
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={80}
+                      />
+                      <YAxis
+                        stroke="#6B7280"
+                        style={{ fontSize: '12px' }}
+                        tickFormatter={(value?: number) => value ? `${(value / 1000).toFixed(0)}k€` : ''}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: '#F9FAFB',
+                        }}
+                        formatter={(value?: number) =>
+                          value ? new Intl.NumberFormat('fr-FR', {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }).format(value) : '-'
+                        }
+                      />
+                      <Bar dataKey="revenue" name="Chiffre d'affaires" fill="#6366F1" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    Aucune donnée disponible
+                  </div>
+                )}
               </div>
             </div>
 

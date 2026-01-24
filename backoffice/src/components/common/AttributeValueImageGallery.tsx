@@ -171,7 +171,7 @@ export function AttributeValueImageGallery({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Images: ${ptavName}`} size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title={`Images: ${ptavName}`} size="lg" hideDefaultActions={true}>
       <div className="space-y-4">
         {/* Zone d'upload */}
         <div

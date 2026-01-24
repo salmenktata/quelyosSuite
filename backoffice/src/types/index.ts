@@ -432,6 +432,89 @@ export interface AnalyticsStats {
   }>
 }
 
+export interface RevenueChartData {
+  period: string
+  revenue: number
+  orders: number
+}
+
+export interface OrdersChartData {
+  period: string
+  total: number
+  confirmed: number
+  pending: number
+  cancelled: number
+}
+
+export interface ConversionFunnelData {
+  stage: string
+  count: number
+  percentage: number
+  color: string
+}
+
+export interface TopCategoryData {
+  id: number
+  name: string
+  qty_sold: number
+  revenue: number
+}
+
+export interface AnalyticsChartParams {
+  period?: '7d' | '30d' | '12m' | 'custom'
+  start_date?: string
+  end_date?: string
+  group_by?: 'day' | 'month'
+}
+
+// ==================== INVOICES ====================
+
+export interface InvoiceLine {
+  id: number
+  product_id: number | null
+  product_name: string
+  name: string
+  quantity: number
+  price_unit: number
+  price_subtotal: number
+  price_total: number
+  tax_ids: number[]
+}
+
+export interface Invoice {
+  id: number
+  name: string
+  partner_id: number
+  partner_name: string
+  invoice_date: string | null
+  invoice_date_due: string | null
+  amount_untaxed: number
+  amount_tax: number
+  amount_total: number
+  amount_residual: number
+  state: 'draft' | 'posted' | 'cancel'
+  payment_state: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
+  invoice_line_ids?: InvoiceLine[]
+}
+
+export interface InvoicesQueryParams {
+  limit?: number
+  offset?: number
+  search?: string
+  partner_id?: number
+  state?: 'draft' | 'posted' | 'cancel'
+  payment_state?: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
+  date_from?: string
+  date_to?: string
+}
+
+export interface InvoiceStats {
+  total_invoices: number
+  total_revenue: number
+  unpaid_amount: number
+  overdue_count: number
+}
+
 // ==================== PAGINATION ====================
 
 export interface PaginatedData<T> {
