@@ -22,7 +22,7 @@ import React, {
   ReactNode,
 } from 'react';
 import { TenantConfig, TenantLookupResponse } from '@/types/tenant';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES

@@ -69,7 +69,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       args:
         NODE_ENV: production
     container_name: quelyos-frontend-prod
@@ -95,7 +95,7 @@ services:
   backoffice:
     build:
       context: ./backoffice
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: quelyos-backoffice-prod
     restart: always
     networks:
@@ -116,6 +116,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./nginx/certbot/www:/var/www/certbot:ro
       - ./nginx/certbot/conf:/etc/letsencrypt:ro

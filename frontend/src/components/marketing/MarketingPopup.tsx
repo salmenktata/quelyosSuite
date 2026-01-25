@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
 import { useExitIntent } from '@/hooks/useExitIntent';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface PopupCampaign {
   id: number;

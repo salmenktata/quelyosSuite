@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface CartItemProps {
   item: {

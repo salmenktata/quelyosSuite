@@ -14,7 +14,7 @@ import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { PaymentForm, PaymentMethod } from '@/components/checkout/PaymentForm';
 import { LoadingPage } from '@/components/common/Loading';
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // Méthodes de paiement disponibles
 const paymentMethods: PaymentMethod[] = [

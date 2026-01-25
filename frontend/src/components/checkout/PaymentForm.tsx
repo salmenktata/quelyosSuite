@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/common';
 import { PayPalButton } from './PayPalButton';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // Lazy load Stripe (chargé uniquement si paiement carte sélectionné)
 // Gain: -30 KB sur pages hors checkout

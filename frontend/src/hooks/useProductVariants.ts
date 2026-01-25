@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Product, VariantsResponse, ExtendedProductVariant, ProductImage } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface UseProductVariantsReturn {
   // État

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cmsService } from '@/lib/odoo/cms';
 import { CmsPageContent } from '@/components/cms';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface PageProps {
   params: Promise<{ slug: string }>;

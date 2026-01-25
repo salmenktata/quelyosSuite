@@ -13,7 +13,7 @@ import { Button } from '@/components/common/Button';
 import { formatPrice } from '@/lib/utils/formatting';
 import { odooClient } from '@/lib/odoo/client';
 import type { Order } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 const orderStates = {
   draft: { label: 'Brouillon', color: 'gray' },

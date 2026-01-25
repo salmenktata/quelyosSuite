@@ -8,7 +8,7 @@ import CartItem from './CartItem';
 import CartSummary from './CartSummary';
 import { FreeShippingBar } from './FreeShippingBar';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface CartDrawerProps {
   isOpen: boolean;

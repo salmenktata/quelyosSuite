@@ -12,7 +12,7 @@ import { LoadingPage } from '@/components/common/Loading';
 import { Button } from '@/components/common/Button';
 import { odooClient } from '@/lib/odoo/client';
 import type { Address } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export default function AccountAddressesPage() {
   const router = useRouter();
@@ -124,7 +124,7 @@ export default function AccountAddressesPage() {
             {addresses.map((address) => (
               <div key={address.id} className="bg-white rounded-lg shadow-sm p-6">
                 {/* Badge par défaut */}
-                {address.is_main && (
+                {address.is_default && (
                   <div className="inline-block bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
                     Adresse par défaut
                   </div>

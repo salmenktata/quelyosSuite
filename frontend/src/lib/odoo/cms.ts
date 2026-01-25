@@ -12,7 +12,7 @@ import type {
   GetPagesOptions,
   PagesResponse,
 } from '@/types/cms';
-import { logger } from '../logger';
+import { logger } from '@quelyos/logger';
 
 // Use absolute URL for SSR, relative for client-side
 const getApiBase = () => {

@@ -46,6 +46,11 @@ class QuelyosTenant(models.Model):
         index=True,
         help="Domaine principal de la boutique (ex: marque.com)"
     )
+    backoffice_domain = fields.Char(
+        string='Domaine backoffice',
+        index=True,
+        help="Domaine du backoffice admin (ex: admin.marque.com)"
+    )
     domains_json = fields.Text(
         string='Domaines additionnels',
         default='[]',

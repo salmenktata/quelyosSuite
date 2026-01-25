@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
 import { useSearchHistoryStore } from '@/store/searchHistoryStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface Product {
   id: number;

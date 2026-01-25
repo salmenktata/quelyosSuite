@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface CompareState {
   products: Product[];

@@ -22,7 +22,7 @@ import { ViewersCount } from '@/components/product/ViewersCount';
 import { CountdownTimer } from '@/components/product/CountdownTimer';
 import { useCompareStore } from '@/store/compareStore';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // Lazy load du carousel (non critique pour le premier affichage)
 const RecentlyViewedCarousel = dynamic(

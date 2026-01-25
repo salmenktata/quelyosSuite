@@ -5,7 +5,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export const metadata: Metadata = {
   title: 'Catégories de Produits | Quelyos',

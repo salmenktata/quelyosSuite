@@ -5,7 +5,7 @@ import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import type { Product } from '@quelyos/types';
 import { formatPrice } from '@/lib/utils/formatting';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface BundleSuggestionsProps {
   currentProduct: Product;

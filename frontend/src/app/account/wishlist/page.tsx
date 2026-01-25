@@ -15,7 +15,7 @@ import { Button } from '@/components/common/Button';
 import { formatPrice } from '@/lib/utils/formatting';
 import { odooClient } from '@/lib/odoo/client';
 import type { WishlistItem } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export default function AccountWishlistPage() {
   const router = useRouter();

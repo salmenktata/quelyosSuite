@@ -260,8 +260,11 @@ export interface Order {
   date_order: string;
   customer: User;
   lines: OrderLine[];
+  line_count?: number; // Nombre de lignes de commande
   subtotal: number;
+  amount_untaxed?: number; // Alias Odoo de subtotal
   tax_total: number;
+  amount_tax?: number; // Alias Odoo de tax_total
   shipping_cost: number;
   discount?: number;
   total: number;
@@ -285,6 +288,10 @@ export interface OrderLine {
   price_subtotal: number;
   price_tax: number;
   price_total: number;
+  // Champs dupliqués depuis product pour faciliter l'accès
+  product_name?: string;
+  image_url?: string;
+  quantity?: number; // Alias de product_uom_qty
 }
 
 export interface OrderDetail extends Order {

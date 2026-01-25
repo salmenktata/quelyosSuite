@@ -35,6 +35,7 @@
                         <group string="Identification">
                             <field name="code"/>
                             <field name="domain"/>
+                            <field name="backoffice_domain"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="active" invisible="1"/>
                         </group>
@@ -174,6 +175,7 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="domain"/>
+                <field name="backoffice_domain"/>
                 <field name="plan_id"/>
                 <field name="subscription_state"
                        decoration-success="subscription_state == 'active'"

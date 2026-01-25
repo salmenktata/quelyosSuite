@@ -14,7 +14,7 @@ import { Button } from '@/components/common/Button';
 import { formatPrice } from '@/lib/utils/formatting';
 import { odooClient } from '@/lib/odoo/client';
 import type { Order } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 const orderStates = {
   draft: { label: 'Brouillon', color: 'gray' },
@@ -158,8 +158,8 @@ export default function OrderDetailPage() {
                     {/* Image */}
                     <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-gray-100">
                       <Image
-                        src={line.image_url}
-                        alt={line.product_name}
+                        src={line.image_url || line.product?.image_url || '/placeholder.jpg'}
+                        alt={line.product_name || line.product?.name || 'Product'}
                         fill
                         className="object-cover"
                         sizes="80px"
@@ -173,14 +173,14 @@ export default function OrderDetailPage() {
                       </h3>
                       <p className="text-sm text-gray-600">Quantité: {line.quantity}</p>
                       <p className="text-sm text-gray-600">
-                        Prix unitaire: {formatPrice(line.price_unit, order.currency.symbol)}
+                        Prix unitaire: {formatPrice(line.price_unit, order.currency?.symbol || '€')}
                       </p>
                     </div>
 
                     {/* Prix */}
                     <div className="text-right">
                       <p className="font-bold text-primary">
-                        {formatPrice(line.price_total, order.currency.symbol)}
+                        {formatPrice(line.price_total, order.currency?.symbol || '€')}
                       </p>
                     </div>
                   </div>
@@ -189,17 +189,17 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Adresse de livraison */}
-            {order.partner_shipping && (
+            {order.shipping_address && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-bold mb-4">Adresse de livraison</h2>
                 <div className="text-gray-700">
-                  <p className="font-semibold">{order.partner_shipping.name}</p>
-                  <p>{order.partner_shipping.street}</p>
-                  {order.partner_shipping.street2 && <p>{order.partner_shipping.street2}</p>}
+                  <p className="font-semibold">{order.shipping_address.name}</p>
+                  <p>{order.shipping_address.street}</p>
+                  {order.shipping_address.street2 && <p>{order.shipping_address.street2}</p>}
                   <p>
-                    {order.partner_shipping.zip} {order.partner_shipping.city}
+                    {order.shipping_address.zip} {order.shipping_address.city}
                   </p>
-                  <p>{order.partner_shipping.country_name || order.partner_shipping.country_id}</p>
+                  <p>{order.shipping_address.country_name || order.shipping_address.country_id}</p>
                 </div>
               </div>
             )}
@@ -213,13 +213,13 @@ export default function OrderDetailPage() {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Sous-total</span>
-                  <span>{formatPrice(order.amount_untaxed, order.currency.symbol)}</span>
+                  <span>{formatPrice(order.amount_untaxed || order.subtotal, order.currency?.symbol || '€')}</span>
                 </div>
 
-                {order.amount_tax > 0 && (
+                {(order.amount_tax || order.tax_total) > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>TVA</span>
-                    <span>{formatPrice(order.amount_tax, order.currency.symbol)}</span>
+                    <span>{formatPrice(order.amount_tax || order.tax_total, order.currency?.symbol || '€')}</span>
                   </div>
                 )}
               </div>
@@ -228,7 +228,7 @@ export default function OrderDetailPage() {
                 <div className="flex justify-between items-baseline">
                   <span className="text-lg font-bold text-gray-900">Total</span>
                   <span className="text-2xl font-bold text-primary">
-                    {formatPrice(order.amount_total, order.currency.symbol)}
+                    {formatPrice(order.amount_total || order.total, order.currency?.symbol || '€')}
                   </span>
                 </div>
               </div>

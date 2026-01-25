@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // Configuration images Odoo
@@ -56,6 +57,17 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
+  },
+
+  // Webpack configuration for shared packages
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@quelyos/logger': path.resolve(__dirname, '../shared/logger/src'),
+      '@quelyos/types': path.resolve(__dirname, '../shared/types/src'),
+      '@quelyos/api-client': path.resolve(__dirname, '../shared/api-client/src'),
+    };
+    return config;
   },
 
   // Headers de sécurité

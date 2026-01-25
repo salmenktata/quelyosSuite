@@ -5,7 +5,7 @@
 
 import { VariantsResponse } from '@quelyos/types';
 import { odooClient } from './odoo/client';
-import { logger } from './logger';
+import { logger } from '@quelyos/logger';
 
 // Cache globale avec TTL 5 minutes
 const variantsCache = new Map<number, {

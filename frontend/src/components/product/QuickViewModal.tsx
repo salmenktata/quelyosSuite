@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import { Button } from '@/components/common';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface ProductVariant {
   id: number;

@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { odooClient } from '@/lib/odoo/client'
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600 // Revalider toutes les heures

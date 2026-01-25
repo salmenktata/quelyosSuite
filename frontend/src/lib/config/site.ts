@@ -5,7 +5,7 @@
  */
 
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // Type definitions for site config
 export interface SiteConfig {

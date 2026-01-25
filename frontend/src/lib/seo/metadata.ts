@@ -5,7 +5,7 @@
 
 import { Metadata } from 'next';
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export interface SeoData {
   meta_title: string;

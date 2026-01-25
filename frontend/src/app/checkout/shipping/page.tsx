@@ -13,7 +13,7 @@ import { CheckoutStepper } from '@/components/checkout/CheckoutStepper';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { ShippingForm, ShippingAddress } from '@/components/checkout/ShippingForm';
 import { LoadingPage } from '@/components/common/Loading';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export default function CheckoutShippingPage() {
   const router = useRouter();

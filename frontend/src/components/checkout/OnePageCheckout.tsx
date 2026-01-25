@@ -6,7 +6,7 @@ import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/common';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface ShippingAddress {
   name: string;

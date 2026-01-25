@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Badge } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface CartSummaryProps {
   cart: {

@@ -6,7 +6,7 @@ import { useToast } from '@/store/toastStore';
 import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
 import { odooClient } from '@/lib/odoo/client';
 import Link from 'next/link';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface ContactFormData {
   name: string;

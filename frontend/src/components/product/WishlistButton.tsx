@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useAuthStore } from '@/store/authStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface WishlistButtonProps {
   productId: number;

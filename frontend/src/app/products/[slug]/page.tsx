@@ -25,7 +25,7 @@ import { VariantSelector } from '@/components/product/VariantSelector';
 import { ViewersCount } from '@/components/product/ViewersCount';
 import { CountdownTimer } from '@/components/product/CountdownTimer';
 import { BundleSuggestions } from '@/components/product/BundleSuggestions';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export default function ProductDetailPage() {
   const params = useParams();

@@ -11,7 +11,7 @@ import { CategoriesSection } from '@/components/home/CategoriesSection';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { ProductCardHome } from '@/components/home/ProductCardHome';
 import { NewsletterForm } from '@/components/home/NewsletterForm';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 // Server-side data fetching
 async function getHomeData(): Promise<{ products: Product[]; categories: Category[] }> {

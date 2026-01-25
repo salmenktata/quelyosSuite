@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { odooClient } from '@/lib/odoo/client';
 import { Button } from '@/components/common';
 import { Product } from '@quelyos/types';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface UpsellModalProps {
   isOpen: boolean;

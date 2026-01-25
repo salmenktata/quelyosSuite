@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadStripe, Stripe, PaymentRequest } from '@stripe/stripe-js';
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface WalletPaymentButtonProps {
   orderId?: number;

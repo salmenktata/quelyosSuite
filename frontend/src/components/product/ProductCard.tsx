@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Product } from '@quelyos/types';
 import { Card, Badge, Button } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 interface ProductCardProps {
   product: Product;

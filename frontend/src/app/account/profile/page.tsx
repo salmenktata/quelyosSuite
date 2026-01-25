@@ -12,7 +12,7 @@ import { LoadingPage } from '@/components/common/Loading';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export default function AccountProfilePage() {
   const router = useRouter();

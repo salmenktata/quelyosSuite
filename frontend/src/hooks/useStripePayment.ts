@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react';
 import { useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { odooClient } from '@/lib/odoo/client';
-import { logger } from '@quelyos/logger';
-import { getUserFriendlyErrorMessage } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
+import { getUserFriendlyErrorMessage } from '@/lib/logger';
 
 interface UseStripePaymentOptions {
   orderId: number;
