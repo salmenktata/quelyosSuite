@@ -183,8 +183,8 @@ export default function PromoBanners() {
 
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Bannières Promotionnelles</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Bannières Promotionnelles</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Gérez les 2 bannières affichées sous le slider
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function PromoBanners() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-800">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-800 dark:text-red-300">
             Une erreur est survenue lors du chargement des bannières
           </div>
         )}
@@ -200,34 +200,34 @@ export default function PromoBanners() {
         {isLoading ? (
           <SkeletonTable rows={5} columns={6} />
         ) : (
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 dark:bg-gray-800 shadow">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Ordre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Nom
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Titre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Style
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Statut
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {banners.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                       Aucune bannière trouvée. Créez-en une pour commencer.
                     </td>
                   </tr>
@@ -240,11 +240,11 @@ export default function PromoBanners() {
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, banner.id)}
                       onDragEnd={handleDragEnd}
-                      className={`cursor-move hover:bg-gray-50 ${
+                      className={`cursor-move hover:bg-gray-50 dark:hover:bg-gray-700 ${
                         draggedId === banner.id ? 'opacity-50' : ''
                       }`}
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         <span className="inline-flex items-center">
                           <svg
                             className="mr-2 h-5 w-5 text-gray-400"
@@ -262,10 +262,10 @@ export default function PromoBanners() {
                           {banner.sequence}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                         {banner.name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                         <div className="max-w-xs truncate">{banner.title}</div>
                         {banner.tag && (
                           <div className="mt-1">
@@ -275,7 +275,7 @@ export default function PromoBanners() {
                           </div>
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         <div>Gradient: {banner.gradient}</div>
                         <div className="text-xs text-gray-400">Bouton: {banner.button_bg}</div>
                       </td>
@@ -458,7 +458,7 @@ export default function PromoBanners() {
                 onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label className="ml-2 block text-sm text-gray-900">Actif</label>
+              <label className="ml-2 block text-sm text-gray-900 dark:text-gray-100">Actif</label>
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">

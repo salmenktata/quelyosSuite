@@ -8,9 +8,10 @@ import {
   useReorderHeroSlides,
   type HeroSlide,
 } from '../hooks/useHeroSlides'
-import { Badge, Button, Breadcrumbs, SkeletonTable, Modal } from '../components/common'
+import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, ImageUpload } from '../components/common'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/common/Toast'
+import { useImageUpload } from '../hooks/useImageUpload'
 
 export default function HeroSlides() {
   const [modalOpen, setModalOpen] = useState(false)
@@ -36,6 +37,12 @@ export default function HeroSlides() {
   const deleteMutation = useDeleteHeroSlide()
   const reorderMutation = useReorderHeroSlides()
   const toast = useToast()
+
+  const imageUploadMutation = useImageUpload({
+    endpoint: '/api/ecommerce/hero-slides',
+    id: editingSlide?.id || 0,
+    invalidateKey: ['heroSlides'],
+  })
 
   const slides = (data?.data?.slides || []) as HeroSlide[]
 
@@ -190,7 +197,7 @@ export default function HeroSlides() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-800">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-800 dark:text-red-300">
             Une erreur est survenue lors du chargement des slides
           </div>
         )}
@@ -198,37 +205,37 @@ export default function HeroSlides() {
         {isLoading ? (
           <SkeletonTable rows={5} columns={6} />
         ) : (
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Ordre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Nom
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Titre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     CTA Principal
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Dates
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Statut
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {slides.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">
+                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                       Aucun slide trouvé. Créez-en un pour commencer.
                     </td>
                   </tr>
@@ -241,14 +248,14 @@ export default function HeroSlides() {
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, slide.id)}
                       onDragEnd={handleDragEnd}
-                      className={`cursor-move hover:bg-gray-50 ${
+                      className={`cursor-move hover:bg-gray-50 dark:hover:bg-gray-700 ${
                         draggedId === slide.id ? 'opacity-50' : ''
                       }`}
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         <span className="inline-flex items-center">
                           <svg
-                            className="mr-2 h-5 w-5 text-gray-400"
+                            className="mr-2 h-5 w-5 text-gray-400 dark:text-gray-500"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -263,10 +270,10 @@ export default function HeroSlides() {
                           {slide.sequence}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                         {slide.name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                         <div className="max-w-xs truncate">{slide.title}</div>
                         {slide.subtitle && (
                           <div className="max-w-xs truncate text-xs text-gray-500">
@@ -274,7 +281,7 @@ export default function HeroSlides() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                         <div className="max-w-xs truncate">{slide.cta_text}</div>
                         <div className="max-w-xs truncate text-xs text-gray-500">
                           {slide.cta_link}
@@ -364,6 +371,17 @@ export default function HeroSlides() {
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
               />
             </div>
+
+            {editingSlide && (
+              <ImageUpload
+                currentImageUrl={editingSlide.image_url}
+                onUpload={async (file) => {
+                  await imageUploadMutation.mutateAsync(file)
+                  toast.success('Image uploadée avec succès')
+                }}
+                label="Image du slide (1200x600px recommandé)"
+              />
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>

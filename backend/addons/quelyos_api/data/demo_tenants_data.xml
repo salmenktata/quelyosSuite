@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Tenant 1 - Boutique Sport (Bleu) -->
+        <record id="tenant_sport" model="quelyos.tenant">
+            <field name="name">Boutique Sport</field>
+            <field name="code">sport</field>
+            <field name="domain">localhost</field>
+            <field name="backoffice_domain">localhost:5175</field>
+            <field name="slogan">Équipement sportif de qualité</field>
+            <field name="description">Découvrez notre sélection d'équipements sportifs de qualité professionnelle</field>
+
+            <!-- Branding -->
+            <field name="font_family">inter</field>
+
+            <!-- Couleurs Thème Bleu Sport -->
+            <field name="primary_color">#3b82f6</field>
+            <field name="primary_dark">#2563eb</field>
+            <field name="primary_light">#60a5fa</field>
+            <field name="secondary_color">#10b981</field>
+            <field name="secondary_dark">#059669</field>
+            <field name="secondary_light">#34d399</field>
+            <field name="accent_color">#f59e0b</field>
+            <field name="background_color">#ffffff</field>
+            <field name="foreground_color">#0f172a</field>
+            <field name="muted_color">#f1f5f9</field>
+            <field name="muted_foreground">#64748b</field>
+            <field name="border_color">#e2e8f0</field>
+            <field name="ring_color">#3b82f6</field>
+
+            <!-- Contact -->
+            <field name="email">contact@sport.local</field>
+            <field name="phone">+33 1 23 45 67 89</field>
+
+            <!-- SEO -->
+            <field name="meta_title">Boutique Sport - Équipement sportif professionnel</field>
+            <field name="meta_description">Découvrez notre gamme complète d'équipements sportifs de qualité à prix compétitifs</field>
+
+            <!-- Options -->
+            <field name="enable_dark_mode" eval="True"/>
+            <field name="default_dark" eval="False"/>
+            <field name="feature_wishlist" eval="True"/>
+            <field name="feature_comparison" eval="True"/>
+            <field name="feature_reviews" eval="True"/>
+            <field name="feature_newsletter" eval="True"/>
+            <field name="feature_guest_checkout" eval="True"/>
+
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Tenant 2 - Marque Mode (Rose) -->
+        <record id="tenant_mode" model="quelyos.tenant">
+            <field name="name">Marque Mode</field>
+            <field name="code">mode</field>
+            <field name="domain">localhost</field>
+            <field name="backoffice_domain">localhost:5175</field>
+            <field name="slogan">L'élégance à la française</field>
+            <field name="description">Mode française haut de gamme pour femmes et hommes</field>
+
+            <!-- Branding -->
+            <field name="font_family">poppins</field>
+
+            <!-- Couleurs Thème Rose Mode -->
+            <field name="primary_color">#ec4899</field>
+            <field name="primary_dark">#db2777</field>
+            <field name="primary_light">#f9a8d4</field>
+            <field name="secondary_color">#8b5cf6</field>
+            <field name="secondary_dark">#7c3aed</field>
+            <field name="secondary_light">#a78bfa</field>
+            <field name="accent_color">#f59e0b</field>
+            <field name="background_color">#ffffff</field>
+            <field name="foreground_color">#0f172a</field>
+            <field name="muted_color">#f1f5f9</field>
+            <field name="muted_foreground">#64748b</field>
+            <field name="border_color">#e2e8f0</field>
+            <field name="ring_color">#ec4899</field>
+
+            <!-- Contact -->
+            <field name="email">contact@mode.local</field>
+            <field name="phone">+33 1 98 76 54 32</field>
+
+            <!-- SEO -->
+            <field name="meta_title">Marque Mode - Vêtements tendance et élégants</field>
+            <field name="meta_description">Collection exclusive de vêtements français pour un style unique et raffiné</field>
+
+            <!-- Options -->
+            <field name="enable_dark_mode" eval="True"/>
+            <field name="default_dark" eval="False"/>
+            <field name="feature_wishlist" eval="True"/>
+            <field name="feature_comparison" eval="False"/>
+            <field name="feature_reviews" eval="True"/>
+            <field name="feature_newsletter" eval="True"/>
+            <field name="feature_guest_checkout" eval="True"/>
+
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

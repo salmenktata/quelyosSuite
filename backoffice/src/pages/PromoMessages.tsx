@@ -175,8 +175,8 @@ export default function PromoMessages() {
 
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Messages PromoBar</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Messages PromoBar</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Gérez les messages en rotation dans la barre supérieure
             </p>
           </div>
@@ -184,7 +184,7 @@ export default function PromoMessages() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-800">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-800 dark:text-red-300">
             Une erreur est survenue lors du chargement des messages
           </div>
         )}
@@ -192,34 +192,34 @@ export default function PromoMessages() {
         {isLoading ? (
           <SkeletonTable rows={5} columns={5} />
         ) : (
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 dark:bg-gray-800 shadow">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Ordre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Nom
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Texte
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Icône
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Statut
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {messages.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                       Aucun message trouvé. Créez-en un pour commencer.
                     </td>
                   </tr>
@@ -232,11 +232,11 @@ export default function PromoMessages() {
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, message.id)}
                       onDragEnd={handleDragEnd}
-                      className={`cursor-move hover:bg-gray-50 ${
+                      className={`cursor-move hover:bg-gray-50 dark:hover:bg-gray-700 ${
                         draggedId === message.id ? 'opacity-50' : ''
                       }`}
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         <span className="inline-flex items-center">
                           <svg
                             className="mr-2 h-5 w-5 text-gray-400"
@@ -254,13 +254,13 @@ export default function PromoMessages() {
                           {message.sequence}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                         {message.name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                         <div className="max-w-md truncate">{message.text}</div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         {getIconLabel(message.icon)}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm">
@@ -365,7 +365,7 @@ export default function PromoMessages() {
                 onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label className="ml-2 block text-sm text-gray-900">Actif</label>
+              <label className="ml-2 block text-sm text-gray-900 dark:text-gray-100">Actif</label>
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">

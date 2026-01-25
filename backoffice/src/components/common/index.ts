@@ -46,3 +46,6 @@ export type { Attribute, AttributeValue, AttributeFilterProps } from './Attribut
 
 export { DataTable } from './DataTable'
 export type { DataTableProps, DataTableColumn, BulkAction, MobileCardConfig } from './DataTable'
+
+export { ImageUpload } from './ImageUpload'
+export type { ImageUploadProps } from './ImageUpload'

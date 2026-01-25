@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.0.29',
+    'version': '19.0.1.0.30',
     'category': 'Website',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -21,6 +21,7 @@
         'security/ir.model.access.csv',
         'data/subscription_sequence.xml',
         'data/subscription_plan_data.xml',
+        'data/demo_tenants_data.xml',
         'data/ir_cron_stock_alerts.xml',
         'data/ir_cron_abandoned_cart.xml',
         'views/subscription_views.xml',
