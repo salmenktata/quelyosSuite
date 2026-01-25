@@ -74,7 +74,7 @@
     <!-- Menu -->
     <menuitem id="menu_hero_slide"
               name="Hero Slides"
-              parent="website.menu_website_configuration"
+              parent="menu_quelyos_cms"
               action="action_hero_slide"
-              sequence="50"/>
+              sequence="10"/>
 </odoo>

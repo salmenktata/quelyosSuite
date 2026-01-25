@@ -4,18 +4,20 @@
  * Fonctionnalités :
  * - Affichage détaillé de la pricelist
  * - Liste des règles de prix (items)
+ * - CRUD complet des règles (création, modification, suppression)
  * - Filtrage et tri des règles
  * - Dark mode complet
  * - Accessibilité WCAG 2.1 AA
  * - Skeleton loading
- *
- * Note : Modification des règles via Odoo natif
- * car configuration complexe (formules, dates validité, conditions)
  */
 
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePricelistDetail, type PricelistItem } from '../hooks/usePricelists';
+import {
+  usePricelistDetail,
+  useDeletePricelistItem,
+  type PricelistItem,
+} from '../hooks/usePricelists';
 import { Layout } from '../components/Layout';
 import { PricelistItemFormModal } from '../components/pricelists/PricelistItemFormModal';
 import {
@@ -32,6 +34,8 @@ import {
   XMarkIcon,
   InformationCircleIcon,
   PlusIcon,
+  PencilIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 
 export default function PricelistDetail() {
@@ -42,8 +46,10 @@ export default function PricelistDetail() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [isAddRuleModalOpen, setIsAddRuleModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<PricelistItem | null>(null);
 
   const { data: pricelist, isLoading, error } = usePricelistDetail(pricelistId);
+  const deleteItemMutation = useDeletePricelistItem();
 
   // Filtrage des règles
   const filteredItems = useMemo(() => {
@@ -337,6 +343,9 @@ export default function PricelistDetail() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Qté min
                     </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -344,11 +353,21 @@ export default function PricelistDetail() {
                     <PricelistItemRow
                       key={item.id}
                       item={item}
+                      pricelistId={pricelistId}
                       currencySymbol={pricelist.currency_symbol}
                       getAppliedOnLabel={getAppliedOnLabel}
                       getAppliedOnIcon={getAppliedOnIcon}
                       getComputePriceLabel={getComputePriceLabel}
                       getComputePriceColor={getComputePriceColor}
+                      onEdit={(item) => {
+                        setEditingItem(item);
+                        setIsAddRuleModalOpen(true);
+                      }}
+                      onDelete={(itemId) => {
+                        if (confirm('Confirmer la suppression de cette règle ?')) {
+                          deleteItemMutation.mutate({ pricelistId, itemId });
+                        }
+                      }}
                     />
                   ))}
                 </tbody>
@@ -371,30 +390,19 @@ export default function PricelistDetail() {
           )}
         </div>
 
-        {/* Note informative */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-          <div className="flex gap-3">
-            <InformationCircleIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                Modification des règles de prix
-              </h4>
-              <p className="mt-1 text-sm text-blue-600 dark:text-blue-300">
-                Pour ajouter ou modifier des règles de prix, utilisez l'interface d'administration qui offre
-                des options avancées comme les formules de calcul, les dates de validité et les conditions spécifiques.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Modal ajout règle */}
+      {/* Modal ajout/édition règle */}
       {pricelist && (
         <PricelistItemFormModal
           isOpen={isAddRuleModalOpen}
-          onClose={() => setIsAddRuleModalOpen(false)}
+          onClose={() => {
+            setIsAddRuleModalOpen(false);
+            setEditingItem(null);
+          }}
           pricelistId={pricelistId}
           currencySymbol={pricelist.currency_symbol}
+          item={editingItem || undefined}
         />
       )}
     </Layout>
@@ -404,20 +412,26 @@ export default function PricelistDetail() {
 // Composant ligne de règle
 interface PricelistItemRowProps {
   item: PricelistItem;
+  pricelistId: number;
   currencySymbol: string;
   getAppliedOnLabel: (appliedOn: string) => string;
   getAppliedOnIcon: (appliedOn: string) => React.ReactNode;
   getComputePriceLabel: (computePrice: string) => string;
   getComputePriceColor: (computePrice: string) => string;
+  onEdit: (item: PricelistItem) => void;
+  onDelete: (itemId: number) => void;
 }
 
 function PricelistItemRow({
   item,
+  pricelistId,
   currencySymbol,
   getAppliedOnLabel,
   getAppliedOnIcon,
   getComputePriceLabel,
   getComputePriceColor,
+  onEdit,
+  onDelete,
 }: PricelistItemRowProps) {
   // Formater la valeur selon le type
   const formatValue = () => {
@@ -476,6 +490,22 @@ function PricelistItemRow({
         ) : (
           <span className="text-gray-400">1</span>
         )}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <button
+          onClick={() => onEdit(item)}
+          className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4"
+          aria-label="Modifier"
+        >
+          <PencilIcon className="h-5 w-5 inline" />
+        </button>
+        <button
+          onClick={() => onDelete(item.id)}
+          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+          aria-label="Supprimer"
+        >
+          <TrashIcon className="h-5 w-5 inline" />
+        </button>
       </td>
     </tr>
   );

@@ -98,3 +98,35 @@ export function useStockMoves(params?: { limit?: number; offset?: number; produc
     queryFn: () => api.getStockMoves(params),
   })
 }
+
+// Hook pour exporter le stock en CSV
+export function useExportStock() {
+  return useMutation({
+    mutationFn: (filters: { date_from?: string; date_to?: string }) =>
+      api.exportStockCSV(filters),
+  })
+}
+
+// Hook pour mettre à jour le stock d'une variante
+export function useUpdateVariantStock() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ productId, variantId, quantity }: { productId: number; variantId: number; quantity: number }) =>
+      api.updateVariantStock(productId, variantId, quantity),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['stock-products'] })
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: ['product-variants', variables.productId] })
+    },
+  })
+}
+
+// Hook pour récupérer les variantes d'un produit
+export function useProductVariants(productId: number | null) {
+  return useQuery({
+    queryKey: ['product-variants', productId],
+    queryFn: () => api.getProductVariants(productId!),
+    enabled: !!productId,
+  })
+}

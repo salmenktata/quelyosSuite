@@ -5213,6 +5213,80 @@ class QuelyosAPI(http.Controller):
 
     # ==================== CUSTOMER PROFILE ====================
 
+    @http.route('/api/ecommerce/stock/export', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def export_stock_csv(self, **params):
+        """
+        Export CSV du stock avec filtres dates (ADMIN UNIQUEMENT).
+        Pour compliance audit et reporting.
+
+        Params:
+            date_from (str): Date début filtre YYYY-MM-DD (optionnel)
+            date_to (str): Date fin filtre YYYY-MM-DD (optionnel)
+
+        Returns:
+            Données CSV avec colonnes : id, name, sku, qty_available, virtual_available,
+            list_price, standard_price, valuation, category, create_date
+        """
+        try:
+            # Vérification admin
+            admin_check = self._require_admin()
+            if not admin_check['success']:
+                return admin_check
+
+            Product = request.env['product.product'].sudo()
+
+            # Construire domaine de recherche
+            domain = [('detailed_type', '=', 'product')]
+
+            # Filtres dates optionnels
+            date_from = params.get('date_from')
+            date_to = params.get('date_to')
+
+            if date_from:
+                domain.append(('create_date', '>=', date_from))
+
+            if date_to:
+                # Ajouter 23:59:59 pour inclure toute la journée
+                domain.append(('create_date', '<=', f"{date_to} 23:59:59"))
+
+            # Rechercher produits
+            products = Product.search(domain, order='name')
+
+            # Générer données CSV
+            csv_data = []
+            for product in products:
+                csv_data.append({
+                    'id': product.id,
+                    'name': product.name or '',
+                    'sku': product.default_code or '',
+                    'qty_available': float(product.qty_available),
+                    'virtual_available': float(product.virtual_available),
+                    'list_price': float(product.list_price),
+                    'standard_price': float(product.standard_price),
+                    'valuation': float(product.qty_available * product.standard_price),
+                    'category': product.categ_id.complete_name if product.categ_id else '',
+                    'create_date': product.create_date.strftime('%Y-%m-%d %H:%M:%S') if product.create_date else '',
+                })
+
+            _logger.info(f"Stock CSV export : {len(csv_data)} produits par user {request.env.user.login}")
+
+            return {
+                'success': True,
+                'data': csv_data,
+                'total': len(csv_data),
+                'filters': {
+                    'date_from': date_from,
+                    'date_to': date_to,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Export stock CSV error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     @http.route('/api/ecommerce/customer/profile', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customer_profile(self, **kwargs):
         """Récupérer le profil du client connecté"""
@@ -9033,6 +9107,234 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Create pricelist item error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_pricelist(self, pricelist_id, **kwargs):
+        """
+        Supprimer une pricelist (ADMIN UNIQUEMENT).
+        Vérifie qu'aucun client n'utilise cette pricelist avant suppression.
+
+        Returns:
+            Confirmation de suppression ou erreur si utilisée
+        """
+        try:
+            # Vérification admin
+            admin_check = self._require_admin()
+            if not admin_check['success']:
+                return admin_check
+
+            Pricelist = request.env['product.pricelist'].sudo()
+            pricelist = Pricelist.browse(pricelist_id)
+
+            if not pricelist.exists():
+                return {
+                    'success': False,
+                    'error': f'Pricelist {pricelist_id} introuvable'
+                }
+
+            # Vérifier si des clients utilisent cette pricelist
+            Partner = request.env['res.partner'].sudo()
+            customers_count = Partner.search_count([
+                ('property_product_pricelist', '=', pricelist_id)
+            ])
+
+            if customers_count > 0:
+                return {
+                    'success': False,
+                    'error': f'Impossible de supprimer : {customers_count} client(s) utilisent cette liste de prix'
+                }
+
+            pricelist_name = pricelist.name
+            pricelist.unlink()
+
+            _logger.info(f"Pricelist supprimée : {pricelist_id} - {pricelist_name} par user {request.env.user.login}")
+
+            return {
+                'success': True,
+                'message': f"Liste de prix '{pricelist_name}' supprimée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete pricelist error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_pricelist_item(self, pricelist_id, item_id, **params):
+        """
+        Modifier une règle de prix existante (ADMIN UNIQUEMENT).
+
+        Params:
+            applied_on (str): Type d'application (optionnel)
+            compute_price (str): Type de calcul (optionnel)
+            fixed_price (float): Prix fixe (optionnel)
+            percent_price (float): Pourcentage du prix (optionnel)
+            price_discount (float): Pourcentage de remise (optionnel)
+            min_quantity (int): Quantité minimale (optionnel)
+            product_tmpl_id (int): ID du produit (optionnel)
+            categ_id (int): ID de la catégorie (optionnel)
+            date_start (str): Date début validité (optionnel)
+            date_end (str): Date fin validité (optionnel)
+
+        Returns:
+            Règle de prix mise à jour
+        """
+        try:
+            # Vérification admin
+            admin_check = self._require_admin()
+            if not admin_check['success']:
+                return admin_check
+
+            PricelistItem = request.env['product.pricelist.item'].sudo()
+            item = PricelistItem.browse(item_id)
+
+            if not item.exists():
+                return {
+                    'success': False,
+                    'error': f'Règle de prix {item_id} introuvable'
+                }
+
+            # Vérifier que l'item appartient bien à cette pricelist
+            if item.pricelist_id.id != pricelist_id:
+                return {
+                    'success': False,
+                    'error': f'Cette règle n\'appartient pas à la pricelist {pricelist_id}'
+                }
+
+            # Construire dictionnaire des champs à mettre à jour
+            update_vals = {}
+
+            if 'applied_on' in params:
+                update_vals['applied_on'] = params['applied_on']
+
+            if 'compute_price' in params:
+                update_vals['compute_price'] = params['compute_price']
+
+            if 'fixed_price' in params:
+                update_vals['fixed_price'] = float(params['fixed_price'])
+
+            if 'percent_price' in params:
+                update_vals['percent_price'] = float(params['percent_price'])
+
+            if 'price_discount' in params:
+                update_vals['price_discount'] = float(params['price_discount'])
+
+            if 'min_quantity' in params:
+                update_vals['min_quantity'] = params['min_quantity']
+
+            if 'product_tmpl_id' in params:
+                product_tmpl_id = params['product_tmpl_id']
+                if product_tmpl_id:
+                    ProductTemplate = request.env['product.template'].sudo()
+                    product = ProductTemplate.browse(product_tmpl_id)
+                    if not product.exists():
+                        return {
+                            'success': False,
+                            'error': f'Produit {product_tmpl_id} introuvable'
+                        }
+                update_vals['product_tmpl_id'] = product_tmpl_id
+
+            if 'categ_id' in params:
+                categ_id = params['categ_id']
+                if categ_id:
+                    Category = request.env['product.category'].sudo()
+                    category = Category.browse(categ_id)
+                    if not category.exists():
+                        return {
+                            'success': False,
+                            'error': f'Catégorie {categ_id} introuvable'
+                        }
+                update_vals['categ_id'] = categ_id
+
+            if 'date_start' in params:
+                update_vals['date_start'] = params['date_start']
+
+            if 'date_end' in params:
+                update_vals['date_end'] = params['date_end']
+
+            # Appliquer les modifications
+            if update_vals:
+                item.write(update_vals)
+                _logger.info(f"Règle de prix mise à jour : {item_id} par user {request.env.user.login}")
+
+            # Préparer la réponse
+            item_data = {
+                'id': item.id,
+                'applied_on': item.applied_on,
+                'compute_price': item.compute_price,
+                'fixed_price': float(item.fixed_price) if item.fixed_price else None,
+                'percent_price': float(item.percent_price) if item.percent_price else None,
+                'price_discount': float(item.price_discount) if item.price_discount else None,
+                'min_quantity': item.min_quantity,
+            }
+
+            if item.applied_on == '1_product' and item.product_tmpl_id:
+                item_data['product_id'] = item.product_tmpl_id.id
+                item_data['product_name'] = item.product_tmpl_id.name
+            elif item.applied_on == '2_product_category' and item.categ_id:
+                item_data['category_id'] = item.categ_id.id
+                item_data['category_name'] = item.categ_id.name
+
+            return {
+                'success': True,
+                'data': item_data,
+                'message': f"Règle de prix mise à jour avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Update pricelist item error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_pricelist_item(self, pricelist_id, item_id, **kwargs):
+        """
+        Supprimer une règle de prix (ADMIN UNIQUEMENT).
+
+        Returns:
+            Confirmation de suppression
+        """
+        try:
+            # Vérification admin
+            admin_check = self._require_admin()
+            if not admin_check['success']:
+                return admin_check
+
+            PricelistItem = request.env['product.pricelist.item'].sudo()
+            item = PricelistItem.browse(item_id)
+
+            if not item.exists():
+                return {
+                    'success': False,
+                    'error': f'Règle de prix {item_id} introuvable'
+                }
+
+            # Vérifier que l'item appartient bien à cette pricelist
+            if item.pricelist_id.id != pricelist_id:
+                return {
+                    'success': False,
+                    'error': f'Cette règle n\'appartient pas à la pricelist {pricelist_id}'
+                }
+
+            item.unlink()
+
+            _logger.info(f"Règle de prix supprimée : {item_id} de pricelist {pricelist_id} par user {request.env.user.login}")
+
+            return {
+                'success': True,
+                'message': f"Règle de prix supprimée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete pricelist item error: {e}")
             return {
                 'success': False,
                 'error': str(e)

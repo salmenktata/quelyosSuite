@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { useLowStockAlerts, useHighStockAlerts, useStockProducts, useUpdateProductStock } from '../hooks/useStock'
+import {
+  useLowStockAlerts,
+  useHighStockAlerts,
+  useStockProducts,
+  useUpdateProductStock,
+  useProductVariants,
+} from '../hooks/useStock'
 import { Badge, Button, Breadcrumbs, SkeletonTable, Input } from '../components/common'
 import { useToast } from '../contexts/ToastContext'
 import { api } from '../lib/api'
 import { logger } from '@quelyos/logger'
+import { ExportStockModal } from '../components/stock/ExportStockModal'
+import { VariantStockTable } from '../components/stock/VariantStockTable'
 import {
   ExclamationTriangleIcon,
   ShoppingBagIcon,
@@ -14,10 +22,12 @@ import {
   XMarkIcon,
   PencilIcon,
   ArrowDownTrayIcon,
+  Squares2X2Icon,
+  ArrowLeftIcon,
 } from '@heroicons/react/24/outline'
 import type { StockProduct } from '@/types'
 
-type TabType = 'products' | 'alerts'
+type TabType = 'products' | 'alerts' | 'variants'
 
 export default function Stock() {
   const [activeTab, setActiveTab] = useState<TabType>('products')
@@ -27,6 +37,11 @@ export default function Stock() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'in_stock' | 'low_stock' | 'out_of_stock'>('all')
   const [editingProductId, setEditingProductId] = useState<number | null>(null)
   const [editingQuantity, setEditingQuantity] = useState<string>('')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [selectedProductForVariants, setSelectedProductForVariants] = useState<{
+    id: number
+    name: string
+  } | null>(null)
   const limit = 20
 
   const toast = useToast()
@@ -58,6 +73,12 @@ export default function Stock() {
     limit,
     offset: page * limit,
   })
+
+  const {
+    data: variantsData,
+    isLoading: isLoadingVariants,
+    refetch: refetchVariants,
+  } = useProductVariants(selectedProductForVariants?.id || null)
 
   const updateStockMutation = useUpdateProductStock()
 
@@ -120,6 +141,14 @@ export default function Stock() {
     setActiveTab(tab)
     setPage(0) // Reset pagination
     setSearch('') // Reset search
+    if (tab !== 'variants') {
+      setSelectedProductForVariants(null)
+    }
+  }
+
+  const handleViewVariants = (product: StockProduct) => {
+    setSelectedProductForVariants({ id: product.id, name: product.name })
+    setActiveTab('variants')
   }
 
   const handleExportCSV = async () => {
@@ -309,14 +338,23 @@ export default function Stock() {
               Visualisez et gérez les niveaux de stock de vos produits
             </p>
           </div>
-          <Link to="/stock/moves">
-            <Button variant="secondary" className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-              </svg>
-              Voir les mouvements
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowExportModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+            >
+              <ArrowDownTrayIcon className="h-5 w-5" />
+              Exporter CSV
+            </button>
+            <Link to="/stock/moves">
+              <Button variant="secondary" className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+                Voir les mouvements
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -359,6 +397,26 @@ export default function Stock() {
                 {alertsTotal > 0 && (
                   <Badge variant="error" className="ml-2">
                     {alertsTotal}
+                  </Badge>
+                )}
+              </button>
+
+              <button
+                onClick={() => handleTabChange('variants')}
+                className={`
+                  group inline-flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                  ${
+                    activeTab === 'variants'
+                      ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  }
+                `}
+              >
+                <Squares2X2Icon className="h-5 w-5" />
+                Variantes
+                {selectedProductForVariants && (
+                  <Badge variant="info" className="ml-2">
+                    1 produit
                   </Badge>
                 )}
               </button>
@@ -732,15 +790,24 @@ export default function Stock() {
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() =>
-                                handleStartEdit(product.id, product.qty_available)
-                              }
-                              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-                              title="Modifier le stock"
-                            >
-                              <PencilIcon className="h-5 w-5" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() =>
+                                  handleStartEdit(product.id, product.qty_available)
+                                }
+                                className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                                title="Modifier le stock"
+                              >
+                                <PencilIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => handleViewVariants(product)}
+                                className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                                title="Voir les variantes"
+                              >
+                                <Squares2X2Icon className="h-5 w-5" />
+                              </button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -1076,6 +1143,69 @@ export default function Stock() {
                 </div>
               </div>
             </>
+          ) : activeTab === 'variants' ? (
+            <div className="space-y-6">
+              {selectedProductForVariants ? (
+                <>
+                  {/* Header avec retour */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => {
+                          setSelectedProductForVariants(null)
+                          setActiveTab('products')
+                        }}
+                        className="inline-flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <ArrowLeftIcon className="h-5 w-5" />
+                        Retour aux produits
+                      </button>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        Variantes de : {selectedProductForVariants.name}
+                      </h2>
+                    </div>
+                  </div>
+
+                  {/* Tableau des variantes */}
+                  {isLoadingVariants ? (
+                    <SkeletonTable rows={5} columns={7} />
+                  ) : variantsData?.data?.variants && variantsData.data.variants.length > 0 ? (
+                    <VariantStockTable
+                      productId={selectedProductForVariants.id}
+                      variants={variantsData.data.variants}
+                      onStockUpdated={() => refetchVariants()}
+                    />
+                  ) : (
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+                      <Squares2X2Icon className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        Aucune variante
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Ce produit n'a pas de variantes configurées.
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+                  <Squares2X2Icon className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Sélectionnez un produit
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    Revenez à l'onglet "Tous les Produits" et cliquez sur "Voir variantes" pour un produit.
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('products')}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                  >
+                    <CubeIcon className="h-5 w-5" />
+                    Aller aux produits
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="p-12 text-center">
               <div className="flex justify-center mb-4">
@@ -1097,6 +1227,12 @@ export default function Stock() {
           )}
         </div>
       </div>
+
+      {/* Modal Export Stock */}
+      <ExportStockModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+      />
     </Layout>
   )
 }

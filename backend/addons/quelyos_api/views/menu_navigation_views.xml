@@ -49,7 +49,7 @@
                         <field name="css_class"/>
                     </group>
                     <notebook>
-                        <page string="Sous-menus" attrs="{'invisible': [('parent_id', '!=', False)]}">
+                        <page string="Sous-menus" invisible="parent_id">
                             <field name="child_ids">
                                 <list>
                                     <field name="sequence" widget="handle"/>

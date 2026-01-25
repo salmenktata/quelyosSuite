@@ -160,3 +160,75 @@ export function useCreatePricelistItem() {
     },
   });
 }
+
+export function useDeletePricelist() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (pricelistId: number) => {
+      const response = await odooRpc(`/api/ecommerce/pricelists/${pricelistId}/delete`, {});
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete pricelist');
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pricelists'] });
+    },
+  });
+}
+
+export interface UpdatePricelistItemParams {
+  applied_on?: '3_global' | '2_product_category' | '1_product' | '0_product_variant';
+  compute_price?: 'fixed' | 'percentage' | 'formula';
+  fixed_price?: number;
+  percent_price?: number;
+  price_discount?: number;
+  min_quantity?: number;
+  product_tmpl_id?: number;
+  categ_id?: number;
+  date_start?: string;
+  date_end?: string;
+}
+
+export function useUpdatePricelistItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      pricelistId,
+      itemId,
+      params,
+    }: {
+      pricelistId: number;
+      itemId: number;
+      params: UpdatePricelistItemParams;
+    }) => {
+      const response = await odooRpc(`/api/ecommerce/pricelists/${pricelistId}/items/${itemId}/update`, params);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update pricelist item');
+      }
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['pricelist', variables.pricelistId] });
+    },
+  });
+}
+
+export function useDeletePricelistItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ pricelistId, itemId }: { pricelistId: number; itemId: number }) => {
+      const response = await odooRpc(`/api/ecommerce/pricelists/${pricelistId}/items/${itemId}/delete`, {});
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete pricelist item');
+      }
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['pricelist', variables.pricelistId] });
+    },
+  });
+}

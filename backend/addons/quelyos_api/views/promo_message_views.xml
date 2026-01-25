@@ -48,7 +48,7 @@
 
     <menuitem id="menu_promo_message"
               name="Messages PromoBar"
-              parent="website.menu_website_configuration"
+              parent="menu_quelyos_cms"
               action="action_promo_message"
-              sequence="52"/>
+              sequence="30"/>
 </odoo>

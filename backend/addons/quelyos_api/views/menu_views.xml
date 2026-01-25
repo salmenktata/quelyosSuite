@@ -70,4 +70,13 @@
               parent="menu_quelyos_subscriptions"
               action="action_quelyos_subscription_plan"
               sequence="20"/>
+
+    <!-- ============================================================ -->
+    <!-- SOUS-MENU CMS / CONTENU -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_quelyos_cms"
+              name="CMS / Contenu"
+              parent="menu_quelyos_root"
+              sequence="30"/>
 </odoo>

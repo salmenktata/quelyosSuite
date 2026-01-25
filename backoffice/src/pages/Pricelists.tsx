@@ -4,20 +4,18 @@
  * Fonctionnalités :
  * - Liste des pricelists avec filtres (actives, recherche)
  * - Tri par nom, devise, politique
+ * - CRUD complet (création, modification, suppression)
  * - Navigation vers détails (règles de prix)
  * - Dark mode complet
  * - Accessibilité WCAG 2.1 AA
  * - Skeleton loading
  * - Animations modernes
  * - Raccourcis clavier (Cmd/Ctrl+F, Escape)
- *
- * Note : CRUD non implémenté - les pricelists sont gérées via Odoo natif
- * car configuration complexe (règles de prix, formules, dates validité)
  */
 
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePricelists, type Pricelist } from '../hooks/usePricelists';
+import { usePricelists, useDeletePricelist, type Pricelist } from '../hooks/usePricelists';
 import { Layout } from '../components/Layout';
 import { SkeletonGrid } from '../components/common/Skeleton';
 import { PricelistFormModal } from '../components/pricelists/PricelistFormModal';
@@ -31,6 +29,8 @@ import {
   FunnelIcon,
   ArrowsUpDownIcon,
   PlusIcon,
+  PencilIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 
 // Options de tri
@@ -50,6 +50,7 @@ export default function Pricelists() {
 
   // Données
   const { data: pricelists, isLoading, error, refetch } = usePricelists({ active_only: activeOnly });
+  const deleteMutation = useDeletePricelist();
 
   // Debounce recherche (300ms)
   useEffect(() => {
@@ -349,6 +350,11 @@ export default function Pricelists() {
                 key={pricelist.id}
                 pricelist={pricelist}
                 onClick={() => navigate(`/pricelists/${pricelist.id}`)}
+                onDelete={(id) => {
+                  if (confirm('Confirmer la suppression de cette liste de prix ?')) {
+                    deleteMutation.mutate(id);
+                  }
+                }}
               />
             ))}
           </div>
@@ -361,7 +367,7 @@ export default function Pricelists() {
             <p className="text-gray-500 dark:text-gray-400">
               {searchQuery
                 ? 'Essayez de modifier vos critères de recherche.'
-                : "Les listes de prix sont créées et gérées dans l'interface d'administration."}
+                : "Créez votre première liste de prix en cliquant sur le bouton 'Nouvelle liste'."}
             </p>
           </div>
         )}
@@ -380,22 +386,21 @@ export default function Pricelists() {
 interface PricelistCardProps {
   pricelist: Pricelist;
   onClick: () => void;
+  onDelete: (id: number) => void;
 }
 
-function PricelistCard({ pricelist, onClick }: PricelistCardProps) {
+function PricelistCard({ pricelist, onClick, onDelete }: PricelistCardProps) {
   return (
-    <button
-      onClick={onClick}
-      className="w-full text-left bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+    <div className="relative w-full text-left bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200 group"
     >
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/40 transition-colors">
             <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
               {pricelist.currency_symbol}
             </span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
               {pricelist.name}
             </h3>
@@ -403,18 +408,32 @@ function PricelistCard({ pricelist, onClick }: PricelistCardProps) {
           </div>
         </div>
 
-        {/* Badge statut */}
-        {pricelist.active ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-            <CheckCircleIcon className="w-3.5 h-3.5" />
-            Active
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-            <XCircleIcon className="w-3.5 h-3.5" />
-            Inactive
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {/* Actions */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(pricelist.id);
+            }}
+            className="p-1.5 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+            aria-label="Supprimer"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+
+          {/* Badge statut */}
+          {pricelist.active ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+              <CheckCircleIcon className="w-3.5 h-3.5" />
+              Active
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+              <XCircleIcon className="w-3.5 h-3.5" />
+              Inactive
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Infos */}
@@ -435,11 +454,14 @@ function PricelistCard({ pricelist, onClick }: PricelistCardProps) {
       </div>
 
       {/* Indication cliquable */}
-      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+      <button
+        onClick={onClick}
+        className="w-full mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 text-left"
+      >
         <span className="text-sm text-indigo-600 dark:text-indigo-400 group-hover:underline">
           Voir les règles de prix →
         </span>
-      </div>
-    </button>
+      </button>
+    </div>
   );
 }

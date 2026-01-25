@@ -949,6 +949,27 @@ class ApiClient {
     )
   }
 
+  async exportStockCSV(filters: { date_from?: string; date_to?: string }) {
+    return this.request<APIResponse<{ data: any[]; total: number; filters: { date_from?: string; date_to?: string } }>>(
+      '/api/ecommerce/stock/export',
+      filters
+    )
+  }
+
+  async updateVariantStock(productId: number, variantId: number, quantity: number) {
+    return this.request<APIResponse<{ stock: { product_id: number; variant_id: number; qty_available: number } }>>(
+      `/api/ecommerce/products/${productId}/variants/${variantId}/stock/update`,
+      { quantity }
+    )
+  }
+
+  async getProductVariants(productId: number) {
+    return this.request<APIResponse<{ variants: any[]; attribute_lines: any[] }>>(
+      `/api/ecommerce/products/${productId}/variants`,
+      {}
+    )
+  }
+
   // ==================== DELIVERY ====================
 
   async getDeliveryMethods() {

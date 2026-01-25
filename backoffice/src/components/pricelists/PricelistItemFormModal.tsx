@@ -1,8 +1,9 @@
 /**
- * Modal d'ajout de règle de prix
+ * Modal d'ajout/édition de règle de prix
  *
- * Formulaire complexe pour ajouter une règle de prix à une pricelist.
+ * Formulaire complexe pour ajouter ou modifier une règle de prix à une pricelist.
  * Champs conditionnels selon le type d'application et de calcul.
+ * Supporte le mode édition via la prop 'item'.
  */
 
 import { Fragment, useState, useEffect } from 'react';
@@ -13,7 +14,12 @@ import {
   CalculatorIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
-import { useCreatePricelistItem, type CreatePricelistItemParams } from '../../hooks/usePricelists';
+import {
+  useCreatePricelistItem,
+  useUpdatePricelistItem,
+  type CreatePricelistItemParams,
+  type PricelistItem,
+} from '../../hooks/usePricelists';
 import { useCategories } from '../../hooks/useCategories';
 import { SearchAutocomplete, type SearchSuggestion } from '../common/SearchAutocomplete';
 import { useToast } from '../../hooks/useToast';
@@ -39,6 +45,7 @@ interface PricelistItemFormModalProps {
   onClose: () => void;
   pricelistId: number;
   currencySymbol: string;
+  item?: PricelistItem; // Si défini, mode édition
 }
 
 export function PricelistItemFormModal({
@@ -46,9 +53,11 @@ export function PricelistItemFormModal({
   onClose,
   pricelistId,
   currencySymbol,
+  item,
 }: PricelistItemFormModalProps) {
   const { success, error: showError } = useToast();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const isEditing = !!item;
 
   const {
     register,
@@ -60,9 +69,16 @@ export function PricelistItemFormModal({
     control,
   } = useForm<PricelistItemFormData>({
     defaultValues: {
-      applied_on: '3_global',
-      compute_price: 'percentage',
-      min_quantity: 1,
+      applied_on: item?.applied_on || '3_global',
+      compute_price: item?.compute_price || 'percentage',
+      min_quantity: item?.min_quantity || 1,
+      fixed_price: item?.fixed_price,
+      percent_price: item?.percent_price,
+      price_discount: item?.price_discount,
+      product_tmpl_id: item?.product_id,
+      categ_id: item?.category_id,
+      date_start: item?.date_start || '',
+      date_end: item?.date_end || '',
     },
   });
 
@@ -73,6 +89,7 @@ export function PricelistItemFormModal({
   }>;
 
   const createMutation = useCreatePricelistItem();
+  const updateMutation = useUpdatePricelistItem();
 
   const appliedOn = watch('applied_on');
   const computePrice = watch('compute_price');
@@ -84,6 +101,16 @@ export function PricelistItemFormModal({
       setSelectedProduct(null);
     }
   }, [isOpen, reset]);
+
+  // Initialiser le produit sélectionné en mode édition
+  useEffect(() => {
+    if (item?.product_id && item?.product_name) {
+      setSelectedProduct({
+        id: item.product_id,
+        name: item.product_name,
+      } as Product);
+    }
+  }, [item]);
 
   // Fetch suggestions produits
   const fetchProductSuggestions = async (query: string): Promise<SearchSuggestion<Product>[]> => {
@@ -137,7 +164,7 @@ export function PricelistItemFormModal({
       }
 
       // Préparer les paramètres
-      const params: CreatePricelistItemParams = {
+      const params: any = {
         applied_on: data.applied_on,
         compute_price: data.compute_price,
         min_quantity: data.min_quantity,
@@ -167,8 +194,15 @@ export function PricelistItemFormModal({
         params.date_end = data.date_end;
       }
 
-      await createMutation.mutateAsync({ pricelistId, params });
-      success('Règle de prix ajoutée avec succès');
+      if (isEditing && item) {
+        // Mode édition
+        await updateMutation.mutateAsync({ pricelistId, itemId: item.id, params });
+        success('Règle de prix mise à jour avec succès');
+      } else {
+        // Mode création
+        await createMutation.mutateAsync({ pricelistId, params });
+        success('Règle de prix ajoutée avec succès');
+      }
       onClose();
     } catch (error) {
       showError(error instanceof Error ? error.message : 'Erreur lors de la création');
@@ -225,7 +259,7 @@ export function PricelistItemFormModal({
                       <CalculatorIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Ajouter une règle de prix
+                      {isEditing ? 'Modifier la règle de prix' : 'Ajouter une règle de prix'}
                     </Dialog.Title>
                   </div>
                   <button
@@ -509,12 +543,12 @@ export function PricelistItemFormModal({
                       {isSubmitting ? (
                         <>
                           <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                          Création...
+                          {isEditing ? 'Mise à jour...' : 'Création...'}
                         </>
                       ) : (
                         <>
                           <CheckCircleIcon className="w-5 h-5" />
-                          Ajouter la règle
+                          {isEditing ? 'Mettre à jour' : 'Ajouter la règle'}
                         </>
                       )}
                     </button>
