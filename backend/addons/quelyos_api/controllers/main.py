@@ -1264,7 +1264,7 @@ class QuelyosAPI(http.Controller):
         try:
             # Rechercher les tags produits
             ProductTag = request.env['product.tag'].sudo()
-            tags = ProductTag.search([], order='name')
+            tags = ProductTag.search([], order='name', limit=200)
 
             tag_data = []
             for tag in tags:
@@ -2136,7 +2136,7 @@ class QuelyosAPI(http.Controller):
         """Liste tous les attributs disponibles (couleur, taille, etc.)"""
         try:
             Attribute = request.env['product.attribute'].sudo()
-            attributes = Attribute.search([])
+            attributes = Attribute.search([], limit=100)
 
             result = []
             for attr in attributes:
@@ -6176,7 +6176,7 @@ class QuelyosAPI(http.Controller):
         """Liste des zones de livraison disponibles"""
         try:
             # Dans Odoo, les zones sont définies par les pays
-            countries = request.env['res.country'].sudo().search([])
+            countries = request.env['res.country'].sudo().search([], limit=300)
 
             data = [{
                 'id': c.id,
@@ -9351,7 +9351,7 @@ class QuelyosAPI(http.Controller):
         try:
             PartnerCategory = request.env['res.partner.category'].sudo()
 
-            categories = PartnerCategory.search([], order='name')
+            categories = PartnerCategory.search([], order='name', limit=200)
 
             category_list = []
             for category in categories:

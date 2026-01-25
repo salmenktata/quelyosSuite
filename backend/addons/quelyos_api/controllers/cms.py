@@ -1510,7 +1510,7 @@ class QuelyCMS(BaseController):
 
             _require_admin(request.env)
 
-            metadata = request.env['quelyos.seo.metadata'].sudo().search([])
+            metadata = request.env['quelyos.seo.metadata'].sudo().search([], limit=500, order='id desc')
 
             return {
                 'success': True,
@@ -1672,7 +1672,7 @@ class QuelyCMS(BaseController):
 
             _require_admin(request.env)
 
-            popups = request.env['quelyos.marketing.popup'].sudo().search([])
+            popups = request.env['quelyos.marketing.popup'].sudo().search([], limit=100, order='id desc')
 
             return {
                 'success': True,
@@ -1861,7 +1861,7 @@ class QuelyCMS(BaseController):
 
             _require_admin(request.env)
 
-            pages = request.env['quelyos.static.page'].sudo().search([])
+            pages = request.env['quelyos.static.page'].sudo().search([], limit=200, order='id desc')
 
             return {
                 'success': True,

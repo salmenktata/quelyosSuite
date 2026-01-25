@@ -64,8 +64,8 @@ class QuelyosSEO(http.Controller):
                 xml_content += f'    <priority>{page["priority"]}</priority>\n'
                 xml_content += '  </url>\n'
 
-            # Catégories
-            categories = Category.search([])
+            # Catégories (limit pour éviter surcharge mémoire)
+            categories = Category.search([], limit=500)
             for category in categories:
                 slug = category.name.lower().replace(' ', '-').replace('/', '-')
                 xml_content += '  <url>\n'
@@ -75,8 +75,8 @@ class QuelyosSEO(http.Controller):
                 xml_content += '    <priority>0.7</priority>\n'
                 xml_content += '  </url>\n'
 
-            # Produits publiés
-            products = Product.search([('website_published', '=', True)])
+            # Produits publiés (limit pour sitemap performant)
+            products = Product.search([('website_published', '=', True)], limit=5000)
             for product in products:
                 slug = product.name.lower().replace(' ', '-').replace('/', '-')
                 xml_content += '  <url>\n'
