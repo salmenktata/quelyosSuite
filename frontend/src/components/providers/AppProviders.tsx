@@ -16,6 +16,7 @@ import React, { ReactNode } from 'react';
 import { TenantProvider, useTenant } from '@/lib/tenant';
 import { SiteConfigProvider, useSiteConfig } from '@/lib/config/SiteConfigProvider';
 import { ThemeProvider } from '@/lib/theme';
+import { FaviconApplier } from './ThemeApplier';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -49,6 +50,7 @@ function ThemeWrapper({ children }: { children: ReactNode }) {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <TenantProvider>
+      <FaviconApplier />
       <SiteConfigProvider>
         <ThemeWrapper>{children}</ThemeWrapper>
       </SiteConfigProvider>

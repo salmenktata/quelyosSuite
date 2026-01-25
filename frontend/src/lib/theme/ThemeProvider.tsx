@@ -181,6 +181,13 @@ export function ThemeProvider({
     }
   }, [theme, mounted, tenantTheme]);
 
+  // Appliquer le favicon du tenant
+  useEffect(() => {
+    // Note: tenantTheme n'a pas le branding, on ne peut pas accéder au favicon ici
+    // Le favicon est géré dans le branding du tenant qui n'est pas passé au ThemeProvider
+    // Il faudrait créer un composant séparé ou passer le branding aussi
+  }, []);
+
   const setTheme = useCallback(
     (name: ThemeName) => {
       if (tenantTheme?.darkMode?.enabled === false && name === 'dark') {
