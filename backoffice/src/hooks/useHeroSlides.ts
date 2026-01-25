@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { odooRpc } from '../lib/odoo-rpc'
+import { odooRpc } from '@/lib/odoo-rpc'
 
 export interface HeroSlide {
   id: number
@@ -23,7 +23,7 @@ export function useHeroSlides() {
     queryKey: ['heroSlides'],
     queryFn: async () => {
       const response = await odooRpc<{ slides: HeroSlide[] }>('/api/ecommerce/hero-slides')
-      return response
+      return response.slides || []
     },
   })
 }
@@ -31,11 +31,8 @@ export function useHeroSlides() {
 export function useCreateHeroSlide() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<HeroSlide>) =>
-      odooRpc('/api/ecommerce/hero-slides/create', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['heroSlides'] })
-    },
+    mutationFn: (data: Partial<HeroSlide>) => odooRpc('/api/ecommerce/hero-slides/create', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroSlides'] }),
   })
 }
 
@@ -44,20 +41,15 @@ export function useUpdateHeroSlide() {
   return useMutation({
     mutationFn: ({ id, ...data }: Partial<HeroSlide> & { id: number }) =>
       odooRpc(`/api/ecommerce/hero-slides/${id}/update`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['heroSlides'] })
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroSlides'] }),
   })
 }
 
 export function useDeleteHeroSlide() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) =>
-      odooRpc(`/api/ecommerce/hero-slides/${id}/delete`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['heroSlides'] })
-    },
+    mutationFn: (id: number) => odooRpc(`/api/ecommerce/hero-slides/${id}/delete`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroSlides'] }),
   })
 }
 
@@ -66,8 +58,6 @@ export function useReorderHeroSlides() {
   return useMutation({
     mutationFn: (slideIds: number[]) =>
       odooRpc('/api/ecommerce/hero-slides/reorder', { slide_ids: slideIds }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['heroSlides'] })
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroSlides'] }),
   })
 }

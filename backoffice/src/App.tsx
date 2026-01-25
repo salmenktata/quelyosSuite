@@ -32,6 +32,12 @@ import CustomerCategories from './pages/CustomerCategories'
 import Warehouses from './pages/Warehouses'
 import WarehouseDetail from './pages/WarehouseDetail'
 import MyShop from './pages/MyShop'
+import Tenants from './pages/Tenants'
+import Menus from './pages/Menus'
+import HeroSlides from './pages/HeroSlides'
+import PromoBanners from './pages/PromoBanners'
+import PromoMessages from './pages/PromoMessages'
+import TrustBadges from './pages/TrustBadges'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -279,6 +285,54 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <WarehouseDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tenants"
+                element={
+                  <ProtectedRoute>
+                    <Tenants />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/menus"
+                element={
+                  <ProtectedRoute>
+                    <Menus />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/hero-slides"
+                element={
+                  <ProtectedRoute>
+                    <HeroSlides />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/promo-banners"
+                element={
+                  <ProtectedRoute>
+                    <PromoBanners />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/promo-messages"
+                element={
+                  <ProtectedRoute>
+                    <PromoMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/trust-badges"
+                element={
+                  <ProtectedRoute>
+                    <TrustBadges />
                   </ProtectedRoute>
                 }
               />

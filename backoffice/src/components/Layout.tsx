@@ -243,6 +243,42 @@ export function Layout({ children }: LayoutProps) {
       ],
     },
     {
+      name: 'Contenu',
+      defaultOpen: false,
+      items: [
+        {
+          name: 'Hero Slides',
+          path: '/hero-slides',
+          icon: SparklesIcon,
+        },
+        {
+          name: 'Bannières Promo',
+          path: '/promo-banners',
+          icon: TagIcon,
+        },
+        {
+          name: 'Messages PromoBar',
+          path: '/promo-messages',
+          icon: SparklesIcon,
+        },
+        {
+          name: 'Trust Badges',
+          path: '/trust-badges',
+          icon: SparklesIcon,
+        },
+        {
+          name: 'Menus Navigation',
+          path: '/menus',
+          icon: Bars3Icon,
+        },
+        {
+          name: 'Tenants',
+          path: '/tenants',
+          icon: BuildingStorefrontIcon,
+        },
+      ],
+    },
+    {
       name: 'Ventes & CRM',
       defaultOpen: false,
       items: [
