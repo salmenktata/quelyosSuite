@@ -497,6 +497,109 @@ export default function MyShop() {
 
           {/* Contenu principal */}
           <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            {/* Section Themes */}
+            {activeSection === 'themes' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    Themes predefinis
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Appliquez un theme complet en un clic. Le frontend sera mis a jour apres la
+                    sauvegarde.
+                  </p>
+                </div>
+
+                {hasChanges && (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-200">
+                    Enregistrez ou annulez vos modifications avant d'appliquer un theme.
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {THEME_PRESETS.map((preset) => {
+                    const isActive = isThemeMatch(
+                      {
+                        colors: preset.colors,
+                        fontFamily: preset.fontFamily,
+                        darkMode: preset.darkMode,
+                      },
+                      formData
+                    )
+
+                    return (
+                      <div
+                        key={preset.id}
+                        className={`rounded-xl border p-4 transition-shadow ${
+                          isActive
+                            ? 'border-indigo-500 shadow-md'
+                            : 'border-gray-200 dark:border-gray-700 hover:shadow-md'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                              {preset.label}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {preset.description}
+                            </p>
+                          </div>
+                          {isActive && (
+                            <span className="text-xs font-medium text-indigo-600 dark:text-indigo-300">
+                              Actif
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-4 flex items-center gap-2">
+                          {[preset.colors.primary, preset.colors.secondary, preset.colors.accent, preset.colors.muted, preset.colors.border].map((color, index) => (
+                            <span
+                              key={`${preset.id}-swatch-${index}`}
+                              className="h-6 w-6 rounded-full border border-gray-200 dark:border-gray-700"
+                              style={{ backgroundColor: color }}
+                              aria-hidden="true"
+                            />
+                          ))}
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            Font: {preset.fontFamily}
+                          </span>
+                          <button
+                            onClick={() => applyThemePreset(preset)}
+                            disabled={hasChanges || updateMutation.isPending}
+                            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            Appliquer
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/30 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                      Revenir au theme initial
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Restaure la configuration du theme chargee au debut.
+                    </p>
+                  </div>
+                  <button
+                    onClick={restoreInitialTheme}
+                    disabled={!initialThemeSnapshot || hasChanges || updateMutation.isPending}
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Restaurer
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Section Couleurs */}
             {activeSection === 'colors' && (
               <div className="space-y-8">

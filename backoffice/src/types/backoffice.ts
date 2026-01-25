@@ -339,6 +339,52 @@ export interface ProductsQueryParams {
   search?: string;
   category_id?: number;
   in_stock?: boolean;
+  stock_status?: string;
+  include_archived?: boolean;
+  price_min?: number;
+  price_max?: number;
+  attribute_value_ids?: number[];
   sort?: string;
   sort_by?: string;
+  sort_order?: string;
 }
+
+export interface CouponCreate {
+  code: string;
+  name?: string;
+  discount_type: 'percentage' | 'fixed_amount';
+  discount_value: number;
+  min_amount?: number;
+  max_discount?: number;
+  max_usage?: number;
+  valid_from?: string;
+  valid_until?: string;
+  date_from?: string;
+  date_to?: string;
+  usage_limit?: number;
+  active?: boolean;
+}
+
+export interface CustomerListItem {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  total_orders?: number;
+  orders_count?: number;
+  total_spent?: number;
+  create_date?: string;
+}
+
+export interface DataTableProps<T> {
+  data: T[];
+  columns: any[];
+  onSort?: (key: string, order: SortOrder) => void;
+  selectedIds?: Set<number | string>;
+  onSelectionChange?: (ids: Set<number | string>) => void;
+}
+
+export type SortOrder = 'asc' | 'desc' | null;
+export type Customer = User;
+export interface ProductCreateData extends Partial<Product> {}
+export interface ProductUpdateData extends Partial<Product> {}

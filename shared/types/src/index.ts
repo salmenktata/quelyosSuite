@@ -210,6 +210,7 @@ export interface Category {
   sequence?: number;
   active?: boolean;
   child_ids?: number[];
+  children?: Category[];
   complete_name?: string;
 }
 
@@ -249,6 +250,7 @@ export interface Order {
   shipping_cost: number;
   discount?: number;
   total: number;
+  amount_total?: number;
   currency?: Currency;
   shipping_address?: Address;
   billing_address?: Address;
@@ -323,6 +325,11 @@ export interface Coupon {
   usage_limit?: number;
   usage_count?: number;
   active: boolean;
+  trigger?: string;
+  name?: string;
+  program_type?: string;
+  date_from?: string;
+  date_to?: string;
 }
 
 // ==================== SEO ====================

@@ -8,7 +8,7 @@
  *
  * Fonctionnalités:
  * - Détection automatique du tenant via cookie (set par le middleware)
- * - Cache 5 minutes pour réduire les appels API
+ * - Cache desactive pour refleter les themes rapidement
  * - Fallback gracieux si pas de tenant (utilise le thème par défaut)
  * - Support SSR avec initialTenant prop
  */
@@ -51,7 +51,7 @@ interface TenantProviderProps {
 // CONSTANTES
 // ═══════════════════════════════════════════════════════════════════════════
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 0; // Pas de cache pour refleter les themes en temps reel
 const COOKIE_NAME = 'tenant_code';
 
 // ═══════════════════════════════════════════════════════════════════════════

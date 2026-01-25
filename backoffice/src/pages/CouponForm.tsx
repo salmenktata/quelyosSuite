@@ -16,7 +16,7 @@ export default function CouponForm() {
   const [formData, setFormData] = useState<CouponCreate>({
     name: '',
     code: '',
-    discount_type: 'percent',
+    discount_type: 'percentage',
     discount_value: 0,
     date_from: '',
     date_to: '',
@@ -58,7 +58,7 @@ export default function CouponForm() {
       newErrors.discount_value = 'La réduction doit être supérieure à 0'
     }
 
-    if (formData.discount_type === 'percent' && formData.discount_value > 100) {
+    if (formData.discount_type === 'percentage' && formData.discount_value > 100) {
       newErrors.discount_value = 'Le pourcentage ne peut pas dépasser 100%'
     }
 
@@ -188,13 +188,13 @@ export default function CouponForm() {
               error={errors.discount_value}
               required
               min="0"
-              max={formData.discount_type === 'percent' ? '100' : undefined}
-              step={formData.discount_type === 'percent' ? '1' : '0.01'}
-              placeholder={formData.discount_type === 'percent' ? '10' : '5.00'}
-              helperText={formData.discount_type === 'percent' ? 'Pourcentage de réduction' : 'Montant fixe en euros'}
+              max={formData.discount_type === 'percentage' ? '100' : undefined}
+              step={formData.discount_type === 'percentage' ? '1' : '0.01'}
+              placeholder={formData.discount_type === 'percentage' ? '10' : '5.00'}
+              helperText={formData.discount_type === 'percentage' ? 'Pourcentage de réduction' : 'Montant fixe en euros'}
               icon={
                 <span className="text-sm">
-                  {formData.discount_type === 'percent' ? '%' : '€'}
+                  {formData.discount_type === 'percentage' ? '%' : '€'}
                 </span>
               }
             />
