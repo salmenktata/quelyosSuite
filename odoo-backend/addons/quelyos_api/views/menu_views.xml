@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- ACTIONS ABONNEMENTS -->
+    <!-- ============================================================ -->
+
+    <record id="action_quelyos_subscription" model="ir.actions.act_window">
+        <field name="name">Abonnements</field>
+        <field name="res_model">quelyos.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun abonnement trouvé
+            </p>
+        </field>
+    </record>
+
+    <record id="action_quelyos_subscription_plan" model="ir.actions.act_window">
+        <field name="name">Plans tarifaires</field>
+        <field name="res_model">quelyos.subscription.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez vos plans tarifaires
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- MENU PRINCIPAL QUELYOS -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_quelyos_root"
+              name="Quelyos"
+              sequence="100"
+              web_icon="quelyos_api,static/description/icon.png"/>
+
+    <!-- ============================================================ -->
+    <!-- SOUS-MENU TENANTS -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_quelyos_tenants"
+              name="Tenants / Boutiques"
+              parent="menu_quelyos_root"
+              sequence="10"/>
+
+    <menuitem id="menu_quelyos_tenant_list"
+              name="Tous les Tenants"
+              parent="menu_quelyos_tenants"
+              action="action_quelyos_tenant"
+              sequence="10"/>
+
+    <!-- ============================================================ -->
+    <!-- SOUS-MENU ABONNEMENTS -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_quelyos_subscriptions"
+              name="Abonnements"
+              parent="menu_quelyos_root"
+              sequence="20"/>
+
+    <menuitem id="menu_quelyos_subscription_list"
+              name="Tous les Abonnements"
+              parent="menu_quelyos_subscriptions"
+              action="action_quelyos_subscription"
+              sequence="10"/>
+
+    <menuitem id="menu_quelyos_subscription_plans"
+              name="Plans tarifaires"
+              parent="menu_quelyos_subscriptions"
+              action="action_quelyos_subscription_plan"
+              sequence="20"/>
+
+    <!-- ============================================================ -->
+    <!-- SOUS-MENU CMS / CONTENU - Désactivé (géré via Backoffice) -->
+    <!-- ============================================================ -->
+
+    <!-- Menu CMS déplacé vers le Backoffice React
+    <menuitem id="menu_quelyos_cms"
+              name="CMS / Contenu"
+              parent="menu_quelyos_root"
+              sequence="30"/>
+    -->
+</odoo>

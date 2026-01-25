@@ -1,0 +1,25 @@
+{
+  "name": "@quelyos/config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.js",
+  "exports": {
+    "./typescript": "./tsconfig.base.json",
+    "./eslint/next": "./eslint.next.mjs",
+    "./tailwind": "./tailwind.config.js",
+    "./postcss": "./postcss.config.js",
+    "./routes": "./src/routes.ts"
+  },
+  "files": [
+    "tsconfig.base.json",
+    "eslint.next.mjs",
+    "tailwind.config.js",
+    "postcss.config.js"
+  ],
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "quelyos-suite",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "api",
+    "dashboard-client",
+    "vitrine-quelyos",
+    "vitrine-client"
+  ],
+  "scripts": {
+    "dev": "echo 'Use individual pnpm run dev in each app'",
+    "dev:api": "cd api && pnpm run dev",
+    "dev:dashboard": "cd dashboard-client && pnpm run dev",
+    "dev:vitrine-quelyos": "cd vitrine-quelyos && pnpm run dev",
+    "dev:vitrine-client": "cd vitrine-client && pnpm run dev"
+  }
+}

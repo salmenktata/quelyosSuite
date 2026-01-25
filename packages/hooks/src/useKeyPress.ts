@@ -1,0 +1,37 @@
+/**
+ * Hook pour détecter la touche pressée
+ */
+
+"use client";
+
+import { useEffect, useState } from "react";
+
+export function useKeyPress(targetKey: string): boolean {
+  const [keyPressed, setKeyPressed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const downHandler = (event: KeyboardEvent) => {
+      if (event.key === targetKey) {
+        setKeyPressed(true);
+      }
+    };
+
+    const upHandler = (event: KeyboardEvent) => {
+      if (event.key === targetKey) {
+        setKeyPressed(false);
+      }
+    };
+
+    window.addEventListener("keydown", downHandler);
+    window.addEventListener("keyup", upHandler);
+
+    return () => {
+      window.removeEventListener("keydown", downHandler);
+      window.removeEventListener("keyup", upHandler);
+    };
+  }, [targetKey]);
+
+  return keyPressed;
+}

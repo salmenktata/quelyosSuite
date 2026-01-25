@@ -1,0 +1,38 @@
+{
+  "finance-backlog-finance-backlog-1-2": {
+    "likes": 0,
+    "dislikes": 0,
+    "category": "finance-backlog",
+    "itemId": "finance-backlog-1-2"
+  },
+  "finance-backlog-finance-backlog-1-4": {
+    "likes": 0,
+    "dislikes": 0,
+    "category": "finance-backlog",
+    "itemId": "finance-backlog-1-4"
+  },
+  "finance-backlog-finance-backlog-1-6": {
+    "likes": 0,
+    "dislikes": 0,
+    "category": "finance-backlog",
+    "itemId": "finance-backlog-1-6"
+  },
+  "finance-roadmap-finance-roadmap-2-0": {
+    "likes": 2,
+    "dislikes": 0,
+    "category": "finance-roadmap",
+    "itemId": "finance-roadmap-2-0"
+  },
+  "marketing-roadmap-marketing-roadmap-1-3": {
+    "likes": 1,
+    "dislikes": 0,
+    "category": "marketing-roadmap",
+    "itemId": "marketing-roadmap-1-3"
+  },
+  "marketing-roadmap-marketing-roadmap-1-2": {
+    "likes": 0,
+    "dislikes": 0,
+    "category": "marketing-roadmap",
+    "itemId": "marketing-roadmap-1-2"
+  }
+}

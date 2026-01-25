@@ -1,0 +1,27 @@
+{
+  "name": "@quelyos/utils",
+  "version": "1.0.0",
+  "description": "Utilitaires communs pour toutes les applications Quelyos",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "echo 'Skipping lint for utils package'",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "quelyos",
+    "utils",
+    "helpers",
+    "utilities"
+  ],
+  "author": "Quelyos",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.3"
+  }
+}

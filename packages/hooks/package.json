@@ -1,0 +1,27 @@
+{
+  "name": "@quelyos/hooks",
+  "version": "1.0.0",
+  "description": "Hooks React partagés pour toutes les applications Quelyos",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "echo 'Skipping lint for hooks package'",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "quelyos",
+    "react",
+    "hooks",
+    "shared"
+  ],
+  "author": "Quelyos",
+  "license": "PROPRIETARY",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" fill="none">
+  <defs>
+    <linearGradient id="marketingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="50%" style="stop-color:#fb923c"/>
+      <stop offset="100%" style="stop-color:#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="mIconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fbbf24"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon Marketing - Mégaphone / Social -->
+  <g transform="translate(5, 5)">
+    <!-- Fond circulaire -->
+    <circle cx="20" cy="20" r="18" fill="url(#marketingGradient)" opacity="0.12"/>
+    <circle cx="20" cy="20" r="16" stroke="url(#mIconGradient)" stroke-width="2" fill="none"/>
+    
+    <!-- Mégaphone stylisé -->
+    <path d="M12 17 L12 23 L16 23 L24 28 L24 12 L16 17 Z" fill="url(#mIconGradient)"/>
+    <rect x="8" y="18" width="4" height="4" rx="1" fill="url(#mIconGradient)"/>
+    
+    <!-- Ondes sonores -->
+    <path d="M27 15 Q30 20 27 25" stroke="#f97316" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M30 12 Q35 20 30 28" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    
+    <!-- Points sociaux -->
+    <circle cx="28" cy="10" r="2" fill="#fbbf24"/>
+    <circle cx="32" cy="18" r="1.5" fill="#f97316" opacity="0.8"/>
+  </g>
+  
+  <!-- Texte Quelyos -->
+  <text x="52" y="32" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="700" fill="#1e1b4b">
+    Quelyos
+  </text>
+  
+  <!-- Badge Marketing -->
+  <g transform="translate(142, 15)">
+    <rect x="0" y="0" width="56" height="20" rx="4" fill="url(#marketingGradient)"/>
+    <text x="28" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="white" text-anchor="middle">
+      MARKETING
+    </text>
+  </g>
+</svg>

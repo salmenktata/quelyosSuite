@@ -1,0 +1,52 @@
+{
+  "name": "@quelyos/ui",
+  "version": "2.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./button": "./button.tsx",
+    "./card": "./card.tsx",
+    "./input": "./input.tsx",
+    "./avatar": "./avatar.tsx",
+    "./tabs": "./tabs.tsx",
+    "./dropdown-menu": "./dropdown-menu.tsx",
+    "./tooltip": "./tooltip.tsx",
+    "./navigation-menu": "./navigation-menu.tsx",
+    "./utils": "./lib/utils.ts",
+    "./tokens": "./tokens.ts",
+    "./theme": "./theme.tsx",
+    "./responsive": "./responsive.tsx",
+    "./css-variables": "./css-variables.ts",
+    "./animated": "./animated.tsx",
+    "./animation-variants": "./animation-variants.ts",
+    "./use-animation": "./use-animation.ts"
+  },
+  "scripts": {
+    "lint": "echo 'Skipping lint for ui package'",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.26.2",
+    "lucide-react": "^0.468.0",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.0"
+  }
+}

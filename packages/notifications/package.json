@@ -1,0 +1,30 @@
+{
+  "name": "@quelyos/notifications",
+  "version": "1.0.0",
+  "description": "Système de notifications unifié (toasts, bannières, badges)",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "echo 'Skipping lint for notifications package'",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "quelyos",
+    "notifications",
+    "toasts",
+    "alerts",
+    "ui"
+  ],
+  "author": "Quelyos",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.3.3"
+  }
+}

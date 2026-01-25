@@ -1,0 +1,30 @@
+{
+  "name": "@quelyos/analytics",
+  "version": "1.0.0",
+  "description": "Système de tracking unifié avec Google Analytics 4, PostHog, Mixpanel et A/B Testing",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "echo 'Skipping lint for analytics package'",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "quelyos",
+    "analytics",
+    "tracking",
+    "ab-testing",
+    "funnel",
+    "conversion"
+  ],
+  "author": "Quelyos",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  }
+}

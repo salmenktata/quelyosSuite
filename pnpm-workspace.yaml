@@ -1,0 +1,6 @@
+packages:
+  - 'packages/*'
+  - 'api'
+  - 'dashboard-client'
+  - 'vitrine-quelyos'
+  - 'vitrine-client'

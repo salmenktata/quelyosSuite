@@ -1,0 +1,441 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id         Int         @id @default(autoincrement())
+  name       String
+  isDemo     Boolean     @default(false)
+  users      User[]
+  accounts   Account[]
+  categories Category[]  @relation("CategoryCompany")
+  budgets    Budgets[]
+  portfolios Portfolio[]
+  planning   PlanningItem[] @relation("CompanyToPlanningItem")
+  planningBreakdowns PlanningMonthlyBreakdown[] @relation("CompanyToPlanningMonthly")
+  settings   CompanySettings?
+  invitations TeamInvitation[]
+  auditLogs   AuditLog[]
+  npsResponses NPSResponse[] @relation("CompanyNPS")
+  createdAt  DateTime    @default(now())
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  role       Role     @default(USER)
+  isDemo     Boolean  @default(false)
+  companyId  Int
+  company    Company  @relation(fields: [companyId], references: [id])
+  createdAt  DateTime @default(now())
+  
+  // OAuth fields
+  oauthProvider String?  // "google" | "linkedin" | null
+  oauthId       String?  // ID from OAuth provider
+  emailVerified Boolean  @default(false)
+  avatarUrl     String?  // Profile picture from OAuth
+  
+  resetTokens PasswordResetToken[]
+  refreshTokens RefreshToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  sentInvitations TeamInvitation[] @relation("InvitedBy")
+  auditLogs   AuditLog[] @relation("AuditUser")
+  notificationPrefs NotificationPreferences? @relation("NotificationPrefs")
+  notifications Notification[] @relation("UserNotifications")
+  npsResponses NPSResponse[] @relation("NPSResponses")
+  
+  @@unique([oauthProvider, oauthId])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+  
+  @@index([userId])
+  @@index([token])
+}
+
+enum Role {
+  ADMIN
+  USER
+  SUPERADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PortfolioStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// Types de flux de paiement
+enum FlowType {
+  CASH              // Espèces
+  CARD              // Carte bancaire
+  CHECK             // Chèque
+  TRANSFER          // Virement
+  DIRECT_DEBIT      // Prélèvement
+  BILL_OF_EXCHANGE  // Traite / LCR
+  PROMISSORY_NOTE   // Billet à ordre
+  BANK_CHARGE       // Frais bancaires
+  OTHER             // Autre
+}
+
+model Account {
+  id           Int                      @id @default(autoincrement())
+  name         String
+  type         String                   @default("banque")
+  currency     String                   @default("EUR")
+  balance      Float                    @default(0)
+  institution  String?
+  notes        String?
+  isShared     Boolean                  @default(false)
+  status       AccountStatus            @default(ACTIVE)
+  companyId    Int
+  company      Company                  @relation(fields: [companyId], references: [id])
+  portfolioId  Int?
+  portfolio    Portfolio?               @relation("AccountSinglePortfolio", fields: [portfolioId], references: [id])
+  portfolios   AccountPortfolio[]
+  transactions Transaction[]
+  paymentFlows PaymentFlow[]
+}
+
+// Flux de paiement (Cash, Carte, Chèque, Virement, Traite, etc.)
+model PaymentFlow {
+  id          Int       @id @default(autoincrement())
+  accountId   Int
+  account     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  type        FlowType  @default(OTHER)
+  name        String    // Nom personnalisé (ex: "CB Visa Pro", "Chéquier 001")
+  isActive    Boolean   @default(true)
+  isDefault   Boolean   @default(false)
+  
+  // Métadonnées optionnelles
+  reference   String?   // Numéro de carte, n° chéquier, etc.
+  limitAmount Float?    // Plafond (carte) ou encours max
+  expiresAt   DateTime? // Date d'expiration (carte)
+  color       String?   // Couleur pour l'UI
+  icon        String?   // Icône personnalisée
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  transactions Transaction[]
+  
+  @@unique([accountId, type, reference])
+  @@index([accountId])
+}
+
+model Transaction {
+  id          Int        @id @default(autoincrement())
+  amount      Float
+  amountHT    Float      @default(0)
+  amountTTC   Float      @default(0)
+  vatRate     Float      @default(0)
+  vatMode     String     @default("HT")
+  type        String     // "credit" | "debit"
+  accountId   Int
+  account     Account    @relation(fields: [accountId], references: [id])
+  paymentFlowId Int?
+  paymentFlow PaymentFlow? @relation(fields: [paymentFlowId], references: [id])
+  occurredAt  DateTime   @default(now())
+  scheduledFor DateTime?
+  status      TransactionStatus @default(CONFIRMED)
+  description String?
+  archived    Boolean    @default(false)
+
+  categoryId  Int?
+  category    Category?  @relation("TransactionCategory", fields: [categoryId], references: [id])
+  
+  @@index([paymentFlowId])
+}
+
+model Category {
+  id           Int      @id @default(autoincrement())
+  name         String
+  kind         CategoryKind @default(EXPENSE)
+  companyId    Int
+  company      Company  @relation("CategoryCompany", fields: [companyId], references: [id])
+  transactions Transaction[] @relation("TransactionCategory")
+  budgets      Budget[]
+  planningItems PlanningItem[]
+  createdAt    DateTime @default(now())
+}
+
+enum CategoryKind {
+  INCOME
+  EXPENSE
+}
+
+enum PlanningType {
+  INCOME
+  EXPENSE
+}
+
+model Budget {
+  id          Int        @id @default(autoincrement())
+  month       Int
+  year        Int
+  amount      Float
+
+  categoryId  Int
+  category    Category   @relation(fields: [categoryId], references: [id])
+}
+
+enum TransactionStatus {
+  PLANNED
+  CONFIRMED
+  SCHEDULED
+  CANCELED
+}
+
+model Budgets {
+  id        Int      @id @default(autoincrement())
+  name      String
+  companyId Int
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Portfolio {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String?
+  status      PortfolioStatus    @default(ACTIVE)
+  companyId   Int
+  company     Company            @relation(fields: [companyId], references: [id])
+  accounts    Account[]          @relation("AccountSinglePortfolio")
+  sharedAccounts AccountPortfolio[]
+  planningItems PlanningItem[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model AccountPortfolio {
+  id          Int       @id @default(autoincrement())
+  accountId   Int
+  account     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  portfolioId Int
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([accountId, portfolioId])
+}
+
+model PlanningItem {
+  id               Int                        @id @default(autoincrement())
+  label            String
+  type             PlanningType               @default(EXPENSE)
+  categoryId       Int?
+  category         Category?                  @relation(fields: [categoryId], references: [id])
+  portfolioId      Int?
+  portfolio        Portfolio?                 @relation(fields: [portfolioId], references: [id])
+  color            String?
+  companyId        Int
+  company          Company                    @relation("CompanyToPlanningItem", fields: [companyId], references: [id])
+  archived         Boolean                    @default(false)
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+  monthlyBreakdown PlanningMonthlyBreakdown[]
+
+  @@index([companyId])
+  @@index([type])
+}
+
+model PlanningMonthlyBreakdown {
+  id             Int           @id @default(autoincrement())
+  planningItemId Int
+  item           PlanningItem  @relation(fields: [planningItemId], references: [id], onDelete: Cascade)
+  month          String
+  amount         Float
+  companyId      Int
+  company        Company       @relation("CompanyToPlanningMonthly", fields: [companyId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([companyId])
+  @@index([month])
+  @@unique([planningItemId, month])
+}
+
+model PasswordResetToken {
+  id               Int       @id @default(autoincrement())
+  tokenHash        String    @unique
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt        DateTime
+  usedAt           DateTime?
+  createdAt        DateTime  @default(now())
+  createdIp        String?
+  createdUserAgent String?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Token de vérification d'email
+model EmailVerificationToken {
+  id               Int       @id @default(autoincrement())
+  tokenHash        String    @unique
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt        DateTime
+  usedAt           DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model CompanySettings {
+  id             Int      @id @default(autoincrement())
+  companyId      Int      @unique
+  company        Company  @relation(fields: [companyId], references: [id])
+  vatActive      Boolean  @default(false)
+  vatMode        String   @default("HT")
+  vatDefaultRate Float    @default(0)
+  vatRates       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ====== F54 — Gestion équipe avancée ======
+
+model TeamInvitation {
+  id            Int              @id @default(autoincrement())
+  email         String
+  companyId     Int
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role          Role             @default(USER)
+  token         String           @unique
+  status        InvitationStatus @default(PENDING)
+  invitedById   Int
+  invitedBy     User             @relation("InvitedBy", fields: [invitedById], references: [id])
+  expiresAt     DateTime
+  acceptedAt    DateTime?
+  createdAt     DateTime         @default(now())
+
+  @@index([companyId])
+  @@index([email])
+  @@index([token])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  companyId   Int
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId      Int?
+  user        User?    @relation("AuditUser", fields: [userId], references: [id], onDelete: SetNull)
+  action      String   // CREATE_USER, DELETE_USER, CHANGE_ROLE, INVITE_MEMBER, etc.
+  targetType  String   // User, Account, Transaction, Budget, etc.
+  targetId    Int?
+  targetEmail String?  // Pour les invitations (email du membre invité)
+  metadata    Json?    // Détails supplémentaires (oldRole, newRole, etc.)
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ====== F44 — Notifications push/email ======
+
+model NotificationPreferences {
+  id                    Int      @id @default(autoincrement())
+  userId                Int      @unique
+  user                  User     @relation("NotificationPrefs", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Email notifications
+  emailOnTransaction    Boolean  @default(false)
+  emailOnBudgetAlert    Boolean  @default(true)
+  emailOnExpenseWarning Boolean  @default(true)
+  weeklyDigest          Boolean  @default(true)
+  monthlyReport         Boolean  @default(true)
+  
+  // Push notifications (future)
+  pushEnabled           Boolean  @default(false)
+  pushOnTransaction     Boolean  @default(false)
+  pushOnBudgetAlert     Boolean  @default(true)
+  
+  // Thresholds
+  budgetAlertThreshold  Int      @default(80) // Percentage
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Notification {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  user        User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  title       String
+  message     String
+  actionUrl   String?
+  read        Boolean          @default(false)
+  sentEmail   Boolean          @default(false)
+  sentPush    Boolean          @default(false)
+  metadata    Json?
+  createdAt   DateTime         @default(now())
+  readAt      DateTime?
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  BUDGET_ALERT        // Budget > 80%
+  BUDGET_EXCEEDED     // Budget > 100%
+  EXPENSE_WARNING     // Dépense anormale
+  INVOICE_REMINDER    // Rappel facture
+  WEEKLY_DIGEST       // Résumé hebdo
+  MONTHLY_REPORT      // Rapport mensuel
+  TEAM_INVITE         // Invitation équipe
+  SYSTEM              // Notifications système
+}
+
+// NPS Feedback - Net Promoter Score
+model NPSResponse {
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  user              User     @relation("NPSResponses", fields: [userId], references: [id], onDelete: Cascade)
+  companyId         Int
+  company           Company  @relation("CompanyNPS", fields: [companyId], references: [id], onDelete: Cascade)
+  score             Int      // 0-10
+  feedback          String?  // Optional text feedback
+  testimonialOptIn  Boolean  @default(false) // User accepts to be contacted for testimonial
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([score])
+  @@index([createdAt])
+}

@@ -58,8 +58,8 @@ nginx/             → Config production
 
 ```bash
 # Cloner le projet
-git clone https://github.com/votre-compte/QuelyosERP.git
-cd QuelyosERP
+git clone https://github.com/votre-compte/QuelyosSuite.git
+cd QuelyosSuite
 
 # Backend Odoo (démarrage complet)
 cd backend
@@ -835,8 +835,8 @@ cd backoffice && npm install && npm run dev
 
 ```bash
 # 1. Cloner le projet
-git clone https://github.com/votre-compte/QuelyosERP.git
-cd QuelyosERP
+git clone https://github.com/votre-compte/QuelyosSuite.git
+cd QuelyosSuite
 
 # 2. Configurer les variables d'environnement
 cp .env.production.example .env.production
@@ -916,7 +916,7 @@ Ajouter au crontab pour backup quotidien à 2h du matin :
 ```bash
 crontab -e
 # Ajouter :
-0 2 * * * cd /path/to/QuelyosERP && ./backup.sh >> /var/log/quelyos-backup.log 2>&1
+0 2 * * * cd /path/to/QuelyosSuite && ./backup.sh >> /var/log/quelyos-backup.log 2>&1
 ```
 
 ---

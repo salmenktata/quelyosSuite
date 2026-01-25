@@ -1,0 +1,4 @@
+date,amount,description,account,category,currency,note
+2025-12-01,abc,Test import,CompteTest,CatégorieTest,EUR,Note 1
+2025-12-02,200,,CompteTest,CatégorieTest,EUR,
+2025-12-03,300,Valid,CompteInconnu,CatégorieTest,EUR,

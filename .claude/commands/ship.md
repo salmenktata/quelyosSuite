@@ -394,10 +394,10 @@ git log origin/main -1 --oneline
 
   Branche : main
   Commit : a8c038f - feat: ajout multi-images produits + gestion variantes
-  Remote : https://github.com/username/QuelyosERP
+  Remote : https://github.com/username/QuelyosSuite
 
 Voir sur GitHub :
-https://github.com/username/QuelyosERP/commit/a8c038f
+https://github.com/username/QuelyosSuite/commit/a8c038f
 ```
 
 ---

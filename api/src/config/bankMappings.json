@@ -1,0 +1,257 @@
+{
+  "banks": [
+    {
+      "id": "bnp_paribas",
+      "name": "BNP Paribas",
+      "patterns": {
+        "headers": ["date", "libellé", "complément", "montant", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ",",
+        "encoding": "UTF-8"
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": ["libellé", "complément"],
+        "amount": "montant",
+        "balance": "solde"
+      },
+      "transformations": {
+        "description": "concat",
+        "amount": "parseComma"
+      }
+    },
+    {
+      "id": "credit_agricole",
+      "name": "Crédit Agricole",
+      "patterns": {
+        "headers": ["date opération", "date valeur", "libellé", "débit", "crédit", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ",",
+        "encoding": "UTF-8"
+      },
+      "columnMapping": {
+        "date": "date opération",
+        "description": "libellé",
+        "debit": "débit",
+        "credit": "crédit",
+        "balance": "solde"
+      },
+      "transformations": {
+        "amount": "mergeDebitCredit"
+      }
+    },
+    {
+      "id": "societe_generale",
+      "name": "Société Générale",
+      "patterns": {
+        "headers": ["date", "valeur", "description", "montant", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ",",
+        "encoding": "UTF-8"
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "description",
+        "amount": "montant",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "lcl",
+      "name": "LCL",
+      "patterns": {
+        "headers": ["date", "opération", "montant", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "opération",
+        "amount": "montant",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "caisse_epargne",
+      "name": "Caisse d'Épargne",
+      "patterns": {
+        "headers": ["date", "libellé", "valeur", "débit", "crédit", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "libellé",
+        "debit": "débit",
+        "credit": "crédit",
+        "balance": "solde"
+      },
+      "transformations": {
+        "amount": "mergeDebitCredit"
+      }
+    },
+    {
+      "id": "banque_postale",
+      "name": "La Banque Postale",
+      "patterns": {
+        "headers": ["date comptable", "libellé", "montant", "type", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date comptable",
+        "description": "libellé",
+        "amount": "montant",
+        "type": "type",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "credit_mutuel",
+      "name": "Crédit Mutuel",
+      "patterns": {
+        "headers": ["date", "description", "débit", "crédit", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "description",
+        "debit": "débit",
+        "credit": "crédit",
+        "balance": "solde"
+      },
+      "transformations": {
+        "amount": "mergeDebitCredit"
+      }
+    },
+    {
+      "id": "cic",
+      "name": "CIC",
+      "patterns": {
+        "headers": ["date", "description", "montant", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "description",
+        "amount": "montant",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "boursorama",
+      "name": "Boursorama",
+      "patterns": {
+        "headers": ["dateop", "dateval", "label", "category", "montant"],
+        "dateFormat": "yyyy-MM-dd",
+        "amountSeparator": "."
+      },
+      "columnMapping": {
+        "date": "dateop",
+        "description": "label",
+        "amount": "montant",
+        "category": "category"
+      }
+    },
+    {
+      "id": "fortuneo",
+      "name": "Fortuneo",
+      "patterns": {
+        "headers": ["date", "opération", "débit", "crédit", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "opération",
+        "debit": "débit",
+        "credit": "crédit",
+        "balance": "solde"
+      },
+      "transformations": {
+        "amount": "mergeDebitCredit"
+      }
+    },
+    {
+      "id": "hello_bank",
+      "name": "Hello bank!",
+      "patterns": {
+        "headers": ["date", "libellé", "montant", "devise", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "libellé",
+        "amount": "montant",
+        "currency": "devise",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "ing",
+      "name": "ING Direct",
+      "patterns": {
+        "headers": ["date", "description", "montant", "solde"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": ","
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "description",
+        "amount": "montant",
+        "balance": "solde"
+      }
+    },
+    {
+      "id": "n26",
+      "name": "N26",
+      "patterns": {
+        "headers": ["date", "payee", "amount", "type", "category"],
+        "dateFormat": "yyyy-MM-dd",
+        "amountSeparator": "."
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "payee",
+        "amount": "amount",
+        "type": "type",
+        "category": "category"
+      }
+    },
+    {
+      "id": "revolut",
+      "name": "Revolut",
+      "patterns": {
+        "headers": ["completed date", "description", "amount", "currency", "balance"],
+        "dateFormat": "yyyy-MM-dd HH:mm:ss",
+        "amountSeparator": "."
+      },
+      "columnMapping": {
+        "date": "completed date",
+        "description": "description",
+        "amount": "amount",
+        "currency": "currency",
+        "balance": "balance"
+      }
+    },
+    {
+      "id": "qonto",
+      "name": "Qonto",
+      "patterns": {
+        "headers": ["date", "operation", "amount", "currency", "balance"],
+        "dateFormat": "dd/MM/yyyy",
+        "amountSeparator": "."
+      },
+      "columnMapping": {
+        "date": "date",
+        "description": "operation",
+        "amount": "amount",
+        "currency": "currency",
+        "balance": "balance"
+      }
+    }
+  ]
+}
