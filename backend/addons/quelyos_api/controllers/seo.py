@@ -322,5 +322,5 @@ class QuelyosSEO(http.Controller):
             _logger.error(f"Get metadata error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }

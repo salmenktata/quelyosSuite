@@ -4,10 +4,10 @@ const ODOO_URL = process.env.ODOO_URL || 'http://localhost:8069'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const { slug } = await params
 
     const response = await fetch(`${ODOO_URL}/api/ecommerce/seo-metadata/${slug}`, {
       method: 'POST',

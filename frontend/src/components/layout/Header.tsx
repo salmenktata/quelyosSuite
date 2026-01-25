@@ -28,10 +28,10 @@ const Header: React.FC = () => {
 
   // Promotional messages for the marquee
   const promoMessages = [
-    { text: `Livraison GRATUITE des ${shipping?.freeThreshold || 150} ${currency?.symbol || 'TND'}`, icon: 'truck' as const },
-    { text: 'Retours gratuits sous 30 jours', icon: 'gift' as const },
-    { text: 'Paiement 100% securise', icon: 'star' as const },
-    { text: 'Support client disponible 7j/7', icon: 'clock' as const },
+    { id: 1, text: `Livraison GRATUITE des ${shipping?.freeThreshold || 150} ${currency?.symbol || 'TND'}`, icon: 'truck' as const },
+    { id: 2, text: 'Retours gratuits sous 30 jours', icon: 'gift' as const },
+    { id: 3, text: 'Paiement 100% securise', icon: 'star' as const },
+    { id: 4, text: 'Support client disponible 7j/7', icon: 'clock' as const },
   ];
 
   return (

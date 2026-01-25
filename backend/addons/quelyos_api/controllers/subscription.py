@@ -60,7 +60,7 @@ class SubscriptionController(http.Controller):
             _logger.error("Erreur lors de la récupération des abonnements: %s", str(e), exc_info=True)
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'Une erreur est survenue',
                 'data': [],
                 'total': 0,
             }
@@ -129,7 +129,7 @@ class SubscriptionController(http.Controller):
             }
         except Exception as e:
             _logger.error("Erreur lors de la récupération de l'abonnement %d: %s", subscription_id, str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ==================== PUBLIC ENDPOINTS ====================
 
@@ -166,7 +166,7 @@ class SubscriptionController(http.Controller):
             return {'success': True, 'data': data}
         except Exception as e:
             _logger.error("Erreur lors de la récupération des plans: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e), 'data': []}
+            return {'success': False, 'error': 'Une erreur est survenue', 'data': []}
 
     @http.route('/api/ecommerce/subscription/current', type='json', auth='user', methods=['POST'], csrf=False)
     def get_current_subscription(self, **kwargs):
@@ -219,7 +219,7 @@ class SubscriptionController(http.Controller):
             }
         except Exception as e:
             _logger.error("Erreur lors de la récupération de l'abonnement actuel: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/subscription/create', type='json', auth='user', methods=['POST'], csrf=False)
     def create_subscription(self, plan_id, billing_cycle='monthly', **kwargs):
@@ -265,7 +265,7 @@ class SubscriptionController(http.Controller):
             }
         except Exception as e:
             _logger.error("Erreur lors de la création de l'abonnement: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/subscription/check-quota', type='json', auth='user', methods=['POST'], csrf=False)
     def check_quota(self, resource_type, **kwargs):
@@ -294,10 +294,10 @@ class SubscriptionController(http.Controller):
 
             return {'success': True, 'data': quota_info}
         except ValidationError as e:
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
         except Exception as e:
             _logger.error("Erreur lors de la vérification du quota: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/subscription/cancel', type='json', auth='user', methods=['POST'], csrf=False)
     def cancel_subscription(self, **kwargs):
@@ -329,7 +329,7 @@ class SubscriptionController(http.Controller):
             }
         except Exception as e:
             _logger.error("Erreur lors de l'annulation de l'abonnement: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/subscription/upgrade', type='json', auth='user', methods=['POST'], csrf=False)
     def upgrade_subscription(self, plan_id, **kwargs):
@@ -372,4 +372,4 @@ class SubscriptionController(http.Controller):
             }
         except Exception as e:
             _logger.error("Erreur lors du upgrade de l'abonnement: %s", str(e), exc_info=True)
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}

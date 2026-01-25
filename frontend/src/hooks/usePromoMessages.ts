@@ -4,7 +4,8 @@ import { logger } from '@/lib/logger'
 export interface PromoMessage {
   id: number
   text: string
-  icon: 'truck' | 'gift' | 'star' | 'clock'
+  icon: 'truck' | 'gift' | 'star' | 'clock' | 'percent'
+  link?: string
 }
 
 export function usePromoMessages() {

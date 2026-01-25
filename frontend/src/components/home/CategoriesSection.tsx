@@ -15,16 +15,6 @@ const DEFAULT_CATEGORY_IMAGE = 'https://images.unsplash.com/photo-1556906781-9a4
 function getCategoryImage(category: Category): string {
   // Utiliser image uploadée depuis backoffice ou fallback générique
   return category.image_url || DEFAULT_CATEGORY_IMAGE;
-  }
-  if (categoryName.includes('training') || categoryName.includes('entraînement')) {
-    return categoryImages.training;
-  }
-  if (categoryName.includes('equipment') || categoryName.includes('équipement')) {
-    return categoryImages.equipment;
-  }
-
-  // Image par défaut
-  return categoryImages.default;
 }
 
 export function CategoriesSection({ categories, isLoading }: CategoriesSectionProps) {

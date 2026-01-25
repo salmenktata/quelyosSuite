@@ -139,6 +139,36 @@ ADMIN_ENDPOINTS = [
 ]
 
 
+# ==================== GESTION ERREURS SÉCURISÉE ====================
+
+# Messages d'erreur génériques (ne pas exposer détails techniques)
+ERROR_MESSAGES = {
+    'generic': 'Une erreur est survenue. Veuillez réessayer.',
+    'not_found': 'Ressource non trouvée.',
+    'invalid_data': 'Données invalides.',
+    'unauthorized': 'Accès non autorisé.',
+    'validation': 'Erreur de validation des données.',
+    'server': 'Erreur serveur. Veuillez réessayer plus tard.',
+}
+
+
+def safe_error_response(error_key='generic', success=False):
+    """
+    Retourne une réponse d'erreur sécurisée sans exposer de détails techniques.
+
+    Args:
+        error_key: Clé du message dans ERROR_MESSAGES
+        success: Valeur du champ success
+
+    Returns:
+        dict: Réponse JSON sécurisée
+    """
+    return {
+        'success': success,
+        'error': ERROR_MESSAGES.get(error_key, ERROR_MESSAGES['generic'])
+    }
+
+
 # ==================== LIMITES TAUX (Rate Limiting) ====================
 
 # Configuration pour implémenter rate limiting (à faire)

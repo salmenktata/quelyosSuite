@@ -1,13 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePromoMessages } from '@/hooks/usePromoMessages';
-
-interface PromoMessage {
-  text: string;
-  link?: string;
-  icon?: 'truck' | 'percent' | 'gift' | 'star' | 'clock';
-}
+import { usePromoMessages, PromoMessage } from '@/hooks/usePromoMessages';
 
 interface PromoBarProps {
   messages?: PromoMessage[];
@@ -18,10 +12,10 @@ interface PromoBarProps {
 
 // Fallback messages
 const fallbackMessages: PromoMessage[] = [
-  { text: 'Livraison gratuite dès 100 DT', icon: 'truck' },
-  { text: 'Retours gratuits sous 30 jours', icon: 'gift' },
-  { text: 'Support client 7j/7', icon: 'star' },
-  { text: 'Paiement sécurisé', icon: 'clock' },
+  { id: 1, text: 'Livraison gratuite dès 100 DT', icon: 'truck' },
+  { id: 2, text: 'Retours gratuits sous 30 jours', icon: 'gift' },
+  { id: 3, text: 'Support client 7j/7', icon: 'star' },
+  { id: 4, text: 'Paiement sécurisé', icon: 'clock' },
 ];
 
 const PromoBar: React.FC<PromoBarProps> = ({

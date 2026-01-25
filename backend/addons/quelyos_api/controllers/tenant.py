@@ -592,15 +592,13 @@ class TenantController(BaseController):
 
     def _preflight_response(self):
         """Réponse pour les requêtes OPTIONS (CORS preflight)"""
-        return request.make_response(
-            '',
-            headers={
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id',
-                'Access-Control-Max-Age': '86400'
-            }
-        )
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+        # Ajouter headers preflight spécifiques si origine autorisée
+        if cors_headers:
+            cors_headers['Access-Control-Max-Age'] = '86400'
+        return request.make_response('', headers=cors_headers or {})
 
     def _prepare_tenant_values(self, data, update=False):
         """

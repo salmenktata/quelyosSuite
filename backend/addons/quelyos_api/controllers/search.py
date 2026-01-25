@@ -123,7 +123,7 @@ class QuelyosSearch(http.Controller):
             _logger.error(f"Autocomplete search error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/facets', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -292,5 +292,5 @@ class QuelyosSearch(http.Controller):
             _logger.error(f"Get facets error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }

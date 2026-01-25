@@ -154,7 +154,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Checkout validation error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/checkout/shipping', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -247,7 +247,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Shipping calculation error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/checkout/complete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -377,7 +377,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Checkout complete error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/checkout/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -480,7 +480,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Checkout confirm error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PAYMENT ====================
@@ -536,7 +536,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"PayPal create order error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/paypal/capture-order', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -583,7 +583,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"PayPal capture order error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/wallet/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -635,7 +635,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Wallet payment creation error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/stripe/create-intent', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -742,7 +742,7 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Stripe create payment intent error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/stripe/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -854,5 +854,5 @@ class QuelyosCheckout(http.Controller):
             _logger.error(f"Stripe confirm payment error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }

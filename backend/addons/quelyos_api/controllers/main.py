@@ -599,7 +599,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Registration error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PRODUCTS ====================
@@ -798,7 +798,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get products error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -827,7 +827,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/slug/<string:slug>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -873,10 +873,10 @@ class QuelyosAPI(http.Controller):
             }
 
         except Exception as e:
-            _logger.error(f"Get product by slug error: {e}")
+            _logger.error(f"Get product by slug error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Erreur lors du chargement du produit'
             }
 
     @http.route('/api/ecommerce/products/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -995,7 +995,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -1114,7 +1114,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -1142,7 +1142,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1186,7 +1186,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Archive product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/taxes', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1221,7 +1221,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get taxes error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/uom', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1255,7 +1255,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get UoM error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/product-tags', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1285,7 +1285,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product tags error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/product-tags/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1329,7 +1329,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create product tag error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/product-types', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1354,7 +1354,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product types error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1407,7 +1407,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Duplicate product error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/export', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1486,7 +1486,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Export products error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/import', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1597,7 +1597,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Import products error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PRODUCT IMAGES ====================
@@ -1636,7 +1636,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1705,7 +1705,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Upload product images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -1754,7 +1754,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete product image error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1803,7 +1803,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Reorder product images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== ATTRIBUTE VALUE IMAGES (V2) ====================
@@ -1867,7 +1867,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product attribute images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -1919,7 +1919,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get attribute value images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2013,7 +2013,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Upload attribute value images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -2068,7 +2068,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete attribute value image error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2126,7 +2126,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Reorder attribute value images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PRODUCT VARIANTS ====================
@@ -2164,7 +2164,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get attributes error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2276,7 +2276,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product variants error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2351,7 +2351,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Add product attribute error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -2413,7 +2413,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update product attribute error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2455,7 +2455,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete product attribute error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/regenerate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2545,7 +2545,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Regenerate variants error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -2612,7 +2612,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update product variant error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -2707,7 +2707,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update variant stock error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== VARIANT IMAGES ====================
@@ -2753,7 +2753,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get variant images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2821,7 +2821,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Upload variant images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -2854,7 +2854,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete variant image error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -2891,7 +2891,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Reorder variant images error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== CATEGORIES ====================
@@ -2976,7 +2976,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get categories error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/categories/<int:category_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3005,7 +3005,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -3047,7 +3047,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -3091,7 +3091,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -3119,7 +3119,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/categories/<int:category_id>/move', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3187,7 +3187,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Move category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== SITE CONFIGURATION ====================
@@ -3237,7 +3237,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get site config error: {e}")
             return request.make_json_response({
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             })
 
     @http.route('/api/ecommerce/site-config/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3371,7 +3371,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update site config error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== ORDERS ====================
@@ -3444,7 +3444,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get orders error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3517,7 +3517,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get order error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3563,7 +3563,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create order error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/status', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3612,7 +3612,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update order status error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3666,7 +3666,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get order tracking error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -3722,7 +3722,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update order tracking error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/history', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -3784,7 +3784,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get order history error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
@@ -3833,7 +3833,7 @@ class QuelyosAPI(http.Controller):
         except Exception as e:
             _logger.error(f"Get delivery slip PDF error: {e}")
             return request.make_response(
-                json.dumps({'error': str(e)}),
+                json.dumps({'error': 'Une erreur est survenue'}),
                 headers=[('Content-Type', 'application/json')]
             )
 
@@ -3883,7 +3883,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Send quotation error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -3948,7 +3948,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create invoice error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/unlock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4009,7 +4009,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Unlock order error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/orders', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4054,7 +4054,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get customer orders error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip/pdf', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
@@ -4107,7 +4107,7 @@ class QuelyosAPI(http.Controller):
         except Exception as e:
             _logger.error(f"Get delivery slip PDF error: {e}")
             return request.make_response(
-                json.dumps({'error': str(e)}),
+                json.dumps({'error': 'Une erreur est survenue'}),
                 headers=[('Content-Type', 'application/json')]
             )
 
@@ -4156,7 +4156,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get order tracking error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -4223,7 +4223,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update order tracking error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/orders/<int:order_id>/history', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4284,7 +4284,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get order history error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== CUSTOMERS (ADMIN) ====================
@@ -4369,7 +4369,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get customers error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customers/<int:customer_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4440,7 +4440,7 @@ class QuelyosAPI(http.Controller):
             }
         except Exception as e:
             _logger.error(f"Get customer detail error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer(self, customer_id, **kwargs):
@@ -4477,7 +4477,7 @@ class QuelyosAPI(http.Controller):
             }
         except Exception as e:
             _logger.error(f"Update customer error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/customers/export', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def export_customers_csv(self, **kwargs):
@@ -4558,7 +4558,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Export customers CSV error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ==================== CART ====================
 
@@ -4644,7 +4644,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4726,7 +4726,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Add to cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4795,7 +4795,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/remove/<int:line_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4855,7 +4855,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Remove from cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/clear', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -4902,7 +4902,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Clear cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/save', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5006,7 +5006,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Save cart error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/abandoned', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5083,7 +5083,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get abandoned carts error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/<int:cart_id>/send-reminder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5135,7 +5135,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Send cart reminder error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/recovery-stats', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5208,7 +5208,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get cart recovery stats error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== CUSTOMER PROFILE ====================
@@ -5284,7 +5284,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Export stock CSV error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/profile', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5317,7 +5317,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get profile error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/profile/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5364,7 +5364,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update profile error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== CUSTOMER ADDRESSES ====================
@@ -5403,7 +5403,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get addresses error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/addresses/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5453,7 +5453,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create address error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5511,7 +5511,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update address error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5542,7 +5542,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete address error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== RIBBONS (BADGES) ====================
@@ -5583,7 +5583,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get ribbons error: {e}")
             return request.make_json_response({
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             })
 
     @http.route('/api/ecommerce/products/<int:product_id>/ribbon', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5621,7 +5621,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update product ribbon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== STOCK ====================
@@ -5657,7 +5657,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product stock error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5724,7 +5724,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update product stock error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/moves', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5783,7 +5783,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get stock moves error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5840,7 +5840,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Validate stock error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/products', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5913,7 +5913,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get stock products error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== DELIVERY ====================
@@ -5945,7 +5945,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get delivery methods error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/methods/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -5996,7 +5996,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create delivery method error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6031,7 +6031,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get delivery method detail error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6080,7 +6080,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update delivery method error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6111,7 +6111,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete delivery method error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/calculate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6168,7 +6168,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Calculate delivery error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/delivery/zones', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6195,7 +6195,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get delivery zones error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ===========================
@@ -6233,7 +6233,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get payment methods error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/init', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6310,7 +6310,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Init payment error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6371,7 +6371,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Confirm payment error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/webhook', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6421,7 +6421,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Payment webhook error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/transactions', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6517,7 +6517,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get payment transactions error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6575,7 +6575,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get payment transaction detail error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>/refund', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6644,7 +6644,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Refund payment transaction error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ===========================
@@ -6721,7 +6721,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get coupons error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/coupons/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6801,7 +6801,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create coupon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6847,7 +6847,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get coupon detail error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6914,7 +6914,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update coupon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -6945,7 +6945,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete coupon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/coupon/apply', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -7048,7 +7048,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Apply coupon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/cart/coupon/remove', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -7101,7 +7101,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Remove coupon error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== ANALYTICS ====================
@@ -7242,7 +7242,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get analytics stats error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/analytics/revenue-chart', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -7322,7 +7322,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get revenue chart error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/analytics/orders-chart', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_orders_chart(self, **kwargs):
@@ -7406,7 +7406,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get orders chart error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/analytics/conversion-funnel', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_conversion_funnel(self, **kwargs):
@@ -7499,7 +7499,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get conversion funnel error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/analytics/top-categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_top_categories(self, **kwargs):
@@ -7555,7 +7555,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get top categories error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ===========================
     # PHASE 7: FACTURATION
@@ -7617,7 +7617,7 @@ class QuelyosAPI(http.Controller):
             return {'success': True, 'data': {'invoices': data, 'total': total, 'stats': stats}}
         except Exception as e:
             _logger.error(f"Get invoices list error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_invoice_detail(self, invoice_id, **kwargs):
@@ -7663,7 +7663,7 @@ class QuelyosAPI(http.Controller):
             }
         except Exception as e:
             _logger.error(f"Get invoice detail error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_invoice_from_order(self, order_id, **kwargs):
@@ -7693,7 +7693,7 @@ class QuelyosAPI(http.Controller):
             }
         except Exception as e:
             _logger.error(f"Create invoice error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def post_invoice(self, invoice_id, **kwargs):
@@ -7716,7 +7716,7 @@ class QuelyosAPI(http.Controller):
             }
         except Exception as e:
             _logger.error(f"Post invoice error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ==================== FEATURED PRODUCTS ====================
 
@@ -7784,7 +7784,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get featured products error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/featured/available', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_available_products_for_featured(self, **kwargs):
@@ -7848,7 +7848,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get available products error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/featured/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def add_featured_product(self, **kwargs):
@@ -7892,7 +7892,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Add featured product error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/featured/remove', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def remove_featured_product(self, **kwargs):
@@ -7921,7 +7921,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Remove featured product error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/featured/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def reorder_featured_products(self, **kwargs):
@@ -7950,7 +7950,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Reorder featured products error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ==================== STOCK INVENTORY ====================
 
@@ -8009,7 +8009,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Prepare inventory error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/inventory/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -8113,7 +8113,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Validate inventory error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== STOCK ALERTS ====================
@@ -8189,7 +8189,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get low stock alerts error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/high-stock-alerts', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -8267,7 +8267,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get high stock alerts error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== SHIPPING TRACKING ====================
@@ -8336,7 +8336,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get order tracking error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/tracking/colissimo/<string:tracking_number>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_colissimo_tracking(self, tracking_number, **kwargs):
@@ -8354,7 +8354,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Colissimo tracking error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     @http.route('/api/ecommerce/tracking/mondialrelay/<string:tracking_number>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_mondialrelay_tracking(self, tracking_number, **kwargs):
@@ -8372,7 +8372,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Mondial Relay tracking error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ===== CART RECOVERY =====
 
@@ -8470,7 +8470,7 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Cart recovery error: {e}")
-            return {'success': False, 'error': str(e)}
+            return {'success': False, 'error': 'Une erreur est survenue'}
 
     # ===================================================================
     # CURRENCIES - Multi-devises (Issue #17)
@@ -8527,7 +8527,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get currencies error: {e}")
             return request.make_json_response({
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             })
 
     @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -8577,7 +8577,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Activate currency error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/currencies/convert', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -8658,7 +8658,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Convert currency error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ===================================================================
@@ -8715,7 +8715,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get pricelists error: {e}")
             return request.make_json_response({
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             })
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
@@ -8778,7 +8778,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get pricelist detail error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -8859,7 +8859,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create pricelist error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -8937,7 +8937,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update pricelist error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9109,7 +9109,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create pricelist item error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9162,7 +9162,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete pricelist error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9291,7 +9291,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update pricelist item error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9337,7 +9337,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete pricelist item error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer-categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
@@ -9374,7 +9374,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get customer categories error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer-categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9432,7 +9432,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create customer category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9493,7 +9493,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Update customer category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9543,7 +9543,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Delete customer category error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9606,7 +9606,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Assign pricelist error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9664,7 +9664,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Assign categories error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ===================================================================
@@ -9723,7 +9723,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get warehouses error: {e}")
             return request.make_json_response({
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             })
 
     @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
@@ -9779,7 +9779,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get warehouse detail error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
@@ -9852,7 +9852,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product stock by location error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock/transfer', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -9972,7 +9972,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Create stock transfer error: {e}")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PRODUITS - UPSELL & RECOMMENDATIONS ====================
@@ -10081,7 +10081,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product upsell error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/recommendations', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -10199,7 +10199,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get product recommendations error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== ALERTES STOCK ====================
@@ -10275,7 +10275,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get stock alert status error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -10354,7 +10354,7 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Notify restock error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -10420,5 +10420,5 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Unsubscribe stock alert error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }

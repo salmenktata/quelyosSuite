@@ -6,6 +6,7 @@ import { cmsService } from '@/lib/odoo/cms';
 import { useAuthStore } from '@/store/authStore';
 import type { Menu, MenuItem } from '@/types/cms';
 import { logger } from '@/lib/logger';
+import { sanitizeSvg } from '@/lib/utils/sanitize';
 
 interface DynamicMenuProps {
   code: string;
@@ -170,7 +171,7 @@ const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
   const content = (
     <>
       {showIcons && item.icon && (
-        <span className="mr-2" dangerouslySetInnerHTML={{ __html: item.icon }} />
+        <span className="mr-2" dangerouslySetInnerHTML={{ __html: sanitizeSvg(item.icon) }} />
       )}
       {item.name}
       {hasChildren && (

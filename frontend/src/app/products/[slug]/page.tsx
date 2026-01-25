@@ -26,6 +26,7 @@ import { ViewersCount } from '@/components/product/ViewersCount';
 import { CountdownTimer } from '@/components/product/CountdownTimer';
 import { BundleSuggestions } from '@/components/product/BundleSuggestions';
 import { logger } from '@/lib/logger';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -617,7 +618,7 @@ export default function ProductDetailPage() {
                 {product.technical_description ? (
                   <div
                     className="prose prose-lg max-w-none text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: product.technical_description }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.technical_description) }}
                   />
                 ) : (
                   <div className="space-y-3">

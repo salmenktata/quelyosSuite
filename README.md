@@ -42,7 +42,7 @@ nginx/             → Config production
 | Composant | Technologies |
 |-----------|-------------|
 | Frontend | Next.js 16.1, Tailwind CSS, TypeScript |
-| Backoffice | React 18.3, Vite, Tailwind CSS, React Query |
+| Backoffice | React 19.2, Vite, Tailwind CSS, React Query |
 | Backend | Odoo 19 Community, Python 3.12, PostgreSQL 15 |
 
 ---

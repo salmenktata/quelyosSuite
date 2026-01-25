@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { BlockRenderer } from './BlockRenderer';
 import type { CmsPage, CmsBlock, Breadcrumb } from '@/types/cms';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 interface CmsPageContentProps {
   page: CmsPage;
@@ -57,7 +58,7 @@ export const CmsPageContent: React.FC<CmsPageContentProps> = ({ page }) => {
     return (
       <div
         className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-a:text-primary hover:prose-a:text-primary-dark"
-        dangerouslySetInnerHTML={{ __html: page.content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
       />
     );
   };
@@ -289,7 +290,7 @@ const LandingTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           <div className="container mx-auto px-4">
             <div
               className="prose prose-lg max-w-4xl mx-auto text-center prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
             />
           </div>
         </section>
@@ -427,7 +428,7 @@ const ContactTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
             {page.content && (
               <div
                 className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
-                dangerouslySetInnerHTML={{ __html: page.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
               />
             )}
 
@@ -689,7 +690,7 @@ const FaqTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           {page.content && (
             <div
               className="prose prose-lg max-w-none mb-10 text-center prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
             />
           )}
 
@@ -794,7 +795,7 @@ const AboutTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-12">
             <div
               className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-a:text-primary hover:prose-a:text-primary-dark"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
             />
           </div>
         )}
@@ -973,7 +974,7 @@ const ShippingTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-12">
             <div
               className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-a:text-primary hover:prose-a:text-primary-dark"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
             />
           </div>
         )}
@@ -1079,7 +1080,7 @@ const ReturnsTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-12">
             <div
               className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-a:text-primary hover:prose-a:text-primary-dark"
-              dangerouslySetInnerHTML={{ __html: page.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
             />
           </div>
         )}
@@ -1137,7 +1138,7 @@ const LegalTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
             {page.content ? (
               <div
                 className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-a:text-primary"
-                dangerouslySetInnerHTML={{ __html: page.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
               />
             ) : (
               <div className="text-center py-12">

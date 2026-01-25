@@ -125,7 +125,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Submit review error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/reviews/<int:product_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -222,7 +222,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Get product reviews error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== POPUPS MARKETING ====================
@@ -291,7 +291,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Get active popups error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/popups/<int:popup_id>/click', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -332,7 +332,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Track popup click error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== PROGRAMME DE FIDELITE ====================
@@ -417,7 +417,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Get loyalty points error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     @http.route('/api/ecommerce/loyalty/redeem', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -511,7 +511,7 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Redeem loyalty points error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
 
     # ==================== NEWSLETTER ====================
@@ -598,5 +598,5 @@ class QuelyosMarketing(http.Controller):
             _logger.error(f"Newsletter subscribe error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'Une erreur est survenue'
             }
