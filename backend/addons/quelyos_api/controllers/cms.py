@@ -1047,3 +1047,76 @@ class QuelyCMS(BaseController):
         except Exception as e:
             _logger.error(f"Reorder trust badges error: {e}")
             return {'success': False, 'error': str(e)}
+
+    # ==================== IMAGE UPLOADS ====================
+
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/upload-image', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    def upload_hero_slide_image(self, slide_id, **kwargs):
+        """Upload image pour hero slide"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return request.make_json_response(error)
+
+            error = self._require_admin()
+            if error:
+                return request.make_json_response(error)
+
+            slide = request.env['quelyos.hero.slide'].sudo().browse(slide_id)
+            if not slide.exists():
+                return request.make_json_response({'success': False, 'error': 'Slide non trouvé'})
+
+            # Récupérer le fichier depuis la requête
+            image_file = request.httprequest.files.get('image')
+            if not image_file:
+                return request.make_json_response({'success': False, 'error': 'Aucune image fournie'})
+
+            # Lire le contenu binaire
+            import base64
+            image_data = base64.b64encode(image_file.read())
+
+            # Mettre à jour le slide
+            slide.write({'image': image_data})
+
+            return request.make_json_response({
+                'success': True,
+                'image_url': slide.image_url
+            })
+
+        except Exception as e:
+            _logger.error(f"Upload hero slide image error: {e}")
+            return request.make_json_response({'success': False, 'error': str(e)})
+
+    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/upload-image', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    def upload_promo_banner_image(self, banner_id, **kwargs):
+        """Upload image pour promo banner"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return request.make_json_response(error)
+
+            error = self._require_admin()
+            if error:
+                return request.make_json_response(error)
+
+            banner = request.env['quelyos.promo.banner'].sudo().browse(banner_id)
+            if not banner.exists():
+                return request.make_json_response({'success': False, 'error': 'Bannière non trouvée'})
+
+            image_file = request.httprequest.files.get('image')
+            if not image_file:
+                return request.make_json_response({'success': False, 'error': 'Aucune image fournie'})
+
+            import base64
+            image_data = base64.b64encode(image_file.read())
+
+            banner.write({'image': image_data})
+
+            return request.make_json_response({
+                'success': True,
+                'image_url': banner.image_url
+            })
+
+        except Exception as e:
+            _logger.error(f"Upload promo banner image error: {e}")
+            return request.make_json_response({'success': False, 'error': str(e)})
