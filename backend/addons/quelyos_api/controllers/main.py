@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 from passlib.context import CryptContext
+from ..config import is_origin_allowed, get_cors_headers
 
 _logger = logging.getLogger(__name__)
 
@@ -20,6 +21,24 @@ class QuelyosAPI(http.Controller):
         """Extrait les paramètres de la requête JSON-RPC"""
         return request.params if hasattr(request, 'params') and request.params else {}
 
+    def _get_http_params(self):
+        """Extrait les paramètres HTTP (GET query params ou POST JSON)"""
+        if request.httprequest.method == 'GET':
+            # Convertir ImmutableMultiDict en dict normal
+            return request.httprequest.args.to_dict()
+        else:  # POST avec body JSON
+            try:
+                data = request.get_json_data()
+                if isinstance(data, dict):
+                    # Si c'est un wrapper JSON-RPC (envoyé par le proxy Next.js), extraire params
+                    if 'jsonrpc' in data and 'params' in data:
+                        return data['params'] if isinstance(data['params'], dict) else {}
+                    # Sinon retourner les données directement
+                    return data
+                return {}
+            except:
+                return {}
+
     def _check_session(self):
         """Vérifie que la session est valide"""
         if not request.session.uid:
@@ -30,6 +49,140 @@ class QuelyosAPI(http.Controller):
                 'error_code': 'SESSION_EXPIRED'
             }
         return None
+
+    def _check_cors(self):
+        """
+        Vérifie que l'origine de la requête est autorisée (protection CORS).
+        Retourne un dict d'erreur si l'origine n'est pas autorisée, None sinon.
+
+        Usage dans les endpoints :
+            error = self._check_cors()
+            if error:
+                return error
+
+        NOTE: Cette méthode devrait idéalement être appelée automatiquement
+        via un décorateur ou middleware, mais pour compatibilité avec Odoo
+        on l'appelle manuellement dans les endpoints sensibles.
+        """
+        origin = request.httprequest.headers.get('Origin', '')
+
+        if not is_origin_allowed(origin):
+            _logger.warning(
+                f"CORS violation: Origin '{origin}' is not allowed. "
+                f"Request path: {request.httprequest.path}"
+            )
+            return {
+                'success': False,
+                'error': 'Origine non autorisée',
+                'error_code': 'CORS_VIOLATION'
+            }
+
+        return None
+
+    def _require_admin(self):
+        """
+        Vérifie que l'utilisateur est authentifié ET possède les droits administrateur.
+        Retourne un dict d'erreur si non autorisé, None sinon.
+
+        Usage dans les endpoints :
+            error = self._require_admin()
+            if error:
+                return error
+        """
+        # Vérifier que l'utilisateur est connecté
+        if not request.env.user or request.env.user._is_public():
+            _logger.warning(f"Unauthorized admin action attempt: user not authenticated")
+            return {
+                'success': False,
+                'error': 'Authentification requise',
+                'error_code': 'AUTH_REQUIRED'
+            }
+
+        # Vérifier que l'utilisateur a les droits admin (groupe system)
+        if not request.env.user.has_group('base.group_system'):
+            _logger.warning(
+                f"Unauthorized admin action attempt: user {request.env.user.id} "
+                f"({request.env.user.login}) lacks admin privileges"
+            )
+            return {
+                'success': False,
+                'error': 'Accès refusé : droits administrateur requis',
+                'error_code': 'ADMIN_REQUIRED'
+            }
+
+        return None
+
+    def _validate_customer_ownership(self, customer_id):
+        """
+        Vérifie que l'utilisateur a le droit de modifier les données du client.
+        - Utilisateurs authentifiés : peuvent modifier leurs propres données OU admin peut tout modifier
+        - Invités : doivent fournir guest_email correspondant au partner_id.email
+
+        Args:
+            customer_id: ID du partner (res.partner)
+
+        Returns:
+            dict d'erreur si non autorisé, None sinon
+
+        Usage dans les endpoints :
+            error = self._validate_customer_ownership(customer_id)
+            if error:
+                return error
+        """
+        # Récupérer le partner
+        partner = request.env['res.partner'].sudo().browse(customer_id)
+        if not partner.exists():
+            return {
+                'success': False,
+                'error': 'Client non trouvé',
+                'error_code': 'CUSTOMER_NOT_FOUND'
+            }
+
+        # Cas 1 : Utilisateur authentifié
+        if request.session.uid:
+            # Vérifier si c'est ses propres données
+            if partner.id == request.session.uid:
+                return None  # OK : utilisateur modifie ses propres données
+
+            # Vérifier si admin
+            if request.env.user.has_group('base.group_system'):
+                return None  # OK : admin peut tout modifier
+
+            # Ni propriétaire ni admin
+            _logger.warning(
+                f"Unauthorized customer data access attempt: user {request.env.user.id} "
+                f"tried to access customer {customer_id}"
+            )
+            return {
+                'success': False,
+                'error': 'Accès non autorisé : vous ne pouvez modifier que vos propres données',
+                'error_code': 'OWNERSHIP_VIOLATION'
+            }
+
+        # Cas 2 : Invité - Doit fournir guest_email
+        params = self._get_params()
+        guest_email = params.get('guest_email')
+
+        if not guest_email:
+            return {
+                'success': False,
+                'error': 'Authentification requise ou guest_email manquant',
+                'error_code': 'AUTH_OR_GUEST_EMAIL_REQUIRED'
+            }
+
+        # Vérifier correspondance email
+        if partner.email != guest_email:
+            _logger.warning(
+                f"Unauthorized guest customer data access: guest_email {guest_email} "
+                f"does not match customer {customer_id} email"
+            )
+            return {
+                'success': False,
+                'error': 'Accès non autorisé',
+                'error_code': 'GUEST_EMAIL_MISMATCH'
+            }
+
+        return None  # OK : guest_email valide
 
     def _create_session(self, uid):
         """Crée une session pour l'utilisateur et retourne le session_id"""
@@ -373,6 +526,23 @@ class QuelyosAPI(http.Controller):
                         'sequence': 1,
                     }]
 
+                # Récupérer le ribbon (badge) du produit
+                ribbon_data = None
+                if p.website_ribbon_id:
+                    ribbon = p.website_ribbon_id
+                    # Récupérer le nom dans la langue courante (fr_FR par défaut)
+                    ribbon_name = ribbon.name
+                    if isinstance(ribbon_name, dict):
+                        ribbon_name = ribbon_name.get('fr_FR', ribbon_name.get('en_US', ''))
+                    ribbon_data = {
+                        'id': ribbon.id,
+                        'name': ribbon_name,
+                        'bg_color': ribbon.bg_color,
+                        'text_color': ribbon.text_color,
+                        'position': ribbon.position,
+                        'style': ribbon.style,
+                    }
+
                 data.append({
                     'id': p.id,
                     'name': p.name,
@@ -396,6 +566,13 @@ class QuelyosAPI(http.Controller):
                         'name': p.categ_id.name,
                     } if p.categ_id else None,
                     'variant_count': p.product_variant_count,
+                    'ribbon': ribbon_data,
+                    # Champs marketing e-commerce
+                    'is_featured': getattr(p, 'x_is_featured', False) or False,
+                    'is_new': getattr(p, 'x_is_new', False) or False,
+                    'is_bestseller': getattr(p, 'x_is_bestseller', False) or False,
+                    'compare_at_price': p.compare_list_price if hasattr(p, 'compare_list_price') and p.compare_list_price else None,
+                    'offer_end_date': getattr(p, 'x_offer_end_date', None).isoformat() if getattr(p, 'x_offer_end_date', None) else None,
                 })
 
             return {
@@ -467,6 +644,22 @@ class QuelyosAPI(http.Controller):
                     'price_include': tax.price_include,
                 })
 
+            # Récupérer le ribbon (badge) du produit
+            ribbon_data = None
+            if product.website_ribbon_id:
+                ribbon = product.website_ribbon_id
+                ribbon_name = ribbon.name
+                if isinstance(ribbon_name, dict):
+                    ribbon_name = ribbon_name.get('fr_FR', ribbon_name.get('en_US', ''))
+                ribbon_data = {
+                    'id': ribbon.id,
+                    'name': ribbon_name,
+                    'bg_color': ribbon.bg_color,
+                    'text_color': ribbon.text_color,
+                    'position': ribbon.position,
+                    'style': ribbon.style,
+                }
+
             data = {
                 'id': product.id,
                 'name': product.name,
@@ -498,7 +691,18 @@ class QuelyosAPI(http.Controller):
                     'id': product.categ_id.id,
                     'name': product.categ_id.name,
                 } if product.categ_id else None,
+                'ribbon': ribbon_data,  # Badge/ruban du produit
                 'taxes': taxes,  # Taxes de vente applicables
+                # Champs marketing e-commerce
+                'is_featured': getattr(product, 'x_is_featured', False) or False,
+                'is_new': getattr(product, 'x_is_new', False) or False,
+                'is_bestseller': getattr(product, 'x_is_bestseller', False) or False,
+                'compare_at_price': product.compare_list_price if hasattr(product, 'compare_list_price') and product.compare_list_price else None,
+                'offer_end_date': getattr(product, 'x_offer_end_date', None).isoformat() if getattr(product, 'x_offer_end_date', None) else None,
+                # Champs contenu enrichi
+                'technical_description': getattr(product, 'x_technical_description', None) or None,
+                # Champs statistiques
+                'view_count': getattr(product, 'x_view_count', 0) or 0,
             }
 
             return {
@@ -535,6 +739,13 @@ class QuelyosAPI(http.Controller):
                     'success': False,
                     'error': 'Product not found'
                 }
+
+            # Incrémenter le compteur de vues (tracking)
+            try:
+                current_views = getattr(product, 'x_view_count', 0) or 0
+                product.sudo().write({'x_view_count': current_views + 1})
+            except Exception as view_err:
+                _logger.warning(f"Could not increment view count: {view_err}")
 
             # Récupérer toutes les images du produit (product.image)
             images = []
@@ -606,6 +817,16 @@ class QuelyosAPI(http.Controller):
                     'name': product.categ_id.name,
                 } if product.categ_id else None,
                 'taxes': taxes,
+                # Champs marketing e-commerce
+                'is_featured': getattr(product, 'x_is_featured', False) or False,
+                'is_new': getattr(product, 'x_is_new', False) or False,
+                'is_bestseller': getattr(product, 'x_is_bestseller', False) or False,
+                'compare_at_price': product.compare_list_price if hasattr(product, 'compare_list_price') and product.compare_list_price else None,
+                'offer_end_date': getattr(product, 'x_offer_end_date', None).isoformat() if getattr(product, 'x_offer_end_date', None) else None,
+                # Champs contenu enrichi
+                'technical_description': getattr(product, 'x_technical_description', None) or None,
+                # Champs statistiques
+                'view_count': getattr(product, 'x_view_count', 0) or 0,
             }
 
             return {
@@ -620,10 +841,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_product(self, **kwargs):
-        """Créer un produit (admin)"""
+        """Créer un produit (ADMIN UNIQUEMENT)"""
         try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
             params = self._get_params()
             name = params.get('name')
             price = params.get('price', 0.0)
@@ -635,11 +861,6 @@ class QuelyosAPI(http.Controller):
                     'success': False,
                     'error': 'Product name is required'
                 }
-
-            # Vérifier les permissions (admin uniquement)
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
             pass
 
             product_data = {
@@ -702,6 +923,20 @@ class QuelyosAPI(http.Controller):
                 else:
                     product_data['taxes_id'] = [(5, 0, 0)]  # Supprimer toutes les taxes
 
+            # Champs marketing e-commerce
+            if 'is_featured' in params:
+                product_data['x_is_featured'] = bool(params['is_featured'])
+            if 'is_new' in params:
+                product_data['x_is_new'] = bool(params['is_new'])
+            if 'is_bestseller' in params:
+                product_data['x_is_bestseller'] = bool(params['is_bestseller'])
+            if 'compare_at_price' in params and params['compare_at_price']:
+                product_data['compare_list_price'] = float(params['compare_at_price'])
+            if 'offer_end_date' in params and params['offer_end_date']:
+                product_data['x_offer_end_date'] = params['offer_end_date']
+            if 'technical_description' in params:
+                product_data['x_technical_description'] = params['technical_description'] or False
+
             product = request.env['product.template'].sudo().create(product_data)
 
             return {
@@ -725,15 +960,14 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product(self, product_id, **kwargs):
-        """Modifier un produit (admin)"""
+        """Modifier un produit (ADMIN UNIQUEMENT)"""
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -806,6 +1040,20 @@ class QuelyosAPI(http.Controller):
                 else:
                     update_data['taxes_id'] = [(5, 0, 0)]  # Supprimer toutes les taxes
 
+            # Champs marketing e-commerce
+            if 'is_featured' in params:
+                update_data['x_is_featured'] = bool(params['is_featured'])
+            if 'is_new' in params:
+                update_data['x_is_new'] = bool(params['is_new'])
+            if 'is_bestseller' in params:
+                update_data['x_is_bestseller'] = bool(params['is_bestseller'])
+            if 'compare_at_price' in params:
+                update_data['compare_list_price'] = float(params['compare_at_price']) if params['compare_at_price'] else 0
+            if 'offer_end_date' in params:
+                update_data['x_offer_end_date'] = params['offer_end_date'] if params['offer_end_date'] else False
+            if 'technical_description' in params:
+                update_data['x_technical_description'] = params['technical_description'] if params['technical_description'] else False
+
             if update_data:
                 product.write(update_data)
 
@@ -831,15 +1079,14 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_product(self, product_id, **kwargs):
-        """Supprimer un produit (admin)"""
+        """Supprimer un produit (ADMIN UNIQUEMENT)"""
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -1423,16 +1670,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_product_image(self, product_id, image_id, **kwargs):
-        """Supprimer une image d'un produit (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Supprimer une image d'un produit (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.template'].sudo().browse(product_id)
 
             if not product.exists():
@@ -1732,18 +1978,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_attribute_value_image(self, product_id, ptav_id, image_id, **kwargs):
-        """Supprimer une image d'une valeur d'attribut (admin)"""
-        try:
-            # TODO PRODUCTION: Réactiver les permissions avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {
-            #         'success': False,
-            #         'error': 'Insufficient permissions'
-            #     }
-            pass
+        """Supprimer une image d'une valeur d'attribut (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.template'].sudo().browse(product_id)
             if not product.exists():
                 return {
@@ -1850,7 +2093,7 @@ class QuelyosAPI(http.Controller):
 
     # ==================== PRODUCT VARIANTS ====================
 
-    @http.route('/api/ecommerce/attributes', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/attributes', type='json', auth='public', csrf=False, cors='*')
     def get_all_attributes(self, **kwargs):
         """Liste tous les attributs disponibles (couleur, taille, etc.)"""
         try:
@@ -2073,16 +2316,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_attribute(self, product_id, line_id, **kwargs):
-        """Modifier les valeurs d'un attribut sur un produit (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Modifier les valeurs d'un attribut sur un produit (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.template'].sudo().browse(product_id)
 
             if not product.exists():
@@ -2268,16 +2510,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_variant(self, product_id, variant_id, **kwargs):
-        """Modifier une variante spécifique (prix, code, etc.) (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Modifier une variante spécifique (prix, code, etc.) (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.template'].sudo().browse(product_id)
 
             if not product.exists():
@@ -2336,16 +2577,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_variant_stock(self, product_id, variant_id, **kwargs):
-        """Modifier le stock d'une variante spécifique (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Modifier le stock d'une variante spécifique (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.template'].sudo().browse(product_id)
 
             if not product.exists():
@@ -2546,15 +2786,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_variant_image(self, product_id, variant_id, image_id, **kwargs):
-        """Supprimer une image de variante"""
-        try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Supprimer une image de variante (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             image = request.env['product.image'].sudo().browse(image_id)
 
             if not image.exists() or image.product_variant_id.id != variant_id:
@@ -2618,7 +2858,7 @@ class QuelyosAPI(http.Controller):
 
     # ==================== CATEGORIES ====================
 
-    @http.route('/api/ecommerce/categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories', type='json', auth='public', csrf=False, cors='*')
     def get_categories_list(self, **kwargs):
         """Liste des catégories avec compteur produits, sous-catégories et recherche"""
         try:
@@ -2626,7 +2866,9 @@ class QuelyosAPI(http.Controller):
             limit = int(params.get('limit', 100))
             offset = int(params.get('offset', 0))
             search = params.get('search', '')
-            include_tree = params.get('include_tree', False)
+            # Convertir include_tree en booléen (peut venir comme string "true"/"false" ou booléen)
+            include_tree_param = params.get('include_tree', False)
+            include_tree = include_tree_param in ['true', 'True', '1', 1, True] or include_tree_param is True
 
             # Construire le domaine de recherche
             domain = []
@@ -2728,16 +2970,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/categories/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_category(self, **kwargs):
-        """Créer une catégorie (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Créer une catégorie (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             params = self._get_params()
             name = params.get('name')
             parent_id = params.get('parent_id')
@@ -2771,16 +3012,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_category(self, category_id, **kwargs):
-        """Modifier une catégorie (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Modifier une catégorie (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             category = request.env['product.category'].sudo().browse(category_id)
 
             if not category.exists():
@@ -2816,16 +3056,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_category(self, category_id, **kwargs):
-        """Supprimer une catégorie (admin)"""
-        try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Supprimer une catégorie (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             category = request.env['product.category'].sudo().browse(category_id)
 
             if not category.exists():
@@ -2908,6 +3147,190 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Move category error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== SITE CONFIGURATION ====================
+
+    @http.route('/api/ecommerce/site-config', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_site_config(self, **kwargs):
+        """
+        Récupérer la configuration du site (fonctionnalités activées/désactivées)
+        Public - utilisé par le frontend pour afficher/masquer des fonctionnalités
+        """
+        try:
+            IrConfigParam = request.env['ir.config_parameter'].sudo()
+
+            # Récupérer les paramètres de configuration
+            config = {
+                # Fonctionnalités activées/désactivées
+                'compare_enabled': IrConfigParam.get_param('quelyos.feature.compare_enabled', 'true') == 'true',
+                'wishlist_enabled': IrConfigParam.get_param('quelyos.feature.wishlist_enabled', 'true') == 'true',
+                'reviews_enabled': IrConfigParam.get_param('quelyos.feature.reviews_enabled', 'true') == 'true',
+                'newsletter_enabled': IrConfigParam.get_param('quelyos.feature.newsletter_enabled', 'true') == 'true',
+                # Contact
+                'whatsapp_number': IrConfigParam.get_param('quelyos.contact.whatsapp', '+21600000000'),
+                'contact_email': IrConfigParam.get_param('quelyos.contact.email', 'contact@quelyos.com'),
+                'contact_phone': IrConfigParam.get_param('quelyos.contact.phone', '+21600000000'),
+                # Livraison
+                'shipping_standard_days': IrConfigParam.get_param('quelyos.shipping.standard_days', '2-5'),
+                'shipping_express_days': IrConfigParam.get_param('quelyos.shipping.express_days', '1-2'),
+                'free_shipping_threshold': float(IrConfigParam.get_param('quelyos.shipping.free_threshold', '150')),
+                # Retours
+                'return_delay_days': int(IrConfigParam.get_param('quelyos.returns.delay_days', '30')),
+                'refund_delay_days': IrConfigParam.get_param('quelyos.returns.refund_days', '7-10'),
+                # Garantie
+                'warranty_years': int(IrConfigParam.get_param('quelyos.warranty.years', '2')),
+                # Modes de paiement acceptés
+                'payment_methods': IrConfigParam.get_param('quelyos.payment.methods', 'card,cash,transfer,mobile').split(','),
+            }
+
+            return request.make_json_response({
+                'success': True,
+                'data': config
+            }, headers={
+                'Cache-Control': 'public, max-age=300',  # Cache 5 min
+                'Vary': 'Accept-Encoding'
+            })
+
+        except Exception as e:
+            _logger.error(f"Get site config error: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            })
+
+    @http.route('/api/ecommerce/site-config/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def update_site_config(self, **kwargs):
+        """
+        Mettre à jour la configuration du site (ADMIN UNIQUEMENT)
+
+        Params:
+            compare_enabled (bool): Activer/désactiver la comparaison de produits
+            wishlist_enabled (bool): Activer/désactiver la wishlist
+            reviews_enabled (bool): Activer/désactiver les avis clients
+            newsletter_enabled (bool): Activer/désactiver la newsletter
+        """
+        # Authentifier via le header X-Session-Id (pour les requêtes sans cookies)
+        error = self._authenticate_from_header()
+        if error:
+            return error
+
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
+
+        try:
+            params = self._get_params()
+            IrConfigParam = request.env['ir.config_parameter'].sudo()
+
+            updated_params = []
+
+            # Mettre à jour les paramètres fournis
+            if 'compare_enabled' in params:
+                value = 'true' if params['compare_enabled'] else 'false'
+                IrConfigParam.set_param('quelyos.feature.compare_enabled', value)
+                updated_params.append('compare_enabled')
+
+            if 'wishlist_enabled' in params:
+                value = 'true' if params['wishlist_enabled'] else 'false'
+                IrConfigParam.set_param('quelyos.feature.wishlist_enabled', value)
+                updated_params.append('wishlist_enabled')
+
+            if 'reviews_enabled' in params:
+                value = 'true' if params['reviews_enabled'] else 'false'
+                IrConfigParam.set_param('quelyos.feature.reviews_enabled', value)
+                updated_params.append('reviews_enabled')
+
+            if 'newsletter_enabled' in params:
+                value = 'true' if params['newsletter_enabled'] else 'false'
+                IrConfigParam.set_param('quelyos.feature.newsletter_enabled', value)
+                updated_params.append('newsletter_enabled')
+
+            # Paramètres de contact
+            if 'whatsapp_number' in params:
+                IrConfigParam.set_param('quelyos.contact.whatsapp', str(params['whatsapp_number']))
+                updated_params.append('whatsapp_number')
+            if 'contact_email' in params:
+                IrConfigParam.set_param('quelyos.contact.email', str(params['contact_email']))
+                updated_params.append('contact_email')
+            if 'contact_phone' in params:
+                IrConfigParam.set_param('quelyos.contact.phone', str(params['contact_phone']))
+                updated_params.append('contact_phone')
+
+            # Paramètres de livraison
+            if 'shipping_standard_days' in params:
+                IrConfigParam.set_param('quelyos.shipping.standard_days', str(params['shipping_standard_days']))
+                updated_params.append('shipping_standard_days')
+            if 'shipping_express_days' in params:
+                IrConfigParam.set_param('quelyos.shipping.express_days', str(params['shipping_express_days']))
+                updated_params.append('shipping_express_days')
+            if 'free_shipping_threshold' in params:
+                IrConfigParam.set_param('quelyos.shipping.free_threshold', str(params['free_shipping_threshold']))
+                updated_params.append('free_shipping_threshold')
+
+            # Paramètres de retours
+            if 'return_delay_days' in params:
+                IrConfigParam.set_param('quelyos.returns.delay_days', str(params['return_delay_days']))
+                updated_params.append('return_delay_days')
+            if 'refund_delay_days' in params:
+                IrConfigParam.set_param('quelyos.returns.refund_days', str(params['refund_delay_days']))
+                updated_params.append('refund_delay_days')
+
+            # Paramètres de garantie
+            if 'warranty_years' in params:
+                IrConfigParam.set_param('quelyos.warranty.years', str(params['warranty_years']))
+                updated_params.append('warranty_years')
+
+            # Modes de paiement
+            if 'payment_methods' in params:
+                methods = params['payment_methods']
+                if isinstance(methods, list):
+                    methods = ','.join(methods)
+                IrConfigParam.set_param('quelyos.payment.methods', str(methods))
+                updated_params.append('payment_methods')
+
+            if not updated_params:
+                return {
+                    'success': False,
+                    'error': 'Aucun paramètre à mettre à jour'
+                }
+
+            # Récupérer la configuration mise à jour
+            config = {
+                # Fonctionnalités activées/désactivées
+                'compare_enabled': IrConfigParam.get_param('quelyos.feature.compare_enabled', 'true') == 'true',
+                'wishlist_enabled': IrConfigParam.get_param('quelyos.feature.wishlist_enabled', 'true') == 'true',
+                'reviews_enabled': IrConfigParam.get_param('quelyos.feature.reviews_enabled', 'true') == 'true',
+                'newsletter_enabled': IrConfigParam.get_param('quelyos.feature.newsletter_enabled', 'true') == 'true',
+                # Contact
+                'whatsapp_number': IrConfigParam.get_param('quelyos.contact.whatsapp', '+21600000000'),
+                'contact_email': IrConfigParam.get_param('quelyos.contact.email', 'contact@quelyos.com'),
+                'contact_phone': IrConfigParam.get_param('quelyos.contact.phone', '+21600000000'),
+                # Livraison
+                'shipping_standard_days': IrConfigParam.get_param('quelyos.shipping.standard_days', '2-5'),
+                'shipping_express_days': IrConfigParam.get_param('quelyos.shipping.express_days', '1-2'),
+                'free_shipping_threshold': float(IrConfigParam.get_param('quelyos.shipping.free_threshold', '150')),
+                # Retours
+                'return_delay_days': int(IrConfigParam.get_param('quelyos.returns.delay_days', '30')),
+                'refund_delay_days': IrConfigParam.get_param('quelyos.returns.refund_days', '7-10'),
+                # Garantie
+                'warranty_years': int(IrConfigParam.get_param('quelyos.warranty.years', '2')),
+                # Modes de paiement
+                'payment_methods': IrConfigParam.get_param('quelyos.payment.methods', 'card,cash,transfer,mobile').split(','),
+            }
+
+            return {
+                'success': True,
+                'data': config,
+                'message': f"Configuration mise à jour : {', '.join(updated_params)}"
+            }
+
+        except Exception as e:
+            _logger.error(f"Update site config error: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -3208,16 +3631,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_order_tracking(self, order_id, **kwargs):
-        """Mettre à jour le numéro de suivi d'un picking"""
-        try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Mettre à jour le numéro de suivi d'un picking (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             params = self._get_params()
             picking_id = params.get('picking_id')
             tracking_ref = params.get('tracking_ref', '')
@@ -3426,16 +3848,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_invoice_from_order(self, order_id, **kwargs):
-        """Générer une facture depuis la commande"""
-        try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Générer une facture depuis la commande (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             order = request.env['sale.order'].sudo().browse(order_id)
 
             if not order.exists():
@@ -3700,16 +4121,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_order_tracking(self, order_id, **kwargs):
-        """Mettre à jour le numéro de tracking d'une commande (admin uniquement)"""
-        try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Mettre à jour le numéro de tracking d'une commande (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             order = request.env['sale.order'].sudo().browse(order_id)
 
             if not order.exists():
@@ -3984,13 +4404,15 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get customer detail error: {e}")
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer(self, customer_id, **kwargs):
-        """Modifier un client (admin uniquement)"""
-        try:
-            if not request.env.user.has_group('base.group_system'):
-                return {'success': False, 'error': 'Insufficient permissions'}
+        """Modifier un client (ownership validation)"""
+        # SECURITE : Vérifier ownership (utilisateur modifie ses données OU admin)
+        error = self._validate_customer_ownership(customer_id)
+        if error:
+            return error
 
+        try:
             partner = request.env['res.partner'].sudo().browse(customer_id)
             if not partner.exists():
                 return {'success': False, 'error': 'Customer not found'}
@@ -4445,6 +4867,110 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
+    @http.route('/api/ecommerce/cart/save', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def save_cart_for_guest(self, **kwargs):
+        """
+        Sauvegarder le panier pour un invité (non connecté)
+        Génère un token de récupération et envoie un email immédiatement
+
+        Args:
+            email (str): Email de l'invité pour sauvegarder le panier
+
+        Returns:
+            dict: {
+                'success': bool,
+                'message': str,
+                'recovery_url': str,  # Lien de récupération
+                'token': str  # Token sécurisé (pour debug)
+            }
+        """
+        try:
+            params = self._get_params()
+            guest_email = params.get('email')
+
+            if not guest_email:
+                return {
+                    'success': False,
+                    'error': 'Email requis pour sauvegarder votre panier'
+                }
+
+            # Valider format email
+            import re
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, guest_email):
+                return {
+                    'success': False,
+                    'error': 'Format email invalide'
+                }
+
+            _logger.info(f"Demande sauvegarde panier pour: {guest_email}")
+
+            # Rechercher ou créer le partner
+            partner = request.env['res.partner'].sudo().search([
+                ('email', '=', guest_email)
+            ], limit=1)
+
+            if not partner:
+                # Créer un nouveau partner invité
+                partner = request.env['res.partner'].sudo().create({
+                    'name': guest_email.split('@')[0].title(),
+                    'email': guest_email,
+                    'customer_rank': 1,
+                })
+                _logger.info(f"Nouveau partner créé: {partner.id} ({guest_email})")
+
+            # Récupérer ou créer le panier
+            cart = self._get_or_create_cart(partner.id)
+
+            # Vérifier que le panier contient des produits
+            if not cart.order_line:
+                return {
+                    'success': False,
+                    'error': 'Votre panier est vide. Ajoutez des produits avant de le sauvegarder.'
+                }
+
+            # Générer un token de récupération sécurisé
+            import secrets
+            if not cart.recovery_token:
+                cart.recovery_token = secrets.token_urlsafe(32)
+
+            # Construire l'URL de récupération
+            base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            recovery_url = f"{base_url}/cart/recover?token={cart.recovery_token}"
+
+            # Envoyer l'email de sauvegarde immédiatement
+            try:
+                SaleOrder = request.env['sale.order']
+                sale_order_obj = SaleOrder.browse(cart.id)
+                sale_order_obj.sudo()._send_abandoned_cart_email(cart)
+
+                # Marquer la date d'envoi
+                cart.recovery_email_sent_date = fields.Datetime.now()
+
+                _logger.info(f"Email de sauvegarde panier envoyé avec succès à {guest_email}")
+            except Exception as e:
+                _logger.error(f"Erreur envoi email sauvegarde panier: {e}")
+                # On continue même si l'email échoue, on retourne le lien
+
+            return {
+                'success': True,
+                'message': f'Panier sauvegardé ! Un email avec le lien de récupération a été envoyé à {guest_email}',
+                'recovery_url': recovery_url,
+                'token': cart.recovery_token,
+                'cart': {
+                    'id': cart.id,
+                    'lines_count': len(cart.order_line),
+                    'amount_total': cart.amount_total,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Save cart error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
     @http.route('/api/ecommerce/cart/abandoned', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_abandoned_carts(self, **kwargs):
         """Liste des paniers abandonnés (admin only)"""
@@ -4682,9 +5208,9 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/customer/profile/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/profile/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer_profile(self, **kwargs):
-        """Modifier le profil du client connecté"""
+        """Modifier le profil du client connecté (AUTHENTIFICATION REQUISE)"""
         try:
             partner = request.env.user.partner_id
             params = self._get_params()
@@ -4768,9 +5294,9 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/customer/addresses/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_customer_address(self, **kwargs):
-        """Créer une nouvelle adresse pour le client"""
+        """Créer une nouvelle adresse pour le client (AUTHENTIFICATION REQUISE)"""
         try:
             partner = request.env.user.partner_id
             params = self._get_params()
@@ -4818,9 +5344,9 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer_address(self, address_id, **kwargs):
-        """Modifier une adresse du client"""
+        """Modifier une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
             partner = request.env.user.partner_id
             address = request.env['res.partner'].sudo().browse(address_id)
@@ -4876,9 +5402,9 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_customer_address(self, address_id, **kwargs):
-        """Supprimer une adresse du client"""
+        """Supprimer une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
             partner = request.env.user.partner_id
             address = request.env['res.partner'].sudo().browse(address_id)
@@ -4902,6 +5428,85 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Delete address error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== RIBBONS (BADGES) ====================
+
+    @http.route('/api/ecommerce/ribbons', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_ribbons(self, **kwargs):
+        """Récupérer la liste des rubans (badges) disponibles - avec cache HTTP"""
+        try:
+            ribbons = request.env['product.ribbon'].sudo().search([], order='sequence')
+
+            data = []
+            for ribbon in ribbons:
+                ribbon_name = ribbon.name
+                if isinstance(ribbon_name, dict):
+                    ribbon_name = ribbon_name.get('fr_FR', ribbon_name.get('en_US', ''))
+                data.append({
+                    'id': ribbon.id,
+                    'name': ribbon_name,
+                    'bg_color': ribbon.bg_color,
+                    'text_color': ribbon.text_color,
+                    'position': ribbon.position,
+                    'style': ribbon.style,
+                    'sequence': ribbon.sequence,
+                })
+
+            response_data = {
+                'success': True,
+                'data': {
+                    'ribbons': data
+                }
+            }
+            # Cache HTTP : 6 heures (badges changent rarement)
+            return request.make_json_response(response_data, headers={
+                'Cache-Control': 'public, max-age=21600',
+                'Vary': 'Accept-Encoding'
+            })
+        except Exception as e:
+            _logger.error(f"Get ribbons error: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            })
+
+    @http.route('/api/ecommerce/products/<int:product_id>/ribbon', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def update_product_ribbon(self, product_id, **kwargs):
+        """Mettre à jour le ruban (badge) d'un produit"""
+        try:
+            params = self._get_params()
+            ribbon_id = params.get('ribbon_id')  # null pour supprimer le ruban
+
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Product not found'
+                }
+
+            # Mettre à jour le ruban
+            if ribbon_id:
+                ribbon = request.env['product.ribbon'].sudo().browse(int(ribbon_id))
+                if not ribbon.exists():
+                    return {
+                        'success': False,
+                        'error': 'Ribbon not found'
+                    }
+                product.write({'website_ribbon_id': ribbon.id})
+            else:
+                # Supprimer le ruban
+                product.write({'website_ribbon_id': False})
+
+            return {
+                'success': True,
+                'message': 'Product ribbon updated successfully'
+            }
+        except Exception as e:
+            _logger.error(f"Update product ribbon error: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -4943,16 +5548,15 @@ class QuelyosAPI(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_stock(self, product_id, **kwargs):
-        """Modifier le stock d'un produit (admin uniquement)"""
-        try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """Modifier le stock d'un produit (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             product = request.env['product.product'].sudo().browse(product_id)
 
             if not product.exists():
@@ -5775,15 +6379,15 @@ class QuelyosAPI(http.Controller):
                     'last_state_change': t.last_state_change.isoformat() if hasattr(t, 'last_state_change') and t.last_state_change else None,
                 })
 
-            # Statistiques
-            all_transactions = request.env['payment.transaction'].sudo().search([])
+            # Statistiques (optimisé avec search_count pour éviter de charger toutes les transactions)
+            PaymentTransaction = request.env['payment.transaction'].sudo()
             stats = {
-                'total': len(all_transactions),
-                'done': len(all_transactions.filtered(lambda t: t.state == 'done')),
-                'pending': len(all_transactions.filtered(lambda t: t.state == 'pending')),
-                'error': len(all_transactions.filtered(lambda t: t.state == 'error')),
-                'canceled': len(all_transactions.filtered(lambda t: t.state == 'cancel')),
-                'total_amount': sum(all_transactions.filtered(lambda t: t.state == 'done').mapped('amount')),
+                'total': PaymentTransaction.search_count([]),
+                'done': PaymentTransaction.search_count([('state', '=', 'done')]),
+                'pending': PaymentTransaction.search_count([('state', '=', 'pending')]),
+                'error': PaymentTransaction.search_count([('state', '=', 'error')]),
+                'canceled': PaymentTransaction.search_count([('state', '=', 'cancel')]),
+                'total_amount': sum(PaymentTransaction.search([('state', '=', 'done')]).mapped('amount')),
             }
 
             return {
@@ -6420,7 +7024,11 @@ class QuelyosAPI(http.Controller):
             ])
 
             # Produits en rupture de stock (filtrage côté Python car qty_available est calculé)
-            all_products = request.env['product.product'].sudo().search([])
+            # Limite à 50000 produits actifs pour éviter surcharge mémoire sur très gros catalogues
+            all_products = request.env['product.product'].sudo().search(
+                [('active', '=', True)],
+                limit=50000
+            )
             out_of_stock_products = len([p for p in all_products if p.qty_available <= 0])
 
             # Dernières commandes (5 dernières)
@@ -6945,13 +7553,15 @@ class QuelyosAPI(http.Controller):
             _logger.error(f"Get invoice detail error: {e}")
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_invoice_from_order(self, order_id, **kwargs):
-        """Creer une facture depuis une commande"""
-        try:
-            if not request.env.user.has_group('base.group_system'):
-                return {'success': False, 'error': 'Insufficient permissions'}
+        """Creer une facture depuis une commande (ADMIN UNIQUEMENT)"""
+        # SECURITE : Vérifier droits admin
+        error = self._require_admin()
+        if error:
+            return error
 
+        try:
             order = request.env['sale.order'].sudo().browse(order_id)
             if not order.exists():
                 return {'success': False, 'error': 'Order not found'}
@@ -7749,3 +8359,1395 @@ class QuelyosAPI(http.Controller):
         except Exception as e:
             _logger.error(f"Cart recovery error: {e}")
             return {'success': False, 'error': str(e)}
+
+    # ===================================================================
+    # CURRENCIES - Multi-devises (Issue #17)
+    # ===================================================================
+
+    @http.route('/api/ecommerce/currencies', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_currencies(self, **kwargs):
+        """
+        Récupérer la liste de toutes les devises disponibles - avec cache HTTP.
+
+        Params:
+            active_only (bool): Si True, retourne uniquement les devises actives (défaut: True)
+
+        Returns:
+            Liste des devises avec id, name, symbol, full_name, active, decimal_places
+        """
+        try:
+            params = self._get_http_params()
+            active_only = params.get('active_only', True)
+
+            Currency = request.env['res.currency'].sudo()
+
+            domain = []
+            if active_only:
+                domain.append(('active', '=', True))
+
+            currencies = Currency.search(domain, order='name')
+
+            currency_list = []
+            for currency in currencies:
+                currency_list.append({
+                    'id': currency.id,
+                    'name': currency.name,
+                    'symbol': currency.symbol,
+                    'full_name': currency.full_name,
+                    'active': currency.active,
+                    'decimal_places': currency.decimal_places,
+                    'rounding': float(currency.rounding) if currency.rounding else 0.01,
+                    'position': currency.position,  # 'before' ou 'after' pour position du symbole
+                })
+
+            response_data = {
+                'success': True,
+                'data': currency_list,
+                'total': len(currency_list)
+            }
+            # Cache HTTP : 12 heures (devises très stables)
+            return request.make_json_response(response_data, headers={
+                'Cache-Control': 'public, max-age=43200',
+                'Vary': 'Accept-Encoding'
+            })
+
+        except Exception as e:
+            _logger.error(f"Get currencies error: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            })
+
+    @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def activate_currency(self, currency_id, **params):
+        """
+        Activer ou désactiver une devise.
+
+        Params:
+            currency_id (int): ID de la devise
+            active (bool): True pour activer, False pour désactiver
+
+        Returns:
+            Devise mise à jour
+        """
+        try:
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits administrateur requis.'
+                }
+
+            active = params.get('active', True)
+
+            Currency = request.env['res.currency'].sudo()
+            currency = Currency.browse(currency_id)
+
+            if not currency.exists():
+                return {
+                    'success': False,
+                    'error': f'Devise {currency_id} introuvable'
+                }
+
+            currency.write({'active': active})
+
+            return {
+                'success': True,
+                'data': {
+                    'id': currency.id,
+                    'name': currency.name,
+                    'symbol': currency.symbol,
+                    'active': currency.active,
+                },
+                'message': f"Devise {currency.name} {'activée' if active else 'désactivée'} avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Activate currency error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/currencies/convert', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def convert_currency(self, **params):
+        """
+        Convertir un montant d'une devise à une autre.
+
+        Params:
+            amount (float): Montant à convertir
+            from_currency (str): Code devise source (ex: 'USD')
+            to_currency (str): Code devise cible (ex: 'EUR')
+            date (str, optional): Date pour le taux de change (format YYYY-MM-DD, défaut: aujourd'hui)
+
+        Returns:
+            Montant converti avec détails
+        """
+        try:
+            amount = float(params.get('amount', 0))
+            from_currency_code = params.get('from_currency')
+            to_currency_code = params.get('to_currency')
+            date = params.get('date')  # Format YYYY-MM-DD
+
+            if not from_currency_code or not to_currency_code:
+                return {
+                    'success': False,
+                    'error': 'Paramètres from_currency et to_currency requis'
+                }
+
+            Currency = request.env['res.currency'].sudo()
+
+            from_currency = Currency.search([('name', '=', from_currency_code)], limit=1)
+            to_currency = Currency.search([('name', '=', to_currency_code)], limit=1)
+
+            if not from_currency:
+                return {
+                    'success': False,
+                    'error': f'Devise source {from_currency_code} introuvable'
+                }
+
+            if not to_currency:
+                return {
+                    'success': False,
+                    'error': f'Devise cible {to_currency_code} introuvable'
+                }
+
+            # Conversion via la méthode Odoo _convert
+            # Si même devise, pas de conversion
+            if from_currency.id == to_currency.id:
+                converted_amount = amount
+            else:
+                # Odoo utilise _convert(from_amount, to_currency, company, date)
+                company = request.env.company
+                converted_amount = from_currency._convert(
+                    amount,
+                    to_currency,
+                    company,
+                    date or fields.Date.today()
+                )
+
+            # Récupérer les taux de change actuels
+            from_rate = from_currency.rate if from_currency.rate else 1.0
+            to_rate = to_currency.rate if to_currency.rate else 1.0
+
+            return {
+                'success': True,
+                'data': {
+                    'amount': amount,
+                    'from_currency': from_currency_code,
+                    'to_currency': to_currency_code,
+                    'converted_amount': round(converted_amount, to_currency.decimal_places),
+                    'from_rate': float(from_rate),
+                    'to_rate': float(to_rate),
+                    'date': date or str(fields.Date.today()),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Convert currency error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ===================================================================
+    # PRICELISTS & CUSTOMER CATEGORIES - Segmentation clients (Issue #21)
+    # ===================================================================
+
+    @http.route('/api/ecommerce/pricelists', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_pricelists(self, **kwargs):
+        """
+        Récupérer la liste des pricelists (listes de prix) - avec cache HTTP.
+
+        Params:
+            active_only (bool): Si True, retourne uniquement les pricelists actives (défaut: True)
+
+        Returns:
+            Liste des pricelists avec id, name, currency_id, active
+        """
+        try:
+            params = self._get_http_params()
+            active_only = params.get('active_only', True)
+
+            Pricelist = request.env['product.pricelist'].sudo()
+
+            domain = []
+            if active_only:
+                domain.append(('active', '=', True))
+
+            pricelists = Pricelist.search(domain, order='name')
+
+            pricelist_list = []
+            for pricelist in pricelists:
+                pricelist_list.append({
+                    'id': pricelist.id,
+                    'name': pricelist.name,
+                    'currency_id': pricelist.currency_id.id,
+                    'currency_name': pricelist.currency_id.name,
+                    'currency_symbol': pricelist.currency_id.symbol,
+                    'active': pricelist.active,
+                    'discount_policy': pricelist.discount_policy if hasattr(pricelist, 'discount_policy') else 'with_discount',
+                })
+
+            response_data = {
+                'success': True,
+                'data': pricelist_list,
+                'total': len(pricelist_list)
+            }
+            # Cache HTTP : 6 heures (pricelists changent rarement)
+            return request.make_json_response(response_data, headers={
+                'Cache-Control': 'public, max-age=21600',
+                'Vary': 'Accept-Encoding'
+            })
+
+        except Exception as e:
+            _logger.error(f"Get pricelists error: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            })
+
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_pricelist_detail(self, pricelist_id, **params):
+        """
+        Récupérer le détail d'une pricelist avec ses items (règles de prix).
+
+        Returns:
+            Pricelist avec ses items
+        """
+        try:
+            Pricelist = request.env['product.pricelist'].sudo()
+            pricelist = Pricelist.browse(pricelist_id)
+
+            if not pricelist.exists():
+                return {
+                    'success': False,
+                    'error': f'Pricelist {pricelist_id} introuvable'
+                }
+
+            # Récupérer les items de la pricelist
+            items = []
+            for item in pricelist.item_ids:
+                item_data = {
+                    'id': item.id,
+                    'applied_on': item.applied_on,  # '3_global', '2_product_category', '1_product', '0_product_variant'
+                    'compute_price': item.compute_price,  # 'fixed', 'percentage', 'formula'
+                    'fixed_price': float(item.fixed_price) if item.fixed_price else None,
+                    'percent_price': float(item.percent_price) if item.percent_price else None,
+                    'price_discount': float(item.price_discount) if item.price_discount else None,
+                    'min_quantity': item.min_quantity,
+                }
+
+                # Ajouter les références produit/catégorie selon applied_on
+                if item.applied_on == '1_product' and item.product_tmpl_id:
+                    item_data['product_id'] = item.product_tmpl_id.id
+                    item_data['product_name'] = item.product_tmpl_id.name
+                elif item.applied_on == '2_product_category' and item.categ_id:
+                    item_data['category_id'] = item.categ_id.id
+                    item_data['category_name'] = item.categ_id.name
+
+                items.append(item_data)
+
+            return {
+                'success': True,
+                'data': {
+                    'id': pricelist.id,
+                    'name': pricelist.name,
+                    'currency_id': pricelist.currency_id.id,
+                    'currency_name': pricelist.currency_id.name,
+                    'currency_symbol': pricelist.currency_id.symbol,
+                    'active': pricelist.active,
+                    'discount_policy': pricelist.discount_policy if hasattr(pricelist, 'discount_policy') else 'with_discount',
+                    'items': items,
+                    'item_count': len(items),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get pricelist detail error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customer-categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_customer_categories(self, **params):
+        """
+        Récupérer la liste des catégories/tags clients (pour segmentation).
+
+        Returns:
+            Liste des catégories avec id, name, parent_id
+        """
+        try:
+            PartnerCategory = request.env['res.partner.category'].sudo()
+
+            categories = PartnerCategory.search([], order='name')
+
+            category_list = []
+            for category in categories:
+                category_list.append({
+                    'id': category.id,
+                    'name': category.name,
+                    'parent_id': category.parent_id.id if category.parent_id else None,
+                    'parent_name': category.parent_id.name if category.parent_id else None,
+                    'color': category.color if hasattr(category, 'color') else 0,
+                    'partner_count': len(category.partner_ids) if category.partner_ids else 0,
+                })
+
+            return {
+                'success': True,
+                'data': category_list,
+                'total': len(category_list)
+            }
+
+        except Exception as e:
+            _logger.error(f"Get customer categories error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customer-categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_customer_category(self, **params):
+        """
+        Créer une nouvelle catégorie/tag client.
+
+        Params:
+            name (str): Nom de la catégorie
+            parent_id (int, optional): ID de la catégorie parente
+            color (int, optional): Couleur (0-11)
+
+        Returns:
+            Catégorie créée
+        """
+        try:
+            if not request.env.user.has_group('sales_team.group_sale_manager'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits sales manager requis.'
+                }
+
+            name = params.get('name')
+            if not name:
+                return {
+                    'success': False,
+                    'error': 'Le nom de la catégorie est requis'
+                }
+
+            PartnerCategory = request.env['res.partner.category'].sudo()
+
+            vals = {
+                'name': name,
+            }
+
+            if params.get('parent_id'):
+                vals['parent_id'] = params['parent_id']
+
+            if params.get('color') is not None:
+                vals['color'] = params['color']
+
+            category = PartnerCategory.create(vals)
+
+            return {
+                'success': True,
+                'data': {
+                    'id': category.id,
+                    'name': category.name,
+                    'parent_id': category.parent_id.id if category.parent_id else None,
+                },
+                'message': f"Catégorie '{name}' créée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Create customer category error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_customer_category(self, category_id, **params):
+        """
+        Modifier une catégorie/tag client existante.
+
+        Params:
+            category_id (int): ID de la catégorie à modifier
+            name (str, optional): Nouveau nom
+            color (int, optional): Nouvelle couleur (0-11)
+
+        Returns:
+            Catégorie modifiée
+        """
+        try:
+            if not request.env.user.has_group('sales_team.group_sale_manager'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits sales manager requis.'
+                }
+
+            PartnerCategory = request.env['res.partner.category'].sudo()
+            category = PartnerCategory.browse(category_id)
+
+            if not category.exists():
+                return {
+                    'success': False,
+                    'error': f'Catégorie {category_id} introuvable'
+                }
+
+            vals = {}
+            if params.get('name'):
+                vals['name'] = params['name']
+            if params.get('color') is not None:
+                vals['color'] = params['color']
+
+            if not vals:
+                return {
+                    'success': False,
+                    'error': 'Aucune modification fournie'
+                }
+
+            category.write(vals)
+
+            return {
+                'success': True,
+                'data': {
+                    'id': category.id,
+                    'name': category.name,
+                    'color': category.color if hasattr(category, 'color') else 0,
+                    'parent_id': category.parent_id.id if category.parent_id else None,
+                },
+                'message': f"Catégorie '{category.name}' modifiée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Update customer category error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_customer_category(self, category_id, **params):
+        """
+        Supprimer une catégorie/tag client.
+
+        Params:
+            category_id (int): ID de la catégorie à supprimer
+
+        Returns:
+            Confirmation de suppression
+        """
+        try:
+            if not request.env.user.has_group('sales_team.group_sale_manager'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits sales manager requis.'
+                }
+
+            PartnerCategory = request.env['res.partner.category'].sudo()
+            category = PartnerCategory.browse(category_id)
+
+            if not category.exists():
+                return {
+                    'success': False,
+                    'error': f'Catégorie {category_id} introuvable'
+                }
+
+            category_name = category.name
+            partner_count = len(category.partner_ids) if category.partner_ids else 0
+
+            # Suppression (les relations many2many avec res.partner sont automatiquement nettoyées)
+            category.unlink()
+
+            return {
+                'success': True,
+                'data': {
+                    'id': category_id,
+                    'name': category_name,
+                    'partner_count': partner_count,
+                },
+                'message': f"Catégorie '{category_name}' supprimée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete customer category error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def assign_pricelist_to_customer(self, customer_id, **params):
+        """
+        Assigner une pricelist à un client.
+
+        Params:
+            customer_id (int): ID du client
+            pricelist_id (int): ID de la pricelist à assigner
+
+        Returns:
+            Client mis à jour
+        """
+        try:
+            if not request.env.user.has_group('sales_team.group_sale_manager'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits sales manager requis.'
+                }
+
+            pricelist_id = params.get('pricelist_id')
+            if not pricelist_id:
+                return {
+                    'success': False,
+                    'error': 'pricelist_id requis'
+                }
+
+            Partner = request.env['res.partner'].sudo()
+            Pricelist = request.env['product.pricelist'].sudo()
+
+            customer = Partner.browse(customer_id)
+            if not customer.exists():
+                return {
+                    'success': False,
+                    'error': f'Client {customer_id} introuvable'
+                }
+
+            pricelist = Pricelist.browse(pricelist_id)
+            if not pricelist.exists():
+                return {
+                    'success': False,
+                    'error': f'Pricelist {pricelist_id} introuvable'
+                }
+
+            customer.write({'property_product_pricelist': pricelist_id})
+
+            return {
+                'success': True,
+                'data': {
+                    'id': customer.id,
+                    'name': customer.name,
+                    'pricelist_id': pricelist.id,
+                    'pricelist_name': pricelist.name,
+                },
+                'message': f"Pricelist '{pricelist.name}' assignée au client '{customer.name}'"
+            }
+
+        except Exception as e:
+            _logger.error(f"Assign pricelist error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def assign_categories_to_customer(self, customer_id, **params):
+        """
+        Assigner des catégories/tags à un client.
+
+        Params:
+            customer_id (int): ID du client
+            category_ids (list): Liste d'IDs de catégories
+
+        Returns:
+            Client mis à jour avec ses catégories
+        """
+        try:
+            if not request.env.user.has_group('sales_team.group_sale_manager'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits sales manager requis.'
+                }
+
+            category_ids = params.get('category_ids', [])
+
+            Partner = request.env['res.partner'].sudo()
+            customer = Partner.browse(customer_id)
+
+            if not customer.exists():
+                return {
+                    'success': False,
+                    'error': f'Client {customer_id} introuvable'
+                }
+
+            # Remplacer les catégories existantes
+            customer.write({'category_id': [(6, 0, category_ids)]})
+
+            # Récupérer les catégories assignées
+            categories = []
+            for cat in customer.category_id:
+                categories.append({
+                    'id': cat.id,
+                    'name': cat.name,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'id': customer.id,
+                    'name': customer.name,
+                    'categories': categories,
+                },
+                'message': f"{len(categories)} catégorie(s) assignée(s) au client '{customer.name}'"
+            }
+
+        except Exception as e:
+            _logger.error(f"Assign categories error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ===================================================================
+    # WAREHOUSES - Multi-entrepôts (Issue #22)
+    # ===================================================================
+
+    @http.route('/api/ecommerce/warehouses', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_warehouses(self, **kwargs):
+        """
+        Récupérer la liste des entrepôts - avec cache HTTP.
+
+        Params:
+            active_only (bool): Si True, retourne uniquement les entrepôts actifs (défaut: True)
+
+        Returns:
+            Liste des entrepôts avec id, name, code, company, locations
+        """
+        try:
+            params = self._get_http_params()
+            active_only = params.get('active_only', True)
+
+            Warehouse = request.env['stock.warehouse'].sudo()
+
+            domain = []
+            if active_only:
+                domain.append(('active', '=', True))
+
+            warehouses = Warehouse.search(domain, order='name')
+
+            warehouse_list = []
+            for warehouse in warehouses:
+                warehouse_list.append({
+                    'id': warehouse.id,
+                    'name': warehouse.name,
+                    'code': warehouse.code,
+                    'company_id': warehouse.company_id.id if warehouse.company_id else None,
+                    'company_name': warehouse.company_id.name if warehouse.company_id else None,
+                    'active': warehouse.active,
+                    'partner_id': warehouse.partner_id.id if warehouse.partner_id else None,
+                    'lot_stock_id': warehouse.lot_stock_id.id if warehouse.lot_stock_id else None,
+                    'view_location_id': warehouse.view_location_id.id if warehouse.view_location_id else None,
+                })
+
+            response_data = {
+                'success': True,
+                'data': warehouse_list,
+                'total': len(warehouse_list)
+            }
+            # Cache HTTP : 6 heures (warehouses changent rarement)
+            return request.make_json_response(response_data, headers={
+                'Cache-Control': 'public, max-age=21600',
+                'Vary': 'Accept-Encoding'
+            })
+
+        except Exception as e:
+            _logger.error(f"Get warehouses error: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            })
+
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_warehouse_detail(self, warehouse_id, **params):
+        """
+        Récupérer le détail d'un entrepôt avec ses locations.
+
+        Returns:
+            Entrepôt avec locations et stock total
+        """
+        try:
+            Warehouse = request.env['stock.warehouse'].sudo()
+            warehouse = Warehouse.browse(warehouse_id)
+
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': f'Entrepôt {warehouse_id} introuvable'
+                }
+
+            # Récupérer les locations de cet entrepôt
+            Location = request.env['stock.location'].sudo()
+            locations = Location.search([
+                ('warehouse_id', '=', warehouse_id),
+                ('usage', '=', 'internal')
+            ])
+
+            location_list = []
+            for location in locations:
+                location_list.append({
+                    'id': location.id,
+                    'name': location.name,
+                    'complete_name': location.complete_name,
+                    'usage': location.usage,
+                    'parent_id': location.location_id.id if location.location_id else None,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'id': warehouse.id,
+                    'name': warehouse.name,
+                    'code': warehouse.code,
+                    'company_id': warehouse.company_id.id if warehouse.company_id else None,
+                    'company_name': warehouse.company_id.name if warehouse.company_id else None,
+                    'active': warehouse.active,
+                    'locations': location_list,
+                    'location_count': len(location_list),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get warehouse detail error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    def get_product_stock_by_location(self, product_id, **params):
+        """
+        Récupérer le stock d'un produit par location/entrepôt.
+
+        Params:
+            product_id (int): ID du produit (product.product)
+            warehouse_id (int, optional): Filtrer par entrepôt
+
+        Returns:
+            Stock par location avec warehouse, location, qty_available
+        """
+        try:
+            warehouse_id = params.get('warehouse_id')
+
+            Product = request.env['product.product'].sudo()
+            product = Product.browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': f'Produit {product_id} introuvable'
+                }
+
+            # Récupérer les quants (stock) du produit
+            Quant = request.env['stock.quant'].sudo()
+            domain = [
+                ('product_id', '=', product_id),
+                ('location_id.usage', '=', 'internal'),
+            ]
+
+            if warehouse_id:
+                domain.append(('location_id.warehouse_id', '=', warehouse_id))
+
+            quants = Quant.search(domain)
+
+            # Grouper par location
+            stock_by_location = {}
+            for quant in quants:
+                location_id = quant.location_id.id
+                if location_id not in stock_by_location:
+                    stock_by_location[location_id] = {
+                        'location_id': location_id,
+                        'location_name': quant.location_id.complete_name,
+                        'warehouse_id': quant.location_id.warehouse_id.id if quant.location_id.warehouse_id else None,
+                        'warehouse_name': quant.location_id.warehouse_id.name if quant.location_id.warehouse_id else None,
+                        'qty_available': 0,
+                    }
+                stock_by_location[location_id]['qty_available'] += quant.quantity
+
+            stock_list = list(stock_by_location.values())
+
+            # Calculer le total
+            total_qty = sum(item['qty_available'] for item in stock_list)
+
+            return {
+                'success': True,
+                'data': {
+                    'product_id': product.id,
+                    'product_name': product.display_name,
+                    'stock_by_location': stock_list,
+                    'total_qty': total_qty,
+                    'location_count': len(stock_list),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product stock by location error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/stock/transfer', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_stock_transfer(self, **params):
+        """
+        Créer un transfert de stock entre deux locations/entrepôts.
+
+        Params:
+            product_id (int): ID du produit à transférer
+            quantity (float): Quantité à transférer
+            from_location_id (int): ID de la location source
+            to_location_id (int): ID de la location destination
+            note (str, optional): Note sur le transfert
+
+        Returns:
+            Picking (transfert) créé
+        """
+        try:
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits stock user requis.'
+                }
+
+            product_id = params.get('product_id')
+            quantity = params.get('quantity')
+            from_location_id = params.get('from_location_id')
+            to_location_id = params.get('to_location_id')
+            note = params.get('note', '')
+
+            if not all([product_id, quantity, from_location_id, to_location_id]):
+                return {
+                    'success': False,
+                    'error': 'Paramètres product_id, quantity, from_location_id, to_location_id requis'
+                }
+
+            Product = request.env['product.product'].sudo()
+            Location = request.env['stock.location'].sudo()
+            PickingType = request.env['stock.picking.type'].sudo()
+            Picking = request.env['stock.picking'].sudo()
+
+            product = Product.browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': f'Produit {product_id} introuvable'
+                }
+
+            from_location = Location.browse(from_location_id)
+            to_location = Location.browse(to_location_id)
+
+            if not from_location.exists() or not to_location.exists():
+                return {
+                    'success': False,
+                    'error': 'Location source ou destination introuvable'
+                }
+
+            # Trouver le type de picking "Internal Transfer"
+            picking_type = PickingType.search([
+                ('code', '=', 'internal'),
+                ('warehouse_id', '=', from_location.warehouse_id.id)
+            ], limit=1)
+
+            if not picking_type:
+                # Fallback : utiliser n'importe quel type internal
+                picking_type = PickingType.search([('code', '=', 'internal')], limit=1)
+
+            if not picking_type:
+                return {
+                    'success': False,
+                    'error': 'Type de transfert interne introuvable'
+                }
+
+            # Créer le picking (transfert)
+            picking_vals = {
+                'picking_type_id': picking_type.id,
+                'location_id': from_location_id,
+                'location_dest_id': to_location_id,
+                'move_type': 'direct',
+                'note': note,
+            }
+
+            picking = Picking.create(picking_vals)
+
+            # Créer le mouvement de stock
+            Move = request.env['stock.move'].sudo()
+            move_vals = {
+                'name': product.display_name,
+                'product_id': product_id,
+                'product_uom_qty': quantity,
+                'product_uom': product.uom_id.id,
+                'picking_id': picking.id,
+                'location_id': from_location_id,
+                'location_dest_id': to_location_id,
+            }
+
+            move = Move.create(move_vals)
+
+            # Confirmer le picking
+            picking.action_confirm()
+
+            return {
+                'success': True,
+                'data': {
+                    'picking_id': picking.id,
+                    'picking_name': picking.name,
+                    'state': picking.state,
+                    'product_name': product.display_name,
+                    'quantity': quantity,
+                    'from_location': from_location.complete_name,
+                    'to_location': to_location.complete_name,
+                },
+                'message': f"Transfert créé : {quantity} {product.display_name} de {from_location.name} vers {to_location.name}"
+            }
+
+        except Exception as e:
+            _logger.error(f"Create stock transfer error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== PRODUITS - UPSELL & RECOMMENDATIONS ====================
+
+    @http.route('/api/ecommerce/products/<int:product_id>/upsell', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_upsell(self, product_id, **kwargs):
+        """
+        Récupérer les produits complémentaires (upsell) pour un produit
+
+        Args:
+            product_id (int): ID du produit
+            limit (int, optional): Nombre de produits à retourner (défaut: 4)
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'products': [
+                        {
+                            'id': int,
+                            'name': str,
+                            'slug': str,
+                            'price': float,
+                            'image_url': str,
+                            'in_stock': bool
+                        }
+                    ]
+                }
+            }
+        """
+        try:
+            params = self._get_params()
+            limit = params.get('limit', 4)
+
+            Product = request.env['product.template'].sudo()
+            product = Product.browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit non trouvé'
+                }
+
+            # Stratégie upsell : produits de même catégorie, prix supérieur
+            # OU produits liés via alternative_product_ids / accessory_product_ids
+
+            upsell_products = []
+
+            # 1. Produits accessoires (si définis dans Odoo)
+            if hasattr(product, 'accessory_product_ids') and product.accessory_product_ids:
+                for accessory in product.accessory_product_ids[:limit]:
+                    if accessory.website_published:
+                        image_url = None
+                        if accessory.image_1920:
+                            image_url = f'/web/image/product.template/{accessory.id}/image_1920'
+
+                        slug = accessory.name.lower().replace(' ', '-').replace('/', '-')
+
+                        upsell_products.append({
+                            'id': accessory.id,
+                            'name': accessory.name,
+                            'slug': slug,
+                            'price': accessory.list_price,
+                            'image_url': image_url,
+                            'in_stock': accessory.qty_available > 0 if accessory.type == 'product' else True
+                        })
+
+            # 2. Si pas assez de produits accessoires, chercher dans la même catégorie (prix supérieur)
+            if len(upsell_products) < limit and product.public_categ_ids:
+                remaining = limit - len(upsell_products)
+                category_id = product.public_categ_ids[0].id
+
+                related_products = Product.search([
+                    ('public_categ_ids', 'in', [category_id]),
+                    ('id', '!=', product_id),
+                    ('list_price', '>', product.list_price),
+                    ('website_published', '=', True)
+                ], limit=remaining, order='list_price ASC')
+
+                for related in related_products:
+                    image_url = None
+                    if related.image_1920:
+                        image_url = f'/web/image/product.template/{related.id}/image_1920'
+
+                    slug = related.name.lower().replace(' ', '-').replace('/', '-')
+
+                    upsell_products.append({
+                        'id': related.id,
+                        'name': related.name,
+                        'slug': slug,
+                        'price': related.list_price,
+                        'image_url': image_url,
+                        'in_stock': related.qty_available > 0 if related.type == 'product' else True
+                    })
+
+            _logger.info(f"Upsell for product {product_id}: {len(upsell_products)} products found")
+
+            return {
+                'success': True,
+                'data': {
+                    'products': upsell_products
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product upsell error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/recommendations', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_recommendations(self, product_id, **kwargs):
+        """
+        Récupérer les recommandations pour un produit
+
+        Args:
+            product_id (int): ID du produit
+            limit (int, optional): Nombre de produits à retourner (défaut: 6)
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'products': [
+                        {
+                            'id': int,
+                            'name': str,
+                            'slug': str,
+                            'price': float,
+                            'image_url': str,
+                            'in_stock': bool,
+                            'rating': float,
+                            'reviews_count': int
+                        }
+                    ]
+                }
+            }
+        """
+        try:
+            params = self._get_params()
+            limit = params.get('limit', 6)
+
+            Product = request.env['product.template'].sudo()
+            product = Product.browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit non trouvé'
+                }
+
+            # Stratégie recommandations :
+            # 1. Produits alternatifs (alternative_product_ids)
+            # 2. Produits de même catégorie (prix similaire ±30%)
+            # 3. Produits populaires (best sellers)
+
+            recommendations = []
+
+            # 1. Produits alternatifs
+            if hasattr(product, 'alternative_product_ids') and product.alternative_product_ids:
+                for alternative in product.alternative_product_ids[:limit]:
+                    if alternative.website_published:
+                        image_url = None
+                        if alternative.image_1920:
+                            image_url = f'/web/image/product.template/{alternative.id}/image_1920'
+
+                        slug = alternative.name.lower().replace(' ', '-').replace('/', '-')
+
+                        recommendations.append({
+                            'id': alternative.id,
+                            'name': alternative.name,
+                            'slug': slug,
+                            'price': alternative.list_price,
+                            'image_url': image_url,
+                            'in_stock': alternative.qty_available > 0 if alternative.type == 'product' else True,
+                            'rating': 4.5,  # TODO: intégrer système d'avis
+                            'reviews_count': 0
+                        })
+
+            # 2. Produits de même catégorie (prix similaire)
+            if len(recommendations) < limit and product.public_categ_ids:
+                remaining = limit - len(recommendations)
+                category_id = product.public_categ_ids[0].id
+                price_min = product.list_price * 0.7
+                price_max = product.list_price * 1.3
+
+                similar_products = Product.search([
+                    ('public_categ_ids', 'in', [category_id]),
+                    ('id', '!=', product_id),
+                    ('list_price', '>=', price_min),
+                    ('list_price', '<=', price_max),
+                    ('website_published', '=', True)
+                ], limit=remaining, order='create_date DESC')
+
+                for similar in similar_products:
+                    image_url = None
+                    if similar.image_1920:
+                        image_url = f'/web/image/product.template/{similar.id}/image_1920'
+
+                    slug = similar.name.lower().replace(' ', '-').replace('/', '-')
+
+                    recommendations.append({
+                        'id': similar.id,
+                        'name': similar.name,
+                        'slug': slug,
+                        'price': similar.list_price,
+                        'image_url': image_url,
+                        'in_stock': similar.qty_available > 0 if similar.type == 'product' else True,
+                        'rating': 4.5,
+                        'reviews_count': 0
+                    })
+
+            _logger.info(f"Recommendations for product {product_id}: {len(recommendations)} products found")
+
+            return {
+                'success': True,
+                'data': {
+                    'products': recommendations
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product recommendations error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    # ==================== ALERTES STOCK ====================
+
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-alert-status', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_stock_alert_status(self, product_id, **kwargs):
+        """
+        Vérifier si l'utilisateur est abonné aux alertes de réapprovisionnement
+
+        Args:
+            product_id (int): ID du produit
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'subscribed': bool,
+                    'alert_id': int | null,
+                    'email': str | null
+                }
+            }
+        """
+        try:
+            # Vérifier si utilisateur authentifié
+            if not request.session.uid:
+                return {
+                    'success': True,
+                    'data': {
+                        'subscribed': False,
+                        'alert_id': None,
+                        'email': None
+                    }
+                }
+
+            Partner = request.env['res.partner'].sudo()
+            partner = Partner.browse(request.session.uid)
+
+            if not partner.exists():
+                return {
+                    'success': False,
+                    'error': 'Utilisateur non trouvé'
+                }
+
+            # Vérifier si une alerte existe déjà
+            # Note: Le modèle stock.alert n'existe pas par défaut dans Odoo
+            # Il faut utiliser ir.config_parameter ou créer un modèle custom
+            # Pour l'instant, on simule avec ir.config_parameter
+
+            IrParam = request.env['ir.config_parameter'].sudo()
+            alert_key = f'stock_alert.{product_id}.{partner.id}'
+            alert_value = IrParam.get_param(alert_key)
+
+            if alert_value:
+                return {
+                    'success': True,
+                    'data': {
+                        'subscribed': True,
+                        'alert_id': int(alert_value),  # Stocker l'ID fictif
+                        'email': partner.email
+                    }
+                }
+            else:
+                return {
+                    'success': True,
+                    'data': {
+                        'subscribed': False,
+                        'alert_id': None,
+                        'email': partner.email
+                    }
+                }
+
+        except Exception as e:
+            _logger.error(f"Get stock alert status error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def notify_restock(self, product_id, **kwargs):
+        """
+        S'abonner aux alertes de réapprovisionnement
+
+        Args:
+            product_id (int): ID du produit
+            email (str, optional): Email pour recevoir l'alerte (si invité)
+
+        Returns:
+            dict: {
+                'success': bool,
+                'message': str,
+                'alert_id': int
+            }
+        """
+        try:
+            params = self._get_params()
+            email = params.get('email')
+
+            Product = request.env['product.template'].sudo()
+            product = Product.browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit non trouvé'
+                }
+
+            # Vérifier que le produit est bien en rupture
+            if product.type == 'product' and product.qty_available > 0:
+                return {
+                    'success': False,
+                    'error': 'Le produit est actuellement en stock'
+                }
+
+            # Si utilisateur authentifié
+            if request.session.uid:
+                Partner = request.env['res.partner'].sudo()
+                partner = Partner.browse(request.session.uid)
+                email = partner.email
+                partner_id = partner.id
+            else:
+                # Utilisateur invité
+                if not email:
+                    return {
+                        'success': False,
+                        'error': 'Email requis pour les utilisateurs invités'
+                    }
+                partner_id = 0  # Invité
+
+            # Créer l'alerte (stockée dans ir.config_parameter pour simplicité)
+            # Dans une vraie implémentation, créer un modèle custom stock.alert
+            import time
+            alert_id = int(time.time())  # Générer un ID unique basé sur timestamp
+
+            IrParam = request.env['ir.config_parameter'].sudo()
+            alert_key = f'stock_alert.{product_id}.{partner_id or email}'
+            IrParam.set_param(alert_key, str(alert_id))
+
+            # Stocker aussi l'email pour pouvoir envoyer la notification plus tard
+            email_key = f'stock_alert_email.{alert_id}'
+            IrParam.set_param(email_key, email)
+
+            _logger.info(f"Stock alert created: product {product_id}, email {email}, alert_id {alert_id}")
+
+            return {
+                'success': True,
+                'message': f'Vous serez notifié par email à {email} lorsque {product.name} sera de nouveau en stock',
+                'alert_id': alert_id
+            }
+
+        except Exception as e:
+            _logger.error(f"Notify restock error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def unsubscribe_stock_alert(self, alert_id, **kwargs):
+        """
+        Se désabonner d'une alerte de réapprovisionnement
+
+        Args:
+            alert_id (int): ID de l'alerte
+
+        Returns:
+            dict: {
+                'success': bool,
+                'message': str
+            }
+        """
+        try:
+            IrParam = request.env['ir.config_parameter'].sudo()
+
+            # Chercher l'alerte
+            # Note: ir.config_parameter n'a pas de méthode search par valeur,
+            # donc on doit itérer ou utiliser une autre stratégie
+            # Pour simplifier, on suppose que l'utilisateur fournit le product_id aussi
+
+            params = self._get_params()
+            product_id = params.get('product_id')
+
+            if not product_id:
+                return {
+                    'success': False,
+                    'error': 'product_id requis pour désabonnement'
+                }
+
+            # Déterminer la clé
+            if request.session.uid:
+                Partner = request.env['res.partner'].sudo()
+                partner = Partner.browse(request.session.uid)
+                alert_key = f'stock_alert.{product_id}.{partner.id}'
+            else:
+                email = params.get('email')
+                if not email:
+                    return {
+                        'success': False,
+                        'error': 'Email requis pour désabonnement invité'
+                    }
+                alert_key = f'stock_alert.{product_id}.{email}'
+
+            # Supprimer l'alerte
+            IrParam.set_param(alert_key, False)  # Suppression
+
+            # Supprimer aussi l'email associé
+            email_key = f'stock_alert_email.{alert_id}'
+            IrParam.set_param(email_key, False)
+
+            _logger.info(f"Stock alert {alert_id} unsubscribed")
+
+            return {
+                'success': True,
+                'message': 'Vous ne recevrez plus de notifications pour ce produit'
+            }
+
+        except Exception as e:
+            _logger.error(f"Unsubscribe stock alert error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }

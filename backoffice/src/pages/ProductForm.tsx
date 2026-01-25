@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { useProduct, useCreateProduct, useUpdateProduct, useTaxes, useUom, useProductTypes, useProductTags, useCreateProductTag } from '../hooks/useProducts'
 import { useCategories } from '../hooks/useCategories'
+import { useRibbons, useUpdateProductRibbon } from '../hooks/useRibbons'
 import {
   Button,
   Input,
@@ -21,6 +22,7 @@ import {
   useReorderProductImages,
 } from '../hooks/useProductImages'
 import { api } from '../lib/api'
+import { logger } from '../lib/logger'
 
 export default function ProductForm() {
   const navigate = useNavigate()
@@ -36,9 +38,11 @@ export default function ProductForm() {
   const { data: uomData } = useUom()
   const { data: productTypesData } = useProductTypes()
   const { data: productTagsData } = useProductTags()
+  const { data: ribbonsData } = useRibbons()
   const createTagMutation = useCreateProductTag()
   const createProductMutation = useCreateProduct()
   const updateProductMutation = useUpdateProduct()
+  const updateRibbonMutation = useUpdateProductRibbon()
 
   // Images (uniquement en mode édition)
   const { data: imagesData } = useProductImages(productId)
@@ -57,6 +61,9 @@ export default function ProductForm() {
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
   const [newTagName, setNewTagName] = useState('')
 
+  // État pour le ruban (badge) sélectionné
+  const [selectedRibbonId, setSelectedRibbonId] = useState<number | null>(null)
+
   // Onglet actif
   const [activeTab, setActiveTab] = useState<'general' | 'variants' | 'stock'>('general')
 
@@ -73,9 +80,16 @@ export default function ProductForm() {
     product_height: '',
     description: '',
     description_purchase: '',
+    technical_description: '',
     category_id: '',
     detailed_type: 'consu' as 'consu' | 'service' | 'product',
     uom_id: '',
+    // Champs marketing e-commerce
+    is_featured: false,
+    is_new: false,
+    is_bestseller: false,
+    compare_at_price: '',
+    offer_end_date: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
@@ -85,6 +99,7 @@ export default function ProductForm() {
   const uomList = uomData?.data?.uom || []
   const productTypes = productTypesData?.data?.product_types || []
   const productTags = productTagsData?.data?.tags || []
+  const ribbons = ribbonsData?.data?.ribbons || []
 
   // Charger les données du produit en mode édition
   useEffect(() => {
@@ -103,9 +118,16 @@ export default function ProductForm() {
         product_height: product.product_height?.toString() || '',
         description: product.description || '',
         description_purchase: product.description_purchase || '',
+        technical_description: product.technical_description || '',
         category_id: product.category?.id?.toString() || '',
         detailed_type: product.detailed_type || 'consu',
         uom_id: product.uom_id?.toString() || '',
+        // Champs marketing e-commerce
+        is_featured: product.is_featured || false,
+        is_new: product.is_new || false,
+        is_bestseller: product.is_bestseller || false,
+        compare_at_price: product.compare_at_price?.toString() || '',
+        offer_end_date: product.offer_end_date || '',
       })
       setStockQty(product.qty_available ?? null)
       // Charger les taxes du produit
@@ -115,6 +137,12 @@ export default function ProductForm() {
       // Charger les tags du produit
       if (product.product_tag_ids) {
         setSelectedTagIds(product.product_tag_ids.map((t: { id: number }) => t.id))
+      }
+      // Charger le ruban (badge) du produit
+      if (product.ribbon) {
+        setSelectedRibbonId(product.ribbon.id)
+      } else {
+        setSelectedRibbonId(null)
       }
     }
   }, [isEditing, productData])
@@ -173,6 +201,7 @@ export default function ProductForm() {
       price: Number(formData.price),
       description: formData.description || undefined,
       description_purchase: formData.description_purchase || undefined,
+      technical_description: formData.technical_description || undefined,
       category_id: formData.category_id ? Number(formData.category_id) : undefined,
       default_code: formData.default_code || undefined,
       barcode: formData.barcode || undefined,
@@ -186,6 +215,12 @@ export default function ProductForm() {
       uom_id: formData.uom_id ? Number(formData.uom_id) : undefined,
       taxes_id: selectedTaxIds.length > 0 ? selectedTaxIds : [],
       product_tag_ids: selectedTagIds.length > 0 ? selectedTagIds : [],
+      // Champs marketing e-commerce
+      is_featured: formData.is_featured,
+      is_new: formData.is_new,
+      is_bestseller: formData.is_bestseller,
+      compare_at_price: formData.compare_at_price ? Number(formData.compare_at_price) : undefined,
+      offer_end_date: formData.offer_end_date || undefined,
     }
 
     try {
@@ -204,7 +239,7 @@ export default function ProductForm() {
       navigate('/products')
     } catch (error) {
       toast.error(`Erreur lors de ${isEditing ? 'la modification' : 'la création'} du produit`)
-      console.error('Error saving product:', error)
+      logger.error('Error saving product:', error)
     }
   }
 
@@ -429,6 +464,154 @@ export default function ProductForm() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* Badge/Ruban */}
+                <div>
+                  <label
+                    htmlFor="ribbon_id"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Badge produit
+                  </label>
+                  <select
+                    id="ribbon_id"
+                    name="ribbon_id"
+                    value={selectedRibbonId ?? ''}
+                    onChange={async (e) => {
+                      const newRibbonId = e.target.value ? Number(e.target.value) : null
+                      setSelectedRibbonId(newRibbonId)
+                      // Sauvegarder immédiatement si on édite un produit existant
+                      if (isEditing && productId) {
+                        try {
+                          await updateRibbonMutation.mutateAsync({
+                            productId,
+                            ribbonId: newRibbonId,
+                          })
+                          toast.success('Badge mis à jour')
+                        } catch {
+                          toast.error('Erreur lors de la mise à jour du badge')
+                        }
+                      }
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all"
+                  >
+                    <option value="">Aucun badge</option>
+                    {ribbons.map((ribbon) => (
+                      <option key={ribbon.id} value={ribbon.id}>
+                        {ribbon.name}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedRibbonId && ribbons.find(r => r.id === selectedRibbonId) && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Aperçu :</span>
+                      <span
+                        className="px-3 py-1 rounded text-sm font-medium"
+                        style={{
+                          backgroundColor: ribbons.find(r => r.id === selectedRibbonId)?.bg_color,
+                          color: ribbons.find(r => r.id === selectedRibbonId)?.text_color,
+                        }}
+                      >
+                        {ribbons.find(r => r.id === selectedRibbonId)?.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Options Marketing E-commerce */}
+                <div className="col-span-full">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Options marketing
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {/* Produit vedette */}
+                    <label className={`
+                      flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all
+                      ${formData.is_featured
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }
+                    `}>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_featured}
+                        onChange={(e) => setFormData(prev => ({ ...prev, is_featured: e.target.checked }))}
+                        className="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500"
+                      />
+                      <div>
+                        <span className="font-medium text-gray-900 dark:text-white">Vedette</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Mis en avant sur la page d'accueil</p>
+                      </div>
+                    </label>
+
+                    {/* Nouveau produit */}
+                    <label className={`
+                      flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all
+                      ${formData.is_new
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }
+                    `}>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_new}
+                        onChange={(e) => setFormData(prev => ({ ...prev, is_new: e.target.checked }))}
+                        className="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500"
+                      />
+                      <div>
+                        <span className="font-medium text-gray-900 dark:text-white">Nouveau</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Badge "Nouveau" affiché</p>
+                      </div>
+                    </label>
+
+                    {/* Best-seller */}
+                    <label className={`
+                      flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all
+                      ${formData.is_bestseller
+                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }
+                    `}>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_bestseller}
+                        onChange={(e) => setFormData(prev => ({ ...prev, is_bestseller: e.target.checked }))}
+                        className="w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500"
+                      />
+                      <div>
+                        <span className="font-medium text-gray-900 dark:text-white">Best-seller</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Produit populaire</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Prix barré et date fin offre */}
+                <Input
+                  label="Prix barré (ancien prix)"
+                  type="number"
+                  step="0.01"
+                  id="compare_at_price"
+                  name="compare_at_price"
+                  value={formData.compare_at_price}
+                  onChange={handleChange}
+                  placeholder="59.99"
+                />
+
+                <div>
+                  <label htmlFor="offer_end_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Date fin de l'offre
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="offer_end_date"
+                    name="offer_end_date"
+                    value={formData.offer_end_date}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Affiche un compte à rebours sur le produit</p>
                 </div>
 
                 {/* Référence SKU */}
@@ -755,6 +938,28 @@ export default function ProductForm() {
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all"
                   placeholder="Notes internes pour les commandes fournisseurs..."
                 />
+              </div>
+
+              {/* Description technique */}
+              <div>
+                <label
+                  htmlFor="technical_description"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  Description technique
+                </label>
+                <textarea
+                  id="technical_description"
+                  name="technical_description"
+                  value={formData.technical_description}
+                  onChange={handleChange}
+                  rows={5}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all font-mono text-sm"
+                  placeholder="Spécifications techniques détaillées (matériaux, dimensions, caractéristiques...)&#10;&#10;Vous pouvez utiliser du HTML basique pour le formatage."
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Affiché dans l'onglet "Spécifications" de la fiche produit. Supporte le HTML basique.
+                </p>
               </div>
 
               {/* Images */}
