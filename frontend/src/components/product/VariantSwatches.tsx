@@ -51,8 +51,8 @@ export function VariantSwatches({
       const response = await fetchVariantsLazy(productId);
 
       if (response && response.success) {
-        setAttributeLines(response.data.attribute_lines);
-        setVariants(response.data.variants);
+        setAttributeLines(response.attribute_lines);
+        setVariants(response.variants);
       }
     } catch (error) {
       logger.error('Error loading variants:', error);
@@ -139,11 +139,11 @@ export function VariantSwatches({
       );
 
       if (attrValue) {
-        const existing = valueMap.get(attrValue.id);
+        const existing = valueMap.get(attrValue.value_id);
 
         if (existing) {
           // Mettre à jour stock et compteur
-          valueMap.set(attrValue.id, {
+          valueMap.set(attrValue.value_id, {
             ...existing,
             count: existing.count + 1,
             inStock: existing.inStock || (variant.in_stock && (variant.qty_available || 0) > 0),

@@ -40,8 +40,8 @@ export const useFilterSync = ({
     const newProduct = searchParams.get('new');
     const bestseller = searchParams.get('bestseller');
     const categoryId = searchParams.get('category');
-    const minPrice = searchParams.get('price_min');
-    const maxPrice = searchParams.get('price_max');
+    const minPrice = searchParams.get('min_price');
+    const maxPrice = searchParams.get('max_price');
     const sort = searchParams.get('sort');
     const search = searchParams.get('search');
 
@@ -49,8 +49,8 @@ export const useFilterSync = ({
     if (newProduct === 'true') urlFilters.is_new = true;
     if (bestseller === 'true') urlFilters.is_bestseller = true;
     if (categoryId) urlFilters.category_id = Number(categoryId);
-    if (minPrice) urlFilters.price_min = Number(minPrice);
-    if (maxPrice) urlFilters.price_max = Number(maxPrice);
+    if (minPrice) urlFilters.min_price = Number(minPrice);
+    if (maxPrice) urlFilters.max_price = Number(maxPrice);
     if (sort) urlFilters.sort = sort as any;
     if (search) urlFilters.search = search;
 
@@ -72,8 +72,8 @@ export const useFilterSync = ({
     if (filters.is_new) params.set('new', 'true');
     if (filters.is_bestseller) params.set('bestseller', 'true');
     if (filters.category_id) params.set('category', String(filters.category_id));
-    if (filters.price_min) params.set('price_min', String(filters.price_min));
-    if (filters.price_max) params.set('price_max', String(filters.price_max));
+    if (filters.min_price) params.set('min_price', String(filters.min_price));
+    if (filters.max_price) params.set('max_price', String(filters.max_price));
     if (filters.sort && filters.sort !== 'name') params.set('sort', filters.sort);
 
     // Construire la nouvelle URL

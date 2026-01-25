@@ -42,8 +42,8 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
     filters.is_new,
     filters.is_bestseller,
     filters.category_id,
-    filters.price_min,
-    filters.price_max,
+    filters.min_price,
+    filters.max_price,
   ].filter(Boolean).length;
 
   // Empêcher le scroll du body quand le drawer est ouvert

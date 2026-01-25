@@ -5,11 +5,11 @@
  * Compatible Next.js (SSR + Client) et Vite
  */
 
-// Détection d'environnement universelle
+// Détection d'environnement universelle (Next.js + Vite)
 const isDevelopment =
   typeof process !== 'undefined'
     ? process.env.NODE_ENV === 'development'
-    : typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+    : typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
 
 /**
  * Logger avec masquage automatique en production

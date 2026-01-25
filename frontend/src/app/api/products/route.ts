@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
     if (searchParams.get('search')) {
       params.search = searchParams.get('search');
     }
-    if (searchParams.get('price_min')) {
-      params.price_min = parseFloat(searchParams.get('price_min')!);
+    if (searchParams.get('min_price')) {
+      params.min_price = parseFloat(searchParams.get('min_price')!);
     }
-    if (searchParams.get('price_max')) {
-      params.price_max = parseFloat(searchParams.get('price_max')!);
+    if (searchParams.get('max_price')) {
+      params.max_price = parseFloat(searchParams.get('max_price')!);
     }
     if (searchParams.get('is_featured')) {
       params.is_featured = searchParams.get('is_featured') === 'true';

@@ -26,9 +26,9 @@ const OrderSummary: React.FC = () => {
         {cart.lines.map((line) => (
           <div key={line.id} className="flex gap-3">
             <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
-              {line.image_url && (
+              {line.product_image && (
                 <img
-                  src={line.image_url}
+                  src={line.product_image}
                   alt={line.product_name}
                   className="w-full h-full object-cover rounded"
                 />
@@ -42,7 +42,7 @@ const OrderSummary: React.FC = () => {
                 Qté: {line.quantity}
               </p>
               <p className="text-sm font-semibold text-gray-900">
-                {line.price_subtotal.toFixed(2)} {line.currency_symbol}
+                {(line.price_subtotal || line.subtotal || 0).toFixed(2)} {line.currency_symbol || '€'}
               </p>
             </div>
           </div>
@@ -54,14 +54,14 @@ const OrderSummary: React.FC = () => {
         <div className="flex justify-between text-gray-700">
           <span>Sous-total</span>
           <span className="font-medium">
-            {cart.amount_untaxed.toFixed(2)} {cart.currency.symbol}
+            {(cart.amount_untaxed || cart.subtotal || 0).toFixed(2)} {cart.currency?.symbol || '€'}
           </span>
         </div>
 
         <div className="flex justify-between text-gray-700">
           <span>TVA</span>
           <span className="font-medium">
-            {cart.amount_tax.toFixed(2)} {cart.currency.symbol}
+            {(cart.amount_tax || cart.tax_total || 0).toFixed(2)} {cart.currency?.symbol || '€'}
           </span>
         </div>
 
@@ -74,7 +74,7 @@ const OrderSummary: React.FC = () => {
           <div className="flex justify-between items-center">
             <span className="text-lg font-bold text-gray-900">Total</span>
             <span className="text-2xl font-bold text-primary">
-              {cart.amount_total.toFixed(2)} {cart.currency.symbol}
+              {(cart.amount_total || cart.total || 0).toFixed(2)} {cart.currency?.symbol || '€'}
             </span>
           </div>
         </div>

@@ -1,10 +1,18 @@
-# Commande /coherence - Audit de Cohérence Fonctionnelle Tri-Couche
+# Commande /coherence - Audit de Cohérence Fonctionnelle Tri-Couche + Administrabilité
 
-Tu es un auditeur de cohérence technique spécialisé dans l'architecture tri-couche Backend ↔ Backoffice ↔ Frontend. Ta mission est de garantir une cohérence parfaite entre les trois couches applicatives du projet Quelyos ERP.
+Tu es un auditeur de cohérence technique spécialisé dans l'architecture tri-couche Backend ↔ Backoffice ↔ Frontend. Ta mission est **double** :
 
-## Objectif
+1. **Cohérence technique** : Garantir cohérence parfaite entre les trois couches applicatives
+2. **Administrabilité** : Identifier tout contenu Frontend hardcodé qui DOIT être administrable depuis le Backoffice
 
-Effectuer un audit complet de cohérence pour identifier les incohérences, endpoints orphelins, fonctionnalités UI sans backend, types TypeScript désynchronisés, et garantir la complétude des opérations CRUD.
+## Objectif Principal
+
+**Vision stratégique** : **Rendre 100% du contenu Frontend administrable depuis le Backoffice sans toucher au code.**
+
+Effectuer un audit complet pour :
+- ✅ Identifier incohérences techniques (endpoints orphelins, types désynchronisés, CRUD incomplet)
+- ✅ **Identifier contenus hardcodés non administrables** (hero sliders, bannières, menus, thèmes, etc.)
+- ✅ Proposer roadmap d'implémentation pour rendre Frontend 100% pilotable depuis Backoffice
 
 ## Paramètre optionnel
 
@@ -235,6 +243,125 @@ backoffice/src/
 | ... | ... | ... | ... | ... |
 ```
 
+### Étape 9bis : 🎛️ AUDIT ADMINISTRABILITÉ (NOUVEAU - PRIORITAIRE)
+
+**Objectif** : Identifier TOUS les contenus Frontend hardcodés qui DEVRAIENT être administrables depuis le Backoffice.
+
+**Principe** : Si c'est affiché sur le Frontend → ça DOIT être modifiable depuis le Backoffice sans code.
+
+#### Sections à Auditer Systématiquement
+
+**1. Homepage (page.tsx)** :
+- ✅ Hero Slider : Slides hardcodés dans code ?
+- ✅ Bannières promo : Contenu statique ?
+- ✅ Catégories mises en avant : Sélection manuelle ou automatique ?
+- ✅ Produits vedettes : Gérable via Featured.tsx backoffice ?
+- ✅ Newsletter form : Textes hardcodés ?
+
+**2. Header (Header.tsx)** :
+- ✅ PromoBar messages : Messages hardcodés ?
+- ✅ Navigation menu : Liens hardcodés ou dynamiques ?
+- ✅ Logo/marque : Configurable via SiteConfig ?
+- ✅ Couleurs thème : Tailwind statique ou dynamique ?
+
+**3. Footer (Footer.tsx)** :
+- ✅ Trust badges : Badges hardcodés ?
+- ✅ Liens navigation : Hardcodés ou modèle menu ?
+- ✅ Réseaux sociaux : URLs configurables ?
+- ✅ Textes légaux : Administrables ?
+
+**4. Pages Produits** :
+- ✅ Images catégories : Placeholders hardcodés ou images Odoo ?
+- ✅ Ribbons produits : Gérable via ProductForm ?
+- ✅ Trust badges page détail : Hardcodés ?
+- ✅ Recommandations : Algorithme ou sélection manuelle ?
+
+**5. Contenus Marketing** :
+- ✅ Popups marketing : Interface backoffice existe ?
+- ✅ Bannières promotionnelles : CRUD backoffice ?
+- ✅ Countdown timers : Dates configurables ?
+- ✅ Messages urgence : Hardcodés ?
+
+**6. SEO & Metadata** :
+- ✅ Metadata pages : Administrable par page ?
+- ✅ Sitemap : Dynamique ou statique ?
+- ✅ Robots.txt : Configurable ?
+- ✅ Structured data : Dynamique ?
+
+**7. Thème & Branding** :
+- ✅ Couleurs primaires/secondaires : Tailwind statique ?
+- ✅ Fonts : Hardcodées ?
+- ✅ Logo : Uploadable backoffice ?
+- ✅ Favicon : Administrable ?
+
+#### Pour Chaque Contenu Hardcodé Détecté
+
+**Créer fiche Gap** :
+
+```markdown
+### Gap #N : [Nom Section]
+
+**État actuel** : ❌ Hardcodé dans `[fichier]:[lignes]`
+
+**Exemple code** :
+```typescript
+const slides = [
+  { title: 'Bannière 1', image: 'https://...' },
+  // ... hardcodé
+];
+```
+
+**Problème business** :
+- ❌ Marketing ne peut pas changer sans développeur
+- ❌ Impossible A/B Testing rapide
+- ❌ Pas d'agilité événements
+
+**Solution requise** :
+
+**Backend** :
+- ✅ Modèle Odoo `quelyos.[nom]`
+- ✅ 5 endpoints CRUD `/api/ecommerce/[resource]/*`
+- ✅ Authentification admin pour création/modification
+
+**Backoffice** :
+- ✅ Page `[Nom].tsx` avec CRUD visuel
+- ✅ Formulaire création/édition
+- ✅ Liste avec drag & drop (si ordre important)
+- ✅ Preview temps réel
+
+**Frontend** :
+- ✅ Remplacer hardcoded par fetch dynamique
+- ✅ Cache 5min pour performance
+- ✅ Fallback si API fail
+
+**Effort estimé** : X-Yh
+- Backend : Zh (modèle + endpoints)
+- Backoffice : Zh (page CRUD)
+- Frontend : Zh (fetch dynamique)
+
+**ROI Business** :
+- ✅ Autonomie marketing
+- ✅ A/B Testing facile
+- ✅ Réactivité événements
+- ✅ Multi-tenant ready
+
+**Priorité** : P0/P1/P2
+```
+
+#### Calcul Score Administrabilité
+
+```markdown
+| Catégorie | Administrable | Score |
+|-----------|---------------|-------|
+| Contenus statiques (hero, bannières, badges) | X/Y | XX% |
+| Produits & Catégories | X/Y | XX% |
+| Configuration site | X/Y | XX% |
+| Marketing (popups, promos) | X/Y | XX% |
+| Navigation (menus, footer) | X/Y | XX% |
+| Thème & Branding | X/Y | XX% |
+| **GLOBAL** | **X/Y** | **XX%** |
+```
+
 ### Étape 10 : Analyse Nommage et Conventions
 
 **Vérifier cohérence des conventions de nommage** :
@@ -259,10 +386,14 @@ backoffice/src/
 
 ### Étape 11 : Génération du Rapport de Cohérence
 
-**Générer un rapport structuré complet** :
+**Générer 2 rapports complémentaires** :
+
+#### 📄 Rapport 1 : Cohérence Technique (classique)
+
+Fichier : `COHERENCE_AUDIT_[CIBLE]_[DATE].md`
 
 ```markdown
-## 🔍 Rapport de Cohérence - [Module] - [Date]
+## 🔍 Rapport de Cohérence Technique - [Module/Frontend/Backoffice] - [Date]
 
 ### 📊 Résumé Exécutif
 
@@ -288,6 +419,80 @@ backoffice/src/
 - ✅ Ressources CRUD complet : X
 - 🟡 CRUD partiel : X
 - 🔴 CRUD incomplet (bloquant) : X
+
+**Score Cohérence Technique** : XX% ✅/🟡/🔴
+```
+
+#### 📄 Rapport 2 : Administrabilité Frontend (NOUVEAU)
+
+Fichier : `COHERENCE_ADMINISTRABILITE_FRONTEND_[DATE].md`
+
+```markdown
+## 🎛️ Rapport d'Administrabilité Frontend - [Date]
+
+### 🎯 Vision Stratégique
+
+**Objectif** : Rendre 100% du contenu Frontend administrable depuis le Backoffice sans code.
+
+### 📊 Score Global d'Administrabilité
+
+**Score actuel** : XX% (Y/Z sections administrables)
+
+| Catégorie | Administrable | Score |
+|-----------|---------------|-------|
+| Contenus statiques | X/Y | XX% |
+| Produits & Catégories | X/Y | XX% |
+| Configuration site | X/Y | XX% |
+| Marketing | X/Y | XX% |
+| Navigation | X/Y | XX% |
+| Thème & Branding | X/Y | XX% |
+| **GLOBAL** | **X/Z** | **XX%** |
+
+### 🔴 GAP CRITIQUES (P0) - Contenus Hardcodés
+
+[Pour chaque gap, détailler selon template ci-dessus]
+
+### 🟡 GAPS IMPORTANTS (P1)
+
+[Idem]
+
+### ✅ SECTIONS DÉJÀ ADMINISTRABLES
+
+[Liste avec interfaces backoffice existantes]
+
+### 🚀 Roadmap Implémentation
+
+#### Sprint 1 - Gaps P0 (X jours)
+- ✅ Gap #1 : [Nom] (Xh)
+- ✅ Gap #2 : [Nom] (Xh)
+Total : XXh
+
+#### Sprint 2 - Gaps P1 (X jours)
+- ✅ Gap #3 : [Nom] (Xh)
+Total : XXh
+
+### 💡 Bénéfices Business
+
+- ✅ Autonomie marketing : +XX% efficacité
+- ✅ Réduction coûts : -XX% coûts changements
+- ✅ Multi-tenant ready
+- ✅ A/B Testing facile
+
+### 📝 Conclusion
+
+**État actuel** : XX% administrable
+**Effort total** : XX-YYh (~X sprints)
+**ROI estimé** : [Business case]
+**Recommandation** : Prioriser Sprint 1 (gaps P0)
+```
+
+### Étape 12 : Génération Format Résumé (pour LOGME.md)
+
+**Créer entrée condensée** :
+
+```markdown
+- **[DATE] : Audit cohérence [Cible] - XX% cohérent + YY% administrable** - **Commande `/coherence` exécutée** sur [Frontend/Backoffice/Module]. **Cohérence technique** : XX% (Z endpoints utilisés, 0 endpoint inexistant, X types cohérents). **Administrabilité** : YY% (A/B sections administrables, C gaps P0 hardcodés identifiés : [liste]). **Effort déblocage** : XX-YYh Sprint 1 (gaps P0) + ZZ-WWh Sprint 2 (gaps P1). **ROI** : +XX% autonomie marketing, -YY% coûts changements contenu. Rapports complets : `COHERENCE_AUDIT_[CIBLE]_[DATE].md` (cohérence technique) + `COHERENCE_ADMINISTRABILITE_[CIBLE]_[DATE].md` (gaps hardcodés + roadmap). **Recommandation** : [Action prioritaire].
+```
 
 ---
 

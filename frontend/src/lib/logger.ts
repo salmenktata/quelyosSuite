@@ -5,11 +5,8 @@
  * Compatible Next.js (SSR + Client)
  */
 
-// Détection d'environnement universelle
-const isDevelopment =
-  typeof process !== 'undefined'
-    ? process.env.NODE_ENV === 'development'
-    : typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+// Détection d'environnement Next.js
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 /**
  * Logger avec masquage automatique en production

@@ -26,10 +26,10 @@ export const useWishlistStore = create<WishlistState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await odooClient.getWishlist();
-          if (response.success && response.products) {
-            set({ 
-              items: response.products.map((p: any) => p.id),
-              isLoading: false 
+          if (response.success && response.wishlist) {
+            set({
+              items: response.wishlist.map((item) => item.product.id),
+              isLoading: false
             });
           } else {
             set({ error: response.error || 'Failed to fetch wishlist', isLoading: false });

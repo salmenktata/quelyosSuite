@@ -26,14 +26,14 @@ export function VariantSelector({
   // État pour les attributs sélectionnés (ex: {couleur_id: value_id, taille_id: value_id})
   const [selectedAttributes, setSelectedAttributes] = useState<Record<number, number>>({});
 
-  const { attribute_lines, variants } = variantsData.data;
+  const { attribute_lines, variants } = variantsData;
 
   // Initialiser la sélection avec la variante par défaut ou la première disponible
   useEffect(() => {
     if (selectedVariant && selectedVariant.attribute_values) {
       const initialSelection: Record<number, number> = {};
       selectedVariant.attribute_values.forEach((av) => {
-        initialSelection[av.attribute_id] = av.id;
+        initialSelection[av.attribute_id] = av.value_id;
       });
       setSelectedAttributes(initialSelection);
     } else if (variants.length > 0) {
@@ -42,7 +42,7 @@ export function VariantSelector({
       if (firstVariant.attribute_values) {
         const initialSelection: Record<number, number> = {};
         firstVariant.attribute_values.forEach((av) => {
-          initialSelection[av.attribute_id] = av.id;
+          initialSelection[av.attribute_id] = av.value_id;
         });
         setSelectedAttributes(initialSelection);
         onVariantChange(firstVariant);
@@ -57,7 +57,7 @@ export function VariantSelector({
 
       // Vérifier que tous les attributs sélectionnés correspondent
       return variant.attribute_values.every((av) =>
-        selectedAttributes[av.attribute_id] === av.id
+        selectedAttributes[av.attribute_id] === av.value_id
       );
     });
   }, [selectedAttributes, variants]);
@@ -89,7 +89,7 @@ export function VariantSelector({
         if (attrId === attributeId) return true;
 
         const variantAttrValue = variant.attribute_values?.find(av => av.attribute_id === attrId);
-        return variantAttrValue && variantAttrValue.id === valueId;
+        return variantAttrValue && variantAttrValue.value_id === valueId;
       });
     });
 
@@ -98,7 +98,7 @@ export function VariantSelector({
     compatibleVariants.forEach((variant) => {
       const attrValue = variant.attribute_values?.find(av => av.attribute_id === attributeId);
       if (attrValue) {
-        availableValueIds.add(attrValue.id);
+        availableValueIds.add(attrValue.value_id);
       }
     });
 
@@ -125,7 +125,7 @@ export function VariantSelector({
     return variants.find((variant) => {
       if (!variant.attribute_values) return false;
       return variant.attribute_values.every((av) =>
-        tempSelection[av.attribute_id] === av.id
+        tempSelection[av.attribute_id] === av.value_id
       );
     });
   };

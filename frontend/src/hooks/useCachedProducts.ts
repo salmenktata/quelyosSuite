@@ -11,7 +11,7 @@ interface UseCachedProductsOptions {
   limit?: number;
   offset?: number;
   filters?: Record<string, any>;
-  sort?: 'name' | 'price_asc' | 'price_desc' | 'newest' | 'popular';
+  sort?: 'name' | 'price_asc' | 'price_desc' | 'newest' | 'popularity';
   useCache?: boolean; // Enable/disable cache
 }
 

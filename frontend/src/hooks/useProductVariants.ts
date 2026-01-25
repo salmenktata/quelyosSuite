@@ -70,10 +70,10 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
         setVariantsData(response);
 
         // Sélectionner automatiquement la première variante en stock
-        const firstInStockVariant = response.data.variants.find(
+        const firstInStockVariant = response.variants.find(
           (v: ExtendedProductVariant) => v.in_stock && (v.qty_available || 0) > 0
         );
-        const defaultVariant = firstInStockVariant || response.data.variants[0];
+        const defaultVariant = firstInStockVariant || response.variants[0];
 
         if (defaultVariant) {
           setSelectedVariantId(defaultVariant.id);
@@ -91,8 +91,8 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
     if (!selectedVariantId) return null;
 
     // Chercher d'abord dans variantsData (données enrichies)
-    if (variantsData?.data.variants) {
-      const variant = variantsData.data.variants.find(v => v.id === selectedVariantId);
+    if (variantsData?.variants) {
+      const variant = variantsData.variants.find(v => v.id === selectedVariantId);
       if (variant) return variant;
     }
 

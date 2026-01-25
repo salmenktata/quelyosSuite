@@ -80,13 +80,13 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
     });
   }
 
-  if (filters.price_min !== undefined || filters.price_max !== undefined) {
-    const min = filters.price_min || 0;
-    const max = filters.price_max || '∞';
+  if (filters.min_price !== undefined || filters.max_price !== undefined) {
+    const min = filters.min_price || 0;
+    const max = filters.max_price || '∞';
     activeFilters.push({
-      key: 'price_min',
+      key: 'min_price',
       label: `Prix: ${min} - ${max} TND`,
-      value: { min: filters.price_min, max: filters.price_max },
+      value: { min: filters.min_price, max: filters.max_price },
     });
   }
 
@@ -113,9 +113,9 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
             layout
             onClick={() => {
               // Pour le filtre prix, retirer les deux
-              if (filter.key === 'price_min') {
-                onRemoveFilter('price_min');
-                onRemoveFilter('price_max');
+              if (filter.key === 'min_price') {
+                onRemoveFilter('min_price');
+                onRemoveFilter('max_price');
               } else {
                 onRemoveFilter(filter.key);
               }

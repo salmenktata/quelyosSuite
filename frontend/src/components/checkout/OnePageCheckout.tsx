@@ -530,15 +530,15 @@ export function OnePageCheckout() {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between text-gray-700">
               <span>Sous-total</span>
-              <span>{formatPrice(cart.amount_untaxed)}</span>
+              <span>{formatPrice(cart.amount_untaxed || cart.subtotal)}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>TVA</span>
-              <span>{formatPrice(cart.amount_tax)}</span>
+              <span>{formatPrice(cart.amount_tax || cart.tax_total)}</span>
             </div>
             <div className="flex justify-between border-t pt-2 text-lg font-bold text-gray-900">
               <span>Total</span>
-              <span>{formatPrice(cart.amount_total)}</span>
+              <span>{formatPrice(cart.amount_total || cart.total)}</span>
             </div>
           </div>
 
