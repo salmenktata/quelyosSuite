@@ -418,7 +418,7 @@ export default function Warehouses() {
                 )}
                 {!searchQuery && !activeOnly && (
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
-                    💡 Les entrepôts sont gérés via Odoo natif (configuration critique)
+                    💡 Les entrepôts sont gérés via l'interface d'administration (configuration critique)
                   </p>
                 )}
               </div>

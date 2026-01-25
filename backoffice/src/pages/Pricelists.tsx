@@ -361,7 +361,7 @@ export default function Pricelists() {
             <p className="text-gray-500 dark:text-gray-400">
               {searchQuery
                 ? 'Essayez de modifier vos critères de recherche.'
-                : 'Les listes de prix sont créées et gérées dans Odoo.'}
+                : 'Les listes de prix sont créées et gérées dans l'interface d'administration.'}
             </p>
           </div>
         )}

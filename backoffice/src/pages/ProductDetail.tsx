@@ -475,7 +475,7 @@ export default function ProductDetail() {
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-gray-500 dark:text-gray-400">ID Odoo</dt>
+                      <dt className="text-gray-500 dark:text-gray-400">ID Système</dt>
                       <dd className="text-gray-900 dark:text-gray-100 font-mono">
                         #{product.id}
                       </dd>

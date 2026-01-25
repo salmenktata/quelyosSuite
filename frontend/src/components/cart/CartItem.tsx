@@ -47,10 +47,10 @@ const CartItem: React.FC<CartItemProps> = ({
     }
   };
 
-  const productName = productName || item.product?.name || 'Produit';
+  const productName = item.product_name || item.product?.name || 'Produit';
   const productImage = item.product_image || item.product?.image_url || '';
-  const priceUnit = priceUnit || item.unit_price || 0;
-  const priceSubtotal = priceSubtotal || item.subtotal || 0;
+  const priceUnit = item.price_unit || item.unit_price || 0;
+  const priceSubtotal = item.price_subtotal || item.subtotal || 0;
 
   const imageUrl = productImage
     ? `${process.env.NEXT_PUBLIC_ODOO_URL}${productImage}`

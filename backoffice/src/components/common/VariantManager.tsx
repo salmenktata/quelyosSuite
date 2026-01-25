@@ -301,7 +301,7 @@ export function VariantManager({
                     {line.create_variant === 'no_variant' && (
                       <span
                         className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 rounded"
-                        title="Cet attribut ne génère pas de variantes. Modifiez sa configuration dans Odoo pour activer les variantes."
+                        title="Cet attribut ne génère pas de variantes. Modifiez sa configuration système pour activer les variantes."
                       >
                         ⚠️ Sans variantes
                       </span>
@@ -325,7 +325,7 @@ export function VariantManager({
                   </div>
                   {line.create_variant === 'no_variant' && (
                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                      Pour générer des variantes, modifiez cet attribut dans Odoo (Configuration &gt; Attributs &gt; Mode de création: "Instantanément")
+                      Pour générer des variantes, modifiez cet attribut dans la configuration système (Configuration &gt; Attributs &gt; Mode de création: "Instantanément")
                     </p>
                   )}
                 </div>

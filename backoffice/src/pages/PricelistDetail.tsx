@@ -365,7 +365,7 @@ export default function PricelistDetail() {
               <p className="text-gray-500 dark:text-gray-400">
                 {searchQuery || filterType !== 'all'
                   ? 'Essayez de modifier vos critères de recherche.'
-                  : 'Les règles de prix sont configurées dans Odoo.'}
+                  : 'Les règles de prix sont configurées dans l'interface d'administration.'}
               </p>
             </div>
           )}
@@ -380,7 +380,7 @@ export default function PricelistDetail() {
                 Modification des règles de prix
               </h4>
               <p className="mt-1 text-sm text-blue-600 dark:text-blue-300">
-                Pour ajouter ou modifier des règles de prix, utilisez l'interface Odoo native qui offre
+                Pour ajouter ou modifier des règles de prix, utilisez l'interface d'administration qui offre
                 des options avancées comme les formules de calcul, les dates de validité et les conditions spécifiques.
               </p>
             </div>
