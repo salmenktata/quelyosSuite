@@ -16,12 +16,14 @@ Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, pari
 1. Modifier code `models/`
 2. Incrémenter version `__manifest__.py`
 3. Alerter avec AskUserQuestion
-4. Après commit : `./upgrade.sh quelyos_api`
+4. Après commit : `/upgrade-odoo`
 
 Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
-## Commandes
-`/polish`, `/parity`, `/coherence`, `/clean`, `/restart-odoo`, `/restart-backoffice`
+## Commandes disponibles
+**DevOps** : `/ship`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`
+**Odoo** : `/upgrade-odoo`, `/restart-odoo`, `/restart-backoffice`, `/restart-all`
+**Qualité** : `/polish`, `/parity`, `/coherence`, `/clean`, `/analyze-page`
 
 ## Essentiels
 1. Lire README.md et LOGME.md en début de session
