@@ -57,9 +57,9 @@ function ThemeToggle({ compact }: { compact: boolean }) {
       title={compact ? (theme === 'light' ? 'Mode sombre' : 'Mode clair') : undefined}
     >
       {theme === 'light' ? (
-        <MoonIcon className="w-4 h-4 flex-shrink-0" />
+        <MoonIcon className="w-[18px] h-[18px] flex-shrink-0" />
       ) : (
-        <SunIcon className="w-4 h-4 flex-shrink-0" />
+        <SunIcon className="w-[18px] h-[18px] flex-shrink-0" />
       )}
       {!compact && (
         <span className="font-medium">{theme === 'light' ? 'Mode sombre' : 'Mode clair'}</span>
@@ -104,18 +104,18 @@ function NavGroupComponent({
     <div>
       <button
         onClick={onToggle}
-        className="flex items-center justify-between w-full px-3 py-1.5 text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
       >
         <span>{group.name}</span>
         {isOpen ? (
-          <ChevronDownIcon className="w-3.5 h-3.5" />
+          <ChevronDownIcon className="w-4 h-4" />
         ) : (
-          <ChevronRightIcon className="w-3.5 h-3.5" />
+          <ChevronRightIcon className="w-4 h-4" />
         )}
       </button>
       <div
         className={`space-y-0.5 overflow-hidden transition-all duration-200 ${
-          isOpen ? 'max-h-[1000px] opacity-100 mb-2' : 'max-h-0 opacity-0'
+          isOpen ? 'max-h-[1000px] opacity-100 mb-3 mt-1' : 'max-h-0 opacity-0'
         }`}
       >
         {group.items.map((item) => (
@@ -161,12 +161,12 @@ function NavItemComponent({
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-indigo-600 dark:bg-indigo-400 rounded-r-full" />
       )}
 
-      <Icon className={`w-4 h-4 flex-shrink-0 ${compact ? 'mx-auto' : ''}`} />
+      <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${compact ? 'mx-auto' : ''}`} />
       {!compact && (
         <span className="flex-1 truncate">{item.name}</span>
       )}
       {!compact && item.badge && (
-        <span className="flex items-center justify-center min-w-[18px] h-4 px-1.5 text-[10px] font-semibold text-white bg-red-500 rounded-full">
+        <span className="flex items-center justify-center min-w-[20px] h-[18px] px-1.5 text-[11px] font-semibold text-white bg-red-500 rounded-full">
           {item.badge}
         </span>
       )}
@@ -191,11 +191,11 @@ export function Layout({ children }: LayoutProps) {
 
   const navGroups: NavGroup[] = [
     {
-      name: 'Vue d\'ensemble',
+      name: 'Tableau de bord',
       defaultOpen: true,
       items: [
         {
-          name: 'Tableau de bord',
+          name: 'Vue d\'ensemble',
           path: '/dashboard',
           icon: HomeIcon,
         },
@@ -207,18 +207,49 @@ export function Layout({ children }: LayoutProps) {
       ],
     },
     {
-      name: 'Ventes',
+      name: 'Boutique',
       defaultOpen: true,
+      items: [
+        {
+          name: 'Ma Boutique',
+          path: '/my-shop',
+          icon: BuildingStorefrontIcon,
+        },
+        {
+          name: 'Configuration Site',
+          path: '/site-config',
+          icon: Cog6ToothIcon,
+        },
+        {
+          name: 'Produits Vedette',
+          path: '/featured',
+          icon: SparklesIcon,
+        },
+        {
+          name: 'Paniers Abandonnés',
+          path: '/abandoned-carts',
+          icon: ShoppingCartIcon,
+        },
+        {
+          name: 'Livraison',
+          path: '/delivery',
+          icon: TruckIcon,
+        },
+        {
+          name: 'Codes Promo',
+          path: '/coupons',
+          icon: TicketIcon,
+        },
+      ],
+    },
+    {
+      name: 'Ventes & CRM',
+      defaultOpen: false,
       items: [
         {
           name: 'Commandes',
           path: '/orders',
           icon: ShoppingCartIcon,
-        },
-        {
-          name: 'Paniers abandonnés',
-          path: '/abandoned-carts',
-          icon: BuildingStorefrontIcon,
         },
         {
           name: 'Clients',
@@ -239,7 +270,7 @@ export function Layout({ children }: LayoutProps) {
     },
     {
       name: 'Catalogue',
-      defaultOpen: true,
+      defaultOpen: false,
       items: [
         {
           name: 'Produits',
@@ -251,11 +282,6 @@ export function Layout({ children }: LayoutProps) {
           path: '/categories',
           icon: TagIcon,
         },
-        {
-          name: 'Produits Vedette',
-          path: '/featured',
-          icon: SparklesIcon,
-        },
       ],
     },
     {
@@ -263,7 +289,7 @@ export function Layout({ children }: LayoutProps) {
       defaultOpen: false,
       items: [
         {
-          name: 'Stock',
+          name: 'Inventaire',
           path: '/stock',
           icon: CubeTransparentIcon,
           badge: stockAlerts > 0 ? stockAlerts : undefined,
@@ -293,37 +319,6 @@ export function Layout({ children }: LayoutProps) {
           name: 'Paiements',
           path: '/payments',
           icon: CreditCardIcon,
-        },
-        {
-          name: 'Codes Promo',
-          path: '/coupons',
-          icon: TicketIcon,
-        },
-      ],
-    },
-    {
-      name: 'Configuration',
-      defaultOpen: false,
-      items: [
-        {
-          name: 'Ma Boutique',
-          path: '/my-shop',
-          icon: BuildingStorefrontIcon,
-        },
-        {
-          name: 'Configuration du site',
-          path: '/site-config',
-          icon: Cog6ToothIcon,
-        },
-        {
-          name: 'Livraison',
-          path: '/delivery',
-          icon: TruckIcon,
-        },
-        {
-          name: 'Abonnements',
-          path: '/subscriptions',
-          icon: DocumentTextIcon,
         },
       ],
     },
@@ -379,7 +374,7 @@ export function Layout({ children }: LayoutProps) {
                 <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent leading-tight">
                   Quelyos
                 </h1>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 -mt-0.5">Backoffice</p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 -mt-0.5 font-medium">Backoffice</p>
               </div>
             </div>
           )}
@@ -423,7 +418,7 @@ export function Layout({ children }: LayoutProps) {
               className="hidden lg:flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-all duration-200 w-full group"
               aria-label="Mode compact"
             >
-              <Bars3Icon className="w-4 h-4 flex-shrink-0" />
+              <Bars3Icon className="w-[18px] h-[18px] flex-shrink-0" />
               <span className="font-medium">Réduire</span>
             </button>
           )}
@@ -434,7 +429,7 @@ export function Layout({ children }: LayoutProps) {
               aria-label="Mode étendu"
               title="Agrandir"
             >
-              <Bars3Icon className="w-4 h-4" />
+              <Bars3Icon className="w-[18px] h-[18px]" />
             </button>
           )}
 
@@ -445,7 +440,7 @@ export function Layout({ children }: LayoutProps) {
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-all duration-200"
             title={isCompact ? 'Déconnexion' : undefined}
           >
-            <ArrowLeftOnRectangleIcon className="w-4 h-4 flex-shrink-0" />
+            <ArrowLeftOnRectangleIcon className="w-[18px] h-[18px] flex-shrink-0" />
             {!isCompact && <span className="font-medium">Déconnexion</span>}
           </Link>
         </div>

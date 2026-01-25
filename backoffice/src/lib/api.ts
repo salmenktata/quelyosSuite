@@ -1547,40 +1547,6 @@ class ApiClient {
     return response.blob()
   }
 
-  // ==================== SUBSCRIPTIONS ====================
-
-  async getSubscriptionPlans() {
-    return this.request<APIResponse<import('../types').SubscriptionPlan[]>>('/api/ecommerce/subscription/plans')
-  }
-
-  async getCurrentSubscription() {
-    return this.request<APIResponse<import('../types').Subscription>>('/api/ecommerce/subscription/current')
-  }
-
-  async createSubscription(data: import('../types').SubscriptionCreateData) {
-    return this.request<APIResponse<import('../types').Subscription>>('/api/ecommerce/subscription/create', data)
-  }
-
-  async upgradeSubscription(planId: number) {
-    return this.request<APIResponse<{ message: string }>>('/api/ecommerce/subscription/upgrade', { plan_id: planId })
-  }
-
-  async cancelSubscription() {
-    return this.request<APIResponse<{ message: string }>>('/api/ecommerce/subscription/cancel')
-  }
-
-  async checkQuota(resourceType: 'users' | 'products' | 'orders') {
-    return this.request<APIResponse<import('../types').SubscriptionUsage>>('/api/ecommerce/subscription/check-quota', { resource_type: resourceType })
-  }
-
-  async getSubscriptions(params?: { limit?: number; offset?: number }) {
-    return this.request<{
-      success: boolean
-      data: import('../types').SubscriptionListItem[]
-      total: number
-    }>('/api/ecommerce/subscription/admin/list', params)
-  }
-
   // ==================== SITE CONFIGURATION ====================
 
   async getSiteConfig() {

@@ -98,6 +98,21 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || 'localhost:3000';
   const domain = extractDomain(hostname);
 
+  // 🚀 MODE DEV : Support query param ?tenant=code
+  const tenantParam = request.nextUrl.searchParams.get('tenant');
+  if (tenantParam && isDevDomain(hostname)) {
+    const response = NextResponse.next();
+    response.cookies.set('tenant_code', tenantParam, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 3600,
+      path: '/',
+    });
+    response.headers.set('x-tenant-code', tenantParam);
+    return response;
+  }
+
   // En développement, utiliser le tenant par défaut ou celui configuré
   if (isDevDomain(hostname)) {
     // Vérifier si un tenant de dev est configuré
