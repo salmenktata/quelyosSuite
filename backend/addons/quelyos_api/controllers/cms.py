@@ -187,18 +187,14 @@ class QuelyCMS(BaseController):
                         }
                     ]
                 }
-            }
+        }
 
-            menu = menus_config.get(code)
-            if not menu:
-                _logger.warning(f"Menu fallback non trouvé: {code}")
-                return {'success': True, 'menu': None}
+        menu = menus_config.get(code)
+        if not menu:
+            _logger.warning(f"Menu fallback non trouvé: {code}")
+            return {'success': True, 'menu': None}
 
-            return {'success': True, 'menu': menu}
-
-        except Exception as e:
-            _logger.error(f"Get menu error: {e}")
-            return {'success': False, 'error': str(e)}
+        return {'success': True, 'menu': menu}
 
     @http.route('/api/ecommerce/menus/list', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def list_menus(self, **kwargs):
