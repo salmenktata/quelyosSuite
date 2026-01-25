@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.0.25',
+    'version': '19.0.1.0.28',
     'category': 'Website',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -27,6 +27,10 @@
         'views/subscription_plan_views.xml',
         'views/tenant_views.xml',
         'views/menu_views.xml',
+        'views/hero_slide_views.xml',
+        'views/promo_banner_views.xml',
+        'views/promo_message_views.xml',
+        'views/trust_badge_views.xml',
     ],
     'installable': True,
     'application': True,

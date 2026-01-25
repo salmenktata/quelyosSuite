@@ -3,70 +3,48 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useHeroSlides } from '@/hooks/useHeroSlides';
 
 interface Slide {
   id: number;
   title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  cta: {
-    text: string;
-    link: string;
-  };
-  ctaSecondary?: {
-    text: string;
-    link: string;
-  };
+  subtitle?: string;
+  description?: string;
+  image_url?: string;
+  cta_text: string;
+  cta_link: string;
+  cta_secondary_text?: string;
+  cta_secondary_link?: string;
 }
 
-const slides: Slide[] = [
+const SLIDE_DURATION = 5000; // 5 seconds per slide
+
+// Fallback slides si aucune donnée backend
+const fallbackSlides: Slide[] = [
   {
     id: 1,
     title: 'Bienvenue sur Le Sportif',
     subtitle: 'Votre boutique sport en ligne',
     description: 'Decouvrez notre collection de produits de sport et d\'equipements de qualite. Des prix competitifs et une livraison rapide partout en Tunisie.',
-    image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=600&fit=crop',
-    cta: {
-      text: 'Voir nos produits',
-      link: '/products',
-    },
-    ctaSecondary: {
-      text: 'Promotions',
-      link: '/products?is_featured=true',
-    },
-  },
-  {
-    id: 2,
-    title: 'Nouveautes 2026',
-    subtitle: 'Collection Printemps-Ete',
-    description: 'Decouvrez les dernieres tendances et innovations pour votre pratique sportive. Qualite premium et designs exclusifs.',
-    image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&h=600&fit=crop',
-    cta: {
-      text: 'Decouvrir',
-      link: '/products?is_new=true',
-    },
-  },
-  {
-    id: 3,
-    title: 'Promotions Exclusives',
-    subtitle: 'Jusqu\'a -60% sur une selection',
-    description: 'Ne manquez pas nos offres limitees sur vos produits preferes. Stock limite, profitez-en maintenant !',
-    image: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1200&h=600&fit=crop',
-    cta: {
-      text: 'Voir les promos',
-      link: '/products?is_featured=true',
-    },
+    image_url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=600&fit=crop',
+    cta_text: 'Voir nos produits',
+    cta_link: '/products',
+    cta_secondary_text: 'Promotions',
+    cta_secondary_link: '/products?is_featured=true',
   },
 ];
 
-const SLIDE_DURATION = 5000; // 5 seconds per slide
-
 export function HeroSlider() {
+  const { slides: apiSlides, loading } = useHeroSlides();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Utiliser slides API ou fallback
+  const slides = apiSlides.length > 0 ? apiSlides : fallbackSlides;
+
+  // ⚠️ TOUS LES HOOKS DOIVENT ÊTRE AVANT LES EARLY RETURNS
 
   // Progress animation
   useEffect(() => {
@@ -103,7 +81,7 @@ export function HeroSlider() {
     }, SLIDE_DURATION);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, slides.length]);
 
   const goToSlide = useCallback((index: number) => {
     if (index === currentSlide) return;
@@ -125,7 +103,7 @@ export function HeroSlider() {
     }, 300);
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
-  }, []);
+  }, [slides.length]);
 
   const prevSlide = useCallback(() => {
     setIsTransitioning(true);
@@ -135,7 +113,21 @@ export function HeroSlider() {
     }, 300);
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
-  }, []);
+  }, [slides.length]);
+
+  // ⚠️ EARLY RETURNS APRÈS TOUS LES HOOKS
+
+  // Masquer la section si aucun slide (pas de fallback)
+  if (!loading && apiSlides.length === 0 && fallbackSlides.length === 0) {
+    return null;
+  }
+
+  // Skeleton loader pendant chargement
+  if (loading) {
+    return (
+      <div className="h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] bg-gray-200 animate-pulse" />
+    );
+  }
 
   return (
     <div
@@ -159,15 +151,17 @@ export function HeroSlider() {
               index === currentSlide ? 'scale-110' : 'scale-100'
             }`}
           >
-            <Image
-              src={slide.image}
-              alt={slide.title}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority={index === 0}
-              loading={index === 0 ? 'eager' : 'lazy'}
-            />
+            {slide.image_url && (
+              <Image
+                src={slide.image_url}
+                alt={slide.title}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={index === 0}
+                loading={index === 0 ? 'eager' : 'lazy'}
+              />
+            )}
             {/* Multi-layer gradient overlay for better text readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
@@ -181,10 +175,12 @@ export function HeroSlider() {
               }`}
             >
               {/* Subtitle Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm px-5 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                {slide.subtitle}
-              </div>
+              {slide.subtitle && (
+                <div className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm px-5 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
+                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                  {slide.subtitle}
+                </div>
+              )}
 
               {/* Title with gradient effect */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
@@ -194,28 +190,30 @@ export function HeroSlider() {
               </h1>
 
               {/* Description */}
-              <p className="text-base sm:text-lg md:text-xl mb-8 text-gray-200 max-w-xl leading-relaxed">
-                {slide.description}
-              </p>
+              {slide.description && (
+                <p className="text-base sm:text-lg md:text-xl mb-8 text-gray-200 max-w-xl leading-relaxed">
+                  {slide.description}
+                </p>
+              )}
 
               {/* CTAs with lesportif.com.tn styling */}
               <div className="flex flex-wrap gap-4">
-                <Link href={slide.cta.link}>
+                <Link href={slide.cta_link}>
                   <button className="group bg-primary text-white px-8 py-3.5 rounded-[20px] font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2">
-                    {slide.cta.text}
+                    {slide.cta_text}
                     <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </button>
                 </Link>
-                {slide.ctaSecondary && (
-                  <Link href={slide.ctaSecondary.link}>
+                {slide.cta_secondary_text && slide.cta_secondary_link && (
+                  <Link href={slide.cta_secondary_link}>
                     <button className="group border-2 border-white text-white px-8 py-3.5 rounded-[20px] font-semibold hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm flex items-center gap-2">
                       <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
                       </svg>
-                      {slide.ctaSecondary.text}
+                      {slide.cta_secondary_text}
                     </button>
                   </Link>
                 )}

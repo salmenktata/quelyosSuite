@@ -3,7 +3,7 @@
 Contrôleurs CMS pour les menus, pages et configuration du site
 """
 import logging
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 from .base import BaseController
 
@@ -495,4 +495,555 @@ class QuelyCMS(BaseController):
 
         except Exception as e:
             _logger.error(f"Update site config error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== HERO SLIDES ====================
+
+    @http.route('/api/ecommerce/hero-slides', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_hero_slides(self, **kwargs):
+        """Liste slides actifs pour homepage (cache 5min côté client)"""
+        try:
+            today = fields.Date.today()
+            slides = request.env['quelyos.hero.slide'].sudo().search([
+                ('active', '=', True),
+                ('start_date', '<=', today),
+                ('end_date', '>=', today)
+            ], order='sequence ASC')
+
+            return {
+                'success': True,
+                'slides': [{
+                    'id': s.id,
+                    'title': s.title,
+                    'subtitle': s.subtitle,
+                    'description': s.description,
+                    'image_url': s.image_url,
+                    'cta_text': s.cta_text,
+                    'cta_link': s.cta_link,
+                    'cta_secondary_text': s.cta_secondary_text,
+                    'cta_secondary_link': s.cta_secondary_link,
+                    'sequence': s.sequence
+                } for s in slides]
+            }
+        except Exception as e:
+            _logger.error(f"Get hero slides error: {e}")
+            return {'success': True, 'slides': []}  # Fallback gracieux
+
+    @http.route('/api/ecommerce/hero-slides/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_hero_slide(self, **kwargs):
+        """Créer slide (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+
+            slide = request.env['quelyos.hero.slide'].sudo().create({
+                'name': params.get('name'),
+                'title': params.get('title'),
+                'subtitle': params.get('subtitle'),
+                'description': params.get('description'),
+                'cta_text': params.get('cta_text'),
+                'cta_link': params.get('cta_link'),
+                'cta_secondary_text': params.get('cta_secondary_text'),
+                'cta_secondary_link': params.get('cta_secondary_link'),
+                'sequence': params.get('sequence', 10),
+                'active': params.get('active', True),
+                'start_date': params.get('start_date'),
+                'end_date': params.get('end_date'),
+            })
+
+            return {'success': True, 'id': slide.id}
+
+        except Exception as e:
+            _logger.error(f"Create hero slide error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_hero_slide(self, slide_id, **kwargs):
+        """Modifier slide (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+
+            slide = request.env['quelyos.hero.slide'].sudo().browse(slide_id)
+            if not slide.exists():
+                return {'success': False, 'error': 'Slide non trouvé'}
+
+            slide.write({k: v for k, v in params.items() if k in [
+                'name', 'title', 'subtitle', 'description', 'cta_text', 'cta_link',
+                'cta_secondary_text', 'cta_secondary_link', 'sequence', 'active',
+                'start_date', 'end_date'
+            ]})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Update hero slide error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_hero_slide(self, slide_id, **kwargs):
+        """Supprimer slide (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            slide = request.env['quelyos.hero.slide'].sudo().browse(slide_id)
+            if not slide.exists():
+                return {'success': False, 'error': 'Slide non trouvé'}
+
+            slide.unlink()
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Delete hero slide error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/hero-slides/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_hero_slides(self, **kwargs):
+        """Réordonner slides (drag & drop)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            slide_ids = params.get('slide_ids', [])
+
+            for index, slide_id in enumerate(slide_ids):
+                slide = request.env['quelyos.hero.slide'].sudo().browse(slide_id)
+                if slide.exists():
+                    slide.write({'sequence': index * 10})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Reorder hero slides error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== PROMO BANNERS ====================
+
+    @http.route('/api/ecommerce/promo-banners', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_promo_banners(self, **kwargs):
+        """Liste bannières actives pour homepage"""
+        try:
+            today = fields.Date.today()
+            banners = request.env['quelyos.promo.banner'].sudo().search([
+                ('active', '=', True),
+                ('start_date', '<=', today),
+                ('end_date', '>=', today)
+            ], order='sequence ASC', limit=2)
+
+            return {
+                'success': True,
+                'banners': [{
+                    'id': b.id,
+                    'title': b.title,
+                    'description': b.description,
+                    'tag': b.tag,
+                    'gradient': b.gradient,
+                    'tag_color': b.tag_color,
+                    'button_bg': b.button_bg,
+                    'image_url': b.image_url,
+                    'cta_text': b.cta_text,
+                    'cta_link': b.cta_link,
+                    'sequence': b.sequence
+                } for b in banners]
+            }
+        except Exception as e:
+            _logger.error(f"Get promo banners error: {e}")
+            return {'success': True, 'banners': []}
+
+    @http.route('/api/ecommerce/promo-banners/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_promo_banner(self, **kwargs):
+        """Créer bannière (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            banner = request.env['quelyos.promo.banner'].sudo().create({
+                'name': params.get('name'),
+                'title': params.get('title'),
+                'description': params.get('description'),
+                'tag': params.get('tag'),
+                'gradient': params.get('gradient', 'blue'),
+                'tag_color': params.get('tag_color', 'blue'),
+                'button_bg': params.get('button_bg', 'white'),
+                'cta_text': params.get('cta_text'),
+                'cta_link': params.get('cta_link'),
+                'sequence': params.get('sequence', 10),
+                'active': params.get('active', True),
+                'start_date': params.get('start_date'),
+                'end_date': params.get('end_date'),
+            })
+
+            return {'success': True, 'id': banner.id}
+
+        except Exception as e:
+            _logger.error(f"Create promo banner error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_promo_banner(self, banner_id, **kwargs):
+        """Modifier bannière (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            banner = request.env['quelyos.promo.banner'].sudo().browse(banner_id)
+            if not banner.exists():
+                return {'success': False, 'error': 'Bannière non trouvée'}
+
+            banner.write({k: v for k, v in params.items() if k in [
+                'name', 'title', 'description', 'tag', 'gradient', 'tag_color',
+                'button_bg', 'cta_text', 'cta_link', 'sequence', 'active',
+                'start_date', 'end_date'
+            ]})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Update promo banner error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_promo_banner(self, banner_id, **kwargs):
+        """Supprimer bannière (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            banner = request.env['quelyos.promo.banner'].sudo().browse(banner_id)
+            if not banner.exists():
+                return {'success': False, 'error': 'Bannière non trouvée'}
+
+            banner.unlink()
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Delete promo banner error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-banners/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_promo_banners(self, **kwargs):
+        """Réordonner bannières"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            banner_ids = params.get('banner_ids', [])
+
+            for index, banner_id in enumerate(banner_ids):
+                banner = request.env['quelyos.promo.banner'].sudo().browse(banner_id)
+                if banner.exists():
+                    banner.write({'sequence': index * 10})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Reorder promo banners error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== PROMO MESSAGES ====================
+
+    @http.route('/api/ecommerce/promo-messages', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_promo_messages(self, **kwargs):
+        """Liste messages actifs pour PromoBar"""
+        try:
+            today = fields.Date.today()
+            messages = request.env['quelyos.promo.message'].sudo().search([
+                ('active', '=', True),
+                ('start_date', '<=', today),
+                ('end_date', '>=', today)
+            ], order='sequence ASC')
+
+            return {
+                'success': True,
+                'messages': [{
+                    'id': m.id,
+                    'text': m.text,
+                    'icon': m.icon,
+                    'sequence': m.sequence
+                } for m in messages]
+            }
+        except Exception as e:
+            _logger.error(f"Get promo messages error: {e}")
+            return {'success': True, 'messages': []}
+
+    @http.route('/api/ecommerce/promo-messages/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_promo_message(self, **kwargs):
+        """Créer message (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            message = request.env['quelyos.promo.message'].sudo().create({
+                'name': params.get('name'),
+                'text': params.get('text'),
+                'icon': params.get('icon', 'truck'),
+                'sequence': params.get('sequence', 10),
+                'active': params.get('active', True),
+                'start_date': params.get('start_date'),
+                'end_date': params.get('end_date'),
+            })
+
+            return {'success': True, 'id': message.id}
+
+        except Exception as e:
+            _logger.error(f"Create promo message error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-messages/<int:message_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_promo_message(self, message_id, **kwargs):
+        """Modifier message (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            message = request.env['quelyos.promo.message'].sudo().browse(message_id)
+            if not message.exists():
+                return {'success': False, 'error': 'Message non trouvé'}
+
+            message.write({k: v for k, v in params.items() if k in [
+                'name', 'text', 'icon', 'sequence', 'active', 'start_date', 'end_date'
+            ]})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Update promo message error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-messages/<int:message_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_promo_message(self, message_id, **kwargs):
+        """Supprimer message (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            message = request.env['quelyos.promo.message'].sudo().browse(message_id)
+            if not message.exists():
+                return {'success': False, 'error': 'Message non trouvé'}
+
+            message.unlink()
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Delete promo message error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/promo-messages/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_promo_messages(self, **kwargs):
+        """Réordonner messages"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            message_ids = params.get('message_ids', [])
+
+            for index, message_id in enumerate(message_ids):
+                message = request.env['quelyos.promo.message'].sudo().browse(message_id)
+                if message.exists():
+                    message.write({'sequence': index * 10})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Reorder promo messages error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== TRUST BADGES ====================
+
+    @http.route('/api/ecommerce/trust-badges', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_trust_badges(self, **kwargs):
+        """Liste badges actifs pour footer"""
+        try:
+            badges = request.env['quelyos.trust.badge'].sudo().search([
+                ('active', '=', True)
+            ], order='sequence ASC', limit=4)
+
+            return {
+                'success': True,
+                'badges': [{
+                    'id': b.id,
+                    'title': b.title,
+                    'subtitle': b.subtitle,
+                    'icon': b.icon,
+                    'sequence': b.sequence
+                } for b in badges]
+            }
+        except Exception as e:
+            _logger.error(f"Get trust badges error: {e}")
+            return {'success': True, 'badges': []}
+
+    @http.route('/api/ecommerce/trust-badges/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_trust_badge(self, **kwargs):
+        """Créer badge (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            badge = request.env['quelyos.trust.badge'].sudo().create({
+                'name': params.get('name'),
+                'title': params.get('title'),
+                'subtitle': params.get('subtitle'),
+                'icon': params.get('icon', 'creditcard'),
+                'sequence': params.get('sequence', 10),
+                'active': params.get('active', True),
+            })
+
+            return {'success': True, 'id': badge.id}
+
+        except Exception as e:
+            _logger.error(f"Create trust badge error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_trust_badge(self, badge_id, **kwargs):
+        """Modifier badge (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            badge = request.env['quelyos.trust.badge'].sudo().browse(badge_id)
+            if not badge.exists():
+                return {'success': False, 'error': 'Badge non trouvé'}
+
+            badge.write({k: v for k, v in params.items() if k in [
+                'name', 'title', 'subtitle', 'icon', 'sequence', 'active'
+            ]})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Update trust badge error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_trust_badge(self, badge_id, **kwargs):
+        """Supprimer badge (ADMIN)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            badge = request.env['quelyos.trust.badge'].sudo().browse(badge_id)
+            if not badge.exists():
+                return {'success': False, 'error': 'Badge non trouvé'}
+
+            badge.unlink()
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Delete trust badge error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/trust-badges/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def reorder_trust_badges(self, **kwargs):
+        """Réordonner badges"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            badge_ids = params.get('badge_ids', [])
+
+            for index, badge_id in enumerate(badge_ids):
+                badge = request.env['quelyos.trust.badge'].sudo().browse(badge_id)
+                if badge.exists():
+                    badge.write({'sequence': index * 10})
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Reorder trust badges error: {e}")
             return {'success': False, 'error': str(e)}

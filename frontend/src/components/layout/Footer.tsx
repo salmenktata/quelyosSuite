@@ -4,6 +4,7 @@ import React, { useState, memo } from 'react';
 import Link from 'next/link';
 import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
 import { DynamicMenu } from '@/components/cms';
+import { useTrustBadges } from '@/hooks/useTrustBadges';
 
 // =============================================================================
 // ICONS
@@ -90,7 +91,15 @@ interface SocialLink {
   icon: React.ReactNode;
 }
 
-const TRUST_BADGES: TrustBadge[] = [
+// Mapping icônes backend → React components
+const iconMap: Record<string, React.FC<{ className?: string }>> = {
+  creditcard: Icons.CreditCard,
+  delivery: Icons.Delivery,
+  shield: Icons.Shield,
+  support: Icons.Support,
+};
+
+const TRUST_BADGES_FALLBACK: TrustBadge[] = [
   {
     icon: Icons.CreditCard,
     title: 'Paiement à la livraison',
@@ -138,23 +147,50 @@ const TrustBadgeItem = memo(({ badge, index }: { badge: TrustBadge; index: numbe
 ));
 TrustBadgeItem.displayName = 'TrustBadgeItem';
 
-const TrustBadgesSection = memo(() => (
-  <section className="bg-gradient-to-b from-primary to-primary-dark py-12 relative overflow-hidden">
-    {/* Decorative elements */}
-    <div className="absolute inset-0 opacity-10">
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary rounded-full blur-3xl" />
-    </div>
+const TrustBadgesSection = memo(() => {
+  const { badges: apiBadges, loading } = useTrustBadges();
 
-    <div className="container mx-auto px-4 relative z-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {TRUST_BADGES.map((badge, index) => (
-          <TrustBadgeItem key={index} badge={badge} index={index} />
-        ))}
+  // Convertir badges API en format TrustBadge
+  const badges = apiBadges.length > 0
+    ? apiBadges.map(b => ({
+        icon: iconMap[b.icon] || Icons.CreditCard,
+        title: b.title,
+        subtitle: b.subtitle || '',
+      }))
+    : TRUST_BADGES_FALLBACK;
+
+  if (loading) {
+    return (
+      <section className="bg-gradient-to-b from-primary to-primary-dark py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-24 rounded-2xl bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-gradient-to-b from-primary to-primary-dark py-12 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary rounded-full blur-3xl" />
       </div>
-    </div>
-  </section>
-));
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {badges.slice(0, 4).map((badge, index) => (
+            <TrustBadgeItem key={index} badge={badge} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 TrustBadgesSection.displayName = 'TrustBadgesSection';
 
 const SocialLinkButton = memo(({ link }: { link: SocialLink }) => {

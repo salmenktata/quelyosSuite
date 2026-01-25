@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { usePromoMessages } from '@/hooks/usePromoMessages';
 
 interface PromoMessage {
   text: string;
@@ -9,18 +10,30 @@ interface PromoMessage {
 }
 
 interface PromoBarProps {
-  messages: PromoMessage[];
+  messages?: PromoMessage[];
   backgroundColor?: string;
   textColor?: string;
   dismissible?: boolean;
 }
 
+// Fallback messages
+const fallbackMessages: PromoMessage[] = [
+  { text: 'Livraison gratuite dès 100 DT', icon: 'truck' },
+  { text: 'Retours gratuits sous 30 jours', icon: 'gift' },
+  { text: 'Support client 7j/7', icon: 'star' },
+  { text: 'Paiement sécurisé', icon: 'clock' },
+];
+
 const PromoBar: React.FC<PromoBarProps> = ({
-  messages,
+  messages: propMessages,
   backgroundColor = 'bg-primary-dark',
   textColor = 'text-white',
   dismissible = true,
 }) => {
+  const { messages: apiMessages, loading } = usePromoMessages();
+
+  // Priorité : props > API > fallback
+  const messages = propMessages || (apiMessages.length > 0 ? apiMessages : fallbackMessages);
   const [isVisible, setIsVisible] = React.useState(true);
   const [isPaused, setIsPaused] = React.useState(false);
 

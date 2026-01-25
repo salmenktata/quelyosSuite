@@ -7,3 +7,7 @@ from . import subscription_quota_mixin
 from . import subscription_plan
 from . import subscription
 from . import tenant
+from . import hero_slide
+from . import promo_banner
+from . import promo_message
+from . import trust_badge

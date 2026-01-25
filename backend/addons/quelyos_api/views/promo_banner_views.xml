@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_promo_banner_tree" model="ir.ui.view">
+        <field name="name">quelyos.promo.banner.tree</field>
+        <field name="model">quelyos.promo.banner</field>
+        <field name="arch" type="xml">
+            <list string="Bannières Promo">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="gradient"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_promo_banner_form" model="ir.ui.view">
+        <field name="name">quelyos.promo.banner.form</field>
+        <field name="model">quelyos.promo.banner</field>
+        <field name="arch" type="xml">
+            <form string="Bannière Promo">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group string="Contenu">
+                        <group>
+                            <field name="title"/>
+                            <field name="description"/>
+                            <field name="tag"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image"/>
+                        </group>
+                    </group>
+                    <group string="Style">
+                        <group>
+                            <field name="gradient"/>
+                            <field name="tag_color"/>
+                        </group>
+                        <group>
+                            <field name="button_bg"/>
+                        </group>
+                    </group>
+                    <group string="Call-to-Action">
+                        <group>
+                            <field name="cta_text"/>
+                            <field name="cta_link"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_promo_banner" model="ir.actions.act_window">
+        <field name="name">Bannières Promo</field>
+        <field name="res_model">quelyos.promo.banner</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_promo_banner"
+              name="Bannières Promo"
+              parent="website.menu_website_configuration"
+              action="action_promo_banner"
+              sequence="51"/>
+</odoo>

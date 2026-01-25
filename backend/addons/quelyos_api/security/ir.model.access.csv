@@ -5,3 +5,11 @@ access_quelyos_subscription_user,access_quelyos_subscription_user,model_quelyos_
 access_quelyos_subscription_manager,access_quelyos_subscription_manager,model_quelyos_subscription,base.group_system,1,1,1,1
 access_quelyos_tenant_public,access_quelyos_tenant_public,model_quelyos_tenant,,1,0,0,0
 access_quelyos_tenant_manager,access_quelyos_tenant_manager,model_quelyos_tenant,base.group_system,1,1,1,1
+access_hero_slide_public,quelyos.hero.slide public,model_quelyos_hero_slide,base.group_public,1,0,0,0
+access_hero_slide_user,quelyos.hero.slide user,model_quelyos_hero_slide,base.group_user,1,1,1,1
+access_promo_banner_public,quelyos.promo.banner public,model_quelyos_promo_banner,base.group_public,1,0,0,0
+access_promo_banner_user,quelyos.promo.banner user,model_quelyos_promo_banner,base.group_user,1,1,1,1
+access_promo_message_public,quelyos.promo.message public,model_quelyos_promo_message,base.group_public,1,0,0,0
+access_promo_message_user,quelyos.promo.message user,model_quelyos_promo_message,base.group_user,1,1,1,1
+access_trust_badge_public,quelyos.trust.badge public,model_quelyos_trust_badge,base.group_public,1,0,0,0
+access_trust_badge_user,quelyos.trust.badge user,model_quelyos_trust_badge,base.group_user,1,1,1,1
