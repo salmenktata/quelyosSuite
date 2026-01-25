@@ -1644,3 +1644,189 @@ class QuelyCMS(BaseController):
         except Exception as e:
             _logger.error(f"Delete SEO metadata error: {e}")
             return {'success': False, 'error': str(e)}
+
+    # ============================================
+    # MARKETING POPUPS
+    # ============================================
+
+    @http.route('/api/ecommerce/popups/active', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_active_popups(self, page_path='/', **kwargs):
+        """Récupérer popups actives pour une page (public, frontend)"""
+        try:
+            popup_obj = request.env['quelyos.marketing.popup'].sudo()
+            popups = popup_obj.get_active_popups(page_path)
+
+            return {'success': True, 'popups': popups}
+
+        except Exception as e:
+            _logger.error(f"Get active popups error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_popups_list(self, **kwargs):
+        """Liste toutes les popups (admin)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            _require_admin(request.env)
+
+            popups = request.env['quelyos.marketing.popup'].sudo().search([])
+
+            return {
+                'success': True,
+                'popups': [{
+                    'id': p.id,
+                    'name': p.name,
+                    'popup_type': p.popup_type,
+                    'title': p.title,
+                    'trigger_type': p.trigger_type,
+                    'target_pages': p.target_pages,
+                    'active': p.active,
+                    'views_count': p.views_count,
+                    'clicks_count': p.clicks_count,
+                    'conversion_rate': p.conversion_rate,
+                } for p in popups]
+            }
+
+        except Exception as e:
+            _logger.error(f"Get popups list error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_popup(self, **kwargs):
+        """Créer popup (admin)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            _require_admin(request.env)
+
+            params = request.jsonrequest
+            popup = request.env['quelyos.marketing.popup'].sudo().create({
+                'name': params.get('name'),
+                'popup_type': params.get('popup_type', 'promotion'),
+                'title': params.get('title'),
+                'subtitle': params.get('subtitle'),
+                'content': params.get('content'),
+                'image_url': params.get('image_url'),
+                'cta_text': params.get('cta_text'),
+                'cta_link': params.get('cta_link'),
+                'cta_color': params.get('cta_color', '#01613a'),
+                'show_close_button': params.get('show_close_button', True),
+                'close_text': params.get('close_text', 'Non merci'),
+                'trigger_type': params.get('trigger_type', 'delay'),
+                'trigger_delay': params.get('trigger_delay', 3),
+                'trigger_scroll_percent': params.get('trigger_scroll_percent', 50),
+                'target_pages': params.get('target_pages', 'all'),
+                'custom_pages': params.get('custom_pages'),
+                'show_once_per_session': params.get('show_once_per_session', True),
+                'show_once_per_user': params.get('show_once_per_user', False),
+                'cookie_duration_days': params.get('cookie_duration_days', 30),
+                'start_date': params.get('start_date'),
+                'end_date': params.get('end_date'),
+                'position': params.get('position', 'center'),
+                'overlay_opacity': params.get('overlay_opacity', 0.5),
+                'max_width': params.get('max_width', 500),
+                'background_color': params.get('background_color', '#ffffff'),
+                'text_color': params.get('text_color', '#000000'),
+                'sequence': params.get('sequence', 10),
+                'active': params.get('active', True),
+            })
+
+            return {'success': True, 'id': popup.id}
+
+        except Exception as e:
+            _logger.error(f"Create popup error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups/<int:popup_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_popup(self, popup_id, **kwargs):
+        """Modifier popup (admin)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            _require_admin(request.env)
+
+            popup = request.env['quelyos.marketing.popup'].sudo().browse(popup_id)
+            if not popup.exists():
+                return {'success': False, 'error': 'Popup non trouvé'}
+
+            params = request.jsonrequest
+            update_data = {}
+
+            allowed_fields = [
+                'name', 'popup_type', 'title', 'subtitle', 'content', 'image_url',
+                'cta_text', 'cta_link', 'cta_color', 'show_close_button', 'close_text',
+                'trigger_type', 'trigger_delay', 'trigger_scroll_percent',
+                'target_pages', 'custom_pages', 'show_once_per_session', 'show_once_per_user',
+                'cookie_duration_days', 'start_date', 'end_date', 'position',
+                'overlay_opacity', 'max_width', 'background_color', 'text_color',
+                'sequence', 'active'
+            ]
+
+            for field in allowed_fields:
+                if field in params:
+                    update_data[field] = params[field]
+
+            popup.write(update_data)
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Update popup error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups/<int:popup_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def delete_popup(self, popup_id, **kwargs):
+        """Supprimer popup (admin)"""
+        try:
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            _require_admin(request.env)
+
+            popup = request.env['quelyos.marketing.popup'].sudo().browse(popup_id)
+            if not popup.exists():
+                return {'success': False, 'error': 'Popup non trouvé'}
+
+            popup.unlink()
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f"Delete popup error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups/<int:popup_id>/track-view', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def track_popup_view(self, popup_id, **kwargs):
+        """Enregistrer vue popup (analytics)"""
+        try:
+            popup = request.env['quelyos.marketing.popup'].sudo().browse(popup_id)
+            if popup.exists():
+                popup.increment_views()
+                return {'success': True}
+            return {'success': False, 'error': 'Popup non trouvé'}
+
+        except Exception as e:
+            _logger.error(f"Track popup view error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/popups/<int:popup_id>/track-click', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def track_popup_click(self, popup_id, **kwargs):
+        """Enregistrer clic CTA popup (analytics)"""
+        try:
+            popup = request.env['quelyos.marketing.popup'].sudo().browse(popup_id)
+            if popup.exists():
+                popup.increment_clicks()
+                return {'success': True}
+            return {'success': False, 'error': 'Popup non trouvé'}
+
+        except Exception as e:
+            _logger.error(f"Track popup click error: {e}")
+            return {'success': False, 'error': str(e)}

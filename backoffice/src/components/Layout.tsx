@@ -281,6 +281,11 @@ export function Layout({ children }: LayoutProps) {
           path: '/seo-metadata',
           icon: ChartBarIcon,
         },
+        {
+          name: 'Popups Marketing',
+          path: '/marketing-popups',
+          icon: SparklesIcon,
+        },
       ],
     },
     {

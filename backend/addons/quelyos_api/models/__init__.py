@@ -13,3 +13,4 @@ from . import promo_message
 from . import trust_badge
 from . import menu
 from . import seo_metadata
+from . import marketing_popup
