@@ -4,6 +4,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
 import { logger } from '@/lib/logger';
 
@@ -91,10 +92,12 @@ export default async function CategoriesPage() {
                     {/* Image catégorie */}
                     <div className="relative h-48 bg-linear-to-br from-gray-100 to-gray-50 overflow-hidden">
                       {category.image_url ? (
-                        <img
+                        <Image
                           src={category.image_url}
                           alt={category.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

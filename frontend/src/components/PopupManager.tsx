@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useMarketingPopups, trackPopupView, trackPopupClick, MarketingPopup } from '@/hooks/useMarketingPopups'
 import { X } from 'lucide-react'
+import { sanitizeHtml } from '@/lib/utils/sanitize'
 
 export function PopupManager() {
   const { popups, loading } = useMarketingPopups()
@@ -127,8 +129,8 @@ export function PopupManager() {
 
         {/* Image */}
         {activePopup.image_url && (
-          <div className="w-full h-48 overflow-hidden rounded-t-lg">
-            <img src={activePopup.image_url} alt={activePopup.title} className="w-full h-full object-cover" />
+          <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+            <Image src={activePopup.image_url} alt={activePopup.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 500px" />
           </div>
         )}
 
@@ -141,7 +143,7 @@ export function PopupManager() {
           {activePopup.content && (
             <div
               className="mb-6 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: activePopup.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(activePopup.content) }}
             />
           )}
 

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCompareStore } from '@/store/compareStore';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice } from '@/lib/utils/formatting';
@@ -125,12 +126,14 @@ export function CompareDrawer({ isOpen, onClose }: CompareDrawerProps) {
                           </button>
 
                           {/* Product Image */}
-                          <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
+                          <div className="relative aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
                             {product.images?.[0] || product.image_url ? (
-                              <img
+                              <Image
                                 src={getProxiedImageUrl(product.images?.[0]?.url || product.image_url)}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
+                                sizes="150px"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">

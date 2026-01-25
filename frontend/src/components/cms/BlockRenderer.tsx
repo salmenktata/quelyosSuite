@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { CmsBlock, FaqItem } from '@/types/cms';
+import { sanitizeHtml, sanitizeSvg } from '@/lib/utils/sanitize';
 
 interface BlockRendererProps {
   block: CmsBlock;
@@ -30,7 +31,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, className =
         <div
           className={containerClass}
           style={style}
-          dangerouslySetInnerHTML={{ __html: block.content || '' }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }}
         />
       );
 
@@ -38,11 +39,15 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, className =
       return (
         <div className={containerClass} style={style}>
           {block.image_url && (
-            <img
-              src={block.image_url}
-              alt={block.name || 'Image'}
-              className="w-full h-auto"
-            />
+            <div className="relative w-full aspect-video">
+              <Image
+                src={block.image_url}
+                alt={block.name || 'Image'}
+                fill
+                className="object-contain"
+                sizes="100vw"
+              />
+            </div>
           )}
         </div>
       );
@@ -143,7 +148,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, className =
         <div
           className={containerClass}
           style={style}
-          dangerouslySetInnerHTML={{ __html: block.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }}
         />
       ) : null;
   }
@@ -233,7 +238,7 @@ const AccordionBlock: React.FC<{ contentJson?: string }> = ({ contentJson }) => 
           </button>
           {openIndex === index && (
             <div className="px-4 py-3 border-t bg-gray-50">
-              <div dangerouslySetInnerHTML={{ __html: item.content }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }} />
             </div>
           )}
         </div>
@@ -247,7 +252,7 @@ const CtaBlock: React.FC<{ block: CmsBlock }> = ({ block }) => {
   return (
     <div className="text-center py-12 px-6 bg-gradient-to-r from-primary to-primary-dark rounded-xl text-white">
       {block.content && (
-        <div className="mb-6" dangerouslySetInnerHTML={{ __html: block.content }} />
+        <div className="mb-6" dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }} />
       )}
       {block.button_text && block.button_url && (
         <BlockButton
@@ -272,7 +277,7 @@ const HeroBlock: React.FC<{ block: CmsBlock }> = ({ block }) => {
       <div className="absolute inset-0 bg-black/50" />
       <div className="relative z-10 max-w-3xl px-6">
         {block.content && (
-          <div dangerouslySetInnerHTML={{ __html: block.content }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }} />
         )}
         {block.button_text && block.button_url && (
           <div className="mt-6">
@@ -309,11 +314,13 @@ const ProductCarouselBlock: React.FC<{ products: ProductItem[] }> = ({ products 
             href={`/products/${product.slug}`}
             className="flex-shrink-0 w-64 group"
           >
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
-              <img
+            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
+              <Image
                 src={product.image_url}
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform"
+                sizes="256px"
               />
             </div>
             <h3 className="font-medium text-gray-900 group-hover:text-primary truncate">
@@ -345,12 +352,14 @@ const CategoryGridBlock: React.FC<{ categories: CategoryItem[] }> = ({ categorie
           href={`/products?category=${category.id}`}
           className="group text-center"
         >
-          <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">
+          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">
             {category.image_url ? (
-              <img
+              <Image
                 src={category.image_url}
                 alt={category.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform"
+                sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-dark">
@@ -387,7 +396,7 @@ const NewsletterBlock: React.FC<{ block: CmsBlock }> = ({ block }) => {
   return (
     <div className="text-center py-8 px-6 bg-gray-100 rounded-xl">
       {block.content && (
-        <div className="mb-4" dangerouslySetInnerHTML={{ __html: block.content }} />
+        <div className="mb-4" dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }} />
       )}
       <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
         <input
@@ -436,7 +445,9 @@ const TestimonialBlock: React.FC<{ contentJson?: string }> = ({ contentJson }) =
           <p className="text-gray-600 mb-4 italic">&ldquo;{t.content}&rdquo;</p>
           <div className="flex items-center gap-3">
             {t.avatar ? (
-              <img src={t.avatar} alt={t.author} className="w-10 h-10 rounded-full" />
+              <div className="relative w-10 h-10">
+                <Image src={t.avatar} alt={t.author} fill className="rounded-full object-cover" sizes="40px" />
+              </div>
             ) : (
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                 {t.author.charAt(0)}
@@ -475,7 +486,7 @@ const FeaturesBlock: React.FC<{ contentJson?: string }> = ({ contentJson }) => {
           {f.icon && (
             <div
               className="w-16 h-16 mx-auto mb-4 text-primary"
-              dangerouslySetInnerHTML={{ __html: f.icon }}
+              dangerouslySetInnerHTML={{ __html: sanitizeSvg(f.icon) }}
             />
           )}
           <h3 className="font-bold text-lg mb-2">{f.title}</h3>

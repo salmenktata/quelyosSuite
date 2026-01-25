@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Motion } from '@/components/common/Motion';
 import { isLightColor } from '@/lib/variants';
 
@@ -57,12 +58,13 @@ export function AttributeImageButton({
     >
       {/* Image thumbnail 56x56 OU pastille de couleur */}
       {image ? (
-        <div className="w-14 h-14 mb-2 bg-gray-50 rounded-lg overflow-hidden">
-          <img
+        <div className="relative w-14 h-14 mb-2 bg-gray-50 rounded-lg overflow-hidden">
+          <Image
             src={image}
             alt={label}
-            className="w-full h-full object-cover"
-            loading="lazy"
+            fill
+            className="object-cover"
+            sizes="56px"
           />
         </div>
       ) : colorHex ? (

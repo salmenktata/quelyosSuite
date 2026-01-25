@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import { Button } from '@/components/common';
@@ -160,12 +161,14 @@ export default function PublicWishlistPage() {
             >
               {/* Product Image */}
               <Link href={`/products/${product.slug}`} className="block">
-                <div className="aspect-square overflow-hidden bg-gray-100">
+                <div className="relative aspect-square overflow-hidden bg-gray-100">
                   {product.image_url ? (
-                    <img
+                    <Image
                       src={product.image_url}
                       alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">

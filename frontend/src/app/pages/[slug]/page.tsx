@@ -1,9 +1,11 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import { useStaticPage } from '@/hooks/useStaticPage'
-import { Navbar } from '@/components/layout/Navbar'
+import Header from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { sanitizeHtml } from '@/lib/utils/sanitize'
 
 export default function StaticPageView() {
   const params = useParams()
@@ -13,7 +15,7 @@ export default function StaticPageView() {
   if (loading) {
     return (
       <>
-        <Navbar />
+        <Header />
         <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-4 py-16">
             <div className="animate-pulse">
@@ -35,7 +37,7 @@ export default function StaticPageView() {
   if (error || !page) {
     return (
       <>
-        <Navbar />
+        <Header />
         <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-4 py-16">
             <div className="text-center">
@@ -68,14 +70,17 @@ export default function StaticPageView() {
 
   return (
     <>
-      <Navbar />
+      <Header />
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16">
         {page.show_header_image && page.header_image_url && (
-          <div className="w-full h-64 mb-8 overflow-hidden">
-            <img
+          <div className="relative w-full h-64 mb-8 overflow-hidden">
+            <Image
               src={page.header_image_url}
               alt={page.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority
             />
           </div>
         )}
@@ -95,7 +100,7 @@ export default function StaticPageView() {
                   )}
                   <div
                     className="prose prose-lg dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: page.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
                   />
                 </div>
 
@@ -104,7 +109,7 @@ export default function StaticPageView() {
                     <div className="sticky top-24 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                       <div
                         className="prose prose-sm dark:prose-invert"
-                        dangerouslySetInnerHTML={{ __html: page.sidebar_content }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.sidebar_content) }}
                       />
                     </div>
                   </aside>
@@ -122,7 +127,7 @@ export default function StaticPageView() {
                 )}
                 <div
                   className="prose prose-lg dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: page.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
                 />
               </>
             )}

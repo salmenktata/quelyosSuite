@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import { Button } from '@/components/common';
@@ -164,12 +165,14 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
             <div>
               {/* Main Image */}
               <div className="relative mb-4 overflow-hidden rounded-lg bg-gray-100">
-                <div className="aspect-square">
+                <div className="relative aspect-square">
                   {product.images.length > 0 ? (
-                    <img
+                    <Image
                       src={product.images[currentImageIndex]}
                       alt={product.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
@@ -220,16 +223,18 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                      className={`relative flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all h-16 w-16 ${
                         currentImageIndex === index
                           ? 'border-primary'
                           : 'border-transparent hover:border-gray-300'
                       }`}
                     >
-                      <img
+                      <Image
                         src={image}
                         alt={`${product.name} ${index + 1}`}
-                        className="h-16 w-16 object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="64px"
                       />
                     </button>
                   ))}

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { Button } from '@/components/common';
 import { Product } from '@quelyos/types';
@@ -188,11 +189,13 @@ export function UpsellModal({
                     className="flex gap-4 rounded-lg border-2 border-primary/20 bg-white p-4 transition-all hover:border-primary/40 hover:shadow-md"
                   >
                     {/* Product Image */}
-                    <Link href={`/products/${product.slug}`} onClick={onClose}>
-                      <img
+                    <Link href={`/products/${product.slug}`} onClick={onClose} className="relative h-24 w-24 flex-shrink-0">
+                      <Image
                         src={product.image_url || product.images?.[0]?.url || '/placeholder-product.png'}
                         alt={product.name}
-                        className="h-24 w-24 flex-shrink-0 rounded-lg object-cover"
+                        fill
+                        className="rounded-lg object-cover"
+                        sizes="96px"
                       />
                     </Link>
 

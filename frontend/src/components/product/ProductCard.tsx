@@ -230,4 +230,4 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   );
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);

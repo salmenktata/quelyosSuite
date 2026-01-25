@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Motion, AnimatePresence, type PanInfo } from '@/components/common/Motion';
 import { useKeyboardNav } from '@/hooks/useKeyboardNav';
 import { carouselItem } from '@/lib/animations/variants';
@@ -234,10 +235,12 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
               `}
               aria-label={`Voir l'image ${index + 1}`}
             >
-              <img
+              <Image
                 src={getProxiedImageUrl(image.url)}
                 alt={image.alt || `${productName} - Image ${index + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="80px"
               />
             </button>
           ))}

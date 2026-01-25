@@ -7,6 +7,7 @@
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Motion } from '@/components/common/Motion';
 import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
 import { formatPrice } from '@/lib/utils/formatting';
@@ -99,10 +100,12 @@ export const RecentlyViewedCarousel: React.FC = () => {
               {/* Image */}
               <div className="relative aspect-square bg-gray-100 overflow-hidden">
                 {product.image_url ? (
-                  <img
+                  <Image
                     src={getProxiedImageUrl(product.image_url)}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 200px"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">

@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { useExitIntent } from '@/hooks/useExitIntent';
 import { logger } from '@/lib/logger';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 interface PopupCampaign {
   id: number;
@@ -244,11 +246,13 @@ export function MarketingPopup() {
 
         {/* Image (if available) */}
         {popup.image_url && (
-          <div className="h-48 overflow-hidden rounded-t-lg">
-            <img
+          <div className="relative h-48 overflow-hidden rounded-t-lg">
+            <Image
               src={popup.image_url}
               alt={popup.title}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 500px"
             />
           </div>
         )}
@@ -261,7 +265,7 @@ export function MarketingPopup() {
           {/* HTML Content */}
           <div
             className="mb-6 text-gray-700"
-            dangerouslySetInnerHTML={{ __html: popup.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(popup.content) }}
           />
 
           {/* Coupon Code (if available) */}

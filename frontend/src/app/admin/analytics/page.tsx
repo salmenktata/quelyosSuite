@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { LoadingPage } from '@/components/common/Loading';
 
@@ -297,11 +298,15 @@ export default function AnalyticsPage() {
                   <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
                     {index + 1}
                   </div>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-12 w-12 flex-shrink-0 rounded object-cover"
-                  />
+                  <div className="relative h-12 w-12 flex-shrink-0">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="rounded object-cover"
+                      sizes="48px"
+                    />
+                  </div>
                   <div className="flex-1 overflow-hidden">
                     <Link
                       href={`/products/${product.slug}`}

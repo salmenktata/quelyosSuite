@@ -6,6 +6,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { odooClient } from '@/lib/odoo/client';
 import type { Product, ProductFilters, Category } from '@quelyos/types';
@@ -553,7 +554,7 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
       <div data-testid="product-card" className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex gap-4 hover:shadow-xl hover:border-primary/20 transition-all duration-300">
         <div className="w-32 h-32 shrink-0 bg-gray-50 rounded-lg overflow-hidden relative">
           {imageUrl ? (
-            <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
+            <Image src={imageUrl} alt={product.name} fill className="object-cover" sizes="128px" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
@@ -639,12 +640,14 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-300 transform hover:-translate-y-1">
         {/* Image avec hover button */}
         <div className="relative aspect-square bg-gray-50 overflow-hidden">
-          <Link href={`/products/${product.slug || product.id}`}>
+          <Link href={`/products/${product.slug || product.id}`} className="block relative w-full h-full">
             {imageUrl ? (
-              <img
+              <Image
                 src={imageUrl}
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">

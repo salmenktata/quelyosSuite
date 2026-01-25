@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { logger } from '@/lib/logger';
 
@@ -255,12 +256,14 @@ export function MegaMenu() {
                         className="group flex gap-3 rounded-lg border border-transparent p-2 transition-all hover:border-gray-200 hover:bg-gray-50"
                       >
                         {/* Product Image */}
-                        <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+                        <div className="relative flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                           {product.image_url ? (
-                            <img
+                            <Image
                               src={product.image_url}
                               alt={product.name}
-                              className="h-full w-full object-cover"
+                              fill
+                              className="object-cover"
+                              sizes="64px"
                             />
                           ) : (
                             <svg

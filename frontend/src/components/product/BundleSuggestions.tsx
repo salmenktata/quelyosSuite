@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { useCartStore } from '@/store/cartStore';
 import type { Product } from '@quelyos/types';
@@ -263,12 +264,14 @@ function ProductBundleCard({
       )}
 
       {/* Image */}
-      <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
+      <div className="relative aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 33vw, 150px"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { useSearchHistoryStore } from '@/store/searchHistoryStore';
 import { logger } from '@/lib/logger';
+import { sanitizeHighlight } from '@/lib/utils/sanitize';
 
 interface Product {
   id: number;
@@ -512,7 +514,7 @@ export function SearchAutocomplete({
                         />
                       </svg>
                       <div className="flex-1">
-                        <div dangerouslySetInnerHTML={{ __html: category.highlight }} />
+                        <div dangerouslySetInnerHTML={{ __html: sanitizeHighlight(category.highlight) }} />
                         {category.parent_name && (
                           <div className="text-xs text-gray-400">
                             dans {category.parent_name}
@@ -548,20 +550,21 @@ export function SearchAutocomplete({
                         onClick={() => setIsOpen(false)}
                       >
                         {/* Product Image */}
-                        <img
-                          src={getImageUrl(product.image)}
-                          alt={product.name}
-                          className="h-12 w-12 shrink-0 rounded-md object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/placeholder-product.svg';
-                          }}
-                        />
+                        <div className="relative h-12 w-12 shrink-0">
+                          <Image
+                            src={getImageUrl(product.image) || '/placeholder-product.svg'}
+                            alt={product.name}
+                            fill
+                            className="rounded-md object-cover"
+                            sizes="48px"
+                          />
+                        </div>
 
                         {/* Product Info */}
                         <div className="flex-1 overflow-hidden">
                           <div
                             className="truncate text-sm font-medium text-gray-900"
-                            dangerouslySetInnerHTML={{ __html: product.highlight }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHighlight(product.highlight) }}
                           />
                           {product.default_code && (
                             <div className="text-xs text-gray-500">

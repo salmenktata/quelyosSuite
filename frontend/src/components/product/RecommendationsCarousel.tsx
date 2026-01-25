@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { odooClient } from '@/lib/odoo/client';
 import { Button } from '@/components/common';
 import type { Product } from '@quelyos/types';
@@ -18,7 +19,7 @@ interface RecommendationsCarouselProps {
  * Product Recommendations Carousel
  * Displays recommended or upsell products in a scrollable carousel
  */
-export function RecommendationsCarousel({
+export const RecommendationsCarousel = memo(function RecommendationsCarousel({
   productId,
   title = 'Vous aimerez aussi',
   limit = 8,
@@ -162,10 +163,12 @@ export function RecommendationsCarousel({
           >
             {/* Product Image */}
             <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-gray-100">
-              <img
+              <Image
                 src={product.images?.[0]?.url || product.image_url || '/placeholder.png'}
                 alt={product.name}
-                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
+                sizes="(max-width: 768px) 50vw, 200px"
               />
 
               {/* Quick View Badge for Upsell */}

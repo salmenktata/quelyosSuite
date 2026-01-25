@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useCartStore } from '@/store/cartStore';
 import { LoadingSpinner } from '@/components/common/Loading';
 
@@ -25,12 +26,14 @@ const OrderSummary: React.FC = () => {
       <div className="space-y-4 mb-6 pb-6 border-b border-gray-200">
         {cart.lines.map((line) => (
           <div key={line.id} className="flex gap-3">
-            <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
+            <div className="relative w-16 h-16 bg-gray-100 rounded flex-shrink-0">
               {line.product_image && (
-                <img
+                <Image
                   src={line.product_image}
-                  alt={line.product_name}
-                  className="w-full h-full object-cover rounded"
+                  alt={line.product_name || 'Produit'}
+                  fill
+                  className="object-cover rounded"
+                  sizes="64px"
                 />
               )}
             </div>
