@@ -92,7 +92,7 @@ export function VariantSwatches({
 
   // Sélectionner les attributs à afficher avec ordre de priorité
   const displayedAttributes = React.useMemo(() => {
-    if (!attributeLines.length) return [];
+    if (!attributeLines?.length) return [];
 
     // Trier les attributs par priorité
     const sortedAttributes = [...attributeLines].sort((a, b) => {

@@ -25,7 +25,7 @@ async function getCategories() {
     }
 
     const data = await response.json();
-    return data.categories || [];
+    return data.data?.categories || data.categories || [];
   } catch (error) {
     logger.error('Error fetching categories:', error);
     return [];

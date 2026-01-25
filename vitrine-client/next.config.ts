@@ -61,6 +61,7 @@ const nextConfig: NextConfig = {
 
   // Turbopack configuration for shared packages
   turbopack: {
+    root: path.resolve(__dirname, '..'), // Workspace root pour accéder aux packages partagés
     resolveAlias: {
       '@quelyos/logger': path.resolve(__dirname, '../shared/logger/src'),
       '@quelyos/types': path.resolve(__dirname, '../shared/types/src'),

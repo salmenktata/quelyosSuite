@@ -382,7 +382,7 @@ function ROICalculator() {
           </div>
 
           <Link
-            href="/register?plan=pro"
+            href="/finance/register?plan=pro"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-400"
           >
             Essayer Pro gratuitement
@@ -792,7 +792,7 @@ export default function PricingPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/register?plan=pro"
+                href="/finance/register?plan=pro"
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-sm font-semibold text-slate-900 shadow-lg shadow-white/10 transition-all hover:-translate-y-0.5 hover:shadow-xl"
               >
                 <Sparkles size={16} />

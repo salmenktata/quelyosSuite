@@ -510,6 +510,13 @@ export default function Header() {
               <LogIn className="h-4 w-4" />
               Connexion Marketing
             </a>
+            <a
+              href={config.superadmin.login}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-600/50 bg-slate-800/50 text-slate-400 transition-all hover:border-slate-500 hover:bg-slate-700/50 hover:text-white"
+              title="Super Admin"
+            >
+              <Shield className="h-4 w-4" />
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -654,6 +661,13 @@ export default function Header() {
                 >
                   <LogIn className="h-4 w-4" />
                   Connexion Marketing
+                </a>
+                <a
+                  href={config.superadmin.login}
+                  className="flex items-center justify-center gap-2 rounded-lg border border-slate-600/50 bg-slate-800/50 px-4 py-2 text-xs font-medium text-slate-400"
+                >
+                  <Shield className="h-3 w-3" />
+                  Super Admin
                 </a>
               </div>
             </nav>

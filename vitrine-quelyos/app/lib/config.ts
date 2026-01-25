@@ -49,7 +49,7 @@ export const config = {
   // URLs Super Admin
   superadmin: {
     app: SUPER_ADMIN_BASE,
-    login: join(SUPER_ADMIN_BASE, "/login"),
+    login: "/superadmin/login",
   },
   // URLs API
   api: {

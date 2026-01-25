@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
+import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { ToastContainer } from "@/components/common/Toast";
 import { AppProviders } from "@/components/providers";
 import { siteConfig } from "@/lib/config/site";
 import { generateOrganizationSchema } from "@/lib/utils/seo";
-
-const Header = dynamic(() => import("@/components/layout/Header").then(mod => mod.Header), { ssr: false });
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,7 +53,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
         <AppProviders>
           <div className="flex flex-col min-h-screen">
-            <Header />
+            <HeaderWrapper />
             <main className="flex-grow">
               {children}
             </main>

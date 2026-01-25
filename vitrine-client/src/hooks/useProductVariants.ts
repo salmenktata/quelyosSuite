@@ -70,13 +70,15 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
         setVariantsData(response);
 
         // Sélectionner automatiquement la première variante en stock
-        const firstInStockVariant = response.variants.find(
-          (v: ExtendedProductVariant) => v.in_stock && (v.qty_available || 0) > 0
-        );
-        const defaultVariant = firstInStockVariant || response.variants[0];
+        if (response.variants?.length) {
+          const firstInStockVariant = response.variants.find(
+            (v: ExtendedProductVariant) => v.in_stock && (v.qty_available || 0) > 0
+          );
+          const defaultVariant = firstInStockVariant || response.variants[0];
 
-        if (defaultVariant) {
-          setSelectedVariantId(defaultVariant.id);
+          if (defaultVariant) {
+            setSelectedVariantId(defaultVariant.id);
+          }
         }
       }
     } catch (error) {
