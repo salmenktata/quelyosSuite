@@ -70,7 +70,7 @@ docker-compose ps
 ⚠️ Conteneurs Docker non démarrés
 
 Veuillez démarrer les conteneurs avant l'upgrade :
-  cd backend && docker-compose up -d
+  cd odoo-backend && docker-compose up -d
 
 Puis relancer : /upgrade-odoo
 ```
@@ -78,7 +78,7 @@ Puis relancer : /upgrade-odoo
 **1.2. Vérifier le module existe**
 
 ```bash
-ls -d odoo-backend/addons/$MODULE
+ls -d odoo-odoo-backend/addons/$MODULE
 ```
 
 **Si module introuvable :**
@@ -120,7 +120,7 @@ AskUserQuestion({
 **2.2. Si backup demandé :**
 
 ```bash
-cd backend
+cd odoo-backend
 mkdir -p backups
 docker-compose exec -T db pg_dump -U odoo -d quelyos | gzip > backups/quelyos_$(date +%Y%m%d_%H%M%S).sql.gz
 ```
@@ -137,7 +137,7 @@ docker-compose exec -T db pg_dump -U odoo -d quelyos | gzip > backups/quelyos_$(
 **3.1. Exécuter la commande d'upgrade via Docker**
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose run --rm odoo odoo -d quelyos -u $MODULE --stop-after-init --db_host=db --db_user=odoo --db_password=odoo
 ```
 
@@ -183,7 +183,7 @@ Temps : X.XXs (YYY queries)
 **4.1. Redémarrer le conteneur Odoo**
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose restart odoo
 ```
 
@@ -409,7 +409,7 @@ if git diff --cached --name-only | grep -q "__manifest__.py"; then
   echo "  /upgrade-odoo"
   echo ""
   echo "Ou manuellement :"
-  echo "  cd backend && docker-compose run --rm odoo odoo -d quelyos -u quelyos_api --stop-after-init"
+  echo "  cd odoo-backend && docker-compose run --rm odoo odoo -d quelyos -u quelyos_api --stop-after-init"
   echo ""
 fi
 
@@ -430,7 +430,7 @@ fi
 ### Upgrade via script shell
 
 ```bash
-cd backend
+cd odoo-backend
 ./upgrade.sh quelyos_api
 ```
 

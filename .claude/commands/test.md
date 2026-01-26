@@ -20,10 +20,10 @@ Exécute une suite de tests complète pour valider le bon fonctionnement du syst
 ### 1. Détection du Scope
 
 Analyser le paramètre fourni pour déterminer quels tests exécuter :
-- `backend` → Tests Pytest dans `backend/tests/`
+- `backend` → Tests Pytest dans `odoo-backend/tests/`
 - `frontend` → Tests Playwright dans `frontend/e2e/`
 - `backoffice` → Tests Playwright dans `backoffice/e2e/`
-- `parity` → Tests de parité spécifiques (`backend/tests/test_api_parity.py` + `frontend/e2e/parity/`)
+- `parity` → Tests de parité spécifiques (`odoo-backend/tests/test_api_parity.py` + `frontend/e2e/parity/`)
 - `[module]` (ex: `products`) → Tests filtré par module
 - Aucun paramètre → Tous les tests
 
@@ -34,7 +34,7 @@ Analyser le paramètre fourni pour déterminer quels tests exécuter :
 #### Backend (Pytest)
 - Vérifier que Odoo est démarré : `docker ps | grep odoo`
 - Vérifier base de données de test disponible
-- Installer dépendances si nécessaire : `cd backend && pip install -r requirements.txt`
+- Installer dépendances si nécessaire : `cd odoo-backend && pip install -r requirements.txt`
 
 #### Frontend/Backoffice (Playwright)
 - Vérifier que serveurs dev tournent (frontend:3000, backoffice:5173)
@@ -46,7 +46,7 @@ Analyser le paramètre fourni pour déterminer quels tests exécuter :
 #### Backend (Pytest)
 
 ```bash
-cd backend
+cd odoo-backend
 pytest tests/ -v --tb=short --maxfail=5
 ```
 
@@ -97,7 +97,7 @@ npx playwright test e2e/ --reporter=list
 
 ```bash
 # Backend
-cd backend && pytest tests/test_api_parity.py -v
+cd odoo-backend && pytest tests/test_api_parity.py -v
 
 # Frontend
 cd frontend && npx playwright test e2e/parity/ --reporter=list
@@ -169,7 +169,7 @@ Pour chaque scope testé, collecter :
 ### P0 - BLOQUANT (2)
 
 #### 1. `test_create_product_creates_in_odoo_db` (backend)
-- **Fichier** : `backend/tests/test_api_parity.py:45`
+- **Fichier** : `odoo-backend/tests/test_api_parity.py:45`
 - **Erreur** : `AssertionError: Product not found in Odoo DB after API creation`
 - **Cause probable** : API create ne commit pas en DB ou transaction rollback
 - **Action** : Vérifier méthode `create()` dans `controllers/main.py`
@@ -219,13 +219,13 @@ Pour chaque scope testé, collecter :
 **Si patterns communs détectés, proposer fixes automatiques :**
 
 **Exemple : Tous tests échouent avec "Connection refused"**
-→ Proposer : `cd backend && docker-compose up -d`
+→ Proposer : `cd odoo-backend && docker-compose up -d`
 
 **Exemple : Tests timeout sur API**
 → Proposer : Augmenter timeout Playwright (`test.setTimeout(60000)`)
 
 **Exemple : Tests parité échouent sur champ manquant**
-→ Proposer : `cd backend && ./upgrade.sh quelyos_api`
+→ Proposer : `cd odoo-backend && ./upgrade.sh quelyos_api`
 
 ### 8. Intégration CI/CD (Bonus)
 
@@ -244,7 +244,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run backend tests
-        run: cd backend && pytest tests/ -v
+        run: cd odoo-backend && pytest tests/ -v
 
   frontend:
     runs-on: ubuntu-latest

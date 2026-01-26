@@ -21,6 +21,7 @@ import Stock from './pages/Stock'
 import Inventory from './pages/Inventory'
 import StockMoves from './pages/StockMoves'
 import StockTransfers from './pages/StockTransfers'
+import StockLocations from './pages/StockLocations'
 import DeliveryMethods from './pages/DeliveryMethods'
 import SiteConfig from './pages/SiteConfig'
 import Payments from './pages/Payments'
@@ -254,6 +255,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <StockTransfers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/locations"
+                element={
+                  <ProtectedRoute>
+                    <StockLocations />
                   </ProtectedRoute>
                 }
               />

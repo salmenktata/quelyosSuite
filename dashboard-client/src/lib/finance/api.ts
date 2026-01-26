@@ -3,9 +3,9 @@
  * Appelle le backend Odoo via le proxy Vite
  */
 
-// Utiliser des URLs relatives pour passer par le proxy Vite
-// Le proxy redirige /api/finance vers http://localhost:8069/api/ecommerce/finance
-const API_BASE_URL = ''
+// En développement, appeler directement Odoo avec CORS
+// En production, utiliser les URLs relatives (proxy Next.js)
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:8069' : ''
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -36,13 +36,8 @@ export async function api<T = unknown>(
   endpoint: string,
   options: ApiOptions = {}
 ): Promise<T> {
-  // Utiliser session_id pour l'auth Odoo
+  // Utiliser session_id pour l'auth Odoo (optionnel car endpoints sont auth='public')
   const sessionId = localStorage.getItem('session_id')
-
-  // Skip API call if no session - throw silently catchable error
-  if (!sessionId) {
-    throw new AuthenticationError()
-  }
 
   const { method = 'GET', body, headers = {} } = options
 
@@ -63,7 +58,7 @@ export async function api<T = unknown>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/finance${endpoint}`, fetchOptions)
+    const response = await fetch(`${API_BASE_URL}/api/ecommerce/finance${endpoint}`, fetchOptions)
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))

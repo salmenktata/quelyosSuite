@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to Finance
   if (shouldProxyFinance) {
-    const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:3007';
+    const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
 
     // Construire l'URL cible en remplaçant /finance par la racine Finance
     const targetPath = pathname.replace('/finance', '');
@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to Marketing
   if (shouldProxyMarketing) {
-    const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_APP_URL || 'http://localhost:3002';
+    const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_APP_URL || 'http://localhost:5175';
 
     // Construire l'URL cible en remplaçant /marketing par la racine Marketing
     // Construire l'URL cible en remplaçant /marketing par la racine Marketing

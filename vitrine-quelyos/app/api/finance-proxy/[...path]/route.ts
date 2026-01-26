@@ -8,7 +8,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { path: string[] } }
 ) {
-  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:3007';
+  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
   const path = params.path?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;
 
@@ -40,7 +40,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { path: string[] } }
 ) {
-  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:3007';
+  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
   const path = params.path?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;
 

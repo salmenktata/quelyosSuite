@@ -13,14 +13,13 @@ import { useToast } from '../contexts/ToastContext'
 import { api } from '../lib/api'
 import { logger } from '@quelyos/logger'
 import { ExportStockModal } from '../components/stock/ExportStockModal'
+import { StockAdjustmentModal } from '../components/stock/StockAdjustmentModal'
 import { VariantStockTable } from '../components/stock/VariantStockTable'
 import {
   ExclamationTriangleIcon,
   ShoppingBagIcon,
   CubeIcon,
   CheckIcon,
-  XMarkIcon,
-  PencilIcon,
   ArrowDownTrayIcon,
   Squares2X2Icon,
   ArrowLeftIcon,
@@ -35,9 +34,8 @@ export default function Stock() {
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'in_stock' | 'low_stock' | 'out_of_stock'>('all')
-  const [editingProductId, setEditingProductId] = useState<number | null>(null)
-  const [editingQuantity, setEditingQuantity] = useState<string>('')
   const [showExportModal, setShowExportModal] = useState(false)
+  const [adjustmentModalProduct, setAdjustmentModalProduct] = useState<StockProduct | null>(null)
   const [selectedProductForVariants, setSelectedProductForVariants] = useState<{
     id: number
     name: string
@@ -109,34 +107,6 @@ export default function Stock() {
   }
 
   // Actions
-  const handleStartEdit = (productId: number, currentQty: number) => {
-    setEditingProductId(productId)
-    setEditingQuantity(currentQty.toString())
-  }
-
-  const handleCancelEdit = () => {
-    setEditingProductId(null)
-    setEditingQuantity('')
-  }
-
-  const handleSaveEdit = async (productId: number) => {
-    const quantity = parseFloat(editingQuantity)
-
-    if (isNaN(quantity) || quantity < 0) {
-      toast.error('Quantité invalide')
-      return
-    }
-
-    try {
-      await updateStockMutation.mutateAsync({ productId, quantity })
-      toast.success('Stock mis à jour avec succès')
-      setEditingProductId(null)
-      setEditingQuantity('')
-    } catch (error) {
-      toast.error('Erreur lors de la mise à jour du stock')
-    }
-  }
-
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
     setPage(0) // Reset pagination
@@ -734,30 +704,18 @@ export default function Stock() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {editingProductId === product.id ? (
-                            <Input
-                              type="number"
-                              value={editingQuantity}
-                              onChange={(e) => setEditingQuantity(e.target.value)}
-                              className="w-24"
-                              min="0"
-                              step="1"
-                              autoFocus
-                            />
-                          ) : (
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {product.qty_available} unités
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                              {product.qty_available} unités
+                            </span>
+                            {product.incoming_qty > 0 || product.outgoing_qty > 0 ? (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {product.incoming_qty > 0 && `+${product.incoming_qty} entrant`}
+                                {product.incoming_qty > 0 && product.outgoing_qty > 0 && ' / '}
+                                {product.outgoing_qty > 0 && `-${product.outgoing_qty} sortant`}
                               </span>
-                              {product.incoming_qty > 0 || product.outgoing_qty > 0 ? (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {product.incoming_qty > 0 && `+${product.incoming_qty} entrant`}
-                                  {product.incoming_qty > 0 && product.outgoing_qty > 0 && ' / '}
-                                  {product.outgoing_qty > 0 && `-${product.outgoing_qty} sortant`}
-                                </span>
-                              ) : null}
-                            </div>
-                          )}
+                            ) : null}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge variant={getStockBadgeVariant(product.stock_status)}>
@@ -770,45 +728,22 @@ export default function Stock() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {editingProductId === product.id ? (
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleSaveEdit(product.id)}
-                                disabled={updateStockMutation.isPending}
-                                className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 disabled:opacity-50"
-                                title="Sauvegarder"
-                              >
-                                <CheckIcon className="h-5 w-5" />
-                              </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                disabled={updateStockMutation.isPending}
-                                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 disabled:opacity-50"
-                                title="Annuler"
-                              >
-                                <XMarkIcon className="h-5 w-5" />
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() =>
-                                  handleStartEdit(product.id, product.qty_available)
-                                }
-                                className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-                                title="Modifier le stock"
-                              >
-                                <PencilIcon className="h-5 w-5" />
-                              </button>
-                              <button
-                                onClick={() => handleViewVariants(product)}
-                                className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
-                                title="Voir les variantes"
-                              >
-                                <Squares2X2Icon className="h-5 w-5" />
-                              </button>
-                            </div>
-                          )}
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setAdjustmentModalProduct(product)}
+                              className="px-3 py-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                              title="Ajuster le stock"
+                            >
+                              Ajuster
+                            </button>
+                            <button
+                              onClick={() => handleViewVariants(product)}
+                              className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                              title="Voir les variantes"
+                            >
+                              <Squares2X2Icon className="h-5 w-5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1233,6 +1168,16 @@ export default function Stock() {
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
       />
+
+      {/* Modal Ajustement Stock */}
+      {adjustmentModalProduct && (
+        <StockAdjustmentModal
+          isOpen={!!adjustmentModalProduct}
+          onClose={() => setAdjustmentModalProduct(null)}
+          product={adjustmentModalProduct}
+          onSuccess={() => setAdjustmentModalProduct(null)}
+        />
+      )}
     </Layout>
   )
 }

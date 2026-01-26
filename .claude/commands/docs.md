@@ -50,11 +50,11 @@ Analyse et synchronise automatiquement les versions mentionnées dans la documen
 
 **1.3. Backend Odoo**
 ```bash
-# Lire backend/addons/quelyos_api/__manifest__.py
+# Lire odoo-backend/addons/quelyos_api/__manifest__.py
 - version (ex: 19.0.1.0.22)
 - Extraire version Odoo (19.0)
 
-# Lire backend/docker-compose.yml
+# Lire odoo-backend/docker-compose.yml
 - odoo:19
 - postgres:15
 - python (extraire depuis Dockerfile si disponible)
@@ -77,7 +77,7 @@ Analyse et synchronise automatiquement les versions mentionnées dans la documen
 # Documentation principale
 README.md
 CLAUDE.md
-backend/DEVELOPMENT.md
+odoo-backend/DEVELOPMENT.md
 frontend/README.md
 backoffice/README.md
 
@@ -226,7 +226,7 @@ enum InconsistencyLevel {
 
 ### ✅ COHÉRENT - Versions Alignées
 
-- ✅ **Odoo** : 19 Community (backend/__manifest__.py ↔ README.md)
+- ✅ **Odoo** : 19 Community (odoo-backend/__manifest__.py ↔ README.md)
 - ✅ **PostgreSQL** : 15 (docker-compose.yml ↔ README.md)
 - ✅ **TypeScript** : 5 (frontend + backoffice ↔ docs)
 - ✅ **Zod** : 4.3.6 (frontend + backoffice ↔ cohérent)
@@ -266,14 +266,14 @@ enum InconsistencyLevel {
 }
 ```
 
-#### Backend (backend/addons/quelyos_api/__manifest__.py)
+#### Backend (odoo-backend/addons/quelyos_api/__manifest__.py)
 ```python
 {
   "version": "19.0.1.0.22",   // Odoo 19 ✅ OK
 }
 ```
 
-#### Backend (backend/docker-compose.yml)
+#### Backend (odoo-backend/docker-compose.yml)
 ```yaml
 odoo:19                       // ✅ OK
 postgres:15                   // ✅ OK
@@ -361,7 +361,7 @@ AskUserQuestion({
 
 1. **README.md** - Documentation principale (la plus visible)
 2. **CLAUDE.md** - Instructions Claude
-3. **backend/DEVELOPMENT.md** - Documentation technique
+3. **odoo-backend/DEVELOPMENT.md** - Documentation technique
 4. **Autres fichiers .md** - Docs secondaires
 
 **6.3. Utilisation de l'outil Edit**
@@ -460,7 +460,7 @@ npm install react@19.2.3 react-dom@19.2.3
 |---------|---------------|-------------------|
 | README.md | 3 remplacements | Next.js, React, Tailwind |
 | CLAUDE.md | 2 remplacements | React, Node.js |
-| backend/DEVELOPMENT.md | 1 remplacement | PostgreSQL |
+| odoo-backend/DEVELOPMENT.md | 1 remplacement | PostgreSQL |
 
 **Total** : 6 versions mises à jour dans 3 fichiers
 
@@ -584,7 +584,7 @@ jq '.dependencies.next' frontend/package.json
 jq '.dependencies.react' backoffice/package.json
 
 # Odoo
-grep "version" backend/addons/quelyos_api/__manifest__.py
+grep "version" odoo-backend/addons/quelyos_api/__manifest__.py
 ```
 
 ### Comparaison inter-projets

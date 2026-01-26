@@ -151,7 +151,7 @@ grep -rE "(api_key|apiKey|secret|password|token).*=.*['\"]" \
 
 **Scanner requêtes SQL directes :**
 ```bash
-grep -r "cr\\.execute\\|self\\._cr\\.execute" backend/addons/quelyos_api/ \
+grep -r "cr\\.execute\\|self\\._cr\\.execute" odoo-backend/addons/quelyos_api/ \
   --include="*.py" -B 2 -A 2
 ```
 
@@ -173,7 +173,7 @@ cr.execute("SELECT * FROM product_template WHERE name = %s", (user_input,))
 
 **Scanner usage `sudo()` :**
 ```bash
-grep -r "\\.sudo()" backend/addons/quelyos_api/ --include="*.py" -n -B 2 -A 5
+grep -r "\\.sudo()" odoo-backend/addons/quelyos_api/ --include="*.py" -n -B 2 -A 5
 ```
 
 **Vérifier :**
@@ -197,7 +197,7 @@ product.sudo().write({'name': validated_input})  # OK si raison documentée
 
 **Scanner endpoints API sans validation :**
 ```bash
-grep -r "@http\\.route" backend/addons/quelyos_api/controllers/ \
+grep -r "@http\\.route" odoo-backend/addons/quelyos_api/controllers/ \
   --include="*.py" -A 20 | grep -v "if not\\|raise.*Error\\|validate"
 ```
 
@@ -214,7 +214,7 @@ grep -r "@http\\.route" backend/addons/quelyos_api/controllers/ \
 
 **Scanner retours d'erreur bruts :**
 ```bash
-grep -r "except.*:" backend/addons/quelyos_api/ --include="*.py" -A 5 | \
+grep -r "except.*:" odoo-backend/addons/quelyos_api/ --include="*.py" -A 5 | \
   grep "str(e)\\|repr(e)\\|traceback"
 ```
 
@@ -261,7 +261,7 @@ npm audit fix --force  # Force upgrade (risque breaking changes)
 #### 5.2. Audit Python (Backend)
 
 ```bash
-cd backend
+cd odoo-backend
 pip install safety
 safety check --json
 ```
@@ -274,7 +274,7 @@ safety check --json
 
 **Lister tous les endpoints publics :**
 ```bash
-grep -r "@http\\.route.*auth='public'" backend/addons/quelyos_api/ \
+grep -r "@http\\.route.*auth='public'" odoo-backend/addons/quelyos_api/ \
   --include="*.py" -B 2 -A 1
 ```
 
@@ -290,7 +290,7 @@ grep -r "@http\\.route.*auth='public'" backend/addons/quelyos_api/ \
 
 **Vérifier configuration CORS :**
 ```bash
-grep -r "Access-Control-Allow-Origin" backend/addons/quelyos_api/ \
+grep -r "Access-Control-Allow-Origin" odoo-backend/addons/quelyos_api/ \
   --include="*.py" -n
 ```
 
@@ -310,7 +310,7 @@ if origin in allowed_origins:
 
 **Vérifier protection rate limiting :**
 ```bash
-grep -r "rate.*limit\\|throttle" backend/addons/quelyos_api/ --include="*.py" -n
+grep -r "rate.*limit\\|throttle" odoo-backend/addons/quelyos_api/ --include="*.py" -n
 ```
 
 **Violations P1 :**
@@ -366,7 +366,7 @@ logger.error('Erreur chargement données:', error); // Masqué en production
 
 ### 2. SQL Injection possible dans recherche produits
 
-**Fichier** : `backend/addons/quelyos_api/controllers/main.py:234`
+**Fichier** : `odoo-backend/addons/quelyos_api/controllers/main.py:234`
 
 **Code problématique** :
 ```python
@@ -392,7 +392,7 @@ request.env.cr.execute(
 
 ### 3. Endpoint admin accessible sans authentification
 
-**Fichier** : `backend/addons/quelyos_api/controllers/main.py:456`
+**Fichier** : `odoo-backend/addons/quelyos_api/controllers/main.py:456`
 
 **Code problématique** :
 ```python
@@ -424,7 +424,7 @@ def delete_product(self, product_id):
 
 ### 4. CORS trop permissif
 
-**Fichier** : `backend/addons/quelyos_api/controllers/main.py:12`
+**Fichier** : `odoo-backend/addons/quelyos_api/controllers/main.py:12`
 
 **Code problématique** :
 ```python

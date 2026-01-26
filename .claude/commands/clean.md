@@ -338,7 +338,7 @@ cd backoffice && npm run build
 cd backoffice && npm run lint
 
 # Backend
-cd backend && docker-compose exec odoo python -c "print('Odoo OK')"
+cd odoo-backend && docker-compose exec odoo python -c "print('Odoo OK')"
 ```
 
 **5.2. Vérification git status**

@@ -21,7 +21,7 @@ Relance l'intégralité des services du projet Quelyos ERP : Backend Odoo (8069)
 5. Vérifier que tous les ports sont libérés
 
 ### Étape 2 : Relancer Backend Odoo
-1. Se placer dans `odoo-backend/`
+1. Se placer dans `odoo-odoo-backend/`
 2. Démarrer les conteneurs Docker avec `docker-compose up -d`
 3. Attendre que Odoo soit prêt (~10-30s)
 4. Confirmer que l'API est accessible sur http://localhost:8069/

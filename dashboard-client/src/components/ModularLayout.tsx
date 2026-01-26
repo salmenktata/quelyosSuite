@@ -42,6 +42,7 @@ import {
   ArrowRightLeft,
   Warehouse,
   ClipboardList,
+  MapPin,
   // CRM
   UserCircle,
   Receipt,
@@ -230,9 +231,11 @@ const MODULES: Module[] = [
         title: 'Inventaire',
         items: [
           { name: 'Stock', path: '/stock', icon: Boxes },
+          { name: 'Inventaire Physique', path: '/inventory', icon: ClipboardList },
           { name: 'Mouvements', path: '/stock/moves', icon: ArrowRightLeft },
           { name: 'Transferts', path: '/stock/transfers', icon: Truck },
           { name: 'Entrepôts', path: '/warehouses', icon: Warehouse },
+          { name: 'Emplacements', path: '/stock/locations', icon: MapPin },
         ],
       },
     ],

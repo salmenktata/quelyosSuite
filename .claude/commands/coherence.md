@@ -51,7 +51,7 @@ Frontend (Next.js 16 - E-commerce)
 **Analyser les contrôleurs API Odoo** :
 
 ```bash
-odoo-backend/addons/quelyos_api/controllers/
+odoo-odoo-backend/addons/quelyos_api/controllers/
 ├── main.py                    # Controller principal
 ├── products.py                # Endpoints produits
 ├── orders.py                  # Endpoints commandes
@@ -83,7 +83,7 @@ odoo-backend/addons/quelyos_api/controllers/
 **Analyser les appels API côté Frontend (Next.js)** :
 
 ```bash
-frontend/src/
+vitrine-client/src/
 ├── app/                       # Pages Next.js (App Router)
 ├── components/                # Composants React
 ├── lib/                       # Services API
@@ -107,8 +107,8 @@ frontend/src/
 ```markdown
 | Endpoint Appelé | Fichier Source | Ligne | Type Opération |
 |-----------------|----------------|-------|----------------|
-| POST /api/ecommerce/products | frontend/src/lib/products.ts | 12 | Fetch liste produits |
-| POST /api/ecommerce/cart/add | frontend/src/stores/cartStore.ts | 45 | Ajouter au panier |
+| POST /api/ecommerce/products | vitrine-client/src/lib/products.ts | 12 | Fetch liste produits |
+| POST /api/ecommerce/cart/add | vitrine-client/src/stores/cartStore.ts | 45 | Ajouter au panier |
 | ... | ... | ... | ... |
 ```
 
@@ -117,7 +117,7 @@ frontend/src/
 **Analyser les appels API côté Backoffice (React + Vite)** :
 
 ```bash
-backoffice/src/
+dashboard-client/src/
 ├── pages/                     # Pages admin
 ├── components/                # Composants UI
 ├── hooks/                     # React Query hooks
@@ -132,9 +132,9 @@ backoffice/src/
 ```markdown
 | Endpoint Appelé | Fichier Source | Ligne | Type Opération |
 |-----------------|----------------|-------|----------------|
-| POST /api/ecommerce/products | backoffice/src/hooks/useProducts.ts | 18 | Fetch liste produits admin |
-| POST /api/ecommerce/products/create | backoffice/src/pages/Products.tsx | 87 | Créer nouveau produit |
-| POST /api/ecommerce/products/<id>/update | backoffice/src/pages/Products.tsx | 134 | Modifier produit existant |
+| POST /api/ecommerce/products | dashboard-client/src/hooks/useProducts.ts | 18 | Fetch liste produits admin |
+| POST /api/ecommerce/products/create | dashboard-client/src/pages/Products.tsx | 87 | Créer nouveau produit |
+| POST /api/ecommerce/products/<id>/update | dashboard-client/src/pages/Products.tsx | 134 | Modifier produit existant |
 | ... | ... | ... | ... |
 ```
 
@@ -144,8 +144,8 @@ backoffice/src/
 
 1. **Analyser les types TypeScript** :
    ```bash
-   frontend/src/types/index.ts
-   backoffice/src/types/index.ts
+   vitrine-client/src/types/index.ts
+   dashboard-client/src/types/index.ts
    ```
 
 2. **Comparer avec les réponses API Backend** :
@@ -172,8 +172,8 @@ backoffice/src/
 
 1. **Analyser les schémas Zod** (si utilisés) :
    ```bash
-   frontend/src/lib/validations/
-   backoffice/src/lib/validations/
+   vitrine-client/src/lib/validations/
+   dashboard-client/src/lib/validations/
    ```
 
 2. **Comparer avec** :
@@ -238,8 +238,8 @@ backoffice/src/
 ```markdown
 | Endpoint Appelé (Inexistant) | Fichier Source | Ligne | Impact | Action Requise |
 |------------------------------|----------------|-------|--------|----------------|
-| POST /api/ecommerce/products/duplicate | backoffice/src/pages/Products.tsx | 234 | Fonctionnalité cassée 🔴 | Créer endpoint backend |
-| GET /api/ecommerce/customers/stats | backoffice/src/pages/Dashboard.tsx | 67 | Dashboard incomplet 🟡 | Créer endpoint ou calculer côté client |
+| POST /api/ecommerce/products/duplicate | dashboard-client/src/pages/Products.tsx | 234 | Fonctionnalité cassée 🔴 | Créer endpoint backend |
+| GET /api/ecommerce/customers/stats | dashboard-client/src/pages/Dashboard.tsx | 67 | Dashboard incomplet 🟡 | Créer endpoint ou calculer côté client |
 | ... | ... | ... | ... | ... |
 ```
 
@@ -502,9 +502,9 @@ Total : XXh
 
 | Endpoint Backend | Utilisé Frontend | Utilisé Backoffice | Statut |
 |------------------|------------------|--------------------|--------|
-| POST /api/ecommerce/products | ✅ frontend/src/lib/products.ts:12 | ✅ backoffice/src/hooks/useProducts.ts:18 | ✅ Utilisé |
-| POST /api/ecommerce/products/create | ❌ | ✅ backoffice/src/pages/Products.tsx:87 | ✅ Utilisé |
-| POST /api/ecommerce/products/<id>/delete | ❌ | ✅ backoffice/src/pages/Products.tsx:156 | ✅ Utilisé |
+| POST /api/ecommerce/products | ✅ vitrine-client/src/lib/products.ts:12 | ✅ dashboard-client/src/hooks/useProducts.ts:18 | ✅ Utilisé |
+| POST /api/ecommerce/products/create | ❌ | ✅ dashboard-client/src/pages/Products.tsx:87 | ✅ Utilisé |
+| POST /api/ecommerce/products/<id>/delete | ❌ | ✅ dashboard-client/src/pages/Products.tsx:156 | ✅ Utilisé |
 | POST /api/ecommerce/legacy/old_endpoint | ❌ | ❌ | 🔴 Orphelin |
 | ... | ... | ... | ... |
 
@@ -512,8 +512,8 @@ Total : XXh
 
 | Endpoint Appelé (Inexistant) | Fichier Source | Ligne | Impact |
 |------------------------------|----------------|-------|--------|
-| POST /api/ecommerce/products/duplicate | backoffice/src/pages/Products.tsx | 234 | 🔴 CRITIQUE - Fonctionnalité cassée |
-| GET /api/ecommerce/analytics/revenue | backoffice/src/pages/Dashboard.tsx | 45 | 🟡 IMPORTANT - Dashboard incomplet |
+| POST /api/ecommerce/products/duplicate | dashboard-client/src/pages/Products.tsx | 234 | 🔴 CRITIQUE - Fonctionnalité cassée |
+| GET /api/ecommerce/analytics/revenue | dashboard-client/src/pages/Dashboard.tsx | 45 | 🟡 IMPORTANT - Dashboard incomplet |
 | ... | ... | ... | ... |
 
 ---
@@ -580,13 +580,13 @@ Total : XXh
 #### 1. Endpoints Appelés Inexistants (Fonctionnalités Cassées)
 
 1. **POST /api/ecommerce/products/duplicate**
-   - Appelé dans : backoffice/src/pages/Products.tsx:234
+   - Appelé dans : dashboard-client/src/pages/Products.tsx:234
    - Impact : Bouton "Dupliquer" ne fonctionne pas 🔴
    - Solution : Créer endpoint backend utilisant `product.template.copy()`
    - Effort : Faible (< 1h)
 
 2. **DELETE /api/ecommerce/categories/<id>**
-   - Appelé dans : backoffice/src/pages/Categories.tsx:178
+   - Appelé dans : dashboard-client/src/pages/Categories.tsx:178
    - Impact : Impossible supprimer catégories 🔴
    - Solution : Créer endpoint backend utilisant `product.category.unlink()`
    - Effort : Faible (< 1h)
@@ -614,11 +614,11 @@ Total : XXh
 
 #### 1. Endpoints Orphelins (Code Mort)
 
-1. **POST /api/ecommerce/legacy/old_endpoint** (odoo-backend/addons/quelyos_api/controllers/main.py:456)
+1. **POST /api/ecommerce/legacy/old_endpoint** (odoo-odoo-backend/addons/quelyos_api/controllers/main.py:456)
    - Aucun appel trouvé
    - Action : Supprimer après validation (possible dead code post-refactoring)
 
-2. **GET /api/ecommerce/debug/stats** (odoo-backend/addons/quelyos_api/controllers/main.py:789)
+2. **GET /api/ecommerce/debug/stats** (odoo-odoo-backend/addons/quelyos_api/controllers/main.py:789)
    - Endpoint debug exposé en production
    - Action : Déplacer vers `/internal/` ou supprimer
 
@@ -687,7 +687,7 @@ Total : XXh
 2. **Tests E2E de fonctionnalités** (Playwright)
    ```typescript
    test('Duplicate product button should work', async ({ page }) => {
-     await page.goto('/backoffice/products');
+     await page.goto('/dashboard-client/products');
      await page.click('button:has-text("Dupliquer")');
      // Should NOT throw 404 error
    });
@@ -792,16 +792,16 @@ Lance un audit sur les modules Produits et Commandes uniquement
 
 ```bash
 # Trouver tous les appels API dans Frontend
-grep -r "fetch.*api/ecommerce" frontend/src/ --include="*.ts" --include="*.tsx"
+grep -r "fetch.*api/ecommerce" vitrine-client/src/ --include="*.ts" --include="*.tsx"
 
 # Trouver tous les endpoints Backend
-grep -r "@http.route" odoo-backend/addons/quelyos_api/controllers/ --include="*.py"
+grep -r "@http.route" odoo-odoo-backend/addons/quelyos_api/controllers/ --include="*.py"
 
 # Trouver définitions types TypeScript
-grep -r "interface Product" frontend/src/types/ backoffice/src/types/
+grep -r "interface Product" vitrine-client/src/types/ dashboard-client/src/types/
 
 # Trouver schémas Zod
-grep -r "z\.object" frontend/src/ backoffice/src/ --include="*.ts"
+grep -r "z\.object" vitrine-client/src/ dashboard-client/src/ --include="*.ts"
 ```
 
 ### Analyse Fichiers

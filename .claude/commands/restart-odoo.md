@@ -12,7 +12,7 @@ Relance le serveur Odoo (backend) sur le port 8069 via Docker Compose.
 ## Workflow de la commande
 
 ### Étape 1 : Arrêter les conteneurs Odoo
-1. Se placer dans le dossier `odoo-backend/`
+1. Se placer dans le dossier `odoo-odoo-backend/`
 2. Arrêter les conteneurs Docker avec `docker-compose down`
 3. Vérifier que les conteneurs sont bien arrêtés
 
@@ -25,10 +25,10 @@ Relance le serveur Odoo (backend) sur le port 8069 via Docker Compose.
 
 ```bash
 # 1. Arrêter les conteneurs
-cd backend && docker-compose down
+cd odoo-backend && docker-compose down
 
 # 2. Relancer les conteneurs
-cd backend && docker-compose up -d
+cd odoo-backend && docker-compose up -d
 
 # 3. Vérifier les logs
 docker-compose logs -f --tail=50
@@ -105,7 +105,7 @@ docker-compose ps
 docker exec -it quelyos-odoo bash
 
 # Reset complet (DANGER : perte données)
-cd backend && ./reset.sh
+cd odoo-backend && ./reset.sh
 ```
 
 ---

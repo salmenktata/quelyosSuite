@@ -1,6 +1,6 @@
 {
     'name': 'Quelyos Finance',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.2.2',
     'category': 'Accounting/Finance',
     'summary': 'Module Finance pour Quelyos ERP - Gestion trésorerie, budgets, portefeuilles',
     'description': """
@@ -24,6 +24,8 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/mail_template_cash_alert.xml',
+        'data/ir_cron_cash_alerts.xml',
     ],
     'installable': True,
     'application': False,

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Template email pour alertes de trésorerie -->
+        <record id="email_template_cash_alert" model="mail.template">
+            <field name="name">Quelyos Finance: Alerte de Trésorerie</field>
+            <field name="model_id" ref="model_quelyos_cash_alert"/>
+            <field name="subject">🚨 Alerte Trésorerie: {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or 'noreply@quelyos.com') }}</field>
+            <field name="email_to">{{ object.email_recipients }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <!-- Header -->
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+                        <h1 style="color: white; margin: 0; font-size: 24px;">⚠️ Alerte de Trésorerie</h1>
+                    </div>
+
+                    <!-- Body -->
+                    <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px;">
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <h2 style="color: #1f2937; margin-top: 0;">{{ object.name }}</h2>
+
+                            <table style="width: 100%; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 10px 0; color: #6b7280; font-weight: 600;">Type d'alerte:</td>
+                                    <td style="padding: 10px 0; color: #1f2937; text-align: right;">
+                                        % if object.alert_type == 'threshold':
+                                            Seuil minimum
+                                        % elif object.alert_type == 'negative_forecast':
+                                            Prévision négative
+                                        % elif object.alert_type == 'variance':
+                                            Variance
+                                        % elif object.alert_type == 'budget_exceeded':
+                                            Budget dépassé
+                                        % endif
+                                    </td>
+                                </tr>
+                                <tr style="background: #fef3c7;">
+                                    <td style="padding: 10px; color: #92400e; font-weight: 600;">Solde actuel:</td>
+                                    <td style="padding: 10px; color: #92400e; text-align: right; font-weight: bold; font-size: 18px;">
+                                        {{ '{:,.2f}'.format(object._get_current_balance()) }} {{ object.currency_id.symbol }}
+                                    </td>
+                                </tr>
+                                % if object.threshold_amount:
+                                <tr>
+                                    <td style="padding: 10px 0; color: #6b7280; font-weight: 600;">Seuil configuré:</td>
+                                    <td style="padding: 10px 0; color: #dc2626; text-align: right; font-weight: bold;">
+                                        {{ '{:,.2f}'.format(object.threshold_amount) }} {{ object.currency_id.symbol }}
+                                    </td>
+                                </tr>
+                                % endif
+                                % if object.account_id:
+                                <tr>
+                                    <td style="padding: 10px 0; color: #6b7280; font-weight: 600;">Compte surveillé:</td>
+                                    <td style="padding: 10px 0; color: #1f2937; text-align: right;">
+                                        {{ object.account_id.name }}
+                                    </td>
+                                </tr>
+                                % endif
+                                % if object.portfolio_id:
+                                <tr>
+                                    <td style="padding: 10px 0; color: #6b7280; font-weight: 600;">Portefeuille surveillé:</td>
+                                    <td style="padding: 10px 0; color: #1f2937; text-align: right;">
+                                        {{ object.portfolio_id.name }}
+                                    </td>
+                                </tr>
+                                % endif
+                            </table>
+
+                            <!-- Stats -->
+                            <div style="background: #eff6ff; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #3b82f6;">
+                                <p style="margin: 0; color: #1e40af;">
+                                    <strong>Statistiques:</strong><br/>
+                                    Cette alerte a été déclenchée <strong>{{ object.trigger_count }}</strong> fois.
+                                    % if object.last_triggered:
+                                    <br/>Dernier déclenchement: {{ object.last_triggered.strftime('%d/%m/%Y à %H:%M') }}
+                                    % endif
+                                </p>
+                            </div>
+
+                            <!-- Actions recommandées -->
+                            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                <h3 style="color: #1f2937; margin-top: 0; font-size: 16px;">Actions recommandées:</h3>
+                                <ul style="color: #4b5563; line-height: 1.8;">
+                                    <li>Vérifier les encaissements prévus</li>
+                                    <li>Reporter les dépenses non urgentes</li>
+                                    <li>Contacter votre banquier si nécessaire</li>
+                                    <li>Consulter le dashboard Finance pour plus de détails</li>
+                                </ul>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <div style="text-align: center; margin-top: 30px;">
+                                <a href="http://localhost:5175/finance"
+                                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                          color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px;
+                                          font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    Voir le Dashboard Finance
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div style="text-align: center; margin-top: 30px; color: #9ca3af; font-size: 12px;">
+                            <p>Email automatique envoyé par Quelyos Finance</p>
+                            <p>Quelyos ERP - Gestion intelligente pour TPE/PME</p>
+                        </div>
+                    </div>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

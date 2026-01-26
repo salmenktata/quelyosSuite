@@ -250,7 +250,7 @@ npm run build
 
 **Activer logging temps réponse Odoo :**
 
-Ajouter dans `backend/addons/quelyos_api/controllers/main.py` :
+Ajouter dans `odoo-backend/addons/quelyos_api/controllers/main.py` :
 
 ```python
 import time
@@ -279,7 +279,7 @@ def get_products(self, ...):
 **OU : Analyser logs Odoo existants**
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose logs odoo | grep -E "HTTP.*GET|HTTP.*POST" | \
   awk '{print $NF}' | # Extraire temps réponse
   sort -n | tail -20   # Top 20 endpoints lents
@@ -345,7 +345,7 @@ Détecter boucles avec `search()` ou `browse()` :
 
 ```bash
 grep -r "for.*in.*search\\|for.*in.*browse" \
-  backend/addons/quelyos_api/controllers/ --include="*.py" -B 2 -A 5
+  odoo-backend/addons/quelyos_api/controllers/ --include="*.py" -B 2 -A 5
 ```
 
 **Exemple violation P0 :**
@@ -366,7 +366,7 @@ products.mapped('qty_available')  # Batch fetch
 Vérifier champs `compute` sans cache :
 
 ```bash
-grep -r "@api\\.depends" backend/addons/quelyos_api/ --include="*.py" -A 10 | \
+grep -r "@api\\.depends" odoo-backend/addons/quelyos_api/ --include="*.py" -A 10 | \
   grep -v "store=True"
 ```
 
@@ -375,7 +375,7 @@ grep -r "@api\\.depends" backend/addons/quelyos_api/ --include="*.py" -A 10 | \
 **Recherches sans limite :**
 
 ```bash
-grep -r "\\.search\\(\\[" backend/addons/quelyos_api/ --include="*.py" | \
+grep -r "\\.search\\(\\[" odoo-backend/addons/quelyos_api/ --include="*.py" | \
   grep -v "limit="
 ```
 
@@ -852,7 +852,7 @@ import throttle from 'lodash/throttle';
 **Exemple : N+1 queries Odoo**
 
 ```python
-# Détecté dans backend/addons/quelyos_api/controllers/main.py:234
+# Détecté dans odoo-backend/addons/quelyos_api/controllers/main.py:234
 for order in orders:
     total += order.amount_total  # ❌ N+1
 

@@ -67,7 +67,7 @@ Vérifier dans `dashboard-client/src/pages/` :
 
 ### Phase 4 : Analyse de l'API Odoo
 
-Vérifier dans `odoo-backend/addons/quelyos_api/controllers/` :
+Vérifier dans `odoo-odoo-backend/addons/quelyos_api/controllers/` :
 - Quels endpoints existent ?
 - Quels champs sont exposés ?
 - Quels champs manquent ?
@@ -127,7 +127,7 @@ Vérifier dans `odoo-backend/addons/quelyos_api/controllers/` :
 
 | Fichier | Modifications |
 |---------|--------------|
-| `odoo-backend/.../main.py` | Ajouter champs X, Y |
+| `odoo-odoo-backend/.../main.py` | Ajouter champs X, Y |
 | `dashboard-client/.../ProductForm.tsx` | UI pour X, Y |
 | ... | ... |
 

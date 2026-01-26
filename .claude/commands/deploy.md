@@ -62,7 +62,7 @@ Actions requises :
 
 **Vérifier fichiers .env existent :**
 ```bash
-ls -la odoo-backend/.env.production
+ls -la odoo-odoo-backend/.env.production
 ls -la frontend/.env.production
 ls -la backoffice/.env.production
 ```
@@ -98,7 +98,7 @@ cd frontend && npm outdated
 cd backoffice && npm outdated
 
 # Backend
-cd backend && pip list --outdated
+cd odoo-backend && pip list --outdated
 ```
 
 **Si dépendances critiques outdated (security patches) :**
@@ -270,12 +270,12 @@ Actions requises :
 **CRITIQUE : Backup DB Odoo avant déploiement**
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose exec -T db pg_dump -U odoo -d quelyos | gzip > backups/quelyos_$(date +%Y%m%d_%H%M%S).sql.gz
 ```
 
 **Vérifier :**
-- [ ] Fichier backup créé dans `odoo-backend/backups/`
+- [ ] Fichier backup créé dans `odoo-odoo-backend/backups/`
 - [ ] Taille backup > 0 (non vide)
 - [ ] Backup compressé (.gz)
 
@@ -307,7 +307,7 @@ Actions requises :
 
 **Vérifier modules à upgrader :**
 ```bash
-cd backend
+cd odoo-backend
 grep -r "version.*:" addons/quelyos_api/__manifest__.py
 ```
 
@@ -375,7 +375,7 @@ Actions requises :
 **Vérifier migrations Odoo pendantes :**
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose exec odoo odoo shell -d quelyos << EOF
 modules = env['ir.module.module'].search([('state', '=', 'to upgrade')])
 print(modules.mapped('name'))
@@ -389,7 +389,7 @@ EOF
 - Vérifier succès (aucune erreur dans logs)
 
 **Migrations custom (si applicable) :**
-- Lister scripts migration dans `odoo-backend/migrations/`
+- Lister scripts migration dans `odoo-odoo-backend/migrations/`
 - Exécuter dans l'ordre (par date/version)
 - Vérifier succès de chaque migration
 
@@ -477,7 +477,7 @@ npm run build
 
 #### 3. Rollback Backend (Odoo)
 ```bash
-cd backend
+cd odoo-backend
 
 # Restaurer backup DB
 gunzip < backups/quelyos_20260124_150000.sql.gz | \
@@ -674,7 +674,7 @@ curl -f https://quelyos.com/api/health
 
 ## 📝 Notes
 
-- Backup DB sauvegardé dans `odoo-backend/backups/` (conserver 3 versions)
+- Backup DB sauvegardé dans `odoo-odoo-backend/backups/` (conserver 3 versions)
 - Aucune migration DB breaking (compatibilité arrière OK)
 - Monitoring post-déploiement recommandé (24h)
 - Next release prévue : v1.3.0 (2026-02-08)

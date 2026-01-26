@@ -18,7 +18,7 @@ Vérifie la synchronisation entre les modèles Python Odoo et le schéma de base
 #### 1.1. Lister Modules Custom
 
 ```bash
-cd backend
+cd odoo-backend
 docker-compose exec odoo odoo shell -d quelyos << 'EOF'
 modules = env['ir.module.module'].search([('state', '!=', 'uninstalled')])
 for module in modules:
@@ -59,7 +59,7 @@ Ces modules ont été modifiés mais pas upgradés.
 La DB n'est PAS synchronisée avec le code Python.
 
 Actions requises :
-1. cd backend && ./upgrade.sh quelyos_api
+1. cd odoo-backend && ./upgrade.sh quelyos_api
 2. Relancer /db-sync pour validation
 ```
 
@@ -72,7 +72,7 @@ Actions requises :
 **Scanner fichiers models/ du module :**
 
 ```bash
-cd odoo-backend/addons/quelyos_api/models
+cd odoo-odoo-backend/addons/quelyos_api/models
 grep -r "class.*models\\.Model" *.py
 ```
 
@@ -88,7 +88,7 @@ stock_quant.py:    _inherit = 'stock.quant'
 
 ```bash
 # Exemple : product.template
-grep -A 1 "fields\\..*(" odoo-backend/addons/quelyos_api/models/product.py | \
+grep -A 1 "fields\\..*(" odoo-odoo-backend/addons/quelyos_api/models/product.py | \
   grep -v "^--$" | \
   sed 's/.*fields\.\(.*\)(/\1/' | \
   cut -d'(' -f1
@@ -116,10 +116,10 @@ docker-compose exec db psql -U odoo -d quelyos -c \
 
 #### 2.3. Utiliser Script check_fields.sh
 
-**Le projet dispose déjà du script `odoo-backend/check_fields.sh` :**
+**Le projet dispose déjà du script `odoo-odoo-backend/check_fields.sh` :**
 
 ```bash
-cd backend
+cd odoo-backend
 ./check_fields.sh addons/quelyos_api/models/product.py product_template
 ```
 
@@ -171,7 +171,7 @@ WHERE table_name = 'product_template' AND column_name = 'price';
 **Lister champs Python avec `required=True` :**
 
 ```bash
-grep -r "required=True" odoo-backend/addons/quelyos_api/models/*.py -B 1
+grep -r "required=True" odoo-odoo-backend/addons/quelyos_api/models/*.py -B 1
 ```
 
 **Vérifier contrainte NOT NULL en DB :**
@@ -190,7 +190,7 @@ WHERE table_name = 'product_template'
 **Parser contraintes SQL dans modèles :**
 
 ```bash
-grep -A 5 "_sql_constraints" odoo-backend/addons/quelyos_api/models/*.py
+grep -A 5 "_sql_constraints" odoo-odoo-backend/addons/quelyos_api/models/*.py
 ```
 
 **Exemple :**
@@ -217,7 +217,7 @@ WHERE conrelid = 'product_template'::regclass
 
 ```bash
 grep -rE "fields\\.Many2one|fields\\.One2many|fields\\.Many2many" \
-  odoo-backend/addons/quelyos_api/models/*.py
+  odoo-odoo-backend/addons/quelyos_api/models/*.py
 ```
 
 **Exemple :**
@@ -252,7 +252,7 @@ WHERE tc.constraint_type = 'FOREIGN KEY'
 #### 6.1. Lister Champs avec index=True
 
 ```bash
-grep -r "index=True" odoo-backend/addons/quelyos_api/models/*.py -B 1
+grep -r "index=True" odoo-odoo-backend/addons/quelyos_api/models/*.py -B 1
 ```
 
 #### 6.2. Vérifier Indexes en DB
@@ -310,7 +310,7 @@ HAVING COUNT(*) > 1;
 **Lister champs computed (`compute=`) :**
 
 ```bash
-grep -r "compute=" odoo-backend/addons/quelyos_api/models/*.py -B 2
+grep -r "compute=" odoo-odoo-backend/addons/quelyos_api/models/*.py -B 2
 ```
 
 **Exemple :**
@@ -376,7 +376,7 @@ WHERE table_name = 'product_template'
 
 **Solution** :
 ```bash
-cd backend
+cd odoo-backend
 ./upgrade.sh quelyos_api
 ```
 
@@ -415,7 +415,7 @@ cd backend
 
 **Solution** :
 ```bash
-cd backend
+cd odoo-backend
 ./upgrade.sh quelyos_api
 ./check_fields.sh addons/quelyos_api/models/product.py product_template
 ```
@@ -566,7 +566,7 @@ HAVING COUNT(*) > 1;
 
 1. ✅ **P0-1** : Upgrader module quelyos_api (v19.0.1.0.4 → v19.0.1.0.5)
    ```bash
-   cd backend && ./upgrade.sh quelyos_api
+   cd odoo-backend && ./upgrade.sh quelyos_api
    ```
 
 2. ✅ **P0-2** : Ajouter champ manquant `custom_description`
@@ -608,7 +608,7 @@ Après corrections, le statut devrait être :
 - **Toujours** créer backup DB avant migrations manuelles
 - **Toujours** upgrader module après modification modèles
 - **Automatiser** cette vérification en CI/CD (pre-commit hook)
-- **Documenter** migrations custom dans `odoo-backend/migrations/`
+- **Documenter** migrations custom dans `odoo-odoo-backend/migrations/`
 ```
 
 ### 10. Actions Automatisables (Bonus)
@@ -626,7 +626,7 @@ Options :
 
 **Si Oui :**
 ```bash
-cd backend && ./upgrade.sh quelyos_api && ./check_fields.sh addons/quelyos_api/models/product.py product_template
+cd odoo-backend && ./upgrade.sh quelyos_api && ./check_fields.sh addons/quelyos_api/models/product.py product_template
 ```
 
 ## Métriques de Succès
@@ -678,7 +678,7 @@ cd backend && ./upgrade.sh quelyos_api && ./check_fields.sh addons/quelyos_api/m
 ## Scripts Réutilisables
 
 **Le projet dispose déjà de :**
-- `odoo-backend/upgrade.sh` : Upgrade module + redémarrage + santé
-- `odoo-backend/check_fields.sh` : Vérification champs modèle vs DB
+- `odoo-odoo-backend/upgrade.sh` : Upgrade module + redémarrage + santé
+- `odoo-odoo-backend/check_fields.sh` : Vérification champs modèle vs DB
 
 **Cette commande les orchestre intelligemment.**

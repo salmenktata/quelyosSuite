@@ -20,89 +20,50 @@ export default defineConfig({
       allow: [fileURLToPath(new URL('..', import.meta.url))],
     },
     proxy: {
-      '/api/ecommerce': {
-        target: 'http://localhost:8069',
-        changeOrigin: true,
-        secure: false,
-        // Ne pas transmettre les cookies pour éviter les erreurs Odoo avec sessions invalides
-        cookieDomainRewrite: '',
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            // Supprimer les cookies invalides pour éviter Access Denied Odoo
-            proxyReq.removeHeader('cookie');
-          });
-        },
-      },
-      '/api/finance': {
-        target: 'http://localhost:8069',
-        changeOrigin: true,
-        secure: false,
-        // Ne pas transmettre les cookies pour éviter les erreurs Odoo avec sessions invalides
-        cookieDomainRewrite: '',
-        // Réécrire /api/finance vers /api/ecommerce/finance (controller Odoo)
-        rewrite: (path) => path.replace(/^\/api\/finance/, '/api/ecommerce/finance'),
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq, req) => {
-            // Supprimer les cookies invalides pour éviter Access Denied Odoo
-            proxyReq.removeHeader('cookie');
-            console.log('[Vite Proxy] Finance API:', req.method, req.url, '→', 'http://localhost:8069/api/ecommerce/finance');
-          });
-          proxy.on('error', (err) => {
-            console.error('[Vite Proxy] Finance API error:', err.message);
-          });
-        },
-      },
-      '/api/settings': {
-        target: 'http://localhost:8069',
-        changeOrigin: true,
-        secure: false,
-        cookieDomainRewrite: '',
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.removeHeader('cookie');
-          });
-        },
-      },
-      '/currencies': {
-        target: 'http://localhost:8069',
-        changeOrigin: true,
-        secure: false,
-        cookieDomainRewrite: '',
-        rewrite: (path) => path.replace(/^\/currencies/, '/api/ecommerce/currencies'),
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.removeHeader('cookie');
-          });
-        },
-      },
+      // Routes spécifiques AVANT les routes génériques
       '/dashboard': {
-        target: 'http://localhost:8069',
+        target: 'http://127.0.0.1:8069',
         changeOrigin: true,
         secure: false,
-        cookieDomainRewrite: '',
+        ws: false,
         rewrite: (path) => path.replace(/^\/dashboard/, '/api/ecommerce/dashboard'),
         configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.removeHeader('cookie');
+          proxy.on('error', (err, req) => {
+            console.error('[Proxy Error] /dashboard ->', err.message);
           });
         },
       },
       '/reporting': {
-        target: 'http://localhost:8069',
+        target: 'http://127.0.0.1:8069',
         changeOrigin: true,
         secure: false,
-        cookieDomainRewrite: '',
+        ws: false,
         rewrite: (path) => path.replace(/^\/reporting/, '/api/ecommerce/reporting'),
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.removeHeader('cookie');
-          });
-        },
+      },
+      // Routes API génériques APRÈS
+      '/api/finance': {
+        target: 'http://127.0.0.1:8069',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api\/finance/, '/api/ecommerce/finance'),
+      },
+      '/api/settings': {
+        target: 'http://127.0.0.1:8069',
+        changeOrigin: true,
+        secure: false,
+        ws: false,
+      },
+      '/api/ecommerce': {
+        target: 'http://127.0.0.1:8069',
+        changeOrigin: true,
+        secure: false,
+        ws: false,
       },
       '/web': {
-        target: 'http://localhost:8069',
+        target: 'http://127.0.0.1:8069',
         changeOrigin: true,
         secure: false,
+        ws: false,
       },
     },
   },

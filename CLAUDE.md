@@ -9,6 +9,28 @@
 - **Ignorer** : node_modules/, dist/, .next/, types volumineux
 - Voir `.claude/OPTIMIZATION_MODE.md` et `.claude/GUIDE_ECONOMIE_TOKENS.md`
 
+## ⛔ RÈGLE PORTS - NE JAMAIS MODIFIER
+**INTERDICTION ABSOLUE** : Ne JAMAIS modifier les ports des services
+- **vitrine-quelyos** : Port **3000** FIXE
+- **vitrine-client** : Port **3001** FIXE
+- **dashboard-client** : Port **5175** FIXE
+- **odoo-backend** : Port **8069** FIXE
+- **PostgreSQL** : Port **5432** FIXE
+- **Redis** : Port **6379** FIXE
+
+**En cas de conflit de port** :
+1. ❌ NE PAS changer le port dans la config
+2. ✅ Identifier et arrêter le processus qui occupe le port
+3. ✅ Utiliser `lsof -ti:PORT | xargs kill -9`
+4. ✅ Redémarrer le service sur son port ORIGINAL
+
+**Cette règle s'applique à** :
+- `vite.config.ts`
+- `next.config.js`
+- `docker-compose.yml`
+- `package.json` (scripts dev)
+- Toute autre configuration de port
+
 ## Langue
 Français pour communications. Code en anglais.
 

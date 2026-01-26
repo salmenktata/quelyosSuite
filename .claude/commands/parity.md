@@ -45,8 +45,8 @@ Pour chaque module audité, lister TOUTES les fonctionnalités du modèle Odoo c
 Analyser les fichiers suivants pour chaque module :
 
 **Backend (API Odoo)** :
-- `backend/addons/quelyos_api/controllers/main.py` - Endpoints API
-- `backend/addons/quelyos_api/models/` - Extensions modèles (si existant)
+- `odoo-backend/addons/quelyos_api/controllers/main.py` - Endpoints API
+- `odoo-backend/addons/quelyos_api/models/` - Extensions modèles (si existant)
 
 **Backoffice (Admin React)** :
 - `backoffice/src/pages/` - Pages admin

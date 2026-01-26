@@ -74,13 +74,13 @@ git diff --stat
 📝 Changements détectés :
 
 Modifiés (12) :
-  M backend/addons/quelyos_api/controllers/cms.py
+  M odoo-backend/addons/quelyos_api/controllers/cms.py
   M frontend/src/components/ProductCard.tsx
   M backoffice/src/pages/Products.tsx
   ...
 
 Nouveaux (3) :
-  ?? backend/addons/quelyos_api/models/subscription.py
+  ?? odoo-backend/addons/quelyos_api/models/subscription.py
   ?? frontend/src/hooks/useCurrencies.ts
   ?? .claude/commands/ship.md
 
@@ -239,7 +239,7 @@ git diff --cached | grep -i "password\|secret\|api_key\|token"
 🚨 ALERTE SÉCURITÉ
 
 Des secrets potentiels ont été détectés :
-- backend/.env.production:12 - "DB_PASSWORD=..."
+- odoo-backend/.env.production:12 - "DB_PASSWORD=..."
 - frontend/config.ts:45 - "API_KEY=..."
 
 Actions :
@@ -257,9 +257,9 @@ git status --short
 ```
 📦 Fichiers prêts à commiter :
 
-  M backend/addons/quelyos_api/controllers/cms.py
+  M odoo-backend/addons/quelyos_api/controllers/cms.py
   M frontend/src/components/ProductCard.tsx
-  A backend/addons/quelyos_api/models/subscription.py
+  A odoo-backend/addons/quelyos_api/models/subscription.py
   A .claude/commands/ship.md
   D frontend/src/components/OldComponent.tsx
 
@@ -562,7 +562,7 @@ Message suggéré : "ajout bouton achat rapide produits"
 $ /ship
 
 📝 Changements détectés :
-  M backend/addons/quelyos_api/models/product.py
+  M odoo-backend/addons/quelyos_api/models/product.py
   M frontend/src/lib/api.ts
 
 Type de commit ?
@@ -600,17 +600,17 @@ Message : "implémentation système abonnements Stripe"
 
 ## Intégration avec Workflow Odoo
 
-**IMPORTANT** : Si modifications dans `backend/addons/quelyos_api/models/` :
+**IMPORTANT** : Si modifications dans `odoo-backend/addons/quelyos_api/models/` :
 
 ```
 ⚠️ Modifications Modèle Odoo Détectées
 
 Fichiers modifiés :
-- backend/addons/quelyos_api/models/subscription.py
+- odoo-backend/addons/quelyos_api/models/subscription.py
 
 Actions requises APRÈS commit :
 1. Incrémenter version dans __manifest__.py
-2. Exécuter : cd backend && ./upgrade.sh quelyos_api
+2. Exécuter : cd odoo-backend && ./upgrade.sh quelyos_api
 3. Redémarrer Odoo si nécessaire
 
 Voulez-vous que je vous rappelle ces étapes après le push ?
