@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from './common'
+import { Link } from 'react-router-dom'
 
 interface UnsplashImage {
   id: string
@@ -51,10 +52,43 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
   const [selectedUrl, setSelectedUrl] = useState<string>(currentImageUrl || '')
   const [source, setSource] = useState<ImageSource>('both')
   const [error, setError] = useState<string>('')
+  const [apiKeys, setApiKeys] = useState({ unsplash: '', pexels: '' })
 
-  // API Keys depuis .env (optionnel)
-  const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '' // 50 req/h
-  const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY || '' // 200 req/h
+  // Charger les clés API depuis l'API au démarrage
+  useEffect(() => {
+    const fetchApiKeys = async () => {
+      try {
+        const response = await fetch('/api/settings/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        })
+        const data = await response.json()
+        if (data.success) {
+          setApiKeys({
+            unsplash: data.settings.unsplash_key || import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '',
+            pexels: data.settings.pexels_key || import.meta.env.VITE_PEXELS_API_KEY || ''
+          })
+        } else {
+          // Fallback sur .env si API échoue
+          setApiKeys({
+            unsplash: import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '',
+            pexels: import.meta.env.VITE_PEXELS_API_KEY || ''
+          })
+        }
+      } catch {
+        // Fallback sur .env si erreur réseau
+        setApiKeys({
+          unsplash: import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '',
+          pexels: import.meta.env.VITE_PEXELS_API_KEY || ''
+        })
+      }
+    }
+    fetchApiKeys()
+  }, [])
+
+  const UNSPLASH_ACCESS_KEY = apiKeys.unsplash
+  const PEXELS_API_KEY = apiKeys.pexels
 
   const searchUnsplash = async (): Promise<UnifiedImage[]> => {
     if (!UNSPLASH_ACCESS_KEY) {
@@ -140,12 +174,12 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
 
   const getErrorMessage = (error: Error): string => {
     const errorMessages: Record<string, string> = {
-      'UNSPLASH_NOT_CONFIGURED': '⚠️ Clé API Unsplash non configurée. Voir OBTENIR_CLES_API_IMAGES.md',
-      'UNSPLASH_INVALID_KEY': '❌ Clé API Unsplash invalide ou expirée. Vérifiez votre .env',
+      'UNSPLASH_NOT_CONFIGURED': '⚠️ Clé API Unsplash non configurée',
+      'UNSPLASH_INVALID_KEY': '❌ Clé API Unsplash invalide ou expirée',
       'UNSPLASH_RATE_LIMIT': '⏱️ Limite Unsplash atteinte (50 req/h). Attendez 1h ou utilisez Pexels',
       'UNSPLASH_ERROR': '❌ Erreur Unsplash. Vérifiez votre connexion',
-      'PEXELS_NOT_CONFIGURED': '⚠️ Clé API Pexels non configurée. Voir OBTENIR_CLES_API_IMAGES.md',
-      'PEXELS_INVALID_KEY': '❌ Clé API Pexels invalide ou expirée. Vérifiez votre .env',
+      'PEXELS_NOT_CONFIGURED': '⚠️ Clé API Pexels non configurée',
+      'PEXELS_INVALID_KEY': '❌ Clé API Pexels invalide ou expirée',
       'PEXELS_RATE_LIMIT': '⏱️ Limite Pexels atteinte (200 req/h). Attendez 1h ou utilisez Unsplash',
       'PEXELS_ERROR': '❌ Erreur Pexels. Vérifiez votre connexion',
     }
@@ -301,14 +335,12 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
           <p className="text-sm text-red-800 dark:text-red-200 mb-2">
             {error}
           </p>
-          <a
-            href="https://github.com/salmenktata/quelyosSuite/blob/main/dashboard-client/OBTENIR_CLES_API_IMAGES.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-red-600 dark:text-red-400 underline hover:no-underline"
+          <Link
+            to="/site-config"
+            className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:underline font-medium"
           >
-            📖 Guide : Comment obtenir une clé API (2 minutes)
-          </a>
+            ⚙️ Configurer les clés API dans les paramètres du site
+          </Link>
         </div>
       )}
 

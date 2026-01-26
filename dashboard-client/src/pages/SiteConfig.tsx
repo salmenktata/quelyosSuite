@@ -60,6 +60,39 @@ export default function SiteConfig() {
   // État local pour les modes de paiement
   const [paymentMethods, setPaymentMethods] = useState<string[]>(['card', 'cash', 'transfer', 'mobile'])
 
+  // État local pour les clés API images
+  const [apiKeys, setApiKeys] = useState({
+    unsplash_key: '',
+    pexels_key: ''
+  })
+  const [apiKeysLoading, setApiKeysLoading] = useState(true)
+  const [apiKeysSaving, setApiKeysSaving] = useState(false)
+
+  // Charger les clés API au démarrage
+  useEffect(() => {
+    const fetchApiKeys = async () => {
+      try {
+        const response = await fetch('/api/settings/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        })
+        const data = await response.json()
+        if (data.success) {
+          setApiKeys({
+            unsplash_key: data.settings.unsplash_key || '',
+            pexels_key: data.settings.pexels_key || ''
+          })
+        }
+      } catch (error) {
+        console.error('Erreur chargement clés API:', error)
+      } finally {
+        setApiKeysLoading(false)
+      }
+    }
+    fetchApiKeys()
+  }, [])
+
   // Charger les données depuis l'API
   useEffect(() => {
     if (data) {
@@ -175,6 +208,33 @@ export default function SiteConfig() {
         ? prev.filter(m => m !== method)
         : [...prev, method]
     )
+  }
+
+  const handleSaveApiKeys = async () => {
+    setApiKeysSaving(true)
+    try {
+      const response = await fetch('/api/settings/images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'call',
+          params: apiKeys
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success || data.result?.success) {
+        toast.success('Clés API sauvegardées avec succès !')
+      } else {
+        toast.error(data.error || 'Erreur lors de la sauvegarde des clés API')
+      }
+    } catch (error) {
+      toast.error('Erreur réseau lors de la sauvegarde des clés API')
+    } finally {
+      setApiKeysSaving(false)
+    }
   }
 
   const toggleSortOption = (option: string) => {
@@ -677,6 +737,143 @@ export default function SiteConfig() {
                 {method.label}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Section API Images */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                Clés API Images
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Configurez vos clés API pour la recherche illimitée d'images (Hero Slides)
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              onClick={handleSaveApiKeys}
+              loading={apiKeysSaving}
+              disabled={apiKeysLoading}
+            >
+              Sauvegarder les clés
+            </Button>
+          </div>
+
+          {/* Info box */}
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <p className="text-sm text-blue-800 dark:text-blue-200 font-medium mb-1">
+                  Besoin d'aide ?
+                </p>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+                  Obtenez vos clés API gratuites en 2 minutes • Sans clé, 4 images de démo sont disponibles
+                </p>
+                <a
+                  href="https://github.com/salmenktata/quelyosSuite/blob/main/dashboard-client/OBTENIR_CLES_API_IMAGES.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                >
+                  📖 Guide complet : Comment obtenir vos clés API
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {apiKeysLoading ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              Chargement...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Unsplash */}
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      Unsplash API
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      50 req/h gratuit • 5000 req/h après approbation
+                    </p>
+                  </div>
+                  <a
+                    href="https://unsplash.com/oauth/applications/new"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                  >
+                    Obtenir clé
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+                <input
+                  type="password"
+                  value={apiKeys.unsplash_key}
+                  onChange={e => setApiKeys({ ...apiKeys, unsplash_key: e.target.value })}
+                  placeholder="Votre Access Key Unsplash"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Pexels */}
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      Pexels API
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      200 req/h gratuit
+                    </p>
+                  </div>
+                  <a
+                    href="https://www.pexels.com/api/new/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                  >
+                    Obtenir clé
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+                <input
+                  type="password"
+                  value={apiKeys.pexels_key}
+                  onChange={e => setApiKeys({ ...apiKeys, pexels_key: e.target.value })}
+                  placeholder="Votre API Key Pexels"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Info supplémentaire */}
+          <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 font-medium">
+              💡 Informations
+            </p>
+            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+              <li>• Clés stockées de manière sécurisée dans Odoo</li>
+              <li>• Configurez une seule API ou les deux</li>
+              <li>• Après sauvegarde, rechargez Hero Slides pour tester</li>
+            </ul>
           </div>
         </div>
       </div>

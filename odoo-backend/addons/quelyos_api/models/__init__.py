@@ -17,3 +17,4 @@ from . import menu
 from . import seo_metadata
 from . import marketing_popup
 from . import static_page
+from . import api_settings
