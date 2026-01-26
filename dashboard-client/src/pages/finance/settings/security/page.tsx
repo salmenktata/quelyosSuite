@@ -1,10 +1,8 @@
 
 
-import React, { useState, useEffect } from "react";
-import { useRequireAuth } from "@/lib/finance/compat/auth";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/finance/compat/auth";
 import { api } from "@/lib/finance/api";
-import { GlassCard, GlassPanel } from "@/components/ui/glass";
 import {
   Shield,
   Key,
@@ -28,7 +26,6 @@ type Session = {
 };
 
 export default function SecurityPage() {
-  useRequireAuth();
   const { user } = useAuth();
 
   // Password change state
@@ -201,26 +198,10 @@ export default function SecurityPage() {
   const strengthLabels = ["Très faible", "Faible", "Moyen", "Bon", "Fort", "Excellent"];
 
   return (
-    <div className="relative space-y-6 text-white">
-      {/* Background effects */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-red-500/20 blur-[120px]" />
-        <div className="absolute -right-40 top-40 h-[400px] w-[400px] rounded-full bg-orange-500/20 blur-[120px]" />
-      </div>
-
-      <div className="relative space-y-2">
-        <p className="text-xs uppercase tracking-[0.25em] text-red-200">Paramètres</p>
-        <h1 className="bg-gradient-to-r from-white to-red-200 bg-clip-text text-3xl font-semibold text-transparent">
-          Sécurité du compte
-        </h1>
-        <p className="text-sm text-red-100/80">
-          Protégez votre compte avec un mot de passe fort et l&apos;authentification à deux facteurs.
-        </p>
-      </div>
-
-      <div className="relative grid gap-6 lg:grid-cols-2">
+    <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Password Change */}
-        <GlassPanel gradient="none" className="border-white/10">
+        <section className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-500">
               <Key className="h-5 w-5 text-white" />
@@ -360,10 +341,10 @@ export default function SecurityPage() {
               )}
             </button>
           </form>
-        </GlassPanel>
+        </section>
 
         {/* 2FA Setup */}
-        <GlassPanel gradient="none" className="border-white/10">
+        <section className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-6">
           <div className="flex items-center gap-3 mb-6">
             <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${
               twoFAEnabled ? "from-green-500 to-emerald-500" : "from-slate-500 to-slate-600"
@@ -396,7 +377,7 @@ export default function SecurityPage() {
                     </p>
                   </div>
                 </div>
-              </GlassCard>
+              </section>
 
               <button
                 onClick={handleSetup2FA}
@@ -419,7 +400,7 @@ export default function SecurityPage() {
                     <AlertTriangle size={16} />
                     <span className="text-sm">{twoFAError}</span>
                   </div>
-                </GlassCard>
+                </section>
               )}
             </div>
           )}
@@ -506,7 +487,7 @@ export default function SecurityPage() {
                     </p>
                   </div>
                 </div>
-              </GlassCard>
+              </section>
 
               <button
                 onClick={handleDisable2FA}
@@ -518,7 +499,7 @@ export default function SecurityPage() {
               </button>
             </div>
           )}
-        </GlassPanel>
+        </section>
       </div>
 
       {/* Active Sessions */}
@@ -540,7 +521,7 @@ export default function SecurityPage() {
         ) : sessions.length === 0 ? (
           <GlassCard variant="subtle" className="p-6 text-center">
             <p className="text-slate-400">Aucune session active trouvée</p>
-          </GlassCard>
+          </section>
         ) : (
           <div className="space-y-3">
             {sessions.map((session) => (
@@ -580,7 +561,7 @@ export default function SecurityPage() {
                     </button>
                   )}
                 </div>
-              </GlassCard>
+              </section>
             ))}
           </div>
         )}
