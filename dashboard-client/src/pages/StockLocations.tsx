@@ -1,64 +1,113 @@
 /**
- * Page de visualisation des emplacements stock
+ * Page de gestion des emplacements stock avec vue arbre hiérarchique
  *
- * Affiche la liste des emplacements (locations) des entrepôts
- * avec filtres par type et entrepôt. Lecture seule (géré depuis Odoo).
+ * Fonctionnalités :
+ * - Vue arbre expand/collapse
+ * - Drag & Drop pour réorganiser
+ * - CRUD complet (créer, modifier, archiver)
+ * - Filtres par entrepôt et type
+ * - Recherche
  */
 
 import { useState, useMemo } from 'react'
 import { Layout } from '../components/Layout'
-import { Breadcrumbs, Badge, SkeletonTable, Input } from '../components/common'
-import { useStockLocations } from '../hooks/useStockTransfers'
+import { Breadcrumbs, Badge } from '../components/common'
+import { useLocationsTree, useMoveLocation, useArchiveLocation } from '../hooks/finance/useStockLocations'
 import { useWarehouses } from '../hooks/useWarehouses'
-
-const USAGE_LABELS: Record<string, string> = {
-  internal: 'Interne',
-  view: 'Vue',
-  supplier: 'Fournisseur',
-  customer: 'Client',
-  inventory: 'Inventaire',
-  transit: 'Transit',
-}
-
-const USAGE_VARIANTS: Record<string, 'success' | 'neutral' | 'info' | 'warning' | 'error'> = {
-  internal: 'success',
-  view: 'neutral',
-  supplier: 'info',
-  customer: 'warning',
-  inventory: 'error',
-  transit: 'neutral',
-}
+import { LocationTreeView } from '../components/stock/LocationTreeView'
+import { LocationFormModal } from '../components/stock/LocationFormModal'
+import { filterTree, toggleExpanded, expandAll, collapseAll } from '../lib/stock/tree-utils'
+import { Plus, Maximize2, Minimize2, Search, Filter } from 'lucide-react'
+import type { StockLocation } from '@/types/stock'
+import { logger } from '@quelyos/logger'
 
 export default function StockLocations() {
   const [search, setSearch] = useState('')
-  const [usageFilter, setUsageFilter] = useState<string>('all')
+  const [usageFilter, setUsageFilter] = useState<'all' | 'internal' | 'view'>('all')
   const [warehouseFilter, setWarehouseFilter] = useState<number | undefined>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingLocation, setEditingLocation] = useState<StockLocation | undefined>()
+  const [parentIdForNew, setParentIdForNew] = useState<number | undefined>()
 
-  const { data, isLoading, error } = useStockLocations({
-    usage: usageFilter !== 'all' ? usageFilter : undefined,
+  const { tree, locations, isLoading, error, refetch } = useLocationsTree({
     warehouse_id: warehouseFilter,
+    usage: usageFilter !== 'all' ? usageFilter : undefined,
   })
 
-  const { data: warehousesData, isLoading: isLoadingWarehouses } = useWarehouses()
+  const { data: warehousesData } = useWarehouses({ active_only: true })
+  const { mutate: moveLocation } = useMoveLocation()
+  const { mutate: archiveLocation } = useArchiveLocation()
 
-  const locations = data?.data?.locations || []
-  const warehouses = warehousesData?.data?.warehouses || []
+  const warehouses = warehousesData || []
 
-  // Filtrage local par recherche
-  const filteredLocations = useMemo(() => {
-    if (!search) return locations
+  // Filtrer l'arbre par recherche
+  const filteredTree = useMemo(() => {
+    return filterTree(tree, search)
+  }, [tree, search])
 
-    const searchLower = search.toLowerCase()
-    return locations.filter(
-      (loc) =>
-        loc.name.toLowerCase().includes(searchLower) ||
-        loc.complete_name.toLowerCase().includes(searchLower)
+  const handleEdit = (location: StockLocation) => {
+    setEditingLocation(location)
+    setParentIdForNew(undefined)
+    setIsModalOpen(true)
+  }
+
+  const handleAddChild = (parentId: number) => {
+    setEditingLocation(undefined)
+    setParentIdForNew(parentId)
+    setIsModalOpen(true)
+  }
+
+  const handleCreate = () => {
+    setEditingLocation(undefined)
+    setParentIdForNew(undefined)
+    setIsModalOpen(true)
+  }
+
+  const handleArchive = (locationId: number) => {
+    archiveLocation(locationId, {
+      onSuccess: () => {
+        refetch()
+        logger.info('[StockLocations] Location archived')
+      },
+      onError: (error: any) => {
+        alert(error.message || 'Erreur lors de l\'archivage')
+      }
+    })
+  }
+
+  const handleMove = (draggedId: number, targetId: number) => {
+    moveLocation(
+      { id: draggedId, new_parent_id: targetId },
+      {
+        onSuccess: () => {
+          refetch()
+          logger.info('[StockLocations] Location moved')
+        },
+        onError: (error: any) => {
+          alert(error.message || 'Erreur lors du déplacement')
+        }
+      }
     )
-  }, [locations, search])
+  }
+
+  const handleToggleExpand = (locationId: number) => {
+    toggleExpanded(locationId)
+    refetch() // Force refresh pour reconstruire l'arbre avec le nouvel état
+  }
+
+  const handleExpandAll = () => {
+    expandAll(tree)
+    refetch()
+  }
+
+  const handleCollapseAll = () => {
+    collapseAll()
+    refetch()
+  }
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -67,192 +116,181 @@ export default function StockLocations() {
           ]}
         />
 
+        {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Emplacements Stock
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Visualisez les emplacements (locations) de vos entrepôts
+              Vue hiérarchique des emplacements avec gestion complète
             </p>
-            <Badge variant="info" className="mt-3">
-              🔒 Lecture seule - Géré depuis Odoo
-            </Badge>
           </div>
+          <button
+            onClick={handleCreate}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Créer Emplacement
+          </button>
         </div>
 
-        {/* Filtres */}
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
-            type="text"
-            placeholder="Rechercher un emplacement..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full"
-            aria-label="Rechercher un emplacement"
-          />
+        {/* Filtres et actions */}
+        <div className="mb-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Recherche */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <Search className="inline mr-2 h-4 w-4" />
+                Recherche
+              </label>
+              <input
+                type="text"
+                placeholder="Nom, chemin complet, code-barres..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+            </div>
 
-          <select
-            value={usageFilter}
-            onChange={(e) => setUsageFilter(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            aria-label="Filtrer par type"
-          >
-            <option value="all">Tous les types</option>
-            <option value="internal">Interne</option>
-            <option value="view">Vue</option>
-            <option value="supplier">Fournisseur</option>
-            <option value="customer">Client</option>
-            <option value="inventory">Inventaire</option>
-            <option value="transit">Transit</option>
-          </select>
+            {/* Filtre Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <Filter className="inline mr-2 h-4 w-4" />
+                Type
+              </label>
+              <select
+                value={usageFilter}
+                onChange={(e) => setUsageFilter(e.target.value as any)}
+                className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
+                <option value="all">Tous les types</option>
+                <option value="internal">Stock physique</option>
+                <option value="view">Catégories</option>
+              </select>
+            </div>
 
-          <select
-            value={warehouseFilter || ''}
-            onChange={(e) => setWarehouseFilter(e.target.value ? parseInt(e.target.value) : undefined)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            disabled={isLoadingWarehouses}
-            aria-label="Filtrer par entrepôt"
-          >
-            <option value="">Tous les entrepôts</option>
-            {warehouses.map((warehouse) => (
-              <option key={warehouse.id} value={warehouse.id}>
-                {warehouse.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            {/* Filtre Entrepôt */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Entrepôt
+              </label>
+              <select
+                value={warehouseFilter || ''}
+                onChange={(e) => setWarehouseFilter(e.target.value ? Number(e.target.value) : undefined)}
+                className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              >
+                <option value="">Tous les entrepôts</option>
+                {warehouses.map((wh) => (
+                  <option key={wh.id} value={wh.id}>
+                    {wh.name} ({wh.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        {/* Filtres actifs */}
-        {(search || usageFilter !== 'all' || warehouseFilter) && (
-          <div className="mb-4 flex items-center gap-2 flex-wrap">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Filtres actifs:</span>
+          {/* Actions expand/collapse */}
+          <div className="mt-4 flex items-center gap-2">
+            <button
+              onClick={handleExpandAll}
+              className="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+            >
+              <Maximize2 className="h-3 w-3 mr-1" />
+              Tout déplier
+            </button>
+            <button
+              onClick={handleCollapseAll}
+              className="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+            >
+              <Minimize2 className="h-3 w-3 mr-1" />
+              Tout replier
+            </button>
             {search && (
-              <Badge variant="info" className="flex items-center gap-1">
-                Recherche: {search}
-                <button
-                  onClick={() => setSearch('')}
-                  className="ml-1 hover:text-red-600"
-                  aria-label="Supprimer le filtre de recherche"
-                >
-                  ×
-                </button>
-              </Badge>
-            )}
-            {usageFilter !== 'all' && (
-              <Badge variant="info" className="flex items-center gap-1">
-                Type: {USAGE_LABELS[usageFilter] || usageFilter}
-                <button
-                  onClick={() => setUsageFilter('all')}
-                  className="ml-1 hover:text-red-600"
-                  aria-label="Supprimer le filtre de type"
-                >
-                  ×
-                </button>
-              </Badge>
-            )}
-            {warehouseFilter && (
-              <Badge variant="info" className="flex items-center gap-1">
-                Entrepôt:{' '}
-                {warehouses.find((w) => w.id === warehouseFilter)?.name || warehouseFilter}
-                <button
-                  onClick={() => setWarehouseFilter(undefined)}
-                  className="ml-1 hover:text-red-600"
-                  aria-label="Supprimer le filtre d'entrepôt"
-                >
-                  ×
-                </button>
+              <Badge variant="info">
+                Recherche active : "{search}"
               </Badge>
             )}
           </div>
-        )}
+        </div>
 
-        {/* Tableau */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          {isLoading ? (
-            <SkeletonTable rows={10} columns={4} />
-          ) : error ? (
-            <div className="p-8 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des emplacements
+        {/* Stats */}
+        {locations.length > 0 && (
+          <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total emplacements</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{locations.length}</p>
             </div>
-          ) : filteredLocations.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Nom
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Nom Complet
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Entrepôt
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredLocations.map((location) => (
-                    <tr
-                      key={location.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
-                          {location.name}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                          {location.complete_name}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant={USAGE_VARIANTS[location.usage] || 'neutral'}>
-                          {USAGE_LABELS[location.usage] || location.usage}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900 dark:text-white">
-                          {location.warehouse_name || '—'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="p-12 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                  <span className="text-2xl">📍</span>
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Aucun emplacement trouvé
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                {search
-                  ? 'Aucun emplacement ne correspond à votre recherche.'
-                  : 'Aucun emplacement disponible.'}
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Stock physique</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {locations.filter(l => l.usage === 'internal').length}
               </p>
             </div>
-          )}
-        </div>
-
-        {/* Statistiques */}
-        {!isLoading && filteredLocations.length > 0 && (
-          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            Affichage de {filteredLocations.length} emplacement
-            {filteredLocations.length > 1 ? 's' : ''}{' '}
-            {locations.length !== filteredLocations.length &&
-              `sur ${locations.length} au total`}
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Catégories</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {locations.filter(l => l.usage === 'view').length}
+              </p>
+            </div>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Avec stock</p>
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {locations.filter(l => l.stock_count > 0).length}
+              </p>
+            </div>
           </div>
         )}
+
+        {/* Loading state */}
+        {isLoading ? (
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-8">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+            </div>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+            <p className="text-red-800 dark:text-red-200">Erreur : {error.message}</p>
+            <button
+              onClick={() => refetch()}
+              className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Réessayer
+            </button>
+          </div>
+        ) : (
+          /* Vue arbre */
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <LocationTreeView
+              locations={filteredTree}
+              onEdit={handleEdit}
+              onArchive={handleArchive}
+              onAddChild={handleAddChild}
+              onMove={handleMove}
+              onToggleExpand={handleToggleExpand}
+            />
+          </div>
+        )}
+
+        {/* Modal CRUD */}
+        <LocationFormModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setEditingLocation(undefined)
+            setParentIdForNew(undefined)
+          }}
+          location={editingLocation}
+          parentId={parentIdForNew}
+          warehouseId={warehouseFilter}
+          onSuccess={() => {
+            setIsModalOpen(false)
+            setEditingLocation(undefined)
+            setParentIdForNew(undefined)
+            refetch()
+          }}
+        />
       </div>
     </Layout>
   )

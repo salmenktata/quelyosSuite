@@ -3,9 +3,9 @@
  * Appelle le backend Odoo via le proxy Vite
  */
 
-// En développement, appeler directement Odoo avec CORS
-// En production, utiliser les URLs relatives (proxy Next.js)
-const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:8069' : ''
+// Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
+// Le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
+const API_BASE_URL = ''
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -58,8 +58,12 @@ export async function api<T = unknown>(
     fetchOptions.body = JSON.stringify(body)
   }
 
+  const fullUrl = `${API_BASE_URL}/api/ecommerce${endpoint}`
+  console.log('🔍 [Finance API] Calling:', { fullUrl, method, API_BASE_URL, endpoint })
+
   try {
-    const response = await fetch(`${API_BASE_URL}/api/ecommerce${endpoint}`, fetchOptions)
+    const response = await fetch(fullUrl, fetchOptions)
+    console.log('✅ [Finance API] Response:', { status: response.status, ok: response.ok, url: fullUrl })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
@@ -98,10 +102,12 @@ export async function api<T = unknown>(
     }
     return (json.data ?? json) as T
   } catch (error) {
-    // Don't log authentication errors (expected when not logged in)
-    if (!(error instanceof AuthenticationError)) {
-      console.error('Finance API Error:', error)
-    }
+    console.error('❌ [Finance API] Error:', {
+      url: fullUrl,
+      endpoint,
+      error: error instanceof Error ? error.message : error,
+      type: error?.constructor?.name
+    })
     throw error
   }
 }
@@ -210,8 +216,8 @@ export const financeApi = {
   deleteBudget: (id: number) => api(`/budgets/${id}`, { method: 'DELETE' }),
 
   // Categories
-  getCategories: () => api<Category[]>('/categories'),
-  createCategory: (data: Partial<Category>) => api<Category>('/categories', { method: 'POST', body: data }),
+  getCategories: () => api<Category[]>('/finance/categories'),
+  createCategory: (data: Partial<Category>) => api<Category>('/finance/categories', { method: 'POST', body: data }),
 
   // Suppliers
   getSuppliers: () => api<Supplier[]>('/suppliers'),
@@ -236,5 +242,33 @@ export const financeApi = {
   getReportingData: (type: string, params?: Record<string, unknown>) => {
     const query = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : ''
     return api(`/reporting/${type}${query}`)
+  },
+
+  // Stock Analytics
+  getStockValuation: (params?: { warehouse_id?: number; category_id?: number; date?: string }) => {
+    const query = params ? '?' + new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, v]) => v !== undefined && v !== null)
+        .map(([k, v]) => [k, String(v)])
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+    ).toString() : ''
+    return api(`/finance/stock/valuation${query}`)
+  },
+
+  getStockTurnover: (params?: {
+    start_date?: string
+    end_date?: string
+    category_id?: number
+    status_filter?: string
+    limit?: number
+    offset?: number
+  }) => {
+    const query = params ? '?' + new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, v]) => v !== undefined && v !== null)
+        .map(([k, v]) => [k, String(v)])
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+    ).toString() : ''
+    return api(`/finance/stock/turnover${query}`)
   },
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { useWarehouseDetail, useWarehouseStock } from '../hooks/useWarehouses'
+import { useWarehouseDetail, useWarehouseStock, useArchiveWarehouse } from '../hooks/useWarehouses'
 import { Badge, Button, Breadcrumbs, SkeletonTable } from '../components/common'
 import {
   ArrowLeftIcon,
@@ -10,6 +10,9 @@ import {
   CubeIcon,
   MagnifyingGlassIcon,
   ExclamationTriangleIcon,
+  PencilIcon,
+  ArchiveBoxIcon,
+  ArchiveBoxArrowDownIcon,
 } from '@heroicons/react/24/outline'
 
 type TabType = 'locations' | 'stock'
@@ -26,7 +29,7 @@ export default function WarehouseDetail() {
   const [lowStockOnly, setLowStockOnly] = useState(false)
   const stockLimit = 20
 
-  const { data: warehouse, isLoading, error } = useWarehouseDetail(warehouseId)
+  const { data: warehouse, isLoading, error, refetch } = useWarehouseDetail(warehouseId)
   const {
     data: stockData,
     isLoading: stockLoading,
@@ -36,6 +39,8 @@ export default function WarehouseDetail() {
     search: stockSearch || undefined,
     low_stock_only: lowStockOnly || undefined,
   })
+
+  const { mutate: archiveWarehouse, isPending: isArchiving } = useArchiveWarehouse()
 
   const handleStockSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,18 +103,71 @@ export default function WarehouseDetail() {
 
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <BuildingStorefrontIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                {warehouse.name}
-                <Badge variant={warehouse.active ? 'success' : 'neutral'}>
-                  {warehouse.active ? 'Actif' : 'Inactif'}
-                </Badge>
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400">
-                Code: {warehouse.code} • {warehouse.company_name || 'Aucune société'}
-              </p>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-4">
+              <BuildingStorefrontIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                  {warehouse.name}
+                  <Badge variant={warehouse.active ? 'success' : 'neutral'}>
+                    {warehouse.active ? 'Actif' : 'Inactif'}
+                  </Badge>
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Code: {warehouse.code} • {warehouse.company_name || 'Aucune société'}
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  // TODO: Ouvrir modal d'édition
+                  alert('Fonctionnalité de modification à venir')
+                }}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+              >
+                <PencilIcon className="h-4 w-4 mr-2" />
+                Modifier
+              </button>
+              <button
+                onClick={() => {
+                  if (!warehouse.active) {
+                    alert('Réactivation non encore implémentée')
+                    return
+                  }
+                  if (confirm(`Êtes-vous sûr de vouloir archiver l'entrepôt "${warehouse.name}" ?`)) {
+                    archiveWarehouse(warehouseId, {
+                      onSuccess: () => {
+                        refetch()
+                        alert('Entrepôt archivé avec succès')
+                      },
+                      onError: (error: any) => {
+                        alert(error.message || 'Erreur lors de l\'archivage')
+                      }
+                    })
+                  }
+                }}
+                disabled={isArchiving}
+                className={`inline-flex items-center px-3 py-2 border rounded-lg shadow-sm text-sm font-medium transition-colors duration-200 ${
+                  warehouse.active
+                    ? 'border-red-300 dark:border-red-600 text-red-700 dark:text-red-300 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20'
+                    : 'border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {warehouse.active ? (
+                  <>
+                    <ArchiveBoxIcon className="h-4 w-4 mr-2" />
+                    {isArchiving ? 'Archivage...' : 'Archiver'}
+                  </>
+                ) : (
+                  <>
+                    <ArchiveBoxArrowDownIcon className="h-4 w-4 mr-2" />
+                    Réactiver
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

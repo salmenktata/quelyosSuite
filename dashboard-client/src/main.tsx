@@ -8,9 +8,22 @@ import './index.css'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error: any) => {
+        // Ne pas retry les erreurs 4xx (client errors)
+        if (error?.response?.status >= 400 && error?.response?.status < 500) {
+          return false
+        }
+        // Retry max 3 fois pour 5xx (server errors) et network errors
+        return failureCount < 3
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000,
       refetchOnWindowFocus: false,
     },
+    mutations: {
+      retry: false, // Pas de retry automatique pour mutations
+    }
   },
 })
 

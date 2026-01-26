@@ -934,3 +934,302 @@ class FinanceController(http.Controller):
             }
         except Exception as e:
             return {'success': False, 'error': str(e)}
+
+    # ==================== STOCK ANALYTICS ====================
+
+    @http.route('/api/ecommerce/finance/stock/valuation', type='http', auth='public', cors='*', methods=['GET'], csrf=False)
+    def get_stock_valuation(self, warehouse_id=None, category_id=None, date_str=None, **kwargs):
+        """
+        Valorisation du stock avec agrégations par entrepôt et catégorie
+
+        Query params:
+        - warehouse_id: Filtrer par entrepôt (optionnel)
+        - category_id: Filtrer par catégorie produit (optionnel)
+        - date_str: Date de valorisation (défaut: aujourd'hui)
+        """
+        try:
+            env = self._get_env()
+            StockQuant = env['stock.quant']
+            Product = env['product.product']
+
+            # Construire le domaine de recherche
+            domain = [
+                ('quantity', '>', 0),
+                ('location_id.usage', '=', 'internal')
+            ]
+
+            if warehouse_id:
+                try:
+                    warehouse_id = int(warehouse_id)
+                    domain.append(('location_id.warehouse_id', '=', warehouse_id))
+                except (ValueError, TypeError):
+                    return self._error_response('Invalid warehouse_id', 400)
+
+            # Récupérer tous les quants actifs
+            quants = StockQuant.search(domain)
+
+            # Structures pour agréger les données
+            warehouse_valuation = {}
+            category_valuation = {}
+            total_value = 0.0
+            total_qty = 0.0
+            product_ids = set()
+
+            # Calculer la valorisation par quant
+            for quant in quants:
+                product = quant.product_id
+                if not product:
+                    continue
+
+                product_ids.add(product.id)
+                qty = quant.quantity
+                # Utiliser standard_price pour la valorisation
+                unit_price = product.standard_price or 0.0
+                value = qty * unit_price
+
+                total_value += value
+                total_qty += qty
+
+                # Agrégation par entrepôt
+                warehouse = quant.location_id.warehouse_id
+                if warehouse:
+                    wh_id = warehouse.id
+                    if wh_id not in warehouse_valuation:
+                        warehouse_valuation[wh_id] = {
+                            'warehouse_id': wh_id,
+                            'warehouse_name': warehouse.name,
+                            'total_value': 0.0,
+                            'total_qty': 0.0,
+                            'product_count': set()
+                        }
+                    warehouse_valuation[wh_id]['total_value'] += value
+                    warehouse_valuation[wh_id]['total_qty'] += qty
+                    warehouse_valuation[wh_id]['product_count'].add(product.id)
+
+                # Agrégation par catégorie
+                category = product.categ_id
+                if category:
+                    cat_id = category.id
+                    if cat_id not in category_valuation:
+                        category_valuation[cat_id] = {
+                            'category_id': cat_id,
+                            'category_name': category.complete_name or category.name,
+                            'total_value': 0.0,
+                            'total_qty': 0.0,
+                            'product_count': set()
+                        }
+                    category_valuation[cat_id]['total_value'] += value
+                    category_valuation[cat_id]['total_qty'] += qty
+                    category_valuation[cat_id]['product_count'].add(product.id)
+
+            # Convertir les sets en counts et formatter pour JSON
+            by_warehouse = []
+            for wh_data in warehouse_valuation.values():
+                by_warehouse.append({
+                    'warehouse_id': wh_data['warehouse_id'],
+                    'warehouse_name': wh_data['warehouse_name'],
+                    'total_value': round(wh_data['total_value'], 2),
+                    'total_qty': round(wh_data['total_qty'], 2),
+                    'product_count': len(wh_data['product_count'])
+                })
+
+            by_category = []
+            for cat_data in category_valuation.values():
+                by_category.append({
+                    'category_id': cat_data['category_id'],
+                    'category_name': cat_data['category_name'],
+                    'total_value': round(cat_data['total_value'], 2),
+                    'total_qty': round(cat_data['total_qty'], 2),
+                    'product_count': len(cat_data['product_count'])
+                })
+
+            # Calculer KPIs globaux
+            product_count = len(product_ids)
+            avg_value_per_product = round(total_value / product_count, 2) if product_count > 0 else 0.0
+
+            # Timeline simple (pour MVP, juste la date actuelle)
+            valuation_date = date_str or date.today().strftime('%Y-%m-%d')
+            timeline = [{
+                'date': valuation_date,
+                'total_value': round(total_value, 2)
+            }]
+
+            return self._json_response({
+                'success': True,
+                'data': {
+                    'kpis': {
+                        'total_value': round(total_value, 2),
+                        'total_qty': round(total_qty, 2),
+                        'avg_value_per_product': avg_value_per_product,
+                        'valuation_method': 'standard_price',
+                        'product_count': product_count
+                    },
+                    'by_warehouse': sorted(by_warehouse, key=lambda x: x['total_value'], reverse=True),
+                    'by_category': sorted(by_category, key=lambda x: x['total_value'], reverse=True),
+                    'timeline': timeline
+                }
+            })
+        except Exception as e:
+            _logger.error(f"Error in stock valuation: {e}", exc_info=True)
+            return self._error_response(str(e), 500)
+
+    @http.route('/api/ecommerce/finance/stock/turnover', type='http', auth='public', cors='*', methods=['GET'], csrf=False)
+    def get_stock_turnover(self, start_date=None, end_date=None, category_id=None,
+                          status_filter=None, limit=50, offset=0, **kwargs):
+        """
+        Rapport de rotation du stock avec classification des produits
+
+        Query params:
+        - start_date: Date début période (format YYYY-MM-DD)
+        - end_date: Date fin période (format YYYY-MM-DD)
+        - category_id: Filtrer par catégorie (optionnel)
+        - status_filter: Filtrer par statut (excellent/good/slow/dead)
+        - limit: Nombre de résultats (défaut: 50)
+        - offset: Offset pour pagination (défaut: 0)
+        """
+        try:
+            env = self._get_env()
+            SaleOrderLine = env['sale.order.line']
+            Product = env['product.product']
+
+            # Dates par défaut : 90 derniers jours
+            if not end_date:
+                end_date = date.today()
+            else:
+                try:
+                    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                except ValueError:
+                    return self._error_response('Invalid end_date format (use YYYY-MM-DD)', 400)
+
+            if not start_date:
+                start_date = end_date - timedelta(days=90)
+            else:
+                try:
+                    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                except ValueError:
+                    return self._error_response('Invalid start_date format (use YYYY-MM-DD)', 400)
+
+            # Valider limit et offset
+            try:
+                limit = int(limit)
+                offset = int(offset)
+                if limit <= 0 or limit > 500:
+                    limit = 50
+                if offset < 0:
+                    offset = 0
+            except (ValueError, TypeError):
+                return self._error_response('Invalid limit or offset', 400)
+
+            # Construire domaine pour les ventes
+            sale_domain = [
+                ('order_id.state', 'in', ['sale', 'done']),
+                ('order_id.date_order', '>=', start_date.strftime('%Y-%m-%d')),
+                ('order_id.date_order', '<=', end_date.strftime('%Y-%m-%d'))
+            ]
+
+            if category_id:
+                try:
+                    category_id = int(category_id)
+                    sale_domain.append(('product_id.categ_id', '=', category_id))
+                except (ValueError, TypeError):
+                    return self._error_response('Invalid category_id', 400)
+
+            # Agréger les ventes par produit avec read_group
+            sales_by_product = SaleOrderLine.read_group(
+                sale_domain,
+                ['product_id', 'product_uom_qty:sum'],
+                ['product_id']
+            )
+
+            # Construire le rapport de rotation
+            turnover_data = []
+            total_sales_qty = 0.0
+
+            for group in sales_by_product:
+                product_id = group['product_id'][0] if group['product_id'] else None
+                if not product_id:
+                    continue
+
+                product = Product.browse(product_id)
+                if not product.exists():
+                    continue
+
+                qty_sold = group['product_uom_qty']
+                total_sales_qty += qty_sold
+
+                # Calculer stock moyen (simplifié MVP : stock actuel)
+                # TODO: Améliorer avec vraie moyenne sur période
+                avg_stock = product.qty_available
+
+                # Calculer ratio de rotation annualisé
+                # ratio = (ventes sur période) / stock moyen * (365 / nb_jours_période)
+                period_days = (end_date - start_date).days or 1
+                annualization_factor = 365.0 / period_days
+
+                if avg_stock > 0:
+                    turnover_ratio = (qty_sold / avg_stock) * annualization_factor
+                else:
+                    turnover_ratio = 0.0 if qty_sold == 0 else 999.9  # Produit vendu sans stock = très rapide
+
+                # Calculer jours de stock
+                if turnover_ratio > 0:
+                    days_of_stock = 365.0 / turnover_ratio
+                else:
+                    days_of_stock = 999.9
+
+                # Classification selon le ratio
+                if turnover_ratio >= 12:
+                    status = 'excellent'
+                elif turnover_ratio >= 6:
+                    status = 'good'
+                elif turnover_ratio >= 2:
+                    status = 'slow'
+                else:
+                    status = 'dead'
+
+                turnover_data.append({
+                    'product_id': product.id,
+                    'name': product.display_name or product.name,
+                    'sku': product.default_code or '',
+                    'qty_sold': round(qty_sold, 2),
+                    'avg_stock': round(avg_stock, 2),
+                    'turnover_ratio': round(turnover_ratio, 2),
+                    'days_of_stock': round(days_of_stock, 1),
+                    'status': status
+                })
+
+            # Filtrer par statut si demandé
+            if status_filter and status_filter in ['excellent', 'good', 'slow', 'dead']:
+                turnover_data = [item for item in turnover_data if item['status'] == status_filter]
+
+            # Trier par ratio décroissant
+            turnover_data.sort(key=lambda x: x['turnover_ratio'], reverse=True)
+
+            # KPIs globaux
+            avg_turnover_ratio = sum(item['turnover_ratio'] for item in turnover_data) / len(turnover_data) if turnover_data else 0.0
+            slow_movers_count = sum(1 for item in turnover_data if item['status'] == 'slow')
+            dead_stock_count = sum(1 for item in turnover_data if item['status'] == 'dead')
+
+            # Pagination
+            total_count = len(turnover_data)
+            turnover_data_paginated = turnover_data[offset:offset + limit]
+
+            return self._json_response({
+                'success': True,
+                'data': {
+                    'kpis': {
+                        'avg_turnover_ratio': round(avg_turnover_ratio, 2),
+                        'slow_movers_count': slow_movers_count,
+                        'dead_stock_count': dead_stock_count,
+                        'total_sales_qty': round(total_sales_qty, 2),
+                        'period_days': (end_date - start_date).days
+                    },
+                    'products': turnover_data_paginated,
+                    'total': total_count,
+                    'limit': limit,
+                    'offset': offset
+                }
+            })
+        except Exception as e:
+            _logger.error(f"Error in stock turnover: {e}", exc_info=True)
+            return self._error_response(str(e), 500)

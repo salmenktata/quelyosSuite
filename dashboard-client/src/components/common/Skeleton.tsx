@@ -106,3 +106,49 @@ export function SkeletonGrid({ count = 6, columns = 4 }: { count?: number; colum
     </div>
   );
 }
+
+// Skeleton KPI Card pour dashboards
+export function SkeletonKPI() {
+  return (
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+      <div className="animate-pulse space-y-3">
+        <Skeleton variant="text" width="50%" />
+        <Skeleton variant="text" height={32} width="75%" />
+        <Skeleton variant="text" width="33%" />
+      </div>
+    </div>
+  )
+}
+
+// Skeleton Tree pour arborescences
+export function SkeletonTree({ depth = 3 }: { depth?: number }) {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: depth }).map((_, i) => (
+        <div key={i} style={{ paddingLeft: `${i * 24}px` }}>
+          <div className="animate-pulse flex items-center gap-3 p-3">
+            <Skeleton variant="circular" width={20} height={20} />
+            <Skeleton variant="text" width={200} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Skeleton Chart pour graphiques
+export function SkeletonChart() {
+  return (
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+      <div className="animate-pulse space-y-4">
+        <Skeleton variant="text" width="33%" height={24} />
+        <Skeleton variant="rectangular" height={256} />
+        <div className="flex justify-center gap-4">
+          <Skeleton variant="text" width={64} />
+          <Skeleton variant="text" width={64} />
+          <Skeleton variant="text" width={64} />
+        </div>
+      </div>
+    </div>
+  )
+}

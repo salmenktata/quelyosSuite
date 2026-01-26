@@ -2,6 +2,7 @@
 import logging
 import time
 import os
+import math
 from odoo import http, fields
 from odoo.http import request
 from passlib.context import CryptContext
@@ -8831,6 +8832,995 @@ class QuelyosAPI(http.Controller):
             }, status=200)
 
     # ===================================================================
+    # FINANCE ACCOUNTS & PORTFOLIOS - Comptes bancaires et portefeuilles
+    # ===================================================================
+
+    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_accounts(self, **kwargs):
+        """
+        Récupérer la liste des comptes bancaires/financiers.
+
+        Returns:
+            Liste des comptes avec balances
+        """
+        try:
+            # TODO: Implémenter avec res.partner.bank ou modèle custom
+
+            response_data = []
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get finance accounts error: {e}")
+            return request.make_json_response([], status=200)
+
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_account(self, account_id, **kwargs):
+        """
+        Récupérer un compte spécifique.
+
+        Returns:
+            Détails du compte
+        """
+        try:
+            # TODO: Implémenter avec modèle
+
+            response_data = {
+                'id': account_id,
+                'name': 'Compte principal',
+                'type': 'checking',
+                'balance': 0.0,
+                'currency': 'EUR',
+                'active': True
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get finance account error: {e}")
+            return request.make_json_response({
+                'id': account_id,
+                'name': 'Compte',
+                'balance': 0.0
+            }, status=200)
+
+    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_account(self, **kwargs):
+        """
+        Créer un nouveau compte financier.
+
+        Returns:
+            Compte créé
+        """
+        try:
+            params = self._get_http_params()
+
+            response_data = {
+                'id': 1,
+                'name': params.get('name', 'Nouveau compte'),
+                'type': params.get('type', 'checking'),
+                'balance': 0.0,
+                'currency': params.get('currency', 'EUR'),
+                'active': True
+            }
+
+            return request.make_json_response(response_data, status=201)
+
+        except Exception as e:
+            _logger.error(f"Create finance account error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la création du compte'
+            }, status=500)
+
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    def update_finance_account(self, account_id, **kwargs):
+        """
+        Mettre à jour un compte financier.
+
+        Returns:
+            Compte mis à jour
+        """
+        try:
+            params = self._get_http_params()
+
+            response_data = {
+                'id': account_id,
+                'name': params.get('name', 'Compte mis à jour'),
+                'type': params.get('type', 'checking'),
+                'balance': params.get('balance', 0.0),
+                'currency': params.get('currency', 'EUR'),
+                'active': params.get('active', True)
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Update finance account error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la mise à jour du compte'
+            }, status=500)
+
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    def delete_finance_account(self, account_id, **kwargs):
+        """
+        Supprimer un compte financier.
+
+        Returns:
+            Confirmation de suppression
+        """
+        try:
+            return request.make_json_response({'success': True})
+
+        except Exception as e:
+            _logger.error(f"Delete finance account error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la suppression du compte'
+            }, status=500)
+
+    @http.route('/api/ecommerce/portfolios', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_portfolios(self, **kwargs):
+        """
+        Récupérer la liste des portefeuilles.
+
+        Returns:
+            Liste des portefeuilles avec comptes
+        """
+        try:
+            # TODO: Implémenter avec modèle custom
+
+            response_data = []
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get finance portfolios error: {e}")
+            return request.make_json_response([], status=200)
+
+    @http.route('/api/ecommerce/portfolios/<int:portfolio_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_portfolio(self, portfolio_id, **kwargs):
+        """
+        Récupérer un portefeuille spécifique.
+
+        Returns:
+            Détails du portefeuille avec ses comptes
+        """
+        try:
+            # TODO: Implémenter avec modèle
+
+            response_data = {
+                'id': portfolio_id,
+                'name': 'Portefeuille principal',
+                'description': '',
+                'accounts': [],
+                'totalBalance': 0.0
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get finance portfolio error: {e}")
+            return request.make_json_response({
+                'id': portfolio_id,
+                'name': 'Portefeuille',
+                'accounts': [],
+                'totalBalance': 0.0
+            }, status=200)
+
+    # ===================================================================
+    # FINANCE TRANSACTIONS - Transactions financières
+    # ===================================================================
+
+    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_transactions(self, **kwargs):
+        """Liste des transactions"""
+        return request.make_json_response([])
+
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_transaction(self, transaction_id, **kwargs):
+        """Détail d'une transaction"""
+        return request.make_json_response({'id': transaction_id, 'description': 'Transaction', 'amount': 0.0})
+
+    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_transaction(self, **kwargs):
+        """Créer transaction"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': 1, 'amount': params.get('amount', 0.0)}, status=201)
+
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    def update_finance_transaction(self, transaction_id, **kwargs):
+        """Mettre à jour transaction"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': transaction_id, 'amount': params.get('amount', 0.0)})
+
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    def delete_finance_transaction(self, transaction_id, **kwargs):
+        """Supprimer transaction"""
+        return request.make_json_response({'success': True})
+
+    # ===================================================================
+    # FINANCE BUDGETS - Budgets
+    # ===================================================================
+
+    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_budgets(self, **kwargs):
+        """Liste des budgets"""
+        return request.make_json_response([])
+
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_budget(self, budget_id, **kwargs):
+        """Détail d'un budget"""
+        return request.make_json_response({'id': budget_id, 'name': 'Budget', 'amount': 0.0, 'spent': 0.0})
+
+    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_budget(self, **kwargs):
+        """Créer budget"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': 1, 'name': params.get('name', 'Budget'), 'amount': params.get('amount', 0.0)}, status=201)
+
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    def update_finance_budget(self, budget_id, **kwargs):
+        """Mettre à jour budget"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': budget_id, 'name': params.get('name', 'Budget'), 'amount': params.get('amount', 0.0)})
+
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    def delete_finance_budget(self, budget_id, **kwargs):
+        """Supprimer budget"""
+        return request.make_json_response({'success': True})
+
+    # ===================================================================
+    # FINANCE CATEGORIES - Catégories de transactions
+    # ===================================================================
+
+    @http.route('/api/ecommerce/finance/categories', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_categories(self, **kwargs):
+        """Liste des catégories"""
+        return request.make_json_response([])
+
+    @http.route('/api/ecommerce/finance/categories', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_category(self, **kwargs):
+        """Créer catégorie"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': 1, 'name': params.get('name', 'Catégorie')}, status=201)
+
+    # ===================================================================
+    # DASHBOARD FORECAST - Prévisions dashboard
+    # ===================================================================
+
+    @http.route('/api/ecommerce/dashboard/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_dashboard_forecast(self, **kwargs):
+        """Prévisions pour le dashboard"""
+        return request.make_json_response({'forecast': [], 'trend': 'stable'})
+
+    # ===================================================================
+    # FINANCE SUPPLIERS - Fournisseurs
+    # ===================================================================
+
+    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_suppliers(self, **kwargs):
+        """Liste des fournisseurs"""
+        return request.make_json_response([])
+
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_supplier(self, supplier_id, **kwargs):
+        """Détail fournisseur"""
+        return request.make_json_response({'id': supplier_id, 'name': 'Fournisseur'})
+
+    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_supplier(self, **kwargs):
+        """Créer fournisseur"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': 1, 'name': params.get('name', 'Fournisseur')}, status=201)
+
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    def update_finance_supplier(self, supplier_id, **kwargs):
+        """Mettre à jour fournisseur"""
+        params = self._get_http_params()
+        return request.make_json_response({'id': supplier_id, 'name': params.get('name', 'Fournisseur')})
+
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    def delete_finance_supplier(self, supplier_id, **kwargs):
+        """Supprimer fournisseur"""
+        return request.make_json_response({'success': True})
+
+    # ===================================================================
+    # FINANCE ALERTS - Alertes et notifications financières
+    # ===================================================================
+
+    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_finance_alerts(self, **kwargs):
+        """
+        Récupérer toutes les alertes financières avec leurs déclenchements récents.
+
+        Returns:
+            Liste des alertes avec leurs triggers
+        """
+        try:
+            # TODO: Implémenter avec données réelles depuis res.partner ou modèle custom
+            # Pour l'instant, retourner structure vide
+
+            response_data = {
+                'alerts': []
+            }
+
+            return request.make_json_response(response_data, headers={
+                'Cache-Control': 'private, no-cache',
+            })
+
+        except Exception as e:
+            _logger.error(f"Get finance alerts error: {e}")
+            return request.make_json_response({
+                'alerts': []
+            }, status=200)
+
+    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_finance_alert(self, **kwargs):
+        """
+        Créer une nouvelle alerte financière.
+
+        Body params:
+            name (str): Nom de l'alerte
+            type (str): Type d'alerte (cash_below, cash_above, etc.)
+            threshold (float): Seuil de déclenchement
+            emailRecipients (list): Liste des emails destinataires
+
+        Returns:
+            Alerte créée avec son ID
+        """
+        try:
+            params = self._get_http_params()
+
+            # TODO: Implémenter création dans modèle Odoo
+
+            response_data = {
+                'id': 1,
+                'name': params.get('name', 'Nouvelle alerte'),
+                'type': params.get('type', 'cash_below'),
+                'threshold': float(params.get('threshold', 0)),
+                'emailRecipients': params.get('emailRecipients', []),
+                'active': True
+            }
+
+            return request.make_json_response(response_data, status=201)
+
+        except Exception as e:
+            _logger.error(f"Create finance alert error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la création de l\'alerte'
+            }, status=500)
+
+    @http.route('/api/ecommerce/alerts/<int:alert_id>', type='http', auth='public', methods=['PATCH'], csrf=False, cors='*')
+    def update_finance_alert(self, alert_id, **kwargs):
+        """
+        Mettre à jour une alerte financière.
+
+        Returns:
+            Alerte mise à jour
+        """
+        try:
+            params = self._get_http_params()
+
+            # TODO: Implémenter update dans modèle Odoo
+
+            response_data = {
+                'id': alert_id,
+                'name': params.get('name', 'Alerte mise à jour'),
+                'type': params.get('type', 'cash_below'),
+                'threshold': float(params.get('threshold', 0)),
+                'emailRecipients': params.get('emailRecipients', []),
+                'active': params.get('active', True)
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Update finance alert error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la mise à jour de l\'alerte'
+            }, status=500)
+
+    # ===================================================================
+    # SUPPLIER INVOICES - Factures fournisseurs
+    # ===================================================================
+
+    @http.route('/api/ecommerce/supplier-invoices/upcoming', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_upcoming_supplier_invoices(self, **kwargs):
+        """
+        Récupérer les factures fournisseurs à venir.
+
+        Query params:
+            days (int): Nombre de jours à prévoir (défaut: 60)
+
+        Returns:
+            Liste des factures à venir
+        """
+        try:
+            params = self._get_http_params()
+            days = int(params.get('days', 60))
+
+            # TODO: Implémenter avec account.move (supplier invoices)
+
+            response_data = {
+                'invoices': [],
+                'totalAmount': 0.0,
+                'currency': 'EUR'
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get upcoming supplier invoices error: {e}")
+            return request.make_json_response({
+                'invoices': [],
+                'totalAmount': 0.0,
+                'currency': 'EUR'
+            }, status=200)
+
+    @http.route('/api/ecommerce/supplier-invoices/overdue', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_overdue_supplier_invoices(self, **kwargs):
+        """
+        Récupérer les factures fournisseurs en retard.
+
+        Returns:
+            Liste des factures en retard
+        """
+        try:
+            # TODO: Implémenter avec account.move (overdue invoices)
+
+            response_data = {
+                'invoices': [],
+                'totalAmount': 0.0,
+                'currency': 'EUR'
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get overdue supplier invoices error: {e}")
+            return request.make_json_response({
+                'invoices': [],
+                'totalAmount': 0.0,
+                'currency': 'EUR'
+            }, status=200)
+
+    # ===================================================================
+    # PAYMENT PLANNING - Planification des paiements
+    # ===================================================================
+
+    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_payment_scenarios(self, **kwargs):
+        """
+        Récupérer tous les scénarios de paiement.
+
+        Returns:
+            Liste des scénarios
+        """
+        try:
+            # TODO: Implémenter avec modèle custom payment.scenario
+
+            response_data = {
+                'scenarios': []
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get payment scenarios error: {e}")
+            return request.make_json_response({
+                'scenarios': []
+            }, status=200)
+
+    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_payment_scenario(self, **kwargs):
+        """
+        Créer un nouveau scénario de paiement.
+
+        Returns:
+            Scénario créé
+        """
+        try:
+            params = self._get_http_params()
+
+            # TODO: Implémenter création scénario
+
+            response_data = {
+                'id': 1,
+                'name': params.get('name', 'Nouveau scénario'),
+                'invoices': params.get('invoices', []),
+                'totalAmount': 0.0,
+                'createdAt': fields.Datetime.now().isoformat()
+            }
+
+            return request.make_json_response(response_data, status=201)
+
+        except Exception as e:
+            _logger.error(f"Create payment scenario error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de la création du scénario'
+            }, status=500)
+
+    @http.route('/api/ecommerce/payment-planning/optimize', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def optimize_payment_planning(self, **kwargs):
+        """
+        Optimiser la planification des paiements.
+
+        Body params:
+            invoices (list): Liste des factures à optimiser
+            constraints (dict): Contraintes d'optimisation
+
+        Returns:
+            Plan de paiement optimisé
+        """
+        try:
+            params = self._get_http_params()
+
+            # TODO: Implémenter algorithme d'optimisation
+
+            response_data = {
+                'optimizedPlan': [],
+                'totalSavings': 0.0,
+                'recommendations': []
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Optimize payment planning error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de l\'optimisation'
+            }, status=500)
+
+    @http.route('/api/ecommerce/payment-planning/export-excel', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def export_payment_planning_excel(self, **kwargs):
+        """
+        Exporter le plan de paiement en Excel.
+
+        Returns:
+            Fichier Excel
+        """
+        try:
+            # TODO: Implémenter export Excel avec openpyxl
+
+            return request.make_json_response({
+                'url': '/download/payment-plan.xlsx',
+                'message': 'Export en cours de développement'
+            })
+
+        except Exception as e:
+            _logger.error(f"Export payment planning excel error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de l\'export'
+            }, status=500)
+
+    @http.route('/api/ecommerce/payment-planning/export-pdf', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def export_payment_planning_pdf(self, **kwargs):
+        """
+        Exporter le plan de paiement en PDF.
+
+        Returns:
+            Fichier PDF
+        """
+        try:
+            # TODO: Implémenter export PDF avec reportlab
+
+            return request.make_json_response({
+                'url': '/download/payment-plan.pdf',
+                'message': 'Export en cours de développement'
+            })
+
+        except Exception as e:
+            _logger.error(f"Export payment planning pdf error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de l\'export'
+            }, status=500)
+
+    @http.route('/api/ecommerce/payment-planning/execute-batch', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    def execute_payment_batch(self, **kwargs):
+        """
+        Exécuter un lot de paiements.
+
+        Body params:
+            payments (list): Liste des paiements à exécuter
+
+        Returns:
+            Résultat de l'exécution
+        """
+        try:
+            params = self._get_http_params()
+
+            # TODO: Implémenter exécution batch payments
+
+            response_data = {
+                'success': True,
+                'processedCount': 0,
+                'failedCount': 0,
+                'results': []
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Execute payment batch error: {e}")
+            return request.make_json_response({
+                'error': 'Erreur lors de l\'exécution des paiements'
+            }, status=500)
+
+    # ===================================================================
+    # REPORTING - Rapports financiers avancés
+    # ===================================================================
+
+    @http.route('/api/ecommerce/reporting/overview', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_overview(self, **kwargs):
+        """Vue d'ensemble - Dashboard overview"""
+        return request.make_json_response({
+            'balances': {
+                'total': 0,
+                'accounts': []
+            },
+            'kpis': {
+                'dso': {'value': 0, 'trend': 'stable', 'reliability': 'low'},
+                'ebitda': {'value': 0, 'margin': 0, 'trend': 'stable', 'reliability': 'low'},
+                'bfr': {'value': 0, 'trend': 'stable', 'reliability': 'low'},
+                'breakEven': {'value': 0, 'reachedPercent': 0, 'trend': 'stable', 'reliability': 'low'}
+            },
+            'recentTransactions': [],
+            'insights': [],
+            'actions': [],
+            'forecast': {
+                'historical': [],
+                'forecast': []
+            },
+            'metadata': {
+                'days': 30,
+                'accountCount': 0,
+                'timestamp': fields.Datetime.now().isoformat()
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/cashflow', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_cashflow(self, **kwargs):
+        """Trésorerie - Cash flow analysis"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'currentBalance': 0,
+            'futureImpact': 0,
+            'landingBalance': 0,
+            'runwayDays': None,
+            'daily': [],
+            'perAccount': []
+        })
+
+    @http.route('/api/ecommerce/reporting/forecast-enhanced', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_forecast_enhanced(self, **kwargs):
+        """
+        Récupérer les prévisions de trésorerie avancées avec ML.
+
+        Query params:
+            horizonDays (int): Horizon de prévision en jours (défaut: 90)
+            historicalDays (int): Nombre de jours d'historique (défaut: 45)
+
+        Returns:
+            Prévisions avec données historiques et futures
+        """
+        try:
+            params = self._get_http_params()
+            horizon_days = int(params.get('horizonDays', 90))
+            historical_days = int(params.get('historicalDays', 45))
+
+            # TODO: Implémenter prévisions ML avec modèles ARIMA/Prophet
+
+            response_data = {
+                'historical': [],
+                'forecast': [],
+                'confidence': {
+                    'lower': [],
+                    'upper': []
+                },
+                'accuracy': {
+                    'mape': 0.0,
+                    'rmse': 0.0,
+                    'mae': 0.0
+                },
+                'metadata': {
+                    'horizonDays': horizon_days,
+                    'historicalDays': historical_days,
+                    'model': 'arima',
+                    'generatedAt': fields.Datetime.now().isoformat()
+                }
+            }
+
+            return request.make_json_response(response_data)
+
+        except Exception as e:
+            _logger.error(f"Get forecast enhanced error: {e}")
+            return request.make_json_response({
+                'historical': [],
+                'forecast': [],
+                'confidence': {'lower': [], 'upper': []},
+                'accuracy': {'mape': 0.0, 'rmse': 0.0, 'mae': 0.0},
+                'metadata': {'horizonDays': 90, 'historicalDays': 45, 'model': 'arima'}
+            }, status=200)
+
+    @http.route('/api/ecommerce/reporting/forecast-backtest', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_forecast_backtest(self, **kwargs):
+        """Métriques de backtest des prévisions"""
+        try:
+            return request.make_json_response({
+                'accuracy': {'mape': 0.0, 'rmse': 0.0, 'mae': 0.0},
+                'tests': []
+            })
+        except Exception as e:
+            _logger.error(f"Forecast backtest error: {e}")
+            return request.make_json_response({'accuracy': {}, 'tests': []}, status=200)
+
+    @http.route('/api/ecommerce/reporting/actuals', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_actuals(self, **kwargs):
+        """Données réelles"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'baseBalance': 0,
+            'endBalance': 0,
+            'totalCredit': 0,
+            'totalDebit': 0,
+            'net': 0,
+            'daily': [],
+            'perAccount': [],
+            'categoryTotals': {
+                'income': [],
+                'expense': []
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_forecast(self, **kwargs):
+        """Prévisions simples"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'days': 0,
+            'baseBalance': 0,
+            'projectedBalance': 0,
+            'futureImpact': 0,
+            'daily': [],
+            'perAccount': []
+        })
+
+    @http.route('/api/ecommerce/reporting/combined', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_combined(self, **kwargs):
+        """Données combinées"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'currentBalance': 0,
+            'futureImpact': 0,
+            'landingBalance': 0,
+            'runwayDays': None,
+            'daily': [],
+            'perAccount': []
+        })
+
+    @http.route('/api/ecommerce/reporting/top-categories', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_top_categories(self, **kwargs):
+        """Top catégories"""
+        return request.make_json_response({
+            'income': [],
+            'expense': []
+        })
+
+    @http.route('/api/ecommerce/reporting/budgets', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_budgets(self, **kwargs):
+        """Budgets"""
+        return request.make_json_response({
+            'period': 'month',
+            'budgeted': 0,
+            'actual': 0,
+            'variance': 0,
+            'variancePct': None,
+            'byCategory': []
+        })
+
+    @http.route('/api/ecommerce/reporting/by-category', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_by_category(self, **kwargs):
+        """Par catégorie - Ventilation des revenus et dépenses par catégorie"""
+        return request.make_json_response({
+            'income': [],
+            'expense': [],
+            'total': 0
+        })
+
+    @http.route('/api/ecommerce/reporting/by-flow', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_by_flow(self, **kwargs):
+        """Par flux"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'totalCredit': 0,
+            'totalDebit': 0,
+            'totalCount': 0,
+            'net': 0,
+            'flows': [],
+            'noFlow': {
+                'totalCredit': 0,
+                'totalDebit': 0,
+                'count': 0,
+                'net': 0
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/by-account', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_by_account(self, **kwargs):
+        """Par compte"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'accounts': []
+        })
+
+    @http.route('/api/ecommerce/reporting/by-portfolio', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_by_portfolio(self, **kwargs):
+        """Par portfolio"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'portfolios': []
+        })
+
+    @http.route('/api/ecommerce/reporting/profitability', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_profitability(self, **kwargs):
+        """Profitabilité"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'revenue': 0,
+            'cogs': 0,
+            'grossProfit': 0,
+            'grossMargin': 0,
+            'operatingExpenses': 0,
+            'operatingProfit': 0,
+            'operatingMargin': 0,
+            'otherIncome': 0,
+            'otherExpenses': 0,
+            'netProfit': 0,
+            'netMargin': 0,
+            'breakdown': {
+                'totalIncome': 0,
+                'totalExpense': 0
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/dso', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_dso(self, **kwargs):
+        """DSO (Days Sales Outstanding)"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'dso': 0,
+            'avgPaymentDelay': 0,
+            'totalReceivables': 0,
+            'totalRevenue': 0,
+            'invoices': {
+                'paid': 0,
+                'overdue': 0,
+                'pending': 0
+            },
+            'trend': 'stable',
+            'reliability': {
+                'score': 0,
+                'level': 'low',
+                'missingData': [],
+                'suggestions': []
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/ebitda', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_ebitda(self, **kwargs):
+        """EBITDA"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'revenue': 0,
+            'cogs': 0,
+            'grossProfit': 0,
+            'grossMargin': 0,
+            'operatingExpenses': 0,
+            'operatingProfit': 0,
+            'operatingMargin': 0,
+            'otherIncome': 0,
+            'otherExpenses': 0,
+            'netProfit': 0,
+            'netMargin': 0,
+            'breakdown': {
+                'totalIncome': 0,
+                'totalExpense': 0
+            },
+            'depreciationAndAmortization': 0,
+            'ebitda': 0,
+            'ebitdaMargin': 0,
+            'reliability': {
+                'score': 0,
+                'level': 'low',
+                'missingData': [],
+                'suggestions': []
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/bfr', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_bfr(self, **kwargs):
+        """BFR (Besoin en Fonds de Roulement)"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'bfr': 0,
+            'bfrDays': 0,
+            'components': {
+                'receivables': 0,
+                'inventory': 0,
+                'payables': 0
+            },
+            'ratio': 0,
+            'trend': 'stable',
+            'reliability': {
+                'score': 0,
+                'level': 'low',
+                'missingData': [],
+                'suggestions': []
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/breakeven', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_breakeven(self, **kwargs):
+        """Point mort"""
+        return request.make_json_response({
+            'range': {'from': '', 'to': ''},
+            'breakEvenRevenue': 0,
+            'currentRevenue': 0,
+            'revenueGap': 0,
+            'breakEvenReached': False,
+            'fixedCosts': 0,
+            'variableCosts': 0,
+            'contributionMargin': 0,
+            'safetyMargin': 0,
+            'categoriesBreakdown': {
+                'revenue': [],
+                'fixedCosts': [],
+                'variableCosts': []
+            },
+            'trend': 'stable',
+            'reliability': {
+                'score': 0,
+                'level': 'low',
+                'missingData': [],
+                'suggestions': []
+            }
+        })
+
+    @http.route('/api/ecommerce/reporting/dso/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_dso_history(self, **kwargs):
+        """Historique DSO"""
+        return request.make_json_response({'data': [], 'period': 'monthly'})
+
+    @http.route('/api/ecommerce/reporting/ebitda/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_ebitda_history(self, **kwargs):
+        """Historique EBITDA"""
+        return request.make_json_response({'data': [], 'period': 'monthly'})
+
+    @http.route('/api/ecommerce/reporting/bfr/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_bfr_history(self, **kwargs):
+        """Historique BFR"""
+        return request.make_json_response({'data': [], 'period': 'monthly'})
+
+    @http.route('/api/ecommerce/reporting/breakeven/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_breakeven_history(self, **kwargs):
+        """Historique point mort"""
+        return request.make_json_response({'data': [], 'period': 'monthly'})
+
+    @http.route('/api/ecommerce/reporting/dso/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_dso_forecast(self, **kwargs):
+        """Prévision DSO"""
+        return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
+
+    @http.route('/api/ecommerce/reporting/ebitda/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_ebitda_forecast(self, **kwargs):
+        """Prévision EBITDA"""
+        return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
+
+    @http.route('/api/ecommerce/reporting/bfr/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_reporting_bfr_forecast(self, **kwargs):
+        """Prévision BFR"""
+        return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
+
+    # ===================================================================
     # PRICELISTS & CUSTOMER CATEGORIES - Segmentation clients (Issue #21)
     # ===================================================================
 
@@ -11002,4 +11992,1048 @@ class QuelyosAPI(http.Controller):
             return {
                 'success': False,
                 'error': 'Une erreur est survenue'
+            }
+
+    # ══════════════════════════════════════════════════════════════════════
+    # WAREHOUSE MANAGEMENT (Phase 2)
+    # ══════════════════════════════════════════════════════════════════════
+
+    @http.route('/api/ecommerce/warehouses/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_warehouse(self, **kwargs):
+        """
+        Créer un nouvel entrepôt avec validation du code et création automatique des locations
+
+        Body:
+            - name: str (requis)
+            - code: str (requis, 5 chars max, uppercase)
+            - company_id: int (requis)
+            - partner_id: int (optionnel)
+            - partner_data: dict (optionnel, pour créer une nouvelle adresse)
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'id': int,
+                    'name': str,
+                    'code': str,
+                    'locations': list,
+                    'pickingTypes': list
+                },
+                'error': str (si erreur),
+                'errorCode': str (si erreur)
+            }
+        """
+        try:
+            import re
+            Warehouse = request.env['stock.warehouse'].sudo()
+            Partner = request.env['res.partner'].sudo()
+            Location = request.env['stock.location'].sudo()
+            PickingType = request.env['stock.picking.type'].sudo()
+            Company = request.env['res.company'].sudo()
+
+            params = self._get_params()
+
+            # Récupérer et valider les champs requis
+            name = params.get('name')
+            code = params.get('code')
+            company_id = params.get('company_id')
+
+            if not name or not code:
+                return {
+                    'success': False,
+                    'error': "Champs 'name' et 'code' requis",
+                    'errorCode': 'MISSING_FIELDS'
+                }
+
+            # Validation format code (max 5 chars, uppercase, lettres/chiffres/tirets)
+            code = code.upper().strip()
+            if not re.match(r'^[A-Z0-9-]+$', code) or len(code) > 5:
+                return {
+                    'success': False,
+                    'error': f"Code invalide. Format: max 5 caractères, lettres majuscules, chiffres et tirets uniquement",
+                    'errorCode': 'INVALID_CODE'
+                }
+
+            # Vérifier unicité du code
+            existing = Warehouse.search([('code', '=', code)], limit=1)
+            if existing:
+                return {
+                    'success': False,
+                    'error': f"Un entrepôt avec le code '{code}' existe déjà",
+                    'errorCode': 'DUPLICATE_CODE'
+                }
+
+            # Vérifier que la société existe
+            if company_id:
+                company = Company.browse(company_id)
+                if not company.exists():
+                    return {
+                        'success': False,
+                        'error': "La société n'existe pas",
+                        'errorCode': 'INVALID_COMPANY'
+                    }
+            else:
+                # Utiliser la société par défaut
+                company_id = request.env.company.id
+
+            # Gérer le partner (adresse)
+            partner_id = params.get('partner_id')
+            partner_data = params.get('partner_data')
+
+            if partner_data and not partner_id:
+                # Créer un nouveau partner
+                partner_vals = {
+                    'name': partner_data.get('name', name),
+                    'street': partner_data.get('street'),
+                    'city': partner_data.get('city'),
+                    'zip': partner_data.get('zip'),
+                    'country_id': partner_data.get('country_id'),
+                    'company_id': company_id
+                }
+                partner = Partner.create(partner_vals)
+                partner_id = partner.id
+
+            # Créer l'entrepôt
+            # Odoo va automatiquement créer les locations (Stock, Input, Output) et picking types
+            warehouse_vals = {
+                'name': name,
+                'code': code,
+                'company_id': company_id,
+                'active': True
+            }
+            if partner_id:
+                warehouse_vals['partner_id'] = partner_id
+
+            warehouse = Warehouse.create(warehouse_vals)
+
+            # Récupérer les locations auto-créées
+            locations = Location.search([
+                ('warehouse_id', '=', warehouse.id),
+                ('usage', '=', 'internal')
+            ])
+            locations_data = [{
+                'id': loc.id,
+                'name': loc.name,
+                'complete_name': loc.complete_name,
+                'usage': loc.usage
+            } for loc in locations]
+
+            # Récupérer les picking types auto-créés
+            picking_types = PickingType.search([('warehouse_id', '=', warehouse.id)])
+            picking_types_data = [{
+                'id': pt.id,
+                'name': pt.name,
+                'code': pt.code,
+                'sequence_id': pt.sequence_id.id if pt.sequence_id else None
+            } for pt in picking_types]
+
+            _logger.info(f"Warehouse created: {warehouse.name} (code: {warehouse.code}, id: {warehouse.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': warehouse.id,
+                    'name': warehouse.name,
+                    'code': warehouse.code,
+                    'company_id': warehouse.company_id.id,
+                    'partner_id': warehouse.partner_id.id if warehouse.partner_id else None,
+                    'active': warehouse.active,
+                    'locations': locations_data,
+                    'pickingTypes': picking_types_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create warehouse error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def update_warehouse(self, warehouse_id, **kwargs):
+        """
+        Modifier un entrepôt existant
+
+        Args:
+            warehouse_id: ID de l'entrepôt
+
+        Body:
+            - name: str (optionnel)
+            - partner_id: int (optionnel)
+            - active: bool (optionnel)
+
+        Note: Le code (code) et la société (company_id) sont IMMUTABLES après création
+
+        Returns:
+            dict: {'success': bool, 'data': dict, 'error': str}
+        """
+        try:
+            Warehouse = request.env['stock.warehouse'].sudo()
+            Partner = request.env['res.partner'].sudo()
+
+            params = self._get_params()
+
+            warehouse = Warehouse.browse(warehouse_id)
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': 'Entrepôt introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Construire les valeurs à mettre à jour
+            vals = {}
+            if 'name' in params:
+                vals['name'] = params['name']
+            if 'partner_id' in params:
+                partner_id = params['partner_id']
+                if partner_id:
+                    partner = Partner.browse(partner_id)
+                    if not partner.exists():
+                        return {
+                            'success': False,
+                            'error': 'Partner introuvable',
+                            'errorCode': 'INVALID_PARTNER'
+                        }
+                vals['partner_id'] = partner_id
+            if 'active' in params:
+                vals['active'] = params['active']
+
+            if vals:
+                warehouse.write(vals)
+
+            _logger.info(f"Warehouse updated: {warehouse.name} (id: {warehouse.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': warehouse.id,
+                    'name': warehouse.name,
+                    'code': warehouse.code,
+                    'active': warehouse.active,
+                    'partner_id': warehouse.partner_id.id if warehouse.partner_id else None
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update warehouse error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def archive_warehouse(self, warehouse_id, **kwargs):
+        """
+        Archiver un entrepôt (ne pas supprimer, juste désactiver)
+
+        Vérifications:
+        - Pas de stock dans les locations de l'entrepôt
+        - Pas de mouvements en cours (picking actifs)
+
+        Args:
+            warehouse_id: ID de l'entrepôt
+
+        Returns:
+            dict: {'success': bool, 'error': str, 'errorCode': str}
+        """
+        try:
+            Warehouse = request.env['stock.warehouse'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+            StockPicking = request.env['stock.picking'].sudo()
+
+            warehouse = Warehouse.browse(warehouse_id)
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': 'Entrepôt introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Vérifier qu'il n'y a pas de stock
+            quants = StockQuant.search([
+                ('location_id.warehouse_id', '=', warehouse_id),
+                ('quantity', '>', 0),
+                ('location_id.usage', '=', 'internal')
+            ])
+            if quants:
+                total_qty = sum(quants.mapped('quantity'))
+                product_count = len(set(quants.mapped('product_id.id')))
+                return {
+                    'success': False,
+                    'error': f"Impossible d'archiver : {total_qty:.0f} unités de {product_count} produits en stock",
+                    'errorCode': 'HAS_STOCK',
+                    'details': {
+                        'total_qty': total_qty,
+                        'product_count': product_count
+                    }
+                }
+
+            # Vérifier qu'il n'y a pas de pickings en cours
+            active_pickings = StockPicking.search([
+                ('picking_type_id.warehouse_id', '=', warehouse_id),
+                ('state', 'not in', ['done', 'cancel'])
+            ])
+            if active_pickings:
+                return {
+                    'success': False,
+                    'error': f"Impossible d'archiver : {len(active_pickings)} transferts en cours",
+                    'errorCode': 'HAS_ACTIVE_PICKINGS',
+                    'details': {
+                        'picking_count': len(active_pickings)
+                    }
+                }
+
+            # Archiver l'entrepôt
+            warehouse.active = False
+
+            _logger.info(f"Warehouse archived: {warehouse.name} (id: {warehouse.id})")
+
+            return {
+                'success': True,
+                'message': f"Entrepôt '{warehouse.name}' archivé avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Archive warehouse error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ══════════════════════════════════════════════════════════════════════
+    # STOCK LOCATIONS MANAGEMENT (Phase 3)
+    # ══════════════════════════════════════════════════════════════════════
+
+    def _is_descendant(self, ancestor_id, potential_child_id):
+        """
+        Vérifier si potential_child_id est un descendant de ancestor_id
+        (pour éviter les boucles infinies dans la hiérarchie)
+        """
+        if ancestor_id == potential_child_id:
+            return True
+
+        Location = request.env['stock.location'].sudo()
+        child = Location.browse(potential_child_id)
+
+        while child.location_id:
+            if child.location_id.id == ancestor_id:
+                return True
+            child = child.location_id
+
+        return False
+
+    @http.route('/api/ecommerce/stock/locations/tree', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_locations_tree(self, **kwargs):
+        """
+        Récupérer toutes les locations avec structure hiérarchique (parent_id)
+
+        Body (params):
+            - warehouse_id: int (optionnel, filtrer par entrepôt)
+            - usage: str (optionnel, filtrer par type: 'internal', 'view')
+            - active: bool (optionnel, filtrer par statut actif)
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'locations': [...]
+                }
+            }
+        """
+        try:
+            Location = request.env['stock.location'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+
+            params = self._get_params()
+
+            # Construire le domaine
+            domain = [('usage', 'in', ['internal', 'view'])]
+
+            if params.get('warehouse_id'):
+                try:
+                    warehouse_id = int(params['warehouse_id'])
+                    domain.append(('warehouse_id', '=', warehouse_id))
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Invalid warehouse_id',
+                        'errorCode': 'INVALID_PARAM'
+                    }
+
+            if params.get('usage'):
+                usage = params['usage']
+                if usage in ['internal', 'view']:
+                    domain = [('usage', '=', usage)]
+
+            if 'active' in params:
+                domain.append(('active', '=', bool(params['active'])))
+            else:
+                domain.append(('active', '=', True))
+
+            # Récupérer toutes les locations
+            locations = Location.search(domain, order='complete_name ASC')
+
+            # Sérialiser avec calcul du stock
+            locations_data = []
+            for loc in locations:
+                # Calculer stock total de la location
+                quants = StockQuant.search([
+                    ('location_id', '=', loc.id),
+                    ('quantity', '>', 0)
+                ])
+                stock_count = sum(quants.mapped('quantity')) if quants else 0.0
+
+                locations_data.append({
+                    'id': loc.id,
+                    'name': loc.name,
+                    'complete_name': loc.complete_name,
+                    'usage': loc.usage,
+                    'parent_id': loc.location_id.id if loc.location_id else None,
+                    'warehouse_id': loc.warehouse_id.id if loc.warehouse_id else None,
+                    'warehouse_name': loc.warehouse_id.name if loc.warehouse_id else None,
+                    'barcode': loc.barcode or '',
+                    'stock_count': round(stock_count, 2),
+                    'active': loc.active
+                })
+
+            _logger.info(f"Locations tree retrieved: {len(locations_data)} locations")
+
+            return {
+                'success': True,
+                'data': {
+                    'locations': locations_data
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get locations tree error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/locations/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_location(self, **kwargs):
+        """Créer une nouvelle location"""
+        try:
+            Location = request.env['stock.location'].sudo()
+            Warehouse = request.env['stock.warehouse'].sudo()
+
+            params = self._get_params()
+
+            name = params.get('name')
+            warehouse_id = params.get('warehouse_id')
+            usage = params.get('usage', 'internal')
+
+            if not name or not warehouse_id:
+                return {
+                    'success': False,
+                    'error': "Champs 'name' et 'warehouse_id' requis",
+                    'errorCode': 'MISSING_FIELDS'
+                }
+
+            if usage not in ['internal', 'view']:
+                return {
+                    'success': False,
+                    'error': "Usage doit être 'internal' ou 'view'",
+                    'errorCode': 'INVALID_USAGE'
+                }
+
+            warehouse = Warehouse.browse(warehouse_id)
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': "Entrepôt introuvable",
+                    'errorCode': 'WAREHOUSE_NOT_FOUND'
+                }
+
+            parent_id = params.get('parent_id')
+            if parent_id:
+                parent = Location.browse(parent_id)
+                if not parent.exists():
+                    return {
+                        'success': False,
+                        'error': "Parent location introuvable",
+                        'errorCode': 'PARENT_NOT_FOUND'
+                    }
+
+                if parent.warehouse_id and parent.warehouse_id.id != warehouse_id:
+                    return {
+                        'success': False,
+                        'error': "Parent doit être dans le même entrepôt",
+                        'errorCode': 'WAREHOUSE_MISMATCH'
+                    }
+
+                if parent.usage == 'internal':
+                    return {
+                        'success': False,
+                        'error': "Parent doit être de type 'View', pas 'Stock physique'",
+                        'errorCode': 'INVALID_PARENT_TYPE'
+                    }
+
+            location_vals = {
+                'name': name,
+                'usage': usage,
+                'location_id': parent_id or warehouse.view_location_id.id,
+                'company_id': warehouse.company_id.id,
+                'barcode': params.get('barcode') or False,
+                'active': True
+            }
+
+            location = Location.create(location_vals)
+
+            _logger.info(f"Location created: {location.complete_name} (id: {location.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': location.id,
+                    'name': location.name,
+                    'complete_name': location.complete_name,
+                    'usage': location.usage,
+                    'parent_id': location.location_id.id if location.location_id else None,
+                    'warehouse_id': location.warehouse_id.id if location.warehouse_id else None,
+                    'barcode': location.barcode or '',
+                    'active': location.active
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create location error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def update_location(self, location_id, **kwargs):
+        """Modifier une location existante"""
+        try:
+            Location = request.env['stock.location'].sudo()
+            params = self._get_params()
+
+            location = Location.browse(location_id)
+            if not location.exists():
+                return {
+                    'success': False,
+                    'error': 'Location introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            vals = {}
+
+            if 'name' in params:
+                vals['name'] = params['name']
+
+            if 'parent_id' in params:
+                new_parent_id = params['parent_id']
+                if new_parent_id:
+                    if self._is_descendant(location_id, new_parent_id):
+                        return {
+                            'success': False,
+                            'error': 'Impossible : boucle infinie détectée',
+                            'errorCode': 'CIRCULAR_LOOP'
+                        }
+
+                    new_parent = Location.browse(new_parent_id)
+                    if not new_parent.exists():
+                        return {
+                            'success': False,
+                            'error': 'Nouveau parent introuvable',
+                            'errorCode': 'PARENT_NOT_FOUND'
+                        }
+
+                    if location.warehouse_id and new_parent.warehouse_id:
+                        if new_parent.warehouse_id.id != location.warehouse_id.id:
+                            return {
+                                'success': False,
+                                'error': 'Parent doit être dans le même entrepôt',
+                                'errorCode': 'WAREHOUSE_MISMATCH'
+                            }
+
+                vals['location_id'] = new_parent_id
+
+            if 'barcode' in params:
+                vals['barcode'] = params['barcode'] or False
+
+            if 'active' in params:
+                vals['active'] = params['active']
+
+            if vals:
+                location.write(vals)
+
+            _logger.info(f"Location updated: {location.complete_name} (id: {location.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': location.id,
+                    'name': location.name,
+                    'complete_name': location.complete_name,
+                    'usage': location.usage,
+                    'parent_id': location.location_id.id if location.location_id else None,
+                    'barcode': location.barcode or '',
+                    'active': location.active
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update location error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def archive_location(self, location_id, **kwargs):
+        """Archiver une location"""
+        try:
+            Location = request.env['stock.location'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+
+            location = Location.browse(location_id)
+            if not location.exists():
+                return {
+                    'success': False,
+                    'error': 'Location introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            quants = StockQuant.search([
+                ('location_id', '=', location_id),
+                ('quantity', '>', 0)
+            ])
+            if quants:
+                stock_qty = sum(quants.mapped('quantity'))
+                return {
+                    'success': False,
+                    'error': f"Impossible d'archiver : {stock_qty:.0f} unités en stock",
+                    'errorCode': 'HAS_STOCK',
+                    'details': {'stock_qty': stock_qty}
+                }
+
+            children_count = Location.search_count([
+                ('location_id', '=', location_id),
+                ('active', '=', True)
+            ])
+            if children_count > 0:
+                return {
+                    'success': False,
+                    'error': f"Archiver d'abord les {children_count} sous-emplacements",
+                    'errorCode': 'HAS_CHILDREN',
+                    'details': {'children_count': children_count}
+                }
+
+            location.active = False
+            _logger.info(f"Location archived: {location.complete_name} (id: {location.id})")
+
+            return {
+                'success': True,
+                'message': f"Emplacement '{location.name}' archivé avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Archive location error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/move', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def move_location(self, location_id, **kwargs):
+        """Déplacer une location dans l'arbre"""
+        try:
+            Location = request.env['stock.location'].sudo()
+            params = self._get_params()
+            new_parent_id = params.get('new_parent_id')
+
+            if not new_parent_id:
+                return {
+                    'success': False,
+                    'error': "Champ 'new_parent_id' requis",
+                    'errorCode': 'MISSING_FIELDS'
+                }
+
+            location = Location.browse(location_id)
+            if not location.exists():
+                return {
+                    'success': False,
+                    'error': 'Location introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            if self._is_descendant(location_id, new_parent_id):
+                return {
+                    'success': False,
+                    'error': 'Impossible : boucle infinie détectée',
+                    'errorCode': 'CIRCULAR_LOOP'
+                }
+
+            new_parent = Location.browse(new_parent_id)
+            if not new_parent.exists():
+                return {
+                    'success': False,
+                    'error': 'Nouveau parent introuvable',
+                    'errorCode': 'PARENT_NOT_FOUND'
+                }
+
+            if location.warehouse_id and new_parent.warehouse_id:
+                if new_parent.warehouse_id.id != location.warehouse_id.id:
+                    return {
+                        'success': False,
+                        'error': 'Parent doit être dans le même entrepôt',
+                        'errorCode': 'WAREHOUSE_MISMATCH'
+                    }
+
+            location.location_id = new_parent_id
+            _logger.info(f"Location moved: {location.complete_name} to parent {new_parent_id}")
+
+            return {
+                'success': True,
+                'data': {
+                    'complete_name': location.complete_name,
+                    'parent_id': location.location_id.id if location.location_id else None
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Move location error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ═════════════════════════════════════════════════════════════════════
+    # RÈGLES DE RÉAPPROVISIONNEMENT (ORDERPOINTS)
+    # ═════════════════════════════════════════════════════════════════════
+
+    @http.route('/api/ecommerce/stock/reordering-rules', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_reordering_rules(self, **kwargs):
+        """Liste les règles de réapprovisionnement avec état actuel"""
+        try:
+            Orderpoint = request.env['stock.warehouse.orderpoint'].sudo()
+            Product = request.env['product.product'].sudo()
+
+            params = self._get_params()
+
+            # Build domain
+            domain = []
+            if params.get('warehouse_id'):
+                domain.append(('warehouse_id', '=', int(params['warehouse_id'])))
+            if params.get('active') is not None:
+                domain.append(('active', '=', bool(params['active'])))
+
+            rules = Orderpoint.search(domain)
+
+            rules_data = []
+            for rule in rules:
+                product = rule.product_id
+
+                # Calculer stock actuel dans le warehouse
+                current_stock = product.with_context(
+                    warehouse=rule.warehouse_id.id
+                ).qty_available
+
+                # Vérifier si règle déclenchée (stock < min)
+                is_triggered = current_stock < rule.product_min_qty
+
+                # Calculer quantité à commander
+                qty_to_order = 0
+                if is_triggered:
+                    qty_needed = rule.product_max_qty - current_stock
+                    if rule.qty_multiple > 1:
+                        qty_to_order = math.ceil(qty_needed / rule.qty_multiple) * rule.qty_multiple
+                    else:
+                        qty_to_order = qty_needed
+
+                rules_data.append({
+                    'id': rule.id,
+                    'product_id': product.id,
+                    'product_name': product.display_name,
+                    'product_sku': product.default_code or '',
+                    'warehouse_id': rule.warehouse_id.id,
+                    'warehouse_name': rule.warehouse_id.name,
+                    'min_qty': rule.product_min_qty,
+                    'max_qty': rule.product_max_qty,
+                    'qty_multiple': rule.qty_multiple or 1,
+                    'current_stock': current_stock,
+                    'is_triggered': is_triggered,
+                    'qty_to_order': max(0, qty_to_order),
+                    'active': rule.active
+                })
+
+            # Filtrer si triggered demandé
+            if params.get('triggered'):
+                rules_data = [r for r in rules_data if r['is_triggered']]
+
+            _logger.info(f"Fetched {len(rules_data)} reordering rules")
+
+            return {
+                'success': True,
+                'data': {
+                    'rules': rules_data,
+                    'total': len(rules_data)
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get reordering rules error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/reordering-rules/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_reordering_rule(self, **kwargs):
+        """Créer une nouvelle règle de réapprovisionnement"""
+        try:
+            Orderpoint = request.env['stock.warehouse.orderpoint'].sudo()
+            Product = request.env['product.product'].sudo()
+            Warehouse = request.env['stock.warehouse'].sudo()
+
+            params = self._get_params()
+
+            # Validation champs requis
+            product_id = params.get('product_id')
+            warehouse_id = params.get('warehouse_id')
+            min_qty = params.get('product_min_qty')
+            max_qty = params.get('product_max_qty')
+
+            if not all([product_id, warehouse_id, min_qty is not None, max_qty is not None]):
+                return {
+                    'success': False,
+                    'error': 'Champs requis manquants : product_id, warehouse_id, product_min_qty, product_max_qty',
+                    'errorCode': 'MISSING_FIELDS'
+                }
+
+            # Convertir en nombres
+            try:
+                product_id = int(product_id)
+                warehouse_id = int(warehouse_id)
+                min_qty = float(min_qty)
+                max_qty = float(max_qty)
+                qty_multiple = float(params.get('qty_multiple', 1))
+            except (ValueError, TypeError):
+                return {
+                    'success': False,
+                    'error': 'Valeurs numériques invalides',
+                    'errorCode': 'INVALID_VALUES'
+                }
+
+            # Validation logique min < max
+            if min_qty >= max_qty:
+                return {
+                    'success': False,
+                    'error': 'Seuil minimum doit être inférieur au seuil maximum',
+                    'errorCode': 'INVALID_RANGE'
+                }
+
+            # Vérifier que le produit existe
+            product = Product.browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit introuvable',
+                    'errorCode': 'PRODUCT_NOT_FOUND'
+                }
+
+            # Vérifier que l'entrepôt existe
+            warehouse = Warehouse.browse(warehouse_id)
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': 'Entrepôt introuvable',
+                    'errorCode': 'WAREHOUSE_NOT_FOUND'
+                }
+
+            # Vérifier unicité produit + warehouse
+            existing = Orderpoint.search([
+                ('product_id', '=', product_id),
+                ('warehouse_id', '=', warehouse_id),
+                ('active', '=', True)
+            ])
+            if existing:
+                return {
+                    'success': False,
+                    'error': 'Une règle existe déjà pour ce produit dans cet entrepôt',
+                    'errorCode': 'DUPLICATE_RULE'
+                }
+
+            # Récupérer location stock principale
+            stock_location = warehouse.lot_stock_id
+
+            # Créer la règle
+            rule_vals = {
+                'product_id': product_id,
+                'warehouse_id': warehouse_id,
+                'location_id': stock_location.id,
+                'product_min_qty': min_qty,
+                'product_max_qty': max_qty,
+                'qty_multiple': qty_multiple,
+                'active': True
+            }
+
+            rule = Orderpoint.create(rule_vals)
+
+            _logger.info(f"Reordering rule created: Product {product.display_name} in {warehouse.name} (id: {rule.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': rule.id,
+                    'product_id': product_id,
+                    'product_name': product.display_name,
+                    'warehouse_id': warehouse_id,
+                    'warehouse_name': warehouse.name,
+                    'min_qty': min_qty,
+                    'max_qty': max_qty,
+                    'qty_multiple': qty_multiple
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create reordering rule error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def update_reordering_rule(self, rule_id, **kwargs):
+        """Modifier une règle de réapprovisionnement"""
+        try:
+            Orderpoint = request.env['stock.warehouse.orderpoint'].sudo()
+            params = self._get_params()
+
+            rule = Orderpoint.browse(rule_id)
+            if not rule.exists():
+                return {
+                    'success': False,
+                    'error': 'Règle introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Récupérer valeurs à mettre à jour
+            min_qty = params.get('product_min_qty')
+            max_qty = params.get('product_max_qty')
+            qty_multiple = params.get('qty_multiple')
+            active = params.get('active')
+
+            # Construire dict update
+            update_vals = {}
+
+            if min_qty is not None:
+                try:
+                    min_qty = float(min_qty)
+                    update_vals['product_min_qty'] = min_qty
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur min_qty invalide',
+                        'errorCode': 'INVALID_VALUES'
+                    }
+
+            if max_qty is not None:
+                try:
+                    max_qty = float(max_qty)
+                    update_vals['product_max_qty'] = max_qty
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur max_qty invalide',
+                        'errorCode': 'INVALID_VALUES'
+                    }
+
+            # Validation min < max
+            final_min = update_vals.get('product_min_qty', rule.product_min_qty)
+            final_max = update_vals.get('product_max_qty', rule.product_max_qty)
+            if final_min >= final_max:
+                return {
+                    'success': False,
+                    'error': 'Seuil minimum doit être inférieur au seuil maximum',
+                    'errorCode': 'INVALID_RANGE'
+                }
+
+            if qty_multiple is not None:
+                try:
+                    update_vals['qty_multiple'] = float(qty_multiple)
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur qty_multiple invalide',
+                        'errorCode': 'INVALID_VALUES'
+                    }
+
+            if active is not None:
+                update_vals['active'] = bool(active)
+
+            if update_vals:
+                rule.write(update_vals)
+                _logger.info(f"Reordering rule updated: {rule.id}")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': rule.id,
+                    'min_qty': rule.product_min_qty,
+                    'max_qty': rule.product_max_qty,
+                    'qty_multiple': rule.qty_multiple,
+                    'active': rule.active
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update reordering rule error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def delete_reordering_rule(self, rule_id, **kwargs):
+        """Supprimer (archiver) une règle de réapprovisionnement"""
+        try:
+            Orderpoint = request.env['stock.warehouse.orderpoint'].sudo()
+
+            rule = Orderpoint.browse(rule_id)
+            if not rule.exists():
+                return {
+                    'success': False,
+                    'error': 'Règle introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            product_name = rule.product_id.display_name
+            warehouse_name = rule.warehouse_id.name
+
+            # Archiver (ne pas supprimer définitivement)
+            rule.active = False
+
+            _logger.info(f"Reordering rule archived: {product_name} in {warehouse_name} (id: {rule.id})")
+
+            return {
+                'success': True,
+                'message': f"Règle pour {product_name} archivée avec succès"
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete reordering rule error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
             }

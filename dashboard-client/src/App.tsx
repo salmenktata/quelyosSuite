@@ -22,6 +22,7 @@ import Inventory from './pages/Inventory'
 import StockMoves from './pages/StockMoves'
 import StockTransfers from './pages/StockTransfers'
 import StockLocations from './pages/StockLocations'
+import ReorderingRules from './pages/stock/ReorderingRules'
 import DeliveryMethods from './pages/DeliveryMethods'
 import SiteConfig from './pages/SiteConfig'
 import Payments from './pages/Payments'
@@ -93,8 +94,11 @@ import FinanceSettingsBilling from './pages/finance/settings/billing/page'
 import FinanceSettingsNotifications from './pages/finance/settings/notifications/page'
 import FinanceSettingsIntegrations from './pages/finance/settings/integrations/page'
 import FinanceSettingsSecurity from './pages/finance/settings/security/page'
+import FinanceStockValuation from './pages/finance/stock/valuation/page'
+import FinanceStockTurnover from './pages/finance/stock/turnover/page'
 import { CurrencyProvider } from './lib/finance/CurrencyContext'
 import { FinanceErrorBoundary } from './components/finance/FinanceErrorBoundary'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -123,10 +127,11 @@ function SessionManager() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <ToastProvider>
-            <SessionManager />
-            <Routes>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <ToastProvider>
+              <SessionManager />
+              <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/login" element={<Login />} />
               <Route path="/auth-callback" element={<AuthCallback />} />
@@ -263,6 +268,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <StockLocations />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/reordering-rules"
+                element={
+                  <ProtectedRoute>
+                    <ReorderingRules />
                   </ProtectedRoute>
                 }
               />
@@ -1008,9 +1021,34 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/finance/stock/valuation"
+                element={
+                  <ProtectedRoute>
+                    <FinanceErrorBoundary>
+                      <CurrencyProvider>
+                        <FinanceStockValuation />
+                      </CurrencyProvider>
+                    </FinanceErrorBoundary>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/finance/stock/turnover"
+                element={
+                  <ProtectedRoute>
+                    <FinanceErrorBoundary>
+                      <CurrencyProvider>
+                        <FinanceStockTurnover />
+                      </CurrencyProvider>
+                    </FinanceErrorBoundary>
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
-        </ToastProvider>
-      </ThemeProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
     </QueryClientProvider>
   )
 }

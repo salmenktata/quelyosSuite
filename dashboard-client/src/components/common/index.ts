@@ -17,8 +17,11 @@ export type { ModalProps } from './Modal'
 export { Toast, ToastContainer } from './Toast'
 export type { ToastProps, ToastContainerProps, ToastType } from './Toast'
 
-export { Skeleton, SkeletonTable, SkeletonCard } from './Skeleton'
+export { Skeleton, SkeletonTable, SkeletonCard, SkeletonGrid, SkeletonKPI, SkeletonTree, SkeletonChart } from './Skeleton'
 export type { SkeletonProps } from './Skeleton'
+
+export { DateRangePicker } from './DateRangePicker'
+export type { DateRange } from './DateRangePicker'
 
 export { Table } from './Table'
 export type { TableProps, Column, SortDirection } from './Table'
@@ -49,3 +52,5 @@ export type { DataTableProps, DataTableColumn, BulkAction, MobileCardConfig } fr
 
 export { ImageUpload } from './ImageUpload'
 export type { ImageUploadProps } from './ImageUpload'
+
+export { ErrorBoundary } from './ErrorBoundary'

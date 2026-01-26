@@ -20,7 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import { useWarehouses } from '../hooks/useWarehouses';
 import { Layout } from '../components/Layout';
 import { SkeletonGrid } from '../components/common/Skeleton';
-import { BuildingStorefrontIcon, CheckCircleIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { BuildingStorefrontIcon, CheckCircleIcon, MagnifyingGlassIcon, XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { WarehouseFormModal } from '../components/stock/WarehouseFormModal';
 
 // Tri options
 type SortOption = 'name' | 'code' | 'company';
@@ -33,6 +34,7 @@ export default function Warehouses() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [activeOnly, setActiveOnly] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Données
   const { data: warehouses, isLoading, error, refetch } = useWarehouses({ active_only: activeOnly });
@@ -205,7 +207,26 @@ export default function Warehouses() {
               Gérez vos entrepôts et locations de stock multi-sites
             </p>
           </div>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Créer Entrepôt
+          </button>
         </div>
+
+        {/* Modal Création Entrepôt */}
+        <WarehouseFormModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={(warehouseId) => {
+            setIsCreateModalOpen(false);
+            refetch();
+            // Rediriger vers le détail de l'entrepôt créé
+            navigate(`/warehouses/${warehouseId}`);
+          }}
+        />
 
         {/* Filters & Sort */}
         <div className="flex flex-col sm:flex-row gap-4">

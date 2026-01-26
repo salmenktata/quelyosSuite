@@ -164,3 +164,91 @@ export function useCreateStockTransfer() {
     },
   });
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// WAREHOUSE CRUD (Phase 2)
+// ══════════════════════════════════════════════════════════════════════
+
+export interface CreateWarehouseData {
+  name: string;
+  code: string;
+  company_id: number;
+  partner_id?: number;
+  partner_data?: {
+    name: string;
+    street?: string;
+    city?: string;
+    zip?: string;
+    country_id?: number;
+  };
+}
+
+export interface UpdateWarehouseData {
+  name?: string;
+  partner_id?: number;
+  active?: boolean;
+}
+
+export function useCreateWarehouse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateWarehouseData) => {
+      const response = await odooRpc('/api/ecommerce/warehouses/create', data);
+      if (!response.success) {
+        throw new Error(response.error || 'Échec de la création de l\'entrepôt');
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['warehouses'] });
+      logger.info('[useCreateWarehouse] Warehouse created successfully');
+    },
+    onError: (error) => {
+      logger.error('[useCreateWarehouse] Error:', error);
+    },
+  });
+}
+
+export function useUpdateWarehouse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: UpdateWarehouseData }) => {
+      const response = await odooRpc(`/api/ecommerce/warehouses/${id}/update`, data);
+      if (!response.success) {
+        throw new Error(response.error || 'Échec de la mise à jour de l\'entrepôt');
+      }
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['warehouses'] });
+      queryClient.invalidateQueries({ queryKey: ['warehouse', variables.id] });
+      logger.info('[useUpdateWarehouse] Warehouse updated successfully');
+    },
+    onError: (error) => {
+      logger.error('[useUpdateWarehouse] Error:', error);
+    },
+  });
+}
+
+export function useArchiveWarehouse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (warehouseId: number) => {
+      const response = await odooRpc(`/api/ecommerce/warehouses/${warehouseId}/archive`, {});
+      if (!response.success) {
+        throw new Error(response.error || 'Échec de l\'archivage de l\'entrepôt');
+      }
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['warehouses'] });
+      logger.info('[useArchiveWarehouse] Warehouse archived successfully');
+    },
+    onError: (error) => {
+      logger.error('[useArchiveWarehouse] Error:', error);
+    },
+  });
+}
