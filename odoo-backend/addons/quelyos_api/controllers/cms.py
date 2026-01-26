@@ -718,6 +718,7 @@ class QuelyCMS(BaseController):
                 'title': params.get('title'),
                 'subtitle': params.get('subtitle'),
                 'description': params.get('description'),
+                'image_external_url': params.get('image_url'),  # Frontend envoie 'image_url'
                 'cta_text': params.get('cta_text'),
                 'cta_link': params.get('cta_link'),
                 'cta_secondary_text': params.get('cta_secondary_text'),
@@ -749,11 +750,16 @@ class QuelyCMS(BaseController):
             if not slide.exists():
                 return {'success': False, 'error': 'Slide non trouvé'}
 
-            slide.write({k: v for k, v in params.items() if k in [
+            # Mapper image_url frontend → image_external_url backend
+            update_data = {k: v for k, v in params.items() if k in [
                 'name', 'title', 'subtitle', 'description', 'cta_text', 'cta_link',
                 'cta_secondary_text', 'cta_secondary_link', 'sequence', 'active',
                 'start_date', 'end_date'
-            ]})
+            ]}
+            if 'image_url' in params:
+                update_data['image_external_url'] = params['image_url']
+
+            slide.write(update_data)
 
             return {'success': True}
 
@@ -1185,54 +1191,26 @@ class QuelyCMS(BaseController):
             if error:
                 return request.make_json_response(error)
 
+            slide = request.env['quelyos.hero.slide'].sudo().browse(slide_id)
+            if not slide.exists():
+                return request.make_json_response({'success': False, 'error': 'Slide non trouvé'})
 
+            image_file = request.httprequest.files.get('image')
+            if not image_file:
+                return request.make_json_response({'success': False, 'error': 'Aucune image fournie'})
 
-            tenant = request.env['quelyos.tenant'].sudo().browse(tenant_id)
-            if not tenant.exists():
-                return {'success': False, 'error': 'Tenant non trouvé'}
+            import base64
+            image_data = base64.b64encode(image_file.read())
+            slide.write({'image': image_data})
 
-            params = self._get_params()
-            theme_data = {}
-
-            # Couleurs
-            if 'colors' in params:
-                color_mapping = {
-                    'primary': 'primary_color',
-                    'primary_dark': 'primary_dark',
-                    'primary_light': 'primary_light',
-                    'secondary': 'secondary_color',
-                    'secondary_dark': 'secondary_dark',
-                    'secondary_light': 'secondary_light',
-                    'accent': 'accent_color',
-                    'background': 'background_color',
-                    'foreground': 'foreground_color',
-                    'muted': 'muted_color',
-                    'muted_foreground': 'muted_foreground',
-                    'border': 'border_color',
-                    'ring': 'ring_color'
-                }
-                for key, field in color_mapping.items():
-                    if key in params['colors']:
-                        theme_data[field] = params['colors'][key]
-
-            # Polices
-            if 'fonts' in params and 'family' in params['fonts']:
-                theme_data['font_family'] = params['fonts']['family']
-
-            # Options
-            if 'options' in params:
-                if 'enable_dark_mode' in params['options']:
-                    theme_data['enable_dark_mode'] = params['options']['enable_dark_mode']
-                if 'default_dark' in params['options']:
-                    theme_data['default_dark'] = params['options']['default_dark']
-
-            tenant.write(theme_data)
-
-            return {'success': True}
+            return request.make_json_response({
+                'success': True,
+                'image_url': slide.image_url
+            })
 
         except Exception as e:
-            _logger.error(f"Update tenant theme error: {e}")
-            return {'success': False, 'error': 'Une erreur est survenue'}
+            _logger.error(f"Upload hero slide image error: {e}")
+            return request.make_json_response({'success': False, 'error': 'Une erreur est survenue'})
 
     @http.route('/api/ecommerce/tenants/<int:tenant_id>/upload-logo', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
     def upload_tenant_logo(self, tenant_id, **kwargs):

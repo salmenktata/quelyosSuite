@@ -1,10 +1,12 @@
 import { Button } from './common'
+import { ImageSearcher } from './ImageSearcher'
 
 export interface HeroSlideFormData {
   name: string
   title: string
   subtitle: string
   description: string
+  image_url: string
   cta_text: string
   cta_link: string
   cta_secondary_text: string
@@ -23,6 +25,10 @@ interface HeroSlideFormProps {
 export function HeroSlideForm({ formData, isCreating, onFormDataChange, onSave, onCancel }: HeroSlideFormProps) {
   const updateField = (field: keyof HeroSlideFormData, value: string | boolean) => {
     onFormDataChange({ ...formData, [field]: value })
+  }
+
+  const handleSelectImage = (imageUrl: string) => {
+    updateField('image_url', imageUrl)
   }
 
   return (
@@ -75,6 +81,12 @@ export function HeroSlideForm({ formData, isCreating, onFormDataChange, onSave, 
             placeholder="Description du slide"
           />
         </div>
+
+        {/* Image Searcher */}
+        <ImageSearcher
+          currentImageUrl={formData.image_url}
+          onSelectImage={handleSelectImage}
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <div>

@@ -20,6 +20,7 @@ class HeroSlide(models.Model):
 
     # Image
     image = fields.Binary('Image (1200x600px)', attachment=True)
+    image_external_url = fields.Char('URL Image Externe', size=500, help='URL Unsplash/Pexels ou autre')
     image_url = fields.Char('URL Image', compute='_compute_image_url', store=False)
 
     # CTA Principal
@@ -34,11 +35,14 @@ class HeroSlide(models.Model):
     start_date = fields.Date('Date début', default=fields.Date.today)
     end_date = fields.Date('Date fin', default=lambda self: fields.Date.today() + timedelta(days=365))
 
-    @api.depends('image')
+    @api.depends('image', 'image_external_url')
     def _compute_image_url(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for slide in self:
-            if slide.image:
+            # Priorité : URL externe > Image uploadée
+            if slide.image_external_url:
+                slide.image_url = slide.image_external_url
+            elif slide.image:
                 slide.image_url = f'{base_url}/web/image/quelyos.hero.slide/{slide.id}/image'
             else:
                 slide.image_url = False
