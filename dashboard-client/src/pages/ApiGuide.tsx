@@ -1,4 +1,4 @@
-import { Layout } from '@/components/common'
+import { Layout } from '../components/Layout'
 import { Key, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
