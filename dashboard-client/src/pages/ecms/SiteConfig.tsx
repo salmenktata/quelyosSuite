@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Layout } from '../components/Layout'
-import { useSiteConfig, useUpdateSiteConfig } from '../hooks/useSiteConfig'
-import { Button, Breadcrumbs, Skeleton } from '../components/common'
-import { useToast } from '../contexts/ToastContext'
+import { Layout } from '../../components/Layout'
+import { useSiteConfig, useUpdateSiteConfig } from '../../hooks/useSiteConfig'
+import { Button, Breadcrumbs, Skeleton } from '../../components/common'
+import { useToast } from '../../contexts/ToastContext'
 import { z } from 'zod'
 import { logger } from '@quelyos/logger'
 import {
@@ -11,7 +11,7 @@ import {
   returnsSchema,
   warrantySchema,
   paymentMethodsSchema
-} from '../lib/validation'
+} from '../../lib/validation'
 
 export default function SiteConfig() {
   const toast = useToast()
@@ -873,7 +873,7 @@ export default function SiteConfig() {
               💡 Informations
             </p>
             <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-              <li>• Clés stockées de manière sécurisée dans Odoo</li>
+              <li>• Clés stockées de manière sécurisée dans la base de données système</li>
               <li>• Configurez une seule API ou les deux</li>
               <li>• Après sauvegarde, rechargez Hero Slides pour tester</li>
             </ul>

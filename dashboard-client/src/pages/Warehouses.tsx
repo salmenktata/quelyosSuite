@@ -11,7 +11,7 @@
  * - Animations modernes
  * - Raccourcis clavier
  *
- * Note : CRUD intentionnellement non implémenté - les entrepôts sont gérés via Odoo natif
+ * Note : CRUD intentionnellement non implémenté - les entrepôts sont gérés via l'interface d'administration intégrée
  * car configuration critique (locations auto, règles réappro, multi-société)
  */
 

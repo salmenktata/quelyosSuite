@@ -232,7 +232,7 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
 
   overview: {
     pageId: 'finance-overview',
-    title: 'Vue d\'ensemble',
+    title: 'Vue d ensemble',
     purpose:
       "Ce rapport offre une synthèse de vos principaux KPIs financiers: trésorerie, revenus, dépenses, tendances. C'est votre tableau de bord pour piloter l'essentiel en un coup d'œil.",
     icon: BarChart3 as LucideIcon,
@@ -241,7 +241,7 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
       {
         title: 'Pour un suivi fiable',
         items: [
-          'Consultez cette vue d\'ensemble quotidiennement ou hebdomadairement',
+          'Consultez cette vue d ensemble quotidiennement ou hebdomadairement',
           'Surveillez les KPIs clés: solde de trésorerie, CA du mois, burn rate',
           'Identifiez rapidement les tendances (amélioration, dégradation)',
           'Utilisez cette vue pour préparer vos comités de direction ou boards',

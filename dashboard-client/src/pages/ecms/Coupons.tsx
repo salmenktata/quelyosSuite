@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '../hooks/useCoupons'
-import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../components/common'
+import { Layout } from '../../components/Layout'
+import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '../../hooks/useCoupons'
+import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../hooks/useToast'
+import { useToast } from '../../hooks/useToast'
 
 interface EditFormData {
   name: string
@@ -152,7 +152,7 @@ export default function Coupons() {
               Gerer les coupons et promotions
             </p>
           </div>
-          <Link to="/coupons/create">
+          <Link to="/ecms/coupons/create">
             <Button variant="primary">Creer un coupon</Button>
           </Link>
         </div>
@@ -329,7 +329,7 @@ export default function Coupons() {
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
                   Creez votre premier code promo pour booster vos ventes
                 </p>
-                <Link to="/coupons/create">
+                <Link to="/ecms/coupons/create">
                   <Button variant="primary">Creer un coupon</Button>
                 </Link>
               </div>

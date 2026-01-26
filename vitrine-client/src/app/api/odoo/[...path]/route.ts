@@ -1,7 +1,7 @@
 /**
- * Next.js API Route Proxy to Odoo
+ * Next.js API Route Proxy to Backend
  *
- * This proxies all requests to /api/odoo/* to the Odoo backend
+ * This proxies all requests to /api/odoo/* to the backend system
  * Avoids CORS issues and keeps API configuration server-side
  */
 

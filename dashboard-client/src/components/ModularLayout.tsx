@@ -404,7 +404,7 @@ export const useModule = () => {
 // COMPONENTS
 // ============================================================================
 
-// Odoo-style App Launcher (grid of apps)
+// App Launcher (grid of apps)
 function AppLauncher({
   currentModule,
   onSelect,
@@ -464,7 +464,7 @@ function AppLauncher({
   )
 }
 
-// Odoo-style top navbar with app icons
+// Top navbar with app icons
 function TopNavbar({
   currentModule,
   onModuleChange,
@@ -506,7 +506,7 @@ function TopNavbar({
         <span className="text-white font-semibold hidden sm:block">Quelyos</span>
       </Link>
 
-      {/* Quick module access (Odoo style) */}
+      {/* Quick module access */}
       <nav className="hidden md:flex items-center gap-1">
         {quickModules.map((module) => {
           const ModuleIcon = module.icon
@@ -727,7 +727,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   return (
     <ModuleContext.Provider value={{ currentModule, setModule: handleModuleChange }}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-        {/* Top Navbar (Odoo style) */}
+        {/* Top Navbar */}
         <TopNavbar
           currentModule={currentModule}
           onModuleChange={handleModuleChange}

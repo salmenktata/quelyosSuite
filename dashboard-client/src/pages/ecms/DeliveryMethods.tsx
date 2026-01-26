@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { Layout } from '../components/Layout'
+import { Layout } from '../../components/Layout'
 import {
   useDeliveryMethods,
   useCreateDeliveryMethod,
   useUpdateDeliveryMethod,
   useDeleteDeliveryMethod,
-} from '../hooks/useDelivery'
-import { Badge, Breadcrumbs, Skeleton, Button, Modal, PageNotice } from '../components/common'
+} from '../../hooks/useDelivery'
+import { Badge, Breadcrumbs, Skeleton, Button, Modal, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../hooks/useToast'
+import { useToast } from '../../hooks/useToast'
 
 interface FormData {
   name: string

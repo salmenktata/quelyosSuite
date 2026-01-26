@@ -12,14 +12,14 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Layout } from '../components/Layout'
-import { useMyTenant, useUpdateMyTenant } from '../hooks/useMyTenant'
-import { FONT_OPTIONS, DEFAULT_COLORS } from '../hooks/useTenants'
-import type { TenantConfig } from '../hooks/useTenants'
-import { useToast } from '../contexts/ToastContext'
-import { THEME_PRESETS } from '../data/themePresets'
-import type { ThemePreset as ThemePresetLegacy } from '../data/themePresets'
-import { useThemePresets, type ThemePreset } from '../hooks/useThemePresets'
+import { Layout } from '../../components/Layout'
+import { useMyTenant, useUpdateMyTenant } from '../../hooks/useMyTenant'
+import { FONT_OPTIONS, DEFAULT_COLORS } from '../../hooks/useTenants'
+import type { TenantConfig } from '../../hooks/useTenants'
+import { useToast } from '../../contexts/ToastContext'
+import { THEME_PRESETS } from '../../data/themePresets'
+import type { ThemePreset as ThemePresetLegacy } from '../../data/themePresets'
+import { useThemePresets, type ThemePreset } from '../../hooks/useThemePresets'
 import {
   SwatchIcon,
   SparklesIcon,

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Layout } from '../components/Layout'
-import { useSeoMetadataList, useCreateSeoMetadata, useUpdateSeoMetadata, useDeleteSeoMetadata, SeoMetadata } from '../hooks/useSeoMetadata'
-import { Button, SkeletonTable, PageNotice } from '../components/common'
-import { useToast } from '../hooks/useToast'
+import { Layout } from '../../components/Layout'
+import { useSeoMetadataList, useCreateSeoMetadata, useUpdateSeoMetadata, useDeleteSeoMetadata, SeoMetadata } from '../../hooks/useSeoMetadata'
+import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
 export default function SeoMetadataPage() {

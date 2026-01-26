@@ -207,7 +207,7 @@ export default function Tenants() {
                     />
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    Les informations de base sont gérées dans Odoo.
+                    Les informations de base sont gérées via l'interface d'administration système.
                   </p>
                 </div>
               )}

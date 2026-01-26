@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Layout } from '../components/Layout'
-import { useMarketingPopups, useCreateMarketingPopup, useUpdateMarketingPopup, useDeleteMarketingPopup, MarketingPopup } from '../hooks/useMarketingPopups'
-import { Button, SkeletonTable, PageNotice } from '../components/common'
-import { useToast } from '../hooks/useToast'
+import { Layout } from '../../components/Layout'
+import { useMarketingPopups, useCreateMarketingPopup, useUpdateMarketingPopup, useDeleteMarketingPopup, MarketingPopup } from '../../hooks/useMarketingPopups'
+import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
 export default function MarketingPopupsPage() {

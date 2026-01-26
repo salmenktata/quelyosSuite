@@ -345,7 +345,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
             </Link>
             <span className="text-red-300 dark:text-red-600">|</span>
             <Link
-              to="/site-config"
+              to="/ecms/site-config"
               className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:underline font-medium"
             >
               ⚙️ Configurer maintenant

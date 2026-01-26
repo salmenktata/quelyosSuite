@@ -1,16 +1,16 @@
 import { useState, useCallback } from 'react'
-import { Layout } from '../components/Layout'
+import { Layout } from '../../components/Layout'
 import {
   useFeaturedProducts,
   useAvailableProducts,
   useAddFeaturedProduct,
   useRemoveFeaturedProduct,
   useReorderFeaturedProducts,
-} from '../hooks/useFeatured'
-import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, OdooImage, PageNotice } from '../components/common'
+} from '../../hooks/useFeatured'
+import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, OdooImage, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../hooks/useToast'
-import { ToastContainer } from '../components/common/Toast'
+import { useToast } from '../../hooks/useToast'
+import { ToastContainer } from '../../components/common/Toast'
 
 interface FeaturedProduct {
   id: number

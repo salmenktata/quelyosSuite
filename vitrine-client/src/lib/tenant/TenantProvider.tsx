@@ -3,7 +3,7 @@
 /**
  * TenantProvider - Contexte React pour la gestion multi-tenant.
  *
- * Ce provider charge la configuration du tenant depuis l'API Odoo
+ * Ce provider charge la configuration du tenant depuis l'API backend
  * et la rend disponible dans toute l'application via le hook useTenant().
  *
  * Fonctionnalités:

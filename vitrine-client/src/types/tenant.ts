@@ -1,6 +1,6 @@
 /**
  * Types pour le système multi-tenant.
- * Correspond au modèle Odoo quelyos.tenant.
+ * Correspond au modèle backend quelyos.tenant.
  */
 
 /**

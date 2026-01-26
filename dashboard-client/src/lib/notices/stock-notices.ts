@@ -15,7 +15,7 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
         'Configurez des seuils min/max adaptés à la rotation : seuil min = stock sécurité + qté vendue pendant délai fournisseur',
         'Utilisez les alertes "Stock faible" pour anticiper les ruptures avant qu\'elles impactent les ventes',
         'Exportez régulièrement l\'état du stock (Excel/CSV) pour des analyses complémentaires ou audits',
-        'Ajustez via le modal pour tracer les mouvements : évitez les modifications directes dans Odoo',
+        'Ajustez via le modal pour tracer les mouvements : évitez les modifications directes dans l'interface d'administration',
         'Activez l\'inventaire périodique (mensuel ou trimestriel) pour corriger les écarts physique/théorique',
       ]
     }]

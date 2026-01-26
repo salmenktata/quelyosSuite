@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Layout } from '../components/Layout'
+import { Layout } from '../../components/Layout'
 import {
   useAbandonedCarts,
   useSendCartReminder,
   useCartRecoveryStats,
-} from '../hooks/useAbandonedCarts'
-import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../components/common'
+} from '../../hooks/useAbandonedCarts'
+import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { EnvelopeIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
 

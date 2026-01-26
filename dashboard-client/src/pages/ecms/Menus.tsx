@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Layout } from '../components/Layout'
+import { Layout } from '../../components/Layout'
 import {
   useMenus,
   useCreateMenu,
@@ -7,11 +7,11 @@ import {
   useDeleteMenu,
   useReorderMenus,
   type MenuItem,
-} from '../hooks/useMenus'
-import { PageNotice } from '../components/common'
+} from '../../hooks/useMenus'
+import { PageNotice } from '../../components/common'
 import { marketingNotices } from '@/lib/notices'
-import { Badge, Button, SkeletonTable } from '../components/common'
-import { useToast } from '../hooks/useToast'
+import { Badge, Button, SkeletonTable } from '../../components/common'
+import { useToast } from '../../hooks/useToast'
 
 export default function Menus() {
   const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null)

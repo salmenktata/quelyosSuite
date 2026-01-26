@@ -28,8 +28,8 @@ import {
 } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
-import { ToastContainer } from '../components/common/Toast'
-import { api } from '../lib/api'
+import { ToastContainer } from '../../components/common/Toast'
+import { api } from '../../lib/api'
 import { logger } from '@quelyos/logger'
 import type { ProductsQueryParams, Product } from '@/types'
 

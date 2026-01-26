@@ -1,5 +1,5 @@
 /**
- * Service CMS pour récupérer les menus, pages et blocs depuis Odoo
+ * Service CMS pour récupérer les menus, pages et blocs depuis le système backend
  */
 
 import axios from 'axios';

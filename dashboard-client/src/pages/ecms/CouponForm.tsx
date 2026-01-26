@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { useCreateCoupon } from '../hooks/useCoupons'
+import { Layout } from '../../components/Layout'
+import { useCreateCoupon } from '../../hooks/useCoupons'
 import type { CouponCreate } from '@/types'
-import { Button, Input, Breadcrumbs } from '../components/common'
-import { useToast } from '../hooks/useToast'
-import { ToastContainer } from '../components/common/Toast'
+import { Button, Input, Breadcrumbs } from '../../components/common'
+import { useToast } from '../../hooks/useToast'
+import { ToastContainer } from '../../components/common/Toast'
 import { logger } from '@quelyos/logger'
 
 export default function CouponForm() {

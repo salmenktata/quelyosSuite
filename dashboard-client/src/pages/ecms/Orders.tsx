@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { useOrders } from '../hooks/useOrders'
-import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../components/common'
+import { Layout } from '../../components/Layout'
+import { useOrders } from '../../hooks/useOrders'
+import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { OrdersKanban } from '../components/OrdersKanban'
+import { OrdersKanban } from '../../components/OrdersKanban'
 import { Squares2X2Icon, TableCellsIcon } from '@heroicons/react/24/outline'
 
 export default function Orders() {

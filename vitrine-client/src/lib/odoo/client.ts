@@ -1,6 +1,6 @@
 /**
- * Client API Odoo pour Next.js
- * Gère les appels JSON-RPC vers le backend Odoo E-commerce
+ * Client API Backend pour Next.js
+ * Gère les appels JSON-RPC vers le système backend E-commerce
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';

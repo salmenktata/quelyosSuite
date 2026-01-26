@@ -36,7 +36,7 @@ export function CustomerEmpty({ hasSearch, onResetSearch }: CustomerEmptyProps) 
         consulter les commandes existantes.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <Link to="/orders">
+        <Link to="/ecms/orders">
           <Button variant="primary">Voir les commandes</Button>
         </Link>
         <Link to="/analytics">

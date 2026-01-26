@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { useProduct } from '../hooks/useProducts'
-import { useProductImages } from '../hooks/useProductImages'
-import { Button, Breadcrumbs, Skeleton, Badge } from '../components/common'
+import { Layout } from '../../components/Layout'
+import { useProduct } from '../../hooks/useProducts'
+import { useProductImages } from '../../hooks/useProductImages'
+import { Button, Breadcrumbs, Skeleton, Badge } from '../../components/common'
 import type { ProductImage } from '@/types'
 import {
   PencilIcon,

@@ -31,7 +31,7 @@ export default function ApiGuide() {
               </p>
             </div>
             <Link
-              to="/site-config"
+              to="/ecms/site-config"
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition flex items-center gap-2"
             >
               <Key className="w-4 h-4" />
@@ -190,7 +190,7 @@ export default function ApiGuide() {
                 <li>
                   Aller dans{' '}
                   <Link
-                    to="/site-config"
+                    to="/ecms/site-config"
                     className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
                   >
                     Configuration du site
@@ -201,7 +201,7 @@ export default function ApiGuide() {
                 <li>Cliquer sur "Sauvegarder les clés"</li>
                 <li>
                   Recharger la page{' '}
-                  <Link to="/hero-slides" className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                  <Link to="/ecms/hero-slides" className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
                     Hero Slides
                   </Link>{' '}
                   pour tester la recherche
@@ -214,7 +214,7 @@ export default function ApiGuide() {
                   Bon à savoir
                 </p>
                 <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1 ml-6 list-disc">
-                  <li>Les clés sont stockées de manière sécurisée dans Odoo</li>
+                  <li>Les clés sont stockées de manière sécurisée dans la base de données système</li>
                   <li>Vous pouvez configurer une seule API ou les deux</li>
                   <li>Sans clé, 4 images de démonstration restent disponibles</li>
                   <li>Vous pouvez toujours coller une URL d'image manuellement</li>
@@ -269,7 +269,7 @@ export default function ApiGuide() {
           {/* Back to config */}
           <div className="flex justify-center pt-4">
             <Link
-              to="/site-config"
+              to="/ecms/site-config"
               className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-2 font-medium"
             >
               <Key className="w-5 h-5" />

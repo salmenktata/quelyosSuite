@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { useProduct, useCreateProduct, useUpdateProduct, useTaxes, useUom, useProductTypes, useProductTags, useCreateProductTag } from '../hooks/useProducts'
-import { useCategories } from '../hooks/useCategories'
-import { useRibbons, useUpdateProductRibbon } from '../hooks/useRibbons'
+import { Layout } from '../../components/Layout'
+import { useProduct, useCreateProduct, useUpdateProduct, useTaxes, useUom, useProductTypes, useProductTags, useCreateProductTag } from '../../hooks/useProducts'
+import { useCategories } from '../../hooks/useCategories'
+import { useRibbons, useUpdateProductRibbon } from '../../hooks/useRibbons'
 import {
   Button,
   Input,
@@ -12,16 +12,16 @@ import {
   ImageGallery,
   VariantManager,
   Badge,
-} from '../components/common'
-import { useToast } from '../hooks/useToast'
-import { ToastContainer } from '../components/common/Toast'
+} from '../../components/common'
+import { useToast } from '../../hooks/useToast'
+import { ToastContainer } from '../../components/common/Toast'
 import {
   useProductImages,
   useUploadProductImages,
   useDeleteProductImage,
   useReorderProductImages,
-} from '../hooks/useProductImages'
-import { api } from '../lib/api'
+} from '../../hooks/useProductImages'
+import { api } from '../../lib/api'
 import { logger } from '@quelyos/logger'
 
 export default function ProductForm() {

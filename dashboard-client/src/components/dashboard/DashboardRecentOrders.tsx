@@ -41,7 +41,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
         <div className="text-center py-8">
           <p className="text-gray-600 dark:text-gray-400 text-sm">Aucune commande récente</p>
           <Link
-            to="/orders"
+            to="/ecms/orders"
             className="inline-block mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
           >
             Voir toutes les commandes →
@@ -59,7 +59,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
           Commandes récentes
         </h3>
         <Link
-          to="/orders"
+          to="/ecms/orders"
           className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline hidden sm:inline"
         >
           Voir tout →
@@ -94,7 +94,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
       </div>
 
       <Link
-        to="/orders"
+        to="/ecms/orders"
         className="block text-center text-sm text-indigo-600 dark:text-indigo-400 hover:underline mt-4 sm:hidden"
       >
         Voir toutes les commandes →

@@ -3,7 +3,7 @@
  *
  * Ce middleware intercepte toutes les requêtes et:
  * 1. Détecte le domaine de la requête
- * 2. Recherche le tenant correspondant via l'API Odoo
+ * 2. Recherche le tenant correspondant via l'API backend
  * 3. Injecte le code du tenant dans un cookie
  *
  * Le TenantProvider côté client utilise ce cookie pour charger la config.
@@ -19,7 +19,7 @@ const tenantCache = new Map<string, { code: string; timestamp: number }>();
 const CACHE_TTL = 60 * 1000; // 60 secondes
 
 /**
- * Recherche un tenant par son domaine via l'API Odoo
+ * Recherche un tenant par son domaine via l'API backend
  */
 async function lookupTenant(
   domain: string

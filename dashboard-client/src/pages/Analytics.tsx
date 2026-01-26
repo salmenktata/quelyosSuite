@@ -528,7 +528,7 @@ export default function Analytics() {
                 </div>
                 <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                   <Link
-                    to="/orders"
+                    to="/ecms/orders"
                     className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
                   >
                     Voir toutes les commandes →

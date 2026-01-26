@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Layout } from '../components/Layout'
-import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '../hooks/useHeroSlides'
-import { Button, ToastContainer, PageNotice } from '../components/common'
-import { useToast } from '../hooks/useToast'
+import { Layout } from '../../components/Layout'
+import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '../../hooks/useHeroSlides'
+import { Button, ToastContainer, PageNotice } from '../../components/common'
+import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
-import { HeroSlideTable } from '../components/HeroSlideTable'
-import { HeroSlideForm, HeroSlideFormData } from '../components/HeroSlideForm'
+import { HeroSlideTable } from '../../components/HeroSlideTable'
+import { HeroSlideForm, HeroSlideFormData } from '../../components/HeroSlideForm'
 
 const DEFAULT_FORM_DATA: HeroSlideFormData = {
   name: '',
