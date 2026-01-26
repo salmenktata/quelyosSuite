@@ -10,8 +10,8 @@
  */
 
 import { useState } from 'react'
-import { Layout } from '../components/Layout'
-import { Breadcrumbs, Badge } from '../components/common'
+import { Layout } from '../../components/Layout'
+import { Breadcrumbs, Badge } from '../../components/common'
 import { useReorderingRules, useDeleteReorderingRule, useToggleReorderingRule } from '../hooks/finance/useReorderingRules'
 import { useWarehouses } from '../hooks/useWarehouses'
 import { ReorderingRuleFormModal } from '../components/stock/ReorderingRuleFormModal'

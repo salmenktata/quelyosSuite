@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useHeroSlides } from '@/hooks/useHeroSlides';
+import type { HeroSlide } from '@/hooks/useHeroSlides';
 
 interface Slide {
   id: number;
@@ -36,15 +36,18 @@ const fallbackSlides: Slide[] = [
   },
 ];
 
-export function HeroSlider() {
-  const { slides: apiSlides, loading } = useHeroSlides();
+interface HeroSliderProps {
+  slides?: HeroSlide[];
+}
+
+export function HeroSlider({ slides: propSlides = [] }: HeroSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Utiliser slides API ou fallback
-  const slides = apiSlides.length > 0 ? apiSlides : fallbackSlides;
+  // Utiliser slides props ou fallback
+  const slides = propSlides.length > 0 ? propSlides : fallbackSlides;
 
   // ⚠️ TOUS LES HOOKS DOIVENT ÊTRE AVANT LES EARLY RETURNS
 
@@ -112,15 +115,8 @@ export function HeroSlider() {
   // ⚠️ EARLY RETURNS APRÈS TOUS LES HOOKS
 
   // Masquer la section si aucun slide (pas de fallback)
-  if (!loading && apiSlides.length === 0 && fallbackSlides.length === 0) {
+  if (slides.length === 0) {
     return null;
-  }
-
-  // Skeleton loader pendant chargement
-  if (loading) {
-    return (
-      <div className="h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] bg-gray-200 animate-pulse" />
-    );
   }
 
   return (

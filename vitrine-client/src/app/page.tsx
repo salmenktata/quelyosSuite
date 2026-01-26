@@ -5,6 +5,8 @@
 
 import Link from 'next/link';
 import type { Product, Category } from '@quelyos/types';
+import type { HeroSlide } from '@/hooks/useHeroSlides';
+import type { PromoBanner } from '@/hooks/usePromoBanners';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { PromoBanners } from '@/components/home/PromoBanners';
 import { CategoriesSection } from '@/components/home/CategoriesSection';
@@ -14,21 +16,29 @@ import { NewsletterForm } from '@/components/home/NewsletterForm';
 import { logger } from '@/lib/logger';
 
 // Server-side data fetching
-async function getHomeData(): Promise<{ products: Product[]; categories: Category[] }> {
+async function getHomeData(): Promise<{ products: Product[]; categories: Category[]; heroSlides: HeroSlide[]; promoBanners: PromoBanner[] }> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   try {
-    const [productsRes, categoriesRes] = await Promise.all([
+    const [productsRes, categoriesRes, heroSlidesRes, promoBannersRes] = await Promise.all([
       fetch(`${baseUrl}/api/products?limit=8&is_featured=true`, {
         next: { revalidate: 60 } // ISR: revalidate every 60 seconds
       }),
       fetch(`${baseUrl}/api/categories`, {
+        next: { revalidate: 300 } // ISR: revalidate every 5 minutes
+      }),
+      fetch(`${baseUrl}/api/hero-slides`, {
+        next: { revalidate: 300 } // ISR: revalidate every 5 minutes
+      }),
+      fetch(`${baseUrl}/api/promo-banners`, {
         next: { revalidate: 300 } // ISR: revalidate every 5 minutes
       })
     ]);
 
     let products: Product[] = [];
     let categories: Category[] = [];
+    let heroSlides: HeroSlide[] = [];
+    let promoBanners: PromoBanner[] = [];
 
     if (productsRes.ok) {
       const data = await productsRes.json();
@@ -51,20 +61,30 @@ async function getHomeData(): Promise<{ products: Product[]; categories: Categor
       categories = (data.categories || []).slice(0, 4);
     }
 
-    return { products, categories };
+    if (heroSlidesRes.ok) {
+      const data = await heroSlidesRes.json();
+      heroSlides = data.success ? data.slides || [] : [];
+    }
+
+    if (promoBannersRes.ok) {
+      const data = await promoBannersRes.json();
+      promoBanners = data.success ? data.banners || [] : [];
+    }
+
+    return { products, categories, heroSlides, promoBanners };
   } catch (error) {
     logger.error('Error fetching home data:', error);
-    return { products: [], categories: [] };
+    return { products: [], categories: [], heroSlides: [], promoBanners: [] };
   }
 }
 
 export default async function Home() {
-  const { products, categories } = await getHomeData();
+  const { products, categories, heroSlides, promoBanners } = await getHomeData();
 
   return (
     <div className="bg-gray-50">
       {/* HERO SLIDER */}
-      <HeroSlider />
+      <HeroSlider slides={heroSlides} />
 
       {/* CATEGORIES */}
       <CategoriesSection categories={categories} isLoading={false} />
@@ -96,7 +116,7 @@ export default async function Home() {
       </section>
 
       {/* PROMO BANNERS */}
-      <PromoBanners />
+      <PromoBanners banners={promoBanners} />
 
       {/* BENEFITS SECTION */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-16">

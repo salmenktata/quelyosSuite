@@ -11,6 +11,7 @@ import { generateOrganizationSchema } from "@/lib/utils/seo";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap", // Prevent FOUT/FOIT causing CLS
 });
 
 export const metadata: Metadata = {

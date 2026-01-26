@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePromoBanners } from '@/hooks/usePromoBanners';
+import type { PromoBanner } from '@/hooks/usePromoBanners';
 
 // Mapping gradients backend → Tailwind
 const gradientMap: Record<string, string> = {
@@ -54,27 +54,17 @@ const fallbackBanners = [
   },
 ];
 
-export function PromoBanners() {
-  const { banners: apiBanners, loading } = usePromoBanners();
+interface PromoBannersProps {
+  banners?: PromoBanner[];
+}
 
-  // Utiliser bannières API ou fallback
-  const banners = apiBanners.length > 0 ? apiBanners : fallbackBanners;
+export function PromoBanners({ banners: propBanners = [] }: PromoBannersProps) {
+  // Utiliser bannières props ou fallback
+  const banners = propBanners.length > 0 ? propBanners : fallbackBanners;
 
   // Masquer section si aucune bannière
-  if (!loading && apiBanners.length === 0 && fallbackBanners.length === 0) {
+  if (banners.length === 0) {
     return null;
-  }
-
-  // Skeleton pendant chargement
-  if (loading) {
-    return (
-      <section className="container mx-auto px-4 max-w-7xl py-12">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="h-[300px] rounded-2xl bg-gray-200 animate-pulse" />
-          <div className="h-[300px] rounded-2xl bg-gray-200 animate-pulse" />
-        </div>
-      </section>
-    );
   }
 
   return (
