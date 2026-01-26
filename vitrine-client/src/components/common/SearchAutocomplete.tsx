@@ -47,7 +47,7 @@ const getImageUrl = (imagePath: string | null | undefined): string => {
   // If already a full URL, return as is
   if (imagePath.startsWith('http')) return imagePath;
   // Prefix with Odoo URL
-  const odooUrl = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+  const odooUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
   return `${odooUrl}${imagePath}`;
 };
 

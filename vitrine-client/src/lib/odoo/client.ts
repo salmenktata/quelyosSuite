@@ -29,9 +29,9 @@ const getApiBase = () => {
   return '/api/backend';
 };
 
-const DB = process.env.ODOO_DATABASE || 'quelyos';
+const DB = process.env.BACKEND_DATABASE || 'quelyos';
 
-export class OdooClient {
+export class BackendClient {
   private api: AxiosInstance;
   private sessionId: string | null = null;
 
@@ -562,7 +562,7 @@ export class OdooClient {
 }
 
 // Instance singleton
-export const odooClient = new OdooClient();
+export const odooClient = new BackendClient();
 
 // Charger la session au démarrage (côté client uniquement)
 if (typeof window !== 'undefined') {

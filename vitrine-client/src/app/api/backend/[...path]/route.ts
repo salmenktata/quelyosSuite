@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 export async function POST(
   request: NextRequest,
@@ -23,7 +23,7 @@ export async function POST(
     const body = await request.json();
 
     // Forward the request to Odoo with JSON-RPC format
-    const response = await fetch(`${ODOO_URL}${odooPath}`, {
+    const response = await fetch(`${BACKEND_URL}${odooPath}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export async function GET(
     // Use POST internally (Odoo expects JSON-RPC POST)
     const odooPath = `/api/ecommerce/${params.path.join('/')}`;
 
-    const response = await fetch(`${ODOO_URL}${odooPath}`, {
+    const response = await fetch(`${BACKEND_URL}${odooPath}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

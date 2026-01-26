@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 export async function GET(
   request: NextRequest,
@@ -23,7 +23,7 @@ export async function GET(
     const endpoint = `/api/ecommerce/cart/${pathString}`;
 
     // Appeler l'API backend
-    const response = await fetch(`${ODOO_URL}${endpoint}`, {
+    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const endpoint = `/api/ecommerce/cart/${pathString}`;
 
     // Appeler l'API backend
-    const response = await fetch(`${ODOO_URL}${endpoint}`, {
+    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const endpoint = `/api/ecommerce/cart/${pathString}`;
 
     // Appeler l'API backend
-    const response = await fetch(`${ODOO_URL}${endpoint}`, {
+    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -56,7 +56,7 @@ export async function getProductSeoMetadata(productId: number): Promise<Metadata
           {
             url: seo.og_image.startsWith('http')
               ? seo.og_image
-              : `${process.env.NEXT_PUBLIC_ODOO_URL || ''}${seo.og_image}`,
+              : `${process.env.NEXT_PUBLIC_BACKEND_URL || ''}${seo.og_image}`,
             alt: seo.og_title,
           },
         ],
@@ -71,7 +71,7 @@ export async function getProductSeoMetadata(productId: number): Promise<Metadata
         images: [
           seo.twitter_image.startsWith('http')
             ? seo.twitter_image
-            : `${process.env.NEXT_PUBLIC_ODOO_URL || ''}${seo.twitter_image}`,
+            : `${process.env.NEXT_PUBLIC_BACKEND_URL || ''}${seo.twitter_image}`,
         ],
       },
     };

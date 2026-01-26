@@ -1,12 +1,12 @@
 /**
  * Image Proxy API Route
- * Proxies images from Odoo to avoid CORS issues
+ * Proxies images from backend to avoid CORS issues
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,13 +17,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'URL parameter required' }, { status: 400 });
     }
 
-    // Check if it's a valid Odoo image URL (contains /web/image or is from known Odoo hosts)
-    const isOdooUrl = url.includes('/web/image') ||
-                      url.includes('localhost:8069') ||
-                      url.includes('odoo:8069') ||
-                      url.startsWith(ODOO_URL);
+    // Check if it's a valid backend image URL
+    const isBackendUrl = url.includes('/web/image') ||
+                         url.includes('localhost:8069') ||
+                         url.startsWith(BACKEND_URL);
 
-    if (!isOdooUrl) {
+    if (!isBackendUrl) {
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
@@ -32,12 +31,12 @@ export async function GET(request: NextRequest) {
     if (url.startsWith('http')) {
       fullUrl = url;
     } else if (url.startsWith('/')) {
-      fullUrl = `${ODOO_URL}${url}`;
+      fullUrl = `${BACKEND_URL}${url}`;
     } else {
-      fullUrl = `${ODOO_URL}/${url}`;
+      fullUrl = `${BACKEND_URL}/${url}`;
     }
 
-    // Fetch the image from Odoo
+    // Fetch the image from backend
     const response = await fetch(fullUrl, {
       headers: {
         'Accept': 'image/*',

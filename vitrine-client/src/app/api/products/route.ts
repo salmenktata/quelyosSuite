@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Appeler l'API backend
-    const response = await fetch(`${ODOO_URL}/api/ecommerce/products`, {
+    const response = await fetch(`${BACKEND_URL}/api/ecommerce/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

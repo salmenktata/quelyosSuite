@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const ODOO_URL = process.env.ODOO_URL || 'http://localhost:8069'
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { slug } = await params
 
-    const response = await fetch(`${ODOO_URL}/api/ecommerce/pages/${slug}`, {
+    const response = await fetch(`${BACKEND_URL}/api/ecommerce/pages/${slug}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({}),

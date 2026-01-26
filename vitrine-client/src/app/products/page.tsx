@@ -44,7 +44,7 @@ function getProxiedImageUrl(url: string | undefined): string {
   // Proxy Odoo images through our API to avoid CORS issues
   const isOdooImage = url.includes('/web/image') ||
                       url.includes('localhost:8069') ||
-                      url.includes('odoo:8069');
+                      url.includes('');
 
   if (isOdooImage) {
     return `/api/image?url=${encodeURIComponent(url)}`;

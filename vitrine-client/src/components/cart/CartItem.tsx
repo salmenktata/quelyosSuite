@@ -53,7 +53,7 @@ const CartItem: React.FC<CartItemProps> = ({
   const priceSubtotal = item.price_subtotal || item.subtotal || 0;
 
   const imageUrl = productImage
-    ? `${process.env.NEXT_PUBLIC_ODOO_URL}${productImage}`
+    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${productImage}`
     : '/placeholder-product.png';
 
   if (compact) {

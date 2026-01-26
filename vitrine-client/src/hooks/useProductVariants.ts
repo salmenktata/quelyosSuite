@@ -45,7 +45,7 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
     setIsLoadingVariants(true);
     try {
       // Appel direct à l'API via proxy Next.js
-      const apiBase = typeof window !== 'undefined' ? '/api/backend' : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8069';
+      const apiBase = typeof window !== 'undefined' ? '/api/backend' : process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
       const url = `${apiBase}/products/${productId}/variants`;
 
       const res = await fetch(url, {

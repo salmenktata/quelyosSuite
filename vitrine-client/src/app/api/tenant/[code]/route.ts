@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.ODOO_URL || process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 export async function GET(
   request: NextRequest,
@@ -27,7 +27,7 @@ export async function GET(
     }
 
     // Appel direct HTTP vers Odoo (pas JSON-RPC)
-    const odooUrl = `${ODOO_URL}/api/ecommerce/tenant/${code}`;
+    const odooUrl = `${BACKEND_URL}/api/ecommerce/tenant/${code}`;
 
     const response = await fetch(odooUrl, {
       method: 'GET',
