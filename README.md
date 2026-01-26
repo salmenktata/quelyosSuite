@@ -62,8 +62,8 @@ nginx/             → Config production
 
 ```bash
 # Cloner le projet
-git clone https://github.com/votre-compte/QuelyosSuite.git
-cd QuelyosSuite
+git clone https://github.com/salmenktata/quelyosSuite.git
+cd quelyosSuite
 
 # Installation des dépendances
 pnpm install  # ou npm install dans chaque dossier
@@ -847,8 +847,8 @@ cd backoffice && npm install && npm run dev
 
 ```bash
 # 1. Cloner le projet
-git clone https://github.com/votre-compte/QuelyosSuite.git
-cd QuelyosSuite
+git clone https://github.com/salmenktata/quelyosSuite.git
+cd quelyosSuite
 
 # 2. Configurer les variables d'environnement
 cp .env.production.example .env.production
@@ -928,7 +928,7 @@ Ajouter au crontab pour backup quotidien à 2h du matin :
 ```bash
 crontab -e
 # Ajouter :
-0 2 * * * cd /path/to/QuelyosSuite && ./backup.sh >> /var/log/quelyos-backup.log 2>&1
+0 2 * * * cd /path/to/quelyosSuite && ./backup.sh >> /var/log/quelyos-backup.log 2>&1
 ```
 
 ---

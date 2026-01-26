@@ -98,7 +98,7 @@ Backend (8069) ─┐
 ## Structure des Répertoires
 
 ```
-QuelyosSuite/
+quelyosSuite/
 ├── odoo-backend/           # Backend Odoo 19
 │   ├── addons/
 │   │   └── quelyos_api/    # Module API REST custom

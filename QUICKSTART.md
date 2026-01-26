@@ -6,8 +6,8 @@ Guide de démarrage rapide pour développeurs.
 
 ```bash
 # 1. Cloner et installer
-git clone https://github.com/votre-compte/QuelyosSuite.git
-cd QuelyosSuite
+git clone https://github.com/salmenktata/quelyosSuite.git
+cd quelyosSuite
 pnpm install  # ou npm install dans chaque dossier
 
 # 2. Démarrer tous les services
@@ -98,7 +98,7 @@ docker ps
 ## Structure du Projet
 
 ```
-QuelyosSuite/
+quelyosSuite/
 ├── vitrine-quelyos/    # Site vitrine (3000)
 ├── vitrine-client/     # E-commerce (3001)
 ├── dashboard-client/   # Backoffice (5175)
