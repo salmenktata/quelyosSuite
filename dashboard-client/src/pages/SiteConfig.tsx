@@ -778,14 +778,12 @@ export default function SiteConfig() {
                   Obtenez vos clés API gratuites en 2 minutes • Sans clé, 4 images de démo sont disponibles
                 </p>
                 <a
-                  href="https://github.com/salmenktata/quelyosSuite/blob/main/dashboard-client/OBTENIR_CLES_API_IMAGES.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/api-guide"
                   className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
                   📖 Guide complet : Comment obtenir vos clés API
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
               </div>

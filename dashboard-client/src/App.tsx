@@ -43,6 +43,7 @@ import TrustBadges from './pages/TrustBadges'
 import SeoMetadata from './pages/SeoMetadata'
 import MarketingPopups from './pages/MarketingPopups'
 import StaticPages from './pages/StaticPages'
+import ApiGuide from './pages/ApiGuide'
 // Finance module
 import FinanceDashboard from './pages/finance/FinanceDashboard'
 import FinanceAccounts from './pages/finance/accounts/page'
@@ -366,6 +367,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <HeroSlides />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/api-guide"
+                element={
+                  <ProtectedRoute>
+                    <ApiGuide />
                   </ProtectedRoute>
                 }
               />

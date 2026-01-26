@@ -332,15 +332,24 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       {/* Message d'erreur */}
       {error && (
         <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-sm text-red-800 dark:text-red-200 mb-2">
+          <p className="text-sm text-red-800 dark:text-red-200 mb-3">
             {error}
           </p>
-          <Link
-            to="/site-config"
-            className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:underline font-medium"
-          >
-            ⚙️ Configurer les clés API dans les paramètres du site
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/api-guide"
+              className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:underline font-medium"
+            >
+              📖 Voir le guide complet
+            </Link>
+            <span className="text-red-300 dark:text-red-600">|</span>
+            <Link
+              to="/site-config"
+              className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:underline font-medium"
+            >
+              ⚙️ Configurer maintenant
+            </Link>
+          </div>
         </div>
       )}
 
