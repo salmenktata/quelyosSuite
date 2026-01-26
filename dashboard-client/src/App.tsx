@@ -7,44 +7,44 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import AuthCallback from './pages/AuthCallback'
-import Orders from './pages/ecms/Orders'
-import OrderDetail from './pages/ecms/OrderDetail'
+import Orders from './pages/store/Orders'
+import OrderDetail from './pages/store/OrderDetail'
 import Customers from './pages/crm/Customers'
 import CustomerDetail from './pages/crm/CustomerDetail'
-import Products from './pages/ecms/Products'
-import ProductDetail from './pages/ecms/ProductDetail'
-import ProductForm from './pages/ecms/ProductForm'
-import Categories from './pages/ecms/Categories'
-import Coupons from './pages/ecms/Coupons'
-import CouponForm from './pages/ecms/CouponForm'
+import Products from './pages/store/Products'
+import ProductDetail from './pages/store/ProductDetail'
+import ProductForm from './pages/store/ProductForm'
+import Categories from './pages/store/Categories'
+import Coupons from './pages/store/Coupons'
+import CouponForm from './pages/store/CouponForm'
 import Stock from './pages/Stock'
 import Inventory from './pages/Inventory'
 import StockMoves from './pages/StockMoves'
 import StockTransfers from './pages/StockTransfers'
 import StockLocations from './pages/StockLocations'
 import ReorderingRules from './pages/stock/ReorderingRules'
-import DeliveryMethods from './pages/ecms/DeliveryMethods'
-import SiteConfig from './pages/ecms/SiteConfig'
+import DeliveryMethods from './pages/store/DeliveryMethods'
+import SiteConfig from './pages/store/SiteConfig'
 import Payments from './pages/Payments'
-import Featured from './pages/ecms/Featured'
+import Featured from './pages/store/Featured'
 import Analytics from './pages/Analytics'
 import Invoices from './pages/Invoices'
-import AbandonedCarts from './pages/ecms/AbandonedCarts'
+import AbandonedCarts from './pages/store/AbandonedCarts'
 import Pricelists from './pages/Pricelists'
 import PricelistDetail from './pages/PricelistDetail'
 import CustomerCategories from './pages/crm/CustomerCategories'
 import Warehouses from './pages/Warehouses'
 import WarehouseDetail from './pages/WarehouseDetail'
-import MyShop from './pages/ecms/MyShop'
+import MyShop from './pages/store/MyShop'
 // import Tenants from './pages/Tenants' // Désactivé - réservé super-admin
-import Menus from './pages/ecms/Menus'
-import HeroSlides from './pages/ecms/HeroSlides'
-import PromoBanners from './pages/ecms/PromoBanners'
-import PromoMessages from './pages/ecms/PromoMessages'
-import TrustBadges from './pages/ecms/TrustBadges'
-import SeoMetadata from './pages/ecms/SeoMetadata'
-import MarketingPopups from './pages/ecms/MarketingPopups'
-import StaticPages from './pages/ecms/StaticPages'
+import Menus from './pages/store/Menus'
+import HeroSlides from './pages/store/HeroSlides'
+import PromoBanners from './pages/store/PromoBanners'
+import PromoMessages from './pages/store/PromoMessages'
+import TrustBadges from './pages/store/TrustBadges'
+import SeoMetadata from './pages/store/SeoMetadata'
+import MarketingPopups from './pages/store/MarketingPopups'
+import StaticPages from './pages/store/StaticPages'
 import ApiGuide from './pages/ApiGuide'
 // Finance module
 import FinanceDashboard from './pages/finance/FinanceDashboard'
@@ -143,9 +143,9 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/ecms" element={<Navigate to="/ecms/my-shop" replace />} />
+              <Route path="/store" element={<Navigate to="/store/my-shop" replace />} />
               <Route
-                path="/ecms/orders"
+                path="/store/orders"
                 element={
                   <ProtectedRoute>
                     <Orders />
@@ -153,7 +153,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/orders/:id"
+                path="/store/orders/:id"
                 element={
                   <ProtectedRoute>
                     <OrderDetail />
@@ -178,7 +178,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/products"
+                path="/store/products"
                 element={
                   <ProtectedRoute>
                     <Products />
@@ -186,7 +186,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/products/create"
+                path="/store/products/create"
                 element={
                   <ProtectedRoute>
                     <ProductForm />
@@ -194,7 +194,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/products/:id"
+                path="/store/products/:id"
                 element={
                   <ProtectedRoute>
                     <ProductDetail />
@@ -202,7 +202,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/products/:id/edit"
+                path="/store/products/:id/edit"
                 element={
                   <ProtectedRoute>
                     <ProductForm />
@@ -210,7 +210,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/categories"
+                path="/store/categories"
                 element={
                   <ProtectedRoute>
                     <Categories />
@@ -218,7 +218,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/coupons"
+                path="/store/coupons"
                 element={
                   <ProtectedRoute>
                     <Coupons />
@@ -226,7 +226,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/coupons/create"
+                path="/store/coupons/create"
                 element={
                   <ProtectedRoute>
                     <CouponForm />
@@ -282,7 +282,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/delivery"
+                path="/store/delivery"
                 element={
                   <ProtectedRoute>
                     <DeliveryMethods />
@@ -290,7 +290,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/site-config"
+                path="/store/site-config"
                 element={
                   <ProtectedRoute>
                     <SiteConfig />
@@ -306,7 +306,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/featured"
+                path="/store/featured"
                 element={
                   <ProtectedRoute>
                     <Featured />
@@ -330,7 +330,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/abandoned-carts"
+                path="/store/abandoned-carts"
                 element={
                   <ProtectedRoute>
                     <AbandonedCarts />
@@ -379,7 +379,7 @@ export default function App() {
               />
               {/* Route Tenants désactivée - réservée super-admin */}
               <Route
-                path="/ecms/menus"
+                path="/store/menus"
                 element={
                   <ProtectedRoute>
                     <Menus />
@@ -387,7 +387,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/hero-slides"
+                path="/store/hero-slides"
                 element={
                   <ProtectedRoute>
                     <HeroSlides />
@@ -403,7 +403,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/promo-banners"
+                path="/store/promo-banners"
                 element={
                   <ProtectedRoute>
                     <PromoBanners />
@@ -411,7 +411,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/promo-messages"
+                path="/store/promo-messages"
                 element={
                   <ProtectedRoute>
                     <PromoMessages />
@@ -419,7 +419,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/trust-badges"
+                path="/store/trust-badges"
                 element={
                   <ProtectedRoute>
                     <TrustBadges />
@@ -427,7 +427,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/seo-metadata"
+                path="/store/seo-metadata"
                 element={
                   <ProtectedRoute>
                     <SeoMetadata />
@@ -435,7 +435,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/marketing-popups"
+                path="/store/marketing-popups"
                 element={
                   <ProtectedRoute>
                     <MarketingPopups />
@@ -443,7 +443,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/static-pages"
+                path="/store/static-pages"
                 element={
                   <ProtectedRoute>
                     <StaticPages />
@@ -451,7 +451,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/ecms/my-shop"
+                path="/store/my-shop"
                 element={
                   <ProtectedRoute>
                     <MyShop />
