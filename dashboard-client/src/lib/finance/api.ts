@@ -49,8 +49,9 @@ export async function api<T = unknown>(
       ...(sessionId && { 'X-Session-Id': sessionId }),
       ...headers,
     },
-    // Inclure les credentials pour les cookies de session Odoo
-    credentials: 'include',
+    // Ne pas inclure les credentials en cross-origin (incompatible avec CORS wildcard)
+    // L'authentification se fait via le header X-Session-Id
+    credentials: 'omit',
   }
 
   if (body && method !== 'GET') {
