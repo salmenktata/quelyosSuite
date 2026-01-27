@@ -39,7 +39,7 @@ export function useAuth(): AuthContextType {
       }
 
       // Fallback: essayer le JWT token (legacy)
-      const token = localStorage.getItem('odoo_session_token')
+      const token = localStorage.getItem('backend_session_token')
       if (!token) return null
 
       // Décoder le payload JWT (simplifié)
@@ -62,7 +62,7 @@ export function useAuth(): AuthContextType {
   }
 
   const logout = () => {
-    localStorage.removeItem('odoo_session_token')
+    localStorage.removeItem('backend_session_token')
     localStorage.removeItem('session_id')
     localStorage.removeItem('user')
     window.location.href = '/login'

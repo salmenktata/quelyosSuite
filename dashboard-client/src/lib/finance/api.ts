@@ -1,6 +1,6 @@
 /**
  * API Finance - Wrapper pour les appels API du module finance
- * Appelle le backend Odoo via le proxy Vite
+ * Appelle le backend via le proxy Vite
  */
 
 // Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
@@ -36,7 +36,7 @@ export async function api<T = unknown>(
   endpoint: string,
   options: ApiOptions = {}
 ): Promise<T> {
-  // Utiliser session_id pour l'auth Odoo (optionnel car endpoints sont auth='public')
+  // Utiliser session_id pour l'auth (optionnel car endpoints sont auth='public')
   const sessionId = localStorage.getItem('session_id')
 
   const { method = 'GET', body, headers = {} } = options
@@ -45,7 +45,7 @@ export async function api<T = unknown>(
     method,
     headers: {
       'Content-Type': 'application/json',
-      // Header d'authentification Odoo
+      // Header d'authentification
       ...(sessionId && { 'X-Session-Id': sessionId }),
       ...headers,
     },
@@ -77,7 +77,7 @@ export async function api<T = unknown>(
 
     const json = await response.json()
 
-    // Gérer le format de réponse Odoo
+    // Gérer le format de réponse backend
     // Les endpoints HTTP retournent {success, data} directement
     // Les endpoints JSON-RPC retournent {result: {success, data}}
     if (json.result !== undefined) {

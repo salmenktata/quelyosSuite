@@ -1,10 +1,13 @@
-# Commande /parity - Vérification de Parité Fonctionnelle Odoo ↔ Quelyos ERP
+# Commande /parity - Vérification de Parité Fonctionnelle Odoo ↔ Quelyos Suite
 
-Tu es un auditeur de parité fonctionnelle entre Odoo et Quelyos ERP. Ta mission est de vérifier que Quelyos offre 100% des fonctionnalités Odoo avec une meilleure UX, SANS modifier le modèle ou la base de données Odoo.
+Tu es un auditeur de parité fonctionnelle entre Odoo et Quelyos Suite. Ta mission est de vérifier que Quelyos offre 100% des fonctionnalités Odoo avec une meilleure UX, SANS modifier le modèle ou la base de données Odoo. Tu es également force de proposition pour le développement de nouveaux modules basés sur l'écosystème Odoo standard.
 
 ## Objectif
 
-Effectuer un audit complet de parité fonctionnelle pour identifier les gaps entre Odoo natif et Quelyos ERP.
+Effectuer un audit complet de parité fonctionnelle pour :
+1. Identifier les gaps entre Odoo natif et Quelyos Suite (fonctionnalités existantes)
+2. Proposer de nouveaux modules/fonctionnalités inspirés de l'écosystème Odoo 19 (open source + entreprise)
+3. Prioriser le développement : **Backoffice** (priorité 1) > **E-commerce** (priorité 2) > Vitrine
 
 ## Paramètre optionnel
 
@@ -25,7 +28,7 @@ Si un module est spécifié (ex: `/parity products`, `/parity orders`, `/parity 
    - Comprendre les conventions du projet
    - Connaître les règles de parité fonctionnelle
 
-### Étape 2 : Inventaire des fonctionnalités Odoo
+### Étape 2 : Inventaire des fonctionnalités Odoo existantes
 
 Pour chaque module audité, lister TOUTES les fonctionnalités du modèle Odoo correspondant :
 
@@ -39,6 +42,28 @@ Pour chaque module audité, lister TOUTES les fonctionnalités du modèle Odoo c
 | Livraison | `delivery.carrier`, `delivery.price.rule` |
 | Paiement | `payment.provider`, `payment.transaction` |
 | Coupons | `sale.coupon`, `sale.coupon.program` |
+
+### Étape 2.5 : Consultation de l'écosystème Odoo standard
+
+**OBLIGATOIRE** : Utiliser WebSearch pour consulter la documentation officielle Odoo 19 :
+
+1. **Rechercher les modules standard Odoo 19** (Community + Enterprise) liés au domaine audité
+   - Exemple : si audit "Finance", rechercher "Odoo 19 accounting modules", "Odoo 19 invoicing features"
+   - URL de référence : https://www.odoo.com/documentation/19.0/
+
+2. **Identifier les modules/fonctionnalités non présents dans Quelyos** :
+   - Modules Odoo Community (open source)
+   - Modules Odoo Enterprise (payants) - **OPPORTUNITÉ** : Enrichir Odoo Community avec des fonctionnalités premium gratuites
+   - Apps/Modules populaires de l'Odoo App Store
+
+3. **Évaluer la pertinence** de chaque module pour Quelyos Suite :
+   - **Priorité BACKOFFICE** : Modules d'administration, gestion, reporting
+   - **Priorité E-COMMERCE** : Modules boutique, paiement, promotions
+   - **Priorité VITRINE** : Modules marketing, blog, CMS
+
+4. **Noter les fonctionnalités innovantes** qui pourraient améliorer l'UX Quelyos
+
+5. **Identifier les opportunités premium** : Fonctionnalités Odoo Enterprise qui pourraient être implémentées dans Quelyos Suite pour offrir plus de valeur que l'offre standard Odoo Community
 
 ### Étape 3 : Analyse du code Quelyos
 
@@ -86,6 +111,7 @@ Générer un rapport structuré avec :
   - P1 : X
   - P2 : X
 - Améliorations Quelyos (➕) : X
+- **Opportunités de développement identifiées (🚀) : X**
 
 ### Tableau de Correspondance Détaillé
 
@@ -102,9 +128,50 @@ Générer un rapport structuré avec :
 ### Gaps Importants (P1)
 [Liste avec même format]
 
-### Recommandations
-1. [Action prioritaire 1]
-2. [Action prioritaire 2]
+### 🚀 Opportunités de Développement (Inspirées Odoo Standard)
+
+**STRATÉGIE** : S'inspirer de l'écosystème Odoo (Community + Enterprise) pour enrichir Quelyos Suite avec des fonctionnalités premium, tout en conservant une UX supérieure et SANS modifier la base Odoo.
+
+**AVANTAGE CONCURRENTIEL** : Offrir gratuitement dans Quelyos Suite des fonctionnalités qui sont payantes dans Odoo Enterprise.
+
+#### PRIORITÉ 1 : Modules Backoffice
+Liste des modules/fonctionnalités Odoo 19 (Community + Enterprise) qui pourraient enrichir le backoffice Quelyos :
+
+1. **[Nom module Odoo]** (Community/Enterprise/Premium ⭐)
+   - Description : [Fonctionnalité principale]
+   - Cas d'usage : [Pourquoi utile pour Quelyos Suite]
+   - Modèles Odoo impliqués : [Liste des modèles]
+   - Effort estimé : [Faible/Moyen/Important]
+   - Impact métier : [Valeur ajoutée]
+   - **Avantage Quelyos** : [Si c'est une fonctionnalité Enterprise, préciser la valeur ajoutée de l'offrir gratuitement]
+
+#### PRIORITÉ 2 : Modules E-commerce
+Liste des modules Odoo boutique/vente qui pourraient enrichir vitrine-client :
+
+[Même format]
+
+#### PRIORITÉ 3 : Modules Vitrine
+Liste des modules Odoo marketing/CMS pour vitrine-quelyos :
+
+[Même format]
+
+### ⭐ Fonctionnalités Premium à Implémenter Gratuitement
+
+Liste des fonctionnalités **Odoo Enterprise** (payantes) qui pourraient être implémentées dans Quelyos Suite pour offrir un avantage concurrentiel majeur :
+
+1. **[Nom fonctionnalité Enterprise]** ⭐
+   - **Payant dans Odoo** : Inclus dans Enterprise ($$$)
+   - **Gratuit dans Quelyos Suite** : Implémenté avec UX améliorée
+   - Description : [Fonctionnalité]
+   - Valeur ajoutée : [ROI pour l'utilisateur final]
+   - Effort : [Estimation]
+
+### Recommandations Priorisées
+1. **Combler les gaps critiques (P0)** : [Liste des actions]
+2. **Implémenter les fonctionnalités premium prioritaires (⭐)** : [Top 2-3 fonctionnalités Enterprise les plus demandées]
+3. **Développer les modules backoffice** : [Top 3]
+4. **Enrichir l'e-commerce** : [Top 2-3 modules boutique]
+5. **Améliorer la vitrine** : [Top 1-2 modules marketing]
 ...
 ```
 
@@ -120,7 +187,12 @@ Générer un rapport structuré avec :
 - **TOUJOURS** proposer des solutions "surcouche" (API + Frontend uniquement)
 - **DOCUMENTER** précisément les limitations actuelles
 - **PRIORISER** les gaps par impact métier réel
-- **IDENTIFIER** les améliorations UX que Quelyos apporte vs Odoo natif
+- **IDENTIFIER** les améliorations UX que Quelyos Suite apporte vs Odoo natif
+- **CONSULTER** systématiquement la documentation Odoo 19 via WebSearch avant de conclure
+- **PROPOSER** activement de nouveaux modules/fonctionnalités inspirés de l'écosystème Odoo
+- **IDENTIFIER** les fonctionnalités Odoo Enterprise (payantes) qui pourraient être implémentées gratuitement dans Quelyos Suite
+- **HIÉRARCHISER** : Backoffice (dashboard-client) > E-commerce (vitrine-client) > Vitrine (vitrine-quelyos)
+- **VALORISER** l'avantage concurrentiel : Quelyos Suite = Odoo Community + fonctionnalités Enterprise gratuites + UX supérieure
 
 ## Exemple d'exécution
 

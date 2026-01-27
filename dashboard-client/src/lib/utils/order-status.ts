@@ -1,5 +1,5 @@
 /**
- * Utilitaires pour gérer les statuts de commande Odoo
+ * Utilitaires pour gérer les statuts de commande
  */
 
 export type OrderState = 'draft' | 'sent' | 'sale' | 'done' | 'cancel'

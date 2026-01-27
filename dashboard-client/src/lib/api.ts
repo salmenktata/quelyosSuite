@@ -70,7 +70,7 @@ class ApiClient {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      // Ne pas envoyer de cookies pour éviter les conflits avec les sessions Odoo invalides
+      // Ne pas envoyer de cookies pour éviter les conflits avec les sessions invalides
       credentials: 'omit',
       body: JSON.stringify({
         jsonrpc: '2.0',
