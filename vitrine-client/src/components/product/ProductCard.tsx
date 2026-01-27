@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const imageUrl = mainImage?.url || '/placeholder-product.png';
 
   // Calculate discount percentage
-  const listPrice = product.list_price ?? product.price ?? 0;
+  const listPrice = product.price ?? 0;
   const hasDiscount = product.compare_at_price && product.compare_at_price > listPrice;
   const discountPercent = hasDiscount
     ? Math.round(((product.compare_at_price! - listPrice) / product.compare_at_price!) * 100)

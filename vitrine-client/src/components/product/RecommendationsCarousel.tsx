@@ -211,7 +211,7 @@ export const RecommendationsCarousel = memo(function RecommendationsCarousel({
               {/* Price */}
               <div className="mt-auto">
                 <p className="text-lg font-bold text-primary">
-                  {formatPrice(product.list_price ?? product.price ?? 0)}
+                  {formatPrice(product.price ?? 0)}
                 </p>
               </div>
             </div>

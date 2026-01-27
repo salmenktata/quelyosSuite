@@ -253,3 +253,100 @@ Bundles statiques:
   - "OdooClient": 0 ✅
   - "getOdooImageUrl": 0 ✅
 ```
+
+### Phase 2 - Anonymisation Réponses API ✅ (2026-01-27)
+
+**Objectif** : Masquer les noms de champs Odoo dans les réponses JSON publiques
+
+#### **P0-API - Champs Backend Exposés**
+
+**Détection** :
+```bash
+# Vérifier que le frontend n'utilise PAS les noms Odoo
+grep -rn "list_price\|default_code\|qty_available\|attribute_lines\|create_date\|write_date" \
+  vitrine-client/src \
+  --include="*.tsx" --include="*.ts" \
+  | grep -v "api-anonymizer.ts" \
+  | grep -v "test.ts" \
+  | grep -v "lib/odoo/"
+# Attendu : Aucun résultat (0 occurrences)
+```
+
+**Mapping des champs** (défini dans `vitrine-client/src/lib/api-anonymizer.ts`) :
+
+| Champ Backend (Odoo) | → Champ Standard |
+|---------------------|------------------|
+| `list_price` | `price` |
+| `standard_price` | `cost_price` |
+| `default_code` | `sku` |
+| `qty_available` | `stock_quantity` |
+| `virtual_available` | `available_quantity` |
+| `create_date` | `created_at` |
+| `write_date` | `updated_at` |
+| `attribute_lines` | `attributes` |
+| `categ_id` | `category_id` |
+| `pricelist_id` | `price_list_id` |
+
+#### **Architecture de transformation**
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Odoo/Backend  │ -> │  API Anonymizer  │ -> │  Frontend       │
+│   (inchangé)    │    │  (middleware)    │    │  (noms standards)│
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+- **Fichier clé** : `vitrine-client/src/lib/api-anonymizer.ts`
+- **Intégration** : `vitrine-client/src/app/api/backend/[...path]/route.ts`
+- **Mode** : `DUAL_NAMING_MODE = false` (transformation complète)
+
+#### **Vérifications automatiques**
+
+```bash
+# 1. Test réponse API (champs standards uniquement)
+curl -s http://localhost:3001/api/backend/products | jq '.products[0] | keys' | grep -E "list_price|default_code|qty_available"
+# Attendu : Aucun résultat
+
+# 2. Vérifier présence nouveaux noms
+curl -s http://localhost:3001/api/backend/products | jq '.products[0] | {price, sku, stock_quantity}'
+# Attendu : Valeurs présentes (pas null)
+
+# 3. Vérifier types TypeScript
+grep -rn "sku\|stock_quantity\|created_at" vitrine-client/src/components --include="*.tsx" | head -5
+# Attendu : Utilisation des nouveaux noms
+```
+
+#### **Fichiers migrés (Phase 2)**
+
+**Types partagés** :
+- `shared/types/src/index.ts` - Ajout alias standards (price, sku, stock_quantity, etc.)
+
+**Composants vitrine-client** (21 fichiers) :
+- `hooks/useProductVariants.ts`
+- `hooks/useRecentlyViewed.ts`
+- `store/comparisonStore.ts`
+- `components/product/VariantSelector.tsx`
+- `components/product/VariantSwatches.tsx`
+- `components/product/ProductCard.tsx`
+- `components/product/CompareDrawer.tsx`
+- `components/product/CompareButton.tsx`
+- `components/product/QuickViewModal.tsx`
+- `components/product/RecommendationsCarousel.tsx`
+- `components/product/BundleSuggestions.tsx`
+- `components/home/ProductCardHome.tsx`
+- `components/cart/UpsellModal.tsx`
+- `components/common/SearchAutocomplete.tsx`
+- `app/products/page.tsx`
+- `app/products/[slug]/page.tsx`
+- `app/products/[slug]/layout.tsx`
+- `app/compare/page.tsx`
+- `app/account/wishlist/page.tsx`
+
+#### **Impact dashboard-client**
+
+⚠️ **Note** : Le dashboard-client (backoffice) n'est PAS migré car :
+1. Interface interne (admin uniquement)
+2. Pas d'exposition publique des réponses API
+3. Utilise toujours les noms Odoo originaux
+
+Les types `@quelyos/types` supportent les deux conventions (alias).

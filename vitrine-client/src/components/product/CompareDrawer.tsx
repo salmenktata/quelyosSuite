@@ -160,7 +160,7 @@ export function CompareDrawer({ isOpen, onClose }: CompareDrawerProps) {
                     {products.map((product) => (
                       <td key={product.id} className="p-4 text-center">
                         <div className="text-2xl font-bold text-primary">
-                          {formatPrice(product.price || product.list_price || 0, product.currency?.symbol || 'TND')}
+                          {formatPrice(product.price || 0, product.currency?.symbol || 'TND')}
                         </div>
                         {product.compare_at_price && product.compare_at_price > (product.price || 0) && (
                           <div className="text-sm text-gray-400 line-through">
@@ -210,7 +210,7 @@ export function CompareDrawer({ isOpen, onClose }: CompareDrawerProps) {
                     <td className="sticky left-0 bg-gray-50 p-4 font-medium text-gray-700">Référence</td>
                     {products.map((product) => (
                       <td key={product.id} className="p-4 text-center text-gray-600 font-mono text-sm">
-                        {product.default_code || '-'}
+                        {product.sku || '-'}
                       </td>
                     ))}
                   </tr>

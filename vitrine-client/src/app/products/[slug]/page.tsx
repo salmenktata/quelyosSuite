@@ -274,12 +274,12 @@ export default function ProductDetailPage() {
             <ViewersCount productId={product.id} className="mb-4" />
 
             {/* SKU */}
-            {product.default_code && (
+            {product.sku && (
               <div className="text-xs text-gray-500 mb-4 flex items-center gap-1.5">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
                 </svg>
-                Référence: {product.default_code}
+                Référence: {product.sku}
               </div>
             )}
 
@@ -624,7 +624,7 @@ export default function ProductDetailPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Référence:</span>
-                      <span className="text-gray-900 font-bold">{product.default_code || product.id}</span>
+                      <span className="text-gray-900 font-bold">{product.sku || product.id}</span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Catégorie:</span>

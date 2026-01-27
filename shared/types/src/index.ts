@@ -34,6 +34,9 @@ export interface User {
   phone?: string;
   is_portal?: boolean;
   active?: boolean;
+  // Standard name (anonymized API)
+  created_at?: string;
+  // Legacy alias (dashboard compatibility)
   create_date?: string;
 }
 
@@ -45,18 +48,28 @@ export interface Product {
   slug: string;
   description?: string;
   technical_description?: string;
-  price?: number; // Prix affiché (peut varier selon pricelist)
-  list_price?: number; // Prix catalogue de base
-  standard_price?: number; // Coût d'achat
-  compare_at_price?: number; // Prix barré
+  // Pricing - Standard names (anonymized API)
+  price?: number;
+  cost_price?: number;
+  compare_at_price?: number;
+  // Pricing - Legacy aliases (dashboard compatibility)
+  list_price?: number;
+  standard_price?: number;
   currency?: Currency;
-  default_code?: string;
+  // Identifiers - Standard names
+  sku?: string;
   barcode?: string;
+  // Identifiers - Legacy alias
+  default_code?: string;
   image?: string | null;
   image_url?: string;
   images?: ProductImage[];
   category?: Category | null;
   in_stock?: boolean;
+  // Stock - Standard names
+  stock_quantity?: number;
+  available_quantity?: number;
+  // Stock - Legacy aliases
   stock_qty?: number;
   qty_available?: number;
   virtual_available?: number;
@@ -75,13 +88,14 @@ export interface Product {
   is_new?: boolean;
   is_bestseller?: boolean;
   ribbon?: Ribbon | null;
-  offer_end_date?: string | null; // ISO 8601
+  offer_end_date?: string | null;
   // Analytics
   view_count?: number;
   wishlist_count?: number;
   avg_rating?: number;
   review_count?: number;
-  // Relations
+  // Relations - Standard name
+  attributes?: AttributeLine[];
   variants?: ProductVariant[];
   variant_count?: number;
   related_products?: number[];
@@ -89,7 +103,12 @@ export interface Product {
   product_tag_ids?: ProductTag[];
   // SEO
   seo?: SEOData;
+  // Dates - Standard names
+  created_at?: string | null;
+  updated_at?: string | null;
+  // Dates - Legacy aliases
   create_date?: string | null;
+  write_date?: string | null;
 }
 
 export interface ProductDetail extends Product {
@@ -101,10 +120,17 @@ export interface ProductVariant {
   name: string;
   display_name?: string;
   price: number;
+  // Legacy alias
   list_price?: number;
   in_stock: boolean;
-  stock_qty: number;
+  // Standard name
+  stock_quantity?: number;
+  // Legacy aliases
+  stock_qty?: number;
   qty_available?: number;
+  // Standard name
+  sku?: string;
+  // Legacy alias
   default_code?: string;
   barcode?: string;
   attributes: ProductAttribute[];
@@ -181,16 +207,23 @@ export interface AttributeValue {
 
 export interface ExtendedProductVariant extends ProductVariant {
   display_name?: string;
+  // Legacy aliases (inherited from ProductVariant but explicit here)
   list_price?: number;
   default_code?: string;
   barcode?: string;
   qty_available?: number;
+  // Standard names
+  sku?: string;
+  stock_quantity?: number;
 }
 
 export interface VariantsResponse {
   success: boolean;
   product_id: number;
-  attribute_lines: AttributeLine[];
+  // Standard name
+  attributes?: AttributeLine[];
+  // Legacy alias
+  attribute_lines?: AttributeLine[];
   variants: ExtendedProductVariant[];
 }
 

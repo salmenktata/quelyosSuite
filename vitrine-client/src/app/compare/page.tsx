@@ -45,7 +45,7 @@ export default function ComparePage() {
   // Extraire les attributs communs pour la comparaison
   const attributes = [
     { key: 'category', label: 'Catégorie', getValue: (p: typeof products[0]) => p.category?.name || '-' },
-    { key: 'price', label: 'Prix', getValue: (p: typeof products[0]) => formatPrice(p.list_price, p.currency?.symbol || 'TND') },
+    { key: 'price', label: 'Prix', getValue: (p: typeof products[0]) => formatPrice(p.price, p.currency?.symbol || 'TND') },
     { key: 'stock', label: 'Disponibilité', getValue: (p: typeof products[0]) => p.in_stock ? 'En stock' : 'Rupture' },
     { key: 'rating', label: 'Note', getValue: (p: typeof products[0]) => p.avg_rating ? p.avg_rating.toFixed(1) + ' ⭐' : '-' },
     { key: 'reviews', label: 'Nombre d\'avis', getValue: (p: typeof products[0]) => p.review_count?.toString() || '0' },

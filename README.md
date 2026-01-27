@@ -150,7 +150,7 @@ Parité     Packaging  Légal          Commercial  Lancement
 | **Panier** | **90%** ✅ | 🟡 1 P1 (panier abandonné) | |
 | **Factures** | **85%** ✅ | ✅ COMPLÉTÉ | 0 P0, 0 P1 (UI backoffice) |
 | **Clients** | **85%** | 🟡 1 P1 (export CSV) | |
-| **Stock** | **31%** | 🔴 2 P0 (UI ajustement + inventaire) + 8 P1 | Audit `/parity` révèle gaps réels |
+| **Stock** | **31%** | 🔴 2 P0 (UI ajustement + inventaire) + 8 P1 | Audit `/parity stock` + 8 addons OCA identifiés (#52) |
 | **Commandes** | **75%** | 🟡 3 P1 (bon livraison, tracking, historique) | |
 | **Paiement** | **65%** | 🟡 2 P1 (Stripe Elements, remboursements UI) | |
 | **Pricelists** | **21%** | 🔴 3 P0 (CRUD complet) + 10 P1 | Audit 2026-01-25 : Lecture seule uniquement |
@@ -198,9 +198,22 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 - **12 modules/fonctionnalités** Odoo 19 identifiés
 - **8 fonctionnalités Enterprise ⭐** : Marketing Automation, Subscriptions, Bank Sync, SMS Marketing, Social Media, Field Service, Studio, Website Builder avancé
 - **4 fonctionnalités Community** : Project, ESG, Blog, modules industrie
+- **8 addons OCA gratuits 🎁** : Stock cycle count, Barcode scanning, Stock requests, Demand estimate (voir #52)
 - **Priorisation** : Backoffice (P1) > E-commerce (P2) > Vitrine (P3)
 
-**Voir détails complets** : Issue #[TBD] - Roadmap Fonctionnalités Premium
+**Voir détails complets** : Issue #43 - Roadmap Fonctionnalités Premium
+
+#### 🎁 Addons OCA (Odoo Community Association)
+
+> **Stratégie** : Intégrer des addons OCA gratuits (licence AGPL-3.0) pour accélérer le développement avec du code mature et testé par la communauté.
+
+**Audit Stock** : 8 addons OCA identifiés (Issue #52)
+- **4 modules installation directe** : stock_cycle_count, stock_inventory_lockdown, stock_inventory_cost_info, stock_available_unreserved
+- **4 modules réimplémentation** : stock_barcodes (PWA mobile), stock_request, stock_demand_estimate (ML), stock_warehouse_calendar
+
+**Gain** : ~2-3 mois de développement économisés + Passage de 31% à 65%+ parité Stock
+
+**Documentation** : Voir `docs/OCA_INTEGRATION.md`
 
 ### Phase 2 : Packaging Produit (3-4 semaines)
 

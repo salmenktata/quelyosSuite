@@ -9,7 +9,7 @@ interface CompareButtonProps {
     id: number;
     name: string;
     slug: string;
-    list_price: number;
+    price: number;
     image_url?: string;
   };
   size?: 'sm' | 'md';

@@ -17,7 +17,7 @@ interface Product {
   price: number;
   currency: string;
   category: string | null;
-  default_code: string | null;
+  sku: string | null;
 }
 
 interface Category {
@@ -566,9 +566,9 @@ export function SearchAutocomplete({
                             className="truncate text-sm font-medium text-gray-900"
                             dangerouslySetInnerHTML={{ __html: sanitizeHighlight(product.highlight) }}
                           />
-                          {product.default_code && (
+                          {product.sku && (
                             <div className="text-xs text-gray-500">
-                              Réf: {product.default_code}
+                              Réf: {product.sku}
                             </div>
                           )}
                           {product.category && (

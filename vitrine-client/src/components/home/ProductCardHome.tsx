@@ -24,9 +24,8 @@ function getProxiedImageUrl(url: string | undefined): string {
 export function ProductCardHome({ product }: { product: Product }) {
   const toast = useToast();
 
-  // Protéger contre list_price undefined/null
-  // Backend peut retourner 'price' ou 'list_price' selon le contexte
-  const listPrice = product.list_price ?? product.price ?? 0;
+  // Prix du produit (API anonymisée retourne 'price')
+  const listPrice = product.price ?? 0;
   const comparePrice = product.compare_at_price ?? 0;
 
   const discountPercent = comparePrice > 0 && listPrice > 0
@@ -95,9 +94,9 @@ export function ProductCardHome({ product }: { product: Product }) {
 
         {/* Infos */}
         <Link href={`/products/${product.slug || product.id}`} className="block p-4">
-          {product.default_code && (
+          {product.sku && (
             <div className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1.5">
-              {product.default_code}
+              {product.sku}
             </div>
           )}
 

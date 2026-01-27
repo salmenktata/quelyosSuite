@@ -26,7 +26,7 @@ export function VariantSelector({
   // État pour les attributs sélectionnés (ex: {couleur_id: value_id, taille_id: value_id})
   const [selectedAttributes, setSelectedAttributes] = useState<Record<number, number>>({});
 
-  const { attribute_lines, variants } = variantsData;
+  const { attributes, variants } = variantsData;
 
   // Initialiser la sélection avec la variante par défaut ou la première disponible
   useEffect(() => {
@@ -71,7 +71,8 @@ export function VariantSelector({
 
   // Déterminer quelles valeurs d'attribut sont disponibles selon la sélection actuelle
   const getAvailableValues = (attributeId: number) => {
-    const attribute = attribute_lines.find(a => a.attribute_id === attributeId);
+    if (!attributes) return new Set<number>();
+    const attribute = attributes.find(a => a.attribute_id === attributeId);
     if (!attribute) return new Set<number>();
 
     // Si aucun attribut sélectionné, toutes les valeurs sont disponibles
@@ -130,13 +131,13 @@ export function VariantSelector({
     });
   };
 
-  if (!attribute_lines.length) {
+  if (!attributes || !attributes.length) {
     return null;
   }
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {attribute_lines.map((attributeLine) => {
+      {attributes.map((attributeLine) => {
         const availableValueIds = getAvailableValues(attributeLine.attribute_id);
         const isColorAttribute = attributeLine.display_type === 'color' ||
                                 attributeLine.attribute_name.toLowerCase().includes('couleur') ||
@@ -162,7 +163,7 @@ export function VariantSelector({
                   const variantForValue = getVariantForAttributeValue(attributeLine.attribute_id, value.id);
                   const isAvailable = availableValueIds.has(value.id);
                   const isSelected = selectedAttributes[attributeLine.attribute_id] === value.id;
-                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.qty_available || 0) > 0 : false;
+                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.stock_quantity || 0) > 0 : false;
 
                   const colorHex = value.html_color || getColorHex(value.name);
 
@@ -197,7 +198,7 @@ export function VariantSelector({
                   const variantForValue = getVariantForAttributeValue(attributeLine.attribute_id, value.id);
                   const isAvailable = availableValueIds.has(value.id);
                   const isSelected = selectedAttributes[attributeLine.attribute_id] === value.id;
-                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.qty_available || 0) > 0 : false;
+                  const inStock = variantForValue ? variantForValue.in_stock && (variantForValue.stock_quantity || 0) > 0 : false;
 
                   return (
                     <SizeButton
@@ -208,7 +209,7 @@ export function VariantSelector({
                       onClick={() => handleAttributeSelect(attributeLine.attribute_id, value.id)}
                       stockInfo={{
                         inStock: inStock,
-                        qty: variantForValue?.qty_available,
+                        qty: variantForValue?.stock_quantity,
                       }}
                     />
                   );

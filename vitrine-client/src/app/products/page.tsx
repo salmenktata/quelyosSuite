@@ -539,7 +539,7 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
     ? product.variants?.find(v => v.id === selectedVariantId) || product.variants?.[0]
     : null;
 
-  const displayPrice = selectedVariant ? selectedVariant.price : (product.list_price ?? product.price ?? 0);
+  const displayPrice = selectedVariant ? selectedVariant.price : (product.price ?? product.price ?? 0);
   const displayInStock = selectedVariant ? selectedVariant.in_stock : product.in_stock;
 
   const discountPercent = product.compare_at_price && displayPrice
@@ -568,12 +568,12 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
           )}
         </div>
         <div className="flex-1">
-          {product.default_code && (
+          {product.sku && (
             <div className="text-xs text-secondary font-bold uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
               </svg>
-              {product.default_code}
+              {product.sku}
             </div>
           )}
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
@@ -731,12 +731,12 @@ function ProductCardLeSportif({ product, viewMode }: { product: Product; viewMod
 
         {/* Product Info */}
         <Link href={`/products/${product.slug || product.id}`} className="block p-4">
-          {product.default_code && (
+          {product.sku && (
             <div className="text-xs text-secondary font-bold uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
               </svg>
-              {product.default_code}
+              {product.sku}
             </div>
           )}
 

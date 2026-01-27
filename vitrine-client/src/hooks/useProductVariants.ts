@@ -72,7 +72,7 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
         // Sélectionner automatiquement la première variante en stock
         if (response.variants?.length) {
           const firstInStockVariant = response.variants.find(
-            (v: ExtendedProductVariant) => v.in_stock && (v.qty_available || 0) > 0
+            (v: ExtendedProductVariant) => v.in_stock && (v.stock_quantity || 0) > 0
           );
           const defaultVariant = firstInStockVariant || response.variants[0];
 
@@ -110,22 +110,22 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
   // Calculer le prix affiché (variante sélectionnée > produit)
   const displayPrice = useMemo(() => {
     if (selectedVariant) {
-      return selectedVariant.list_price ?? selectedVariant.price ?? 0;
+      return selectedVariant.price ?? selectedVariant.price ?? 0;
     }
-    return product?.list_price ?? product?.price ?? 0;
+    return product?.price ?? product?.price ?? 0;
   }, [selectedVariant, product]);
 
   // Calculer le stock affiché
   const displayStock = useMemo(() => {
     if (selectedVariant) {
-      return selectedVariant.in_stock && (selectedVariant.qty_available || 0) > 0;
+      return selectedVariant.in_stock && (selectedVariant.stock_quantity || 0) > 0;
     }
     return product?.in_stock ?? false;
   }, [selectedVariant, product]);
 
   const displayStockQty = useMemo(() => {
     if (selectedVariant) {
-      return selectedVariant.qty_available ?? 0;
+      return selectedVariant.stock_quantity ?? 0;
     }
     return product?.stock_qty ?? 0;
   }, [selectedVariant, product]);

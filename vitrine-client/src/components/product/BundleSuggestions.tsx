@@ -113,7 +113,7 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
   // Calculer le total
   const allProducts = [currentProduct, ...bundleProducts];
   const selectedProductsList = allProducts.filter(p => selectedProducts.has(p.id));
-  const total = selectedProductsList.reduce((sum, p) => sum + (p.price || p.list_price || 0), 0);
+  const total = selectedProductsList.reduce((sum, p) => sum + (p.price || 0), 0);
   const bundleDiscount = 0.05; // 5% de réduction pour l'achat groupé
   const totalWithDiscount = total * (1 - bundleDiscount);
   const savings = total - totalWithDiscount;
@@ -286,7 +286,7 @@ function ProductBundleCard({
         {product.name}
       </h4>
       <div className="text-lg font-bold text-gray-900">
-        {formatPrice(product.price || product.list_price || 0, product.currency?.symbol || 'TND')}
+        {formatPrice(product.price || 0, product.currency?.symbol || 'TND')}
       </div>
     </div>
   );

@@ -65,6 +65,33 @@ Pour chaque module audité, lister TOUTES les fonctionnalités du modèle Odoo c
 
 5. **Identifier les opportunités premium** : Fonctionnalités Odoo Enterprise qui pourraient être implémentées dans Quelyos Suite pour offrir plus de valeur que l'offre standard Odoo Community
 
+### Étape 2.6 : Consultation des addons OCA (Odoo Community Association)
+
+**OBLIGATOIRE** : Utiliser WebSearch pour consulter les addons OCA gratuits et open source :
+
+1. **Rechercher les addons OCA pertinents** pour le module audité
+   - URL de référence : https://odoo-community.org/shop
+   - Repositories GitHub OCA : https://github.com/OCA
+   - Exemple Stock : `OCA/stock-logistics-warehouse`, `OCA/stock-logistics-barcode`, `OCA/wms`
+
+2. **Identifier les addons OCA** applicables au module :
+   - **GRATUITS** : Tous les modules OCA sont open source (licence AGPL-3.0)
+   - **MAINTENUS** : Vérifier activité GitHub (commits récents, stars, forks)
+   - **COMPATIBLES** : Vérifier versions supportées (Odoo 16/17/18/19)
+
+3. **Évaluer l'intérêt** de chaque addon OCA :
+   - Fonctionnalités apportées
+   - Complexité d'intégration
+   - Dépendances
+   - Qualité du code (tests, documentation)
+
+4. **Catégoriser par priorité** :
+   - **Intégration directe** : Addons prêts à l'emploi (à installer dans `odoo-backend/addons/`)
+   - **Inspiration** : Fonctionnalités à ré-implémenter avec UX Quelyos moderne
+   - **Rejeter** : Addons obsolètes ou trop spécifiques
+
+5. **Documenter les opportunités OCA** dans le rapport final
+
 ### Étape 3 : Analyse du code Quelyos
 
 Analyser les fichiers suivants pour chaque module :
@@ -112,6 +139,7 @@ Générer un rapport structuré avec :
   - P2 : X
 - Améliorations Quelyos (➕) : X
 - **Opportunités de développement identifiées (🚀) : X**
+- **Addons OCA gratuits identifiés (🎁) : X**
 
 ### Tableau de Correspondance Détaillé
 
@@ -155,6 +183,29 @@ Liste des modules Odoo marketing/CMS pour vitrine-quelyos :
 
 [Même format]
 
+### 🎁 Addons OCA (Odoo Community Association) à Intégrer
+
+**STRATÉGIE** : Identifier et intégrer des addons OCA gratuits et open source (licence AGPL-3.0) pour enrichir rapidement Quelyos Suite.
+
+**AVANTAGE** : Code mature, testé par la communauté, prêt à l'emploi (ou inspiration pour implémentation moderne).
+
+#### Addons OCA Recommandés
+
+Liste des addons OCA pertinents pour le module audité :
+
+1. **[Nom addon OCA]** (OCA 🎁 - Gratuit)
+   - **Repository** : [Lien GitHub OCA]
+   - **Description** : [Fonctionnalité principale]
+   - **Cas d'usage** : [Pourquoi utile pour Quelyos Suite]
+   - **Maturité** : [Stars GitHub, commits récents, tests]
+   - **Compatibilité** : [Versions Odoo supportées]
+   - **Intégration** :
+     - ✅ **Directe** : À installer dans `odoo-backend/addons/` (prêt à l'emploi)
+     - 🔄 **Inspiration** : Ré-implémenter avec UX Quelyos moderne
+   - **Effort estimé** : [Installation directe: < 1j / Réimplémentation: X jours]
+   - **Impact métier** : [Valeur ajoutée]
+   - **Avantage Quelyos** : [Si réimplémentation : UX moderne, sinon : gain temps dev]
+
 ### ⭐ Fonctionnalités Premium à Implémenter Gratuitement
 
 Liste des fonctionnalités **Odoo Enterprise** (payantes) qui pourraient être implémentées dans Quelyos Suite pour offrir un avantage concurrentiel majeur :
@@ -168,10 +219,11 @@ Liste des fonctionnalités **Odoo Enterprise** (payantes) qui pourraient être i
 
 ### Recommandations Priorisées
 1. **Combler les gaps critiques (P0)** : [Liste des actions]
-2. **Implémenter les fonctionnalités premium prioritaires (⭐)** : [Top 2-3 fonctionnalités Enterprise les plus demandées]
-3. **Développer les modules backoffice** : [Top 3]
-4. **Enrichir l'e-commerce** : [Top 2-3 modules boutique]
-5. **Améliorer la vitrine** : [Top 1-2 modules marketing]
+2. **Intégrer les addons OCA recommandés (🎁)** : [Top 2-3 addons prêts à l'emploi]
+3. **Implémenter les fonctionnalités premium prioritaires (⭐)** : [Top 2-3 fonctionnalités Enterprise les plus demandées]
+4. **Développer les modules backoffice** : [Top 3]
+5. **Enrichir l'e-commerce** : [Top 2-3 modules boutique]
+6. **Améliorer la vitrine** : [Top 1-2 modules marketing]
 ...
 ```
 

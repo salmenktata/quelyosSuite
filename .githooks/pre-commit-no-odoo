@@ -37,4 +37,36 @@ if [ -n "$VIOLATIONS" ]; then
 fi
 
 echo "✅ Aucune référence Odoo dans UI"
+
+# Phase 2 : Vérification champs API (vitrine-client uniquement)
+echo "🔍 Vérification champs API backend dans vitrine-client..."
+
+VITRINE_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E 'vitrine-client/src/.*\.(tsx?|jsx?)$' | grep -v 'api-anonymizer.ts' | grep -v 'lib/odoo/' | grep -v '\.test\.')
+
+API_VIOLATIONS=""
+for file in $VITRINE_FILES; do
+  if [ -f "$file" ]; then
+    # Grep pour champs Odoo (list_price, default_code, qty_available, attribute_lines)
+    API_MATCHES=$(grep -n -E '\blist_price\b|\bdefault_code\b|\bqty_available\b|\battribute_lines\b' "$file" 2>/dev/null)
+    if [ -n "$API_MATCHES" ]; then
+      API_VIOLATIONS="$API_VIOLATIONS\n⚠️  $file:\n$API_MATCHES\n"
+    fi
+  fi
+done
+
+if [ -n "$API_VIOLATIONS" ]; then
+  echo "🚫 COMMIT BLOQUÉ - Champs API backend détectés dans vitrine-client:"
+  echo -e "$API_VIOLATIONS"
+  echo ""
+  echo "💡 Utiliser les noms standards:"
+  echo "   list_price → price"
+  echo "   default_code → sku"
+  echo "   qty_available → stock_quantity"
+  echo "   attribute_lines → attributes"
+  echo ""
+  echo "📄 Voir .claude/commands/no-odoo.md (Phase 2)"
+  exit 1
+fi
+
+echo "✅ Champs API anonymisés"
 exit 0

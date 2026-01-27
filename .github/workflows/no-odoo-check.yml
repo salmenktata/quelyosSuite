@@ -55,6 +55,44 @@ jobs:
 
           echo "## ✅ Aucune violation Odoo UI" >> $GITHUB_STEP_SUMMARY
 
+      - name: Scan champs API backend (Phase 2)
+        run: |
+          echo "🔍 Scanning for backend field names in vitrine-client..."
+
+          # Exclusions
+          EXCLUSIONS="api-anonymizer.ts|lib/odoo|__tests__|\.test\."
+
+          API_VIOLATIONS=""
+
+          # Champs Odoo à détecter
+          for field in "list_price" "default_code" "qty_available" "attribute_lines"; do
+            MATCHES=$(grep -rln "\b${field}\b" \
+              vitrine-client/src \
+              --include="*.ts" --include="*.tsx" 2>/dev/null \
+              | grep -vE "$EXCLUSIONS" || true)
+
+            if [ -n "$MATCHES" ]; then
+              API_VIOLATIONS="$API_VIOLATIONS\n⚠️ \"$field\":\n$MATCHES\n"
+            fi
+          done
+
+          if [ -n "$API_VIOLATIONS" ]; then
+            echo "## 🚨 Champs API backend détectés" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo -e "$API_VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Mapping requis" >> $GITHUB_STEP_SUMMARY
+            echo "| Champ Backend | → Standard |" >> $GITHUB_STEP_SUMMARY
+            echo "|---------------|------------|" >> $GITHUB_STEP_SUMMARY
+            echo "| list_price | price |" >> $GITHUB_STEP_SUMMARY
+            echo "| default_code | sku |" >> $GITHUB_STEP_SUMMARY
+            echo "| qty_available | stock_quantity |" >> $GITHUB_STEP_SUMMARY
+            echo "| attribute_lines | attributes |" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "✅ Champs API anonymisés" >> $GITHUB_STEP_SUMMARY
+
       - name: Vérifier page legal préservée
         run: |
           if [ -f "vitrine-client/src/app/legal/page.tsx" ]; then

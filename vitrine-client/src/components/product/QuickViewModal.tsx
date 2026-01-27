@@ -22,7 +22,6 @@ interface Product {
   description: string;
   short_description: string;
   price: number;
-  list_price: number;
   discount_percentage: number;
   currency: string;
   stock_available: boolean;
@@ -255,7 +254,7 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
                 {product.discount_percentage > 0 && (
                   <>
                     <span className="text-xl text-gray-500 line-through">
-                      {formatPrice(product.list_price)}
+                      {formatPrice(product.price * (1 + product.discount_percentage / 100))}
                     </span>
                     <span className="rounded-full bg-red-500 px-2 py-1 text-xs font-bold text-white">
                       -{product.discount_percentage}%

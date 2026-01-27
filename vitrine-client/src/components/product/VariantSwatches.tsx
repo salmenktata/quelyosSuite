@@ -51,7 +51,7 @@ export function VariantSwatches({
       const response = await fetchVariantsLazy(productId);
 
       if (response && response.success) {
-        setAttributeLines(response.attribute_lines);
+        setAttributeLines(response.attributes);
         setVariants(response.variants);
       }
     } catch (error) {
@@ -114,7 +114,7 @@ export function VariantSwatches({
       count: number;
     }>();
 
-    // 1. Initialiser avec TOUTES les valeurs depuis attribute_lines
+    // 1. Initialiser avec TOUTES les valeurs depuis attributes
     //    (pour afficher même les attributs non-variant comme "Shoes size")
     attribute.values.forEach((value) => {
       let hexColor: string | undefined;
@@ -146,7 +146,7 @@ export function VariantSwatches({
           valueMap.set(attrValue.value_id, {
             ...existing,
             count: existing.count + 1,
-            inStock: existing.inStock || (variant.in_stock && (variant.qty_available || 0) > 0),
+            inStock: existing.inStock || (variant.in_stock && (variant.stock_quantity || 0) > 0),
             variant: existing.variant || variant, // Garder première variante pour preview
           });
         }
@@ -155,13 +155,13 @@ export function VariantSwatches({
 
     // 3. Pour les attributs qui ne sont pas dans les variantes (attributs non-variant),
     //    considérer comme "disponibles" s'il y a au moins une variante en stock
-    const hasStockVariant = variants.some(v => v.in_stock && (v.qty_available || 0) > 0);
+    const hasStockVariant = variants.some(v => v.in_stock && (v.stock_quantity || 0) > 0);
     if (hasStockVariant) {
       valueMap.forEach((value, id) => {
         if (value.count === 0) {
           // Cet attribut n'est pas présent dans les variantes
           // On le marque comme disponible avec la première variante en stock
-          const firstStockVariant = variants.find(v => v.in_stock && (v.qty_available || 0) > 0);
+          const firstStockVariant = variants.find(v => v.in_stock && (v.stock_quantity || 0) > 0);
           valueMap.set(id, {
             ...value,
             inStock: true,

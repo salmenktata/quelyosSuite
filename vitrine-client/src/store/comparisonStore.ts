@@ -7,7 +7,7 @@ export interface ComparisonProduct {
   id: number;
   name: string;
   slug: string;
-  list_price: number;
+  price: number;
   image_url?: string;
   images?: { id: string | number; url: string; alt: string }[];
   currency?: { id: number; name: string; symbol: string };
