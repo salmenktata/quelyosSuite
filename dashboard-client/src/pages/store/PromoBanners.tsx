@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { usePromoBanners, useCreatePromoBanner, useUpdatePromoBanner, useDeletePromoBanner, PromoBanner } from '../../hooks/usePromoBanners'
-import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
 
@@ -84,6 +84,13 @@ export default function PromoBanners() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Bannières Promo' },
+        ]}
+      />
       <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
         <PageNotice config={ecommerceNotices.promoBanners} className="mb-6" />
 

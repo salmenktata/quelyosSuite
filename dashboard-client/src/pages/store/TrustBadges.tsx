@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { useTrustBadges, useCreateTrustBadge, useUpdateTrustBadge, useDeleteTrustBadge, TrustBadge } from '../../hooks/useTrustBadges'
-import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
@@ -89,6 +89,13 @@ export default function TrustBadges() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Badges Confiance' },
+        ]}
+      />
       <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
         <PageNotice config={marketingNotices.trustBadges} className="mb-6" />
 

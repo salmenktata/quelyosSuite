@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { usePromoMessages, useCreatePromoMessage, useUpdatePromoMessage, useDeletePromoMessage, PromoMessage } from '../../hooks/usePromoMessages'
-import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
@@ -86,6 +86,13 @@ export default function PromoMessages() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Messages Promo' },
+        ]}
+      />
       <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
         <PageNotice config={marketingNotices.promoMessages} className="mb-6" />
 

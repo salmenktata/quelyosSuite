@@ -5,7 +5,7 @@ import { useOrders } from '../../hooks/useOrders'
 import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { OrdersKanban } from '../../components/OrdersKanban'
-import { Squares2X2Icon, TableCellsIcon } from '@heroicons/react/24/outline'
+import { LayoutGrid as Squares2X2Icon, Table as TableCellsIcon } from 'lucide-react'
 
 export default function Orders() {
   const [page, setPage] = useState(0)

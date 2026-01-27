@@ -8,7 +8,7 @@ import {
   useReorderMenus,
   type MenuItem,
 } from '../../hooks/useMenus'
-import { PageNotice } from '../../components/common'
+import { PageNotice, Breadcrumbs } from '../../components/common'
 import { marketingNotices } from '@/lib/notices'
 import { Badge, Button, SkeletonTable } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
@@ -150,6 +150,13 @@ export default function Menus() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Menus Navigation' },
+        ]}
+      />
       <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
         <PageNotice config={marketingNotices.menus} className="mb-6" />
 

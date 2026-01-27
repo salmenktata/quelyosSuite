@@ -11,8 +11,9 @@ import {
   useCreateInvoice,
   useUnlockOrder,
 } from '../../hooks/useOrders'
-import { Breadcrumbs, Skeleton, Modal } from '../../components/common'
+import { Breadcrumbs, Skeleton, Modal, PageNotice, SkeletonTable } from '../../components/common'
 import { useToast } from '../../contexts/ToastContext'
+import { storeNotices } from '../../lib/notices/store-notices'
 import { api } from '../../lib/api'
 import { OrderHeader } from '../../components/orders/OrderHeader'
 import { OrderCustomerInfo } from '../../components/orders/OrderCustomerInfo'
@@ -129,25 +130,7 @@ export default function OrderDetail() {
     return (
       <Layout>
         <div className="p-4 md:p-8">
-          <Breadcrumbs
-            items={[
-              { label: 'Tableau de bord', href: '/dashboard' },
-              { label: 'Commandes', href: '/orders' },
-              { label: 'Chargement...' },
-            ]}
-          />
-          <div className="space-y-4 mt-8">
-            <Skeleton variant="text" width="40%" height={36} />
-            <Skeleton variant="text" width="60%" height={20} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-              <div className="lg:col-span-2">
-                <Skeleton height={300} />
-              </div>
-              <div>
-                <Skeleton height={200} />
-              </div>
-            </div>
-          </div>
+          <SkeletonTable rows={8} columns={4} />
         </div>
       </Layout>
     )
@@ -178,6 +161,8 @@ export default function OrderDetail() {
             { label: order.name },
           ]}
         />
+
+        <PageNotice config={storeNotices.orderDetail} className="mt-6 mb-6" />
 
         {/* Header */}
         <OrderHeader orderName={order.name} orderDate={order.date_order} orderState={order.state} />

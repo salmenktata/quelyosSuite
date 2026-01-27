@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { useStaticPages, useCreateStaticPage, useUpdateStaticPage, useDeleteStaticPage, StaticPage } from '../../hooks/useStaticPages'
-import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
@@ -122,6 +122,13 @@ export default function StaticPagesPage() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Pages Statiques' },
+        ]}
+      />
       <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
         <PageNotice config={marketingNotices.staticPages} className="mb-6" />
 

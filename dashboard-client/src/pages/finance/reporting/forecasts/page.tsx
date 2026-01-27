@@ -104,19 +104,19 @@ export default function KPIForecastsPage() {
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-6">
           <ForecastChart historical={dsoForecast?.historical || []} forecast={dsoForecast?.forecast.map(f => ({ date: f.date, value: f.dso || 0, confidence80: f.confidence80, confidence95: f.confidence95 })) || []}
-            title="Prédiction DSO (Délai d'Encaissement)" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${dsoForecast?.model.trainedOn || 0} mois d'historique`}
+            title="Prédiction DSO (Délai d'Encaissement)" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${dsoForecast?.model?.trainedOn || 0} mois d'historique`}
             valueLabel="DSO (jours)" formatValue={(v) => `${v.toFixed(1)} jours`} loading={dsoLoading} error={dsoError?.message || null} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-6">
           <ForecastChart historical={ebitdaForecast?.historical || []} forecast={ebitdaForecast?.forecast.map(f => ({ date: f.date, value: f.ebitdaMargin || 0, confidence80: f.confidence80, confidence95: f.confidence95 })) || []}
-            title="Prédiction EBITDA Margin" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${ebitdaForecast?.model.trainedOn || 0} mois d'historique`}
+            title="Prédiction EBITDA Margin" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${ebitdaForecast?.model?.trainedOn || 0} mois d'historique`}
             valueLabel="Marge EBITDA" formatValue={(v) => `${v.toFixed(1)}%`} loading={ebitdaLoading} error={ebitdaError?.message || null} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mb-6">
           <ForecastChart historical={bfrForecast?.historical || []} forecast={bfrForecast?.forecast.map(f => ({ date: f.date, value: f.bfr || 0, confidence80: f.confidence80, confidence95: f.confidence95 })) || []}
-            title="Prédiction BFR (Besoin en Fonds de Roulement)" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${bfrForecast?.model.trainedOn || 0} mois d'historique`}
+            title="Prédiction BFR (Besoin en Fonds de Roulement)" subtitle={`Prédiction sur ${horizonDays} jours basée sur ${bfrForecast?.model?.trainedOn || 0} mois d'historique`}
             valueLabel="BFR" formatValue={(v) => formatAmount(v)} loading={bfrLoading} error={bfrError?.message || null} />
         </motion.div>
       </div>

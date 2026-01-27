@@ -357,6 +357,7 @@ export default function DSOReportPage() {
         )}
 
         {/* Top Customers by Receivables */}
+        {!loading && !error && apiData && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -403,8 +404,10 @@ export default function DSOReportPage() {
             )}
           </GlassPanel>
         </motion.div>
+        )}
 
         {/* Invoice Status Breakdown */}
+        {!loading && !error && apiData && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -437,6 +440,7 @@ export default function DSOReportPage() {
             </div>
           </GlassPanel>
         </motion.div>
+        )}
 
         {/* Recommendations */}
         <motion.div

@@ -8,7 +8,7 @@ import {
 } from '../../hooks/useAbandonedCarts'
 import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { EnvelopeIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
+import { Mail as EnvelopeIcon, ShoppingCart as ShoppingCartIcon } from 'lucide-react'
 
 export default function AbandonedCarts() {
   const [page, setPage] = useState(0)

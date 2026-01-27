@@ -13,24 +13,26 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Layout } from '../../components/Layout'
+import { Breadcrumbs, SkeletonTable, Button, PageNotice } from '../../components/common'
 import { useMyTenant, useUpdateMyTenant } from '../../hooks/useMyTenant'
 import { FONT_OPTIONS, DEFAULT_COLORS } from '../../hooks/useTenants'
 import type { TenantConfig } from '../../hooks/useTenants'
 import { useToast } from '../../contexts/ToastContext'
+import { storeNotices } from '../../lib/notices/store-notices'
 import { THEME_PRESETS } from '../../data/themePresets'
 import type { ThemePreset as ThemePresetLegacy } from '../../data/themePresets'
 import { useThemePresets, type ThemePreset } from '../../hooks/useThemePresets'
 import {
-  SwatchIcon,
-  SparklesIcon,
-  PhotoIcon,
-  DevicePhoneMobileIcon,
-  GlobeAltIcon,
-  MagnifyingGlassIcon,
-  Cog6ToothIcon,
-  CheckIcon,
-  ArrowPathIcon,
-} from '@heroicons/react/24/outline'
+  Palette as SwatchIcon,
+  Sparkles as SparklesIcon,
+  Image as PhotoIcon,
+  Smartphone as DevicePhoneMobileIcon,
+  Globe as GlobeAltIcon,
+  Search as MagnifyingGlassIcon,
+  Settings as Cog6ToothIcon,
+  Check as CheckIcon,
+  RefreshCw as ArrowPathIcon,
+} from 'lucide-react'
 
 // Types locaux pour le formulaire
 interface FormData {
@@ -413,8 +415,8 @@ export default function MyShop() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="p-6 flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+        <div className="p-4 md:p-8">
+          <SkeletonTable rows={8} columns={4} />
         </div>
       </Layout>
     )
@@ -424,7 +426,7 @@ export default function MyShop() {
   if (error || !tenant) {
     return (
       <Layout>
-        <div className="p-6">
+        <div className="p-4 md:p-8">
           <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
             <h2 className="text-lg font-medium text-red-800 dark:text-red-200 mb-2">
               {(error as Error)?.message || 'Aucun tenant associé'}
@@ -442,9 +444,17 @@ export default function MyShop() {
 
   return (
     <Layout>
-      <div className="p-6">
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Accueil', href: '/dashboard' },
+            { label: 'Boutique', href: '/store/my-shop' },
+            { label: 'Ma Boutique' },
+          ]}
+        />
+
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Ma Boutique
@@ -454,27 +464,28 @@ export default function MyShop() {
             </p>
           </div>
           <div className="flex gap-3">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleReset}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+              icon={<ArrowPathIcon className="w-4 h-4" />}
             >
-              <ArrowPathIcon className="w-4 h-4" />
               Réinitialiser
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
               onClick={handleSave}
               disabled={!hasChanges || updateMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              loading={updateMutation.isPending}
+              icon={!updateMutation.isPending ? <CheckIcon className="w-4 h-4" /> : undefined}
             >
-              {updateMutation.isPending ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-              ) : (
-                <CheckIcon className="w-4 h-4" />
-              )}
               Enregistrer
-            </button>
+            </Button>
           </div>
         </div>
+
+        <PageNotice config={storeNotices.myShop} className="mb-6" />
 
         <div className="flex gap-6">
           {/* Navigation latérale */}
@@ -483,18 +494,20 @@ export default function MyShop() {
               {SECTIONS.map((section) => {
                 const Icon = section.icon
                 return (
-                  <button
+                  <Button
                     key={section.id}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setActiveSection(section.id)}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    className={`w-full justify-start ${
                       activeSection === section.id
                         ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
+                    icon={<Icon className="w-5 h-5" />}
                   >
-                    <Icon className="w-5 h-5" />
                     {section.label}
-                  </button>
+                  </Button>
                 )
               })}
             </nav>
@@ -572,13 +585,14 @@ export default function MyShop() {
                           <span className="text-xs text-gray-500 dark:text-gray-400">
                             Font: {preset.fontFamily}
                           </span>
-                          <button
+                          <Button
+                            variant="primary"
+                            size="sm"
                             onClick={() => applyThemePreset(preset)}
                             disabled={hasChanges || updateMutation.isPending}
-                            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             Appliquer
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     )
@@ -594,13 +608,14 @@ export default function MyShop() {
                       Restaure la configuration du theme chargee au debut.
                     </p>
                   </div>
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={restoreInitialTheme}
                     disabled={!initialThemeSnapshot || hasChanges || updateMutation.isPending}
-                    className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     Restaurer
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -761,12 +776,14 @@ export default function MyShop() {
                       onChange={handleLogoChange}
                       className="hidden"
                     />
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => logoInputRef.current?.click()}
-                      className="px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 border border-indigo-600 dark:border-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                      className="text-indigo-600 dark:text-indigo-400 border-indigo-600 dark:border-indigo-400"
                     >
                       Changer le logo
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -794,12 +811,14 @@ export default function MyShop() {
                       onChange={handleFaviconChange}
                       className="hidden"
                     />
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => faviconInputRef.current?.click()}
-                      className="px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 border border-indigo-600 dark:border-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                      className="text-indigo-600 dark:text-indigo-400 border-indigo-600 dark:border-indigo-400"
                     >
                       Changer le favicon
-                    </button>
+                    </Button>
                   </div>
                 </div>
 

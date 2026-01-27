@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '../../hooks/useHeroSlides'
-import { Button, ToastContainer, PageNotice } from '../../components/common'
+import { Button, ToastContainer, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 import { HeroSlideTable } from '../../components/HeroSlideTable'
@@ -90,6 +90,13 @@ export default function HeroSlides() {
 
   return (
     <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Accueil', href: '/dashboard' },
+          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Hero Slides' },
+        ]}
+      />
       {/* Toast Container */}
       <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
 

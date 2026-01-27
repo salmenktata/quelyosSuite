@@ -2,19 +2,20 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Layout } from '../../components/Layout'
 import { useProduct } from '../../hooks/useProducts'
 import { useProductImages } from '../../hooks/useProductImages'
-import { Button, Breadcrumbs, Skeleton, Badge } from '../../components/common'
+import { Button, Breadcrumbs, Skeleton, Badge, PageNotice, SkeletonTable } from '../../components/common'
 import type { ProductImage } from '@/types'
+import { storeNotices } from '../../lib/notices/store-notices'
 import {
-  PencilIcon,
-  TagIcon,
-  CubeIcon,
-  ScaleIcon,
-  ChartBarIcon,
-  ArrowTopRightOnSquareIcon,
-  ArchiveBoxIcon,
-  DocumentDuplicateIcon,
-  PhotoIcon,
-} from '@heroicons/react/24/outline'
+  Pencil as PencilIcon,
+  Tag as TagIcon,
+  Box as CubeIcon,
+  Scale as ScaleIcon,
+  BarChart3 as ChartBarIcon,
+  ExternalLink as ArrowTopRightOnSquareIcon,
+  Archive as ArchiveBoxIcon,
+  Copy as DocumentDuplicateIcon,
+  Image as PhotoIcon,
+} from 'lucide-react'
 
 export default function ProductDetail() {
   const navigate = useNavigate()
@@ -34,18 +35,8 @@ export default function ProductDetail() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="p-6 space-y-6">
-          <Skeleton className="h-8 w-64" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <Skeleton className="h-96" />
-              <Skeleton className="h-64" />
-            </div>
-            <div className="space-y-6">
-              <Skeleton className="h-48" />
-              <Skeleton className="h-32" />
-            </div>
-          </div>
+        <div className="p-4 md:p-8">
+          <SkeletonTable rows={8} columns={4} />
         </div>
       </Layout>
     )
@@ -54,7 +45,7 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <Layout>
-        <div className="p-6">
+        <div className="p-4 md:p-8">
           <div className="text-center py-12">
             <CubeIcon className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -94,16 +85,18 @@ export default function ProductDetail() {
 
   return (
     <Layout>
-      <div className="p-6">
-        {/* En-tête */}
-        <div className="mb-6">
-          <Breadcrumbs
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
             items={[
               { label: 'Produits', href: '/products' },
               { label: product.name, href: `/products/${id}` },
             ]}
           />
-          <div className="mt-4 flex items-start justify-between">
+
+        <PageNotice config={storeNotices.productDetail} />
+
+        <div>
+          <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">

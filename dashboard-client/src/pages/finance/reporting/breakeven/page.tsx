@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
+import { Card } from "@/components/ui/card";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { ExportDropdown } from "@/components/finance/reporting/ExportDropdown";
@@ -127,7 +127,7 @@ export default function BreakEvenReportPage() {
           transition={{ delay: 0.1 }}
           className="mb-6"
         >
-          <GlassPanel className="p-4">
+          <Card className="p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
@@ -168,18 +168,18 @@ export default function BreakEvenReportPage() {
                       [],
                       ['Coûts Fixes par Catégorie'],
                       ['Catégorie', 'Montant'],
-                      ...apiData.categoriesBreakdown.fixed.map(c => [c.categoryName, formatAmount(c.amount)]),
+                      ...apiData.categoriesBreakdown.fixed.map(c => [c.name, formatAmount(c.total)]),
                       [],
                       ['Coûts Variables par Catégorie'],
                       ['Catégorie', 'Montant'],
-                      ...apiData.categoriesBreakdown.variable.map(c => [c.categoryName, formatAmount(c.amount)]),
+                      ...apiData.categoriesBreakdown.variable.map(c => [c.name, formatAmount(c.total)]),
                     ];
                     return rows;
                   }}
                 />
               )}
             </div>
-          </GlassPanel>
+          </Card>
         </motion.div>
 
         {/* Loading State */}
@@ -189,12 +189,12 @@ export default function BreakEvenReportPage() {
             animate={{ opacity: 1 }}
             className="mb-6"
           >
-            <GlassCard className="p-8">
+            <Card className="p-8">
               <div className="flex items-center justify-center gap-3 text-indigo-300">
                 <Loader2 className="h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
-            </GlassCard>
+            </Card>
           </motion.div>
         )}
 
@@ -205,7 +205,7 @@ export default function BreakEvenReportPage() {
             animate={{ opacity: 1 }}
             className="mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
+            <Card className="border-red-400/40 bg-red-500/10 p-4">
               <div className="flex items-center gap-3">
                 <AlertCircle className="h-5 w-5 text-red-400" />
                 <div className="flex-1">
@@ -218,7 +218,7 @@ export default function BreakEvenReportPage() {
                   Réessayer
                 </button>
               </div>
-            </GlassCard>
+            </Card>
           </motion.div>
         )}
 
@@ -233,12 +233,12 @@ export default function BreakEvenReportPage() {
             transition={{ delay: 0.15 }}
             className="mb-6"
           >
-            <GlassCard className="border-amber-400/40 bg-amber-500/10 p-4">
+            <Card className="border-amber-400/40 bg-amber-500/10 p-4">
               <div className="flex items-center gap-3">
                 <AlertCircle className="h-5 w-5 text-amber-400" />
                 <p className="text-sm text-amber-100">{apiData.warning}</p>
               </div>
-            </GlassCard>
+            </Card>
           </motion.div>
         )}
 
@@ -248,10 +248,7 @@ export default function BreakEvenReportPage() {
           transition={{ delay: 0.2 }}
           className="mb-6 grid gap-4 md:grid-cols-4"
         >
-          <GlassCard
-            className="p-4"
-            gradient={apiData.breakEvenReached ? "emerald" : "rose"}
-          >
+          <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className={`mb-1 text-sm ${apiData.breakEvenReached ? "text-emerald-200" : "text-rose-200"}`}>
@@ -270,9 +267,9 @@ export default function BreakEvenReportPage() {
                 <AlertCircle className="h-8 w-8 text-rose-300" />
               )}
             </div>
-          </GlassCard>
+          </Card>
 
-          <GlassCard className="p-4" gradient="indigo">
+          <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="mb-1 text-sm text-indigo-200">
@@ -287,9 +284,9 @@ export default function BreakEvenReportPage() {
               </div>
               <Target className="h-8 w-8 text-indigo-300" />
             </div>
-          </GlassCard>
+          </Card>
 
-          <GlassCard className="p-4" gradient="emerald">
+          <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="mb-1 text-sm text-emerald-200">
@@ -304,9 +301,9 @@ export default function BreakEvenReportPage() {
               </div>
               <DollarSign className="h-8 w-8 text-emerald-300" />
             </div>
-          </GlassCard>
+          </Card>
 
-          <GlassCard className="p-4" gradient="purple">
+          <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="mb-1 text-sm text-purple-200">
@@ -321,7 +318,7 @@ export default function BreakEvenReportPage() {
               </div>
               <Percent className="h-8 w-8 text-purple-300" />
             </div>
-          </GlassCard>
+          </Card>
         </motion.div>
 
         {/* Break-even Status */}
@@ -331,7 +328,7 @@ export default function BreakEvenReportPage() {
           transition={{ delay: 0.3 }}
           className="mb-6"
         >
-          <GlassPanel className={`p-6 ${apiData.breakEvenReached ? "bg-emerald-500/5" : "bg-rose-500/5"}`}>
+          <Card className={`p-6 ${apiData.breakEvenReached ? "bg-emerald-500/5" : "bg-rose-500/5"}`}>
             <div className="flex items-start gap-3">
               {apiData.breakEvenReached ? (
                 <TrendingUp className="h-6 w-6 text-emerald-400 flex-shrink-0" />
@@ -357,7 +354,7 @@ export default function BreakEvenReportPage() {
                 )}
               </div>
             </div>
-          </GlassPanel>
+          </Card>
         </motion.div>
 
         {/* Historical Trend */}
@@ -406,7 +403,7 @@ export default function BreakEvenReportPage() {
           transition={{ delay: 0.4 }}
           className="mb-6"
         >
-          <GlassPanel className="p-6">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Structure des coûts
             </h2>
@@ -437,7 +434,7 @@ export default function BreakEvenReportPage() {
                 </p>
               </div>
             </div>
-          </GlassPanel>
+          </Card>
         </motion.div>
 
         {/* Break-even Formula */}
@@ -447,7 +444,7 @@ export default function BreakEvenReportPage() {
           transition={{ delay: 0.5 }}
           className="mb-6"
         >
-          <GlassPanel className="p-6">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Calcul du point mort
             </h2>
@@ -485,7 +482,7 @@ export default function BreakEvenReportPage() {
                 </p>
               </div>
             </div>
-          </GlassPanel>
+          </Card>
         </motion.div>
 
         {/* Category Breakdown */}
@@ -496,7 +493,7 @@ export default function BreakEvenReportPage() {
           className="mb-6 grid gap-6 lg:grid-cols-2"
         >
           {/* Fixed Costs */}
-          <GlassPanel className="p-6">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts fixes (FIXED)
             </h2>
@@ -506,18 +503,18 @@ export default function BreakEvenReportPage() {
               <div className="space-y-2">
                 {apiData.categoriesBreakdown.fixed.slice(0, 10).map((cat) => (
                   <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-indigo-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.categoryName}</span>
+                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
                     <span className="text-sm font-semibold text-indigo-400">
-                      {formatAmount(cat.amount)}
+                      {formatAmount(cat.total)}
                     </span>
                   </div>
                 ))}
               </div>
             )}
-          </GlassPanel>
+          </Card>
 
           {/* Variable Costs */}
-          <GlassPanel className="p-6">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts variables (VARIABLE)
             </h2>
@@ -527,15 +524,15 @@ export default function BreakEvenReportPage() {
               <div className="space-y-2">
                 {apiData.categoriesBreakdown.variable.slice(0, 10).map((cat) => (
                   <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-emerald-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.categoryName}</span>
+                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
                     <span className="text-sm font-semibold text-emerald-400">
-                      {formatAmount(cat.amount)}
+                      {formatAmount(cat.total)}
                     </span>
                   </div>
                 ))}
               </div>
             )}
-          </GlassPanel>
+          </Card>
         </motion.div>
 
         {/* Unclassified Costs */}
@@ -546,7 +543,7 @@ export default function BreakEvenReportPage() {
             transition={{ delay: 0.7 }}
             className="mb-6"
           >
-            <GlassPanel className="p-6 border-amber-500/30">
+            <Card className="p-6 border-amber-500/30">
               <div className="flex items-center gap-2 mb-4">
                 <AlertCircle className="h-5 w-5 text-amber-400" />
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -559,14 +556,14 @@ export default function BreakEvenReportPage() {
               <div className="space-y-2">
                 {apiData.categoriesBreakdown.unclassified.slice(0, 10).map((cat) => (
                   <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-amber-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.categoryName}</span>
+                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
                     <span className="text-sm font-semibold text-amber-400">
-                      {formatAmount(cat.amount)}
+                      {formatAmount(cat.total)}
                     </span>
                   </div>
                 ))}
               </div>
-            </GlassPanel>
+            </Card>
           </motion.div>
         )}
 
@@ -576,7 +573,7 @@ export default function BreakEvenReportPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
         >
-          <GlassPanel className="p-6" gradient="violet">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               💡 Recommandations
             </h2>
@@ -602,7 +599,7 @@ export default function BreakEvenReportPage() {
                 </p>
               </div>
             </div>
-          </GlassPanel>
+          </Card>
         </motion.div>
         </>
         )}
