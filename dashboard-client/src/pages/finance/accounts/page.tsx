@@ -460,14 +460,12 @@ export default function AccountsPage() {
                 <div className="flex gap-2">
                   {selectedIds.length > 0 && (
                     <>
-                      <button className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <Archive className="h-4 w-4" />
+                      <Button variant="secondary" icon={<Archive className="h-4 w-4" />}>
                         Archiver
-                      </button>
-                      <button className="flex items-center gap-2 rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600 dark:text-red-400 transition hover:bg-red-100 dark:hover:bg-red-900/50">
-                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="danger" icon={<Trash2 className="h-4 w-4" />}>
                         Supprimer
-                      </button>
+                      </Button>
                     </>
                   )}
                 </div>
@@ -576,21 +574,23 @@ export default function AccountsPage() {
                           </td>
                           <td className="p-4">
                             <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => {
-                                  startEdit(acc)
-                                }}
-                                className="rounded-lg border border-gray-300 dark:border-gray-600 p-2 text-gray-600 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-700"
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => startEdit(acc)}
+                                icon={<Pencil className="h-4 w-4" />}
                               >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                              <button
+                                <span className="sr-only">Modifier</span>
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="sm"
                                 onClick={() => deleteAccount(acc.id)}
                                 disabled={deletingId === acc.id}
-                                className="rounded-lg border border-red-300 dark:border-red-700 p-2 text-red-600 dark:text-red-400 transition hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-60"
+                                icon={<Trash2 className="h-4 w-4" />}
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                                <span className="sr-only">Supprimer</span>
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -613,10 +613,9 @@ export default function AccountsPage() {
               <div className="flex items-center justify-between px-1">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{sortedAndFiltered.length} compte(s)</span>
                 {selectedIds.length > 0 && (
-                  <button className="flex items-center gap-1.5 rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-1.5 text-xs text-red-600 dark:text-red-400">
-                    <Trash2 className="h-3.5 w-3.5" />
+                  <Button variant="danger" size="sm" icon={<Trash2 className="h-3.5 w-3.5" />}>
                     Suppr. ({selectedIds.length})
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -678,21 +677,23 @@ export default function AccountsPage() {
                     )}
 
                     <div className="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                      <button
+                      <Button
+                        variant="secondary"
+                        className="flex-1"
                         onClick={() => startEdit(acc)}
-                        className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 py-2 text-sm text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-700"
+                        icon={<Pencil className="h-3.5 w-3.5" />}
                       >
-                        <Pencil className="h-3.5 w-3.5" />
                         Modifier
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="danger"
+                        className="flex-1"
                         onClick={() => deleteAccount(acc.id)}
                         disabled={deletingId === acc.id}
-                        className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-red-300 dark:border-red-700 py-2 text-sm text-red-600 dark:text-red-400 transition hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-60"
+                        icon={<Trash2 className="h-3.5 w-3.5" />}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
                         Supprimer
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )
