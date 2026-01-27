@@ -19,7 +19,7 @@ export function useUserCurrencyPreference() {
   return useQuery({
     queryKey: ["currency", "user-preference"],
     queryFn: () =>
-      api<{
+      api.request<{
         displayCurrency: string;
         baseCurrency: string;
         isCustom: boolean;
@@ -39,7 +39,7 @@ export function useAvailableCurrencies() {
   return useQuery({
     queryKey: ["currency", "available"],
     queryFn: () =>
-      api<{
+      api.request<{
         currencies: Currency[];
         defaultCurrency: string;
       }>("/currencies"),
@@ -58,7 +58,7 @@ export function useExchangeRates() {
   return useQuery({
     queryKey: ["currency", "exchange-rates"],
     queryFn: () =>
-      api<{
+      api.request<{
         baseCurrency: string;
         rates: ExchangeRates;
       }>("/currencies/exchange-rates"),

@@ -42,12 +42,12 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
         // Générer et télécharger le CSV
         const filename = `stock_${new Date().toISOString().split('T')[0]}.csv`
         exportToCSV(
-          response.data,
+          response.data.data,
           filename,
           ['id', 'name', 'sku', 'qty_available', 'virtual_available', 'list_price', 'standard_price', 'valuation', 'category', 'create_date']
         )
 
-        success(`Export réussi : ${response.total} produits exportés`)
+        success(`Export réussi : ${response.data.total} produits exportés`)
         reset()
         onClose()
       } else {

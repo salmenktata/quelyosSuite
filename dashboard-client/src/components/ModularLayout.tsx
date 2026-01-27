@@ -782,7 +782,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     currentModule.sections.forEach(section => {
       section.items.forEach(item => {
-        if (item.subItems?.some(sub => isActive(sub.path))) {
+        if (item.subItems?.some(sub => sub.path && isActive(sub.path))) {
           setOpenMenus(prev => new Set(prev).add(item.name))
         }
       })

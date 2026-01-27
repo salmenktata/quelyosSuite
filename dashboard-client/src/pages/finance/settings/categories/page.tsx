@@ -1,8 +1,20 @@
-
+/**
+ * Page Paramètres Catégories - Gestion des catégories de transactions
+ *
+ * Fonctionnalités :
+ * - Gestion des catégories de revenus et dépenses
+ * - Création de catégories personnalisées (nom, type, couleur)
+ * - Suppression de catégories existantes
+ * - Import automatique de catégories par défaut
+ * - Visualisation séparée : dépenses vs revenus
+ */
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/finance/api";
 import { Loader2, Plus, Trash2, Edit2, Tag, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { Layout } from '@/components/Layout';
+import { Breadcrumbs, PageNotice, Button } from '@/components/common';
+import { financeNotices } from '@/lib/notices/finance-notices';
 
 type CategoryKind = "INCOME" | "EXPENSE";
 
@@ -26,9 +38,7 @@ const DEFAULT_COLORS = [
   "#ec4899",
 ];
 
-// Catégories par défaut à proposer si aucune n'existe
 const DEFAULT_CATEGORIES: Array<{ name: string; kind: CategoryKind; color: string }> = [
-  // Dépenses
   { name: "Alimentation", kind: "EXPENSE", color: "#f97316" },
   { name: "Transport", kind: "EXPENSE", color: "#0ea5e9" },
   { name: "Logement", kind: "EXPENSE", color: "#8b5cf6" },
@@ -37,7 +47,6 @@ const DEFAULT_CATEGORIES: Array<{ name: string; kind: CategoryKind; color: strin
   { name: "Shopping", kind: "EXPENSE", color: "#eab308" },
   { name: "Factures", kind: "EXPENSE", color: "#64748b" },
   { name: "Autres dépenses", kind: "EXPENSE", color: "#6b7280" },
-  // Revenus
   { name: "Salaire", kind: "INCOME", color: "#22c55e" },
   { name: "Freelance", kind: "INCOME", color: "#10b981" },
   { name: "Investissements", kind: "INCOME", color: "#14b8a6" },
@@ -110,7 +119,6 @@ export default function CategoriesPage() {
     }
   }
 
-  // Créer les catégories par défaut
   async function seedDefaultCategories() {
     setSeedingDefaults(true);
     setError(null);
@@ -129,7 +137,7 @@ export default function CategoriesPage() {
           }) as Category;
           created.push(newCat);
         } catch {
-          // Ignorer les erreurs individuelles (doublon possible)
+          // Ignorer les erreurs individuelles
         }
       }
 
@@ -143,91 +151,106 @@ export default function CategoriesPage() {
     }
   }
 
-  // Séparer les catégories par type
   const expenseCategories = categories.filter((c) => c.kind === "EXPENSE");
   const incomeCategories = categories.filter((c) => c.kind === "INCOME");
 
   return (
-    <div className="space-y-6">
-      {/* Bouton pour créer les catégories par défaut */}
-      {categories.length === 0 && !loading && (
-        <button
-          onClick={seedDefaultCategories}
-          disabled={seedingDefaults}
-          className="flex items-center gap-2 rounded-xl bg-emerald-600/80 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
-        >
-          {seedingDefaults ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          Créer catégories par défaut
-        </button>
-      )}
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Finance', href: '/finance' },
+            { label: 'Paramètres', href: '/finance/settings' },
+            { label: 'Catégories' },
+          ]}
+        />
 
-      {error && (
-        <div className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {error}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Catégories</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Gérez vos catégories de revenus et dépenses
+            </p>
+          </div>
         </div>
-      )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Liste des catégories */}
-        <div className="lg:col-span-2 space-y-6">
+        <PageNotice config={financeNotices.settingsCategories} className="mb-6" />
+
+        {categories.length === 0 && !loading && (
+          <Button
+            variant="primary"
+            onClick={seedDefaultCategories}
+            disabled={seedingDefaults}
+            loading={seedingDefaults}
+            icon={!seedingDefaults && <RefreshCw className="h-4 w-4" />}
+          >
+            Créer catégories par défaut
+          </Button>
+        )}
+
+        {error && (
+          <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-800 dark:text-red-200">
+            {error}
+          </div>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-6">
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-300" />
+                <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
               </div>
             ) : categories.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl">
-                <div className="rounded-xl border border-white/10 bg-white/5 px-6 py-12 text-center">
-                  <Tag className="h-12 w-12 text-indigo-300/40 mx-auto mb-3" />
-                  <p className="text-indigo-100/80 mb-2">Aucune catégorie pour le moment.</p>
-                  <p className="text-xs text-indigo-100/60">Cliquez sur &quot;Créer catégories par défaut&quot; pour commencer rapidement.</p>
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl">
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-6 py-12 text-center">
+                  <Tag className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">Aucune catégorie pour le moment.</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">Cliquez sur &quot;Créer catégories par défaut&quot; pour commencer rapidement.</p>
                 </div>
               </div>
             ) : (
               <>
-                {/* Catégories de dépenses */}
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-4">
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4">
                   <div className="flex items-center gap-2">
-                    <TrendingDown className="h-5 w-5 text-red-400" />
-                    <h2 className="text-lg font-semibold">Dépenses</h2>
-                    <span className="ml-auto rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-300">
+                    <TrendingDown className="h-5 w-5 text-red-500" />
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Dépenses</h2>
+                    <span className="ml-auto rounded-full bg-red-50 dark:bg-red-900/20 px-2 py-0.5 text-xs text-red-600 dark:text-red-400">
                       {expenseCategories.length}
                     </span>
                   </div>
                   {expenseCategories.length === 0 ? (
-                    <p className="text-sm text-indigo-100/60 py-4 text-center">Aucune catégorie de dépense</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">Aucune catégorie de dépense</p>
                   ) : (
                     <div className="grid gap-2 sm:grid-cols-2">
                       {expenseCategories.map((category) => (
                         <div
                           key={category.id}
-                          className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between hover:bg-white/10 transition"
+                          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-3 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div
                               className="h-4 w-4 rounded-full shrink-0"
                               style={{ backgroundColor: category.color || "#ef4444" }}
                             />
-                            <span className="font-medium truncate">{category.name}</span>
+                            <span className="font-medium text-gray-900 dark:text-white truncate">{category.name}</span>
                           </div>
                           <div className="flex gap-1 shrink-0">
-                            <button className="p-1.5 rounded-lg hover:bg-white/10 transition">
-                              <Edit2 className="h-3.5 w-3.5 text-indigo-300" />
-                            </button>
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              icon={<Edit2 className="h-3.5 w-3.5" />}
+                              aria-label="Modifier"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => deleteCategory(category.id)}
                               disabled={deleting === category.id}
-                              className="p-1.5 rounded-lg hover:bg-red-500/20 transition disabled:opacity-60"
-                            >
-                              {deleting === category.id ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin text-red-300" />
-                              ) : (
-                                <Trash2 className="h-3.5 w-3.5 text-red-300" />
-                              )}
-                            </button>
+                              loading={deleting === category.id}
+                              icon={deleting !== category.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
+                              aria-label="Supprimer"
+                            />
                           </div>
                         </div>
                       ))}
@@ -235,46 +258,46 @@ export default function CategoriesPage() {
                   )}
                 </div>
 
-                {/* Catégories de revenus */}
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-4">
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-emerald-400" />
-                    <h2 className="text-lg font-semibold">Revenus</h2>
-                    <span className="ml-auto rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-300">
+                    <TrendingUp className="h-5 w-5 text-emerald-500" />
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Revenus</h2>
+                    <span className="ml-auto rounded-full bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 text-xs text-emerald-600 dark:text-emerald-400">
                       {incomeCategories.length}
                     </span>
                   </div>
                   {incomeCategories.length === 0 ? (
-                    <p className="text-sm text-indigo-100/60 py-4 text-center">Aucune catégorie de revenu</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">Aucune catégorie de revenu</p>
                   ) : (
                     <div className="grid gap-2 sm:grid-cols-2">
                       {incomeCategories.map((category) => (
                         <div
                           key={category.id}
-                          className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between hover:bg-white/10 transition"
+                          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-3 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div
                               className="h-4 w-4 rounded-full shrink-0"
                               style={{ backgroundColor: category.color || "#22c55e" }}
                             />
-                            <span className="font-medium truncate">{category.name}</span>
+                            <span className="font-medium text-gray-900 dark:text-white truncate">{category.name}</span>
                           </div>
                           <div className="flex gap-1 shrink-0">
-                            <button className="p-1.5 rounded-lg hover:bg-white/10 transition">
-                              <Edit2 className="h-3.5 w-3.5 text-indigo-300" />
-                            </button>
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              icon={<Edit2 className="h-3.5 w-3.5" />}
+                              aria-label="Modifier"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => deleteCategory(category.id)}
                               disabled={deleting === category.id}
-                              className="p-1.5 rounded-lg hover:bg-red-500/20 transition disabled:opacity-60"
-                            >
-                              {deleting === category.id ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin text-red-300" />
-                              ) : (
-                                <Trash2 className="h-3.5 w-3.5 text-red-300" />
-                              )}
-                            </button>
+                              loading={deleting === category.id}
+                              icon={deleting !== category.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
+                              aria-label="Supprimer"
+                            />
                           </div>
                         </div>
                       ))}
@@ -285,9 +308,8 @@ export default function CategoriesPage() {
             )}
           </div>
 
-          {/* Formulaire d'ajout */}
-          <div className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-4 h-fit">
-            <h3 className="text-lg font-semibold">Ajouter une catégorie</h3>
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4 h-fit">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ajouter une catégorie</h3>
 
             <div className="space-y-4">
               <input
@@ -295,43 +317,34 @@ export default function CategoriesPage() {
                 placeholder="Nom de la catégorie"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-indigo-100/40 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
 
-              {/* Sélecteur de type */}
               <div className="space-y-2">
-                <label className="block text-sm text-indigo-100">Type</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-white">Type</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
+                  <Button
+                    variant={newCategoryKind === "EXPENSE" ? "danger" : "secondary"}
+                    size="sm"
                     onClick={() => setNewCategoryKind("EXPENSE")}
-                    className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition ${
-                      newCategoryKind === "EXPENSE"
-                        ? "border-red-400 bg-red-500/20 text-red-300"
-                        : "border-white/20 text-slate-400 hover:border-white/40"
-                    }`}
+                    icon={<TrendingDown className="h-4 w-4" />}
                   >
-                    <TrendingDown className="h-4 w-4" />
                     Dépense
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant={newCategoryKind === "INCOME" ? "primary" : "secondary"}
+                    size="sm"
                     onClick={() => setNewCategoryKind("INCOME")}
-                    className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition ${
-                      newCategoryKind === "INCOME"
-                        ? "border-emerald-400 bg-emerald-500/20 text-emerald-300"
-                        : "border-white/20 text-slate-400 hover:border-white/40"
-                    }`}
+                    icon={<TrendingUp className="h-4 w-4" />}
+                    className={newCategoryKind === "INCOME" ? "bg-emerald-600 hover:bg-emerald-500" : ""}
                   >
-                    <TrendingUp className="h-4 w-4" />
                     Revenu
-                  </button>
+                  </Button>
                 </div>
               </div>
 
-              {/* Sélecteur de couleur */}
               <div className="space-y-2">
-                <label className="block text-sm text-indigo-100">Couleur</label>
+                <label className="block text-sm font-medium text-gray-900 dark:text-white">Couleur</label>
                 <div className="grid grid-cols-4 gap-2">
                   {DEFAULT_COLORS.map((color) => (
                     <button
@@ -340,47 +353,44 @@ export default function CategoriesPage() {
                       onClick={() => setNewCategoryColor(color)}
                       className={`h-10 rounded-lg border-2 transition ${
                         newCategoryColor === color
-                          ? "border-white scale-110"
-                          : "border-white/30 hover:border-white/50"
+                          ? "border-gray-900 dark:border-white scale-110"
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                       }`}
                       style={{ backgroundColor: color }}
+                      aria-label={`Couleur ${color}`}
                     />
                   ))}
                 </div>
               </div>
 
-              <button
+              <Button
+                variant="primary"
                 onClick={createCategory}
                 disabled={!newCategoryName.trim() || creating}
-                className="w-full flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-3 text-sm font-semibold shadow-lg transition hover:from-indigo-400 hover:to-violet-400 disabled:opacity-60"
+                loading={creating}
+                icon={!creating && <Plus className="h-4 w-4" />}
+                className="w-full"
               >
-                {creating ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" /> Créer
-                  </>
-                )}
-              </button>
+                Créer
+              </Button>
 
-              {/* Bouton pour ajouter les catégories par défaut */}
               {categories.length > 0 && (
-                <button
+                <Button
+                  variant="secondary"
                   onClick={seedDefaultCategories}
                   disabled={seedingDefaults}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-xs text-indigo-200 transition hover:bg-white/5 disabled:opacity-60"
+                  loading={seedingDefaults}
+                  icon={!seedingDefaults && <RefreshCw className="h-3.5 w-3.5" />}
+                  className="w-full"
+                  size="sm"
                 >
-                  {seedingDefaults ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-3.5 w-3.5" />
-                  )}
                   Ajouter catégories manquantes
-                </button>
+                </Button>
               )}
             </div>
           </div>
         </div>
       </div>
+    </Layout>
   );
 }

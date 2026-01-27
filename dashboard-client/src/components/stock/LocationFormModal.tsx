@@ -47,7 +47,7 @@ function LocationTreeSelect({ value, onChange, tree, excludeId, warehouseId, lab
         .filter(node => node.warehouse_id === warehouseId)
         .map(node => ({
           ...node,
-          children: node.children ? filterByWarehouse(node.children) : []
+          children: node.children ? filterByWarehouse(node.children as LocationTreeNode[]) : []
         }))
     }
 
@@ -71,7 +71,7 @@ function LocationTreeSelect({ value, onChange, tree, excludeId, warehouseId, lab
         })
 
         if (node.children && node.children.length > 0) {
-          traverse(node.children, level + 1)
+          traverse(node.children as LocationTreeNode[], level + 1)
         }
       })
     }
@@ -171,7 +171,7 @@ export function LocationFormModal({
     const traverse = (nodes: LocationTreeNode[]) => {
       nodes.forEach(node => {
         map.set(node.id, node)
-        if (node.children) traverse(node.children)
+        if (node.children) traverse(node.children as LocationTreeNode[])
       })
     }
     traverse(tree)
@@ -185,10 +185,16 @@ export function LocationFormModal({
 
   const onSubmit = (data: FormData) => {
     if (mode === 'create') {
+      // Validation : CreateLocationParams n'accepte que 'internal' | 'view'
+      if (data.usage !== 'internal' && data.usage !== 'view') {
+        alert('Type d\'emplacement invalide. Seuls "Stock physique" et "Catégorie" sont supportés.')
+        return
+      }
+
       createLocation(
         {
           name: data.name,
-          usage: data.usage,
+          usage: data.usage as 'internal' | 'view',
           warehouse_id: data.warehouse_id,
           parent_id: data.parent_id,
           barcode: data.barcode,

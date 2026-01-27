@@ -182,7 +182,7 @@ function TreeNode({
       {/* Enfants récursifs */}
       {node.isExpanded && hasChildren && (
         <div className="border-l-2 border-gray-200 dark:border-gray-700 ml-6">
-          {node.children!.map((child) => (
+          {(node.children as LocationTreeNode[]).map((child) => (
             <TreeNode
               key={child.id}
               node={child}
@@ -224,7 +224,7 @@ export function LocationTreeView({
     const traverse = (nodes: LocationTreeNode[]) => {
       nodes.forEach(node => {
         map.set(node.id, node)
-        if (node.children) traverse(node.children)
+        if (node.children) traverse(node.children as LocationTreeNode[])
       })
     }
     traverse(locations)

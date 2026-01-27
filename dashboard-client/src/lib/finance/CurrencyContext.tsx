@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { api, AuthenticationError } from "./api";
 import { logger } from '@quelyos/logger';
+import { getValidSessionId } from '@/lib/session';
 
 const SETTINGS_KEY = "qyl_settings";
 const DEFAULT_CURRENCY = "EUR";
@@ -137,7 +138,8 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const init = async () => {
       // Check if user is authenticated before making API calls
-      const sessionId = localStorage.getItem('session_id');
+      const sessionId = getValidSessionId();
+
       if (!sessionId) {
         // User not authenticated - use localStorage fallback only
         try {

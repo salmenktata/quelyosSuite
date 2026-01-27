@@ -1,9 +1,21 @@
-
+/**
+ * Page Paramètres TVA & Fiscalité - Configuration fiscale
+ *
+ * Fonctionnalités :
+ * - Activation/désactivation de la TVA
+ * - Configuration du taux de TVA (%)
+ * - Choix stratégie HT (hors taxes) ou TTC (toutes taxes comprises)
+ * - Synchronisation Stripe (plans tarifaires en ligne)
+ * - Snapshot local avec aperçu de la configuration
+ */
 
 import { useEffect, useMemo, useState } from "react";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { Check, Loader2, Shield, WalletCards } from "lucide-react";
 import { logger } from '@quelyos/logger';
+import { Layout } from '@/components/Layout';
+import { Breadcrumbs, PageNotice, Button } from '@/components/common';
+import { financeNotices } from '@/lib/notices/finance-notices';
 
 const STORAGE_KEY = "qyl_vat_strategy";
 
@@ -24,7 +36,6 @@ const DEFAULT_SNAPSHOT: VatSnapshot = {
 };
 
 export default function TvaPage() {
-
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const [stripe, setStripe] = useState<Stripe | null>(null);
   const [snapshot, setSnapshot] = useState<VatSnapshot>(DEFAULT_SNAPSHOT);
@@ -80,151 +91,174 @@ export default function TvaPage() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          <section className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold">Stratégie de TVA</h2>
-                <p className="text-sm text-indigo-100/80">Appliquée aux devis, factures et prévisions.</p>
-              </div>
-              <button
-                onClick={() => updateSnapshot({ enabled: !snapshot.enabled })}
-                className={`rounded-full px-4 py-2 text-xs font-semibold border transition ${
-                  snapshot.enabled
-                    ? "border-emerald-300/60 bg-emerald-500/15 text-emerald-50"
-                    : "border-white/30 bg-white/10 text-indigo-100"
-                }`}
-              >
-                {snapshot.enabled ? "TVA activée" : "TVA désactivée"}
-              </button>
-            </div>
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Finance', href: '/finance' },
+            { label: 'Paramètres', href: '/finance/settings' },
+            { label: 'TVA & Fiscalité' },
+          ]}
+        />
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label htmlFor="rate" className="text-sm text-indigo-100">
-                  Taux de TVA (%)
-                </label>
-                <input
-                  id="rate"
-                  type="number"
-                  min={0}
-                  step={0.1}
-                  value={snapshot.rate}
-                  onChange={(e) => updateSnapshot({ rate: Number(e.target.value) })}
-                  className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
-                />
-              </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">TVA & Fiscalité</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Configurez votre stratégie fiscale et taux de TVA
+            </p>
+          </div>
+        </div>
 
-              <div className="space-y-2">
-                <label htmlFor="strategy" className="text-sm text-indigo-100">
-                  Stratégie de prix
-                </label>
-                <select
-                  id="strategy"
-                  value={snapshot.strategy}
-                  onChange={(e) => updateSnapshot({ strategy: e.target.value as VatStrategy })}
-                  className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+        <PageNotice config={financeNotices.settingsTva} className="mb-6" />
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-6">
+            <section className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl space-y-6">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Stratégie de TVA</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Appliquée aux devis, factures et prévisions.</p>
+                </div>
+                <Button
+                  variant={snapshot.enabled ? "primary" : "secondary"}
+                  size="sm"
+                  onClick={() => updateSnapshot({ enabled: !snapshot.enabled })}
                 >
-                  <option value="HT" className="text-slate-900">
-                    Prix saisis en HT
-                  </option>
-                  <option value="TTC" className="text-slate-900">
-                    Prix saisis en TTC
-                  </option>
-                </select>
+                  {snapshot.enabled ? "TVA activée" : "TVA désactivée"}
+                </Button>
               </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="rate" className="block text-sm font-medium text-gray-900 dark:text-white">
+                    Taux de TVA (%)
+                  </label>
+                  <input
+                    id="rate"
+                    type="number"
+                    min={0}
+                    step={0.1}
+                    value={snapshot.rate}
+                    onChange={(e) => updateSnapshot({ rate: Number(e.target.value) })}
+                    className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="strategy" className="block text-sm font-medium text-gray-900 dark:text-white">
+                    Stratégie de prix
+                  </label>
+                  <select
+                    id="strategy"
+                    value={snapshot.strategy}
+                    onChange={(e) => updateSnapshot({ strategy: e.target.value as VatStrategy })}
+                    className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                  >
+                    <option value="HT" className="bg-white dark:bg-gray-900">
+                      Prix saisis en HT
+                    </option>
+                    <option value="TTC" className="bg-white dark:bg-gray-900">
+                      Prix saisis en TTC
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <Shield className="h-4 w-4" />
+                    Impact
+                  </div>
+                  <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    {snapshot.enabled
+                      ? snapshot.strategy === "HT"
+                        ? "TVA ajoutée sur sortie"
+                        : "TVA extraite sur sortie"
+                      : "TVA non appliquée"}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <WalletCards className="h-4 w-4" />
+                    Synchronisation
+                  </div>
+                  <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    {stripeAvailable
+                      ? snapshot.stripeSync
+                        ? "Stripe (actif)"
+                        : "Stripe disponible"
+                      : "Snapshot local"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3">
+                {error && (
+                  <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+                )}
+                {saved && !error && (
+                  <span className="text-sm text-emerald-600 dark:text-emerald-400">Paramètres sauvegardés.</span>
+                )}
+                <Button
+                  variant="primary"
+                  onClick={saveSnapshot}
+                  disabled={saving}
+                  loading={saving}
+                  icon={!saving && <Check className="h-5 w-5" />}
+                >
+                  Sauvegarder
+                </Button>
+              </div>
+            </section>
+          </div>
+
+          <section className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Stripe</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Connexion</h3>
+              </div>
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
+              ) : stripe ? (
+                <span className="rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-200">
+                  Connecté
+                </span>
+              ) : (
+                <span className="rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
+                  {stripeAvailable ? "Disponible" : "Clé manquante"}
+                </span>
+              )}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center gap-2 text-sm text-indigo-100/80">
-                  <Shield className="h-4 w-4" />
-                  Impact
-                </div>
-                <p className="mt-2 text-lg font-semibold">
-                  {snapshot.enabled
-                    ? snapshot.strategy === "HT"
-                      ? "TVA ajoutée sur sortie"
-                      : "TVA extraite sur sortie"
-                    : "TVA non appliquée"}
-                </p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center gap-2 text-sm text-indigo-100/80">
-                  <WalletCards className="h-4 w-4" />
-                  Synchronisation
-                </div>
-                <p className="mt-2 text-lg font-semibold">
-                  {stripeAvailable
-                    ? snapshot.stripeSync
-                      ? "Stripe (actif)"
-                      : "Stripe disponible"
-                    : "Snapshot local"}
-                </p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {stripeAvailable
+                ? "Stripe sera utilisé pour synchroniser les plans et taxes dès que l'API sera câblée."
+                : "Pas de clé Stripe détectée. Les paramètres restent stockés localement pour synchronisation ultérieure."}
+            </p>
 
-            <div className="flex items-center justify-end gap-3">
-              {error && (
-                <span className="text-sm text-red-200">{error}</span>
-              )}
-              {saved && !error && (
-                <span className="text-sm text-emerald-200">Paramètres sauvegardés.</span>
-              )}
-              <button
-                onClick={saveSnapshot}
-                disabled={saving}
-                className="flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3 text-sm font-semibold shadow-lg transition hover:from-indigo-400 hover:to-violet-400 disabled:opacity-60"
-              >
-                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Check className="mr-2 h-5 w-5" /> Sauvegarder</>}
-              </button>
+            {stripeAvailable && (
+              <label className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-3 text-sm text-gray-900 dark:text-white cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={snapshot.stripeSync}
+                  onChange={(e) => updateSnapshot({ stripeSync: e.target.checked })}
+                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600"
+                />
+                Activer la synchro Stripe dès que disponible
+              </label>
+            )}
+
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-3 text-xs text-gray-600 dark:text-gray-400">
+              Snapshot actuel<br />
+              <pre className="mt-2 whitespace-pre-wrap">{JSON.stringify(snapshot, null, 2)}</pre>
             </div>
           </section>
         </div>
-
-        <section className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-indigo-200">Stripe</p>
-              <h3 className="text-lg font-semibold">Connexion</h3>
-            </div>
-            {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin text-indigo-100" />
-            ) : stripe ? (
-              <span className="rounded-full border border-emerald-300/60 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-50">
-                Connecté
-              </span>
-            ) : (
-              <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold text-indigo-100">
-                {stripeAvailable ? "Disponible" : "Clé manquante"}
-              </span>
-            )}
-          </div>
-
-          <p className="text-sm text-indigo-100/80">
-          {stripeAvailable
-            ? "Stripe sera utilisé pour synchroniser les plans et taxes dès que l&apos;API sera câblée."
-            : "Pas de clé Stripe détectée. Les paramètres restent stockés localement pour synchronisation ultérieure."}
-          </p>
-
-          {stripeAvailable && (
-            <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-              <input
-                type="checkbox"
-                checked={snapshot.stripeSync}
-                onChange={(e) => updateSnapshot({ stripeSync: e.target.checked })}
-                className="h-4 w-4 rounded border-white/30 bg-transparent"
-              />
-              Activer la synchro Stripe dès que disponible
-            </label>
-          )}
-
-          <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-indigo-100/80">
-            Snapshot actuel<br />
-            {JSON.stringify(snapshot, null, 2)}
-          </div>
-        </section>
-    </div>
+      </div>
+    </Layout>
   );
 }

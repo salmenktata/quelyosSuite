@@ -189,7 +189,7 @@ export function FinanceLayout({ children }: FinanceLayoutProps) {
   // Auto-ouvrir les menus contenant la page active
   useEffect(() => {
     mainMenuItems.forEach(item => {
-      if (item.subItems?.some(sub => isActive(sub.path))) {
+      if (item.subItems?.some(sub => sub.path && isActive(sub.path))) {
         setOpenMenus(prev => new Set(prev).add(item.name))
       }
     })

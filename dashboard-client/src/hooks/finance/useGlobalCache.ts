@@ -92,19 +92,19 @@ export function invalidateAllCache() {
  * Hook pré-configuré pour les comptes
  */
 export function useAccounts() {
-  return useGlobalCache("accounts", () => api("/company/accounts"));
+  return useGlobalCache("accounts", () => api.request("/company/accounts"));
 }
 
 /**
  * Hook pré-configuré pour les portefeuilles
  */
 export function usePortfolios() {
-  return useGlobalCache("portfolios", () => api("/company/portfolios"));
+  return useGlobalCache("portfolios", () => api.request("/company/portfolios"));
 }
 
 /**
  * Hook pré-configuré pour les catégories
  */
 export function useCategories() {
-  return useGlobalCache("categories", () => api("/company/categories"));
+  return useGlobalCache("categories", () => api.request("/company/categories"));
 }

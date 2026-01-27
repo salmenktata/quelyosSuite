@@ -66,7 +66,7 @@ export function useTotalBalance(): BalanceData {
       setError(null);
 
       // Récupérer les comptes
-      const accounts = await api<Account[]>("/company/accounts");
+      const accounts = await api.request<Account[]>("/company/accounts");
       
       // Calculer le solde total
       const totalBalance = accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
@@ -76,7 +76,7 @@ export function useTotalBalance(): BalanceData {
       let variationPercent = 0;
       
       try {
-        const variationData = await api<{ variation24h: number; variationPercent: number }>(
+        const variationData = await api.request<{ variation24h: number; variationPercent: number }>(
           "/company/accounts/variation24h"
         );
         variation24h = variationData.variation24h || 0;
@@ -87,7 +87,7 @@ export function useTotalBalance(): BalanceData {
         try {
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
-          const transactions = await api<Array<{ type: string; amount: number; date: string }>>(
+          const transactions = await api.request<Array<{ type: string; amount: number; date: string }>>(
             `/company/transactions?from=${yesterday.toISOString().split('T')[0]}`
           );
           

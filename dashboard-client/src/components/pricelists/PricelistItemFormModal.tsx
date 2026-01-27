@@ -69,16 +69,16 @@ export function PricelistItemFormModal({
     control,
   } = useForm<PricelistItemFormData>({
     defaultValues: {
-      applied_on: item?.applied_on || '3_global',
-      compute_price: item?.compute_price || 'percentage',
+      applied_on: (item?.applied_on as PricelistItemFormData['applied_on']) || '3_global',
+      compute_price: (item?.compute_price as PricelistItemFormData['compute_price']) || 'percentage',
       min_quantity: item?.min_quantity || 1,
       fixed_price: item?.fixed_price,
       percent_price: item?.percent_price,
       price_discount: item?.price_discount,
       product_tmpl_id: item?.product_id,
       categ_id: item?.category_id,
-      date_start: item?.date_start || '',
-      date_end: item?.date_end || '',
+      date_start: '',
+      date_end: '',
     },
   });
 

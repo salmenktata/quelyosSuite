@@ -56,7 +56,7 @@ class ApiClient {
     }
   }
 
-  private async request<T>(endpoint: string, data?: unknown): Promise<T> {
+  async request<T>(endpoint: string, data?: unknown): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
     logger.debug('[API] request() ->', endpoint, 'URL:', url)
 

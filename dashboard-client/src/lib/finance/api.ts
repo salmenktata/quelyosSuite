@@ -4,6 +4,7 @@
  */
 
 import { logger } from '@/lib/logger'
+import { getValidSessionId } from '@/lib/session'
 
 // Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
 // Le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
@@ -39,7 +40,7 @@ export async function api<T = unknown>(
   options: ApiOptions = {}
 ): Promise<T> {
   // Utiliser session_id pour l'auth (optionnel car endpoints sont auth='public')
-  const sessionId = localStorage.getItem('session_id')
+  const sessionId = getValidSessionId()
 
   const { method = 'GET', body, headers = {} } = options
 

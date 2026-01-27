@@ -50,7 +50,7 @@ export function buildLocationTree(locations: StockLocation[]): LocationTreeNode[
     nodes.sort((a, b) => a.name.localeCompare(b.name))
     nodes.forEach(node => {
       if (node.children && node.children.length > 0) {
-        sortTree(node.children)
+        sortTree(node.children as LocationTreeNode[])
       }
     })
   }
@@ -127,7 +127,7 @@ export function flattenTree(tree: LocationTreeNode[]): LocationTreeNode[] {
     nodes.forEach(node => {
       result.push(node)
       if (node.children && node.children.length > 0) {
-        traverse(node.children)
+        traverse(node.children as LocationTreeNode[])
       }
     })
   }
@@ -159,7 +159,7 @@ export function filterTree(
         node.complete_name.toLowerCase().includes(query) ||
         (node.barcode && node.barcode.toLowerCase().includes(query))
 
-      const filteredChildren = node.children ? traverse(node.children) : []
+      const filteredChildren = node.children ? traverse(node.children as LocationTreeNode[]) : []
 
       if (matchesNode || filteredChildren.length > 0) {
         result.push({

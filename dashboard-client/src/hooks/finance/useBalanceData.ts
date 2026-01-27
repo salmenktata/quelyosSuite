@@ -20,7 +20,7 @@ interface VariationData {
 export function useAccounts() {
   return useQuery({
     queryKey: ["company", "accounts"],
-    queryFn: () => api<Account[]>("/company/accounts"),
+    queryFn: () => api.request<Account[]>("/company/accounts"),
     staleTime: 2 * 60 * 1000, // 2 minutes - balance changes frequently
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
@@ -35,7 +35,7 @@ export function useAccounts() {
 export function useBalanceVariation() {
   return useQuery({
     queryKey: ["company", "balance-variation"],
-    queryFn: () => api<VariationData>("/company/accounts/variation24h"),
+    queryFn: () => api.request<VariationData>("/company/accounts/variation24h"),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,

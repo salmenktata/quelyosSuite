@@ -31,7 +31,7 @@ export function useLocationsTree(params?: UseLocationsTreeParams) {
           throw new Error(response.error || 'Échec du chargement des emplacements')
         }
 
-        return (response.data?.locations as StockLocation[]) || []
+        return ((response.data as any)?.locations as StockLocation[]) || []
       } catch (error) {
         logger.error('[useLocationsTree] Fetch error:', error)
         throw error

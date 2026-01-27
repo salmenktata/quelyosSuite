@@ -18,7 +18,7 @@ const schema = z.object({
   warehouse_id: z.number().min(1, 'Sélectionnez un entrepôt'),
   product_min_qty: z.number().min(0, 'Quantité minimum doit être ≥ 0'),
   product_max_qty: z.number().min(1, 'Quantité maximum doit être ≥ 1'),
-  qty_multiple: z.number().min(1, 'Multiple doit être ≥ 1').default(1),
+  qty_multiple: z.number().min(1, 'Multiple doit être ≥ 1'),
 }).refine(data => data.product_min_qty < data.product_max_qty, {
   message: 'Seuil minimum doit être inférieur au seuil maximum',
   path: ['product_max_qty']
@@ -52,10 +52,10 @@ export function ReorderingRuleFormModal({
   const { mutate: createRule, isPending: isCreating } = useCreateReorderingRule()
   const { mutate: updateRule, isPending: isUpdating } = useUpdateReorderingRule()
   const { data: warehousesData } = useWarehouses({ active_only: true })
-  const { data: productsData } = useProducts({ active_only: true })
+  const { data: productsData } = useProducts({ include_archived: false })
 
   const warehouses = warehousesData || []
-  const products = productsData?.products || []
+  const products = (productsData?.data?.products as any[]) || []
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
