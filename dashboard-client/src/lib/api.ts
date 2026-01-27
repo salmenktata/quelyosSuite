@@ -15,6 +15,9 @@ import type {
   CartRecoveryStats,
   OrderHistoryItem,
   ShippingTrackingInfo,
+  Stage,
+  LeadListItem,
+  Lead,
 } from '@/types'
 import type {
   APIResponse,
@@ -32,8 +35,8 @@ import type {
 } from '@quelyos/types'
 import { logger } from '@quelyos/logger'
 
-// En développement, utiliser le proxy Vite (pas de CORS)
-// En production, utiliser l'URL complète
+// Développement : accès direct à Odoo via VITE_API_URL
+// Production : URL backend configurée dans .env.production
 const API_URL = import.meta.env.VITE_API_URL || ''
 
 class ApiClient {
@@ -70,8 +73,10 @@ class ApiClient {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      // Envoyer les cookies pour l'authentification Odoo
-      credentials: 'include',
+      // credentials: 'omit' car Odoo utilise Access-Control-Allow-Origin: *
+      // qui est incompatible avec credentials: 'include'
+      // Authentification via X-Session-Id header à la place
+      credentials: 'omit',
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'call',
@@ -965,7 +970,7 @@ class ApiClient {
     warehouse_id?: number
     search?: string
   }) {
-    return this.request('/api/ecommerce/stock/transfers', params)
+    return this.request('/api/ecommerce/stock/pickings', params)
   }
 
   async getStockLocations(params?: {
@@ -987,11 +992,11 @@ class ApiClient {
   }
 
   async validateStockTransfer(pickingId: number) {
-    return this.request(`/api/ecommerce/stock/transfers/${pickingId}/validate`, {})
+    return this.request(`/api/ecommerce/stock/pickings/${pickingId}/validate`, {})
   }
 
   async cancelStockTransfer(pickingId: number) {
-    return this.request(`/api/ecommerce/stock/transfers/${pickingId}/cancel`, {})
+    return this.request(`/api/ecommerce/stock/pickings/${pickingId}/cancel`, {})
   }
 
   // ==================== STOCK OCA ====================
@@ -1798,6 +1803,56 @@ class ApiClient {
     }
   }) {
     return this.request<APIResponse<{ message: string; updated: string[] }>>('/api/ecommerce/site-config/update', data)
+  }
+
+  // ========================================
+  // CRM METHODS
+  // ========================================
+
+  async getStages() {
+    return this.request<APIResponse<Stage[]>>('/api/ecommerce/crm/stages')
+  }
+
+  async getLeads(params?: { limit?: number; offset?: number; search?: string }) {
+    return this.request<APIResponse<{ data: LeadListItem[]; pagination: { total: number; limit: number; offset: number } }>>('/api/ecommerce/crm/leads', params)
+  }
+
+  async getLead(id: number) {
+    return this.request<APIResponse<Lead>>(`/api/ecommerce/crm/leads/${id}`)
+  }
+
+  async createLead(data: {
+    name: string
+    partner_id?: number
+    stage_id?: number
+    expected_revenue?: number
+    probability?: number
+    date_deadline?: string
+    description?: string
+    email?: string
+    phone?: string
+    mobile?: string
+  }) {
+    return this.request<APIResponse<{ id: number; name: string; stage_id?: number; stage_name?: string }>>('/api/ecommerce/crm/leads/create', data)
+  }
+
+  async updateLead(id: number, data: {
+    name?: string
+    partner_id?: number
+    stage_id?: number
+    expected_revenue?: number
+    probability?: number
+    date_deadline?: string
+    description?: string
+    email?: string
+    phone?: string
+    mobile?: string
+  }) {
+    return this.request<APIResponse<{ id: number; name: string; expected_revenue?: number; probability?: number }>>(`/api/ecommerce/crm/leads/${id}/update`, data)
+  }
+
+  async updateLeadStage(id: number, stage_id: number) {
+    return this.request<APIResponse<{ id: number; stage_id: number; stage_name: string }>>(`/api/ecommerce/crm/leads/${id}/stage`, { stage_id })
   }
 }
 

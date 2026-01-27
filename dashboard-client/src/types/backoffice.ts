@@ -428,3 +428,36 @@ import type { User } from '@quelyos/types';
 export type Customer = User;
 export type ProductCreateData = Record<string, any>;
 export type ProductUpdateData = Record<string, any>;
+
+// ==================== CRM ====================
+
+export interface Stage {
+  id: number
+  name: string
+  sequence: number
+  fold: boolean
+  is_won: boolean
+}
+
+export interface LeadListItem {
+  id: number
+  name: string
+  partner_id?: number
+  partner_name?: string
+  stage_id: number
+  stage_name: string
+  expected_revenue?: number
+  probability?: number
+  user_id?: number
+  user_name?: string
+  date_deadline?: string
+  create_date: string
+}
+
+export interface Lead extends LeadListItem {
+  description?: string
+  email?: string
+  phone?: string
+  mobile?: string
+  write_date?: string
+}

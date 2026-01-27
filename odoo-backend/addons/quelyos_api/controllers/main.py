@@ -248,6 +248,7 @@ class QuelyosAPI(http.Controller):
             'images': images,
             'slug': product_slug,
             'qty_available': qty,
+            'qty_available_unreserved': product.qty_available_unreserved,
             'virtual_available': product.virtual_available,
             'stock_status': stock_status,
             'active': product.active,
@@ -789,6 +790,7 @@ class QuelyosAPI(http.Controller):
                     'images': images_list if images_list else None,
                     'slug': p.name.lower().replace(' ', '-'),
                     'qty_available': qty,
+                    'qty_available_unreserved': p.qty_available_unreserved,
                     'virtual_available': p.virtual_available,
                     'stock_status': p_stock_status,
                     'in_stock': qty > 0,
@@ -8150,6 +8152,292 @@ class QuelyosAPI(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
+    # ==================== STOCK TRANSFERS (PICKINGS) ====================
+
+    @http.route('/api/ecommerce/stock/pickings', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_stock_pickings(self, **kwargs):
+        """
+        Lister les bons de transfert (stock.picking) avec filtres
+        ADMIN UNIQUEMENT
+        """
+        try:
+            # Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            params = self._get_params()
+            limit = params.get('limit', 20)
+            offset = params.get('offset', 0)
+            state = params.get('state')  # draft, waiting, confirmed, assigned, done, cancel
+            warehouse_id = params.get('warehouse_id')
+            search = params.get('search', '').strip()
+
+            Picking = request.env['stock.picking'].sudo()
+
+            # Construire domaine de recherche
+            domain = []
+
+            if state:
+                domain.append(('state', '=', state))
+
+            if warehouse_id:
+                domain.append(('location_id.warehouse_id', '=', warehouse_id))
+
+            if search:
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('origin', 'ilike', search))
+
+            # Recherche avec pagination
+            pickings = Picking.search(domain, limit=limit, offset=offset, order='scheduled_date desc, id desc')
+            total_count = Picking.search_count(domain)
+
+            # Mapping des états pour labels français
+            state_labels = {
+                'draft': 'Brouillon',
+                'waiting': 'En attente',
+                'confirmed': 'Confirmé',
+                'assigned': 'Prêt',
+                'done': 'Fait',
+                'cancel': 'Annulé',
+            }
+
+            transfers = []
+            for picking in pickings:
+                # Récupérer les produits du transfert
+                products = []
+                for move in picking.move_ids_without_package:
+                    products.append({
+                        'id': move.product_id.id,
+                        'name': move.product_id.name,
+                        'sku': move.product_id.default_code or '',
+                        'quantity': move.product_uom_qty,
+                        'quantity_done': move.quantity_done,
+                    })
+
+                transfers.append({
+                    'id': picking.id,
+                    'name': picking.name,
+                    'state': picking.state,
+                    'state_label': state_labels.get(picking.state, picking.state),
+                    'scheduled_date': picking.scheduled_date.isoformat() if picking.scheduled_date else None,
+                    'date_done': picking.date_done.isoformat() if picking.date_done else None,
+                    'from_location': picking.location_id.complete_name if picking.location_id else '',
+                    'to_location': picking.location_dest_id.complete_name if picking.location_dest_id else '',
+                    'from_warehouse': picking.location_id.warehouse_id.name if picking.location_id.warehouse_id else None,
+                    'to_warehouse': picking.location_dest_id.warehouse_id.name if picking.location_dest_id.warehouse_id else None,
+                    'products': products,
+                    'products_count': len(products),
+                    'note': picking.note or '',
+                    'create_date': picking.create_date.isoformat() if picking.create_date else None,
+                    'user_name': picking.user_id.name if picking.user_id else None,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'transfers': transfers,
+                    'total': total_count,
+                    'limit': limit,
+                    'offset': offset,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock pickings error: {e}")
+            return {
+                'success': False,
+                'error': 'Erreur lors de la récupération des transferts'
+            }
+
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_stock_picking_details(self, picking_id, **kwargs):
+        """
+        Récupérer les détails d'un bon de transfert
+        ADMIN UNIQUEMENT
+        """
+        try:
+            # Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Picking = request.env['stock.picking'].sudo()
+            picking = Picking.browse(picking_id)
+
+            if not picking.exists():
+                return {
+                    'success': False,
+                    'error': 'Transfert non trouvé'
+                }
+
+            # Mapping des états
+            state_labels = {
+                'draft': 'Brouillon',
+                'waiting': 'En attente',
+                'confirmed': 'Confirmé',
+                'assigned': 'Prêt',
+                'done': 'Fait',
+                'cancel': 'Annulé',
+            }
+
+            # Récupérer les lignes de mouvement
+            moves = []
+            for move in picking.move_ids_without_package:
+                moves.append({
+                    'id': move.id,
+                    'product_id': move.product_id.id,
+                    'product_name': move.product_id.name,
+                    'product_sku': move.product_id.default_code or '',
+                    'qty_demand': move.product_uom_qty,
+                    'qty_done': move.quantity_done,
+                    'location_src': move.location_id.complete_name if move.location_id else '',
+                    'location_dest': move.location_dest_id.complete_name if move.location_dest_id else '',
+                    'state': move.state,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'id': picking.id,
+                    'name': picking.name,
+                    'state': picking.state,
+                    'state_label': state_labels.get(picking.state, picking.state),
+                    'scheduled_date': picking.scheduled_date.isoformat() if picking.scheduled_date else None,
+                    'date_done': picking.date_done.isoformat() if picking.date_done else None,
+                    'origin': picking.origin or '',
+                    'note': picking.note or '',
+                    'from_location': picking.location_id.complete_name if picking.location_id else '',
+                    'to_location': picking.location_dest_id.complete_name if picking.location_dest_id else '',
+                    'from_warehouse': picking.location_id.warehouse_id.name if picking.location_id.warehouse_id else None,
+                    'to_warehouse': picking.location_dest_id.warehouse_id.name if picking.location_dest_id.warehouse_id else None,
+                    'user_name': picking.user_id.name if picking.user_id else None,
+                    'moves': moves,
+                    'moves_count': len(moves),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get picking details error: {e}")
+            return {
+                'success': False,
+                'error': 'Erreur lors de la récupération des détails'
+            }
+
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/validate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def validate_stock_picking(self, picking_id, **kwargs):
+        """
+        Valider un bon de transfert (action_done)
+        ADMIN UNIQUEMENT
+        """
+        try:
+            # Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Picking = request.env['stock.picking'].sudo()
+            picking = Picking.browse(picking_id)
+
+            if not picking.exists():
+                return {
+                    'success': False,
+                    'error': 'Transfert non trouvé'
+                }
+
+            # Vérifier que le picking est dans un état validable
+            if picking.state in ['done', 'cancel']:
+                return {
+                    'success': False,
+                    'error': f'Le transfert ne peut pas être validé (état: {picking.state})'
+                }
+
+            # Valider le picking (met à jour les stock.quant automatiquement)
+            try:
+                picking.button_validate()
+            except Exception as validate_error:
+                _logger.error(f"Picking validation error: {validate_error}")
+                return {
+                    'success': False,
+                    'error': f'Erreur lors de la validation: {str(validate_error)}'
+                }
+
+            _logger.info(f"[STOCK] Picking {picking.name} validated by admin")
+
+            return {
+                'success': True,
+                'data': {
+                    'picking_id': picking.id,
+                    'picking_name': picking.name,
+                    'state': picking.state,
+                },
+                'message': f'Transfert {picking.name} validé avec succès'
+            }
+
+        except Exception as e:
+            _logger.error(f"Validate picking error: {e}")
+            return {
+                'success': False,
+                'error': 'Erreur lors de la validation du transfert'
+            }
+
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/cancel', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def cancel_stock_picking(self, picking_id, **kwargs):
+        """
+        Annuler un bon de transfert
+        ADMIN UNIQUEMENT
+        """
+        try:
+            # Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Picking = request.env['stock.picking'].sudo()
+            picking = Picking.browse(picking_id)
+
+            if not picking.exists():
+                return {
+                    'success': False,
+                    'error': 'Transfert non trouvé'
+                }
+
+            # Vérifier que le picking peut être annulé
+            if picking.state == 'done':
+                return {
+                    'success': False,
+                    'error': 'Un transfert validé ne peut pas être annulé'
+                }
+
+            if picking.state == 'cancel':
+                return {
+                    'success': False,
+                    'error': 'Le transfert est déjà annulé'
+                }
+
+            # Annuler le picking
+            picking.action_cancel()
+
+            _logger.info(f"[STOCK] Picking {picking.name} cancelled by admin")
+
+            return {
+                'success': True,
+                'data': {
+                    'picking_id': picking.id,
+                    'picking_name': picking.name,
+                    'state': picking.state,
+                },
+                'message': f'Transfert {picking.name} annulé'
+            }
+
+        except Exception as e:
+            _logger.error(f"Cancel picking error: {e}")
+            return {
+                'success': False,
+                'error': 'Erreur lors de l\'annulation du transfert'
+            }
+
     # ==================== STOCK ALERTS ====================
 
     @http.route('/api/ecommerce/stock/low-stock-alerts', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -13065,6 +13353,342 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Delete reordering rule error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ========================================
+    # CRM ENDPOINTS
+    # ========================================
+
+    @http.route('/api/ecommerce/crm/stages', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_crm_stages(self, **kwargs):
+        """Récupérer les stages (colonnes) du pipeline CRM"""
+        try:
+            Stage = request.env['crm.stage'].sudo()
+            stages = Stage.search([], order='sequence asc')
+
+            data = []
+            for stage in stages:
+                data.append({
+                    'id': stage.id,
+                    'name': stage.name,
+                    'sequence': stage.sequence,
+                    'fold': stage.fold,
+                    'is_won': stage.is_won
+                })
+
+            return {
+                'success': True,
+                'data': data
+            }
+
+        except Exception as e:
+            _logger.error(f"Get CRM stages error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/leads', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_crm_leads(self, **kwargs):
+        """Récupérer les leads (opportunités) avec pagination"""
+        try:
+            params = self._get_params()
+            limit = params.get('limit', 20)
+            offset = params.get('offset', 0)
+            search_term = params.get('search', '').strip()
+
+            Lead = request.env['crm.lead'].sudo()
+
+            # Construire domaine de recherche
+            domain = []
+            if search_term:
+                domain = [
+                    '|', '|',
+                    ('name', 'ilike', search_term),
+                    ('partner_name', 'ilike', search_term),
+                    ('email_from', 'ilike', search_term)
+                ]
+
+            # Compter total
+            total = Lead.search_count(domain)
+
+            # Récupérer leads
+            leads = Lead.search(domain, limit=limit, offset=offset, order='create_date desc')
+
+            data = []
+            for lead in leads:
+                data.append({
+                    'id': lead.id,
+                    'name': lead.name,
+                    'partner_id': lead.partner_id.id if lead.partner_id else None,
+                    'partner_name': lead.partner_name or (lead.partner_id.name if lead.partner_id else None),
+                    'stage_id': lead.stage_id.id if lead.stage_id else None,
+                    'stage_name': lead.stage_id.name if lead.stage_id else 'Non défini',
+                    'expected_revenue': lead.expected_revenue,
+                    'probability': lead.probability,
+                    'user_id': lead.user_id.id if lead.user_id else None,
+                    'user_name': lead.user_id.name if lead.user_id else None,
+                    'date_deadline': lead.date_deadline.isoformat() if lead.date_deadline else None,
+                    'create_date': lead.create_date.isoformat() if lead.create_date else None
+                })
+
+            return {
+                'success': True,
+                'data': data,
+                'pagination': {
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get CRM leads error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_crm_lead_detail(self, lead_id, **kwargs):
+        """Récupérer le détail d'un lead"""
+        try:
+            Lead = request.env['crm.lead'].sudo()
+            lead = Lead.browse(lead_id)
+
+            if not lead.exists():
+                return {
+                    'success': False,
+                    'error': 'Lead introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            return {
+                'success': True,
+                'data': {
+                    'id': lead.id,
+                    'name': lead.name,
+                    'partner_id': lead.partner_id.id if lead.partner_id else None,
+                    'partner_name': lead.partner_name or (lead.partner_id.name if lead.partner_id else None),
+                    'stage_id': lead.stage_id.id if lead.stage_id else None,
+                    'stage_name': lead.stage_id.name if lead.stage_id else 'Non défini',
+                    'expected_revenue': lead.expected_revenue,
+                    'probability': lead.probability,
+                    'user_id': lead.user_id.id if lead.user_id else None,
+                    'user_name': lead.user_id.name if lead.user_id else None,
+                    'date_deadline': lead.date_deadline.isoformat() if lead.date_deadline else None,
+                    'create_date': lead.create_date.isoformat() if lead.create_date else None,
+                    'write_date': lead.write_date.isoformat() if lead.write_date else None,
+                    'description': lead.description or '',
+                    'email': lead.email_from or '',
+                    'phone': lead.phone or '',
+                    'mobile': lead.mobile or ''
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get CRM lead detail error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/leads/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_crm_lead(self, **kwargs):
+        """Créer un nouveau lead"""
+        try:
+            # Vérifier session
+            session_error = self._check_session()
+            if session_error:
+                return session_error
+
+            params = self._get_params()
+            name = params.get('name', '').strip()
+
+            if not name:
+                return {
+                    'success': False,
+                    'error': 'Le nom de l\'opportunité est obligatoire',
+                    'errorCode': 'MISSING_REQUIRED_FIELD'
+                }
+
+            Lead = request.env['crm.lead'].sudo()
+
+            # Construire valeurs
+            vals = {
+                'name': name,
+                'user_id': request.session.uid
+            }
+
+            # Champs optionnels
+            if params.get('partner_id'):
+                vals['partner_id'] = params['partner_id']
+            if params.get('stage_id'):
+                vals['stage_id'] = params['stage_id']
+            if params.get('expected_revenue'):
+                vals['expected_revenue'] = float(params['expected_revenue'])
+            if params.get('probability') is not None:
+                vals['probability'] = float(params['probability'])
+            if params.get('date_deadline'):
+                vals['date_deadline'] = params['date_deadline']
+            if params.get('description'):
+                vals['description'] = params['description']
+            if params.get('email'):
+                vals['email_from'] = params['email']
+            if params.get('phone'):
+                vals['phone'] = params['phone']
+            if params.get('mobile'):
+                vals['mobile'] = params['mobile']
+
+            # Créer lead
+            lead = Lead.create(vals)
+            _logger.info(f"CRM lead created: {lead.name} (id: {lead.id})")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': lead.id,
+                    'name': lead.name,
+                    'stage_id': lead.stage_id.id if lead.stage_id else None,
+                    'stage_name': lead.stage_id.name if lead.stage_id else 'Non défini'
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create CRM lead error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_crm_lead(self, lead_id, **kwargs):
+        """Mettre à jour un lead"""
+        try:
+            # Vérifier session
+            session_error = self._check_session()
+            if session_error:
+                return session_error
+
+            params = self._get_params()
+            Lead = request.env['crm.lead'].sudo()
+            lead = Lead.browse(lead_id)
+
+            if not lead.exists():
+                return {
+                    'success': False,
+                    'error': 'Lead introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Construire dict de mise à jour
+            update_vals = {}
+
+            if 'name' in params and params['name'].strip():
+                update_vals['name'] = params['name'].strip()
+            if 'partner_id' in params:
+                update_vals['partner_id'] = params['partner_id'] or False
+            if 'stage_id' in params:
+                update_vals['stage_id'] = params['stage_id']
+            if 'expected_revenue' in params:
+                update_vals['expected_revenue'] = float(params['expected_revenue']) if params['expected_revenue'] else 0
+            if 'probability' in params:
+                update_vals['probability'] = float(params['probability']) if params['probability'] is not None else 0
+            if 'date_deadline' in params:
+                update_vals['date_deadline'] = params['date_deadline'] or False
+            if 'description' in params:
+                update_vals['description'] = params['description']
+            if 'email' in params:
+                update_vals['email_from'] = params['email']
+            if 'phone' in params:
+                update_vals['phone'] = params['phone']
+            if 'mobile' in params:
+                update_vals['mobile'] = params['mobile']
+
+            if update_vals:
+                lead.write(update_vals)
+                _logger.info(f"CRM lead updated: {lead.id}")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': lead.id,
+                    'name': lead.name,
+                    'expected_revenue': lead.expected_revenue,
+                    'probability': lead.probability
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update CRM lead error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_lead_stage(self, lead_id, **kwargs):
+        """Mettre à jour le stage d'un lead (drag & drop)"""
+        try:
+            # Vérifier session
+            session_error = self._check_session()
+            if session_error:
+                return session_error
+
+            params = self._get_params()
+            stage_id = params.get('stage_id')
+
+            if not stage_id:
+                return {
+                    'success': False,
+                    'error': 'Le stage_id est obligatoire',
+                    'errorCode': 'MISSING_REQUIRED_FIELD'
+                }
+
+            Lead = request.env['crm.lead'].sudo()
+            lead = Lead.browse(lead_id)
+
+            if not lead.exists():
+                return {
+                    'success': False,
+                    'error': 'Lead introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Vérifier que le stage existe
+            Stage = request.env['crm.stage'].sudo()
+            stage = Stage.browse(stage_id)
+            if not stage.exists():
+                return {
+                    'success': False,
+                    'error': 'Stage introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Mettre à jour le stage
+            lead.write({'stage_id': stage_id})
+            _logger.info(f"CRM lead {lead.id} moved to stage {stage.name}")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': lead.id,
+                    'stage_id': stage.id,
+                    'stage_name': stage.name
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update lead stage error: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),

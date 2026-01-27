@@ -11,6 +11,9 @@ import Orders from './pages/store/Orders'
 import OrderDetail from './pages/store/OrderDetail'
 import Customers from './pages/crm/Customers'
 import CustomerDetail from './pages/crm/CustomerDetail'
+import Pipeline from './pages/crm/Pipeline'
+import Leads from './pages/crm/Leads'
+import LeadDetail from './pages/crm/LeadDetail'
 import Products from './pages/store/Products'
 import ProductDetail from './pages/store/ProductDetail'
 import ProductForm from './pages/store/ProductForm'
@@ -387,6 +390,30 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <CustomerCategories />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/crm/pipeline"
+                element={
+                  <ProtectedRoute>
+                    <Pipeline />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/crm/leads"
+                element={
+                  <ProtectedRoute>
+                    <Leads />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/crm/leads/:id"
+                element={
+                  <ProtectedRoute>
+                    <LeadDetail />
                   </ProtectedRoute>
                 }
               />

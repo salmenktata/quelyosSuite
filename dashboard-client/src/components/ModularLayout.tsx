@@ -49,6 +49,8 @@ import {
   UserCircle,
   Receipt,
   BadgePercent,
+  Kanban,
+  Target,
   // New
   Megaphone,
   UsersRound,
@@ -319,6 +321,13 @@ const MODULES: Module[] = [
     description: 'Clients & Ventes',
     basePath: '/crm',
     sections: [
+      {
+        title: 'Pipeline',
+        items: [
+          { name: 'Pipeline', path: '/crm/pipeline', icon: Kanban },
+          { name: 'Opportunités', path: '/crm/leads', icon: Target },
+        ],
+      },
       {
         title: 'Clients',
         items: [
