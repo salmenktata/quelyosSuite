@@ -1,16 +1,27 @@
 import { Link } from 'react-router-dom'
 import { List, Plus } from 'lucide-react'
 import { Layout } from '@/components/Layout'
+import { Breadcrumbs, SkeletonCard, PageNotice, Button } from '@/components/common'
 import { PipelineKanban } from '@/components/PipelineKanban'
+import { LeadStats } from '@/components/leads/LeadStats'
 import { useLeads } from '@/hooks/useLeads'
 import { useStages } from '@/hooks/useStages'
 import { useUpdateLeadStage } from '@/hooks/useUpdateLeadStage'
+import { crmNotices } from '@/lib/notices/crm-notices'
 import { toast } from 'sonner'
 
+/**
+ * Page Pipeline CRM
+ * Affiche les opportunités commerciales en vue Kanban avec drag & drop
+ */
 export default function Pipeline() {
-  const { data: leadsData, isLoading: leadsLoading } = useLeads()
-  const { data: stages = [], isLoading: stagesLoading } = useStages()
+  const { data: leadsData, isLoading: leadsLoading, error: leadsError } = useLeads()
+  const { data: stages = [], isLoading: stagesLoading, error: stagesError } = useStages()
   const updateStageMutation = useUpdateLeadStage()
+
+  const leads = leadsData?.leads || []
+  const isLoading = leadsLoading || stagesLoading
+  const error = leadsError || stagesError
 
   const handleStageChange = async (leadId: number, stageId: number) => {
     try {
@@ -24,56 +35,64 @@ export default function Pipeline() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="p-4 md:p-8">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-          <Link to="/" className="hover:text-gray-900 dark:hover:text-white">
-            Accueil
-          </Link>
-          <span>/</span>
-          <Link to="/crm" className="hover:text-gray-900 dark:hover:text-white">
-            CRM
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 dark:text-white">Pipeline</span>
-        </nav>
+        <Breadcrumbs items={[{ label: 'Tableau de bord', href: '/dashboard' }, { label: 'Pipeline CRM' }]} />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Pipeline CRM
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Gérez vos opportunités commerciales par glisser-déposer
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/crm/leads"
-              className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
-              <List className="w-5 h-5" />
-              Vue Liste
-            </Link>
-            <Link
-              to="/crm/leads/new"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Nouvelle Opportunité
-            </Link>
-          </div>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            Pipeline CRM
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Gérez vos opportunités commerciales par glisser-déposer
+          </p>
+        </div>
+
+        <PageNotice config={crmNotices.pipeline} className="mb-6" />
+
+        {/* KPI Cards */}
+        {!isLoading && !error && leads.length > 0 && (
+          <LeadStats leads={leads} />
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center justify-end gap-3 mb-6">
+          <Link
+            to="/crm/leads"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <List className="w-5 h-5" />
+            Vue Liste
+          </Link>
+          <Link
+            to="/crm/leads/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Nouvelle Opportunité
+          </Link>
         </div>
 
         {/* Kanban */}
-        {leadsLoading || stagesLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center" role="alert">
+            <p className="text-red-600 dark:text-red-400 mb-4">
+              Erreur lors du chargement du pipeline
+            </p>
+            <Button variant="secondary" onClick={() => window.location.reload()}>
+              Réessayer
+            </Button>
           </div>
         ) : (
           <PipelineKanban
-            leads={leadsData?.leads || []}
+            leads={leads}
             stages={stages}
             onStageChange={handleStageChange}
           />

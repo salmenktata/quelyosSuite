@@ -1,4 +1,4 @@
-import { Receipt, BarChart3, Lightbulb, UserCircle, Tag, DollarSign, ClipboardList } from 'lucide-react';
+import { Receipt, BarChart3, Lightbulb, UserCircle, Tag, DollarSign, ClipboardList, Target } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
 
 /**
@@ -121,10 +121,45 @@ export const crmNotices: Record<string, PageNoticeConfig> = {
     }]
   },
 
+  pipeline: {
+    pageId: 'crm-pipeline',
+    title: 'Pipeline CRM',
+    purpose: "Visualisez et gérez vos opportunités commerciales en vue Kanban. Glissez-déposez les leads entre les étapes pour suivre leur progression vers la conversion.",
+    icon: BarChart3,
+    moduleColor: 'violet',
+    sections: [{
+      title: 'Bonnes pratiques',
+      icon: Lightbulb,
+      items: [
+        `Mettez à jour quotidiennement : déplacez leads entre étapes dès changement statut pour pipeline temps réel fiable`,
+        `Qualifiez rapidement : distinguez prospects froids des opportunités chaudes pour concentrer énergie sur conversions probables`,
+        `Suivez temps par étape : si lead bloqué >7j même étape, identifiez blocage et relancez prospect activement`,
+        `Priorisez par revenu attendu : focalisez d'abord sur opportunités à fort montant pour maximiser ROI commercial`,
+        `Nettoyez mensuellement : archivez leads perdus/abandonnés pour garder pipeline clair et éviter pollution données`,
+      ]
+    }]
+  },
+
+  leads: {
+    pageId: 'crm-leads',
+    title: 'Opportunités',
+    purpose: "Gérez toutes vos opportunités commerciales en cours : qualification, suivi, relances et conversion en clients. Vue liste complète avec filtres et recherche.",
+    icon: Target,
+    moduleColor: 'violet',
+    sections: [{
+      title: 'Bonnes pratiques',
+      icon: Lightbulb,
+      items: [
+        `Créez lead immédiatement : dès contact prospect (appel, email, salon) pour ne perdre aucune opportunité commerciale`,
+        `Renseignez montant attendu + probabilité : permet calcul revenu prévisionnel et priorisation intelligente du pipeline`,
+        `Assignez responsable : chaque lead doit avoir un commercial référent pour suivi personnalisé et accountability`,
+        `Planifiez échéances : date limite rappel automatique pour relancer au bon moment sans oublier opportunités`,
+        `Documentez interactions : notes sur chaque appel/email pour historique complet et passation si changement commercial`,
+      ]
+    }]
+  },
+
   // Configurations futures (à activer quand pages créées)
-  // leads: { ... },
-  // opportunities: { ... },
-  // pipeline: { ... },
   // activities: { ... },
   // campaigns: { ... },
 };
