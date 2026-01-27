@@ -55,9 +55,6 @@ class ApiClient {
 
   private async request<T>(endpoint: string, data?: unknown): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
-    console.log('[API DEBUG] Endpoint:', endpoint)
-    console.log('[API DEBUG] Full URL:', url)
-    console.log('[API DEBUG] Base URL:', this.baseUrl)
     logger.debug('[API] request() ->', endpoint, 'URL:', url)
 
     const headers: HeadersInit = {
@@ -69,7 +66,6 @@ class ApiClient {
       headers['X-Session-Id'] = this.sessionId
     }
 
-    console.log('[API DEBUG] Headers:', headers)
     logger.debug('[API] Sending fetch to:', url)
     const response = await fetch(url, {
       method: 'POST',
@@ -83,7 +79,6 @@ class ApiClient {
         id: Math.random(),
       }),
     })
-    console.log('[API DEBUG] Response status:', response.status, response.statusText)
     logger.debug('[API] Response status:', response.status, response.statusText)
 
     if (!response.ok) {
