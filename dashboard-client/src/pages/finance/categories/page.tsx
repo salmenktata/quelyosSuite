@@ -1,11 +1,24 @@
+/**
+ * Page : Catégories de transactions Finance
+ *
+ * Fonctionnalités :
+ * - Affichage des catégories de revenus et dépenses séparées
+ * - Création de nouvelles catégories (nom + type)
+ * - Distinction visuelle revenus (vert) vs dépenses (rouge)
+ * - Compteur de catégories par type
+ * - Formulaire inline de création avec validation
+ * - États empty adaptés pour chaque section
+ */
+
 import { useEffect, useState } from "react";
-import { ModularLayout } from "@/components/ModularLayout";
+import { Layout } from "@/components/Layout";
+import { Breadcrumbs, PageNotice, SkeletonTable } from "@/components/common";
 import { api } from "@/lib/finance/api";
 import type { CreateCategoryRequest } from "@/types/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { PageHeader } from "@/components/finance/PageHeader";
 import { Button } from "@/components/ui/button";
-import { TagIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Tag, Plus } from "lucide-react";
+import { financeNotices } from "@/lib/notices/finance-notices";
 
 type Category = {
   id: number;
@@ -26,12 +39,15 @@ export default function CategoriesPage() {
   async function fetchCategories() {
     try {
       setError(null);
+      setLoading(true);
       const data = await api<Category[]>("/categories");
       setCategories(data);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erreur de chargement des catégories."
       );
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -67,26 +83,45 @@ export default function CategoriesPage() {
   const expenseCategories = categories.filter((c) => c.kind === "EXPENSE");
 
   return (
-    <ModularLayout>
-      <div className="p-8 space-y-6">
-        <PageHeader
-          icon={TagIcon}
-          title="Catégories"
-          description="Organisez vos transactions par catégories pour un suivi clair"
-          breadcrumbs={[
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
             { label: "Finance", href: "/finance" },
-            { label: "Catégories" },
+            { label: "Catégories", href: "/finance/categories" },
           ]}
-          actions={
+        />
+
+        {/* Header */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-lg bg-emerald-100 dark:bg-emerald-900/30 p-3">
+              <Tag className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Catégories
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Organisez vos transactions par catégories pour un suivi clair
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3">
             <Button
               variant="primary"
               className="gap-2"
               onClick={() => setShowForm(!showForm)}
             >
-              <PlusIcon className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
               {showForm ? "Annuler" : "Nouvelle catégorie"}
             </Button>
-          }
+          </div>
+        </div>
+
+        <PageNotice
+          config={financeNotices['categories']}
+          className="mb-6"
         />
 
         {/* Formulaire de création */}
@@ -100,10 +135,10 @@ export default function CategoriesPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="text-sm font-medium text-gray-900 dark:text-white"
                     htmlFor="category-name"
                   >
-                    Nom de la catégorie
+                    Nom de la catégorie <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <input
                     id="category-name"
@@ -118,10 +153,10 @@ export default function CategoriesPage() {
 
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="text-sm font-medium text-gray-900 dark:text-white"
                     htmlFor="category-kind"
                   >
-                    Type
+                    Type <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <select
                     id="category-kind"
@@ -142,8 +177,13 @@ export default function CategoriesPage() {
               </div>
 
               {error && (
-                <div className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
-                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                    <Button variant="outline" size="sm" onClick={fetchCategories}>
+                      Réessayer
+                    </Button>
+                  </div>
                 </div>
               )}
             </form>
@@ -151,7 +191,13 @@ export default function CategoriesPage() {
         )}
 
         {/* Liste des catégories */}
-        <div className="grid gap-6 md:grid-cols-2">
+        {loading ? (
+          <div className="grid gap-6 md:grid-cols-2">
+            <SkeletonTable rows={5} columns={2} />
+            <SkeletonTable rows={5} columns={2} />
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
           {/* Catégories de revenus */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
             <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -220,7 +266,8 @@ export default function CategoriesPage() {
             </div>
           </div>
         </div>
+        )}
       </div>
-    </ModularLayout>
+    </Layout>
   );
 }

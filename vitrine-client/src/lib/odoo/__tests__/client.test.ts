@@ -1,22 +1,19 @@
 /**
- * Tests for Odoo client
+ * Tests for Backend client
  */
 
-import { OdooClient } from '../client';
+import { BackendClient } from '../client';
 
-describe('OdooClient', () => {
-  let client: OdooClient;
+describe('BackendClient', () => {
+  let client: BackendClient;
 
   beforeEach(() => {
-    client = new OdooClient({
-      baseURL: 'http://localhost:8069',
-      database: 'test_db',
-    });
+    client = new BackendClient();
   });
 
   describe('constructor', () => {
-    it('should create an instance with correct base URL', () => {
-      expect(client).toBeInstanceOf(OdooClient);
+    it('should create an instance', () => {
+      expect(client).toBeInstanceOf(BackendClient);
     });
   });
 

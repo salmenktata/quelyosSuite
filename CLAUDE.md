@@ -146,6 +146,19 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 ### Messages d'erreur
 - ❌ `"Odoo returned error"` → ✅ `"Backend error"`
 
+### Jargon Odoo (termes révélateurs)
+**Termes interdits dans vitrine-client** :
+| Interdit | → Utiliser |
+|----------|-----------|
+| `OCA` | `communauté open-source` |
+| `OpenERP` / `OERP` | `ERP système` |
+| `ir.model` | `system.model` |
+| `res.partner` | `contacts` |
+| `res.users` | `users` |
+| `product.template` | `products` |
+| `sale.order` | `orders` |
+| `Werkzeug` | (supprimer) |
+
 ### Vérification
 Lancer `/no-odoo` avant chaque commit pour vérifier conformité.
 

@@ -31,6 +31,29 @@ grep -r "Odoo" frontend/src backoffice/src \
   | grep -v "frontend/src/app/legal"
 ```
 
+### Étape 1b : Détection Jargon Odoo
+**Termes spécifiques révélant l'infrastructure backend** :
+
+| Terme | Signification | Risque |
+|-------|---------------|--------|
+| `OCA` | Odoo Community Association | Identification écosystème |
+| `OpenERP` | Ancien nom d'Odoo | Identification historique |
+| `OERP` | Diminutif OpenERP | Identification historique |
+| `ir.model` | Modèle Odoo introspection | Pattern technique Odoo |
+| `res.partner` | Modèle Odoo contacts | Pattern technique Odoo |
+| `res.users` | Modèle Odoo utilisateurs | Pattern technique Odoo |
+| `product.template` | Modèle Odoo produits | Pattern technique Odoo |
+| `sale.order` | Modèle Odoo ventes | Pattern technique Odoo |
+| `Werkzeug` | Framework Python Odoo | Fingerprint serveur |
+
+**Commande Grep (jargon)** :
+```bash
+grep -rE "\bOCA\b|OpenERP|OERP|\bir\.model\b|\bres\.partner\b|\bres\.users\b|\bproduct\.template\b|\bsale\.order\b|Werkzeug" \
+  vitrine-client/src dashboard-client/src \
+  --include="*.tsx" --include="*.ts" \
+  | grep -vE "legal/|lib/odoo|node_modules|\.test\."
+```
+
 ### Étape 2 : Classification des Violations
 
 **P0 - Critique** (UI visible utilisateur final) :
@@ -41,6 +64,11 @@ grep -r "Odoo" frontend/src backoffice/src \
 **P1 - Important** (métadonnées exposées) :
 - Labels de champs : `"ID Odoo"` → `"ID Système"`
 - Headers de colonnes
+
+**P1b - Jargon Odoo** (termes techniques) :
+- Références OCA, OpenERP, OERP
+- Patterns modèles Odoo (ir.*, res.*, product.*, sale.*)
+- Références framework Werkzeug
 
 **P2 - Mineur** (optionnel) :
 - Commentaires code
@@ -57,6 +85,19 @@ grep -r "Odoo" frontend/src backoffice/src \
 | `gérées dans Odoo` | `gérées dans l'interface d'administration` |
 | `configurées dans Odoo` | `configurées dans l'interface d'administration` |
 | `ID Odoo` | `ID Système` |
+
+**Mapping jargon** :
+| Pattern Original | Remplacement |
+|-----------------|--------------|
+| `OCA` | `communauté open-source` |
+| `OpenERP` | `ERP système` |
+| `OERP` | `ERP` |
+| `ir.model` | `system.model` |
+| `res.partner` | `contacts` |
+| `res.users` | `users` |
+| `product.template` | `products` |
+| `sale.order` | `orders` |
+| `Werkzeug` | (supprimer) |
 
 **Application** :
 - Mode `--fix` : Edit automatique des fichiers P0

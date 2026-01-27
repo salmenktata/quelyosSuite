@@ -43,7 +43,7 @@ export function MappingStep({
         <select
           value={selectedAccountId || ""}
           onChange={(e) => onAccountChange(Number(e.target.value))}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">-- Sélectionnez un compte --</option>
           {accounts.map((account) => (

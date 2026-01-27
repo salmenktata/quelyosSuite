@@ -1,11 +1,24 @@
+/**
+ * Page Archives Finance
+ *
+ * Fonctionnalités :
+ * - Liste des transactions archivées (exclues des calculs actifs)
+ * - Filtres par type (dépense/revenu) et statut (Prévu, Programmé, Fait, Annulé)
+ * - Recherche en texte libre (description, tag, nom de compte)
+ * - Sélection multiple avec restauration groupée
+ * - Suppression définitive groupée (irréversible)
+ * - Affichage complet : compte, montant, date, statut, description
+ */
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ModularLayout } from "@/components/ModularLayout";
+import { Layout } from "@/components/Layout";
+import { Breadcrumbs, PageNotice, SkeletonTable, Button } from "@/components/common";
+import { financeNotices } from "@/lib/notices/finance-notices";
 import { ROUTES } from "@/lib/finance/compat/routes";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ArrowUpRight, Loader2, Trash2, Undo2 } from "lucide-react";
+import { ArrowUpRight, Trash2, Undo2, Archive as ArchiveIcon } from "lucide-react";
 import type { BulkDeleteRequest } from "@/types/api";
 
 const statusLabels: Record<string, string> = {
@@ -118,31 +131,49 @@ export default function ArchivesPage() {
   }
 
   return (
-    <ModularLayout>
+    <Layout>
       <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs items={[
+          { label: "Finance", href: "/finance" },
+          { label: "Archives" }
+        ]} />
+
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Archives</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Transactions archivées
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Consultation des lignes masquées (hors calculs).</p>
+          <div className="flex items-start gap-4">
+            <div className="rounded-lg bg-gray-100 dark:bg-gray-700 p-3">
+              <ArchiveIcon className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Transactions archivées
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Consultation des lignes masquées (hors calculs)
+              </p>
+            </div>
           </div>
-          <Link
+          <Button
+            as={Link}
             to={ROUTES.FINANCE.DASHBOARD.HOME}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-700"
+            variant="secondary"
+            icon={<ArrowUpRight size={16} />}
           >
-            <ArrowUpRight size={16} /> Retour dashboard
-          </Link>
+            Retour dashboard
+          </Button>
         </div>
 
+        <PageNotice config={financeNotices.archives} className="mb-6" />
+
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 text-sm text-red-700 dark:text-red-300">
-            {error}
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4" role="alert">
+            <p className="text-red-900 dark:text-red-100 mb-2">{error}</p>
+            <Button onClick={fetchArchives} variant="secondary" size="sm">
+              Réessayer
+            </Button>
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 grid gap-3 md:grid-cols-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 grid gap-3 md:grid-cols-4">
           <div className="space-y-1">
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Type</p>
             <select
@@ -181,7 +212,7 @@ export default function ArchivesPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 py-3 text-sm">
             <div className="flex items-center gap-3">
               <span className="font-medium text-gray-900 dark:text-white">Archives</span>
@@ -193,62 +224,63 @@ export default function ArchivesPage() {
               )}
             </div>
           <div className="flex flex-wrap gap-2">
-            <button
+            <Button
               onClick={unarchiveSelected}
               disabled={selectedIds.length === 0}
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-300 transition hover:bg-emerald-100 dark:hover:bg-emerald-900/50 disabled:opacity-50"
+              variant="secondary"
+              size="sm"
+              icon={<Undo2 size={14} />}
+              className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
             >
-              <Undo2 size={14} /> Restaurer
-            </button>
-            <button
+              Restaurer
+            </Button>
+            <Button
               onClick={deleteSelected}
               disabled={selectedIds.length === 0}
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 text-xs font-medium text-red-700 dark:text-red-300 transition hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50"
+              variant="danger"
+              size="sm"
+              icon={<Trash2 size={14} />}
             >
-              <Trash2 size={14} /> Supprimer
-            </button>
+              Supprimer
+            </Button>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-700/50">
-              <tr className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                <th className="px-4 py-3 text-left">
-                  <input
-                    type="checkbox"
-                    aria-label="Tout sélectionner"
-                    checked={filtered.length > 0 && filtered.every((tx) => selectedIds.includes(tx.id))}
-                    onChange={toggleSelectAll}
-                    className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
-                  />
-                </th>
-                <th className="px-4 py-3 text-left">Type</th>
-                <th className="px-4 py-3 text-left">Compte</th>
-                <th className="px-4 py-3 text-left">Montant</th>
-                <th className="px-4 py-3 text-left">Date</th>
-                <th className="px-4 py-3 text-left">Statut</th>
-                <th className="px-4 py-3 text-left">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {loading && (
-                <tr>
-                  <td colSpan={7} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                    <Loader2 size={16} className="mx-auto animate-spin" />
-                  </td>
+        {loading ? (
+          <SkeletonTable rows={5} columns={7} />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
+                <tr className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <th className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      aria-label="Tout sélectionner"
+                      checked={filtered.length > 0 && filtered.every((tx) => selectedIds.includes(tx.id))}
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
+                    />
+                  </th>
+                  <th className="px-4 py-3 text-left">Type</th>
+                  <th className="px-4 py-3 text-left">Compte</th>
+                  <th className="px-4 py-3 text-left">Montant</th>
+                  <th className="px-4 py-3 text-left">Date</th>
+                  <th className="px-4 py-3 text-left">Statut</th>
+                  <th className="px-4 py-3 text-left">Description</th>
                 </tr>
-              )}
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
 
-              {!loading && filtered.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                    Aucune transaction archivée.
-                  </td>
-                </tr>
-              )}
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                      Aucune transaction archivée.
+                    </td>
+                  </tr>
+                )}
 
-              {!loading && filtered.map((tx) => (
+                {filtered.map((tx) => (
                 <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <td className="px-4 py-3 align-top">
                     <input
@@ -289,12 +321,13 @@ export default function ArchivesPage() {
                     {tx.description || ""}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       </div>
-    </ModularLayout>
+    </Layout>
   );
 }

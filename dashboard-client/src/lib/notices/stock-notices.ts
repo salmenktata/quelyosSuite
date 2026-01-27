@@ -225,8 +225,8 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
 
   inventoriesOCA: {
     pageId: 'stock-inventories-oca',
-    title: 'Inventaires OCA',
-    purpose: "Version avancée de l'inventaire physique avec fonctionnalités OCA : inventaires par lots, validation multi-niveaux, historique détaillé. Pour organisations nécessitant un contrôle strict du stock.",
+    title: 'Inventaires Avancés',
+    purpose: "Version avancée de l'inventaire physique avec fonctionnalités étendues : inventaires par lots, validation multi-niveaux, historique détaillé. Pour organisations nécessitant un contrôle strict du stock.",
     icon: ClipboardList,
     moduleColor: 'orange',
     sections: [{

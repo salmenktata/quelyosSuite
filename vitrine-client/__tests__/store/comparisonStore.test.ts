@@ -3,8 +3,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
-import { useComparisonStore } from '@/store/comparisonStore';
-import type { Product } from '@/types';
+import { useComparisonStore, ComparisonProduct } from '@/store/comparisonStore';
 
 // Mock du localStorage
 const localStorageMock = (() => {
@@ -29,46 +28,37 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // Mock product data
-const mockProduct1: Product = {
+const mockProduct1: ComparisonProduct = {
   id: 1,
   name: 'Product 1',
   slug: 'product-1',
-  description: 'Test product 1',
-  list_price: 100,
-  currency: { id: 1, code: 'EUR', symbol: '€', name: 'EUR' },
+  price: 100,
+  currency: { id: 1, symbol: '€', name: 'EUR' },
   in_stock: true,
-  stock_qty: 10,
-  images: [],
-  category: null,
-  seo: { meta_title: '', meta_description: '', meta_keywords: '' },
-  is_featured: false,
-  is_new: false,
-  is_bestseller: false,
-  view_count: 0,
 };
 
-const mockProduct2: Product = {
+const mockProduct2: ComparisonProduct = {
   ...mockProduct1,
   id: 2,
   name: 'Product 2',
   slug: 'product-2',
 };
 
-const mockProduct3: Product = {
+const mockProduct3: ComparisonProduct = {
   ...mockProduct1,
   id: 3,
   name: 'Product 3',
   slug: 'product-3',
 };
 
-const mockProduct4: Product = {
+const mockProduct4: ComparisonProduct = {
   ...mockProduct1,
   id: 4,
   name: 'Product 4',
   slug: 'product-4',
 };
 
-const mockProduct5: Product = {
+const mockProduct5: ComparisonProduct = {
   ...mockProduct1,
   id: 5,
   name: 'Product 5',
@@ -146,7 +136,7 @@ describe('comparisonStore', () => {
   it('should check if can add more products', () => {
     const { result } = renderHook(() => useComparisonStore());
 
-    expect(result.current.canAddMore()).toBe(true);
+    expect(result.current.canAdd()).toBe(true);
 
     act(() => {
       result.current.addProduct(mockProduct1);
@@ -155,7 +145,7 @@ describe('comparisonStore', () => {
       result.current.addProduct(mockProduct4);
     });
 
-    expect(result.current.canAddMore()).toBe(false);
+    expect(result.current.canAdd()).toBe(false);
   });
 
   it('should clear all comparison products', () => {

@@ -78,13 +78,15 @@ export default function ImportPage() {
         />
 
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
-            Import intelligent
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Importez vos transactions bancaires en quelques clics
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Import intelligent
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Importez vos transactions bancaires en quelques clics
+            </p>
+          </div>
         </div>
 
         {/* PageNotice */}

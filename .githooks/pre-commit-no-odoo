@@ -38,6 +38,37 @@ fi
 
 echo "✅ Aucune référence Odoo dans UI"
 
+# Phase 1b : Vérification jargon Odoo
+echo "🔍 Vérification jargon Odoo (OCA, OpenERP, patterns modèles)..."
+
+JARGON_VIOLATIONS=""
+for file in $STAGED_FILES; do
+  if [ -f "$file" ]; then
+    # Grep pour jargon Odoo (OCA, OpenERP, OERP, patterns modèles)
+    JARGON_MATCHES=$(grep -nE '\bOCA\b|\bOpenERP\b|\bOERP\b|\bir\.model\b|\bres\.partner\b|\bres\.users\b|\bproduct\.template\b|\bsale\.order\b|\bWerkzeug\b' "$file" 2>/dev/null | grep -v '^\s*//')
+    if [ -n "$JARGON_MATCHES" ]; then
+      JARGON_VIOLATIONS="$JARGON_VIOLATIONS\n⚠️  $file:\n$JARGON_MATCHES\n"
+    fi
+  fi
+done
+
+if [ -n "$JARGON_VIOLATIONS" ]; then
+  echo "🚫 COMMIT BLOQUÉ - Jargon Odoo détecté dans UI:"
+  echo -e "$JARGON_VIOLATIONS"
+  echo ""
+  echo "💡 Termes à remplacer:"
+  echo "   OCA → communauté open-source"
+  echo "   OpenERP/OERP → ERP système"
+  echo "   ir.model → system.model"
+  echo "   res.partner → contacts"
+  echo "   product.template → products"
+  echo ""
+  echo "📄 Voir .claude/commands/no-odoo.md (Jargon)"
+  exit 1
+fi
+
+echo "✅ Aucun jargon Odoo détecté"
+
 # Phase 2 : Vérification champs API (vitrine-client uniquement)
 echo "🔍 Vérification champs API backend dans vitrine-client..."
 

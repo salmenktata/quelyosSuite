@@ -55,6 +55,46 @@ jobs:
 
           echo "## ✅ Aucune violation Odoo UI" >> $GITHUB_STEP_SUMMARY
 
+      - name: Scan jargon Odoo (Phase 1b)
+        run: |
+          echo "🔍 Scanning for Odoo jargon (OCA, OpenERP, model patterns)..."
+
+          # Exclusions
+          EXCLUSIONS="legal/page.tsx|lib/odoo|__tests__|node_modules|\.test\."
+
+          JARGON_VIOLATIONS=""
+
+          # Termes jargon Odoo
+          for term in "\\bOCA\\b" "\\bOpenERP\\b" "\\bOERP\\b" "\\bir\\.model\\b" "\\bres\\.partner\\b" "\\bres\\.users\\b" "\\bproduct\\.template\\b" "\\bsale\\.order\\b" "\\bWerkzeug\\b"; do
+            MATCHES=$(grep -rlE "$term" \
+              vitrine-client/src \
+              dashboard-client/src \
+              --include="*.ts" --include="*.tsx" 2>/dev/null \
+              | grep -vE "$EXCLUSIONS" || true)
+
+            if [ -n "$MATCHES" ]; then
+              JARGON_VIOLATIONS="$JARGON_VIOLATIONS\n⚠️ \"$term\":\n$MATCHES\n"
+            fi
+          done
+
+          if [ -n "$JARGON_VIOLATIONS" ]; then
+            echo "## 🚨 Jargon Odoo détecté" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo -e "$JARGON_VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Mapping requis" >> $GITHUB_STEP_SUMMARY
+            echo "| Terme | → Remplacement |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|----------------|" >> $GITHUB_STEP_SUMMARY
+            echo "| OCA | communauté open-source |" >> $GITHUB_STEP_SUMMARY
+            echo "| OpenERP/OERP | ERP système |" >> $GITHUB_STEP_SUMMARY
+            echo "| ir.model | system.model |" >> $GITHUB_STEP_SUMMARY
+            echo "| res.partner | contacts |" >> $GITHUB_STEP_SUMMARY
+            echo "| product.template | products |" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "✅ Aucun jargon Odoo détecté" >> $GITHUB_STEP_SUMMARY
+
       - name: Scan champs API backend (Phase 2)
         run: |
           echo "🔍 Scanning for backend field names in vitrine-client..."

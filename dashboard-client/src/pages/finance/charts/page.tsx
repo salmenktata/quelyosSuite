@@ -84,7 +84,7 @@ export default function ChartsPage() {
               </p>
             </div>
           </div>
-          <Button icon={Plus} variant="default">
+          <Button icon={<Plus className="h-4 w-4" />} variant="default">
             Nouveau compte
           </Button>
         </div>

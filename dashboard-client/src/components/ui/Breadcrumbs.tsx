@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { ChevronRight, Home } from "lucide-react";
 
 export interface BreadcrumbItem {
   label: string;
@@ -18,11 +18,11 @@ export function Breadcrumbs({ items, homeHref = "/" }: BreadcrumbsProps) {
         to={homeHref}
         className="flex items-center hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
       >
-        <HomeIcon className="h-4 w-4" />
+        <Home className="h-4 w-4" />
       </Link>
       {items.map((item, index) => (
         <div key={index} className="flex items-center gap-2">
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
           {item.href ? (
             <Link
               to={item.href}

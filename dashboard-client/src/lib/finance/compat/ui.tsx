@@ -16,12 +16,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none'
 
     const variantClasses = {
-      default: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-      outline: 'border border-gray-300 bg-transparent hover:bg-gray-100 focus:ring-gray-500',
-      ghost: 'bg-transparent hover:bg-gray-100 focus:ring-gray-500',
-      destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+      default: 'bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500',
+      primary: 'bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500',
+      secondary: 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-gray-500',
+      outline: 'border border-gray-300 dark:border-gray-600 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white focus:ring-gray-500',
+      ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white focus:ring-gray-500',
+      destructive: 'bg-red-600 dark:bg-red-500 text-white hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500',
     }
 
     const sizeClasses = {
@@ -54,12 +54,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         <input
           ref={ref}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            error ? 'border-red-500' : 'border-gray-300'
+          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'
           } ${className}`}
           {...props}
         />
-        {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{error}</p>}
       </div>
     )
   }
@@ -76,7 +76,7 @@ interface CardProps {
 export function Card({ children, className = '', onClick }: CardProps) {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${className}`}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${className}`}
       onClick={onClick}
     >
       {children}
@@ -85,7 +85,7 @@ export function Card({ children, className = '', onClick }: CardProps) {
 }
 
 export function CardHeader({ children, className = '' }: CardProps) {
-  return <div className={`px-6 py-4 border-b border-gray-200 ${className}`}>{children}</div>
+  return <div className={`px-6 py-4 border-b border-gray-200 dark:border-gray-700 ${className}`}>{children}</div>
 }
 
 export function CardContent({ children, className = '' }: CardProps) {
@@ -93,7 +93,7 @@ export function CardContent({ children, className = '' }: CardProps) {
 }
 
 export function CardFooter({ children, className = '' }: CardProps) {
-  return <div className={`px-6 py-4 border-t border-gray-200 ${className}`}>{children}</div>
+  return <div className={`px-6 py-4 border-t border-gray-200 dark:border-gray-700 ${className}`}>{children}</div>
 }
 
 // Badge
@@ -105,14 +105,14 @@ interface BadgeProps {
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   const variantClasses = {
-    default: 'bg-gray-100 text-gray-800',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    error: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800',
-    destructive: 'bg-red-100 text-red-800',
-    secondary: 'bg-gray-200 text-gray-700',
-    outline: 'bg-transparent border border-gray-300 text-gray-700',
+    default: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+    success: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+    warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+    error: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+    info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+    destructive: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+    secondary: 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+    outline: 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300',
   }
 
   return (
@@ -128,7 +128,7 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className = '' }: SkeletonProps) {
-  return <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+  return <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} />
 }
 
 // Select
@@ -141,7 +141,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <select
         ref={ref}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
         {...props}
       >
         {options.map((opt) => (
