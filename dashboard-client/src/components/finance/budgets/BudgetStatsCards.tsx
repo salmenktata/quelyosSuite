@@ -42,7 +42,7 @@ export function BudgetStatsCards({ budgets, formatCurrency }: BudgetStatsCardsPr
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       {/* Total Budgété */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -59,7 +59,7 @@ export function BudgetStatsCards({ budgets, formatCurrency }: BudgetStatsCardsPr
       </div>
 
       {/* Total Dépensé */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -90,7 +90,7 @@ export function BudgetStatsCards({ budgets, formatCurrency }: BudgetStatsCardsPr
       </div>
 
       {/* Budgets Sains */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -120,7 +120,7 @@ export function BudgetStatsCards({ budgets, formatCurrency }: BudgetStatsCardsPr
       </div>
 
       {/* Économies / Restant */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">

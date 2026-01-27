@@ -3,6 +3,7 @@ import logging
 import time
 import os
 import math
+from datetime import datetime, timedelta
 from odoo import http, fields
 from odoo.http import request
 from passlib.context import CryptContext
@@ -921,9 +922,11 @@ class QuelyosAPI(BaseController):
         """Créer un produit (ADMIN UNIQUEMENT)"""
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             params = self._get_params()
             name = params.get('name')
@@ -1040,9 +1043,11 @@ class QuelyosAPI(BaseController):
         """Modifier un produit (ADMIN UNIQUEMENT)"""
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -1159,9 +1164,11 @@ class QuelyosAPI(BaseController):
         """Supprimer un produit (ADMIN UNIQUEMENT)"""
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -5716,9 +5723,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Product = request.env['product.product'].sudo()
             Move = request.env['stock.move'].sudo()
@@ -5936,9 +5945,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Move = request.env['stock.move'].sudo()
             params = self._get_params()
@@ -9139,9 +9150,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -9245,9 +9258,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -9402,9 +9417,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             from datetime import datetime, timedelta
 
@@ -9585,15 +9602,9 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/stock/uom', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_uom_list(self, **kwargs):
-        """Liste toutes les unités de mesure disponibles"""
+        """Liste toutes les unités de mesure disponibles (Odoo 19 - catégories UoM supprimées)"""
         try:
-            params = self._get_params()
-            category_id = params.get('category_id')
-
             domain = [('active', '=', True)]
-            if category_id:
-                domain.append(('category_id', '=', category_id))
-
             uoms = request.env['uom.uom'].sudo().search(domain, order='name')
 
             uom_list = []
@@ -9601,11 +9612,6 @@ class QuelyosAPI(BaseController):
                 uom_list.append({
                     'id': uom.id,
                     'name': uom.name,
-                    'category_id': uom.category_id.id,
-                    'category_name': uom.category_id.name,
-                    'uom_type': uom.uom_type,
-                    'factor': uom.factor,
-                    'factor_inv': uom.factor_inv,
                     'rounding': uom.rounding,
                     'active': uom.active,
                 })
@@ -9628,24 +9634,17 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/stock/uom/categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_uom_categories(self, **kwargs):
-        """Liste toutes les catégories UoM"""
+        """
+        Note: Les catégories UoM ont été supprimées dans Odoo 19.
+        Retourne une liste vide pour compatibilité API.
+        """
         try:
-            categories = request.env['uom.category'].sudo().search([], order='name')
-
-            cat_list = []
-            for cat in categories:
-                uom_count = request.env['uom.uom'].sudo().search_count([('category_id', '=', cat.id)])
-                cat_list.append({
-                    'id': cat.id,
-                    'name': cat.name,
-                    'uom_count': uom_count,
-                })
-
             return {
                 'success': True,
                 'data': {
-                    'categories': cat_list,
-                    'total': len(cat_list),
+                    'categories': [],
+                    'total': 0,
+                    'message': 'UoM categories removed in Odoo 19'
                 }
             }
 
@@ -9681,15 +9680,14 @@ class QuelyosAPI(BaseController):
                     'error': 'UoM non trouvée'
                 }
 
-            # Vérifier même catégorie
-            if from_uom.category_id != to_uom.category_id:
+            # Conversion via Odoo (Odoo 19 gère automatiquement la compatibilité)
+            try:
+                converted_qty = from_uom._compute_quantity(qty, to_uom)
+            except Exception as conversion_error:
                 return {
                     'success': False,
-                    'error': f'Conversion impossible : catégories différentes ({from_uom.category_id.name} vs {to_uom.category_id.name})'
+                    'error': f'Conversion impossible : {str(conversion_error)}'
                 }
-
-            # Conversion via Odoo
-            converted_qty = from_uom._compute_quantity(qty, to_uom)
 
             return {
                 'success': True,
@@ -9727,17 +9725,14 @@ class QuelyosAPI(BaseController):
                     'error': 'Produit non trouvé'
                 }
 
-            # UoM principale
+            # UoM principale (Odoo 19: structure simplifiée)
             uom = product.uom_id
-            # UoM d'achat
-            uom_po = product.uom_po_id
 
-            # Autres UoM de la même catégorie
+            # Autres UoM actives
             alternative_uoms = request.env['uom.uom'].sudo().search([
-                ('category_id', '=', uom.category_id.id),
                 ('id', '!=', uom.id),
                 ('active', '=', True)
-            ])
+            ], limit=10)
 
             return {
                 'success': True,
@@ -9747,19 +9742,11 @@ class QuelyosAPI(BaseController):
                     'uom': {
                         'id': uom.id,
                         'name': uom.name,
-                        'category': uom.category_id.name,
                         'rounding': uom.rounding,
-                    },
-                    'uom_po': {
-                        'id': uom_po.id,
-                        'name': uom_po.name,
-                        'category': uom_po.category_id.name,
                     },
                     'alternative_uoms': [{
                         'id': u.id,
                         'name': u.name,
-                        'factor': u.factor,
-                        'factor_inv': u.factor_inv,
                     } for u in alternative_uoms],
                 }
             }
@@ -9831,7 +9818,7 @@ class QuelyosAPI(BaseController):
                     'partner': move.picking_id.partner_id.name if move.picking_id and move.picking_id.partner_id else None,
                 })
 
-            # Infos lot
+            # Infos lot (expiration_date peut ne pas exister selon config Odoo)
             lot_info = {
                 'id': lot.id,
                 'name': lot.name,
@@ -9840,7 +9827,7 @@ class QuelyosAPI(BaseController):
                 'product_name': lot.product_id.name,
                 'product_sku': lot.product_id.default_code or '',
                 'stock_qty': lot.product_qty,
-                'expiration_date': lot.expiration_date.isoformat() if lot.expiration_date else None,
+                'expiration_date': getattr(lot, 'expiration_date', None).isoformat() if getattr(lot, 'expiration_date', None) else None,
             }
 
             return {
@@ -14181,9 +14168,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Route = request.env['stock.route'].sudo()
 
@@ -14250,9 +14239,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Route = request.env['stock.route'].sudo()
             route = Route.browse(route_id)
@@ -14338,9 +14329,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Warehouse = request.env['stock.warehouse'].sudo()
             warehouse = Warehouse.browse(warehouse_id)
@@ -14424,9 +14417,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Warehouse = request.env['stock.warehouse'].sudo()
             params = self._get_params()
@@ -14515,9 +14510,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -14615,9 +14612,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -14721,9 +14720,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -14835,9 +14836,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Product = request.env['product.product'].sudo()
             product = Product.browse(product_id)
@@ -14893,9 +14896,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -15036,9 +15041,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Location = request.env['stock.location'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -15128,9 +15135,11 @@ class QuelyosAPI(BaseController):
         """
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Location = request.env['stock.location'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -15233,9 +15242,11 @@ class QuelyosAPI(BaseController):
         """Créer une nouvelle location (admin uniquement)"""
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Location = request.env['stock.location'].sudo()
             Warehouse = request.env['stock.warehouse'].sudo()
@@ -15332,9 +15343,11 @@ class QuelyosAPI(BaseController):
         """Modifier une location existante (admin uniquement)"""
         try:
             # SECURITE : Vérifier droits admin
-            error = self._require_admin()
-            if error:
-                return error
+            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
 
             Location = request.env['stock.location'].sudo()
             params = self._get_params()

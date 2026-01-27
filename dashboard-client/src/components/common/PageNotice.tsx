@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Info, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
 import { logger } from '@quelyos/logger';
 import type { PageNoticeConfig } from "@/lib/notices/types";
 import { MODULE_COLOR_CONFIGS } from "@/lib/notices/types";
@@ -108,12 +107,12 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <GlassPanel className="p-0" gradient={colorConfig.gradient}>
+            <div className={`border ${colorConfig.border} ${colorConfig.bg} rounded-xl backdrop-blur-sm p-0`}>
               <button
                 onClick={handleToggle}
                 aria-label={`Développer les informations - ${config.title}`}
                 aria-expanded={false}
-                className="w-full px-5 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors text-left"
+                className="w-full px-5 py-3 flex items-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
               >
                 <div className={`rounded-lg ${colorConfig.iconBg} p-2 flex-shrink-0`}>
                   <Icon className={`h-4 w-4 ${colorConfig.iconText}`} />
@@ -123,7 +122,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                 </span>
                 <ChevronDown className={`h-4 w-4 ${colorConfig.iconText} flex-shrink-0`} />
               </button>
-            </GlassPanel>
+            </div>
           </motion.div>
         ) : mounted ? (
           // Expanded State
@@ -134,21 +133,21 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <GlassPanel className="p-5" gradient={colorConfig.gradient}>
+            <div className={`border ${colorConfig.border} ${colorConfig.bg} rounded-xl backdrop-blur-sm p-5`}>
               <div className="flex items-start gap-3">
                 <div className={`rounded-lg ${colorConfig.iconBg} p-2 flex-shrink-0`}>
                   <Icon className={`h-5 w-5 ${colorConfig.iconText}`} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-semibold text-white">
+                    <h3 className={`text-base font-semibold ${colorConfig.textPrimary}`}>
                       {config.title}
                     </h3>
                     <button
                       onClick={handleToggle}
                       aria-label={`Masquer les informations - ${config.title}`}
                       aria-expanded={true}
-                      className="rounded-full p-1.5 hover:bg-white/10 transition-colors"
+                      className="rounded-full p-1.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                     >
                       <ChevronUp className={`h-4 w-4 ${colorConfig.iconText}`} />
                     </button>
@@ -156,7 +155,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
 
                   {/* Purpose */}
                   <div className="mb-3">
-                    <p className={`text-sm ${colorConfig.textPrimary} leading-relaxed`}>
+                    <p className={`text-sm ${colorConfig.textSecondary} leading-relaxed`}>
                       {config.purpose}
                     </p>
                   </div>
@@ -166,10 +165,10 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                     const SectionIcon = section.icon;
                     return (
                       <div key={sectionIndex} className={sectionIndex > 0 ? "mt-3" : ""}>
-                        <div className="rounded-lg bg-white/5 p-3">
+                        <div className="rounded-lg bg-black/5 dark:bg-white/5 p-3">
                           <div className="flex items-center gap-2 mb-2">
-                            {SectionIcon && <SectionIcon className="h-4 w-4 text-yellow-300" />}
-                            <span className="text-sm font-medium text-white">
+                            {SectionIcon && <SectionIcon className={`h-4 w-4 ${colorConfig.iconText}`} />}
+                            <span className={`text-sm font-medium ${colorConfig.textPrimary}`}>
                               {section.title}
                             </span>
                           </div>
@@ -177,7 +176,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                             {section.items.map((item, itemIndex) => (
                               <li
                                 key={itemIndex}
-                                className="text-xs text-slate-200 flex items-start gap-2"
+                                className={`text-xs ${colorConfig.textSecondary} flex items-start gap-2`}
                               >
                                 <span className={`${colorConfig.bullet} mt-0.5 flex-shrink-0`}>•</span>
                                 <span>{item}</span>
@@ -191,30 +190,30 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
 
                   {/* Feedback Section */}
                   {enableFeedback && (
-                    <div className="mt-4 pt-3 border-t border-white/10">
+                    <div className={`mt-4 pt-3 border-t ${colorConfig.border}`}>
                       {!feedbackGiven ? (
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-slate-300">
+                          <span className={`text-xs ${colorConfig.textSecondary}`}>
                             Ces informations vous sont-elles utiles ?
                           </span>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleFeedback(true)}
                               aria-label="Oui, c'est utile"
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors group"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors group"
                             >
-                              <ThumbsUp className="h-3.5 w-3.5 text-slate-400 group-hover:text-green-400 transition-colors" />
-                              <span className="text-xs text-slate-400 group-hover:text-green-400 transition-colors">
+                              <ThumbsUp className={`h-3.5 w-3.5 ${colorConfig.textSecondary} group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors`} />
+                              <span className={`text-xs ${colorConfig.textSecondary} group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors`}>
                                 Oui
                               </span>
                             </button>
                             <button
                               onClick={() => handleFeedback(false)}
                               aria-label="Non, pas utile"
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors group"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors group"
                             >
-                              <ThumbsDown className="h-3.5 w-3.5 text-slate-400 group-hover:text-red-400 transition-colors" />
-                              <span className="text-xs text-slate-400 group-hover:text-red-400 transition-colors">
+                              <ThumbsDown className={`h-3.5 w-3.5 ${colorConfig.textSecondary} group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors`} />
+                              <span className={`text-xs ${colorConfig.textSecondary} group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors`}>
                                 Non
                               </span>
                             </button>
@@ -224,15 +223,15 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                         <div className="flex items-center gap-2">
                           {feedbackValue ? (
                             <>
-                              <ThumbsUp className="h-3.5 w-3.5 text-green-400" />
-                              <span className="text-xs text-green-400">
+                              <ThumbsUp className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                              <span className="text-xs text-green-600 dark:text-green-400">
                                 Merci pour votre retour positif !
                               </span>
                             </>
                           ) : (
                             <>
-                              <ThumbsDown className="h-3.5 w-3.5 text-red-400" />
-                              <span className="text-xs text-red-400">
+                              <ThumbsDown className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+                              <span className="text-xs text-red-600 dark:text-red-400">
                                 Merci pour votre retour. Nous travaillons à améliorer ce contenu.
                               </span>
                             </>
@@ -243,21 +242,21 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                   )}
                 </div>
               </div>
-            </GlassPanel>
+            </div>
           </motion.div>
         ) : (
           // Loading State (prevents hydration mismatch)
-          <GlassPanel className="p-5" gradient={colorConfig.gradient}>
+          <div className={`border ${colorConfig.border} ${colorConfig.bg} rounded-xl backdrop-blur-sm p-5`}>
             <div className="flex items-start gap-3">
               <div className={`rounded-lg ${colorConfig.iconBg} p-2 flex-shrink-0`}>
                 <Icon className={`h-5 w-5 ${colorConfig.iconText}`} />
               </div>
               <div className="flex-1">
-                <h3 className="mb-2 text-base font-semibold text-white">
+                <h3 className={`mb-2 text-base font-semibold ${colorConfig.textPrimary}`}>
                   {config.title}
                 </h3>
                 <div className="mb-3">
-                  <p className={`text-sm ${colorConfig.textPrimary} leading-relaxed`}>
+                  <p className={`text-sm ${colorConfig.textSecondary} leading-relaxed`}>
                     {config.purpose}
                   </p>
                 </div>
@@ -265,10 +264,10 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                   const SectionIcon = section.icon;
                   return (
                     <div key={sectionIndex} className={sectionIndex > 0 ? "mt-3" : ""}>
-                      <div className="rounded-lg bg-white/5 p-3">
+                      <div className="rounded-lg bg-black/5 dark:bg-white/5 p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          {SectionIcon && <SectionIcon className="h-4 w-4 text-yellow-300" />}
-                          <span className="text-sm font-medium text-white">
+                          {SectionIcon && <SectionIcon className={`h-4 w-4 ${colorConfig.iconText}`} />}
+                          <span className={`text-sm font-medium ${colorConfig.textPrimary}`}>
                             {section.title}
                           </span>
                         </div>
@@ -276,7 +275,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                           {section.items.map((item, itemIndex) => (
                             <li
                               key={itemIndex}
-                              className="text-xs text-slate-200 flex items-start gap-2"
+                              className={`text-xs ${colorConfig.textSecondary} flex items-start gap-2`}
                             >
                               <span className={`${colorConfig.bullet} mt-0.5 flex-shrink-0`}>•</span>
                               <span>{item}</span>
@@ -289,7 +288,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                 })}
               </div>
             </div>
-          </GlassPanel>
+          </div>
         )}
       </AnimatePresence>
     </motion.div>

@@ -119,8 +119,8 @@ export const BudgetFormModal = memo(function BudgetFormModal({
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
-                Nom du budget <span className="text-rose-400">*</span>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Nom du budget <span className="text-rose-600 dark:text-rose-400">*</span>
               </label>
               <input
                 ref={firstInputRef}
@@ -129,7 +129,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Marketing Q1, Dépenses fixes..."
-                className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white placeholder:text-indigo-100/60 focus:outline-none focus:ring-2 backdrop-blur-sm transition-all ${focusRing}`}
+                className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-indigo-100/60 focus:outline-none focus:ring-2 backdrop-blur-sm transition-all ${focusRing}`}
                 required
                 disabled={isSubmitting}
               />
@@ -137,8 +137,8 @@ export const BudgetFormModal = memo(function BudgetFormModal({
 
             {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
-                Montant <span className="text-rose-400">*</span>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Montant <span className="text-rose-600 dark:text-rose-400">*</span>
               </label>
               <div className="relative">
                 <input
@@ -149,24 +149,24 @@ export const BudgetFormModal = memo(function BudgetFormModal({
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   placeholder="1000.00"
-                  className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 pr-12 text-white placeholder:text-indigo-100/60 focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
+                  className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 pr-12 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-indigo-100/60 focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
                   required
                   disabled={isSubmitting}
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-100/60">€</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-indigo-100/60">€</span>
               </div>
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Catégorie
               </label>
               <select
                 name="categoryId"
                 value={formData.categoryId || ""}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value ? Number(e.target.value) : null })}
-                className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
+                className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
                 disabled={isSubmitting}
               >
                 <option value="">Toutes catégories</option>
@@ -178,14 +178,14 @@ export const BudgetFormModal = memo(function BudgetFormModal({
 
             {/* Period */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
-                Période <span className="text-rose-400">*</span>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Période <span className="text-rose-600 dark:text-rose-400">*</span>
               </label>
               <select
                 name="period"
                 value={formData.period}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value as typeof formData.period })}
-                className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
+                className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
                 required
                 disabled={isSubmitting}
               >
@@ -199,15 +199,15 @@ export const BudgetFormModal = memo(function BudgetFormModal({
 
             {/* Start Date */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
-                Date de début <span className="text-rose-400">*</span>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Date de début <span className="text-rose-600 dark:text-rose-400">*</span>
               </label>
               <input
                 type="date"
                 name="startDate"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
+                className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
                 required
                 disabled={isSubmitting}
               />
@@ -216,8 +216,8 @@ export const BudgetFormModal = memo(function BudgetFormModal({
             {/* End Date (only if CUSTOM) */}
             {formData.period === "CUSTOM" && (
               <div>
-                <label className="block text-sm font-medium text-indigo-100 mb-2">
-                  Date de fin <span className="text-rose-400">*</span>
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                  Date de fin <span className="text-rose-600 dark:text-rose-400">*</span>
                 </label>
                 <input
                   type="date"
@@ -225,7 +225,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                   min={formData.startDate}
-                  className={`w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
+                  className={`w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 backdrop-blur-sm ${focusRing}`}
                   required={formData.period === "CUSTOM"}
                   disabled={isSubmitting}
                 />

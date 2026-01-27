@@ -699,14 +699,14 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const detectModule = (): Module => {
     const path = location.pathname
     // IMPORTANT: Check /finance/stock BEFORE /finance
-    if (path.startsWith('/finance/stock')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0]
-    if (path.startsWith('/finance')) return accessibleModules.find(m => m.id === 'finance') || accessibleModules[0]
-    if (path.startsWith('/stock') || path.startsWith('/warehouses') || path.startsWith('/inventory')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0]
-    if (path.startsWith('/crm') || path.startsWith('/invoices') || path.startsWith('/payments') || path.startsWith('/pricelists')) return accessibleModules.find(m => m.id === 'crm') || accessibleModules[0]
-    if (path.startsWith('/store')) return accessibleModules.find(m => m.id === 'store') || accessibleModules[0]
-    if (path.startsWith('/marketing')) return accessibleModules.find(m => m.id === 'marketing') || accessibleModules[0]
-    if (path.startsWith('/hr')) return accessibleModules.find(m => m.id === 'hr') || accessibleModules[0]
-    return accessibleModules.find(m => m.id === 'home') || accessibleModules[0]
+    if (path.startsWith('/finance/stock')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/finance')) return accessibleModules.find(m => m.id === 'finance') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/stock') || path.startsWith('/warehouses') || path.startsWith('/inventory')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/crm') || path.startsWith('/invoices') || path.startsWith('/payments') || path.startsWith('/pricelists')) return accessibleModules.find(m => m.id === 'crm') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/store')) return accessibleModules.find(m => m.id === 'store') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/marketing')) return accessibleModules.find(m => m.id === 'marketing') || accessibleModules[0] || MODULES[0]
+    if (path.startsWith('/hr')) return accessibleModules.find(m => m.id === 'hr') || accessibleModules[0] || MODULES[0]
+    return accessibleModules.find(m => m.id === 'home') || accessibleModules[0] || MODULES[0]
   }
 
   const [currentModule, setCurrentModule] = useState<Module>(detectModule)

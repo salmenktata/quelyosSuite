@@ -10,6 +10,10 @@ import {
   Target,
   TrendingDown,
   FileText,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Users,
+  Lightbulb,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -288,6 +292,116 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
           `Utilisez le cash-flow projeté pour anticiper les besoins de trésorerie à 90 jours`,
           `Exportez les graphiques pour vos présentations et rapports de gestion`,
           `Comparez les périodes pour mesurer la croissance et l'impact des actions correctives`,
+        ],
+      },
+    ],
+  },
+
+  expenses: {
+    pageId: 'finance-expenses',
+    title: 'Gestion des Dépenses',
+    purpose:
+      "Suivez et contrôlez toutes vos dépenses d'entreprise. Catégorisez, analysez et optimisez vos sorties d'argent pour maintenir une santé financière saine.",
+    icon: ArrowDownCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Catégorisez systématiquement chaque dépense dès sa saisie pour faciliter l'analyse`,
+          `Numérisez et attachez les justificatifs (factures, reçus) pour la traçabilité comptable`,
+          `Définissez des budgets par catégorie et surveillez les dépassements mensuellement`,
+          `Analysez les dépenses récurrentes pour identifier les opportunités de renégociation`,
+          `Exportez régulièrement pour votre comptable ou expert-comptable`,
+        ],
+      },
+    ],
+  },
+
+  incomes: {
+    pageId: 'finance-incomes',
+    title: 'Gestion des Revenus',
+    purpose:
+      "Suivez toutes vos sources de revenus (ventes, prestations, autres). Analysez la répartition et anticipez vos entrées d'argent pour optimiser votre trésorerie.",
+    icon: ArrowUpCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Enregistrez les revenus dès leur confirmation pour avoir une vision temps réel`,
+          `Catégorisez par source (ventes, prestations, subventions) pour identifier les activités rentables`,
+          `Suivez les délais de paiement client pour anticiper les encaissements`,
+          `Comparez revenus réels vs prévisionnels pour ajuster votre stratégie commerciale`,
+          `Analysez la saisonnalité de vos revenus pour planifier les périodes creuses`,
+        ],
+      },
+    ],
+  },
+
+  suppliers: {
+    pageId: 'finance-suppliers',
+    title: 'Gestion des Fournisseurs',
+    purpose:
+      "Gérez votre base fournisseurs, suivez les délais de paiement et pilotez vos relations commerciales. Optimisez vos conditions de paiement et réduisez les risques de rupture.",
+    icon: Users as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Classez vos fournisseurs par importance (stratégique, régulier, occasionnel) pour prioriser`,
+          `Négociez des délais de paiement adaptés à votre trésorerie (45-60 jours)`,
+          `Surveillez les factures impayées et alertez avant échéance pour maintenir la relation`,
+          `Diversifiez vos fournisseurs critiques pour réduire les risques de rupture`,
+          `Analysez les volumes d'achats pour négocier des remises sur quantités`,
+        ],
+      },
+    ],
+  },
+
+  accounts: {
+    pageId: 'finance-accounts',
+    title: 'Comptes Bancaires',
+    purpose:
+      "Centralisez tous vos comptes bancaires (banque, cash, épargne, investissements). Suivez les soldes en temps réel et pilotez votre trésorerie multi-comptes.",
+    icon: CreditCard as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Créez un compte par type (banque principale, cash, épargne) pour clarifier la répartition`,
+          `Réconciliez mensuellement les soldes système vs relevés bancaires réels`,
+          `Définissez un seuil de trésorerie mini par compte et configurez des alertes`,
+          `Centralisez la trésorerie excédentaire sur un compte rémunéré`,
+          `Attribuez des comptes à des portefeuilles (opérationnel, investissement) pour segmenter`,
+        ],
+      },
+    ],
+  },
+
+  budgets: {
+    pageId: 'finance-budgets',
+    title: 'Gestion des Budgets',
+    purpose:
+      "Définissez des budgets prévisionnels par catégorie et période. Suivez en temps réel les écarts entre prévu et réalisé pour ajuster votre pilotage financier.",
+    icon: Target as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Définissez des budgets réalistes basés sur l'historique + croissance prévisionnelle`,
+          `Révisez trimestriellement les budgets pour ajuster selon l'activité réelle`,
+          `Configurez des alertes à 80% et 100% de consommation pour anticiper les dépassements`,
+          `Analysez les écarts significatifs (>20%) pour identifier les dérives ou opportunités`,
+          `Impliquez les responsables de chaque poste budgétaire dans le suivi`,
         ],
       },
     ],

@@ -29,6 +29,13 @@ import ReorderingRules from './pages/stock/ReorderingRules'
 import StockChangeReasons from './pages/stock/StockChangeReasons'
 import InventoriesOCA from './pages/stock/InventoriesOCA'
 import LocationLocks from './pages/stock/LocationLocks'
+import ExpiryAlerts from './pages/stock/ExpiryAlerts'
+import WarehouseRoutes from './pages/stock/WarehouseRoutes'
+import ABCAnalysis from './pages/stock/ABCAnalysis'
+import StockForecast from './pages/stock/StockForecast'
+import UnitOfMeasure from './pages/stock/UnitOfMeasure'
+import LotTraceability from './pages/stock/LotTraceability'
+import AdvancedReports from './pages/stock/AdvancedReports'
 import DeliveryMethods from './pages/store/DeliveryMethods'
 import SiteConfig from './pages/store/SiteConfig'
 import Payments from './pages/Payments'
@@ -310,6 +317,62 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <LocationLocks />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/expiry-alerts"
+                element={
+                  <ProtectedRoute>
+                    <ExpiryAlerts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/warehouse-routes"
+                element={
+                  <ProtectedRoute>
+                    <WarehouseRoutes />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/abc-analysis"
+                element={
+                  <ProtectedRoute>
+                    <ABCAnalysis />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/forecast"
+                element={
+                  <ProtectedRoute>
+                    <StockForecast />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/uom"
+                element={
+                  <ProtectedRoute>
+                    <UnitOfMeasure />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/lot-traceability"
+                element={
+                  <ProtectedRoute>
+                    <LotTraceability />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/stock/advanced-reports"
+                element={
+                  <ProtectedRoute>
+                    <AdvancedReports />
                   </ProtectedRoute>
                 }
               />

@@ -57,7 +57,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
       {/* Quick Filters Row */}
       <div className="flex flex-wrap gap-3 items-center">
         {/* Search */}

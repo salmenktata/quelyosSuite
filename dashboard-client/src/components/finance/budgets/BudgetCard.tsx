@@ -54,7 +54,7 @@ export function BudgetCard({ budget, formatCurrency, onEdit, onDuplicate, onDele
       data-testid="budget-card"
       data-status={budget.status ? budget.status.toLowerCase() : undefined}
       onClick={() => navigate(`/finance/budgets/${budget.id}`)}
-      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-all ${
+      className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-all ${
         budget.status === "EXCEEDED"
           ? "ring-1 ring-rose-200 dark:ring-rose-800"
           : budget.status === "WARNING"
