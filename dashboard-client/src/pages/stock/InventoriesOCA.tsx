@@ -109,7 +109,7 @@ export default function InventoriesOCA() {
                   {inventories.length === 0 && (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-sm text-gray-500">
-                        Aucun inventaire. Créez-en dans Odoo → Stock → Inventaires.
+                        Aucun inventaire. Créez-en depuis Stock → Inventaires.
                       </td>
                     </tr>
                   )}
@@ -156,7 +156,7 @@ export default function InventoriesOCA() {
           <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
             <p className="text-sm text-blue-800">
               💡 <strong>Astuce :</strong> Le module OCA stock_inventory restaure les fonctionnalités d'inventaire
-              groupé retirées dans Odoo 15+, permettant de compter plusieurs produits simultanément.
+              groupé, permettant de compter plusieurs produits simultanément.
             </p>
           </div>
         )}

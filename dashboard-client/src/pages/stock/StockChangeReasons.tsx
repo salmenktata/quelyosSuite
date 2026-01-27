@@ -83,7 +83,7 @@ export default function StockChangeReasons() {
                 {reasons.length === 0 && (
                   <tr>
                     <td colSpan={3} className="px-6 py-12 text-center text-sm text-gray-500">
-                      Aucune raison configurée. Créez-en dans Odoo → Stock → Configuration → Raisons de Changement.
+                      Aucune raison configurée. Créez-en depuis Configuration → Stock → Raisons de Changement.
                     </td>
                   </tr>
                 )}
