@@ -16,6 +16,7 @@ import {
   Monitor,
   Clock
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 type Session = {
   id: number;
@@ -366,7 +367,7 @@ export default function SecurityPage() {
 
           {!twoFAEnabled && !twoFASetupMode && (
             <div className="space-y-4">
-              <GlassCard variant="subtle" className="p-4">
+              <Card>
                 <div className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-amber-400 mt-0.5" />
                   <div>
@@ -377,7 +378,7 @@ export default function SecurityPage() {
                     </p>
                   </div>
                 </div>
-              </GlassCard>
+              </Card>
 
               <button
                 onClick={handleSetup2FA}
@@ -395,12 +396,12 @@ export default function SecurityPage() {
               </button>
 
               {twoFAError && (
-                <GlassCard variant="subtle" className="border-rose-500/30 bg-rose-500/10 px-4 py-3">
+                <Card>
                   <div className="flex items-center gap-2 text-rose-200">
                     <AlertTriangle size={16} />
                     <span className="text-sm">{twoFAError}</span>
                   </div>
-                </GlassCard>
+                </Card>
               )}
             </div>
           )}
@@ -477,7 +478,7 @@ export default function SecurityPage() {
 
           {twoFAEnabled && !twoFASetupMode && (
             <div className="space-y-4">
-              <GlassCard variant="subtle" className="p-4 border-green-500/20 bg-green-500/5">
+              <Card>
                 <div className="flex items-start gap-3">
                   <Check className="h-5 w-5 text-green-400 mt-0.5" />
                   <div>
@@ -487,7 +488,7 @@ export default function SecurityPage() {
                     </p>
                   </div>
                 </div>
-              </GlassCard>
+              </Card>
 
               <button
                 onClick={handleDisable2FA}
@@ -503,7 +504,7 @@ export default function SecurityPage() {
       </div>
 
       {/* Active Sessions */}
-      <GlassPanel gradient="none" className="border-white/10">
+      <div>
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500">
             <Monitor className="h-5 w-5 text-white" />
@@ -519,15 +520,14 @@ export default function SecurityPage() {
             <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
           </div>
         ) : sessions.length === 0 ? (
-          <GlassCard variant="subtle" className="p-6 text-center">
+          <Card>
             <p className="text-slate-400">Aucune session active trouvée</p>
-          </GlassCard>
+          </Card>
         ) : (
           <div className="space-y-3">
             {sessions.map((session) => (
-              <GlassCard
+              <Card
                 key={session.id}
-                variant="subtle"
                 className={`p-4 ${session.isCurrent ? "border-green-500/30 bg-green-500/5" : ""}`}
               >
                 <div className="flex items-center justify-between gap-4">
@@ -561,11 +561,11 @@ export default function SecurityPage() {
                     </button>
                   )}
                 </div>
-              </GlassCard>
+              </Card>
             ))}
           </div>
         )}
-      </GlassPanel>
+      </div>
     </div>
   );
 }

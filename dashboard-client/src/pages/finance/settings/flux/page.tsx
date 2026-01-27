@@ -313,7 +313,7 @@ export default function FluxSettingsPage() {
           ) : (
             <div className="space-y-3">
               {customFlowTypes.map((custom) => (
-                <GlassListItem
+                <div
                   key={custom.id}
                   className="flex items-center justify-between p-4"
                 >
@@ -342,7 +342,7 @@ export default function FluxSettingsPage() {
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                </GlassListItem>
+                </div>
               ))}
             </div>
           )}

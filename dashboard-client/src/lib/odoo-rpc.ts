@@ -28,9 +28,10 @@ export async function odooRpc<T = unknown>(
   }
 
   // Ajouter le session_id si disponible
+  // Utiliser Authorization au lieu de X-Session-Id pour compatibilité CORS
   const sessionId = localStorage.getItem('session_id')
   if (sessionId && sessionId !== 'null' && sessionId !== 'undefined') {
-    headers['X-Session-Id'] = sessionId
+    headers['Authorization'] = `Bearer ${sessionId}`
   }
 
   try {

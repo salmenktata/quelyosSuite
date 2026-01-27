@@ -1,7 +1,25 @@
+/**
+ * ModularLayout - Layout principal du Dashboard avec navigation modulaire
+ *
+ * Fonctionnalités :
+ * - Navigation modulaire par 7 modules (Home, Finance, Boutique, Stock, CRM, Marketing, RH)
+ * - Menu latéral adaptatif avec sous-menus dépliables
+ * - Détection automatique du module actif selon l'URL
+ * - App Launcher pour accès rapide aux applications
+ * - Quick access navbar pour 5 modules principaux
+ * - Gestion des permissions utilisateur (filtrage modules)
+ * - Support dark/light mode complet
+ * - Responsive mobile avec sidebar escamotable
+ * - Auto-ouverture des sous-menus contenant la page active
+ * - Bouton "Voir mon site" vers e-commerce
+ * - Gestion des badges et séparateurs dans les sous-menus
+ * - Persistance du module actif lors de la navigation
+ */
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
 import { usePermissions } from '../hooks/usePermissions'
+import { Button } from './common/Button'
 import {
   // Common
   ChevronDown,
@@ -306,8 +324,8 @@ const MODULES: Module[] = [
       {
         title: 'Analyse',
         items: [
-          { name: 'Valorisation', path: '/finance/stock/valuation', icon: Layers },
-          { name: 'Rotation', path: '/finance/stock/turnover', icon: Shuffle },
+          { name: 'Valorisation', path: '/stock/valuation', icon: Layers },
+          { name: 'Rotation', path: '/stock/turnover', icon: Shuffle },
         ],
       },
     ],
@@ -449,7 +467,7 @@ function AppLauncher({
             <input
               type="text"
               placeholder="Rechercher une application..."
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
         </div>
@@ -492,6 +510,7 @@ function TopNavbar({
   onMenuClick,
   onAppLauncherClick,
   isAppLauncherOpen,
+  isModuleChanging,
   modules
 }: {
   currentModule: Module
@@ -499,6 +518,7 @@ function TopNavbar({
   onMenuClick: () => void
   onAppLauncherClick: () => void
   isAppLauncherOpen: boolean
+  isModuleChanging: boolean
   modules: Module[]
 }) {
   const { theme, toggleTheme } = useTheme()
@@ -510,16 +530,19 @@ function TopNavbar({
   return (
     <header className="h-14 bg-gray-900 dark:bg-gray-950 border-b border-gray-800 flex items-center px-4 sticky top-0 z-30">
       {/* App launcher button */}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onAppLauncherClick}
-        className={`p-2 rounded-lg transition-all mr-3 ${
+        className={`mr-3 ${
           isAppLauncherOpen
             ? 'bg-gray-700 text-white'
             : 'text-gray-400 hover:bg-gray-800 hover:text-white'
         }`}
+        icon={<Grid3X3 className="h-5 w-5" />}
       >
-        <Grid3X3 className="h-5 w-5" />
-      </button>
+        <span className="sr-only">Lanceur d'applications</span>
+      </Button>
 
       {/* Logo */}
       <Link to="/dashboard" className="flex items-center gap-2 mr-6">
@@ -535,18 +558,21 @@ function TopNavbar({
           const ModuleIcon = module.icon
           const isActive = module.id === currentModule.id
           return (
-            <button
+            <Button
               key={module.id}
+              variant="ghost"
+              size="sm"
               onClick={() => onModuleChange(module.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              loading={isModuleChanging && isActive}
+              className={`${
                 isActive
                   ? 'bg-gray-700 text-white'
                   : 'text-gray-400 hover:bg-gray-800 hover:text-white'
               }`}
+              icon={<ModuleIcon className="h-4 w-4" />}
             >
-              <ModuleIcon className="h-4 w-4" />
-              <span>{module.shortName}</span>
-            </button>
+              {module.shortName}
+            </Button>
           )
         })}
       </nav>
@@ -573,21 +599,27 @@ function TopNavbar({
           <span className="hidden md:inline">Voir mon site</span>
         </a>
 
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={toggleTheme}
-          className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+          className="text-gray-400 hover:bg-gray-800 hover:text-white"
           title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
+          icon={theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         >
-          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-        </button>
+          <span className="sr-only">{theme === 'light' ? 'Mode sombre' : 'Mode clair'}</span>
+        </Button>
 
         {/* Mobile menu button */}
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onMenuClick}
-          className="lg:hidden p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+          className="lg:hidden text-gray-400 hover:bg-gray-800 hover:text-white"
+          icon={<Menu className="h-5 w-5" />}
         >
-          <Menu className="h-5 w-5" />
-        </button>
+          <span className="sr-only">Menu</span>
+        </Button>
       </div>
     </header>
   )
@@ -632,7 +664,7 @@ function MenuItemComponent({
                 return (
                   <div
                     key={`separator-${idx}`}
-                    className="px-3 pt-3 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600 border-b border-gray-200 dark:border-gray-700 mt-2"
+                    className="px-3 pt-3 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 mt-2"
                   >
                     {subItem.name}
                   </div>
@@ -688,6 +720,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAppLauncherOpen, setIsAppLauncherOpen] = useState(false)
   const [openMenus, setOpenMenus] = useState<Set<string>>(new Set())
+  const [isModuleChanging, setIsModuleChanging] = useState(false)
   const { canAccessModule } = usePermissions()
 
   // Filtrer les modules selon les permissions de l'utilisateur
@@ -717,10 +750,13 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/')
 
-  const handleModuleChange = (moduleId: ModuleId) => {
+  const handleModuleChange = async (moduleId: ModuleId) => {
+    setIsModuleChanging(true)
     const module = MODULES.find(m => m.id === moduleId)!
     setCurrentModule(module)
     navigate(module.basePath)
+    // Délai minimal pour feedback visuel
+    setTimeout(() => setIsModuleChanging(false), 300)
   }
 
   const handleLogout = () => {

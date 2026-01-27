@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@quelyos/logger'
+import { odooRpc } from '@/lib/odoo-rpc'
 
 // URL de l'API (même config que api.ts)
 const API_URL = import.meta.env.VITE_API_URL || ''
@@ -70,27 +71,15 @@ export function useSiteConfig() {
   return useQuery<SiteConfig>({
     queryKey: ['site-config'],
     queryFn: async () => {
-      // L'endpoint dans main.py est un GET HTTP (pas JSON-RPC)
-      // On utilise credentials: 'omit' pour éviter d'envoyer des cookies de session invalides
-      const response = await fetch(`${API_URL}/api/ecommerce/site-config`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'omit',
-      })
+      // L'endpoint est JSON-RPC (POST)
+      // Le backend retourne {success: true, config: {...}}
+      const result = await odooRpc<{ success: boolean; config: SiteConfig }>('/api/ecommerce/site-config')
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+      if (result.success && result.data) {
+        return result.data.config
       }
 
-      const data = await response.json()
-
-      if (data.success) {
-        return data.data as SiteConfig
-      }
-
-      throw new Error(data.error || 'Erreur lors de la récupération de la configuration')
+      throw new Error(result.error || 'Erreur lors de la récupération de la configuration')
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
