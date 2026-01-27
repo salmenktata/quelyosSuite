@@ -1,4 +1,15 @@
+/**
+ * Page Messages Promotionnels - Gestion de la barre de messages
+ *
+ * Fonctionnalités :
+ * - Liste des messages promo affichés en barre supérieure
+ * - Création/édition/suppression de messages
+ * - Choix de l'icône (camion, cadeau, étoile, etc.)
+ * - Activation/désactivation des messages
+ */
+
 import { useState } from 'react'
+import { Plus, Trash2, X, Save } from 'lucide-react'
 import { Layout } from '../../components/Layout'
 import { usePromoMessages, useCreatePromoMessage, useUpdatePromoMessage, useDeletePromoMessage, PromoMessage } from '../../hooks/usePromoMessages'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
@@ -86,16 +97,27 @@ export default function PromoMessages() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Tableau de bord', href: '/dashboard' },
-          { label: 'Messages Promo' },
-        ]}
-      />
-      <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Messages PromoBar</h1>
-          {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Store', href: '/store' },
+            { label: 'Messages Promo' },
+          ]}
+        />
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Messages PromoBar</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Messages affichés en barre supérieure du site
+            </p>
+          </div>
+          {!showForm && (
+            <Button onClick={handleNew} icon={<Plus className="h-4 w-4" />}>
+              Nouveau
+            </Button>
+          )}
         </div>
 
         <PageNotice config={storeNotices.promoMessages} className="mb-6" />
@@ -128,7 +150,14 @@ export default function PromoMessages() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button onClick={(e) => { e.stopPropagation(); handleDelete(m.id) }} size="sm" variant="secondary">Supprimer</Button>
+                        <Button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(m.id) }}
+                          size="sm"
+                          variant="danger"
+                          icon={<Trash2 className="h-3.5 w-3.5" />}
+                        >
+                          Supprimer
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -153,7 +182,7 @@ export default function PromoMessages() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom *</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Nom *</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -164,7 +193,7 @@ export default function PromoMessages() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Texte affiché *</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Texte affiché *</label>
                   <input
                     type="text"
                     value={formData.text}
@@ -175,7 +204,7 @@ export default function PromoMessages() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Icône</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Icône</label>
                   <select
                     value={formData.icon}
                     onChange={e => setFormData({ ...formData, icon: e.target.value as PromoMessage['icon'] })}
@@ -200,8 +229,12 @@ export default function PromoMessages() {
               </div>
 
               <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button onClick={handleCancel} variant="secondary">Annuler</Button>
-                <Button onClick={handleSave} disabled={!formData.name || !formData.text}>Sauvegarder</Button>
+                <Button onClick={handleCancel} variant="secondary" icon={<X className="h-4 w-4" />}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSave} disabled={!formData.name || !formData.text} icon={<Save className="h-4 w-4" />}>
+                  Sauvegarder
+                </Button>
               </div>
             </div>
           )}

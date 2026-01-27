@@ -182,7 +182,8 @@ export default function DeviseFormatsPage() {
                 onClick={saveLanguage}
                 icon={<Check className="h-5 w-5" />}
                 aria-label="Sauvegarder la langue"
-              />
+              >
+              </Button>
             </div>
           </div>
 

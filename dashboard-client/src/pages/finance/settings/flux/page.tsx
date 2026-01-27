@@ -239,7 +239,7 @@ export default function FluxSettingsPage() {
                   </div>
                   <Switch
                     checked={setting.enabled}
-                    onChange={() => toggleFlowType(setting.type)}
+                    onCheckedChange={() => toggleFlowType(setting.type)}
                   />
                 </div>
               );
@@ -333,7 +333,7 @@ export default function FluxSettingsPage() {
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={custom.enabled}
-                      onChange={() => toggleCustomType(custom.id)}
+                      onCheckedChange={() => toggleCustomType(custom.id)}
                     />
                     <button
                       onClick={() => handleDeleteCustom(custom.id)}

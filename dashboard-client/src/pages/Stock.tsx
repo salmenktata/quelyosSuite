@@ -23,6 +23,7 @@ import {
   ArrowDownTrayIcon,
   Squares2X2Icon,
   ArrowLeftIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 import type { StockProduct } from '@/types'
 import { stockNotices } from '@/lib/notices'

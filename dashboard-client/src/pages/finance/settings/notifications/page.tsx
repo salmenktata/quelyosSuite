@@ -183,7 +183,7 @@ export default function NotificationsPage() {
                     <div className="font-medium">{label}</div>
                     <div className="text-xs text-indigo-100/60">{description}</div>
                   </div>
-                  <Switch checked={settings[key]} onChange={() => toggle(key)} />
+                  <Switch checked={settings[key]} onCheckedChange={() => toggle(key)} />
                 </div>
               ))}
             </div>

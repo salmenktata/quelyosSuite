@@ -1,3 +1,14 @@
+/**
+ * Page Badges de Confiance - Gestion des trust badges
+ *
+ * Fonctionnalités :
+ * - Liste des badges de confiance (paiement sécurisé, livraison, garantie, etc.)
+ * - Création/édition/suppression de badges
+ * - Choix de l'icône (carte bancaire, livraison, bouclier, etc.)
+ * - Activation/désactivation des badges
+ */
+
+
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { useTrustBadges, useCreateTrustBadge, useUpdateTrustBadge, useDeleteTrustBadge, TrustBadge } from '../../hooks/useTrustBadges'

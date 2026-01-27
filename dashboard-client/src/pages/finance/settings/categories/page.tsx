@@ -73,7 +73,7 @@ export default function CategoriesPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await api.request<any>("/finance/categories");
+      const data = await api<any>("/finance/categories");
       const cats = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setCategories(cats);
     } catch (err) {
@@ -241,7 +241,8 @@ export default function CategoriesPage() {
                               size="sm"
                               icon={<Edit2 className="h-3.5 w-3.5" />}
                               aria-label="Modifier"
-                            />
+                            >
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -250,7 +251,8 @@ export default function CategoriesPage() {
                               loading={deleting === category.id}
                               icon={deleting !== category.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
                               aria-label="Supprimer"
-                            />
+                            >
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -288,7 +290,8 @@ export default function CategoriesPage() {
                               size="sm"
                               icon={<Edit2 className="h-3.5 w-3.5" />}
                               aria-label="Modifier"
-                            />
+                            >
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -297,7 +300,8 @@ export default function CategoriesPage() {
                               loading={deleting === category.id}
                               icon={deleting !== category.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
                               aria-label="Supprimer"
-                            />
+                            >
+                            </Button>
                           </div>
                         </div>
                       ))}

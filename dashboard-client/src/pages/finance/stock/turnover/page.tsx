@@ -14,11 +14,11 @@ import { useStockTurnover } from "@/hooks/finance/useStockTurnover"
 import type { TurnoverStatus } from "@/types/stock"
 import { logger } from '@quelyos/logger'
 
-const STATUS_CONFIG: Record<TurnoverStatus, { label: string; variant: 'success' | 'info' | 'warning' | 'danger' }> = {
+const STATUS_CONFIG: Record<TurnoverStatus, { label: string; variant: 'success' | 'info' | 'warning' | 'error' }> = {
   excellent: { label: 'Excellent', variant: 'success' },
   good: { label: 'Bon', variant: 'info' },
   slow: { label: 'Lent', variant: 'warning' },
-  dead: { label: 'Dormant', variant: 'danger' },
+  dead: { label: 'Dormant', variant: 'error' },
 }
 
 export default function StockTurnoverPage() {

@@ -1,4 +1,17 @@
+/**
+ * Page Menus Navigation - Gestion des menus header et footer
+ *
+ * Fonctionnalités :
+ * - Liste des menus avec réorganisation par glisser-déposer
+ * - Création/édition/suppression de menus
+ * - Configuration complète (libellé, URL, icône, classes CSS)
+ * - Options avancées (nouvel onglet, authentification requise)
+ * - Compteur d'éléments enfants
+ * - Séquence de tri personnalisable
+ */
+
 import { useState, useCallback } from 'react'
+import { Plus, Trash2, X, Save, GripVertical } from 'lucide-react'
 import { Layout } from '../../components/Layout'
 import {
   useMenus,
@@ -150,19 +163,27 @@ export default function Menus() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Tableau de bord', href: '/dashboard' },
-          { label: 'Menus Navigation' },
-        ]}
-      />
-      <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Store', href: '/store' },
+            { label: 'Menus Navigation' },
+          ]}
+        />
+
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Menus Navigation</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Menus du header et footer (glisser-déposer pour réordonner)</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Menus Navigation</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Menus du header et footer (glisser-déposer pour réordonner)
+            </p>
           </div>
-          {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
+          {!showForm && (
+            <Button onClick={handleNew} icon={<Plus className="h-4 w-4" />}>
+              Nouveau
+            </Button>
+          )}
         </div>
 
         <PageNotice config={storeNotices.menus} className="mb-6" />
@@ -210,14 +231,12 @@ export default function Menus() {
                       >
                         <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                           <span className="inline-flex items-center">
-                            <svg className="mr-1 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-                            </svg>
+                            <GripVertical className="mr-1 h-4 w-4 text-gray-400" />
                             {menu.sequence}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{menu.code}</td>
-                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                        <td className="px-4 py-3 text-sm font-mono text-gray-900 dark:text-white">{menu.code}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                           {menu.icon && <span className="mr-1">{menu.icon}</span>}
                           {menu.label}
                           {menu.children_count ? (
@@ -230,7 +249,14 @@ export default function Menus() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <Button onClick={(e) => { e.stopPropagation(); handleDelete(menu.id) }} size="sm" variant="secondary">Supprimer</Button>
+                          <Button
+                            onClick={(e) => { e.stopPropagation(); handleDelete(menu.id) }}
+                            size="sm"
+                            variant="danger"
+                            icon={<Trash2 className="h-3.5 w-3.5" />}
+                          >
+                            Supprimer
+                          </Button>
                         </td>
                       </tr>
                     ))
@@ -250,7 +276,7 @@ export default function Menus() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom interne *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Nom interne *</label>
                     <input
                       type="text"
                       value={formData.name}
@@ -260,7 +286,7 @@ export default function Menus() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Code *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Code *</label>
                     <input
                       type="text"
                       value={formData.code}
@@ -297,7 +323,7 @@ export default function Menus() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Icône</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Icône</label>
                     <input
                       type="text"
                       value={formData.icon}
@@ -307,7 +333,7 @@ export default function Menus() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Classes CSS</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Classes CSS</label>
                     <input
                       type="text"
                       value={formData.css_class}
@@ -346,8 +372,14 @@ export default function Menus() {
               </div>
 
               <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button onClick={handleCancel} variant="secondary">Annuler</Button>
-                <Button onClick={handleSave} disabled={!formData.name || !formData.code || !formData.label || !formData.url}>
+                <Button onClick={handleCancel} variant="secondary" icon={<X className="h-4 w-4" />}>
+                  Annuler
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={!formData.name || !formData.code || !formData.label || !formData.url}
+                  icon={<Save className="h-4 w-4" />}
+                >
                   Sauvegarder
                 </Button>
               </div>
