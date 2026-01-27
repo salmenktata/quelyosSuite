@@ -1,53 +1,79 @@
+/**
+ * Page Graphiques Financiers
+ *
+ * Fonctionnalités :
+ * - Visualisation flux financiers (graphiques interactifs)
+ * - Évolution mensuelle recettes/dépenses
+ * - Répartition par catégories
+ * - Cash-flow projeté 90 jours
+ */
 
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { GlassCard, GlassPanel } from "@/components/ui/glass";
-import { BarChart3, PieChart, LineChart } from "lucide-react";
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
+import { financeNotices } from '@/lib/notices'
+import { BarChart3, PieChart, LineChart } from 'lucide-react'
 
 export default function ChartsPage() {
-  useRequireAuth();
-
   return (
-    <div className="space-y-6 text-white">
-      <div className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.25em] text-indigo-200">Rapports</p>
-        <h1 className="text-2xl font-semibold">Graphiques</h1>
-        <p className="text-sm text-indigo-100/80">
-          Visualisez vos flux financiers sous forme de graphiques interactifs.
-        </p>
-      </div>
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Finance', href: '/finance' },
+            { label: 'Graphiques' },
+          ]}
+        />
 
-      <GlassPanel className="p-6">
-        <div className="grid gap-4 md:grid-cols-3">
-          <GlassCard className="p-4">
-            <div className="flex items-center gap-3">
-              <BarChart3 className="h-5 w-5 text-indigo-300" />
-              <div>
-                <p className="text-sm font-semibold">Évolution mensuelle</p>
-                <p className="text-xs text-indigo-100/70">Recettes et dépenses</p>
-              </div>
-            </div>
-          </GlassCard>
-          <GlassCard className="p-4">
-            <div className="flex items-center gap-3">
-              <PieChart className="h-5 w-5 text-emerald-300" />
-              <div>
-                <p className="text-sm font-semibold">Répartition catégories</p>
-                <p className="text-xs text-indigo-100/70">Vue par poste</p>
-              </div>
-            </div>
-          </GlassCard>
-          <GlassCard className="p-4">
-            <div className="flex items-center gap-3">
-              <LineChart className="h-5 w-5 text-amber-300" />
-              <div>
-                <p className="text-sm font-semibold">Cash-flow projeté</p>
-                <p className="text-xs text-indigo-100/70">Prévisions 90 jours</p>
-              </div>
-            </div>
-          </GlassCard>
+        <PageNotice config={financeNotices.charts} className="mb-6" />
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Graphiques Financiers
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Visualisez vos flux financiers sous forme de graphiques interactifs
+          </p>
         </div>
-      </GlassPanel>
-    </div>
-  );
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Évolution mensuelle</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Recettes et dépenses</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                <PieChart className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Répartition catégories</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Vue par poste</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                <LineChart className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Cash-flow projeté</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Prévisions 90 jours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  )
 }

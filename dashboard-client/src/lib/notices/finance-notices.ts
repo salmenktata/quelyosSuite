@@ -271,4 +271,25 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
       },
     ],
   },
+
+  charts: {
+    pageId: 'finance-charts',
+    title: 'Graphiques Financiers',
+    purpose:
+      "Visualisez vos données financières sous forme de graphiques interactifs pour identifier rapidement les tendances, anomalies et opportunités d'optimisation.",
+    icon: BarChart3 as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        items: [
+          `Consultez l'évolution mensuelle pour détecter les variations saisonnières`,
+          `Analysez la répartition par catégories pour identifier les postes prioritaires`,
+          `Utilisez le cash-flow projeté pour anticiper les besoins de trésorerie à 90 jours`,
+          `Exportez les graphiques pour vos présentations et rapports de gestion`,
+          `Comparez les périodes pour mesurer la croissance et l'impact des actions correctives`,
+        ],
+      },
+    ],
+  },
 };
