@@ -19,7 +19,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
 import { usePermissions } from '../hooks/usePermissions'
+import { useActiveRoute } from '../hooks/useActiveRoute'
 import { Button } from './common/Button'
+import { SidebarMenuItem } from './navigation/SidebarMenuItem'
 import {
   // Common
   ChevronDown,
@@ -625,91 +627,6 @@ function TopNavbar({
   )
 }
 
-function MenuItemComponent({
-  item,
-  isActive,
-  isOpen,
-  onToggle,
-  moduleColor,
-}: {
-  item: MenuItem
-  isActive: (path: string) => boolean
-  isOpen: boolean
-  onToggle: () => void
-  moduleColor: string
-}) {
-  const Icon = item.icon
-  const hasSubItems = item.subItems && item.subItems.length > 0
-  const isCurrentlyActive = item.path ? isActive(item.path) : item.subItems?.some(sub => sub.path && isActive(sub.path))
-
-  if (hasSubItems) {
-    return (
-      <div>
-        <button
-          onClick={onToggle}
-          className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-            isCurrentlyActive
-              ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-          }`}
-        >
-          <Icon className="h-5 w-5" />
-          <span className="flex-1 text-left">{item.name}</span>
-          {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
-        {isOpen && (
-          <div className="ml-4 mt-1 border-l-2 border-gray-200 dark:border-gray-600 pl-3">
-            {item.subItems?.map((subItem, idx) => {
-              if (subItem.separator) {
-                return (
-                  <div
-                    key={`separator-${idx}`}
-                    className="px-3 pt-3 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 mt-2"
-                  >
-                    {subItem.name}
-                  </div>
-                )
-              }
-              return (
-                <Link
-                  key={subItem.path}
-                  to={subItem.path!}
-                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs transition-all ${
-                    isActive(subItem.path!)
-                      ? `bg-gray-100 dark:bg-gray-700 ${moduleColor} font-medium`
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <span>{subItem.name}</span>
-                  {subItem.badge && (
-                    <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-1.5 py-0.5 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                      {subItem.badge}
-                    </span>
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  return (
-    <Link
-      to={item.path || '#'}
-      className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-        isCurrentlyActive
-          ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
-          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-      }`}
-    >
-      <Icon className="h-5 w-5" />
-      <span className="flex-1">{item.name}</span>
-    </Link>
-  )
-}
-
 // ============================================================================
 // MAIN LAYOUT
 // ============================================================================
@@ -722,6 +639,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [openMenus, setOpenMenus] = useState<Set<string>>(new Set())
   const [isModuleChanging, setIsModuleChanging] = useState(false)
   const { canAccessModule } = usePermissions()
+  const { isActive } = useActiveRoute()
 
   // Filtrer les modules selon les permissions de l'utilisateur
   const accessibleModules = useMemo(() => {
@@ -747,8 +665,6 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setCurrentModule(detectModule())
   }, [location.pathname])
-
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/')
 
   const handleModuleChange = async (moduleId: ModuleId) => {
     setIsModuleChanging(true)
@@ -856,13 +772,13 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                   </p>
                   <div className="space-y-0.5">
                     {section.items.map((item) => (
-                      <MenuItemComponent
+                      <SidebarMenuItem
                         key={item.name}
                         item={item}
                         isActive={isActive}
-                        isOpen={openMenus.has(item.name)}
-                        onToggle={() => toggleMenu(item.name)}
                         moduleColor={currentModule.color}
+                        openMenus={openMenus}
+                        onToggleMenu={toggleMenu}
                       />
                     ))}
                   </div>
