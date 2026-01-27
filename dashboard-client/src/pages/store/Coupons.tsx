@@ -242,14 +242,16 @@ export default function Coupons() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleToggleActive(coupon)}
-                            className="focus:outline-none"
+                            className="!p-0"
                           >
                             <Badge variant={coupon.active ? 'success' : 'neutral'}>
                               {coupon.active ? 'Actif' : 'Inactif'}
                             </Badge>
-                          </button>
+                          </Button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {coupon.trigger === 'with_code' ? 'Code' : 'Auto'}

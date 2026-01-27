@@ -168,7 +168,7 @@ export default function DSOReportPage() {
                       [],
                       ['Top Clients - Créances'],
                       ['Client', 'Créances', 'Nb Factures'],
-                      ...apiData.byCustomer.map(c => [
+                      ...(apiData.byCustomer || []).map(c => [
                         c.customerName,
                         formatAmount(c.receivables),
                         c.invoiceCount
@@ -372,7 +372,7 @@ export default function DSOReportPage() {
               </h2>
             </div>
 
-            {apiData.byCustomer.length === 0 ? (
+            {!apiData.byCustomer || apiData.byCustomer.length === 0 ? (
               <div className="py-8 text-center">
                 <p className="text-slate-400">Aucune créance client en cours</p>
               </div>
@@ -387,7 +387,7 @@ export default function DSOReportPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {apiData.byCustomer.map((customer, idx) => (
+                    {apiData.byCustomer?.map((customer, idx) => (
                       <tr key={customer.customerId} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="py-3 text-gray-900 dark:text-white">{customer.customerName}</td>
                         <td className="py-3 text-right font-semibold text-gray-900 dark:text-white">

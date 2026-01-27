@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Test - Pages Stock Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #2563eb; }
+        .page-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status.ok { background: #dcfce7; color: #166534; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .endpoint { font-family: 'Courier New', monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        .checklist { background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 10px 0; }
+        .checklist li { margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Guide de Test - Pages Stock Dashboard</h1>
+    
+    <div class="page-card">
+        <h3>ℹ️ Instructions Préalables</h3>
+        <ol>
+            <li>Assurez-vous que le dashboard tourne sur <strong>http://localhost:5175</strong></li>
+            <li>Connectez-vous avec un compte admin</li>
+            <li>Ouvrez la console navigateur (F12) pour voir les erreurs éventuelles</li>
+            <li>Testez chaque page en cliquant sur les boutons ci-dessous</li>
+        </ol>
+    </div>
+
+    <h2>📊 Pages Stock Principales (7 pages avec endpoints)</h2>
+
+    <div class="page-card">
+        <h3>1. Analyse ABC (Pareto 80-20)</h3>
+        <span class="status ok">✅ API OK</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/abc-analysis</span></p>
+        <p><strong>Description</strong> : Classification produits par contribution valeur (A/B/C)</p>
+        <a href="http://localhost:5175/stock/abc-analysis" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ KPIs catégories A/B/C affichés</li>
+                <li>☐ Filtres threshold_a et threshold_b fonctionnels</li>
+                <li>☐ Tableau produits triés par valorisation</li>
+                <li>☐ Badges couleurs par catégorie</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>2. Rapports Avancés</h3>
+        <span class="status ok">✅ API OK</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/reports/advanced</span></p>
+        <p><strong>Description</strong> : Ruptures stock, dead stock, anomalies</p>
+        <a href="http://localhost:5175/stock/advanced-reports" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Liste ruptures de stock</li>
+                <li>☐ Dead stock (produits dormants)</li>
+                <li>☐ Anomalies détectées</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>3. Alertes Expiration</h3>
+        <span class="status warning">⚠️ API auth='user'</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/lots/expiry-alerts</span></p>
+        <p><strong>Description</strong> : Produits expirés ou proche expiration</p>
+        <a href="http://localhost:5175/stock/expiry-alerts" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Produits expirés (badge rouge)</li>
+                <li>☐ Proche expiration (badge orange)</li>
+                <li>☐ Filtres par date</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>4. Prévisions Stock</h3>
+        <span class="status ok">✅ API OK</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/forecast</span></p>
+        <p><strong>Description</strong> : Prédictions besoins stock futurs</p>
+        <a href="http://localhost:5175/stock/forecast" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Graphiques tendances</li>
+                <li>☐ Prévisions N jours</li>
+                <li>☐ Recommandations réappro</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>5. Unités de Mesure</h3>
+        <span class="status ok">✅ API OK</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/uom</span></p>
+        <p><strong>Description</strong> : Gestion UoM et conversions</p>
+        <a href="http://localhost:5175/stock/uom" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Liste unités de mesure</li>
+                <li>☐ Catégories UoM (vide Odoo 19)</li>
+                <li>☐ Calculateur conversions</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>6. Routes Entrepôt</h3>
+        <span class="status warning">⚠️ API auth='user'</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/routes</span></p>
+        <p><strong>Description</strong> : Configuration flux réception/livraison</p>
+        <a href="http://localhost:5175/stock/warehouse-routes" target="_blank" class="btn">🧪 Tester la page</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Routes entrepôt vs globales</li>
+                <li>☐ Filtres par type</li>
+                <li>☐ Règles push/pull</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-card">
+        <h3>7. Valorisation par Catégorie</h3>
+        <span class="status ok">✅ API OK (Gap P2 Final)</span>
+        <p><strong>Endpoint</strong> : <span class="endpoint">POST /api/ecommerce/stock/valuation/by-category</span></p>
+        <p><strong>Description</strong> : Note: accessible via page Stock principale</p>
+        <a href="http://localhost:5175/stock" target="_blank" class="btn">🧪 Tester la page Stock</a>
+        <div class="checklist">
+            <strong>À vérifier :</strong>
+            <ul>
+                <li>☐ Bouton "Export valorisation par catégorie"</li>
+                <li>☐ Téléchargement CSV</li>
+                <li>☐ Données groupées par catégorie</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>🔧 Autres Pages Stock (4 pages)</h2>
+
+    <div class="page-card">
+        <h3>8. Traçabilité Lots</h3>
+        <span class="status warning">⚠️ Paramètre lot_id requis</span>
+        <p><strong>Route</strong> : <span class="endpoint">/stock/lot-traceability</span></p>
+        <a href="http://localhost:5175/stock/lot-traceability" target="_blank" class="btn">🧪 Tester la page</a>
+    </div>
+
+    <div class="page-card">
+        <h3>9. Règles Réappro</h3>
+        <span class="status ok">✅ Page existante</span>
+        <p><strong>Route</strong> : <span class="endpoint">/stock/reordering-rules</span></p>
+        <a href="http://localhost:5175/stock/reordering-rules" target="_blank" class="btn">🧪 Tester la page</a>
+    </div>
+
+    <div class="page-card">
+        <h3>10. Motifs Changements Stock</h3>
+        <span class="status ok">✅ Page existante</span>
+        <p><strong>Route</strong> : <span class="endpoint">/stock/change-reasons</span></p>
+        <a href="http://localhost:5175/stock/change-reasons" target="_blank" class="btn">🧪 Tester la page</a>
+    </div>
+
+    <div class="page-card">
+        <h3>11. Inventaires OCA</h3>
+        <span class="status warning">⚠️ Addon OCA requis</span>
+        <p><strong>Route</strong> : <span class="endpoint">/stock/inventories-oca</span></p>
+        <a href="http://localhost:5175/stock/inventories-oca" target="_blank" class="btn">🧪 Tester la page</a>
+    </div>
+
+    <h2>📝 Rapport de Test</h2>
+    <div class="page-card">
+        <h3>Template à compléter</h3>
+        <pre style="background: #f8fafc; padding: 15px; border-radius: 6px;">
+# Résultats Tests Pages Stock - [DATE]
+
+## Pages Testées
+- [ ] 1. ABC Analysis : ✅ / ❌ / ⚠️
+- [ ] 2. Advanced Reports : ✅ / ❌ / ⚠️
+- [ ] 3. Expiry Alerts : ✅ / ❌ / ⚠️
+- [ ] 4. Stock Forecast : ✅ / ❌ / ⚠️
+- [ ] 5. Unit of Measure : ✅ / ❌ / ⚠️
+- [ ] 6. Warehouse Routes : ✅ / ❌ / ⚠️
+- [ ] 7. Valuation by Category : ✅ / ❌ / ⚠️
+
+## Bugs Identifiés
+1. [Page] : Description du bug
+2. ...
+
+## Améliorations UI/UX
+1. [Page] : Suggestion d'amélioration
+2. ...
+        </pre>
+    </div>
+
+    <footer style="text-align: center; margin-top: 40px; color: #64748b;">
+        <p>Guide généré par Claude Code - Session Tests Frontend Stock</p>
+        <p>Date: 2026-01-27</p>
+    </footer>
+</body>
+</html>

@@ -57,7 +57,7 @@ export default function StockTurnoverPage() {
         p.avg_stock,
         p.turnover_ratio,
         p.days_of_stock,
-        STATUS_CONFIG[p.status].label
+        p.status ? STATUS_CONFIG[p.status].label : 'N/A'
       ])
     ]
 
@@ -299,22 +299,22 @@ export default function StockTurnoverPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 dark:text-gray-100">
-                        {product.qty_sold.toFixed(0)}
+                        {product.qty_sold?.toFixed(0) || '0'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 dark:text-gray-400">
-                        {product.avg_stock.toFixed(0)}
+                        {product.avg_stock?.toFixed(0) || '0'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className="font-semibold text-gray-900 dark:text-gray-100">
-                          {product.turnover_ratio.toFixed(2)}
+                          {product.turnover_ratio?.toFixed(2) || '0.00'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 dark:text-gray-400">
-                        {product.days_of_stock >= 999 ? '∞' : product.days_of_stock.toFixed(0)}
+                        {product.days_of_stock !== undefined && product.days_of_stock >= 999 ? '∞' : product.days_of_stock?.toFixed(0) || '0'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <Badge variant={STATUS_CONFIG[product.status].variant}>
-                          {STATUS_CONFIG[product.status].label}
+                        <Badge variant={product.status ? STATUS_CONFIG[product.status].variant : 'info'}>
+                          {product.status ? STATUS_CONFIG[product.status].label : 'N/A'}
                         </Badge>
                       </td>
                     </tr>

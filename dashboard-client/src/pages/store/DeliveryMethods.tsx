@@ -203,14 +203,16 @@ export default function DeliveryMethods() {
                       </div>
                     </div>
                     <div className="ml-4 flex items-center gap-3">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleToggleActive(method)}
-                        className="focus:outline-none"
+                        className="!p-0"
                       >
                         <Badge variant={method.active !== false ? 'success' : 'neutral'}>
                           {method.active !== false ? 'Active' : 'Inactive'}
                         </Badge>
-                      </button>
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => openEditModal(method)}>
                         Modifier
                       </Button>

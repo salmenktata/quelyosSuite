@@ -19,7 +19,7 @@ class QuelyosCheckout(http.Controller):
 
     # ==================== CHECKOUT ====================
 
-    @http.route('/api/ecommerce/checkout/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def checkout_validate(self, **kwargs):
         """
         Valider le panier avant checkout
@@ -163,7 +163,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/shipping', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/shipping', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def checkout_calculate_shipping(self, **kwargs):
         """
         Calculer les frais de livraison
@@ -259,7 +259,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/complete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/complete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def checkout_complete(self, **kwargs):
         """
         Finaliser la commande (créer sale.order confirmée)
@@ -392,7 +392,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def checkout_confirm(self, **kwargs):
         """
         Confirmer la commande (après paiement validé)
@@ -497,7 +497,7 @@ class QuelyosCheckout(http.Controller):
 
     # ==================== PAYMENT ====================
 
-    @http.route('/api/ecommerce/payment/paypal/create-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/paypal/create-order', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def paypal_create_order(self, **kwargs):
         """
         Créer un ordre PayPal
@@ -551,7 +551,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/paypal/capture-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/paypal/capture-order', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def paypal_capture_order(self, **kwargs):
         """
         Capturer un paiement PayPal
@@ -598,7 +598,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/wallet/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/wallet/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def wallet_create_payment(self, **kwargs):
         """
         Créer un paiement Wallet (Apple Pay / Google Pay)
@@ -650,7 +650,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/stripe/create-intent', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/stripe/create-intent', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def stripe_create_payment_intent(self, **kwargs):
         """
         Créer un Payment Intent Stripe pour un paiement par carte bancaire
@@ -757,7 +757,7 @@ class QuelyosCheckout(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/stripe/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/stripe/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def stripe_confirm_payment(self, **kwargs):
         """
         Confirmer un paiement Stripe et finaliser la commande

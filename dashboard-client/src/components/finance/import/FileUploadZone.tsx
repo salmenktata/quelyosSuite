@@ -1,8 +1,6 @@
-"use client";
-
 import { useCallback, useState, useRef } from "react";
 import { Upload, File, X, CheckCircle } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { FileUploadZoneProps } from "@/types/import";
 
@@ -25,14 +23,14 @@ export function FileUploadZone({
     // Vérifier extension
     const extension = file.name.split(".").pop()?.toLowerCase();
     if (!extension || !ACCEPTED_EXTENSIONS.includes(extension)) {
-      onError("Format de fichier non supporté. Utilisez CSV ou Excel (.xlsx, .xls).");
+      onError?.("Format de fichier non supporté. Utilisez CSV ou Excel (.xlsx, .xls).");
       return false;
     }
 
     // Vérifier taille
     const sizeMB = file.size / (1024 * 1024);
     if (sizeMB > maxSizeMB) {
-      onError(`Le fichier est trop volumineux (${sizeMB.toFixed(1)} MB > ${maxSizeMB} MB)`);
+      onError?.(`Le fichier est trop volumineux (${sizeMB.toFixed(1)} MB > ${maxSizeMB} MB)`);
       return false;
     }
 
@@ -94,7 +92,7 @@ export function FileUploadZone({
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
     >
-      <GlassPanel gradient="indigo">
+      <Card>
       <input
         ref={inputRef}
         type="file"
@@ -163,7 +161,7 @@ export function FileUploadZone({
           </button>
         </div>
       )}
-      </GlassPanel>
+      </Card>
     </div>
   );
 }

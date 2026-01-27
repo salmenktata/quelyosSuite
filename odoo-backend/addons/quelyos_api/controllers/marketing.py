@@ -20,7 +20,7 @@ class QuelyosMarketing(http.Controller):
 
     # ==================== AVIS PRODUITS (REVIEWS) ====================
 
-    @http.route('/api/ecommerce/reviews/submit', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reviews/submit', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def submit_review(self, **kwargs):
         """
         Soumettre un avis produit
@@ -128,7 +128,7 @@ class QuelyosMarketing(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/reviews/<int:product_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reviews/<int:product_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_reviews(self, product_id, **kwargs):
         """
         Récupérer les avis d'un produit
@@ -227,7 +227,7 @@ class QuelyosMarketing(http.Controller):
 
     # ==================== POPUPS MARKETING ====================
 
-    @http.route('/api/ecommerce/popups/active', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/active', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_active_popups(self, **kwargs):
         """
         Récupérer les popups marketing actifs
@@ -294,7 +294,7 @@ class QuelyosMarketing(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/popups/<int:popup_id>/click', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/<int:popup_id>/click', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def track_popup_click(self, popup_id, **kwargs):
         """
         Tracker un clic sur un popup (analytics)
@@ -337,7 +337,7 @@ class QuelyosMarketing(http.Controller):
 
     # ==================== PROGRAMME DE FIDELITE ====================
 
-    @http.route('/api/ecommerce/loyalty/points', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/loyalty/points', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_loyalty_points(self, **kwargs):
         """
         Récupérer les points de fidélité de l'utilisateur
@@ -420,7 +420,7 @@ class QuelyosMarketing(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/loyalty/redeem', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/loyalty/redeem', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def redeem_loyalty_points(self, **kwargs):
         """
         Utiliser des points de fidélité
@@ -516,7 +516,7 @@ class QuelyosMarketing(http.Controller):
 
     # ==================== NEWSLETTER ====================
 
-    @http.route('/api/ecommerce/newsletter/subscribe', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/newsletter/subscribe', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def subscribe_newsletter(self, **kwargs):
         """
         S'abonner à la newsletter

@@ -14,7 +14,7 @@ class SubscriptionController(BaseController):
 
     # ==================== ADMIN ENDPOINTS ====================
 
-    @http.route('/api/ecommerce/subscription/admin/list', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/admin/list', type='json', auth='user', methods=['POST'], csrf=False)
     def admin_list_subscriptions(self, limit=20, offset=0, **kwargs):
         """
         Liste tous les abonnements (backoffice admin)
@@ -75,7 +75,7 @@ class SubscriptionController(BaseController):
                 'total': 0,
             }
 
-    @http.route('/api/ecommerce/subscription/admin/<int:subscription_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/admin/<int:subscription_id>', type='json', auth='user', methods=['POST'], csrf=False)
     def admin_get_subscription(self, subscription_id, **kwargs):
         """
         Détails d'un abonnement (backoffice admin)
@@ -152,7 +152,7 @@ class SubscriptionController(BaseController):
 
     # ==================== PUBLIC ENDPOINTS ====================
 
-    @http.route('/api/ecommerce/subscription/plans', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/plans', type='json', auth='public', methods=['POST'], csrf=False)
     def get_subscription_plans(self, **kwargs):
         """
         Liste tous les plans d'abonnement disponibles
@@ -187,7 +187,7 @@ class SubscriptionController(BaseController):
             _logger.error("Erreur lors de la récupération des plans: %s", str(e), exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue', 'data': []}
 
-    @http.route('/api/ecommerce/subscription/current', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/current', type='json', auth='user', methods=['POST'], csrf=False)
     def get_current_subscription(self, **kwargs):
         """
         Récupère l'abonnement actif de l'utilisateur connecté
@@ -240,7 +240,7 @@ class SubscriptionController(BaseController):
             _logger.error("Erreur lors de la récupération de l'abonnement actuel: %s", str(e), exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/subscription/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/create', type='json', auth='user', methods=['POST'], csrf=False)
     def create_subscription(self, plan_id, billing_cycle='monthly', **kwargs):
         """
         Créer un nouvel abonnement pour l'utilisateur connecté
@@ -286,7 +286,7 @@ class SubscriptionController(BaseController):
             _logger.error("Erreur lors de la création de l'abonnement: %s", str(e), exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/subscription/check-quota', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/check-quota', type='json', auth='user', methods=['POST'], csrf=False)
     def check_quota(self, resource_type, **kwargs):
         """
         Vérifier le quota d'une ressource pour l'utilisateur connecté
@@ -318,7 +318,7 @@ class SubscriptionController(BaseController):
             _logger.error("Erreur lors de la vérification du quota: %s", str(e), exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/subscription/cancel', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/cancel', type='json', auth='user', methods=['POST'], csrf=False)
     def cancel_subscription(self, **kwargs):
         """
         Annuler l'abonnement de l'utilisateur connecté
@@ -350,7 +350,7 @@ class SubscriptionController(BaseController):
             _logger.error("Erreur lors de l'annulation de l'abonnement: %s", str(e), exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/subscription/upgrade', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/ecommerce/subscription/upgrade', type='json', auth='user', methods=['POST'], csrf=False)
     def upgrade_subscription(self, plan_id, **kwargs):
         """
         Mettre à niveau l'abonnement vers un plan supérieur

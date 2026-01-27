@@ -162,7 +162,7 @@ class QuelyosSEO(http.Controller):
                 headers=[('Content-Type', 'text/plain; charset=utf-8')]
             )
 
-    @http.route('/api/ecommerce/seo/metadata', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo/metadata', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_metadata(self, **kwargs):
         """
         Récupérer les métadonnées SEO pour une page

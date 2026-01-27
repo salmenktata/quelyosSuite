@@ -34,7 +34,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['GET', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def get_tenant_by_domain(self, **kwargs):
         """
@@ -49,8 +48,13 @@ class TenantController(BaseController):
 
         Cache: 60s recommandé côté client
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             domain = kwargs.get('domain', '').strip().lower()
@@ -60,7 +64,7 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Paramètre domain requis',
                     'error_code': 'MISSING_DOMAIN'
-                }, status=400)
+                }, status=400, headers=cors_headers)
 
             # Recherche du tenant
             Tenant = request.env['quelyos.tenant']
@@ -72,17 +76,18 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Tenant non trouvé',
                     'error_code': 'TENANT_NOT_FOUND'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             # Convertir en config frontend
             config = tenant.to_frontend_config()
 
+            # Fusionner headers CORS avec Cache-Control
+            response_headers = {**cors_headers, 'Cache-Control': 'public, max-age=60'}
+
             return request.make_json_response({
                 'success': True,
                 'tenant': config
-            }, headers={
-                'Cache-Control': 'public, max-age=60'  # Cache 60s
-            })
+            }, headers=response_headers)
 
         except Exception as e:
             _logger.error(f"Error fetching tenant by domain: {e}")
@@ -90,7 +95,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
                 'error_code': 'SERVER_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/<int:tenant_id>',
@@ -98,7 +103,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['GET', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def get_tenant_by_id(self, tenant_id, **kwargs):
         """
@@ -108,18 +112,23 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification requise pour accès par ID
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             error = self._require_admin()
             if error:
-                return request.make_json_response(error, status=403)
+                return request.make_json_response(error, status=403, headers=cors_headers)
 
             tenant = request.env['quelyos.tenant'].sudo().browse(tenant_id)
 
@@ -128,12 +137,12 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Tenant non trouvé',
                     'error_code': 'TENANT_NOT_FOUND'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             return request.make_json_response({
                 'success': True,
                 'tenant': tenant.to_frontend_config()
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error fetching tenant {tenant_id}: {e}")
@@ -141,7 +150,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
                 'error_code': 'SERVER_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/<string:code>',
@@ -149,7 +158,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['GET', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def get_tenant_by_code(self, code, **kwargs):
         """
@@ -159,8 +167,13 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             tenant = request.env['quelyos.tenant'].sudo().search([
@@ -173,14 +186,15 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Tenant non trouvé',
                     'error_code': 'TENANT_NOT_FOUND'
-                }, status=404)
+                }, status=404, headers=cors_headers)
+
+            # Fusionner headers CORS avec Cache-Control
+            response_headers = {**cors_headers, 'Cache-Control': 'public, max-age=300'}
 
             return request.make_json_response({
                 'success': True,
                 'tenant': tenant.to_frontend_config()
-            }, headers={
-                'Cache-Control': 'public, max-age=300'  # Cache 5 min
-            })
+            }, headers=response_headers)
 
         except Exception as e:
             _logger.error(f"Error fetching tenant by code {code}: {e}")
@@ -188,7 +202,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
                 'error_code': 'SERVER_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     # ═══════════════════════════════════════════════════════════════════════════
     # ENDPOINTS UTILISATEUR (Mon Tenant)
@@ -199,8 +213,7 @@ class TenantController(BaseController):
         type='http',
         auth='public',
         methods=['GET', 'OPTIONS'],
-        csrf=False,
-        cors='*'
+        csrf=False
     )
     def get_my_tenant(self, **kwargs):
         """
@@ -210,14 +223,19 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig} ou {success: false, error: string}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             user = request.env.user
             company_id = user.company_id.id
@@ -259,12 +277,12 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Aucun tenant associé à votre compte',
                     'error_code': 'NO_TENANT'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             return request.make_json_response({
                 'success': True,
                 'tenant': tenant.to_frontend_config()
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error fetching my tenant: {e}")
@@ -272,15 +290,14 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
                 'error_code': 'SERVER_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/my/update',
         type='http',
         auth='public',
         methods=['PUT', 'POST', 'OPTIONS'],
-        csrf=False,
-        cors='*'
+        csrf=False
     )
     def update_my_tenant(self, **kwargs):
         """
@@ -293,14 +310,19 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             user = request.env.user
             company_id = user.company_id.id
@@ -316,7 +338,7 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Aucun tenant associé à votre compte',
                     'error_code': 'NO_TENANT'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             # Récupérer et préparer les données
             data = self._get_http_params()
@@ -335,7 +357,7 @@ class TenantController(BaseController):
             return request.make_json_response({
                 'success': True,
                 'tenant': tenant.to_frontend_config()
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error updating my tenant: {e}")
@@ -343,7 +365,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur lors de la mise à jour',
                 'error_code': 'UPDATE_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     # ═══════════════════════════════════════════════════════════════════════════
     # ENDPOINTS ADMIN (CRUD)
@@ -355,7 +377,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['GET', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def list_tenants(self, **kwargs):
         """
@@ -368,18 +389,23 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenants: TenantConfig[], total: number}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification admin requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             error = self._require_admin()
             if error:
-                return request.make_json_response(error, status=403)
+                return request.make_json_response(error, status=403, headers=cors_headers)
 
             # Construire le domaine de recherche
             domain = []
@@ -405,7 +431,7 @@ class TenantController(BaseController):
                 'success': True,
                 'tenants': [t.to_frontend_config() for t in tenants],
                 'total': total
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error listing tenants: {e}")
@@ -413,7 +439,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
                 'error_code': 'SERVER_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/create',
@@ -421,7 +447,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['POST', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def create_tenant(self, **kwargs):
         """
@@ -436,18 +461,23 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig, id: number}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification admin requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             error = self._require_admin()
             if error:
-                return request.make_json_response(error, status=403)
+                return request.make_json_response(error, status=403, headers=cors_headers)
 
             # Récupérer les données
             data = self._get_http_params()
@@ -460,7 +490,7 @@ class TenantController(BaseController):
                         'success': False,
                         'error': f'Champ requis manquant: {field}',
                         'error_code': 'MISSING_FIELD'
-                    }, status=400)
+                    }, status=400, headers=cors_headers)
 
             # Préparer les valeurs
             values = self._prepare_tenant_values(data)
@@ -474,7 +504,7 @@ class TenantController(BaseController):
                 'success': True,
                 'tenant': tenant.to_frontend_config(),
                 'id': tenant.id
-            }, status=201)
+            }, status=201, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error creating tenant: {e}")
@@ -484,12 +514,12 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Code ou domaine déjà utilisé',
                     'error_code': 'DUPLICATE_KEY'
-                }, status=409)
+                }, status=409, headers=cors_headers)
             return request.make_json_response({
                 'success': False,
                 'error': 'Erreur lors de la création',
                 'error_code': 'CREATE_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/<int:tenant_id>/update',
@@ -497,7 +527,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['PUT', 'POST', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def update_tenant(self, tenant_id, **kwargs):
         """
@@ -509,18 +538,23 @@ class TenantController(BaseController):
         Returns:
             {success: true, tenant: TenantConfig}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification admin requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             error = self._require_admin()
             if error:
-                return request.make_json_response(error, status=403)
+                return request.make_json_response(error, status=403, headers=cors_headers)
 
             # Récupérer le tenant
             tenant = request.env['quelyos.tenant'].sudo().browse(tenant_id)
@@ -530,7 +564,7 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Tenant non trouvé',
                     'error_code': 'TENANT_NOT_FOUND'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             # Récupérer et préparer les données
             data = self._get_http_params()
@@ -544,7 +578,7 @@ class TenantController(BaseController):
             return request.make_json_response({
                 'success': True,
                 'tenant': tenant.to_frontend_config()
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error updating tenant {tenant_id}: {e}")
@@ -552,7 +586,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur lors de la mise à jour',
                 'error_code': 'UPDATE_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     @http.route(
         '/api/ecommerce/tenant/<int:tenant_id>/delete',
@@ -560,7 +594,6 @@ class TenantController(BaseController):
         auth='public',
         methods=['DELETE', 'OPTIONS'],
         csrf=False,
-        cors='*'
     )
     def delete_tenant(self, tenant_id, **kwargs):
         """
@@ -570,18 +603,23 @@ class TenantController(BaseController):
         Returns:
             {success: true, message: string}
         """
+        # Récupérer les headers CORS
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
         if request.httprequest.method == 'OPTIONS':
-            return self._preflight_response()
+            return request.make_response('', headers=cors_headers)
 
         try:
             # Authentification admin requise
             error = self._authenticate_from_header()
             if error:
-                return request.make_json_response(error, status=401)
+                return request.make_json_response(error, status=401, headers=cors_headers)
 
             error = self._require_admin()
             if error:
-                return request.make_json_response(error, status=403)
+                return request.make_json_response(error, status=403, headers=cors_headers)
 
             tenant = request.env['quelyos.tenant'].sudo().browse(tenant_id)
 
@@ -590,7 +628,7 @@ class TenantController(BaseController):
                     'success': False,
                     'error': 'Tenant non trouvé',
                     'error_code': 'TENANT_NOT_FOUND'
-                }, status=404)
+                }, status=404, headers=cors_headers)
 
             tenant_code = tenant.code
 
@@ -602,7 +640,7 @@ class TenantController(BaseController):
             return request.make_json_response({
                 'success': True,
                 'message': f'Tenant {tenant_code} archivé avec succès'
-            })
+            }, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"Error deleting tenant {tenant_id}: {e}")
@@ -610,7 +648,7 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur lors de la suppression',
                 'error_code': 'DELETE_ERROR'
-            }, status=500)
+            }, status=500, headers=cors_headers)
 
     # ═══════════════════════════════════════════════════════════════════════════
     # MÉTHODES PRIVÉES

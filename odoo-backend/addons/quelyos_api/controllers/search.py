@@ -18,7 +18,7 @@ class QuelyosSearch(http.Controller):
 
     # ==================== RECHERCHE ====================
 
-    @http.route('/api/ecommerce/search/autocomplete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/search/autocomplete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def search_autocomplete(self, **kwargs):
         """
         Recherche autocomplete avec suggestions
@@ -126,7 +126,7 @@ class QuelyosSearch(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/facets', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/facets', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_products_facets(self, **kwargs):
         """
         Récupérer les filtres dynamiques (facets) pour les produits

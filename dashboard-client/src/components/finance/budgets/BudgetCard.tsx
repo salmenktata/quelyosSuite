@@ -21,9 +21,9 @@ interface Budget {
 interface BudgetCardProps {
   budget: Budget;
   formatCurrency: (amount: number) => string;
-  onEdit?: (budget: Budget) => void;
-  onDuplicate?: (budget: Budget) => void;
-  onDelete?: (budget: Budget) => void;
+  onEdit?: (budget: Budget) => void | Promise<void>;
+  onDuplicate?: (budget: Budget) => void | Promise<void>;
+  onDelete?: (budget: Budget) => void | Promise<void>;
 }
 
 const periodLabels: Record<BudgetPeriod, string> = {

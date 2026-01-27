@@ -168,11 +168,11 @@ export default function BreakEvenReportPage() {
                       [],
                       ['Coûts Fixes par Catégorie'],
                       ['Catégorie', 'Montant'],
-                      ...apiData.categoriesBreakdown.fixed.map(c => [c.name, formatAmount(c.total)]),
+                      ...(apiData.categoriesBreakdown?.fixed || []).map(c => [c.name, formatAmount(c.total)]),
                       [],
                       ['Coûts Variables par Catégorie'],
                       ['Catégorie', 'Montant'],
-                      ...apiData.categoriesBreakdown.variable.map(c => [c.name, formatAmount(c.total)]),
+                      ...(apiData.categoriesBreakdown?.variable || []).map(c => [c.name, formatAmount(c.total)]),
                     ];
                     return rows;
                   }}
@@ -417,7 +417,7 @@ export default function BreakEvenReportPage() {
                   {formatAmount(apiData.fixedCosts)}
                 </p>
                 <p className="text-xs text-slate-400">
-                  {apiData.categoriesBreakdown.fixed.length} catégories
+                  {apiData.categoriesBreakdown?.fixed?.length || 0} catégories
                 </p>
               </div>
 
@@ -430,7 +430,7 @@ export default function BreakEvenReportPage() {
                   {formatAmount(apiData.variableCosts)}
                 </p>
                 <p className="text-xs text-slate-400">
-                  {apiData.categoriesBreakdown.variable.length} catégories
+                  {apiData.categoriesBreakdown?.variable?.length || 0} catégories
                 </p>
               </div>
             </div>
@@ -497,7 +497,7 @@ export default function BreakEvenReportPage() {
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts fixes (FIXED)
             </h2>
-            {apiData.categoriesBreakdown.fixed.length === 0 ? (
+            {!apiData.categoriesBreakdown?.fixed || apiData.categoriesBreakdown.fixed.length === 0 ? (
               <p className="text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût fixe</p>
             ) : (
               <div className="space-y-2">
@@ -518,7 +518,7 @@ export default function BreakEvenReportPage() {
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts variables (VARIABLE)
             </h2>
-            {apiData.categoriesBreakdown.variable.length === 0 ? (
+            {!apiData.categoriesBreakdown?.variable || apiData.categoriesBreakdown.variable.length === 0 ? (
               <p className="text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût variable</p>
             ) : (
               <div className="space-y-2">
@@ -536,7 +536,7 @@ export default function BreakEvenReportPage() {
         </motion.div>
 
         {/* Unclassified Costs */}
-        {apiData.categoriesBreakdown.unclassified.length > 0 && (
+        {apiData.categoriesBreakdown?.unclassified && apiData.categoriesBreakdown.unclassified.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

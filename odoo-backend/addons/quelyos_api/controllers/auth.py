@@ -52,7 +52,7 @@ class AuthController(http.Controller):
             response.status_code = 400
             return response
 
-    @http.route('/api/auth/sso-login', type='jsonrpc', auth='none', methods=['POST', 'OPTIONS'], csrf=False)
+    @http.route('/api/auth/sso-login', type='json', auth='none', methods=['POST', 'OPTIONS'], csrf=False)
     def sso_login(self, **kwargs):
         """
         Authentification SSO - valide les credentials et crée une session Odoo.
@@ -98,7 +98,7 @@ class AuthController(http.Controller):
             _logger.error(f"SSO login error: {e}")
             return {'success': False, 'error': 'Erreur de connexion'}
 
-    @http.route('/api/auth/user-info', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/user-info', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_user_info(self, **kwargs):
         """
         Récupère les informations de l'utilisateur connecté incluant ses groupes de sécurité.

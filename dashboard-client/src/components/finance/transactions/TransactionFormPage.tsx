@@ -94,7 +94,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
 
   useRequireAuth();
   const { currency } = useCurrency();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const targetId = useMemo(() => {
     const raw = searchParams?.get("id");

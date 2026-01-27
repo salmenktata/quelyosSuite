@@ -647,8 +647,9 @@ export default function Products() {
 
             {/* Bouton pour afficher/masquer les filtres d'attributs */}
             {attributes.length > 0 && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowAttributeFilters(!showAttributeFilters)}
                 className={`
                   flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
@@ -676,7 +677,7 @@ export default function Products() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Button>
             )}
           </div>
 
@@ -688,16 +689,17 @@ export default function Products() {
                   Filtrer par attributs
                 </h3>
                 {selectedAttributeValues.length > 0 && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       setSelectedAttributeValues([])
                       setPage(0)
                     }}
-                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="!p-0 text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
                   >
                     Effacer tout ({selectedAttributeValues.length})
-                  </button>
+                  </Button>
                 )}
               </div>
               <AttributeFilter
@@ -998,47 +1000,55 @@ export default function Products() {
                         />
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleSort('name')}
-                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200"
+                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200 !p-0 !text-xs uppercase"
                           aria-label={`Trier par produit ${sortBy === 'name' ? (sortOrder === 'asc' ? 'décroissant' : 'croissant') : ''}`}
                         >
                           Produit
                           <SortIcon field="name" />
-                        </button>
+                        </Button>
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleSort('default_code')}
-                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200"
+                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200 !p-0 !text-xs uppercase"
                           aria-label={`Trier par SKU ${sortBy === 'default_code' ? (sortOrder === 'asc' ? 'décroissant' : 'croissant') : ''}`}
                         >
                           SKU
                           <SortIcon field="default_code" />
-                        </button>
+                        </Button>
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Catégorie
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleSort('price')}
-                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200"
+                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200 !p-0 !text-xs uppercase"
                           aria-label={`Trier par prix ${sortBy === 'price' ? (sortOrder === 'asc' ? 'décroissant' : 'croissant') : ''}`}
                         >
                           Prix
                           <SortIcon field="price" />
-                        </button>
+                        </Button>
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleSort('qty_available')}
-                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200"
+                          className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200 !p-0 !text-xs uppercase"
                           aria-label={`Trier par stock ${sortBy === 'qty_available' ? (sortOrder === 'asc' ? 'décroissant' : 'croissant') : ''}`}
                         >
                           Stock
                           <SortIcon field="qty_available" />
-                        </button>
+                        </Button>
                       </th>
                       <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Actions

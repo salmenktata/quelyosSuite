@@ -52,7 +52,7 @@ _view_count_cache = {}
 class QuelyosAPI(BaseController):
     """API REST pour frontend e-commerce et backoffice"""
 
-    # Odoo gère automatiquement le format JSON-RPC pour les routes type='jsonrpc'
+    # Odoo gère automatiquement le format JSON-RPC pour les routes type='json'
     # On retourne directement les dictionnaires
 
     def _get_params(self):
@@ -402,7 +402,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== AUTHENTICATION ====================
 
-    @http.route('/api/ecommerce/auth/login', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/login', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def auth_login(self, **kwargs):
         """Authentification utilisateur avec vérification du mot de passe"""
         try:
@@ -529,7 +529,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Authentication failed'
             }
 
-    @http.route('/api/ecommerce/auth/logout', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/logout', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def auth_logout(self, **kwargs):
         """Déconnexion utilisateur"""
         try:
@@ -539,7 +539,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Logout error: {e}")
             return {'success': True}  # Toujours retourner success
 
-    @http.route('/api/ecommerce/auth/session', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/session', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def auth_session(self, **kwargs):
         """Vérifier la session courante"""
         try:
@@ -563,7 +563,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Session check error: {e}")
             return {'authenticated': False}
 
-    @http.route('/api/ecommerce/auth/register', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/register', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def auth_register(self, **kwargs):
         """Inscription nouvel utilisateur"""
         try:
@@ -626,7 +626,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== PRODUCTS ====================
 
-    @http.route('/api/ecommerce/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_products_list(self, **kwargs):
         """Liste des produits avec recherche, filtres et tri (GET via JSON-RPC)"""
         try:
@@ -856,7 +856,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_detail(self, product_id, **kwargs):
         """Détail d'un produit (GET via JSON-RPC)"""
         try:
@@ -885,7 +885,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/slug/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/slug/<string:slug>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_by_slug(self, slug, **kwargs):
         """Détail d'un produit par slug (GET via JSON-RPC)"""
         try:
@@ -934,7 +934,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors du chargement du produit'
             }
 
-    @http.route('/api/ecommerce/products/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_product(self, **kwargs):
         """Créer un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1055,7 +1055,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product(self, product_id, **kwargs):
         """Modifier un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1176,7 +1176,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_product(self, product_id, **kwargs):
         """Supprimer un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1206,7 +1206,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def archive_product(self, product_id, **kwargs):
         """Archiver ou désarchiver un produit (admin)
         PROTECTION: Store User minimum requis
@@ -1251,7 +1251,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/taxes', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/taxes', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_taxes(self, **kwargs):
         """Récupérer la liste des taxes disponibles"""
         try:
@@ -1286,7 +1286,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/uom', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_uom(self, **kwargs):
         """Récupérer la liste des unités de mesure disponibles"""
         try:
@@ -1320,7 +1320,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-tags', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-tags', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_tags(self, **kwargs):
         """Récupérer la liste des tags produits disponibles"""
         try:
@@ -1350,7 +1350,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-tags/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-tags/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_product_tag(self, **kwargs):
         """Créer un nouveau tag produit (admin)
         PROTECTION: Store User minimum requis
@@ -1395,7 +1395,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-types', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-types', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_types(self, **kwargs):
         """Récupérer la liste des types de produits disponibles"""
         try:
@@ -1420,7 +1420,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def duplicate_product(self, product_id, **kwargs):
         """Dupliquer un produit (admin)
         PROTECTION: Store User minimum requis
@@ -1474,7 +1474,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/export', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def export_products(self, **kwargs):
         """Exporter les produits en CSV (admin)"""
         try:
@@ -1553,7 +1553,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/import', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/import', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def import_products(self, **kwargs):
         """Importer des produits depuis CSV (admin)"""
         try:
@@ -1665,7 +1665,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== PRODUCT IMAGES ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_images(self, product_id, **kwargs):
         """Liste toutes les images d'un produit"""
         try:
@@ -1702,7 +1702,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def upload_product_images(self, product_id, **kwargs):
         """Upload images produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1772,7 +1772,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_product_image(self, product_id, image_id, **kwargs):
         """Supprimer image produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1822,7 +1822,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def reorder_product_images(self, product_id, **kwargs):
         """Réorganiser images produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1876,7 +1876,7 @@ class QuelyosAPI(BaseController):
     # Images associées aux valeurs d'attributs (ex: images pour la couleur "Rouge")
     # Approche optimisée : une seule copie des images par valeur, partagée par toutes les variantes
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_attribute_images(self, product_id, **kwargs):
         """
         Récupère les lignes d'attributs du produit avec le compteur d'images par valeur.
@@ -1936,7 +1936,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Récupère les images associées à une valeur d'attribut spécifique"""
         try:
@@ -1988,7 +1988,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def upload_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Upload des images pour une valeur d'attribut (admin)"""
         try:
@@ -2082,7 +2082,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_attribute_value_image(self, product_id, ptav_id, image_id, **kwargs):
         """Supprimer une image d'une valeur d'attribut (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2137,7 +2137,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def reorder_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Réorganiser l'ordre des images d'une valeur d'attribut (admin)"""
         try:
@@ -2197,7 +2197,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== PRODUCT VARIANTS ====================
 
-    @http.route('/api/ecommerce/attributes', type='jsonrpc', auth='public', csrf=False, cors='*')
+    @http.route('/api/ecommerce/attributes', type='json', auth='public', csrf=False, cors='*')
     def get_all_attributes(self, **kwargs):
         """Liste tous les attributs disponibles (couleur, taille, etc.)"""
         try:
@@ -2233,7 +2233,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_variants(self, product_id, **kwargs):
         """Obtenir les variantes et attributs d'un produit"""
         try:
@@ -2345,7 +2345,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def add_product_attribute(self, product_id, **kwargs):
         """Ajouter un attribut à un produit (admin)"""
         try:
@@ -2420,7 +2420,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_attribute(self, product_id, line_id, **kwargs):
         """Modifier les valeurs d'un attribut sur un produit (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2482,7 +2482,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def delete_product_attribute(self, product_id, line_id, **kwargs):
         """Supprimer un attribut d'un produit (admin)"""
         try:
@@ -2524,7 +2524,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/regenerate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/regenerate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def regenerate_product_variants(self, product_id, **kwargs):
         """Régénérer toutes les variantes d'un produit basées sur ses attributs (admin)
 
@@ -2614,7 +2614,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_variant(self, product_id, variant_id, **kwargs):
         """Modifier une variante spécifique (prix, code, etc.) (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2681,7 +2681,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_variant_stock(self, product_id, variant_id, **kwargs):
         """Modifier le stock d'une variante spécifique (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2778,7 +2778,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== VARIANT IMAGES ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_variant_images(self, product_id, variant_id, **kwargs):
         """Récupérer les images d'une variante spécifique"""
         try:
@@ -2822,7 +2822,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def upload_variant_images(self, product_id, variant_id, **kwargs):
         """Uploader des images pour une variante"""
         try:
@@ -2890,7 +2890,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_variant_image(self, product_id, variant_id, image_id, **kwargs):
         """Supprimer une image de variante (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2923,7 +2923,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def reorder_variant_images(self, product_id, variant_id, **kwargs):
         """Réordonner les images d'une variante"""
         try:
@@ -2962,7 +2962,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== CATEGORIES ====================
 
-    @http.route('/api/ecommerce/categories', type='jsonrpc', auth='public', csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories', type='json', auth='public', csrf=False, cors='*')
     def get_categories_list(self, **kwargs):
         """Liste des catégories avec compteur produits, sous-catégories et recherche"""
         try:
@@ -3045,7 +3045,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_category_detail(self, category_id, **kwargs):
         """Détail d'une catégorie (GET via JSON-RPC)"""
         try:
@@ -3074,7 +3074,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_category(self, **kwargs):
         """Créer une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -3116,7 +3116,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_category(self, category_id, **kwargs):
         """Modifier une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -3160,7 +3160,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_category(self, category_id, **kwargs):
         """Supprimer une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -3188,7 +3188,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/move', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def move_category(self, category_id, **kwargs):
         """Déplacer une catégorie vers un nouveau parent (admin)"""
         try:
@@ -3306,7 +3306,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/site-config/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/site-config/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_site_config(self, **kwargs):
         """
         Mettre à jour la configuration du site (ADMIN UNIQUEMENT)
@@ -3442,7 +3442,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== ORDERS ====================
 
-    @http.route('/api/ecommerce/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_orders_list(self, **kwargs):
         """Liste des commandes (admin uniquement)"""
         try:
@@ -3513,7 +3513,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_detail(self, order_id, **kwargs):
         """Détail d'une commande"""
         try:
@@ -3586,7 +3586,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def create_order(self, **kwargs):
         """Créer une commande depuis le panier"""
         try:
@@ -3632,7 +3632,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/status', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/status', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_order_status(self, order_id, **kwargs):
         """Changer le statut d'une commande (admin uniquement)"""
         try:
@@ -3681,7 +3681,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_tracking(self, order_id, **kwargs):
         """Récupérer les informations de suivi de la commande"""
         try:
@@ -3735,7 +3735,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_order_tracking(self, order_id, **kwargs):
         """Mettre à jour le numéro de suivi d'un picking (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -3791,7 +3791,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_history(self, order_id, **kwargs):
         """Récupérer l'historique des modifications de la commande"""
         try:
@@ -3903,7 +3903,7 @@ class QuelyosAPI(BaseController):
                 headers=[('Content-Type', 'application/json')]
             )
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/send-quotation', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/send-quotation', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def send_quotation_email(self, order_id, **kwargs):
         """Envoyer le devis par email au client"""
         try:
@@ -3952,7 +3952,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_invoice_from_order(self, order_id, **kwargs):
         """Générer une facture depuis la commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -4017,7 +4017,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/unlock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/unlock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def unlock_order(self, order_id, **kwargs):
         """Remettre la commande en brouillon"""
         try:
@@ -4078,7 +4078,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/orders', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customer_orders(self, **kwargs):
         """Liste des commandes du client connecté"""
         try:
@@ -4177,7 +4177,7 @@ class QuelyosAPI(BaseController):
                 headers=[('Content-Type', 'application/json')]
             )
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_tracking(self, order_id, **kwargs):
         """Obtenir les informations de tracking d'une commande (admin uniquement)"""
         try:
@@ -4225,7 +4225,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_order_tracking(self, order_id, **kwargs):
         """Mettre à jour le numéro de tracking d'une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -4292,7 +4292,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_history(self, order_id, **kwargs):
         """Obtenir l'historique des modifications d'une commande (admin uniquement)"""
         try:
@@ -4355,7 +4355,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== CUSTOMERS (ADMIN) ====================
 
-    @http.route('/api/ecommerce/customers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customers_list(self, **kwargs):
         """Liste de tous les clients (admin uniquement)"""
         try:
@@ -4438,7 +4438,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customer_detail(self, customer_id, **kwargs):
         """Detail d'un client avec historique commandes (admin uniquement)"""
         try:
@@ -4508,7 +4508,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get customer detail error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer(self, customer_id, **kwargs):
         """Modifier un client (ownership validation)"""
         # SECURITE : Vérifier ownership (utilisateur modifie ses données OU admin)
@@ -4545,7 +4545,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Update customer error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/customers/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/export', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def export_customers_csv(self, **kwargs):
         """Exporter les clients en CSV (admin uniquement)"""
         try:
@@ -4646,7 +4646,7 @@ class QuelyosAPI(BaseController):
 
         return cart
 
-    @http.route('/api/ecommerce/cart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_cart(self, **kwargs):
         """Récupérer le panier du client"""
         try:
@@ -4713,7 +4713,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def add_to_cart(self, **kwargs):
         """Ajouter un produit au panier"""
         try:
@@ -4795,7 +4795,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_cart_line(self, **kwargs):
         """Modifier la quantité d'une ligne du panier"""
         try:
@@ -4864,7 +4864,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/remove/<int:line_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/remove/<int:line_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def remove_from_cart(self, line_id, **kwargs):
         """Supprimer une ligne du panier"""
         try:
@@ -4924,7 +4924,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/clear', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/clear', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def clear_cart(self, **kwargs):
         """Vider le panier"""
         try:
@@ -4971,7 +4971,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/save', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def save_cart_for_guest(self, **kwargs):
         """
         Sauvegarder le panier pour un invité (non connecté)
@@ -5075,7 +5075,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/abandoned', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/abandoned', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_abandoned_carts(self, **kwargs):
         """Liste des paniers abandonnés (admin only)"""
         try:
@@ -5152,7 +5152,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/<int:cart_id>/send-reminder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/<int:cart_id>/send-reminder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def send_cart_reminder(self, cart_id, **kwargs):
         """Envoyer un email de relance pour panier abandonné"""
         try:
@@ -5204,7 +5204,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/recovery-stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/recovery-stats', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_cart_recovery_stats(self, **kwargs):
         """Statistiques de récupération des paniers abandonnés"""
         try:
@@ -5279,7 +5279,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== CUSTOMER PROFILE ====================
 
-    @http.route('/api/ecommerce/stock/export', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/export', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def export_stock_csv(self, **params):
         """
         Export CSV du stock avec filtres dates (ADMIN UNIQUEMENT).
@@ -5353,7 +5353,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/profile', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/profile', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customer_profile(self, **kwargs):
         """Récupérer le profil du client connecté"""
         try:
@@ -5386,7 +5386,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/profile/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/profile/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer_profile(self, **kwargs):
         """Modifier le profil du client connecté (AUTHENTIFICATION REQUISE)"""
         try:
@@ -5435,7 +5435,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== CUSTOMER ADDRESSES ====================
 
-    @http.route('/api/ecommerce/customer/addresses', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customer_addresses(self, **kwargs):
         """Liste des adresses du client connecté"""
         try:
@@ -5472,7 +5472,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_customer_address(self, **kwargs):
         """Créer une nouvelle adresse pour le client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -5522,7 +5522,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer_address(self, address_id, **kwargs):
         """Modifier une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -5580,7 +5580,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_customer_address(self, address_id, **kwargs):
         """Supprimer une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -5652,7 +5652,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/products/<int:product_id>/ribbon', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/ribbon', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_product_ribbon(self, product_id, **kwargs):
         """Mettre à jour le ruban (badge) d'un produit"""
         try:
@@ -5692,7 +5692,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_stock(self, product_id, **kwargs):
         """Récupérer le stock disponible d'un produit"""
         try:
@@ -5730,7 +5730,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock/history', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/history', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_product_stock_history(self, product_id, **kwargs):
         """
         Récupérer l'historique des mouvements de stock d'un produit (admin uniquement).
@@ -5882,7 +5882,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_stock(self, product_id, **kwargs):
         """Modifier le stock d'un produit (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -5949,7 +5949,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/moves', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/moves', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_stock_moves(self, **kwargs):
         """
         Liste des mouvements de stock avec historique complet (admin uniquement).
@@ -6100,7 +6100,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def validate_stock_availability(self, **kwargs):
         """Vérifier la disponibilité du stock pour plusieurs produits"""
         try:
@@ -6157,7 +6157,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/products', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_products(self, **kwargs):
         """Liste de tous les produits avec leur stock (admin uniquement)"""
         try:
@@ -6232,7 +6232,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== DELIVERY ====================
 
-    @http.route('/api/ecommerce/delivery/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_delivery_methods(self, **kwargs):
         """Liste des méthodes de livraison disponibles"""
         try:
@@ -6262,7 +6262,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def create_delivery_method(self, **kwargs):
         """Creer une methode de livraison (admin uniquement)"""
         try:
@@ -6313,7 +6313,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_delivery_method_detail(self, method_id, **kwargs):
         """Detail d'une methode de livraison (admin uniquement)"""
         try:
@@ -6348,7 +6348,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_delivery_method(self, method_id, **kwargs):
         """Mettre a jour une methode de livraison (admin uniquement)"""
         try:
@@ -6397,7 +6397,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def delete_delivery_method(self, method_id, **kwargs):
         """Supprimer une methode de livraison (admin uniquement)"""
         try:
@@ -6428,7 +6428,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/calculate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/calculate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def calculate_delivery_cost(self, **kwargs):
         """Calculer les frais de livraison"""
         try:
@@ -6485,7 +6485,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/zones', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/zones', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_delivery_zones(self, **kwargs):
         """Liste des zones de livraison disponibles"""
         try:
@@ -6516,7 +6516,7 @@ class QuelyosAPI(BaseController):
     # PHASE 4: PAIEMENT
     # ===========================
 
-    @http.route('/api/ecommerce/payment/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/methods', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_payment_methods(self, **kwargs):
         """Liste des moyens de paiement disponibles"""
         try:
@@ -6550,7 +6550,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/init', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/init', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def init_payment(self, **kwargs):
         """Initialiser un paiement (créer une transaction Stripe PaymentIntent)"""
         try:
@@ -6627,7 +6627,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/confirm', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def confirm_payment(self, **kwargs):
         """Confirmer un paiement après validation par Stripe"""
         try:
@@ -6688,7 +6688,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/webhook', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/webhook', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def payment_webhook(self, **kwargs):
         """Webhook pour recevoir les notifications de Stripe"""
         try:
@@ -6738,7 +6738,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_payment_transactions(self, **kwargs):
         """Liste des transactions de paiement (admin uniquement)"""
         try:
@@ -6834,7 +6834,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_payment_transaction_detail(self, transaction_id, **kwargs):
         """Détail d'une transaction de paiement (admin uniquement)"""
         try:
@@ -6892,7 +6892,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>/refund', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>/refund', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def refund_payment_transaction(self, transaction_id, **kwargs):
         """Rembourser une transaction de paiement (admin uniquement)"""
         try:
@@ -6965,7 +6965,7 @@ class QuelyosAPI(BaseController):
     # PHASE 5: MARKETING (COUPONS)
     # ===========================
 
-    @http.route('/api/ecommerce/coupons', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_coupons_list(self, **kwargs):
         """Liste des coupons (admin uniquement)"""
         try:
@@ -7038,7 +7038,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_coupon(self, **kwargs):
         """Créer coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -7119,7 +7119,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_coupon_detail(self, coupon_id, **kwargs):
         """Détail coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -7167,7 +7167,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_coupon(self, coupon_id, **kwargs):
         """Mettre à jour coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -7236,7 +7236,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_coupon(self, coupon_id, **kwargs):
         """Supprimer coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -7269,7 +7269,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/coupon/apply', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/coupon/apply', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def apply_coupon_to_cart(self, **kwargs):
         """Appliquer un code promo au panier"""
         try:
@@ -7372,7 +7372,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/coupon/remove', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/coupon/remove', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def remove_coupon_from_cart(self, **kwargs):
         """Retirer un code promo du panier"""
         try:
@@ -7427,7 +7427,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== ANALYTICS ====================
 
-    @http.route('/api/ecommerce/analytics/stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/stats', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_analytics_stats(self, **kwargs):
         """Statistiques globales (admin uniquement)"""
         try:
@@ -7566,7 +7566,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/analytics/revenue-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/revenue-chart', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_revenue_chart(self, **kwargs):
         """Graphique évolution du chiffre d'affaires par période"""
         try:
@@ -7645,7 +7645,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get revenue chart error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/orders-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/orders-chart', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_orders_chart(self, **kwargs):
         """Graphique évolution du nombre de commandes par période et par état"""
         try:
@@ -7729,7 +7729,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get orders chart error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/conversion-funnel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/conversion-funnel', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_conversion_funnel(self, **kwargs):
         """Funnel de conversion : visiteurs → panier → commande → paiement"""
         try:
@@ -7822,7 +7822,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get conversion funnel error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/top-categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/top-categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_top_categories(self, **kwargs):
         """Top catégories les plus vendues avec graphique"""
         try:
@@ -7882,7 +7882,7 @@ class QuelyosAPI(BaseController):
     # PHASE 7: FACTURATION
     # ===========================
 
-    @http.route('/api/ecommerce/invoices', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_invoices_list(self, **kwargs):
         """Liste des factures (admin uniquement)"""
         try:
@@ -7940,7 +7940,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get invoices list error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_invoice_detail(self, invoice_id, **kwargs):
         """Detail d'une facture"""
         try:
@@ -7986,7 +7986,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get invoice detail error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_invoice_from_order(self, order_id, **kwargs):
         """Creer une facture depuis une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -8016,7 +8016,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Create invoice error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def post_invoice(self, invoice_id, **kwargs):
         """Valider une facture brouillon"""
         try:
@@ -8041,7 +8041,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== FEATURED PRODUCTS ====================
 
-    @http.route('/api/ecommerce/featured', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/featured', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_featured_products(self, **kwargs):
         """Liste des produits vedettes (website_sequence > 0)"""
         try:
@@ -8107,7 +8107,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get featured products error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/featured/available', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/featured/available', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_available_products_for_featured(self, **kwargs):
         """Liste des produits non vedettes pour ajout (admin)"""
         try:
@@ -8171,7 +8171,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get available products error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/featured/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/featured/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def add_featured_product(self, **kwargs):
         """Ajouter un produit aux vedettes (admin)"""
         try:
@@ -8215,7 +8215,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Add featured product error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/featured/remove', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/featured/remove', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def remove_featured_product(self, **kwargs):
         """Retirer un produit des vedettes (admin)"""
         try:
@@ -8244,7 +8244,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Remove featured product error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/featured/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/featured/reorder', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def reorder_featured_products(self, **kwargs):
         """Reordonner les produits vedettes (admin)"""
         try:
@@ -8275,7 +8275,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK INVENTORY ====================
 
-    @http.route('/api/ecommerce/stock/inventory/prepare', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory/prepare', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def prepare_inventory(self, **kwargs):
         """Préparer un inventaire physique - Récupérer liste produits avec stock actuel"""
         try:
@@ -8340,7 +8340,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/inventory/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def validate_inventory(self, **kwargs):
         """Valider un inventaire physique - Appliquer les ajustements de stock en masse"""
         try:
@@ -8465,7 +8465,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK TRANSFERS (PICKINGS) ====================
 
-    @http.route('/api/ecommerce/stock/pickings', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_pickings(self, **kwargs):
         """
         Lister les bons de transfert (stock.picking) avec filtres
@@ -8564,7 +8564,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la récupération des transferts'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_picking_details(self, picking_id, **kwargs):
         """
         Récupérer les détails d'un bon de transfert
@@ -8640,7 +8640,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la récupération des détails'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def validate_stock_picking(self, picking_id, **kwargs):
         """
         Valider un bon de transfert (action_done)
@@ -8699,7 +8699,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la validation du transfert'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/cancel', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def cancel_stock_picking(self, picking_id, **kwargs):
         """
         Annuler un bon de transfert
@@ -8759,7 +8759,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== CYCLE COUNTS ====================
 
-    @http.route('/api/ecommerce/stock/cycle-counts', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_cycle_counts(self, **kwargs):
         """
         Lister les comptages cycliques
@@ -8826,7 +8826,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la récupération des comptages'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_cycle_count_detail(self, count_id, **kwargs):
         """
         Détails d'un comptage cyclique avec lignes
@@ -8891,7 +8891,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la récupération des détails'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_cycle_count(self, **kwargs):
         """
         Créer un comptage cyclique
@@ -8946,7 +8946,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la création du comptage'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/start', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/start', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def start_cycle_count(self, count_id, **kwargs):
         """
         Démarrer un comptage cyclique
@@ -8981,7 +8981,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors du démarrage'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/validate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/validate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def validate_cycle_count(self, count_id, **kwargs):
         """
         Valider un comptage cyclique et appliquer ajustements
@@ -9018,7 +9018,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors de la validation'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/update-line', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/update-line', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_cycle_count_line(self, count_id, **kwargs):
         """
         Mettre à jour quantité comptée d'une ligne
@@ -9070,7 +9070,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK LOCATIONS LOCK/UNLOCK ====================
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/lock', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/lock', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def lock_stock_location(self, location_id, **kwargs):
         """
         Verrouiller une location (bloquer mouvements)
@@ -9123,7 +9123,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur lors du verrouillage'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/unlock', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/unlock', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def unlock_stock_location(self, location_id, **kwargs):
         """
         Déverrouiller une location
@@ -9172,7 +9172,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK TURNOVER (ROTATION) ====================
 
-    @http.route('/api/ecommerce/stock/turnover', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/turnover', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_stock_turnover(self, **kwargs):
         """
         Récupérer les statistiques de rotation stock pour tous les produits (admin uniquement).
@@ -9271,7 +9271,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== ABC ANALYSIS (Gap P2-1) ====================
 
-    @http.route('/api/ecommerce/stock/abc-analysis', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/abc-analysis', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_abc_analysis(self, **kwargs):
         """
         Analyse ABC des produits selon la règle de Pareto 80-20 (admin uniquement).
@@ -9429,7 +9429,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK FORECAST (Gap P2-2) ====================
 
-    @http.route('/api/ecommerce/stock/forecast', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/forecast', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_forecast(self, **kwargs):
         """
         Calcul des prévisions de besoins stock basées sur historique ventes (admin uniquement).
@@ -9636,7 +9636,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== UOM / UNITS OF MEASURE (Gap P2-3) ====================
 
-    @http.route('/api/ecommerce/stock/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_uom_list(self, **kwargs):
         """Liste toutes les unités de mesure disponibles (Odoo 19 - catégories UoM supprimées)"""
         try:
@@ -9668,7 +9668,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/uom/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom/categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_uom_categories(self, **kwargs):
         """
         Note: Les catégories UoM ont été supprimées dans Odoo 19.
@@ -9692,7 +9692,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/uom/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom/convert', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def convert_uom(self, **kwargs):
         """Convertit une quantité d'une UoM vers une autre"""
         try:
@@ -9750,7 +9750,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/uom-config', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/uom-config', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_uom_config(self, product_id, **kwargs):
         """Configuration UoM d'un produit"""
         try:
@@ -9797,7 +9797,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== LOT TRACEABILITY (Gap P2-4) ====================
 
-    @http.route('/api/ecommerce/stock/lots/<int:lot_id>/traceability', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>/traceability', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_lot_traceability(self, lot_id, **kwargs):
         """Traçabilité complète amont/aval d'un lot"""
         try:
@@ -9887,7 +9887,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== ADVANCED STOCK REPORTS (Gap P2-5) ====================
 
-    @http.route('/api/ecommerce/stock/reports/advanced', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reports/advanced', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_advanced_stock_reports(self, **kwargs):
         """Rapports stock avancés : ruptures, dead stock, anomalies"""
         try:
@@ -10000,7 +10000,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK VALUATION BY CATEGORY (Gap P2) ====================
 
-    @http.route('/api/ecommerce/stock/valuation/by-category', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/valuation/by-category', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_valuation_by_category(self, **kwargs):
         """Rapport de valorisation du stock par catégorie produit (coût standard)"""
         try:
@@ -10133,7 +10133,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== STOCK ALERTS ====================
 
-    @http.route('/api/ecommerce/stock/low-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/low-stock-alerts', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_low_stock_alerts(self, **kwargs):
         """Récupérer les produits en stock bas (admin uniquement)"""
         try:
@@ -10207,7 +10207,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/high-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/high-stock-alerts', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_high_stock_alerts(self, **kwargs):
         """Récupérer les produits en surstock (admin uniquement)"""
         try:
@@ -10287,7 +10287,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== SHIPPING TRACKING ====================
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_order_tracking(self, order_id, **kwargs):
         """Récupérer les informations de suivi d'une commande"""
         try:
@@ -10353,7 +10353,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Get order tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/tracking/colissimo/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tracking/colissimo/<string:tracking_number>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_colissimo_tracking(self, tracking_number, **kwargs):
         """Récupérer le détail du suivi Colissimo via leur API"""
         try:
@@ -10371,7 +10371,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Colissimo tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/tracking/mondialrelay/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tracking/mondialrelay/<string:tracking_number>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_mondialrelay_tracking(self, tracking_number, **kwargs):
         """Récupérer le détail du suivi Mondial Relay via leur API"""
         try:
@@ -10391,7 +10391,7 @@ class QuelyosAPI(BaseController):
 
     # ===== CART RECOVERY =====
 
-    @http.route('/api/ecommerce/cart/recover', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/recover', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def recover_abandoned_cart(self, token, **kwargs):
         """
         Récupérer un panier abandonné via le token sécurisé envoyé par email
@@ -10545,7 +10545,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def activate_currency(self, currency_id, **params):
         """
         Activer ou désactiver une devise.
@@ -10595,7 +10595,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/currencies/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/convert', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def convert_currency(self, **params):
         """
         Convertir un montant d'une devise à une autre.
@@ -11891,7 +11891,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
     def get_pricelist_detail(self, pricelist_id, **params):
         """
         Récupérer le détail d'une pricelist avec ses items (règles de prix).
@@ -11954,7 +11954,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_pricelist(self, **params):
         """
         Créer une nouvelle pricelist (ADMIN UNIQUEMENT).
@@ -12035,7 +12035,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_pricelist(self, pricelist_id, **params):
         """
         Modifier une pricelist existante (ADMIN UNIQUEMENT).
@@ -12113,7 +12113,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_pricelist_item(self, pricelist_id, **params):
         """
         Ajouter une règle de prix à une pricelist (ADMIN UNIQUEMENT).
@@ -12285,7 +12285,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_pricelist(self, pricelist_id, **kwargs):
         """
         Supprimer une pricelist (ADMIN UNIQUEMENT).
@@ -12338,7 +12338,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_pricelist_item(self, pricelist_id, item_id, **params):
         """
         Modifier une règle de prix existante (ADMIN UNIQUEMENT).
@@ -12467,7 +12467,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_pricelist_item(self, pricelist_id, item_id, **kwargs):
         """
         Supprimer une règle de prix (ADMIN UNIQUEMENT).
@@ -12513,7 +12513,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
     def get_customer_categories(self, **params):
         """
         Récupérer la liste des catégories/tags clients (pour segmentation).
@@ -12550,7 +12550,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_customer_category(self, **params):
         """
         Créer une nouvelle catégorie/tag client.
@@ -12608,7 +12608,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_customer_category(self, category_id, **params):
         """
         Modifier une catégorie/tag client existante.
@@ -12669,7 +12669,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def delete_customer_category(self, category_id, **params):
         """
         Supprimer une catégorie/tag client.
@@ -12719,7 +12719,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def assign_pricelist_to_customer(self, customer_id, **params):
         """
         Assigner une pricelist à un client.
@@ -12782,7 +12782,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def assign_categories_to_customer(self, customer_id, **params):
         """
         Assigner des catégories/tags à un client.
@@ -12899,7 +12899,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
     def get_warehouse_detail(self, warehouse_id, **params):
         """
         Récupérer le détail d'un entrepôt avec ses locations.
@@ -12955,7 +12955,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/stock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_warehouse_stock(self, warehouse_id, **params):
         """
         Récupérer le stock de tous les produits dans un entrepôt.
@@ -13088,7 +13088,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='json', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
     def get_product_stock_by_location(self, product_id, **params):
         """
         Récupérer le stock d'un produit par location/entrepôt.
@@ -13161,7 +13161,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfer', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfer', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_stock_transfer(self, **params):
         """
         Créer un transfert de stock entre deux locations/entrepôts.
@@ -13279,7 +13279,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def list_stock_transfers(self, **params):
         """
         Lister les transferts internes (pickings).
@@ -13380,7 +13380,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/locations', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def list_stock_locations(self, **params):
         """
         Lister les locations de stock (pour sélection transfert).
@@ -13442,7 +13442,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def validate_stock_transfer(self, picking_id, **params):
         """
         Valider un transfert (marquer quantités faites + confirmer).
@@ -13504,7 +13504,7 @@ class QuelyosAPI(BaseController):
                 'error': str(e) if 'pas assez de stock' in str(e).lower() else 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/cancel', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def cancel_stock_transfer(self, picking_id, **params):
         """
         Annuler un transfert.
@@ -13562,7 +13562,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== PRODUITS - UPSELL & RECOMMENDATIONS ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/upsell', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/upsell', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_upsell(self, product_id, **kwargs):
         """
         Récupérer les produits complémentaires (upsell) pour un produit
@@ -13669,7 +13669,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/recommendations', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/recommendations', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_product_recommendations(self, product_id, **kwargs):
         """
         Récupérer les recommandations pour un produit
@@ -13789,7 +13789,7 @@ class QuelyosAPI(BaseController):
 
     # ==================== ALERTES STOCK ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock-alert-status', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-alert-status', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_stock_alert_status(self, product_id, **kwargs):
         """
         Vérifier si l'utilisateur est abonné aux alertes de réapprovisionnement
@@ -13863,7 +13863,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def notify_restock(self, product_id, **kwargs):
         """
         S'abonner aux alertes de réapprovisionnement
@@ -13942,7 +13942,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def unsubscribe_stock_alert(self, alert_id, **kwargs):
         """
         Se désabonner d'une alerte de réapprovisionnement
@@ -14012,7 +14012,7 @@ class QuelyosAPI(BaseController):
     # WAREHOUSE MANAGEMENT (Phase 2)
     # ══════════════════════════════════════════════════════════════════════
 
-    @http.route('/api/ecommerce/warehouses/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def create_warehouse(self, **kwargs):
         """
         Créer un nouvel entrepôt avec validation du code et création automatique des locations
@@ -14166,7 +14166,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_warehouse(self, warehouse_id, **kwargs):
         """
         Modifier un entrepôt existant
@@ -14240,7 +14240,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def archive_warehouse(self, warehouse_id, **kwargs):
         """
         Archiver un entrepôt (ne pas supprimer, juste désactiver)
@@ -14324,7 +14324,7 @@ class QuelyosAPI(BaseController):
     # WAREHOUSE ROUTES (Gap P1-4)
     # ══════════════════════════════════════════════════════════════════════
 
-    @http.route('/api/ecommerce/stock/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/routes', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_stock_routes(self, **kwargs):
         """
         Liste toutes les routes stock disponibles (admin uniquement).
@@ -14393,7 +14393,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/routes/<int:route_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/routes/<int:route_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_stock_route_detail(self, route_id, **kwargs):
         """
         Détails d'une route avec ses règles push et pull (admin uniquement).
@@ -14484,7 +14484,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_warehouse_routes(self, warehouse_id, **kwargs):
         """
         Récupérer les routes configurées pour un entrepôt (admin uniquement).
@@ -14569,7 +14569,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes/configure', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes/configure', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def configure_warehouse_routes(self, warehouse_id, **kwargs):
         """
         Configurer les étapes de réception et livraison d'un entrepôt (admin uniquement).
@@ -14665,7 +14665,7 @@ class QuelyosAPI(BaseController):
     # LOT/SERIAL NUMBERS & EXPIRATION DATES (Gap P1-6)
     # ══════════════════════════════════════════════════════════════════════
 
-    @http.route('/api/ecommerce/stock/lots', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_lots(self, **kwargs):
         """
         Liste tous les lots/numéros de série avec dates d'expiration (admin uniquement).
@@ -14765,7 +14765,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots/<int:lot_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_lot_detail(self, lot_id, **kwargs):
         """
         Détails complets d'un lot/numéro de série (admin uniquement).
@@ -14872,7 +14872,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots/expiry-alerts', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/expiry-alerts', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_expiry_alerts(self, **kwargs):
         """
         Récupérer les lots avec alertes d'expiration (admin uniquement).
@@ -14991,7 +14991,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_product_expiry_config(self, product_id, **kwargs):
         """
         Récupérer la configuration des délais d'expiration d'un produit (admin uniquement).
@@ -15047,7 +15047,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_product_expiry_config(self, product_id, **kwargs):
         """
         Configurer les délais d'expiration d'un produit (admin uniquement).
@@ -15190,7 +15190,7 @@ class QuelyosAPI(BaseController):
 
         return False
 
-    @http.route('/api/ecommerce/stock/locations/tree', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/tree', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_locations_tree(self, **kwargs):
         """
         Récupérer toutes les locations avec structure hiérarchique (admin uniquement).
@@ -15288,7 +15288,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_location_detail(self, location_id, **kwargs):
         """
         Obtenir les détails complets d'une location (admin uniquement).
@@ -15406,7 +15406,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_location(self, **kwargs):
         """Créer une nouvelle location (admin uniquement)"""
         try:
@@ -15507,7 +15507,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_location(self, location_id, **kwargs):
         """Modifier une location existante (admin uniquement)"""
         try:
@@ -15594,7 +15594,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/archive', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def archive_location(self, location_id, **kwargs):
         """Archiver une location"""
         try:
@@ -15650,7 +15650,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/move', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def move_location(self, location_id, **kwargs):
         """Déplacer une location dans l'arbre"""
         try:
@@ -15719,7 +15719,7 @@ class QuelyosAPI(BaseController):
     # RÈGLES DE RÉAPPROVISIONNEMENT (ORDERPOINTS)
     # ═════════════════════════════════════════════════════════════════════
 
-    @http.route('/api/ecommerce/stock/reordering-rules', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_reordering_rules(self, **kwargs):
         """Liste les règles de réapprovisionnement avec état actuel"""
         try:
@@ -15798,7 +15798,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def create_reordering_rule(self, **kwargs):
         """Créer une nouvelle règle de réapprovisionnement"""
         try:
@@ -15929,7 +15929,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def update_reordering_rule(self, rule_id, **kwargs):
         """Modifier une règle de réapprovisionnement"""
         try:
@@ -16046,7 +16046,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/delete', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def delete_reordering_rule(self, rule_id, **kwargs):
         """Supprimer (archiver) une règle de réapprovisionnement"""
         try:
@@ -16085,7 +16085,7 @@ class QuelyosAPI(BaseController):
     # CRM ENDPOINTS
     # ========================================
 
-    @http.route('/api/ecommerce/crm/stages', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/stages', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_stages(self, **kwargs):
         """Récupérer les stages (colonnes) du pipeline CRM"""
         try:
@@ -16115,7 +16115,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_leads(self, **kwargs):
         """Récupérer les leads (opportunités) avec pagination"""
         try:
@@ -16177,7 +16177,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_lead_detail(self, lead_id, **kwargs):
         """Récupérer le détail d'un lead"""
         try:
@@ -16222,7 +16222,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_crm_lead(self, **kwargs):
         """Créer un nouveau lead"""
         try:
@@ -16291,7 +16291,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_crm_lead(self, lead_id, **kwargs):
         """Mettre à jour un lead"""
         try:
@@ -16357,7 +16357,7 @@ class QuelyosAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_lead_stage(self, lead_id, **kwargs):
         """Mettre à jour le stage d'un lead (drag & drop)"""
         try:

@@ -246,13 +246,15 @@ export default function MarketingPopupsPage() {
               {/* Tabs */}
               <div className="flex border-b border-gray-200 dark:border-gray-700">
                 {(['general', 'trigger', 'design'] as const).map(tab => (
-                  <button
+                  <Button
                     key={tab}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 text-sm font-medium ${activeTab === tab ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'}`}
+                    className={`!rounded-none px-4 py-2 text-sm font-medium ${activeTab === tab ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
                   >
                     {tab === 'general' ? 'Général' : tab === 'trigger' ? 'Déclencheur' : 'Design'}
-                  </button>
+                  </Button>
                 ))}
               </div>
 

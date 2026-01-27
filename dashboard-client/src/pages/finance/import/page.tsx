@@ -3,7 +3,7 @@
 import { useReducer, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, FileSpreadsheet, CheckSquare, CheckCircle } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { Card } from "@/components/ui/card";
 import { FileUploadZone } from "@/components/finance/import/FileUploadZone";
 import { ImportWizardSteps } from "@/components/finance/import/ImportWizardSteps";
 import { ColumnMappingTable } from "@/components/finance/import/ColumnMappingTable";
@@ -162,7 +162,7 @@ const STEPS: StepInfo[] = [
   { id: "complete", label: "Terminé", icon: CheckCircle },
 ];
 
-const REQUIRED_FIELDS = ["date", "description"];
+const REQUIRED_FIELDS: import("@/types/import").FieldType[] = ["date", "description"];
 
 export default function ImportPage() {
   const navigate = useNavigate();
@@ -316,7 +316,7 @@ export default function ImportPage() {
 
         {/* Error Display */}
         {state.error && (
-          <GlassPanel gradient="violet" className="p-6">
+          <Card gradient="violet" className="p-6">
             <div className="flex items-start gap-3">
               <div className="text-rose-400">⚠️</div>
               <div className="flex-1">
@@ -330,11 +330,11 @@ export default function ImportPage() {
                 Recommencer
               </button>
             </div>
-          </GlassPanel>
+          </Card>
         )}
 
         {/* Step Content */}
-        <GlassPanel gradient="indigo" className="p-8">
+        <Card gradient="indigo" className="p-8">
           {/* Step 1: Upload */}
           {state.currentStep === "upload" && (
             <div className="space-y-6">
@@ -438,7 +438,7 @@ export default function ImportPage() {
               </div>
 
               {/* Preview Summary */}
-              <GlassPanel gradient="indigo" className="p-6">
+              <Card gradient="indigo" className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div>
                     <p className="text-2xl font-bold text-white">{state.previewData.totalRows}</p>
@@ -461,7 +461,7 @@ export default function ImportPage() {
                     <p className="text-sm text-rose-300">Erreurs</p>
                   </div>
                 </div>
-              </GlassPanel>
+              </Card>
 
               {/* Validation Errors */}
               {state.previewData.previewRows.filter((r) => r.error).length > 0 && (
@@ -503,7 +503,7 @@ export default function ImportPage() {
               onImportAnother={() => dispatch({ type: "RESET_WIZARD" })}
             />
           )}
-        </GlassPanel>
+        </Card>
     </div>
   );
 }

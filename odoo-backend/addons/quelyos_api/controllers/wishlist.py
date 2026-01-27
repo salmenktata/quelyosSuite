@@ -34,7 +34,7 @@ class QuelyosWishlist(http.Controller):
 
     # ==================== WISHLIST ====================
 
-    @http.route('/api/ecommerce/wishlist', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/wishlist', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_wishlist(self, **kwargs):
         """
         Récupérer la wishlist de l'utilisateur
@@ -125,7 +125,7 @@ class QuelyosWishlist(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/wishlist/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/wishlist/add', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def add_to_wishlist(self, **kwargs):
         """
         Ajouter un produit à la wishlist
@@ -215,7 +215,7 @@ class QuelyosWishlist(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/wishlist/remove/<int:product_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/wishlist/remove/<int:product_id>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def remove_from_wishlist(self, product_id, **kwargs):
         """
         Retirer un produit de la wishlist
@@ -280,7 +280,7 @@ class QuelyosWishlist(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/wishlist/public/<string:token>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/wishlist/public/<string:token>', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_public_wishlist(self, token, **kwargs):
         """
         Récupérer une wishlist publique partageable via token
