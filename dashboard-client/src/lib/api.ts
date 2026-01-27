@@ -147,11 +147,29 @@ class ApiClient {
         localStorage.setItem('user', JSON.stringify(result.user))
       }
       logger.debug('[API] Session stored:', this.sessionId?.substring(0, 20) + '...')
+
+      // Récupérer les groupes de sécurité de l'utilisateur
+      try {
+        const userInfo = await this.getUserInfo()
+        if (userInfo.success && userInfo.user) {
+          // Enrichir les données utilisateur avec les groupes
+          const enrichedUser = { ...result.user, groups: userInfo.user.groups }
+          localStorage.setItem('user', JSON.stringify(enrichedUser))
+          logger.debug('[API] User groups loaded:', userInfo.user.groups)
+        }
+      } catch (error) {
+        logger.warn('[API] Failed to load user groups:', error)
+        // Continuer même si la récupération des groupes échoue
+      }
     } else {
       logger.warn('[API] Login failed or no session_id:', result)
     }
 
     return result
+  }
+
+  async getUserInfo(): Promise<APIResponse<{ user: { id: number; name: string; email: string; login: string; groups: string[] } }>> {
+    return this.request<APIResponse<{ user: { id: number; name: string; email: string; login: string; groups: string[] } }>>('/api/auth/user-info')
   }
 
   async logout(): Promise<APIResponse> {

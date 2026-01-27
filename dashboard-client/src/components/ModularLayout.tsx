@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
+import { usePermissions } from '../hooks/usePermissions'
 import {
   // Common
   ChevronDown,
@@ -427,12 +428,14 @@ function AppLauncher({
   currentModule,
   onSelect,
   isOpen,
-  onClose
+  onClose,
+  modules
 }: {
   currentModule: Module
   onSelect: (id: ModuleId) => void
   isOpen: boolean
   onClose: () => void
+  modules: Module[]
 }) {
   if (!isOpen) return null
 
@@ -451,7 +454,7 @@ function AppLauncher({
           </div>
         </div>
         <div className="p-3 grid grid-cols-3 gap-2 max-h-80 overflow-y-auto">
-          {MODULES.map((module) => {
+          {modules.map((module) => {
             const ModuleIcon = module.icon
             const isActive = module.id === currentModule.id
             return (
@@ -488,19 +491,21 @@ function TopNavbar({
   onModuleChange,
   onMenuClick,
   onAppLauncherClick,
-  isAppLauncherOpen
+  isAppLauncherOpen,
+  modules
 }: {
   currentModule: Module
   onModuleChange: (id: ModuleId) => void
   onMenuClick: () => void
   onAppLauncherClick: () => void
   isAppLauncherOpen: boolean
+  modules: Module[]
 }) {
   const { theme, toggleTheme } = useTheme()
   const Icon = currentModule.icon
 
-  // Show only 5 most used modules in quick access
-  const quickModules = MODULES.filter(m => ['home', 'finance', 'store', 'crm', 'stock'].includes(m.id))
+  // Show only 5 most used modules in quick access (filtered by permissions)
+  const quickModules = modules.filter(m => ['home', 'finance', 'store', 'crm', 'stock'].includes(m.id))
 
   return (
     <header className="h-14 bg-gray-900 dark:bg-gray-950 border-b border-gray-800 flex items-center px-4 sticky top-0 z-30">
@@ -683,19 +688,25 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAppLauncherOpen, setIsAppLauncherOpen] = useState(false)
   const [openMenus, setOpenMenus] = useState<Set<string>>(new Set())
+  const { canAccessModule } = usePermissions()
+
+  // Filtrer les modules selon les permissions de l'utilisateur
+  const accessibleModules = useMemo(() => {
+    return MODULES.filter(module => canAccessModule(module.id))
+  }, [canAccessModule])
 
   // Detect current module from URL
   const detectModule = (): Module => {
     const path = location.pathname
     // IMPORTANT: Check /finance/stock BEFORE /finance
-    if (path.startsWith('/finance/stock')) return MODULES.find(m => m.id === 'stock')!
-    if (path.startsWith('/finance')) return MODULES.find(m => m.id === 'finance')!
-    if (path.startsWith('/stock') || path.startsWith('/warehouses') || path.startsWith('/inventory')) return MODULES.find(m => m.id === 'stock')!
-    if (path.startsWith('/crm') || path.startsWith('/invoices') || path.startsWith('/payments') || path.startsWith('/pricelists')) return MODULES.find(m => m.id === 'crm')!
-    if (path.startsWith('/store')) return MODULES.find(m => m.id === 'store')!
-    if (path.startsWith('/marketing')) return MODULES.find(m => m.id === 'marketing')!
-    if (path.startsWith('/hr')) return MODULES.find(m => m.id === 'hr')!
-    return MODULES.find(m => m.id === 'home')!
+    if (path.startsWith('/finance/stock')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0]
+    if (path.startsWith('/finance')) return accessibleModules.find(m => m.id === 'finance') || accessibleModules[0]
+    if (path.startsWith('/stock') || path.startsWith('/warehouses') || path.startsWith('/inventory')) return accessibleModules.find(m => m.id === 'stock') || accessibleModules[0]
+    if (path.startsWith('/crm') || path.startsWith('/invoices') || path.startsWith('/payments') || path.startsWith('/pricelists')) return accessibleModules.find(m => m.id === 'crm') || accessibleModules[0]
+    if (path.startsWith('/store')) return accessibleModules.find(m => m.id === 'store') || accessibleModules[0]
+    if (path.startsWith('/marketing')) return accessibleModules.find(m => m.id === 'marketing') || accessibleModules[0]
+    if (path.startsWith('/hr')) return accessibleModules.find(m => m.id === 'hr') || accessibleModules[0]
+    return accessibleModules.find(m => m.id === 'home') || accessibleModules[0]
   }
 
   const [currentModule, setCurrentModule] = useState<Module>(detectModule)
@@ -752,6 +763,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           onMenuClick={() => setIsMobileMenuOpen(true)}
           onAppLauncherClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
           isAppLauncherOpen={isAppLauncherOpen}
+          modules={accessibleModules}
         />
 
         {/* App Launcher Popup */}
@@ -760,6 +772,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           onSelect={handleModuleChange}
           isOpen={isAppLauncherOpen}
           onClose={() => setIsAppLauncherOpen(false)}
+          modules={accessibleModules}
         />
 
         <div className="flex-1 flex">

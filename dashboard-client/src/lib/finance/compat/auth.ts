@@ -10,6 +10,7 @@ export interface User {
   name: string
   email: string
   role?: string
+  groups: string[] // Groupes de sécurité Odoo (ex: ['Quelyos Stock User', ...])
 }
 
 export interface AuthContextType {
@@ -34,7 +35,8 @@ export function useAuth(): AuthContextType {
           id: user.id || 1,
           name: user.name || 'Utilisateur',
           email: user.email || '',
-          role: user.role || 'user'
+          role: user.role || 'user',
+          groups: user.groups || []
         }
       }
 
@@ -48,7 +50,8 @@ export function useAuth(): AuthContextType {
         id: payload.uid || payload.sub || 1,
         name: payload.name || 'Utilisateur',
         email: payload.email || '',
-        role: payload.role || 'user'
+        role: payload.role || 'user',
+        groups: payload.groups || []
       }
     } catch {
       return null

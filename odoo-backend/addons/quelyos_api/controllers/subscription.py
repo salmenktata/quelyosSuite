@@ -4,11 +4,12 @@ import logging
 from odoo import http, _
 from odoo.http import request
 from odoo.exceptions import ValidationError, AccessError
+from .base import BaseController
 
 _logger = logging.getLogger(__name__)
 
 
-class SubscriptionController(http.Controller):
+class SubscriptionController(BaseController):
     """Controller pour la gestion des abonnements Quelyos"""
 
     # ==================== ADMIN ENDPOINTS ====================
@@ -17,16 +18,21 @@ class SubscriptionController(http.Controller):
     def admin_list_subscriptions(self, limit=20, offset=0, **kwargs):
         """
         Liste tous les abonnements (backoffice admin)
+        PROTECTION: Finance User minimum requis
 
         :param limit: Nombre de résultats par page
         :param offset: Décalage pour la pagination
         :return: Liste des abonnements avec stats
         """
+        # Vérifier permissions Finance User minimum
+        error = self._check_any_group('group_quelyos_finance_user', 'group_quelyos_finance_manager')
+        if error:
+            return error
+
         try:
-            # SUDO justifié : Endpoint auth='user' réservé aux utilisateurs connectés Odoo.
+            # SUDO justifié : Après vérification groupe Finance ci-dessus.
             # sudo() nécessaire pour lister tous les abonnements sans restriction ACL
-            # (backoffice admin doit voir tous les subs, pas seulement ceux de son compte).
-            # Sécurité : auth='user' requis (ligne 16)
+            # (backoffice finance doit voir tous les subs, pas seulement ceux de son compte).
             Subscription = request.env['quelyos.subscription'].sudo()
 
             # Recherche avec pagination
@@ -73,15 +79,20 @@ class SubscriptionController(http.Controller):
     def admin_get_subscription(self, subscription_id, **kwargs):
         """
         Détails d'un abonnement (backoffice admin)
+        PROTECTION: Finance User minimum requis
 
         :param subscription_id: ID de l'abonnement
         :return: Détails complets de l'abonnement
         """
+        # Vérifier permissions Finance User minimum
+        error = self._check_any_group('group_quelyos_finance_user', 'group_quelyos_finance_manager')
+        if error:
+            return error
+
         try:
-            # SUDO justifié : Endpoint auth='user' réservé aux utilisateurs connectés Odoo.
+            # SUDO justifié : Après vérification groupe Finance ci-dessus.
             # sudo() nécessaire pour accéder aux détails complets de l'abonnement
-            # sans restriction ACL (backoffice admin doit voir toutes les infos).
-            # Sécurité : auth='user' requis (ligne 68)
+            # sans restriction ACL (backoffice finance doit voir toutes les infos).
             subscription = request.env['quelyos.subscription'].sudo().browse(subscription_id)
 
             if not subscription.exists():

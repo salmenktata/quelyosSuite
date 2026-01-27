@@ -98,6 +98,43 @@ class AuthController(http.Controller):
             _logger.error(f"SSO login error: {e}")
             return {'success': False, 'error': 'Erreur de connexion'}
 
+    @http.route('/api/auth/user-info', type='json', auth='user', methods=['POST'], csrf=False)
+    def get_user_info(self, **kwargs):
+        """
+        Récupère les informations de l'utilisateur connecté incluant ses groupes de sécurité.
+
+        Returns:
+            dict: {
+                success: bool,
+                user: {
+                    id: int,
+                    name: str,
+                    email: str,
+                    login: str,
+                    groups: [str] - Liste des noms de groupes (ex: ['Quelyos Stock User', ...])
+                }
+            }
+        """
+        try:
+            user = request.env.user
+
+            # Récupérer uniquement les groupes Quelyos
+            quelyos_groups = user.groups_id.filtered(lambda g: 'Quelyos' in g.name)
+
+            return {
+                'success': True,
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email or '',
+                    'login': user.login,
+                    'groups': quelyos_groups.mapped('name'),
+                }
+            }
+        except Exception as e:
+            _logger.error(f"Get user info error: {e}")
+            return {'success': False, 'error': 'Erreur lors de la récupération des informations utilisateur'}
+
     @http.route('/api/auth/sso-redirect', type='http', auth='none', methods=['GET', 'POST'], csrf=False)
     def sso_redirect(self, **kwargs):
         """

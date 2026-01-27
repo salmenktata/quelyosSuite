@@ -8,6 +8,7 @@ from odoo.http import request
 from passlib.context import CryptContext
 from ..config import is_origin_allowed, get_cors_headers
 from ..lib.cache import get_cache_service, CacheTTL
+from .base import BaseController
 
 _logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ if REDIS_AVAILABLE:
 _view_count_cache = {}
 
 
-class QuelyosAPI(http.Controller):
+class QuelyosAPI(BaseController):
     """API REST pour frontend e-commerce et backoffice"""
 
     # Odoo gère automatiquement le format JSON-RPC pour les routes type='json'
@@ -8715,11 +8716,11 @@ class QuelyosAPI(http.Controller):
     def get_cycle_counts(self, **kwargs):
         """
         Lister les comptages cycliques
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -8782,11 +8783,11 @@ class QuelyosAPI(http.Controller):
     def get_cycle_count_detail(self, count_id, **kwargs):
         """
         Détails d'un comptage cyclique avec lignes
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -8847,11 +8848,11 @@ class QuelyosAPI(http.Controller):
     def create_cycle_count(self, **kwargs):
         """
         Créer un comptage cyclique
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -8902,11 +8903,11 @@ class QuelyosAPI(http.Controller):
     def start_cycle_count(self, count_id, **kwargs):
         """
         Démarrer un comptage cyclique
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -8937,11 +8938,11 @@ class QuelyosAPI(http.Controller):
     def validate_cycle_count(self, count_id, **kwargs):
         """
         Valider un comptage cyclique et appliquer ajustements
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -8974,11 +8975,11 @@ class QuelyosAPI(http.Controller):
     def update_cycle_count_line(self, count_id, **kwargs):
         """
         Mettre à jour quantité comptée d'une ligne
-        ADMIN UNIQUEMENT
+        PROTECTION: Stock User minimum requis
         """
         try:
-            # Vérifier droits admin
-            error = self._require_admin()
+            # Vérifier permissions Stock User minimum
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
             if error:
                 return error
 
@@ -9213,6 +9214,761 @@ class QuelyosAPI(http.Controller):
 
         except Exception as e:
             _logger.error(f"Get stock turnover error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ==================== ABC ANALYSIS (Gap P2-1) ====================
+
+    @http.route('/api/ecommerce/stock/abc-analysis', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_abc_analysis(self, **kwargs):
+        """
+        Analyse ABC des produits selon la règle de Pareto 80-20 (admin uniquement).
+
+        Classification:
+        - Catégorie A: 20% produits = 80% valeur stock
+        - Catégorie B: 30% produits = 15% valeur stock
+        - Catégorie C: 50% produits = 5% valeur stock
+
+        Paramètres optionnels:
+        - warehouse_id (int): Filtrer par entrepôt
+        - category_id (int): Filtrer par catégorie produit
+        - threshold_a (float): Seuil % catégorie A (défaut: 80)
+        - threshold_b (float): Seuil % catégorie B (défaut: 95)
+
+        Returns:
+            - products: Liste produits avec classification A/B/C
+            - kpis: Statistiques par catégorie
+            - cumulative: Données pour courbe de Pareto
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Product = request.env['product.product'].sudo()
+            params = self._get_params()
+
+            warehouse_id = params.get('warehouse_id')
+            category_id = params.get('category_id')
+            threshold_a = float(params.get('threshold_a', 80))
+            threshold_b = float(params.get('threshold_b', 95))
+
+            # Domain de base : produits stockables uniquement
+            domain = [
+                ('type', '=', 'product'),
+                ('active', '=', True),
+            ]
+
+            if category_id:
+                domain.append(('categ_id', '=', int(category_id)))
+
+            # Rechercher tous les produits
+            products = Product.search(domain)
+
+            # Calculer valeur stock pour chaque produit
+            products_data = []
+            total_value = 0
+
+            for product in products:
+                # Quantité en stock (filtré par warehouse si spécifié)
+                if warehouse_id:
+                    qty = product.with_context(warehouse=int(warehouse_id)).qty_available
+                else:
+                    qty = product.qty_available
+
+                # Valeur = quantité × prix coût
+                value = qty * product.standard_price
+                total_value += value
+
+                if value > 0:  # On garde uniquement les produits avec valeur > 0
+                    products_data.append({
+                        'id': product.id,
+                        'name': product.display_name,
+                        'sku': product.default_code or '',
+                        'qty': qty,
+                        'standard_price': product.standard_price,
+                        'value': value,
+                    })
+
+            # Trier par valeur décroissante
+            products_data.sort(key=lambda x: x['value'], reverse=True)
+
+            # Calculer % cumulé et classifier
+            cumulative_value = 0
+            cumulative_data = []
+
+            for i, product in enumerate(products_data):
+                cumulative_value += product['value']
+                cumulative_pct = (cumulative_value / total_value * 100) if total_value > 0 else 0
+
+                # Classification ABC selon seuils
+                if cumulative_pct <= threshold_a:
+                    category = 'A'
+                elif cumulative_pct <= threshold_b:
+                    category = 'B'
+                else:
+                    category = 'C'
+
+                product['category'] = category
+                product['cumulative_value'] = cumulative_value
+                product['cumulative_pct'] = round(cumulative_pct, 2)
+                product['value_pct'] = round((product['value'] / total_value * 100), 2) if total_value > 0 else 0
+
+                # Données pour graphique courbe de Pareto
+                cumulative_data.append({
+                    'product_index': i + 1,
+                    'cumulative_pct': round(cumulative_pct, 2),
+                    'category': category
+                })
+
+            # Calculer KPIs par catégorie
+            category_a = [p for p in products_data if p['category'] == 'A']
+            category_b = [p for p in products_data if p['category'] == 'B']
+            category_c = [p for p in products_data if p['category'] == 'C']
+
+            kpis = {
+                'total_value': round(total_value, 2),
+                'total_products': len(products_data),
+                'category_a': {
+                    'count': len(category_a),
+                    'count_pct': round((len(category_a) / len(products_data) * 100), 1) if products_data else 0,
+                    'value': round(sum(p['value'] for p in category_a), 2),
+                    'value_pct': round((sum(p['value'] for p in category_a) / total_value * 100), 1) if total_value > 0 else 0,
+                },
+                'category_b': {
+                    'count': len(category_b),
+                    'count_pct': round((len(category_b) / len(products_data) * 100), 1) if products_data else 0,
+                    'value': round(sum(p['value'] for p in category_b), 2),
+                    'value_pct': round((sum(p['value'] for p in category_b) / total_value * 100), 1) if total_value > 0 else 0,
+                },
+                'category_c': {
+                    'count': len(category_c),
+                    'count_pct': round((len(category_c) / len(products_data) * 100), 1) if products_data else 0,
+                    'value': round(sum(p['value'] for p in category_c), 2),
+                    'value_pct': round((sum(p['value'] for p in category_c) / total_value * 100), 1) if total_value > 0 else 0,
+                },
+            }
+
+            _logger.info(f"ABC Analysis completed: {len(products_data)} products analyzed")
+
+            return {
+                'success': True,
+                'data': {
+                    'products': products_data,
+                    'kpis': kpis,
+                    'cumulative': cumulative_data,
+                    'thresholds': {
+                        'a': threshold_a,
+                        'b': threshold_b,
+                    }
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"ABC Analysis error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ==================== STOCK FORECAST (Gap P2-2) ====================
+
+    @http.route('/api/ecommerce/stock/forecast', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_stock_forecast(self, **kwargs):
+        """
+        Calcul des prévisions de besoins stock basées sur historique ventes (admin uniquement).
+
+        Méthodes:
+        - Moyenne mobile (7j, 30j, 90j, 365j)
+        - Tendance linéaire
+        - Prévisions sur N jours
+
+        Paramètres optionnels:
+        - product_id (int): ID du produit (requis pour prévisions produit)
+        - forecast_days (int): Nombre de jours à prévoir (défaut: 30)
+        - method (str): 'moving_average' ou 'linear_trend' (défaut: 'moving_average')
+        - period_days (int): Période historique en jours (défaut: 90)
+
+        Returns:
+            - historical: Données historiques de vente
+            - forecast: Prévisions pour N jours
+            - metrics: Métriques (moyennes, tendance)
+            - recommendations: Suggestions réapprovisionnement
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            from datetime import datetime, timedelta
+
+            Product = request.env['product.product'].sudo()
+            Move = request.env['stock.move'].sudo()
+            params = self._get_params()
+
+            product_id = params.get('product_id')
+            if not product_id:
+                return {
+                    'success': False,
+                    'error': 'Le paramètre product_id est requis',
+                    'errorCode': 'MISSING_PRODUCT_ID'
+                }
+
+            product_id = int(product_id)
+            forecast_days = int(params.get('forecast_days', 30))
+            method = params.get('method', 'moving_average')
+            period_days = int(params.get('period_days', 90))
+
+            # Vérifier que le produit existe
+            product = Product.browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit introuvable',
+                    'errorCode': 'PRODUCT_NOT_FOUND'
+                }
+
+            # Récupérer historique des ventes (mouvements done depuis internal vers customer)
+            date_from = datetime.now() - timedelta(days=period_days)
+            moves = Move.search([
+                ('product_id', '=', product_id),
+                ('state', '=', 'done'),
+                ('location_id.usage', '=', 'internal'),
+                ('location_dest_id.usage', '=', 'customer'),
+                ('date', '>=', date_from),
+            ], order='date ASC')
+
+            # Agréger ventes par jour
+            daily_sales = {}
+            for move in moves:
+                date_key = move.date.date().isoformat() if move.date else None
+                if date_key:
+                    daily_sales[date_key] = daily_sales.get(date_key, 0) + move.product_uom_qty
+
+            # Construire série temporelle complète (avec 0 pour jours sans vente)
+            current_date = date_from.date()
+            end_date = datetime.now().date()
+            historical = []
+
+            while current_date <= end_date:
+                date_key = current_date.isoformat()
+                qty_sold = daily_sales.get(date_key, 0)
+                historical.append({
+                    'date': date_key,
+                    'qty_sold': qty_sold
+                })
+                current_date += timedelta(days=1)
+
+            # Calculer moyennes mobiles
+            ma_7 = sum(d['qty_sold'] for d in historical[-7:]) / 7 if len(historical) >= 7 else 0
+            ma_30 = sum(d['qty_sold'] for d in historical[-30:]) / 30 if len(historical) >= 30 else 0
+            ma_90 = sum(d['qty_sold'] for d in historical[-90:]) / 90 if len(historical) >= 90 else 0
+
+            # Calcul de tendance (régression linéaire simple)
+            n = len(historical)
+            if n > 10:  # Besoin d'au moins 10 points
+                sum_x = sum(range(n))
+                sum_y = sum(d['qty_sold'] for d in historical)
+                sum_xy = sum(i * d['qty_sold'] for i, d in enumerate(historical))
+                sum_x2 = sum(i * i for i in range(n))
+
+                # Pente (a) et ordonnée (b) de y = ax + b
+                a = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x) if (n * sum_x2 - sum_x * sum_x) != 0 else 0
+                b = (sum_y - a * sum_x) / n
+
+                trend = 'increasing' if a > 0.01 else ('decreasing' if a < -0.01 else 'stable')
+                trend_slope = round(a, 4)
+            else:
+                a, b, trend, trend_slope = 0, ma_7, 'stable', 0
+
+            # Générer prévisions
+            forecast = []
+            forecast_date = datetime.now().date() + timedelta(days=1)
+
+            if method == 'moving_average':
+                # Utiliser la moyenne mobile comme prévision constante
+                forecast_qty = ma_7 if ma_7 > 0 else ma_30
+            else:  # linear_trend
+                # Utiliser la tendance linéaire
+                forecast_qty = max(0, b + a * n)  # Commencer à partir du dernier point
+
+            for i in range(forecast_days):
+                if method == 'linear_trend':
+                    # Ajuster selon la pente
+                    daily_forecast = max(0, b + a * (n + i))
+                else:
+                    # Moyenne mobile constante
+                    daily_forecast = forecast_qty
+
+                forecast.append({
+                    'date': forecast_date.isoformat(),
+                    'qty_forecast': round(daily_forecast, 2)
+                })
+                forecast_date += timedelta(days=1)
+
+            # Calcul total prévisionnel
+            total_forecast = sum(f['qty_forecast'] for f in forecast)
+
+            # Stock actuel
+            current_stock = product.qty_available
+
+            # Recommandations
+            recommendations = []
+            if total_forecast > current_stock:
+                shortage = total_forecast - current_stock
+                recommendations.append({
+                    'type': 'warning',
+                    'message': f'Risque de rupture : {round(shortage, 2)} unités manquantes sur {forecast_days} jours',
+                    'qty_to_order': round(shortage * 1.2, 2),  # +20% marge sécurité
+                })
+            elif current_stock > total_forecast * 3:
+                recommendations.append({
+                    'type': 'info',
+                    'message': f'Surstock détecté : {round(current_stock - total_forecast, 2)} unités en excès',
+                })
+            else:
+                recommendations.append({
+                    'type': 'success',
+                    'message': 'Stock adéquat pour la période prévue',
+                })
+
+            # Métriques
+            metrics = {
+                'moving_averages': {
+                    'ma_7': round(ma_7, 2),
+                    'ma_30': round(ma_30, 2),
+                    'ma_90': round(ma_90, 2),
+                },
+                'trend': {
+                    'status': trend,
+                    'slope': trend_slope,
+                },
+                'current_stock': current_stock,
+                'total_forecast': round(total_forecast, 2),
+                'avg_daily_forecast': round(total_forecast / forecast_days, 2),
+                'days_of_stock': round(current_stock / (total_forecast / forecast_days), 1) if total_forecast > 0 else 0,
+            }
+
+            _logger.info(f"Stock forecast generated for product {product.display_name}: {forecast_days} days")
+
+            return {
+                'success': True,
+                'data': {
+                    'product_id': product_id,
+                    'product_name': product.display_name,
+                    'product_sku': product.default_code or '',
+                    'historical': historical,
+                    'forecast': forecast,
+                    'metrics': metrics,
+                    'recommendations': recommendations,
+                    'method': method,
+                    'period_days': period_days,
+                    'forecast_days': forecast_days,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Stock forecast error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ==================== UOM / UNITS OF MEASURE (Gap P2-3) ====================
+
+    @http.route('/api/ecommerce/stock/uom', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_uom_list(self, **kwargs):
+        """Liste toutes les unités de mesure disponibles"""
+        try:
+            params = self._get_params()
+            category_id = params.get('category_id')
+
+            domain = [('active', '=', True)]
+            if category_id:
+                domain.append(('category_id', '=', category_id))
+
+            uoms = request.env['uom.uom'].sudo().search(domain, order='name')
+
+            uom_list = []
+            for uom in uoms:
+                uom_list.append({
+                    'id': uom.id,
+                    'name': uom.name,
+                    'category_id': uom.category_id.id,
+                    'category_name': uom.category_id.name,
+                    'uom_type': uom.uom_type,
+                    'factor': uom.factor,
+                    'factor_inv': uom.factor_inv,
+                    'rounding': uom.rounding,
+                    'active': uom.active,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'uoms': uom_list,
+                    'total': len(uom_list),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"UoM list error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/uom/categories', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_uom_categories(self, **kwargs):
+        """Liste toutes les catégories UoM"""
+        try:
+            categories = request.env['uom.category'].sudo().search([], order='name')
+
+            cat_list = []
+            for cat in categories:
+                uom_count = request.env['uom.uom'].sudo().search_count([('category_id', '=', cat.id)])
+                cat_list.append({
+                    'id': cat.id,
+                    'name': cat.name,
+                    'uom_count': uom_count,
+                })
+
+            return {
+                'success': True,
+                'data': {
+                    'categories': cat_list,
+                    'total': len(cat_list),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"UoM categories error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/uom/convert', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def convert_uom(self, **kwargs):
+        """Convertit une quantité d'une UoM vers une autre"""
+        try:
+            params = self._get_params()
+            qty = params.get('qty', 0)
+            from_uom_id = params.get('from_uom_id')
+            to_uom_id = params.get('to_uom_id')
+
+            if not from_uom_id or not to_uom_id:
+                return {
+                    'success': False,
+                    'error': 'from_uom_id et to_uom_id requis'
+                }
+
+            from_uom = request.env['uom.uom'].sudo().browse(from_uom_id)
+            to_uom = request.env['uom.uom'].sudo().browse(to_uom_id)
+
+            if not from_uom.exists() or not to_uom.exists():
+                return {
+                    'success': False,
+                    'error': 'UoM non trouvée'
+                }
+
+            # Vérifier même catégorie
+            if from_uom.category_id != to_uom.category_id:
+                return {
+                    'success': False,
+                    'error': f'Conversion impossible : catégories différentes ({from_uom.category_id.name} vs {to_uom.category_id.name})'
+                }
+
+            # Conversion via Odoo
+            converted_qty = from_uom._compute_quantity(qty, to_uom)
+
+            return {
+                'success': True,
+                'data': {
+                    'original_qty': qty,
+                    'from_uom': {
+                        'id': from_uom.id,
+                        'name': from_uom.name,
+                    },
+                    'to_uom': {
+                        'id': to_uom.id,
+                        'name': to_uom.name,
+                    },
+                    'converted_qty': round(converted_qty, 4),
+                    'formula': f'{qty} {from_uom.name} = {round(converted_qty, 4)} {to_uom.name}',
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"UoM conversion error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/uom-config', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_product_uom_config(self, product_id, **kwargs):
+        """Configuration UoM d'un produit"""
+        try:
+            product = request.env['product.product'].sudo().browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit non trouvé'
+                }
+
+            # UoM principale
+            uom = product.uom_id
+            # UoM d'achat
+            uom_po = product.uom_po_id
+
+            # Autres UoM de la même catégorie
+            alternative_uoms = request.env['uom.uom'].sudo().search([
+                ('category_id', '=', uom.category_id.id),
+                ('id', '!=', uom.id),
+                ('active', '=', True)
+            ])
+
+            return {
+                'success': True,
+                'data': {
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'uom': {
+                        'id': uom.id,
+                        'name': uom.name,
+                        'category': uom.category_id.name,
+                        'rounding': uom.rounding,
+                    },
+                    'uom_po': {
+                        'id': uom_po.id,
+                        'name': uom_po.name,
+                        'category': uom_po.category_id.name,
+                    },
+                    'alternative_uoms': [{
+                        'id': u.id,
+                        'name': u.name,
+                        'factor': u.factor,
+                        'factor_inv': u.factor_inv,
+                    } for u in alternative_uoms],
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Product UoM config error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ==================== LOT TRACEABILITY (Gap P2-4) ====================
+
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>/traceability', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_lot_traceability(self, lot_id, **kwargs):
+        """Traçabilité complète amont/aval d'un lot"""
+        try:
+            lot = request.env['stock.lot'].sudo().browse(lot_id)
+            if not lot.exists():
+                return {
+                    'success': False,
+                    'error': 'Lot non trouvé'
+                }
+
+            # Mouvements upstream (entrées : d'où vient le lot)
+            upstream_moves = request.env['stock.move.line'].sudo().search([
+                ('lot_id', '=', lot.id),
+                ('location_dest_id.usage', '=', 'internal'),
+                ('state', '=', 'done')
+            ], order='date desc', limit=50)
+
+            upstream = []
+            for move_line in upstream_moves:
+                move = move_line.move_id
+                upstream.append({
+                    'id': move.id,
+                    'date': move.date.isoformat() if move.date else None,
+                    'location_src': move.location_id.complete_name,
+                    'location_dest': move.location_dest_id.complete_name,
+                    'quantity': move_line.quantity,
+                    'uom': move.product_uom.name,
+                    'reference': move.reference or '',
+                    'origin': move.origin or '',
+                    'picking_name': move.picking_id.name if move.picking_id else None,
+                    'partner': move.picking_id.partner_id.name if move.picking_id and move.picking_id.partner_id else None,
+                })
+
+            # Mouvements downstream (sorties : où va le lot)
+            downstream_moves = request.env['stock.move.line'].sudo().search([
+                ('lot_id', '=', lot.id),
+                ('location_id.usage', '=', 'internal'),
+                ('state', '=', 'done')
+            ], order='date desc', limit=50)
+
+            downstream = []
+            for move_line in downstream_moves:
+                move = move_line.move_id
+                downstream.append({
+                    'id': move.id,
+                    'date': move.date.isoformat() if move.date else None,
+                    'location_src': move.location_id.complete_name,
+                    'location_dest': move.location_dest_id.complete_name,
+                    'quantity': move_line.quantity,
+                    'uom': move.product_uom.name,
+                    'reference': move.reference or '',
+                    'origin': move.origin or '',
+                    'picking_name': move.picking_id.name if move.picking_id else None,
+                    'partner': move.picking_id.partner_id.name if move.picking_id and move.picking_id.partner_id else None,
+                })
+
+            # Infos lot
+            lot_info = {
+                'id': lot.id,
+                'name': lot.name,
+                'ref': lot.ref or '',
+                'product_id': lot.product_id.id,
+                'product_name': lot.product_id.name,
+                'product_sku': lot.product_id.default_code or '',
+                'stock_qty': lot.product_qty,
+                'expiration_date': lot.expiration_date.isoformat() if lot.expiration_date else None,
+            }
+
+            return {
+                'success': True,
+                'data': {
+                    'lot': lot_info,
+                    'upstream': upstream,
+                    'downstream': downstream,
+                    'upstream_count': len(upstream),
+                    'downstream_count': len(downstream),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Lot traceability error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ==================== ADVANCED STOCK REPORTS (Gap P2-5) ====================
+
+    @http.route('/api/ecommerce/stock/reports/advanced', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_advanced_stock_reports(self, **kwargs):
+        """Rapports stock avancés : ruptures, dead stock, anomalies"""
+        try:
+            params = self._get_params()
+            days_threshold = params.get('days_threshold', 90)  # Pour dead stock
+
+            # 1. RUPTURES DE STOCK (produits avec stock <= 0 et règles réappro)
+            stockouts = []
+            reordering_rules = request.env['stock.warehouse.orderpoint'].sudo().search([
+                ('product_id.qty_available', '<=', 0),
+                ('active', '=', True)
+            ], limit=50)
+
+            for rule in reordering_rules:
+                product = rule.product_id
+                stockouts.append({
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'product_sku': product.default_code or '',
+                    'current_stock': product.qty_available,
+                    'warehouse': rule.warehouse_id.name,
+                    'min_qty': rule.product_min_qty,
+                    'shortage': abs(product.qty_available),
+                })
+
+            # 2. DEAD STOCK (pas de mouvement sortant depuis X jours)
+            cutoff_date = datetime.now() - timedelta(days=days_threshold)
+            dead_stock = []
+
+            products_with_stock = request.env['product.product'].sudo().search([
+                ('qty_available', '>', 0),
+                ('type', '=', 'product')
+            ], limit=100)
+
+            for product in products_with_stock:
+                # Chercher dernier mouvement sortant
+                last_out_move = request.env['stock.move'].sudo().search([
+                    ('product_id', '=', product.id),
+                    ('location_id.usage', '=', 'internal'),
+                    ('location_dest_id.usage', '!=', 'internal'),
+                    ('state', '=', 'done')
+                ], order='date desc', limit=1)
+
+                if not last_out_move or (last_out_move.date and last_out_move.date < cutoff_date):
+                    dead_stock.append({
+                        'product_id': product.id,
+                        'product_name': product.name,
+                        'product_sku': product.default_code or '',
+                        'qty_available': product.qty_available,
+                        'value': product.qty_available * product.standard_price,
+                        'last_move_date': last_out_move.date.isoformat() if last_out_move and last_out_move.date else None,
+                        'days_inactive': (datetime.now().date() - last_out_move.date).days if last_out_move and last_out_move.date else days_threshold + 1,
+                    })
+
+            # 3. ANOMALIES (stock négatif théorique)
+            anomalies = []
+            negative_stock_products = request.env['product.product'].sudo().search([
+                ('qty_available', '<', 0),
+                ('type', '=', 'product')
+            ], limit=50)
+
+            for product in negative_stock_products:
+                anomalies.append({
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'product_sku': product.default_code or '',
+                    'qty_available': product.qty_available,
+                    'anomaly_type': 'negative_stock',
+                    'severity': 'high',
+                })
+
+            # KPIs globaux
+            total_stockout_value = sum(s.get('shortage', 0) * 0 for s in stockouts)  # Simplifié
+            total_dead_stock_value = sum(d.get('value', 0) for d in dead_stock)
+
+            return {
+                'success': True,
+                'data': {
+                    'stockouts': {
+                        'items': stockouts,
+                        'count': len(stockouts),
+                        'total_value': total_stockout_value,
+                    },
+                    'dead_stock': {
+                        'items': dead_stock[:20],  # Limiter à 20
+                        'count': len(dead_stock),
+                        'total_value': round(total_dead_stock_value, 2),
+                        'days_threshold': days_threshold,
+                    },
+                    'anomalies': {
+                        'items': anomalies,
+                        'count': len(anomalies),
+                    },
+                    'kpis': {
+                        'stockout_count': len(stockouts),
+                        'dead_stock_count': len(dead_stock),
+                        'anomaly_count': len(anomalies),
+                        'total_dead_stock_value': round(total_dead_stock_value, 2),
+                    }
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Advanced stock reports error: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),

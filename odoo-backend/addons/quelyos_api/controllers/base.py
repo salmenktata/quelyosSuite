@@ -257,6 +257,92 @@ class BaseController(http.Controller):
 
         return None  # OK : guest_email valide
 
+    def _check_group(self, group_xml_id):
+        """
+        Vérifie que l'utilisateur possède le groupe de sécurité requis.
+        Retourne un dict d'erreur si non autorisé, None sinon.
+
+        Args:
+            group_xml_id: ID XML complet du groupe (ex: 'quelyos_api.group_quelyos_stock_user')
+                         ou nom court (ex: 'group_quelyos_stock_user')
+
+        Returns:
+            dict d'erreur si l'utilisateur n'a pas le groupe, None sinon
+
+        Usage dans les endpoints:
+            error = self._check_group('quelyos_api.group_quelyos_stock_user')
+            if error:
+                return error
+        """
+        # Vérifier que l'utilisateur est connecté
+        if not request.env.user or request.env.user._is_public():
+            _logger.warning(f"Unauthorized action attempt: user not authenticated")
+            return {
+                'success': False,
+                'error': 'Authentification requise',
+                'error_code': 'AUTH_REQUIRED'
+            }
+
+        # Normaliser l'ID du groupe (ajouter préfixe si manquant)
+        if '.' not in group_xml_id:
+            group_xml_id = f'quelyos_api.{group_xml_id}'
+
+        # Vérifier si l'utilisateur a le groupe
+        if not request.env.user.has_group(group_xml_id):
+            _logger.warning(
+                f"Unauthorized action attempt: user {request.env.user.id} "
+                f"({request.env.user.login}) lacks required group '{group_xml_id}'"
+            )
+            return {
+                'success': False,
+                'error': 'Accès refusé : permissions insuffisantes',
+                'error_code': 'INSUFFICIENT_PERMISSIONS'
+            }
+
+        return None
+
+    def _check_any_group(self, *group_xml_ids):
+        """
+        Vérifie que l'utilisateur possède AU MOINS UN des groupes spécifiés.
+        Retourne un dict d'erreur si aucun groupe n'est possédé, None sinon.
+
+        Args:
+            *group_xml_ids: Liste variable d'IDs XML de groupes
+
+        Returns:
+            dict d'erreur si l'utilisateur n'a aucun des groupes, None sinon
+
+        Usage:
+            error = self._check_any_group('group_quelyos_stock_user', 'group_quelyos_stock_manager')
+            if error:
+                return error
+        """
+        # Vérifier que l'utilisateur est connecté
+        if not request.env.user or request.env.user._is_public():
+            return {
+                'success': False,
+                'error': 'Authentification requise',
+                'error_code': 'AUTH_REQUIRED'
+            }
+
+        # Normaliser les IDs et vérifier si l'utilisateur a au moins un groupe
+        for group_xml_id in group_xml_ids:
+            if '.' not in group_xml_id:
+                group_xml_id = f'quelyos_api.{group_xml_id}'
+            if request.env.user.has_group(group_xml_id):
+                return None  # OK, l'utilisateur a ce groupe
+
+        # Aucun groupe trouvé
+        _logger.warning(
+            f"Unauthorized action attempt: user {request.env.user.id} "
+            f"({request.env.user.login}) lacks any of required groups: {group_xml_ids}"
+        )
+        return {
+            'success': False,
+            'error': 'Accès refusé : permissions insuffisantes',
+            'error_code': 'INSUFFICIENT_PERMISSIONS'
+        }
+
     def _create_session(self, uid):
         """Crée une session pour l'utilisateur et retourne le session_id"""
         return request.session.sid
