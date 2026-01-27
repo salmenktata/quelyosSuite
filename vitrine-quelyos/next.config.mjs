@@ -24,7 +24,8 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   experimental: {
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: ["lucide-react", "framer-motion", "@quelyos/ui"],
+    scrollRestoration: true,
   },
 
   async rewrites() {

@@ -7,7 +7,8 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export const dynamic = 'force-dynamic';
+// ISR avec revalidation toutes les heures
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Quelyos — Suite SaaS TPE/PME | Finance & Marketing",

@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
       dynamic: 60,      // 60s ISR pages dynamiques
       static: 3600,     // 1h ISR pages statiques
     },
+    optimizePackageImports: [
+      'lucide-react',
+      'framer-motion',
+      '@headlessui/react',
+      '@heroicons/react',
+    ],
   },
 
   // Optimisation production
