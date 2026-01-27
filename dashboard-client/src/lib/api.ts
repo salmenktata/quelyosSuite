@@ -156,7 +156,7 @@ class ApiClient {
       if (result.user) {
         // Les groupes sont déjà inclus dans result.user depuis le backend
         localStorage.setItem('user', JSON.stringify(result.user))
-        logger.debug('[API] User stored with groups:', result.user.groups?.length || 0, 'groups')
+        logger.debug('[API] User stored with groups:', (result.user as any).groups?.length || 0, 'groups')
       }
       logger.debug('[API] Session stored:', this.sessionId?.substring(0, 20) + '...')
     } else {

@@ -406,4 +406,70 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
       },
     ],
   },
+
+  settingsDevise: {
+    pageId: 'finance-settings-devise',
+    title: 'Devise & Formats',
+    purpose:
+      "Configurez votre devise d'affichage préférée, votre thème (clair/sombre) et votre langue interface. Les montants seront automatiquement convertis dans votre devise pour une lecture facilitée.",
+    icon: DollarSign as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Choisissez la devise dans laquelle vous pilotez votre activité (souvent votre devise locale)`,
+          `Si votre entreprise opère en multi-devises, consultez aussi les montants en devise entreprise`,
+          `Activez le mode sombre pour réduire la fatigue oculaire lors de sessions prolongées`,
+          `Configurez la langue de l'interface selon votre équipe (support multilingue)`,
+          `Les paramètres sont sauvegardés automatiquement et synchronisés sur tous vos appareils`,
+        ],
+      },
+    ],
+  },
+
+  settingsTva: {
+    pageId: 'finance-settings-tva',
+    title: 'TVA & Fiscalité',
+    purpose:
+      "Configurez votre stratégie de TVA (activée/désactivée, taux, mode HT/TTC). Ces paramètres s'appliquent automatiquement aux devis, factures, prévisions et rapports financiers.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Activez la TVA uniquement si votre entreprise est assujettie (vérifiez avec votre comptable)`,
+          `Choisissez "Prix HT" si vous saisissez vos montants hors taxes (B2B)`,
+          `Choisissez "Prix TTC" si vous saisissez vos montants toutes taxes comprises (B2C)`,
+          `Le taux standard en France est 20%, mais vérifiez les taux réduits selon votre activité`,
+          `Activez la synchronisation Stripe si vous utilisez des plans tarifaires en ligne`,
+        ],
+      },
+    ],
+  },
+
+  settingsCategories: {
+    pageId: 'finance-settings-categories',
+    title: 'Catégories',
+    purpose:
+      "Gérez vos catégories de revenus et dépenses pour classifier vos transactions. Une bonne catégorisation facilite l'analyse, les budgets et la compréhension de votre structure de coûts.",
+    icon: PieChart as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Bonnes pratiques',
+        icon: Lightbulb,
+        items: [
+          `Créez des catégories claires et mutuellement exclusives (éviter chevauchements)`,
+          `Limitez-vous à 10-15 catégories principales pour garder une vue lisible`,
+          `Utilisez les catégories par défaut comme point de départ et ajustez selon votre activité`,
+          `Attribuez une couleur distinctive à chaque catégorie pour faciliter la lecture des graphiques`,
+          `Évitez de supprimer une catégorie utilisée dans l'historique (préférez la désactivation)`,
+        ],
+      },
+    ],
+  },
 };

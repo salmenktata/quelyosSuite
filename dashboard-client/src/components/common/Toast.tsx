@@ -75,11 +75,19 @@ export interface ToastContainerProps {
     duration?: number
   }>
   onClose: (id: string) => void
+  position?: string
 }
 
-export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
+export function ToastContainer({ toasts, onClose, position = 'top-right' }: ToastContainerProps) {
+  const positionClasses = {
+    'top-right': 'top-4 right-4',
+    'top-left': 'top-4 left-4',
+    'bottom-right': 'bottom-4 right-4',
+    'bottom-left': 'bottom-4 left-4',
+  }[position] || 'top-4 right-4';
+
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className={`fixed ${positionClasses} z-50 flex flex-col gap-2`}>
       {toasts.map((toast) => (
         <Toast key={toast.id} {...toast} onClose={onClose} />
       ))}

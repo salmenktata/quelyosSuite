@@ -7,6 +7,7 @@ import {
   Settings,
   Tag,
   Truck,
+  FileText,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -235,5 +236,31 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
         'Testez impact franco de port : souvent rentable malgré coût (conversion +15-25%)',
       ]
     }]
+  },
+  staticPages: {
+    pageId: 'store-static-pages',
+    title: 'Pages Statiques',
+    purpose: 'Gérez les pages institutionnelles de votre site : À propos, CGV, Mentions légales, etc.',
+    icon: FileText,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Création et édition de pages statiques',
+          'Configuration de la navigation (menu, footer)',
+          'Gestion du contenu et de la mise en page',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Créer pages essentielles : À propos, CGV, Mentions légales',
+          'Configurer footer : Organisez vos pages en colonnes',
+          'Définir slugs clairs : URLs SEO-friendly',
+        ]
+      }
+    ]
   },
 };
