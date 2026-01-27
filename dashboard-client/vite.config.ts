@@ -47,6 +47,12 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api\/finance/, '/api/ecommerce/finance'),
       },
+      '/api/stock': {
+        target: 'http://127.0.0.1:8069',
+        changeOrigin: true,
+        secure: false,
+        ws: false,
+      },
       '/api/settings': {
         target: 'http://127.0.0.1:8069',
         changeOrigin: true,
