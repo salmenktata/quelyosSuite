@@ -10,34 +10,12 @@ import Image from 'next/image';
 import { Motion, AnimatePresence, type PanInfo } from '@/components/common/Motion';
 import { useKeyboardNav } from '@/hooks/useKeyboardNav';
 import { carouselItem } from '@/lib/animations/variants';
+import { getProxiedImageUrl } from '@/lib/image-proxy';
 
 interface Image {
   url: string;
   alt?: string;
   is_main?: boolean;
-}
-
-/**
- * Helper function to proxy backend images through Next.js API to avoid CORS issues
- */
-function getProxiedImageUrl(url: string | undefined): string {
-  if (!url) return '/placeholder-product.svg';
-
-  // Already proxied, return as-is
-  if (url.startsWith('/api/image')) return url;
-
-  // Local public asset (placeholder, etc.), return as-is
-  if (url.startsWith('/') && !url.includes('/web/image')) return url;
-
-  // Proxy backend images through our API to avoid CORS issues
-  const isBackendImage = url.includes('/web/image') ||
-                         url.includes('localhost:8069');
-
-  if (isBackendImage) {
-    return `/api/image?url=${encodeURIComponent(url)}`;
-  }
-
-  return url;
 }
 
 interface ProductImageGalleryProps {

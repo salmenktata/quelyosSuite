@@ -7,6 +7,7 @@ import { useCartStore } from '@/store/cartStore';
 import type { Product } from '@quelyos/types';
 import { formatPrice } from '@/lib/utils/formatting';
 import { logger } from '@/lib/logger';
+import { getProxiedImageUrl } from '@/lib/image-proxy';
 
 interface BundleSuggestionsProps {
   currentProduct: Product;
@@ -92,22 +93,6 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
     } finally {
       setIsAddingToCart(false);
     }
-  };
-
-  // Helper function pour proxy des images backend
-  const getProxiedImageUrl = (url: string | undefined): string => {
-    if (!url) return '';
-    if (url.startsWith('/api/image')) return url;
-    if (url.startsWith('/') && !url.includes('/web/image')) return url;
-
-    const isBackendImage = url.includes('/web/image') ||
-      url.includes('localhost:8069');
-
-    if (isBackendImage) {
-      return `/api/image?url=${encodeURIComponent(url)}`;
-    }
-
-    return url;
   };
 
   // Calculer le total

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useCompareStore } from '@/store/compareStore';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice } from '@/lib/utils/formatting';
+import { getProxiedImageUrl } from '@/lib/image-proxy';
 
 interface CompareDrawerProps {
   isOpen: boolean;
@@ -28,22 +29,6 @@ export function CompareDrawer({ isOpen, onClose }: CompareDrawerProps) {
   if (!isOpen) return null;
 
   const hasProducts = products.length > 0;
-
-  // Helper function pour proxy des images backend
-  const getProxiedImageUrl = (url: string | undefined): string => {
-    if (!url) return '';
-    if (url.startsWith('/api/image')) return url;
-    if (url.startsWith('/') && !url.includes('/web/image')) return url;
-
-    const isBackendImage = url.includes('/web/image') ||
-      url.includes('localhost:8069');
-
-    if (isBackendImage) {
-      return `/api/image?url=${encodeURIComponent(url)}`;
-    }
-
-    return url;
-  };
 
   const handleAddToCart = async (productId: number) => {
     await addToCart(productId, 1);

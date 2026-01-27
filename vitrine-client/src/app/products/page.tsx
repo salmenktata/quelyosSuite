@@ -38,10 +38,16 @@ export default async function ProductsPage({
   const page = parseInt(params.page || '1', 10);
   const offset = (page - 1) * limit;
 
+  // Valider le type de sort
+  const validSorts = ['name', 'price_asc', 'price_desc', 'newest', 'popularity'] as const;
+  const sort = validSorts.includes(params.sort as any)
+    ? (params.sort as typeof validSorts[number])
+    : 'name';
+
   const filters: ProductFilters = {
     limit,
     offset,
-    sort: params.sort || 'name',
+    sort,
     category_id: params.category ? parseInt(params.category, 10) : undefined,
     min_price: params.min_price ? parseFloat(params.min_price) : undefined,
     max_price: params.max_price ? parseFloat(params.max_price) : undefined,

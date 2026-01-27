@@ -84,6 +84,42 @@ Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, pari
 
 Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
+## 🔒 ANONYMISATION ODOO - RÈGLES STRICTES
+**Objectif** : Masquer toute trace d'Odoo dans le frontend public (vitrine-client)
+
+### Champs API (vitrine-client uniquement)
+**TOUJOURS utiliser les noms standards** :
+| Interdit (Odoo) | → Utiliser (Standard) |
+|-----------------|----------------------|
+| `list_price` | `price` |
+| `default_code` | `sku` |
+| `qty_available` | `stock_quantity` |
+| `virtual_available` | `available_quantity` |
+| `attribute_lines` | `attributes` |
+| `create_date` | `created_at` |
+| `write_date` | `updated_at` |
+| `categ_id` | `category_id` |
+
+### Images backend
+**TOUJOURS utiliser** : `import { getProxiedImageUrl } from '@/lib/image-proxy'`
+- ❌ Ne PAS créer de fonction locale `getProxiedImageUrl`
+- ❌ Ne PAS exposer `/web/image` dans les URLs client
+- ✅ Utiliser `getProxiedImageUrl(url)` pour toutes images backend
+
+### Variables/Classes
+**Dans vitrine-client** :
+- ❌ `OdooClient` → ✅ `BackendClient`
+- ❌ `ODOO_URL` → ✅ `BACKEND_URL`
+- ❌ `getOdooImageUrl` → ✅ `getBackendImageUrl`
+
+### Messages d'erreur
+- ❌ `"Odoo returned error"` → ✅ `"Backend error"`
+
+### Vérification
+Lancer `/no-odoo` avant chaque commit pour vérifier conformité.
+
+**Note** : Le dashboard-client (admin interne) n'est PAS concerné par ces règles.
+
 ## Commandes disponibles
 **DevOps** : `/ship`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`
 **Odoo** : `/upgrade-odoo`, `/restart-odoo`, `/restart-backoffice`, `/restart-vitrine`, `/restart-ecommerce`, `/restart-all`

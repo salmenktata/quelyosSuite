@@ -12,22 +12,7 @@ import { Motion } from '@/components/common/Motion';
 import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
 import { formatPrice } from '@/lib/utils/formatting';
 import { staggerContainer, staggerItem } from '@/lib/animations/variants';
-
-// Helper function to proxy backend images through Next.js API
-function getProxiedImageUrl(url: string | undefined): string {
-  if (!url) return '';
-  if (url.startsWith('/api/image')) return url;
-  if (url.startsWith('/') && !url.includes('/web/image')) return url;
-
-  const isBackendImage = url.includes('/web/image') ||
-    url.includes('localhost:8069');
-
-  if (isBackendImage) {
-    return `/api/image?url=${encodeURIComponent(url)}`;
-  }
-
-  return url;
-}
+import { getProxiedImageUrl } from '@/lib/image-proxy';
 
 export const RecentlyViewedCarousel: React.FC = () => {
   const { products } = useRecentlyViewedStore();

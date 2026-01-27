@@ -4,22 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@quelyos/types';
 import { useToast } from '@/store/toastStore';
-
-// Helper function to proxy backend images through Next.js API
-function getProxiedImageUrl(url: string | undefined): string {
-  if (!url) return '';
-  if (url.startsWith('/api/image')) return url;
-  if (url.startsWith('/') && !url.includes('/web/image')) return url;
-
-  const isBackendImage = url.includes('/web/image') ||
-                         url.includes('localhost:8069');
-
-  if (isBackendImage) {
-    return `/api/image?url=${encodeURIComponent(url)}`;
-  }
-
-  return url;
-}
+import { getProxiedImageUrl } from '@/lib/image-proxy';
 
 export function ProductCardHome({ product }: { product: Product }) {
   const toast = useToast();
