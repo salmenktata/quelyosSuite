@@ -5,6 +5,7 @@ from . import product_template
 from . import product_product
 from . import stock_quant
 from . import stock_location
+from . import stock_lot
 from . import sale_order
 from . import subscription_quota_mixin
 from . import subscription_plan

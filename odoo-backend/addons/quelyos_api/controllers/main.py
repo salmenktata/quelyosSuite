@@ -5683,6 +5683,10 @@ class QuelyosAPI(http.Controller):
                 'incoming_qty': product.incoming_qty,
                 'outgoing_qty': product.outgoing_qty,
                 'is_available': product.qty_available > 0,
+                # Indicateurs de rotation stock (Odoo 19)
+                'qty_sold_365': product.qty_sold_365 if hasattr(product, 'qty_sold_365') else 0,
+                'stock_turnover_365': product.stock_turnover_365 if hasattr(product, 'stock_turnover_365') else 0,
+                'days_of_stock': product.days_of_stock if hasattr(product, 'days_of_stock') else 0,
             }
 
             return {
@@ -5695,6 +5699,156 @@ class QuelyosAPI(http.Controller):
             return {
                 'success': False,
                 'error': 'Une erreur est survenue'
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/history', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_product_stock_history(self, product_id, **kwargs):
+        """
+        Récupérer l'historique des mouvements de stock d'un produit (admin uniquement).
+
+        Paramètres optionnels:
+        - date_from (str): Date de début (format ISO)
+        - date_to (str): Date de fin (format ISO)
+        - move_type (str): Type de mouvement ('in', 'out', 'internal', 'all') (défaut: 'all')
+        - limit (int): Nombre de résultats (défaut: 100)
+        - offset (int): Décalage pour pagination (défaut: 0)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Product = request.env['product.product'].sudo()
+            Move = request.env['stock.move'].sudo()
+
+            # Vérifier que le produit existe
+            product = Product.browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit introuvable',
+                    'errorCode': 'PRODUCT_NOT_FOUND'
+                }
+
+            params = self._get_params()
+            limit = int(params.get('limit', 100))
+            offset = int(params.get('offset', 0))
+            date_from = params.get('date_from')
+            date_to = params.get('date_to')
+            move_type = params.get('move_type', 'all')
+
+            # Domain de base : produit + état done
+            domain = [
+                ('product_id', '=', product_id),
+                ('state', '=', 'done'),
+            ]
+
+            # Filtre période
+            if date_from:
+                domain.append(('date', '>=', date_from))
+            if date_to:
+                domain.append(('date', '<=', date_to))
+
+            # Filtre type de mouvement
+            if move_type and move_type != 'all':
+                if move_type == 'in':
+                    domain.extend([
+                        ('location_id.usage', '=', 'supplier'),
+                        ('location_dest_id.usage', '=', 'internal'),
+                    ])
+                elif move_type == 'out':
+                    domain.extend([
+                        ('location_id.usage', '=', 'internal'),
+                        ('location_dest_id.usage', '=', 'customer'),
+                    ])
+                elif move_type == 'internal':
+                    domain.extend([
+                        ('location_id.usage', '=', 'internal'),
+                        ('location_dest_id.usage', '=', 'internal'),
+                    ])
+
+            # Recherche avec tri chronologique inverse
+            moves = Move.search(
+                domain,
+                limit=limit,
+                offset=offset,
+                order='date desc, id desc'
+            )
+
+            total = Move.search_count(domain)
+
+            # Construction des données enrichies
+            history = []
+            for m in moves:
+                # Déterminer le type et impact sur stock
+                if m.location_id.usage == 'supplier' and m.location_dest_id.usage == 'internal':
+                    move_type_label = 'Entrée'
+                    impact = '+{}'.format(m.product_uom_qty)
+                    icon = 'arrow_downward'
+                elif m.location_id.usage == 'internal' and m.location_dest_id.usage == 'customer':
+                    move_type_label = 'Sortie'
+                    impact = '-{}'.format(m.product_uom_qty)
+                    icon = 'arrow_upward'
+                elif m.location_id.usage == 'internal' and m.location_dest_id.usage == 'internal':
+                    move_type_label = 'Transfert'
+                    impact = '~{}'.format(m.product_uom_qty)
+                    icon = 'swap_horiz'
+                elif m.location_id.usage == 'inventory' or m.location_dest_id.usage == 'inventory':
+                    move_type_label = 'Ajustement'
+                    if m.location_dest_id.usage == 'inventory':
+                        impact = '-{}'.format(m.product_uom_qty)
+                    else:
+                        impact = '+{}'.format(m.product_uom_qty)
+                    icon = 'tune'
+                else:
+                    move_type_label = 'Autre'
+                    impact = '{}'.format(m.product_uom_qty)
+                    icon = 'info'
+
+                # Origine du mouvement
+                origin = m.origin or m.reference or ''
+                if m.picking_id:
+                    origin = m.picking_id.name
+
+                history.append({
+                    'id': m.id,
+                    'date': m.date.isoformat() if m.date else None,
+                    'move_type': move_type_label,
+                    'icon': icon,
+                    'quantity': m.product_uom_qty,
+                    'impact': impact,
+                    'location_src': m.location_id.complete_name,
+                    'location_dest': m.location_dest_id.complete_name,
+                    'reference': m.reference or '',
+                    'origin': origin,
+                    'picking_id': m.picking_id.id if m.picking_id else None,
+                    'picking_name': m.picking_id.name if m.picking_id else None,
+                    'state': m.state,
+                })
+
+            _logger.info(f"Fetched stock history for product {product.display_name}: {len(history)} moves")
+
+            return {
+                'success': True,
+                'data': {
+                    'product_id': product_id,
+                    'product_name': product.display_name,
+                    'product_sku': product.default_code or '',
+                    'current_stock': product.qty_available,
+                    'history': history,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product stock history error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
             }
 
     @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
@@ -5764,47 +5918,136 @@ class QuelyosAPI(http.Controller):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/moves', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/moves', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_stock_moves(self, **kwargs):
-        """Liste des mouvements de stock (admin uniquement)"""
-        try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+        """
+        Liste des mouvements de stock avec historique complet (admin uniquement).
 
+        Paramètres optionnels:
+        - product_id (int): Filtrer par produit
+        - location_id (int): Filtrer par emplacement (source ou destination)
+        - date_from (str): Date de début (format ISO)
+        - date_to (str): Date de fin (format ISO)
+        - state (str): Filtrer par état ('done', 'assigned', 'confirmed', 'waiting', 'cancel')
+        - move_type (str): Type de mouvement ('in', 'out', 'internal')
+        - limit (int): Nombre de résultats (défaut: 50)
+        - offset (int): Décalage pour pagination (défaut: 0)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Move = request.env['stock.move'].sudo()
             params = self._get_params()
+
             limit = int(params.get('limit', 50))
             offset = int(params.get('offset', 0))
             product_id = params.get('product_id')
+            location_id = params.get('location_id')
+            date_from = params.get('date_from')
+            date_to = params.get('date_to')
+            state = params.get('state', 'done')  # Par défaut uniquement les mouvements terminés
+            move_type = params.get('move_type')
 
-            domain = [('state', '=', 'done')]
+            # Construction du domain
+            domain = []
+
+            # Filtre produit
             if product_id:
                 domain.append(('product_id', '=', int(product_id)))
 
-            moves = request.env['stock.move'].sudo().search(
+            # Filtre état
+            if state:
+                domain.append(('state', '=', state))
+
+            # Filtre emplacement (source OU destination)
+            if location_id:
+                location_id = int(location_id)
+                domain.append('|')
+                domain.append(('location_id', '=', location_id))
+                domain.append(('location_dest_id', '=', location_id))
+
+            # Filtre période
+            if date_from:
+                domain.append(('date', '>=', date_from))
+            if date_to:
+                domain.append(('date', '<=', date_to))
+
+            # Filtre type de mouvement
+            if move_type:
+                if move_type == 'in':
+                    # Entrées : depuis fournisseur vers internal
+                    domain.extend([
+                        ('location_id.usage', '=', 'supplier'),
+                        ('location_dest_id.usage', '=', 'internal'),
+                    ])
+                elif move_type == 'out':
+                    # Sorties : depuis internal vers client
+                    domain.extend([
+                        ('location_id.usage', '=', 'internal'),
+                        ('location_dest_id.usage', '=', 'customer'),
+                    ])
+                elif move_type == 'internal':
+                    # Transferts internes
+                    domain.extend([
+                        ('location_id.usage', '=', 'internal'),
+                        ('location_dest_id.usage', '=', 'internal'),
+                    ])
+
+            # Recherche avec tri chronologique inverse
+            moves = Move.search(
                 domain,
                 limit=limit,
                 offset=offset,
-                order='date desc'
+                order='date desc, id desc'
             )
 
-            total = request.env['stock.move'].sudo().search_count(domain)
+            total = Move.search_count(domain)
 
-            data = [{
-                'id': m.id,
-                'product': {
-                    'id': m.product_id.id,
-                    'name': m.product_id.name,
-                },
-                'quantity': m.product_uom_qty,
-                'location_src': m.location_id.complete_name,
-                'location_dest': m.location_dest_id.complete_name,
-                'date': m.date.isoformat() if m.date else None,
-                'state': m.state,
-                'reference': m.reference or '',
-            } for m in moves]
+            # Construction des données enrichies
+            data = []
+            for m in moves:
+                # Déterminer le type de mouvement
+                if m.location_id.usage == 'supplier' and m.location_dest_id.usage == 'internal':
+                    move_type_label = 'Entrée (réception)'
+                elif m.location_id.usage == 'internal' and m.location_dest_id.usage == 'customer':
+                    move_type_label = 'Sortie (livraison)'
+                elif m.location_id.usage == 'internal' and m.location_dest_id.usage == 'internal':
+                    move_type_label = 'Transfert interne'
+                elif m.location_id.usage == 'inventory':
+                    move_type_label = 'Ajustement inventaire'
+                else:
+                    move_type_label = 'Autre'
+
+                # Origine du mouvement
+                origin = m.origin or m.reference or ''
+                if m.picking_id:
+                    origin = m.picking_id.name
+
+                data.append({
+                    'id': m.id,
+                    'product_id': m.product_id.id,
+                    'product_name': m.product_id.display_name,
+                    'product_sku': m.product_id.default_code or '',
+                    'quantity': m.product_uom_qty,
+                    'uom': m.product_uom.name if m.product_uom else 'Unité',
+                    'location_src_id': m.location_id.id,
+                    'location_src': m.location_id.complete_name,
+                    'location_dest_id': m.location_dest_id.id,
+                    'location_dest': m.location_dest_id.complete_name,
+                    'date': m.date.isoformat() if m.date else None,
+                    'state': m.state,
+                    'state_label': dict(Move._fields['state'].selection).get(m.state, m.state),
+                    'move_type': move_type_label,
+                    'reference': m.reference or '',
+                    'origin': origin,
+                    'picking_id': m.picking_id.id if m.picking_id else None,
+                    'picking_name': m.picking_id.name if m.picking_id else None,
+                })
+
+            _logger.info(f"Fetched {len(data)} stock moves (total: {total})")
 
             return {
                 'success': True,
@@ -5817,10 +6060,11 @@ class QuelyosAPI(http.Controller):
             }
 
         except Exception as e:
-            _logger.error(f"Get stock moves error: {e}")
+            _logger.error(f"Get stock moves error: {e}", exc_info=True)
             return {
                 'success': False,
-                'error': 'Une erreur est survenue'
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
             }
 
     @http.route('/api/ecommerce/stock/validate', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -8876,6 +9120,103 @@ class QuelyosAPI(http.Controller):
             return {
                 'success': False,
                 'error': 'Erreur lors du déverrouillage'
+            }
+
+    # ==================== STOCK TURNOVER (ROTATION) ====================
+
+    @http.route('/api/ecommerce/stock/turnover', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_stock_turnover(self, **kwargs):
+        """
+        Récupérer les statistiques de rotation stock pour tous les produits (admin uniquement).
+
+        Paramètres optionnels:
+        - limit (int): Nombre de produits à retourner (défaut: 50)
+        - offset (int): Décalage pour pagination (défaut: 0)
+        - sort (str): Tri ('turnover_desc', 'turnover_asc', 'days_desc', 'days_asc') (défaut: 'turnover_desc')
+        - min_turnover (float): Filtrer par rotation minimale
+        - max_turnover (float): Filtrer par rotation maximale
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Product = request.env['product.product'].sudo()
+            params = self._get_params()
+
+            limit = int(params.get('limit', 50))
+            offset = int(params.get('offset', 0))
+            sort = params.get('sort', 'turnover_desc')
+            min_turnover = params.get('min_turnover')
+            max_turnover = params.get('max_turnover')
+
+            # Domain de base : produits stockables uniquement
+            domain = [
+                ('type', '=', 'product'),
+                ('active', '=', True),
+            ]
+
+            # Rechercher tous les produits
+            products = Product.search(domain)
+
+            # Construire les données avec rotation
+            products_data = []
+            for product in products:
+                turnover = product.stock_turnover_365 if hasattr(product, 'stock_turnover_365') else 0
+                days = product.days_of_stock if hasattr(product, 'days_of_stock') else 0
+                qty_sold = product.qty_sold_365 if hasattr(product, 'qty_sold_365') else 0
+
+                # Appliquer filtres
+                if min_turnover is not None and turnover < float(min_turnover):
+                    continue
+                if max_turnover is not None and turnover > float(max_turnover):
+                    continue
+
+                products_data.append({
+                    'id': product.id,
+                    'name': product.display_name,
+                    'sku': product.default_code or '',
+                    'qty_available': product.qty_available,
+                    'qty_sold_365': qty_sold,
+                    'stock_turnover_365': turnover,
+                    'days_of_stock': days,
+                    'standard_price': product.standard_price,
+                    'list_price': product.list_price,
+                })
+
+            # Tri
+            if sort == 'turnover_desc':
+                products_data.sort(key=lambda x: x['stock_turnover_365'], reverse=True)
+            elif sort == 'turnover_asc':
+                products_data.sort(key=lambda x: x['stock_turnover_365'])
+            elif sort == 'days_desc':
+                products_data.sort(key=lambda x: x['days_of_stock'], reverse=True)
+            elif sort == 'days_asc':
+                products_data.sort(key=lambda x: x['days_of_stock'])
+
+            # Pagination
+            total = len(products_data)
+            products_data = products_data[offset:offset+limit]
+
+            _logger.info(f"Fetched stock turnover for {len(products_data)} products (total: {total})")
+
+            return {
+                'success': True,
+                'data': {
+                    'products': products_data,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock turnover error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
             }
 
     # ==================== STOCK ALERTS ====================
@@ -13068,6 +13409,836 @@ class QuelyosAPI(http.Controller):
             }
 
     # ══════════════════════════════════════════════════════════════════════
+    # WAREHOUSE ROUTES (Gap P1-4)
+    # ══════════════════════════════════════════════════════════════════════
+
+    @http.route('/api/ecommerce/stock/routes', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_stock_routes(self, **kwargs):
+        """
+        Liste toutes les routes stock disponibles (admin uniquement).
+
+        Les routes définissent comment les produits se déplacent entre emplacements.
+
+        Returns:
+            - Routes globales (Buy, Make to Order, etc.)
+            - Routes d'entrepôt (Reception, Delivery, Cross-Dock, etc.)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Route = request.env['stock.route'].sudo()
+
+            # Récupérer toutes les routes actives
+            routes = Route.search([('active', '=', True)])
+
+            routes_data = []
+            for route in routes:
+                # Compter les règles push et pull
+                push_count = len(route.push_ids)
+                pull_count = len(route.rule_ids)
+
+                # Déterminer le type de route
+                if route.warehouse_ids:
+                    route_type = 'warehouse'
+                    warehouses = [{'id': w.id, 'name': w.name} for w in route.warehouse_ids]
+                else:
+                    route_type = 'global'
+                    warehouses = []
+
+                routes_data.append({
+                    'id': route.id,
+                    'name': route.name,
+                    'sequence': route.sequence,
+                    'active': route.active,
+                    'route_type': route_type,
+                    'warehouses': warehouses,
+                    'push_rules_count': push_count,
+                    'pull_rules_count': pull_count,
+                    'sale_selectable': route.sale_selectable,
+                    'product_selectable': route.product_selectable,
+                })
+
+            _logger.info(f"Fetched {len(routes_data)} stock routes")
+
+            return {
+                'success': True,
+                'data': {
+                    'routes': routes_data,
+                    'total': len(routes_data),
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock routes error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/routes/<int:route_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_stock_route_detail(self, route_id, **kwargs):
+        """
+        Détails d'une route avec ses règles push et pull (admin uniquement).
+
+        Args:
+            route_id: ID de la route
+
+        Returns:
+            - Informations de la route
+            - Liste des règles push
+            - Liste des règles pull
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Route = request.env['stock.route'].sudo()
+            route = Route.browse(route_id)
+
+            if not route.exists():
+                return {
+                    'success': False,
+                    'error': 'Route introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Règles push
+            push_rules = []
+            for push in route.push_ids:
+                push_rules.append({
+                    'id': push.id,
+                    'name': push.name,
+                    'location_src_id': push.location_src_id.id,
+                    'location_src': push.location_src_id.complete_name,
+                    'location_dest_id': push.location_dest_id.id,
+                    'location_dest': push.location_dest_id.complete_name,
+                    'picking_type_id': push.picking_type_id.id if push.picking_type_id else None,
+                    'picking_type': push.picking_type_id.name if push.picking_type_id else None,
+                    'auto': push.auto,
+                    'active': push.active,
+                })
+
+            # Règles pull
+            pull_rules = []
+            for pull in route.rule_ids:
+                pull_rules.append({
+                    'id': pull.id,
+                    'name': pull.name,
+                    'action': pull.action,
+                    'location_dest_id': pull.location_dest_id.id,
+                    'location_dest': pull.location_dest_id.complete_name,
+                    'location_src_id': pull.location_src_id.id if pull.location_src_id else None,
+                    'location_src': pull.location_src_id.complete_name if pull.location_src_id else None,
+                    'picking_type_id': pull.picking_type_id.id if pull.picking_type_id else None,
+                    'picking_type': pull.picking_type_id.name if pull.picking_type_id else None,
+                    'procure_method': pull.procure_method,
+                    'active': pull.active,
+                })
+
+            route_data = {
+                'id': route.id,
+                'name': route.name,
+                'sequence': route.sequence,
+                'active': route.active,
+                'sale_selectable': route.sale_selectable,
+                'product_selectable': route.product_selectable,
+                'warehouses': [{'id': w.id, 'name': w.name} for w in route.warehouse_ids],
+                'push_rules': push_rules,
+                'pull_rules': pull_rules,
+            }
+
+            _logger.info(f"Fetched route details: {route.name} (id: {route.id})")
+
+            return {
+                'success': True,
+                'data': route_data
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock route detail error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_warehouse_routes(self, warehouse_id, **kwargs):
+        """
+        Récupérer les routes configurées pour un entrepôt (admin uniquement).
+
+        Args:
+            warehouse_id: ID de l'entrepôt
+
+        Returns:
+            - Routes actives de l'entrepôt
+            - Configuration (reception_steps, delivery_steps)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Warehouse = request.env['stock.warehouse'].sudo()
+            warehouse = Warehouse.browse(warehouse_id)
+
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': 'Entrepôt introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Routes de l'entrepôt
+            routes_data = []
+            for route in warehouse.route_ids.filtered(lambda r: r.active):
+                routes_data.append({
+                    'id': route.id,
+                    'name': route.name,
+                    'sequence': route.sequence,
+                    'push_rules_count': len(route.push_ids),
+                    'pull_rules_count': len(route.rule_ids),
+                })
+
+            # Configuration de l'entrepôt
+            config = {
+                'reception_steps': warehouse.reception_steps,
+                'delivery_steps': warehouse.delivery_steps,
+            }
+
+            # Labels pour les étapes
+            reception_labels = {
+                'one_step': 'Réception en 1 étape (Stock)',
+                'two_steps': 'Réception en 2 étapes (Input + Stock)',
+                'three_steps': 'Réception en 3 étapes (Input + Quality + Stock)',
+            }
+
+            delivery_labels = {
+                'ship_only': 'Livraison en 1 étape (Stock)',
+                'pick_ship': 'Livraison en 2 étapes (Pick + Ship)',
+                'pick_pack_ship': 'Livraison en 3 étapes (Pick + Pack + Ship)',
+            }
+
+            _logger.info(f"Fetched routes for warehouse {warehouse.name}: {len(routes_data)} routes")
+
+            return {
+                'success': True,
+                'data': {
+                    'warehouse_id': warehouse_id,
+                    'warehouse_name': warehouse.name,
+                    'routes': routes_data,
+                    'config': {
+                        'reception_steps': warehouse.reception_steps,
+                        'reception_label': reception_labels.get(warehouse.reception_steps, warehouse.reception_steps),
+                        'delivery_steps': warehouse.delivery_steps,
+                        'delivery_label': delivery_labels.get(warehouse.delivery_steps, warehouse.delivery_steps),
+                    }
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get warehouse routes error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes/configure', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def configure_warehouse_routes(self, warehouse_id, **kwargs):
+        """
+        Configurer les étapes de réception et livraison d'un entrepôt (admin uniquement).
+
+        Odoo génère automatiquement les routes et règles correspondantes.
+
+        Args:
+            warehouse_id: ID de l'entrepôt
+            reception_steps: 'one_step', 'two_steps', ou 'three_steps'
+            delivery_steps: 'ship_only', 'pick_ship', ou 'pick_pack_ship'
+
+        Returns:
+            dict: Nouvelle configuration appliquée
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Warehouse = request.env['stock.warehouse'].sudo()
+            params = self._get_params()
+
+            warehouse = Warehouse.browse(warehouse_id)
+            if not warehouse.exists():
+                return {
+                    'success': False,
+                    'error': 'Entrepôt introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            reception_steps = params.get('reception_steps')
+            delivery_steps = params.get('delivery_steps')
+
+            # Validation des valeurs
+            valid_reception = ['one_step', 'two_steps', 'three_steps']
+            valid_delivery = ['ship_only', 'pick_ship', 'pick_pack_ship']
+
+            update_vals = {}
+
+            if reception_steps:
+                if reception_steps not in valid_reception:
+                    return {
+                        'success': False,
+                        'error': f'Valeur reception_steps invalide. Valeurs autorisées : {valid_reception}',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+                update_vals['reception_steps'] = reception_steps
+
+            if delivery_steps:
+                if delivery_steps not in valid_delivery:
+                    return {
+                        'success': False,
+                        'error': f'Valeur delivery_steps invalide. Valeurs autorisées : {valid_delivery}',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+                update_vals['delivery_steps'] = delivery_steps
+
+            if not update_vals:
+                return {
+                    'success': False,
+                    'error': 'Aucune configuration à modifier',
+                    'errorCode': 'NO_UPDATE'
+                }
+
+            # Appliquer les modifications
+            # Odoo va automatiquement créer/modifier les routes et règles correspondantes
+            warehouse.write(update_vals)
+
+            _logger.info(f"Warehouse routes configured: {warehouse.name} - {update_vals}")
+
+            return {
+                'success': True,
+                'message': 'Configuration des routes mise à jour',
+                'data': {
+                    'warehouse_id': warehouse_id,
+                    'reception_steps': warehouse.reception_steps,
+                    'delivery_steps': warehouse.delivery_steps,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Configure warehouse routes error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ══════════════════════════════════════════════════════════════════════
+    # LOT/SERIAL NUMBERS & EXPIRATION DATES (Gap P1-6)
+    # ══════════════════════════════════════════════════════════════════════
+
+    @http.route('/api/ecommerce/stock/lots', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_lots(self, **kwargs):
+        """
+        Liste tous les lots/numéros de série avec dates d'expiration (admin uniquement).
+
+        Paramètres optionnels:
+        - product_id (int): Filtrer par produit
+        - expiry_status (str): Filtrer par statut ('expired', 'removal', 'alert', 'ok')
+        - has_stock (bool): Uniquement les lots avec stock > 0 (défaut: True)
+        - limit (int): Nombre de résultats (défaut: 100)
+        - offset (int): Décalage pour pagination (défaut: 0)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Lot = request.env['stock.lot'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+            params = self._get_params()
+
+            limit = int(params.get('limit', 100))
+            offset = int(params.get('offset', 0))
+            product_id = params.get('product_id')
+            expiry_status = params.get('expiry_status')
+            has_stock = params.get('has_stock', True)
+
+            # Domain de base
+            domain = []
+
+            if product_id:
+                domain.append(('product_id', '=', int(product_id)))
+
+            # Rechercher lots
+            lots = Lot.search(domain, limit=limit, offset=offset, order='expiration_date ASC')
+
+            lots_data = []
+            for lot in lots:
+                # Calculer stock total du lot
+                quants = StockQuant.search([
+                    ('lot_id', '=', lot.id),
+                    ('location_id.usage', '=', 'internal'),
+                    ('quantity', '>', 0)
+                ])
+                stock_qty = sum(quants.mapped('quantity'))
+
+                # Filtrer si has_stock
+                if has_stock and stock_qty <= 0:
+                    continue
+
+                # Filtrer par expiry_status
+                if expiry_status and lot.expiry_status != expiry_status:
+                    continue
+
+                lots_data.append({
+                    'id': lot.id,
+                    'name': lot.name,
+                    'ref': lot.ref or '',
+                    'product_id': lot.product_id.id,
+                    'product_name': lot.product_id.display_name,
+                    'product_sku': lot.product_id.default_code or '',
+                    'stock_qty': stock_qty,
+                    'expiration_date': lot.expiration_date.isoformat() if lot.expiration_date else None,
+                    'use_date': lot.use_date.isoformat() if lot.use_date else None,
+                    'removal_date': lot.removal_date.isoformat() if lot.removal_date else None,
+                    'alert_date': lot.alert_date.isoformat() if lot.alert_date else None,
+                    'days_until_expiry': lot.days_until_expiry,
+                    'days_until_alert': lot.days_until_alert,
+                    'days_until_removal': lot.days_until_removal,
+                    'days_until_best_before': lot.days_until_best_before,
+                    'expiry_status': lot.expiry_status,
+                    'is_expired': lot.is_expired,
+                    'is_near_expiry': lot.is_near_expiry,
+                })
+
+            total = len(lots_data)
+
+            _logger.info(f"Fetched {total} lots/serial numbers")
+
+            return {
+                'success': True,
+                'data': {
+                    'lots': lots_data,
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get lots error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_lot_detail(self, lot_id, **kwargs):
+        """
+        Détails complets d'un lot/numéro de série (admin uniquement).
+
+        Args:
+            lot_id: ID du lot
+
+        Returns:
+            - Informations du lot
+            - Dates d'expiration
+            - Stock par emplacement
+            - Historique des mouvements
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Lot = request.env['stock.lot'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+            Move = request.env['stock.move'].sudo()
+
+            lot = Lot.browse(lot_id)
+            if not lot.exists():
+                return {
+                    'success': False,
+                    'error': 'Lot introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Stock par emplacement
+            quants = StockQuant.search([
+                ('lot_id', '=', lot_id),
+                ('quantity', '>', 0)
+            ])
+
+            stock_by_location = []
+            total_stock = 0
+            for quant in quants:
+                stock_by_location.append({
+                    'location_id': quant.location_id.id,
+                    'location_name': quant.location_id.complete_name,
+                    'quantity': quant.quantity,
+                })
+                total_stock += quant.quantity
+
+            # Historique mouvements (10 derniers)
+            moves = Move.search([
+                ('lot_ids', 'in', [lot_id]),
+                ('state', '=', 'done')
+            ], limit=10, order='date desc')
+
+            moves_data = []
+            for move in moves:
+                moves_data.append({
+                    'id': move.id,
+                    'date': move.date.isoformat() if move.date else None,
+                    'location_src': move.location_id.complete_name,
+                    'location_dest': move.location_dest_id.complete_name,
+                    'quantity': move.product_uom_qty,
+                    'reference': move.reference or '',
+                })
+
+            lot_data = {
+                'id': lot.id,
+                'name': lot.name,
+                'ref': lot.ref or '',
+                'product_id': lot.product_id.id,
+                'product_name': lot.product_id.display_name,
+                'product_sku': lot.product_id.default_code or '',
+                'company_id': lot.company_id.id if lot.company_id else None,
+                'note': lot.note or '',
+                'expiration_date': lot.expiration_date.isoformat() if lot.expiration_date else None,
+                'use_date': lot.use_date.isoformat() if lot.use_date else None,
+                'removal_date': lot.removal_date.isoformat() if lot.removal_date else None,
+                'alert_date': lot.alert_date.isoformat() if lot.alert_date else None,
+                'days_until_expiry': lot.days_until_expiry,
+                'days_until_alert': lot.days_until_alert,
+                'days_until_removal': lot.days_until_removal,
+                'days_until_best_before': lot.days_until_best_before,
+                'expiry_status': lot.expiry_status,
+                'is_expired': lot.is_expired,
+                'is_near_expiry': lot.is_near_expiry,
+                'total_stock': total_stock,
+                'stock_by_location': stock_by_location,
+                'recent_moves': moves_data,
+            }
+
+            _logger.info(f"Fetched lot details: {lot.name} (id: {lot.id})")
+
+            return {
+                'success': True,
+                'data': lot_data
+            }
+
+        except Exception as e:
+            _logger.error(f"Get lot detail error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/lots/expiry-alerts', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_expiry_alerts(self, **kwargs):
+        """
+        Récupérer les lots avec alertes d'expiration (admin uniquement).
+
+        Paramètres optionnels:
+        - days_threshold (int): Nombre de jours avant expiration pour l'alerte (défaut: 30)
+        - status_filter (str): Filtrer par statut ('alert', 'removal', 'expired', 'all') (défaut: 'all')
+        - has_stock_only (bool): Uniquement lots avec stock (défaut: True)
+        - limit (int): Nombre de résultats (défaut: 100)
+
+        Returns:
+            - Lots avec alertes groupés par statut
+            - Statistiques (nombre par statut)
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Lot = request.env['stock.lot'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+            params = self._get_params()
+
+            days_threshold = int(params.get('days_threshold', 30))
+            status_filter = params.get('status_filter', 'all')
+            has_stock_only = params.get('has_stock_only', True)
+            limit = int(params.get('limit', 100))
+
+            # Rechercher tous les lots avec date d'expiration
+            lots = Lot.search([
+                ('expiration_date', '!=', False)
+            ], order='expiration_date ASC')
+
+            # Filtrer et grouper par statut
+            alerts = {
+                'expired': [],
+                'removal': [],
+                'alert': [],
+                'ok_but_soon': [],  # OK mais dans le threshold
+            }
+
+            for lot in lots:
+                # Calculer stock si nécessaire
+                if has_stock_only:
+                    quants = StockQuant.search([
+                        ('lot_id', '=', lot.id),
+                        ('location_id.usage', '=', 'internal'),
+                        ('quantity', '>', 0)
+                    ])
+                    stock_qty = sum(quants.mapped('quantity'))
+                    if stock_qty <= 0:
+                        continue
+                else:
+                    stock_qty = 0
+
+                # Appliquer filtre statut
+                if status_filter != 'all' and lot.expiry_status != status_filter:
+                    if not (status_filter == 'alert' and lot.days_until_expiry <= days_threshold):
+                        continue
+
+                lot_data = {
+                    'id': lot.id,
+                    'name': lot.name,
+                    'product_id': lot.product_id.id,
+                    'product_name': lot.product_id.display_name,
+                    'product_sku': lot.product_id.default_code or '',
+                    'stock_qty': stock_qty,
+                    'expiration_date': lot.expiration_date.isoformat() if lot.expiration_date else None,
+                    'days_until_expiry': lot.days_until_expiry,
+                    'expiry_status': lot.expiry_status,
+                }
+
+                # Grouper par statut
+                if lot.expiry_status == 'expired':
+                    alerts['expired'].append(lot_data)
+                elif lot.expiry_status == 'removal':
+                    alerts['removal'].append(lot_data)
+                elif lot.expiry_status == 'alert':
+                    alerts['alert'].append(lot_data)
+                elif lot.days_until_expiry <= days_threshold:
+                    alerts['ok_but_soon'].append(lot_data)
+
+                # Limiter le total
+                total_count = sum(len(v) for v in alerts.values())
+                if total_count >= limit:
+                    break
+
+            # Statistiques
+            stats = {
+                'expired_count': len(alerts['expired']),
+                'removal_count': len(alerts['removal']),
+                'alert_count': len(alerts['alert']),
+                'ok_but_soon_count': len(alerts['ok_but_soon']),
+                'total': sum(len(v) for v in alerts.values()),
+            }
+
+            _logger.info(f"Fetched expiry alerts: {stats['total']} lots")
+
+            return {
+                'success': True,
+                'data': {
+                    'alerts': alerts,
+                    'stats': stats,
+                    'days_threshold': days_threshold,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Get expiry alerts error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_product_expiry_config(self, product_id, **kwargs):
+        """
+        Récupérer la configuration des délais d'expiration d'un produit (admin uniquement).
+
+        Args:
+            product_id: ID du produit
+
+        Returns:
+            - Configuration des délais (use_time, removal_time, alert_time, expiration_time)
+            - Activation du tracking par lot
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Product = request.env['product.product'].sudo()
+            product = Product.browse(product_id)
+
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit introuvable',
+                    'errorCode': 'PRODUCT_NOT_FOUND'
+                }
+
+            config_data = {
+                'product_id': product_id,
+                'product_name': product.display_name,
+                'tracking': product.tracking,
+                'use_expiration_date': product.use_expiration_date if hasattr(product, 'use_expiration_date') else False,
+                'expiration_time': product.expiration_time if hasattr(product, 'expiration_time') else 0,
+                'use_time': product.use_time if hasattr(product, 'use_time') else 0,
+                'removal_time': product.removal_time if hasattr(product, 'removal_time') else 0,
+                'alert_time': product.alert_time if hasattr(product, 'alert_time') else 0,
+            }
+
+            _logger.info(f"Fetched expiry config for product: {product.display_name}")
+
+            return {
+                'success': True,
+                'data': config_data
+            }
+
+        except Exception as e:
+            _logger.error(f"Get product expiry config error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def update_product_expiry_config(self, product_id, **kwargs):
+        """
+        Configurer les délais d'expiration d'un produit (admin uniquement).
+
+        Args:
+            product_id: ID du produit
+            use_expiration_date (bool): Activer suivi des dates d'expiration
+            expiration_time (int): Nombre de jours avant expiration
+            use_time (int): Nombre de jours avant DLUO (Best Before Date)
+            removal_time (int): Nombre de jours avant retrait du stock
+            alert_time (int): Nombre de jours avant déclenchement alerte
+
+        Returns:
+            Configuration mise à jour
+        """
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Product = request.env['product.product'].sudo()
+            params = self._get_params()
+
+            product = Product.browse(product_id)
+            if not product.exists():
+                return {
+                    'success': False,
+                    'error': 'Produit introuvable',
+                    'errorCode': 'PRODUCT_NOT_FOUND'
+                }
+
+            # Vérifier que le produit est suivi par lot/série
+            if product.tracking == 'none':
+                return {
+                    'success': False,
+                    'error': 'Le produit doit être suivi par lot ou numéro de série pour activer les dates d\'expiration',
+                    'errorCode': 'TRACKING_REQUIRED'
+                }
+
+            update_vals = {}
+
+            if 'use_expiration_date' in params:
+                update_vals['use_expiration_date'] = bool(params['use_expiration_date'])
+
+            if 'expiration_time' in params:
+                try:
+                    update_vals['expiration_time'] = int(params['expiration_time'])
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur expiration_time invalide',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+
+            if 'use_time' in params:
+                try:
+                    update_vals['use_time'] = int(params['use_time'])
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur use_time invalide',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+
+            if 'removal_time' in params:
+                try:
+                    update_vals['removal_time'] = int(params['removal_time'])
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur removal_time invalide',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+
+            if 'alert_time' in params:
+                try:
+                    update_vals['alert_time'] = int(params['alert_time'])
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur alert_time invalide',
+                        'errorCode': 'INVALID_VALUE'
+                    }
+
+            if not update_vals:
+                return {
+                    'success': False,
+                    'error': 'Aucune configuration à modifier',
+                    'errorCode': 'NO_UPDATE'
+                }
+
+            # Appliquer les modifications
+            product.write(update_vals)
+
+            _logger.info(f"Updated expiry config for product: {product.display_name} - {update_vals}")
+
+            return {
+                'success': True,
+                'message': 'Configuration d\'expiration mise à jour',
+                'data': {
+                    'product_id': product_id,
+                    'use_expiration_date': product.use_expiration_date if hasattr(product, 'use_expiration_date') else False,
+                    'expiration_time': product.expiration_time if hasattr(product, 'expiration_time') else 0,
+                    'use_time': product.use_time if hasattr(product, 'use_time') else 0,
+                    'removal_time': product.removal_time if hasattr(product, 'removal_time') else 0,
+                    'alert_time': product.alert_time if hasattr(product, 'alert_time') else 0,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Update product expiry config error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    # ══════════════════════════════════════════════════════════════════════
     # STOCK LOCATIONS MANAGEMENT (Phase 3)
     # ══════════════════════════════════════════════════════════════════════
 
@@ -13089,10 +14260,10 @@ class QuelyosAPI(http.Controller):
 
         return False
 
-    @http.route('/api/ecommerce/stock/locations/tree', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/tree', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def get_locations_tree(self, **kwargs):
         """
-        Récupérer toutes les locations avec structure hiérarchique (parent_id)
+        Récupérer toutes les locations avec structure hiérarchique (admin uniquement).
 
         Body (params):
             - warehouse_id: int (optionnel, filtrer par entrepôt)
@@ -13108,6 +14279,11 @@ class QuelyosAPI(http.Controller):
             }
         """
         try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
             Location = request.env['stock.location'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
 
@@ -13180,10 +14356,131 @@ class QuelyosAPI(http.Controller):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/create', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
-    def create_location(self, **kwargs):
-        """Créer une nouvelle location"""
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def get_location_detail(self, location_id, **kwargs):
+        """
+        Obtenir les détails complets d'une location (admin uniquement).
+
+        Args:
+            location_id: ID de la location
+
+        Returns:
+            - Informations complètes de la location
+            - Stock actuel (quantité totale par produit)
+            - Nombre de produits stockés
+            - Sous-emplacements (enfants directs)
+        """
         try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
+            Location = request.env['stock.location'].sudo()
+            StockQuant = request.env['stock.quant'].sudo()
+
+            location = Location.browse(location_id)
+            if not location.exists():
+                return {
+                    'success': False,
+                    'error': 'Location introuvable',
+                    'errorCode': 'NOT_FOUND'
+                }
+
+            # Calculer stock total
+            quants = StockQuant.search([
+                ('location_id', '=', location_id),
+                ('quantity', '>', 0)
+            ])
+            total_stock = sum(quants.mapped('quantity'))
+            products_count = len(set(quants.mapped('product_id.id')))
+
+            # Stock par produit (top 10)
+            stock_by_product = []
+            product_quants = {}
+            for quant in quants:
+                if quant.product_id.id not in product_quants:
+                    product_quants[quant.product_id.id] = {
+                        'product_id': quant.product_id.id,
+                        'product_name': quant.product_id.display_name,
+                        'product_sku': quant.product_id.default_code or '',
+                        'quantity': 0,
+                    }
+                product_quants[quant.product_id.id]['quantity'] += quant.quantity
+
+            # Trier par quantité décroissante et limiter à 10
+            stock_by_product = sorted(
+                product_quants.values(),
+                key=lambda x: x['quantity'],
+                reverse=True
+            )[:10]
+
+            # Sous-emplacements (enfants directs)
+            children = Location.search([
+                ('location_id', '=', location_id),
+                ('active', '=', True)
+            ], order='name')
+
+            children_data = []
+            for child in children:
+                child_quants = StockQuant.search([
+                    ('location_id', '=', child.id),
+                    ('quantity', '>', 0)
+                ])
+                child_stock = sum(child_quants.mapped('quantity'))
+
+                children_data.append({
+                    'id': child.id,
+                    'name': child.name,
+                    'complete_name': child.complete_name,
+                    'usage': child.usage,
+                    'stock_count': round(child_stock, 2),
+                })
+
+            location_data = {
+                'id': location.id,
+                'name': location.name,
+                'complete_name': location.complete_name,
+                'usage': location.usage,
+                'parent_id': location.location_id.id if location.location_id else None,
+                'parent_name': location.location_id.complete_name if location.location_id else None,
+                'warehouse_id': location.warehouse_id.id if location.warehouse_id else None,
+                'warehouse_name': location.warehouse_id.name if location.warehouse_id else None,
+                'barcode': location.barcode or '',
+                'active': location.active,
+                'is_locked': location.is_locked if hasattr(location, 'is_locked') else False,
+                'lock_reason': location.lock_reason if hasattr(location, 'lock_reason') else None,
+                'total_stock': round(total_stock, 2),
+                'products_count': products_count,
+                'stock_by_product': stock_by_product,
+                'children': children_data,
+                'children_count': len(children_data),
+            }
+
+            _logger.info(f"Fetched location details: {location.complete_name} (id: {location.id})")
+
+            return {
+                'success': True,
+                'data': location_data
+            }
+
+        except Exception as e:
+            _logger.error(f"Get location detail error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/stock/locations/create', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_location(self, **kwargs):
+        """Créer une nouvelle location (admin uniquement)"""
+        try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
             Location = request.env['stock.location'].sudo()
             Warehouse = request.env['stock.warehouse'].sudo()
 
@@ -13274,10 +14571,15 @@ class QuelyosAPI(http.Controller):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_location(self, location_id, **kwargs):
-        """Modifier une location existante"""
+        """Modifier une location existante (admin uniquement)"""
         try:
+            # SECURITE : Vérifier droits admin
+            error = self._require_admin()
+            if error:
+                return error
+
             Location = request.env['stock.location'].sudo()
             params = self._get_params()
 
@@ -13528,6 +14830,8 @@ class QuelyosAPI(http.Controller):
                     'min_qty': rule.product_min_qty,
                     'max_qty': rule.product_max_qty,
                     'qty_multiple': rule.qty_multiple or 1,
+                    'rule_horizon': rule.rule_horizon if hasattr(rule, 'rule_horizon') else 0,
+                    'deadline': rule.deadline if hasattr(rule, 'deadline') else 0,
                     'current_stock': current_stock,
                     'is_triggered': is_triggered,
                     'qty_to_order': max(0, qty_to_order),
@@ -13646,6 +14950,19 @@ class QuelyosAPI(http.Controller):
                 'active': True
             }
 
+            # Champs Odoo 19 : horizon et deadline (optionnels)
+            if 'rule_horizon' in params:
+                try:
+                    rule_vals['rule_horizon'] = float(params['rule_horizon'])
+                except (ValueError, TypeError):
+                    pass
+
+            if 'deadline' in params:
+                try:
+                    rule_vals['deadline'] = float(params['deadline'])
+                except (ValueError, TypeError):
+                    pass
+
             rule = Orderpoint.create(rule_vals)
 
             _logger.info(f"Reordering rule created: Product {product.display_name} in {warehouse.name} (id: {rule.id})")
@@ -13660,7 +14977,9 @@ class QuelyosAPI(http.Controller):
                     'warehouse_name': warehouse.name,
                     'min_qty': min_qty,
                     'max_qty': max_qty,
-                    'qty_multiple': qty_multiple
+                    'qty_multiple': qty_multiple,
+                    'rule_horizon': rule.rule_horizon if hasattr(rule, 'rule_horizon') else 0,
+                    'deadline': rule.deadline if hasattr(rule, 'deadline') else 0
                 }
             }
 
@@ -13741,6 +15060,29 @@ class QuelyosAPI(http.Controller):
             if active is not None:
                 update_vals['active'] = bool(active)
 
+            # Champs Odoo 19 : horizon et deadline (optionnels)
+            rule_horizon = params.get('rule_horizon')
+            if rule_horizon is not None:
+                try:
+                    update_vals['rule_horizon'] = float(rule_horizon)
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur rule_horizon invalide',
+                        'errorCode': 'INVALID_VALUES'
+                    }
+
+            deadline = params.get('deadline')
+            if deadline is not None:
+                try:
+                    update_vals['deadline'] = float(deadline)
+                except (ValueError, TypeError):
+                    return {
+                        'success': False,
+                        'error': 'Valeur deadline invalide',
+                        'errorCode': 'INVALID_VALUES'
+                    }
+
             if update_vals:
                 rule.write(update_vals)
                 _logger.info(f"Reordering rule updated: {rule.id}")
@@ -13752,6 +15094,8 @@ class QuelyosAPI(http.Controller):
                     'min_qty': rule.product_min_qty,
                     'max_qty': rule.product_max_qty,
                     'qty_multiple': rule.qty_multiple,
+                    'rule_horizon': rule.rule_horizon if hasattr(rule, 'rule_horizon') else 0,
+                    'deadline': rule.deadline if hasattr(rule, 'deadline') else 0,
                     'active': rule.active
                 }
             }

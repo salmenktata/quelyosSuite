@@ -175,7 +175,6 @@ export default function LocationLocks() {
                           </Badge>
                         )}
                       </td>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
