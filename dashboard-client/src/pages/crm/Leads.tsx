@@ -1,7 +1,20 @@
+/**
+ * Page Liste des Opportunités CRM
+ *
+ * Fonctionnalités :
+ * - Liste paginée de toutes les opportunités commerciales
+ * - Statistiques agrégées (total, revenu attendu, probabilité moyenne)
+ * - Recherche et filtres
+ * - Tri interactif par colonne
+ * - Pagination offset-based (20 items/page)
+ */
+
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Kanban, Plus } from 'lucide-react'
 import { Layout } from '@/components/Layout'
+import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
+import { crmNotices } from '@/lib/notices'
 import { LeadStats } from '@/components/leads/LeadStats'
 import { LeadFilters } from '@/components/leads/LeadFilters'
 import { LeadTable } from '@/components/leads/LeadTable'
@@ -14,7 +27,7 @@ export default function Leads() {
   const [offset, setOffset] = useState(0)
   const limit = 20
 
-  const { data, isLoading } = useLeads({
+  const { data, isLoading, error, refetch } = useLeads({
     limit,
     offset,
     search: debouncedSearch,
@@ -41,19 +54,16 @@ export default function Leads() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-          <Link to="/" className="hover:text-gray-900 dark:hover:text-white">
-            Accueil
-          </Link>
-          <span>/</span>
-          <Link to="/crm" className="hover:text-gray-900 dark:hover:text-white">
-            CRM
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 dark:text-white">Opportunités</span>
-        </nav>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'CRM', href: '/crm' },
+            { label: 'Opportunités' },
+          ]}
+        />
+
+        <PageNotice config={crmNotices.leads} className="mb-6" />
 
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -66,19 +76,15 @@ export default function Leads() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              to="/crm/pipeline"
-              className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
-              <Kanban className="w-5 h-5" />
-              Vue Pipeline
+            <Link to="/crm/pipeline">
+              <Button variant="secondary" icon={<Kanban className="w-5 h-5" />}>
+                Vue Pipeline
+              </Button>
             </Link>
-            <Link
-              to="/crm/leads/new"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Nouvelle Opportunité
+            <Link to="/crm/leads/new">
+              <Button variant="primary" icon={<Plus className="w-5 h-5" />}>
+                Nouvelle Opportunité
+              </Button>
             </Link>
           </div>
         </div>
@@ -98,8 +104,15 @@ export default function Leads() {
 
         {/* Content */}
         {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <SkeletonTable rows={20} columns={6} />
+        ) : error ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+            <p className="text-red-800 dark:text-red-200 mb-4">
+              Erreur lors du chargement des opportunités
+            </p>
+            <Button variant="secondary" onClick={() => refetch && refetch()}>
+              Réessayer
+            </Button>
           </div>
         ) : data?.leads && data.leads.length > 0 ? (
           <>
