@@ -5,13 +5,13 @@
         <field name="name">quelyos.oca.module.info.tree</field>
         <field name="model">quelyos.oca.module.info</field>
         <field name="arch" type="xml">
-            <tree string="Modules OCA Utilisés" create="false" delete="false" edit="false">
+            <list string="Modules OCA Utilisés" create="false" delete="false" edit="false">
                 <field name="name" string="Nom Technique"/>
                 <field name="display_name" string="Nom"/>
                 <field name="version"/>
                 <field name="state" decoration-success="state == 'installed'" decoration-danger="state == 'uninstalled'"/>
                 <field name="author"/>
-            </tree>
+            </list>
         </field>
     </record>
 

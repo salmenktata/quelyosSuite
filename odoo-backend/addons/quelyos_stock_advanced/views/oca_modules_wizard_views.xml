@@ -23,12 +23,12 @@
                     <notebook>
                         <page string="Modules">
                             <field name="module_ids" nolabel="1">
-                                <tree create="false" delete="false" edit="false">
+                                <list create="false" delete="false" edit="false">
                                     <field name="name"/>
                                     <field name="display_name"/>
                                     <field name="version"/>
                                     <field name="state" decoration-success="state == 'installed'" decoration-danger="state == 'uninstalled'"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

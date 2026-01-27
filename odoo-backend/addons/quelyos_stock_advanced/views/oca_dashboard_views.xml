@@ -14,13 +14,10 @@
 
                     <group>
                         <group string="📊 Statistiques">
-                            <div class="oe_form_group">
-                                <label string="Total Modules OCA"/>
-                                <div>
-                                    <field name="name" invisible="1"/>
-                                    <span class="o_stat_value">4</span>
-                                    <span class="o_stat_text">modules</span>
-                                </div>
+                            <field name="name" invisible="1"/>
+                            <div>
+                                <p><strong>Total Modules OCA: </strong>4 modules</p>
+                                <p>Tous les modules OCA sont adaptés pour Odoo 19.0</p>
                             </div>
                         </group>
                     </group>

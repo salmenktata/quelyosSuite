@@ -6,12 +6,11 @@ Intégration des addons OCA : stock_change_qty_reason, stock_inventory, etc.
 import logging
 from odoo import http
 from odoo.http import request
-from .base import QuelyosBaseController
 
 _logger = logging.getLogger(__name__)
 
 
-class StockOCAController(QuelyosBaseController):
+class StockOCAController(http.Controller):
     """API pour fonctionnalités Stock OCA"""
 
     # ==================== STOCK QUANTITY CHANGE REASONS (OCA) ====================
