@@ -6,6 +6,7 @@ import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../com
 import { ecommerceNotices } from '@/lib/notices'
 import { OrdersKanban } from '../../components/OrdersKanban'
 import { LayoutGrid as Squares2X2Icon, Table as TableCellsIcon } from 'lucide-react'
+import type { Order } from '@/types'
 
 export default function Orders() {
   const [page, setPage] = useState(0)
@@ -94,7 +95,7 @@ export default function Orders() {
 
   const hasActiveFilters = statusFilter || search || dateFrom || dateTo
 
-  const orders = (data?.data?.orders || []) as import('../types').Order[]
+  const orders = (data?.data?.orders || []) as Order[]
   const total = (data?.data?.total || 0) as number
 
   return (

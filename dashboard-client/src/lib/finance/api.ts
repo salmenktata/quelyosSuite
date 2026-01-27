@@ -1,6 +1,6 @@
 /**
  * API Finance - Wrapper pour les appels API du module finance
- * Appelle le backend via le proxy Vite
+ * Utilise l'API ecommerce du backend via le proxy Vite
  */
 
 import { logger } from '@/lib/logger'
@@ -61,12 +61,12 @@ export async function api<T = unknown>(
     fetchOptions.body = JSON.stringify(body)
   }
 
-  const fullUrl = `${API_BASE_URL}/api/finance${endpoint}`
-  logger.debug('Finance API Calling:', { fullUrl, method, API_BASE_URL, endpoint })
+  const fullUrl = `${API_BASE_URL}/api/ecommerce${endpoint}`
+  logger.debug('Finance API (via ecommerce) Calling:', { fullUrl, method, API_BASE_URL, endpoint })
 
   try {
     const response = await fetch(fullUrl, fetchOptions)
-    logger.debug('Finance API Response:', { status: response.status, ok: response.ok, url: fullUrl })
+    logger.debug('Finance API (via ecommerce) Response:', { status: response.status, ok: response.ok, url: fullUrl })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
@@ -105,7 +105,7 @@ export async function api<T = unknown>(
     }
     return (json.data ?? json) as T
   } catch (error) {
-    logger.error('Finance API Error:', {
+    logger.error('Finance API (via ecommerce) Error:', {
       url: fullUrl,
       endpoint,
       error: error instanceof Error ? error.message : error,

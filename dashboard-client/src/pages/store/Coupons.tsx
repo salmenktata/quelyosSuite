@@ -5,6 +5,7 @@ import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '../../hooks/useCou
 import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
+import type { Coupon } from '@/types'
 
 interface EditFormData {
   name: string
@@ -191,7 +192,7 @@ export default function Coupons() {
             <div className="p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des coupons
             </div>
-          ) : data?.data?.coupons && (data.data.coupons as import('../types').Coupon[]).length > 0 ? (
+          ) : data?.data?.coupons && (data.data.coupons as Coupon[]).length > 0 ? (
             <>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -218,7 +219,7 @@ export default function Coupons() {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {(data.data.coupons as import('../types').Coupon[]).map((coupon) => (
+                    {(data.data.coupons as Coupon[]).map((coupon) => (
                       <tr
                         key={coupon.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

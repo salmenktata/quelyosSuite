@@ -1,4 +1,16 @@
+/**
+ * Page SEO Metadata - Gestion des balises meta pour le référencement
+ *
+ * Fonctionnalités :
+ * - Liste des métadonnées SEO par page/slug
+ * - Création/édition/suppression de metadata
+ * - Onglets : Balises Meta / Open Graph / Avancé
+ * - Score SEO et optimisation keywords
+ * - Gestion noindex/nofollow/schema.org
+ */
+
 import { useState } from 'react'
+import { Plus, Trash2, X, Save } from 'lucide-react'
 import { Layout } from '../../components/Layout'
 import { useSeoMetadataList, useCreateSeoMetadata, useUpdateSeoMetadata, useDeleteSeoMetadata, SeoMetadata } from '../../hooks/useSeoMetadata'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
@@ -118,19 +130,25 @@ export default function SeoMetadataPage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Tableau de bord', href: '/dashboard' },
-          { label: 'SEO Métadonnées' },
-        ]}
-      />
-      <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Store', href: '/store' },
+            { label: 'SEO Métadonnées' },
+          ]}
+        />
+
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">SEO Metadata</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SEO Metadata</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Balises meta pour le référencement</p>
           </div>
-          {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
+          {!showForm && (
+            <Button onClick={handleNew} icon={<Plus className="h-4 w-4" />}>
+              Nouveau
+            </Button>
+          )}
         </div>
 
         <PageNotice config={storeNotices.seoMetadata} className="mb-6" />
@@ -167,7 +185,14 @@ export default function SeoMetadataPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button onClick={(e) => { e.stopPropagation(); handleDelete(m.id) }} size="sm" variant="secondary">Supprimer</Button>
+                        <Button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(m.id) }}
+                          size="sm"
+                          variant="danger"
+                          icon={<Trash2 className="h-3.5 w-3.5" />}
+                        >
+                          Supprimer
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -212,11 +237,11 @@ export default function SeoMetadataPage() {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom interne</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Nom interne</label>
                         <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm" placeholder="Homepage" />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type de page</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Type de page</label>
                         <select value={formData.page_type} onChange={e => setFormData({ ...formData, page_type: e.target.value as typeof formData.page_type })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm">
                           <option value="home">Homepage</option>
                           <option value="product">Page Produit</option>
@@ -228,19 +253,19 @@ export default function SeoMetadataPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug (URL)</label>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Slug (URL)</label>
                       <input type="text" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm font-mono" placeholder="/about-us" />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                         Meta Title <span className="text-xs text-gray-500">({formData.meta_title.length}/60)</span>
                       </label>
                       <input type="text" maxLength={60} value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm" />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                         Meta Description <span className="text-xs text-gray-500">({formData.meta_description.length}/160)</span>
                       </label>
                       <textarea maxLength={160} rows={3} value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm" />
@@ -251,14 +276,14 @@ export default function SeoMetadataPage() {
                 {activeTab === 'og' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">OG Image URL</label>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">OG Image URL</label>
                       <input type="url" value={formData.og_image_url} onChange={e => setFormData({ ...formData, og_image_url: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm" placeholder="https://..." />
                       <p className="text-xs text-gray-500 mt-1">Recommandé : 1200x630px</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">OG Type</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">OG Type</label>
                         <select value={formData.og_type} onChange={e => setFormData({ ...formData, og_type: e.target.value as typeof formData.og_type })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm">
                           <option value="website">Website</option>
                           <option value="article">Article</option>
@@ -266,7 +291,7 @@ export default function SeoMetadataPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter Card</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Twitter Card</label>
                         <select value={formData.twitter_card} onChange={e => setFormData({ ...formData, twitter_card: e.target.value as typeof formData.twitter_card })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm">
                           <option value="summary">Summary</option>
                           <option value="summary_large_image">Summary Large Image</option>
@@ -281,7 +306,7 @@ export default function SeoMetadataPage() {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Schema.org Type</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Schema.org Type</label>
                         <select value={formData.schema_type} onChange={e => setFormData({ ...formData, schema_type: e.target.value as typeof formData.schema_type })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm">
                           <option value="WebPage">WebPage</option>
                           <option value="Product">Product</option>
@@ -291,7 +316,7 @@ export default function SeoMetadataPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Focus Keyword</label>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Focus Keyword</label>
                         <input type="text" value={formData.focus_keyword} onChange={e => setFormData({ ...formData, focus_keyword: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 text-sm" placeholder="mot-clé principal" />
                       </div>
                     </div>
@@ -299,15 +324,15 @@ export default function SeoMetadataPage() {
                     <div className="flex flex-wrap gap-4">
                       <label className="flex items-center gap-2">
                         <input type="checkbox" checked={formData.noindex} onChange={e => setFormData({ ...formData, noindex: e.target.checked })} className="w-4 h-4 text-indigo-600 border-gray-300 rounded" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">NoIndex</span>
+                        <span className="text-sm text-gray-900 dark:text-white">NoIndex</span>
                       </label>
                       <label className="flex items-center gap-2">
                         <input type="checkbox" checked={formData.nofollow} onChange={e => setFormData({ ...formData, nofollow: e.target.checked })} className="w-4 h-4 text-indigo-600 border-gray-300 rounded" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">NoFollow</span>
+                        <span className="text-sm text-gray-900 dark:text-white">NoFollow</span>
                       </label>
                       <label className="flex items-center gap-2">
                         <input type="checkbox" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} className="w-4 h-4 text-indigo-600 border-gray-300 rounded" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Actif</span>
+                        <span className="text-sm text-gray-900 dark:text-white">Actif</span>
                       </label>
                     </div>
                   </>
@@ -315,8 +340,12 @@ export default function SeoMetadataPage() {
               </div>
 
               <div className="flex justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700">
-                <Button onClick={handleCancel} variant="secondary">Annuler</Button>
-                <Button onClick={handleSave} disabled={!formData.slug}>Sauvegarder</Button>
+                <Button onClick={handleCancel} variant="secondary" icon={<X className="h-4 w-4" />}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSave} disabled={!formData.slug} icon={<Save className="h-4 w-4" />}>
+                  Sauvegarder
+                </Button>
               </div>
             </div>
           )}

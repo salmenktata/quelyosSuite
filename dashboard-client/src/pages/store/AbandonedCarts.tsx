@@ -9,6 +9,7 @@ import {
 import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { Mail as EnvelopeIcon, ShoppingCart as ShoppingCartIcon } from 'lucide-react'
+import type { AbandonedCart } from '@/types'
 
 export default function AbandonedCarts() {
   const [page, setPage] = useState(0)
@@ -79,7 +80,7 @@ export default function AbandonedCarts() {
 
   const hasActiveFilters = search || hoursThreshold !== 24
 
-  const carts = (data?.data?.abandoned_carts || []) as import('../types').AbandonedCart[]
+  const carts = (data?.data?.abandoned_carts || []) as AbandonedCart[]
   const total = (data?.data?.total || 0) as number
 
   const stats = statsData?.data

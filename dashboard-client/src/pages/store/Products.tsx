@@ -60,7 +60,7 @@ import { useToast } from '../../hooks/useToast'
 import { ToastContainer } from '../../components/common/Toast'
 import { api } from '../../lib/api'
 import { logger } from '@quelyos/logger'
-import type { ProductsQueryParams, Product } from '@/types'
+import type { ProductsQueryParams, Product, Category } from '@/types'
 
 type SortField = 'name' | 'price' | 'qty_available' | 'default_code'
 type SortOrder = 'asc' | 'desc'
@@ -130,12 +130,12 @@ export default function Products() {
 
   // Support des deux formats de réponse API (data.products ou products directement)
   const productsResponse = productsData as unknown as { data?: { products?: Product[]; total?: number }; products?: Product[]; total?: number }
-  const products = (productsResponse?.data?.products || productsResponse?.products || []) as import('../types').Product[]
+  const products = (productsResponse?.data?.products || productsResponse?.products || []) as Product[]
   const total = (productsResponse?.data?.total || productsResponse?.total || 0) as number
   const totalPages = Math.ceil(total / limit)
 
-  const categoriesResponse = categoriesData as unknown as { data?: { categories?: import('../types').Category[] }; categories?: import('../types').Category[] }
-  const categories = (categoriesResponse?.data?.categories || categoriesResponse?.categories || []) as import('../types').Category[]
+  const categoriesResponse = categoriesData as unknown as { data?: { categories?: Category[] }; categories?: Category[] }
+  const categories = (categoriesResponse?.data?.categories || categoriesResponse?.categories || []) as Category[]
 
   const navigate = useNavigate()
 
