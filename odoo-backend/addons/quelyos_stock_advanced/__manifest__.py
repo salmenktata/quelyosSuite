@@ -55,6 +55,9 @@ Voir docs/OCA_PATCHES_19.md pour détails.
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/oca_dashboard_views.xml',
+        'views/oca_module_info_views.xml',
+        'views/oca_modules_wizard_views.xml',
     ],
     'installable': True,
     'application': False,

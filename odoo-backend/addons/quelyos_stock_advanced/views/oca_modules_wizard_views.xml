@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue du Wizard -->
+    <record id="view_oca_modules_wizard_form" model="ir.ui.view">
+        <field name="name">quelyos.oca.modules.wizard.form</field>
+        <field name="model">quelyos.oca.modules.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Modules OCA - Vue d'Ensemble">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Modules OCA Intégrés dans Quelyos</h1>
+                    </div>
+
+                    <group>
+                        <group string="📊 Statistiques">
+                            <field name="total_modules" readonly="1"/>
+                            <field name="installed_modules" readonly="1"/>
+                            <field name="uninstalled_modules" readonly="1"/>
+                            <field name="installation_rate" widget="percentage" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Modules">
+                            <field name="module_ids" nolabel="1">
+                                <tree create="false" delete="false" edit="false">
+                                    <field name="name"/>
+                                    <field name="display_name"/>
+                                    <field name="version"/>
+                                    <field name="state" decoration-success="state == 'installed'" decoration-danger="state == 'uninstalled'"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Voir Détails" type="object" name="action_view_modules" class="btn-primary"/>
+                    <button string="Fermer" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir le wizard -->
+    <record id="action_oca_modules_wizard" model="ir.actions.act_window">
+        <field name="name">Vue d'Ensemble Modules OCA</field>
+        <field name="res_model">quelyos.oca.modules.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

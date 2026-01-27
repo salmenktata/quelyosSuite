@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_quelyos_stock_advanced_user,quelyos_stock_advanced.user,stock.model_stock_quant,base.group_user,1,1,1,0
 access_quelyos_stock_advanced_manager,quelyos_stock_advanced.manager,stock.model_stock_quant,stock.group_stock_manager,1,1,1,1
+access_quelyos_oca_module_info_user,quelyos.oca.module.info.user,model_quelyos_oca_module_info,base.group_user,1,1,1,1
+access_quelyos_oca_module_info_manager,quelyos.oca.module.info.manager,model_quelyos_oca_module_info,stock.group_stock_manager,1,1,1,1
+access_quelyos_oca_modules_wizard_user,quelyos.oca.modules.wizard.user,model_quelyos_oca_modules_wizard,base.group_user,1,1,1,1
+access_quelyos_oca_modules_wizard_manager,quelyos.oca.modules.wizard.manager,model_quelyos_oca_modules_wizard,stock.group_stock_manager,1,1,1,1

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Tree pour lister les modules OCA -->
+    <record id="view_oca_module_info_tree" model="ir.ui.view">
+        <field name="name">quelyos.oca.module.info.tree</field>
+        <field name="model">quelyos.oca.module.info</field>
+        <field name="arch" type="xml">
+            <tree string="Modules OCA Utilisés" create="false" delete="false" edit="false">
+                <field name="name" string="Nom Technique"/>
+                <field name="display_name" string="Nom"/>
+                <field name="version"/>
+                <field name="state" decoration-success="state == 'installed'" decoration-danger="state == 'uninstalled'"/>
+                <field name="author"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Form pour détails module OCA -->
+    <record id="view_oca_module_info_form" model="ir.ui.view">
+        <field name="name">quelyos.oca.module.info.form</field>
+        <field name="model">quelyos.oca.module.info</field>
+        <field name="arch" type="xml">
+            <form string="Détails Module OCA" create="false" delete="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                        <h3>
+                            <field name="name" readonly="1"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="version"/>
+                            <field name="state" widget="badge" decoration-success="state == 'installed'" decoration-danger="state == 'uninstalled'"/>
+                            <field name="is_oca" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="author"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="summary" widget="text"/>
+                        </page>
+                        <page string="Adaptations Odoo 19.0">
+                            <field name="adaptation_notes" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir la liste des modules OCA -->
+    <record id="action_oca_module_info" model="ir.actions.act_window">
+        <field name="name">Modules OCA Utilisés</field>
+        <field name="res_model">quelyos.oca.module.info</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_installed': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Modules OCA (Odoo Community Association) Intégrés
+            </p>
+            <p>
+                Quelyos Stock Advanced utilise 4 modules OCA pour enrichir les fonctionnalités Stock:
+                <ul>
+                    <li>stock_change_qty_reason - Raisons de changement de quantité</li>
+                    <li>stock_inventory - Inventaires améliorés</li>
+                    <li>stock_location_lockdown - Verrouillage d'emplacements</li>
+                    <li>stock_demand_estimate - Estimation de la demande</li>
+                </ul>
+            </p>
+            <p>
+                Ces modules ont été adaptés de la version OCA 18.0 vers Odoo 19.0.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu dans Stock -->
+    <menuitem
+        id="menu_quelyos_oca_modules"
+        name="Modules OCA"
+        parent="stock.menu_stock_root"
+        action="action_oca_module_info"
+        sequence="100"
+        groups="stock.group_stock_manager"/>
+
+</odoo>

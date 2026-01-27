@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Quelyos Stock Advanced -->
+    <record id="view_quelyos_stock_advanced_dashboard" model="ir.ui.view">
+        <field name="name">quelyos.stock.advanced.dashboard</field>
+        <field name="model">quelyos.oca.module.info</field>
+        <field name="arch" type="xml">
+            <form string="Quelyos Stock Advanced - Dashboard">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Quelyos Stock Advanced</h1>
+                        <h3>Modules OCA Intégrés</h3>
+                    </div>
+
+                    <group>
+                        <group string="📊 Statistiques">
+                            <div class="oe_form_group">
+                                <label string="Total Modules OCA"/>
+                                <div>
+                                    <field name="name" invisible="1"/>
+                                    <span class="o_stat_value">4</span>
+                                    <span class="o_stat_text">modules</span>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Modules Installés">
+                            <p>
+                                <strong>Modules OCA Stock adaptés pour Odoo 19.0</strong>
+                            </p>
+                            <ul>
+                                <li><strong>stock_change_qty_reason</strong> (19.0.1.0.0) - Raisons de changement de quantité
+                                    <br/>➜ API: /api/stock/change-reasons, /api/stock/adjust-with-reason
+                                </li>
+                                <li><strong>stock_inventory</strong> (19.0.1.1.2) - Inventaires améliorés OCA
+                                    <br/>➜ API: /api/stock/inventories-oca
+                                </li>
+                                <li><strong>stock_location_lockdown</strong> (19.0.1.0.0) - Verrouillage d'emplacements
+                                    <br/>➜ API: /api/stock/location-locks, /api/stock/location/&lt;id&gt;/lock
+                                </li>
+                                <li><strong>stock_demand_estimate</strong> (19.0.1.1.0) - Estimation de la demande
+                                    <br/>➜ Dashboard et prévisions
+                                </li>
+                            </ul>
+                        </page>
+                        <page string="API REST">
+                            <group>
+                                <p>
+                                    <strong>Endpoints API Disponibles</strong>
+                                </p>
+                                <ul>
+                                    <li>GET /api/stock/change-reasons - Liste des raisons de changement</li>
+                                    <li>POST /api/stock/adjust-with-reason - Ajuster stock avec raison</li>
+                                    <li>GET /api/stock/inventories-oca - Liste des inventaires OCA</li>
+                                    <li>GET /api/stock/location-locks - Liste des emplacements verrouillés</li>
+                                    <li>POST /api/stock/location/&lt;id&gt;/lock - Verrouiller/déverrouiller emplacement</li>
+                                </ul>
+                            </group>
+                        </page>
+                        <page string="Frontend React">
+                            <group>
+                                <p>
+                                    <strong>Pages Dashboard Client</strong>
+                                </p>
+                                <ul>
+                                    <li><strong>/stock/change-reasons</strong> - Gestion des raisons de changement
+                                        <br/>➜ dashboard-client/src/pages/stock/StockChangeReasons.tsx
+                                    </li>
+                                    <li><strong>/stock/inventories-oca</strong> - Liste des inventaires OCA
+                                        <br/>➜ dashboard-client/src/pages/stock/InventoriesOCA.tsx
+                                    </li>
+                                    <li><strong>/stock/location-locks</strong> - Verrouillage d'emplacements
+                                        <br/>➜ dashboard-client/src/pages/stock/LocationLocks.tsx
+                                    </li>
+                                </ul>
+                            </group>
+                        </page>
+                        <page string="Adaptations Odoo 19.0">
+                            <group>
+                                <p>
+                                    <strong>Patchs Appliqués pour Compatibilité Odoo 19.0</strong>
+                                </p>
+                                <ul>
+                                    <li><strong>stock_change_qty_reason</strong>
+                                        <br/>• Fichier: security/stock_security.xml
+                                        <br/>• Problème: category_id supprimé de res.groups
+                                        <br/>• Solution: Suppression du champ category_id pour groupes cachés
+                                    </li>
+                                    <li><strong>stock_demand_estimate</strong>
+                                        <br/>• Fichier: views/stock_demand_estimate_view.xml
+                                        <br/>• Problème: attribut expand supprimé de &lt;group&gt; dans search views
+                                        <br/>• Solution: Utilisation de &lt;separator&gt; + &lt;group&gt; sans expand
+                                    </li>
+                                    <li><strong>stock_inventory</strong>
+                                        <br/>• Aucune modification nécessaire ✓
+                                    </li>
+                                    <li><strong>stock_location_lockdown</strong>
+                                        <br/>• Aucune modification nécessaire ✓
+                                    </li>
+                                </ul>
+                                <p>
+                                    <em>Voir docs/OCA_PATCHES_19.md pour détails complets</em>
+                                </p>
+                            </group>
+                        </page>
+                        <page string="Documentation">
+                            <group>
+                                <p>
+                                    <strong>📚 Documentation Disponible</strong>
+                                </p>
+                                <ul>
+                                    <li>docs/OCA_INTEGRATION.md - Guide d'intégration OCA</li>
+                                    <li>docs/OCA_PATCHES_19.md - Détails des adaptations Odoo 19.0</li>
+                                    <li>docs/OCA_STATUS.md - État actuel de l'intégration</li>
+                                    <li>docs/QUELYOS_STOCK_ADVANCED.md - Guide utilisation module wrapper</li>
+                                    <li>odoo-backend/addons/quelyos_stock_advanced/README.md - Documentation module</li>
+                                </ul>
+                                <p>
+                                    <strong>🔗 Liens Utiles</strong>
+                                </p>
+                                <ul>
+                                    <li>Repository OCA: https://github.com/OCA/stock-logistics-warehouse</li>
+                                    <li>Issue GitHub: https://github.com/salmenktata/quelyosSuite/issues/52</li>
+                                    <li>Documentation Odoo 19.0: https://www.odoo.com/documentation/19.0/</li>
+                                </ul>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir le dashboard -->
+    <record id="action_quelyos_stock_advanced_dashboard" model="ir.actions.act_window">
+        <field name="name">Quelyos Stock Advanced - Dashboard</field>
+        <field name="res_model">quelyos.oca.module.info</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_quelyos_stock_advanced_dashboard"/>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu Dashboard dans Stock -->
+    <menuitem
+        id="menu_quelyos_stock_advanced_dashboard"
+        name="📊 Dashboard OCA"
+        parent="stock.menu_stock_root"
+        action="action_quelyos_stock_advanced_dashboard"
+        sequence="99"
+        groups="stock.group_stock_manager"/>
+
+</odoo>
