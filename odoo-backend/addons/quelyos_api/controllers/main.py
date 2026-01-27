@@ -487,17 +487,34 @@ class QuelyosAPI(BaseController):
             user = request.env['res.users'].sudo().browse(uid)
             partner = user.partner_id
 
+            # Récupérer les groupes de sécurité Quelyos via SQL direct
+            request.env.cr.execute("""
+                SELECT g.name
+                FROM res_groups g
+                JOIN res_groups_users_rel r ON g.id = r.gid
+                WHERE r.uid = %s AND g.name::text LIKE '%%Quelyos%%'
+            """, (uid,))
+
+            group_names = []
+            for row in request.env.cr.fetchall():
+                name = row[0]
+                # Si name est un dict (JSONB traduit), extraire la valeur
+                if isinstance(name, dict):
+                    name = name.get('en_US') or name.get('fr_FR') or next(iter(name.values()), '')
+                group_names.append(name)
+
             user_data = {
                 'id': partner.id,
                 'name': partner.name,
                 'email': partner.email or user.login,
                 'phone': partner.phone or '',
+                'groups': group_names,  # Ajouter les groupes directement
             }
 
             # Récupérer le session_id
             session_id = request.session.sid
 
-            _logger.info(f"User {email} authenticated successfully")
+            _logger.info(f"User {email} authenticated successfully with {len(group_names)} groups")
 
             return {
                 'success': True,
@@ -9980,6 +9997,139 @@ class QuelyosAPI(BaseController):
                 'error': str(e),
                 'errorCode': 'SERVER_ERROR'
             }
+
+    # ==================== STOCK VALUATION BY CATEGORY (Gap P2) ====================
+
+    @http.route('/api/ecommerce/stock/valuation/by-category', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_stock_valuation_by_category(self, **kwargs):
+        """Rapport de valorisation du stock par catégorie produit (coût standard)"""
+        try:
+            # TODO PRODUCTION: Réactiver auth admin
+            # error = self._require_admin()
+            # if error:
+            #     return error
+            pass
+
+            params = self._get_params()
+            warehouse_id = params.get('warehouse_id')
+            include_zero_stock = params.get('include_zero_stock', False)
+
+            Product = request.env['product.product'].sudo()
+
+            # Construire domaine de recherche
+            # Inclure tous les produits qui ont un coût (stockables, consommables, etc.)
+            domain = [
+                ('type', 'in', ['product', 'consu']),  # Stockables ou consommables
+                ('standard_price', '>', 0),  # Avec un coût défini
+            ]
+
+            if not include_zero_stock:
+                domain.append(('qty_available', '>', 0))
+
+            products = Product.search(domain)
+
+            # Grouper par catégorie
+            categories_data = {}
+            total_valuation = 0
+            total_products = 0
+            total_quantity = 0
+
+            for product in products:
+                # Filtrer par entrepôt si spécifié
+                if warehouse_id:
+                    qty = product.with_context(warehouse=warehouse_id).qty_available
+                else:
+                    qty = product.qty_available
+
+                if not include_zero_stock and qty <= 0:
+                    continue
+
+                # Utiliser coût standard pour valorisation comptable
+                cost = product.standard_price or 0
+                valuation = cost * qty
+
+                # Récupérer catégorie
+                category = product.categ_id
+                if category:
+                    cat_name = category.complete_name or category.name or 'Sans catégorie'
+                    cat_id = category.id
+                else:
+                    cat_name = 'Sans catégorie'
+                    cat_id = 0
+
+                if cat_name not in categories_data:
+                    categories_data[cat_name] = {
+                        'category_id': cat_id,
+                        'category_name': cat_name,
+                        'product_count': 0,
+                        'total_quantity': 0,
+                        'total_valuation': 0,
+                        'average_cost': 0,
+                        'products': []
+                    }
+
+                categories_data[cat_name]['product_count'] += 1
+                categories_data[cat_name]['total_quantity'] += qty
+                categories_data[cat_name]['total_valuation'] += valuation
+
+                categories_data[cat_name]['products'].append({
+                    'id': product.id,
+                    'name': product.name,
+                    'sku': product.default_code or '',
+                    'quantity': qty,
+                    'cost': cost,
+                    'valuation': valuation
+                })
+
+                total_valuation += valuation
+                total_products += 1
+                total_quantity += qty
+
+            # Calculer moyennes et trier
+            categories_list = []
+            for cat_name, data in categories_data.items():
+                data['average_cost'] = (
+                    data['total_valuation'] / data['product_count']
+                    if data['product_count'] > 0
+                    else 0
+                )
+                data['percentage_of_total'] = (
+                    (data['total_valuation'] / total_valuation * 100)
+                    if total_valuation > 0
+                    else 0
+                )
+                categories_list.append(data)
+
+            # Trier par valorisation décroissante
+            categories_list.sort(key=lambda x: x['total_valuation'], reverse=True)
+
+            return {
+                'success': True,
+                'data': {
+                    'categories': categories_list,
+                    'summary': {
+                        'total_categories': len(categories_list),
+                        'total_products': total_products,
+                        'total_quantity': total_quantity,
+                        'total_valuation': total_valuation,
+                        'average_valuation_per_category': (
+                            total_valuation / len(categories_list)
+                            if len(categories_list) > 0
+                            else 0
+                        )
+                    }
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Stock valuation by category error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+
 
     # ==================== STOCK ALERTS ====================
 
