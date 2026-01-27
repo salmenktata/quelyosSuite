@@ -275,7 +275,7 @@ export default function OptimizationPanel() {
       {/* Header */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="h-6 w-6 text-primary" />
+          <Sparkles className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
           <div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Optimisation des paiements</h3>
             <p className="text-sm text-muted-foreground">
@@ -431,7 +431,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Factures planifiées</span>
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400" />
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {result.metrics.scheduledInvoices}/{result.metrics.totalInvoices}
@@ -448,7 +448,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Montant factures</span>
-                <TrendingUp className="h-4 w-4 text-blue-500" />
+                <TrendingUp className="h-4 w-4 text-blue-500 dark:text-blue-400" />
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {result.metrics.totalAmount.toFixed(2)} €
@@ -461,7 +461,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Taux de ponctualité</span>
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400" />
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">{result.metrics.onTimeRate.toFixed(1)}%</div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -472,7 +472,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Délai moyen</span>
-                <AlertTriangle className="h-4 w-4 text-orange-500" />
+                <AlertTriangle className="h-4 w-4 text-orange-500 dark:text-orange-400" />
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {result.metrics.averagePaymentDelay} jours
@@ -486,7 +486,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Pénalités de retard</span>
-                <AlertTriangle className="h-4 w-4 text-red-500" />
+                <AlertTriangle className="h-4 w-4 text-red-500 dark:text-red-400" />
               </div>
               <div className="text-2xl font-bold text-red-600">
                 {result.metrics.totalPenalties > 0 && "+"}
@@ -500,7 +500,7 @@ export default function OptimizationPanel() {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Remises obtenues</span>
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400" />
               </div>
               <div className="text-2xl font-bold text-green-600">
                 {result.metrics.totalDiscounts > 0 && "-"}
@@ -514,7 +514,7 @@ export default function OptimizationPanel() {
             <Card className={`p-4 ${result.metrics.netSavings > 0 ? "border-green-500" : result.metrics.netSavings < 0 ? "border-red-500" : ""}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Coût total</span>
-                <TrendingUp className="h-4 w-4 text-primary" />
+                <TrendingUp className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {result.metrics.totalCost.toFixed(2)} €

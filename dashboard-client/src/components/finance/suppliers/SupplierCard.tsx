@@ -170,14 +170,14 @@ export default function SupplierCard({ supplier, onRefresh }: SupplierCardProps)
           <FileText className="h-4 w-4 text-muted-foreground" />
           <div>
             <div className="text-xs text-muted-foreground">Factures</div>
-            <div className="font-semibold">{supplier._count.invoices}</div>
+            <div className="font-semibold text-gray-900 dark:text-white">{supplier._count.invoices}</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <CreditCard className="h-4 w-4 text-muted-foreground" />
           <div>
             <div className="text-xs text-muted-foreground">Paiements</div>
-            <div className="font-semibold">{supplier._count.payments}</div>
+            <div className="font-semibold text-gray-900 dark:text-white">{supplier._count.payments}</div>
           </div>
         </div>
       </div>

@@ -180,7 +180,7 @@ export default function PaymentScheduleCalendar() {
                   ${status === "high" ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-900/50" : ""}
                   ${status === "medium" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50" : ""}
                   ${status === "low" ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50" : ""}
-                  ${!status ? "hover:bg-gray-100 dark:hover:bg-gray-800" : ""}
+                  ${!status ? "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" : ""}
                 `}
               >
                 <div className="flex flex-col items-center justify-center h-full">

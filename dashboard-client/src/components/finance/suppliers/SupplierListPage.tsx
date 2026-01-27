@@ -239,7 +239,7 @@ export default function SupplierListPage() {
         ) : suppliers.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
-              <BuildingOfficeIcon className="h-8 w-8 text-gray-400" />
+              <BuildingOfficeIcon className="h-8 w-8 text-gray-400 dark:text-gray-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Aucun fournisseur

@@ -188,7 +188,7 @@ export default function ScenarioComparison() {
       {/* Header */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
-          <GitCompare className="h-6 w-6 text-primary" />
+          <GitCompare className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
           <div>
             <h3 className="text-xl font-semibold text-gray-900 dark:!text-white">Comparaison de scénarios</h3>
             <p className="text-sm text-muted-foreground">
