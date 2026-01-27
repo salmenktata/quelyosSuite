@@ -1,3 +1,14 @@
+/**
+ * Page de gestion des catégories de produits
+ *
+ * Fonctionnalités :
+ * - Arborescence hiérarchique des catégories avec drag & drop
+ * - CRUD complet (créer, modifier, supprimer, déplacer)
+ * - Recherche en temps réel avec debounce
+ * - Upload d'images pour chaque catégorie
+ * - Statistiques (total, racines, produits, vides)
+ */
+
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Layout } from '../../components/Layout'
 import {
@@ -257,7 +268,7 @@ export default function Categories() {
 
   return (
     <Layout>
-      <main role="main" className="p-8">
+      <main role="main" className="p-4 md:p-8">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -427,11 +438,13 @@ export default function Categories() {
           {isLoading ? (
             <SkeletonTable rows={8} columns={4} />
           ) : error ? (
-            <div className="p-8 text-center text-red-600 dark:text-red-400 animate-fadeIn">
-              <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <p>Erreur lors du chargement des catégories</p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+              <p className="text-red-800 dark:text-red-200 mb-4">
+                Erreur lors du chargement des catégories
+              </p>
+              <Button variant="secondary" onClick={() => window.location.reload()}>
+                Réessayer
+              </Button>
             </div>
           ) : displayCategories.length === 0 ? (
             <div className="p-12 text-center animate-fadeIn">

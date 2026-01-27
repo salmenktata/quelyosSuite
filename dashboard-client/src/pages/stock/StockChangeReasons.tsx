@@ -84,6 +84,12 @@ export default function StockChangeReasons() {
                     Nom
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Description
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Utilisations
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Statut
                   </th>
                 </tr>
@@ -91,7 +97,7 @@ export default function StockChangeReasons() {
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {reasons.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                       Aucune raison configurée. Créez-en depuis Configuration → Stock → Raisons de Changement.
                     </td>
                   </tr>
@@ -101,10 +107,16 @@ export default function StockChangeReasons() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                       {reason.code || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
                       {reason.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                      {reason.description || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900 dark:text-white">
+                      {reason.usage_count}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       {reason.active ? (
                         <Badge variant="success">
                           <CheckCircle2 className="h-3 w-3 mr-1" />

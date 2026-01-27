@@ -1,3 +1,13 @@
+/**
+ * Page de gestion des produits mis en avant
+ *
+ * Fonctionnalités :
+ * - Liste des produits vedettes affichés en homepage
+ * - Réorganisation par drag & drop pour modifier l'ordre d'affichage
+ * - Ajout/retrait de produits avec recherche
+ * - Badge statut stock (en stock, faible, rupture)
+ */
+
 import { useState, useCallback } from 'react'
 import { Layout } from '../../components/Layout'
 import {
@@ -148,7 +158,7 @@ export default function Featured() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -201,8 +211,13 @@ export default function Featured() {
           {isLoading ? (
             <SkeletonTable rows={5} columns={5} />
           ) : error ? (
-            <div className="p-8 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des produits vedettes
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+              <p className="text-red-800 dark:text-red-200 mb-4">
+                Erreur lors du chargement des produits vedettes
+              </p>
+              <Button variant="secondary" onClick={() => window.location.reload()}>
+                Réessayer
+              </Button>
             </div>
           ) : featuredProducts.length > 0 ? (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">

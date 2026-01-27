@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Tree -->
+    <record id="view_quelyos_stock_change_reason_tree" model="ir.ui.view">
+        <field name="name">quelyos.stock.change.reason.tree</field>
+        <field name="model">quelyos.stock.change.reason</field>
+        <field name="arch" type="xml">
+            <list string="Raisons de Changement de Stock">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="usage_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Form -->
+    <record id="view_quelyos_stock_change_reason_form" model="ir.ui.view">
+        <field name="name">quelyos.stock.change.reason.form</field>
+        <field name="model">quelyos.stock.change.reason</field>
+        <field name="arch" type="xml">
+            <form string="Raison de Changement">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="usage_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Search -->
+    <record id="view_quelyos_stock_change_reason_search" model="ir.ui.view">
+        <field name="name">quelyos.stock.change.reason.search</field>
+        <field name="model">quelyos.stock.change.reason</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Raisons">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="active" string="Actif" domain="[('active', '=', True)]"/>
+                <filter name="archived" string="Archivé" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_quelyos_stock_change_reason" model="ir.actions.act_window">
+        <field name="name">Raisons de Changement</field>
+        <field name="res_model">quelyos.stock.change.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_quelyos_stock_change_reason"
+              name="Raisons de Changement"
+              parent="stock.menu_stock_config_settings"
+              action="action_quelyos_stock_change_reason"
+              sequence="10"/>
+</odoo>

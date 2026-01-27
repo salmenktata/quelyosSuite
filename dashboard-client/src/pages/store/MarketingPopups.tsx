@@ -1,7 +1,18 @@
+/**
+ * Page de gestion des popups marketing
+ *
+ * Fonctionnalités :
+ * - CRUD complet des popups promotionnelles
+ * - Configuration déclencheurs (délai, scroll, exit intent)
+ * - Ciblage pages (toutes, homepage, produits, panier)
+ * - Personnalisation design (position, couleurs, dimensions)
+ * - Tracking vues et conversions
+ */
+
 import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { useMarketingPopups, useCreateMarketingPopup, useUpdateMarketingPopup, useDeleteMarketingPopup, MarketingPopup } from '../../hooks/useMarketingPopups'
-import { Button, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 import { marketingNotices } from '@/lib/notices'
 
@@ -9,7 +20,7 @@ export default function MarketingPopupsPage() {
   const [editingPopup, setEditingPopup] = useState<MarketingPopup | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [activeTab, setActiveTab] = useState<'general' | 'trigger' | 'design'>('general')
-  const { data: popups, isLoading } = useMarketingPopups()
+  const { data: popups, isLoading, error, refetch } = useMarketingPopups()
   const createMutation = useCreateMarketingPopup()
   const updateMutation = useUpdateMarketingPopup()
   const deleteMutation = useDeleteMarketingPopup()
@@ -147,7 +158,15 @@ export default function MarketingPopupsPage() {
 
   return (
     <Layout>
-      <div className="p-6 bg-white dark:bg-gray-800 min-h-screen">
+      <div className="p-4 md:p-8">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Store', href: '/store' },
+            { label: 'Popups Marketing' },
+          ]}
+        />
+
         <PageNotice config={marketingNotices.popups} className="mb-6" />
 
         <div className="flex justify-between items-center mb-6">
@@ -161,7 +180,18 @@ export default function MarketingPopupsPage() {
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}
           <div className="overflow-hidden">
-            {isLoading ? <SkeletonTable rows={5} columns={5} /> : (
+            {isLoading ? (
+              <SkeletonTable rows={5} columns={5} />
+            ) : error ? (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+                <p className="text-red-800 dark:text-red-200 mb-4">
+                  Erreur lors du chargement des popups marketing
+                </p>
+                <Button variant="secondary" onClick={() => refetch && refetch()}>
+                  Réessayer
+                </Button>
+              </div>
+            ) : (
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>

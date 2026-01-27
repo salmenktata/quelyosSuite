@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ==================== RAISONS DE CHANGEMENT DE STOCK ==================== -->
+
+        <record id="stock_reason_inventory" model="quelyos.stock.change.reason">
+            <field name="name">Inventaire physique</field>
+            <field name="code">INV</field>
+            <field name="description">Ajustement suite à inventaire annuel ou comptage cyclique</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stock_reason_breakage" model="quelyos.stock.change.reason">
+            <field name="name">Casse</field>
+            <field name="code">CASSE</field>
+            <field name="description">Produit cassé ou endommagé lors de la manipulation</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stock_reason_theft" model="quelyos.stock.change.reason">
+            <field name="name">Vol</field>
+            <field name="code">VOL</field>
+            <field name="description">Produit volé ou manquant sans explication</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stock_reason_damaged" model="quelyos.stock.change.reason">
+            <field name="name">Produit endommagé</field>
+            <field name="code">DMG</field>
+            <field name="description">Produit endommagé durant le transport ou le stockage</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stock_reason_expired" model="quelyos.stock.change.reason">
+            <field name="name">Produit périmé</field>
+            <field name="code">EXP</field>
+            <field name="description">Produit dont la date de péremption est dépassée</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="stock_reason_return" model="quelyos.stock.change.reason">
+            <field name="name">Retour client</field>
+            <field name="code">RET</field>
+            <field name="description">Retour client accepté et remis en stock</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- ==================== INVENTAIRES DE STOCK ==================== -->
+
+        <!-- Inventaire en cours -->
+        <record id="stock_inventory_demo_1" model="quelyos.stock.inventory">
+            <field name="name">INV/2026/001</field>
+            <field name="date" eval="(DateTime.now() - timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="state">in_progress</field>
+            <field name="note">Inventaire mensuel janvier 2026 - Zone A</field>
+        </record>
+
+        <!-- Inventaire terminé -->
+        <record id="stock_inventory_demo_2" model="quelyos.stock.inventory">
+            <field name="name">INV/2026/002</field>
+            <field name="date" eval="(DateTime.now() - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="location_id" ref="stock.stock_location_components"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="state">done</field>
+            <field name="note">Inventaire composants - Contrôle qualité annuel</field>
+        </record>
+
+        <!-- Inventaire brouillon -->
+        <record id="stock_inventory_demo_3" model="quelyos.stock.inventory">
+            <field name="name">INV/2026/003</field>
+            <field name="date" eval="DateTime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="state">draft</field>
+            <field name="note">Préparation inventaire fin de mois</field>
+        </record>
+
+        <!-- ==================== VERROUILLAGES D'EMPLACEMENTS ==================== -->
+
+        <!-- Verrouillage actif -->
+        <record id="location_lock_maintenance" model="quelyos.stock.location.lock">
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="reason">Maintenance planifiée de l'entrepôt principal - Réorganisation des rayonnages</field>
+            <field name="date_start" eval="(DateTime.now() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_end" eval="(DateTime.now() + timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Verrouillage passé (terminé) -->
+        <record id="location_lock_inventory" model="quelyos.stock.location.lock">
+            <field name="location_id" ref="stock.stock_location_components"/>
+            <field name="reason">Inventaire physique annuel - Zone composants électroniques</field>
+            <field name="date_start" eval="(DateTime.now() - timedelta(days=10)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_end" eval="(DateTime.now() - timedelta(days=9)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- Verrouillage permanent (sans date de fin) -->
+        <record id="location_lock_restricted" model="quelyos.stock.location.lock">
+            <field name="location_id" ref="stock.stock_location_suppliers"/>
+            <field name="reason">Zone de quarantaine - Produits en attente de contrôle qualité</field>
+            <field name="date_start" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

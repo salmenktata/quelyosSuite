@@ -194,8 +194,10 @@ export interface UpdateReorderingRuleParams {
 export interface StockChangeReason {
   id: number
   name: string
-  code: string | null
+  code: string
+  description: string
   active: boolean
+  usage_count: number
 }
 
 export interface StockInventoryOCA {
@@ -203,13 +205,24 @@ export interface StockInventoryOCA {
   name: string
   date: string | null
   state: string
-  location_id: number | null
-  location_name: string | null
+  location_id: number
+  location_name: string
+  user_id: number
+  user_name: string
+  line_count: number
+  note: string
 }
 
 export interface LocationLock {
+  id: number
+  name: string
   location_id: number
   location_name: string
-  complete_name: string
-  blocked: boolean
+  reason: string
+  date_start: string | null
+  date_end: string | null
+  user_id: number
+  user_name: string
+  active: boolean
+  is_locked: boolean
 }

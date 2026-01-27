@@ -5,3 +5,11 @@ access_quelyos_oca_module_info_user,quelyos.oca.module.info.user,model_quelyos_o
 access_quelyos_oca_module_info_manager,quelyos.oca.module.info.manager,model_quelyos_oca_module_info,stock.group_stock_manager,1,1,1,1
 access_quelyos_oca_modules_wizard_user,quelyos.oca.modules.wizard.user,model_quelyos_oca_modules_wizard,base.group_user,1,1,1,1
 access_quelyos_oca_modules_wizard_manager,quelyos.oca.modules.wizard.manager,model_quelyos_oca_modules_wizard,stock.group_stock_manager,1,1,1,1
+access_quelyos_stock_change_reason_user,quelyos.stock.change.reason.user,model_quelyos_stock_change_reason,base.group_user,1,0,0,0
+access_quelyos_stock_change_reason_manager,quelyos.stock.change.reason.manager,model_quelyos_stock_change_reason,stock.group_stock_manager,1,1,1,1
+access_quelyos_stock_inventory_user,quelyos.stock.inventory.user,model_quelyos_stock_inventory,base.group_user,1,1,1,0
+access_quelyos_stock_inventory_manager,quelyos.stock.inventory.manager,model_quelyos_stock_inventory,stock.group_stock_manager,1,1,1,1
+access_quelyos_stock_inventory_line_user,quelyos.stock.inventory.line.user,model_quelyos_stock_inventory_line,base.group_user,1,1,1,0
+access_quelyos_stock_inventory_line_manager,quelyos.stock.inventory.line.manager,model_quelyos_stock_inventory_line,stock.group_stock_manager,1,1,1,1
+access_quelyos_stock_location_lock_user,quelyos.stock.location.lock.user,model_quelyos_stock_location_lock,base.group_user,1,0,0,0
+access_quelyos_stock_location_lock_manager,quelyos.stock.location.lock.manager,model_quelyos_stock_location_lock,stock.group_stock_manager,1,1,1,1

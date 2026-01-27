@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos Stock Advanced',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.1.0',
     'category': 'Inventory/Inventory',
     'summary': 'Fonctionnalités Stock Avancées Quelyos (natif)',
     'description': """
@@ -44,6 +44,10 @@ Conçu pour s'intégrer parfaitement avec le backoffice React/Vite.
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/seed_data.xml',
+        'views/quelyos_stock_change_reason_views.xml',
+        'views/quelyos_stock_inventory_views.xml',
+        'views/quelyos_stock_location_lock_views.xml',
         'views/oca_dashboard_views.xml',
         'views/oca_module_info_views.xml',
         'views/oca_modules_wizard_views.xml',

@@ -85,11 +85,12 @@ class QuelyosStockInventory(models.Model):
         for inventory in self:
             inventory.line_count = len(inventory.line_ids)
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', _('Nouveau')) == _('Nouveau'):
-            vals['name'] = self.env['ir.sequence'].next_by_code('quelyos.stock.inventory') or _('Nouveau')
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', _('Nouveau')) == _('Nouveau'):
+                vals['name'] = self.env['ir.sequence'].next_by_code('quelyos.stock.inventory') or _('Nouveau')
+        return super().create(vals_list)
 
     def action_start(self):
         """Démarrer l'inventaire : créer les lignes avec quantités théoriques"""

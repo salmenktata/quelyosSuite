@@ -30,8 +30,9 @@ export default function InventoriesOCA() {
   const getStateBadge = (state: string) => {
     const stateMap: Record<string, { variant: 'neutral' | 'warning' | 'success', label: string }> = {
       draft: { variant: 'neutral', label: 'Brouillon' },
-      confirm: { variant: 'warning', label: 'En cours' },
-      done: { variant: 'success', label: 'Validé' },
+      in_progress: { variant: 'warning', label: 'En cours' },
+      done: { variant: 'success', label: 'Terminé' },
+      cancelled: { variant: 'neutral', label: 'Annulé' },
     }
     return stateMap[state] || { variant: 'neutral', label: state }
   }
@@ -108,6 +109,12 @@ export default function InventoriesOCA() {
                       Emplacement
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Responsable
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Lignes
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       État
                     </th>
                   </tr>
@@ -115,7 +122,7 @@ export default function InventoriesOCA() {
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {inventories.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                      <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                         Aucun inventaire. Créez-en depuis Stock → Inventaires.
                       </td>
                     </tr>
@@ -124,7 +131,7 @@ export default function InventoriesOCA() {
                     const stateBadge = getStateBadge(inventory.state)
                     return (
                       <tr key={inventory.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
                           {inventory.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -137,7 +144,7 @@ export default function InventoriesOCA() {
                             '-'
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                           {inventory.location_name ? (
                             <div className="flex items-center gap-2">
                               <MapPin className="h-4 w-4" />
@@ -147,7 +154,13 @@ export default function InventoriesOCA() {
                             '-'
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                          {inventory.user_name || '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900 dark:text-white">
+                          {inventory.line_count}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
                           <Badge variant={stateBadge.variant}>{stateBadge.label}</Badge>
                         </td>
                       </tr>

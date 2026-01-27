@@ -14,7 +14,7 @@ import { Layout } from '../../components/Layout'
 import { Breadcrumbs, Badge, SkeletonTable, PageNotice, Button } from '../../components/common'
 import { useLocationLocks, useLockLocation } from '../../hooks/useStock'
 import { stockNotices } from '@/lib/notices'
-import { AlertCircle, Lock, Unlock } from 'lucide-react'
+import { AlertCircle, Lock, Unlock, MapPin } from 'lucide-react'
 import type { LocationLock } from '@/types/stock'
 import { logger } from '@quelyos/logger'
 
@@ -112,51 +112,69 @@ export default function LocationLocks() {
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Nom
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Emplacement
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Chemin complet
+                      Raison
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      État
+                      Responsable
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Actions
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Période
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      État
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {locks.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                      <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                         Aucun emplacement verrouillé. Verrouillez des emplacements pour bloquer les mouvements pendant un inventaire.
                       </td>
                     </tr>
                   )}
                   {locks.map((lock: LocationLock) => (
-                    <tr key={lock.location_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {lock.location_name}
+                    <tr key={lock.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                        {lock.name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                        {lock.location_name}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          {lock.location_name}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant="warning">
-                          <Lock className="h-3 w-3 mr-1" />
-                          Verrouillé
-                        </Badge>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                        {lock.reason}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleToggleLock(lock.location_id, true, lock.location_name)}
-                          loading={isLocking && processingId === lock.location_id}
-                          icon={<Unlock className="h-4 w-4" />}
-                        >
-                          Déverrouiller
-                        </Button>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {lock.user_name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {lock.date_start ? new Date(lock.date_start).toLocaleDateString('fr-FR') : '-'}
+                        {lock.date_end && (
+                          <> → {new Date(lock.date_end).toLocaleDateString('fr-FR')}</>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {lock.is_locked ? (
+                          <Badge variant="warning">
+                            <Lock className="h-3 w-3 mr-1" />
+                            Verrouillé
+                          </Badge>
+                        ) : (
+                          <Badge variant="success">
+                            <Unlock className="h-3 w-3 mr-1" />
+                            Déverrouillé
+                          </Badge>
+                        )}
+                      </td>
                       </td>
                     </tr>
                   ))}

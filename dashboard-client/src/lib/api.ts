@@ -1008,10 +1008,14 @@ class ApiClient {
         reasons: Array<{
           id: number
           name: string
-          code: string | null
+          code: string
+          description: string
           active: boolean
+          usage_count: number
         }>
         total: number
+        limit: number
+        offset: number
       }
       error?: string
       error_code?: string
@@ -1048,8 +1052,12 @@ class ApiClient {
           name: string
           date: string | null
           state: string
-          location_id: number | null
-          location_name: string | null
+          location_id: number
+          location_name: string
+          user_id: number
+          user_name: string
+          line_count: number
+          note: string
         }>
         total: number
         limit: number
@@ -1057,7 +1065,7 @@ class ApiClient {
       }
       error?: string
       error_code?: string
-    }>('/api/stock/inventories-oca', params)
+    }>('/api/stock/inventories', params)
   }
 
   async getLocationLocks() {
@@ -1065,12 +1073,21 @@ class ApiClient {
       success: boolean
       data: {
         locks: Array<{
+          id: number
+          name: string
           location_id: number
           location_name: string
-          complete_name: string
-          blocked: boolean
+          reason: string
+          date_start: string | null
+          date_end: string | null
+          user_id: number
+          user_name: string
+          active: boolean
+          is_locked: boolean
         }>
         total: number
+        limit: number
+        offset: number
       }
       error?: string
       error_code?: string
