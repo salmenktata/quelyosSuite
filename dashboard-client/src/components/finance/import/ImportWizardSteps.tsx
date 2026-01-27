@@ -18,20 +18,20 @@ export function ImportWizardSteps({
       case 'completed':
         return {
           circle: "bg-emerald-500 border-emerald-400",
-          text: "text-emerald-300",
+          text: "text-emerald-600 dark:text-emerald-400",
           line: "bg-emerald-500/50",
         };
       case 'current':
         return {
           circle: "bg-indigo-500 border-indigo-400 ring-4 ring-indigo-500/20",
-          text: "text-white font-semibold",
-          line: "bg-white/10",
+          text: "text-gray-900 dark:text-white font-semibold",
+          line: "bg-gray-300 dark:bg-gray-700",
         };
       case 'pending':
         return {
-          circle: "bg-white/5 border-white/20",
-          text: "text-white/40",
-          line: "bg-white/10",
+          circle: "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700",
+          text: "text-gray-400 dark:text-gray-600",
+          line: "bg-gray-300 dark:bg-gray-700",
         };
     }
   };
@@ -133,7 +133,7 @@ export function ImportWizardSteps({
                     {step.label}
                   </p>
                   {status === 'current' && (
-                    <p className="text-xs text-indigo-300/70 mt-0.5">
+                    <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
                       En cours
                     </p>
                   )}
@@ -143,9 +143,9 @@ export function ImportWizardSteps({
                 <div
                   className={cn(
                     "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                    status === 'completed' && "bg-emerald-500/20 text-emerald-300",
-                    status === 'current' && "bg-indigo-500/20 text-indigo-300",
-                    status === 'pending' && "bg-white/5 text-white/30"
+                    status === 'completed' && "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300",
+                    status === 'current' && "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300",
+                    status === 'pending' && "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600"
                   )}
                 >
                   {idx + 1}

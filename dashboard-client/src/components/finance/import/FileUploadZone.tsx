@@ -109,21 +109,21 @@ export function FileUploadZone({
             "flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-8 text-center transition-all",
             isDragging
               ? "border-indigo-400 bg-indigo-500/20"
-              : "border-white/20 bg-white/5",
+              : "border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800",
             disabled && "opacity-50 cursor-not-allowed"
           )}
         >
           <Upload
             className={cn(
               "h-12 w-12 transition-colors",
-              isDragging ? "text-indigo-300" : "text-indigo-400/70"
+              isDragging ? "text-indigo-400" : "text-gray-400 dark:text-gray-500"
             )}
           />
           <div>
-            <p className="text-lg font-semibold text-white">
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
               Glissez-déposez votre fichier ici
             </p>
-            <p className="text-sm text-indigo-200/70 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               ou cliquez pour parcourir
             </p>
           </div>
@@ -135,26 +135,26 @@ export function FileUploadZone({
           >
             Parcourir les fichiers
           </button>
-          <p className="text-xs text-indigo-200/50">
+          <p className="text-xs text-gray-500 dark:text-gray-500">
             CSV, XLS, XLSX · Max {maxSizeMB} MB
           </p>
         </div>
       ) : (
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-emerald-500/50 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 p-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <CheckCircle className="h-6 w-6 text-emerald-400 shrink-0" />
+            <CheckCircle className="h-6 w-6 text-emerald-500 dark:text-emerald-400 shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-white truncate">
+              <p className="font-medium text-gray-900 dark:text-white truncate">
                 {selectedFile.name}
               </p>
-              <p className="text-xs text-emerald-200/70">
+              <p className="text-xs text-emerald-700 dark:text-emerald-300">
                 {formatFileSize(selectedFile.size)}
               </p>
             </div>
           </div>
           <button
             onClick={clearFile}
-            className="rounded-lg border border-white/20 p-2 text-white/70 transition hover:bg-white/10 hover:text-white shrink-0"
+            className="rounded-lg border border-gray-300 dark:border-gray-700 p-2 text-gray-600 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white shrink-0"
             aria-label="Supprimer le fichier"
           >
             <X className="h-4 w-4" />

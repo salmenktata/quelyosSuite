@@ -28,21 +28,21 @@ export function ValidationErrors({
     switch (severity) {
       case 'error':
         return {
-          panel: "border-rose-500/30 bg-rose-500/10",
-          text: "text-rose-200",
-          badge: "text-rose-300",
+          panel: "border-rose-500/50 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10",
+          text: "text-rose-800 dark:text-rose-200",
+          badge: "text-rose-700 dark:text-rose-300",
         };
       case 'warning':
         return {
-          panel: "border-amber-500/30 bg-amber-500/10",
-          text: "text-amber-200",
-          badge: "text-amber-300",
+          panel: "border-amber-500/50 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10",
+          text: "text-amber-800 dark:text-amber-200",
+          badge: "text-amber-700 dark:text-amber-300",
         };
       case 'info':
         return {
-          panel: "border-blue-500/30 bg-blue-500/10",
-          text: "text-blue-200",
-          badge: "text-blue-300",
+          panel: "border-blue-500/50 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10",
+          text: "text-blue-800 dark:text-blue-200",
+          badge: "text-blue-700 dark:text-blue-300",
         };
     }
   };
@@ -57,8 +57,8 @@ export function ValidationErrors({
       {errorsList.length > 0 && (
         <GlassPanel gradient="violet" className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <XCircle className="h-6 w-6 text-rose-400" />
-            <h3 className="text-lg font-semibold text-white">
+            <XCircle className="h-6 w-6 text-rose-500 dark:text-rose-400" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {errorsList.length} erreur{errorsList.length > 1 ? 's' : ''} détectée{errorsList.length > 1 ? 's' : ''}
             </h3>
           </div>
@@ -90,8 +90,8 @@ export function ValidationErrors({
       {warningsList.length > 0 && (
         <GlassPanel gradient="amber" className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <AlertTriangle className="h-6 w-6 text-amber-400" />
-            <h3 className="text-lg font-semibold text-white">
+            <AlertTriangle className="h-6 w-6 text-amber-500 dark:text-amber-400" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {warningsList.length} avertissement{warningsList.length > 1 ? 's' : ''}
             </h3>
           </div>
@@ -109,7 +109,7 @@ export function ValidationErrors({
               );
             })}
             {warningsList.length > 10 && (
-              <p className="text-xs text-amber-200/70 mt-2 pl-2">
+              <p className="text-xs text-amber-700 dark:text-amber-300 mt-2 pl-2">
                 ... et {warningsList.length - 10} autres avertissements
               </p>
             )}
@@ -121,19 +121,19 @@ export function ValidationErrors({
       {infosList.length > 0 && (
         <GlassPanel gradient="indigo" className="p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Info className="h-5 w-5 text-blue-400" />
-            <h4 className="text-sm font-semibold text-white">
+            <Info className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
               {infosList.length} information{infosList.length > 1 ? 's' : ''}
             </h4>
           </div>
           <div className="space-y-1 max-h-32 overflow-y-auto">
             {infosList.slice(0, 5).map((info, idx) => (
-              <p key={idx} className="text-xs text-blue-200/80">
+              <p key={idx} className="text-xs text-blue-700 dark:text-blue-300">
                 Ligne {info.line}: {info.message}
               </p>
             ))}
             {infosList.length > 5 && (
-              <p className="text-xs text-blue-200/60">
+              <p className="text-xs text-blue-600 dark:text-blue-400">
                 ... et {infosList.length - 5} autres
               </p>
             )}
@@ -145,7 +145,7 @@ export function ValidationErrors({
       {onDownloadReport && errors.length > 10 && (
         <button
           onClick={onDownloadReport}
-          className="flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition"
+          className="flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition"
         >
           <Download className="h-4 w-4" />
           Télécharger le rapport complet ({errors.length} éléments)

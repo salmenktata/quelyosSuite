@@ -67,10 +67,10 @@ export function ColumnMappingTable({
       {/* Header with status */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Correspondance des colonnes
           </h3>
-          <p className="text-sm text-indigo-200/70 mt-1">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Vérifiez et ajustez la correspondance entre vos colonnes et les champs Quelyos
           </p>
         </div>
@@ -101,7 +101,7 @@ export function ColumnMappingTable({
                 <div className="sm:w-48 flex items-center gap-2">
                   <span className={cn(
                     "text-sm font-medium",
-                    isRequired ? "text-white" : "text-indigo-200/80"
+                    isRequired ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-300"
                   )}>
                     {targetField.label}
                   </span>
@@ -131,15 +131,15 @@ export function ColumnMappingTable({
                       }
                     }}
                     className={cn(
-                      "flex-1 rounded-lg border bg-white/5 px-4 py-2 text-sm text-white transition",
+                      "flex-1 rounded-lg border bg-white dark:bg-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-white transition",
                       "focus:outline-none focus:ring-2 focus:ring-indigo-500",
-                      mapping ? "border-white/20" : "border-white/10",
-                      !mapping && isRequired && "border-rose-500/50"
+                      mapping ? "border-gray-300 dark:border-gray-700" : "border-gray-300 dark:border-gray-700",
+                      !mapping && isRequired && "border-rose-500"
                     )}
                   >
                     <option value="">-- Non mappé --</option>
                     {headers.map((header) => (
-                      <option key={header} value={header} className="bg-gray-900">
+                      <option key={header} value={header}>
                         {header}
                       </option>
                     ))}
@@ -162,7 +162,7 @@ export function ColumnMappingTable({
                   {mapping && (
                     <button
                       onClick={() => onMappingChange(targetField.value, null)}
-                      className="p-2 rounded-lg border border-white/20 text-white/70 hover:bg-white/10 hover:text-white transition"
+                      className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition"
                       aria-label={`Supprimer le mapping pour ${targetField.label}`}
                     >
                       <X className="h-4 w-4" />
@@ -175,10 +175,10 @@ export function ColumnMappingTable({
         </div>
 
         {/* Required Fields Notice */}
-        <div className="mt-6 flex items-start gap-2 text-xs text-indigo-200/60">
+        <div className="mt-6 flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
           <Info className="h-4 w-4 shrink-0 mt-0.5" />
           <p>
-            Les champs marqués d&apos;un <span className="text-rose-400">*</span> sont obligatoires.
+            Les champs marqués d&apos;un <span className="text-rose-600 dark:text-rose-400">*</span> sont obligatoires.
             Les autres champs sont optionnels et amélioreront la catégorisation automatique.
           </p>
         </div>
@@ -186,15 +186,15 @@ export function ColumnMappingTable({
 
       {/* Preview Table */}
       <div>
-        <h4 className="text-sm font-semibold text-white mb-3">
+        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
           Aperçu des données ({displayRows.length} lignes)
         </h4>
 
-        <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/5">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 bg-white/5">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-indigo-200/70 uppercase tracking-wider">
+              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                   #
                 </th>
                 {headers.map((header) => {
@@ -211,13 +211,13 @@ export function ColumnMappingTable({
                       key={header}
                       className={cn(
                         "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider",
-                        mappedField ? "text-emerald-300" : "text-indigo-200/50"
+                        mappedField ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-500"
                       )}
                     >
                       <div className="flex flex-col gap-1">
                         <span>{header}</span>
                         {targetField && (
-                          <span className="text-xs font-normal normal-case text-emerald-400/80">
+                          <span className="text-xs font-normal normal-case text-emerald-700 dark:text-emerald-300">
                             → {targetField.label}
                           </span>
                         )}
@@ -232,18 +232,18 @@ export function ColumnMappingTable({
                 <tr
                   key={idx}
                   className={cn(
-                    "border-b border-white/5 transition-colors",
-                    idx % 2 === 0 ? "bg-white/0" : "bg-white/[0.02]",
-                    "hover:bg-white/5"
+                    "border-b border-gray-100 dark:border-gray-800 transition-colors",
+                    idx % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50 dark:bg-gray-900",
+                    "hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}
                 >
-                  <td className="px-4 py-3 text-indigo-200/50 font-mono text-xs">
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-500 font-mono text-xs">
                     {idx + 1}
                   </td>
                   {headers.map((header) => (
                     <td
                       key={header}
-                      className="px-4 py-3 text-white/80 max-w-xs truncate"
+                      className="px-4 py-3 text-gray-700 dark:text-gray-300 max-w-xs truncate"
                       title={String(row[header] || "")}
                     >
                       {String(row[header] || "")}
@@ -259,7 +259,7 @@ export function ColumnMappingTable({
         {previewData.length > 10 && (
           <button
             onClick={() => setShowAllRows(!showAllRows)}
-            className="mt-4 flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition"
+            className="mt-4 flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition"
           >
             <ChevronDown
               className={cn(
