@@ -20,6 +20,31 @@
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "type-check": "pnpm -r type-check",
-    "clean": "pnpm -r exec rm -rf node_modules dist .next .turbo"
+    "clean": "pnpm -r exec rm -rf node_modules dist .next .turbo",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+    "dashboard-client/**/*.{ts,tsx}": [
+      "bash -c 'cd dashboard-client && pnpm type-check'",
+      "bash -c 'cd dashboard-client && pnpm eslint --max-warnings 0'",
+      "bash scripts/check-console-log.sh"
+    ],
+    "vitrine-client/**/*.{ts,tsx}": [
+      "bash -c 'cd vitrine-client && pnpm tsc --noEmit'",
+      "bash -c 'cd vitrine-client && pnpm eslint --max-warnings 0'",
+      "bash scripts/check-console-log.sh"
+    ],
+    "vitrine-quelyos/**/*.{ts,tsx}": [
+      "bash -c 'cd vitrine-quelyos && pnpm tsc --noEmit'",
+      "bash -c 'cd vitrine-quelyos && pnpm eslint --max-warnings 0'",
+      "bash scripts/check-console-log.sh"
+    ],
+    "odoo-backend/**/*.py": [
+      "bash scripts/check-odoo-syntax.sh"
+    ]
   }
 }

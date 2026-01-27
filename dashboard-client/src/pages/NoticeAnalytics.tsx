@@ -13,6 +13,7 @@ import {
   type NoticeAnalytics
 } from '@/lib/notices/analytics';
 import { DownloadIcon, TrendingUpIcon, TrendingDownIcon, MinusIcon } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function NoticeAnalyticsPage() {
   const [analytics, setAnalytics] = useState<Record<string, NoticeAnalytics>>({});
@@ -38,7 +39,7 @@ export default function NoticeAnalyticsPage() {
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Export failed:', error);
+      logger.error('Export failed:', error);
     }
   };
 

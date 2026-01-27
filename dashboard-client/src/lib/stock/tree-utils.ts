@@ -1,4 +1,5 @@
 import type { StockLocation, LocationTreeNode } from '@/types/stock'
+import { logger } from '@/lib/logger'
 
 /**
  * Construire un arbre hiérarchique à partir d'une liste plate de locations
@@ -192,7 +193,7 @@ export function getExpandedLocationIds(): Set<number> {
       return new Set(ids)
     }
   } catch (error) {
-    console.error('[tree-utils] Error reading expanded IDs from localStorage:', error)
+    logger.error('tree-utils: Error reading expanded IDs from localStorage:', error)
   }
   return new Set()
 }
@@ -204,7 +205,7 @@ function saveExpandedLocationIds(ids: Set<number>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]))
   } catch (error) {
-    console.error('[tree-utils] Error saving expanded IDs to localStorage:', error)
+    logger.error('tree-utils: Error saving expanded IDs to localStorage:', error)
   }
 }
 

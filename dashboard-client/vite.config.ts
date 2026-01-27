@@ -52,6 +52,14 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         ws: false,
+        configure: (proxy) => {
+          proxy.on('error', (err, req) => {
+            console.error('[Proxy Error] /api/stock ->', err.message);
+          });
+          proxy.on('proxyReq', (proxyReq, req) => {
+            console.log('[Proxy Request] /api/stock ->', req.url);
+          });
+        },
       },
       '/api/settings': {
         target: 'http://127.0.0.1:8069',

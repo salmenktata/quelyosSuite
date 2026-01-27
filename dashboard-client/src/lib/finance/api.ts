@@ -3,6 +3,8 @@
  * Appelle le backend via le proxy Vite
  */
 
+import { logger } from '@/lib/logger'
+
 // Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
 // Le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
 const API_BASE_URL = ''
@@ -59,11 +61,11 @@ export async function api<T = unknown>(
   }
 
   const fullUrl = `${API_BASE_URL}/api/ecommerce${endpoint}`
-  console.log('🔍 [Finance API] Calling:', { fullUrl, method, API_BASE_URL, endpoint })
+  logger.debug('Finance API Calling:', { fullUrl, method, API_BASE_URL, endpoint })
 
   try {
     const response = await fetch(fullUrl, fetchOptions)
-    console.log('✅ [Finance API] Response:', { status: response.status, ok: response.ok, url: fullUrl })
+    logger.debug('Finance API Response:', { status: response.status, ok: response.ok, url: fullUrl })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
@@ -102,7 +104,7 @@ export async function api<T = unknown>(
     }
     return (json.data ?? json) as T
   } catch (error) {
-    console.error('❌ [Finance API] Error:', {
+    logger.error('Finance API Error:', {
       url: fullUrl,
       endpoint,
       error: error instanceof Error ? error.message : error,

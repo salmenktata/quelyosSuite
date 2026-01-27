@@ -7,6 +7,7 @@ from odoo import http, fields
 from odoo.http import request
 from passlib.context import CryptContext
 from ..config import is_origin_allowed, get_cors_headers
+from ..lib.cache import get_cache_service, CacheTTL
 
 _logger = logging.getLogger(__name__)
 
@@ -622,6 +623,31 @@ class QuelyosAPI(http.Controller):
             price_max = params.get('price_max')
             attribute_value_ids = params.get('attribute_value_ids')  # Liste d'IDs de valeurs d'attributs
 
+            # Initialiser le cache et générer la clé unique
+            cache = get_cache_service()
+            cache_key = cache._generate_key(
+                'products',
+                limit=limit,
+                offset=offset,
+                category_id=category_id,
+                search=search,
+                sort_by=sort_by,
+                sort_order=sort_order,
+                stock_status=stock_status,
+                include_archived=include_archived,
+                price_min=price_min,
+                price_max=price_max,
+                attribute_value_ids=str(attribute_value_ids) if attribute_value_ids else None
+            )
+
+            # Vérifier le cache
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                _logger.debug(f"✅ Cache HIT for products list")
+                return cached_data
+
+            _logger.debug(f"❌ Cache MISS for products list - fetching from DB")
+
             # Context pour inclure les produits archivés si demandé
             ProductTemplate = request.env['product.template'].sudo()
             if include_archived:
@@ -783,7 +809,8 @@ class QuelyosAPI(http.Controller):
                     'offer_end_date': getattr(p, 'x_offer_end_date', None).isoformat() if getattr(p, 'x_offer_end_date', None) else None,
                 })
 
-            return {
+            # Construire le résultat
+            result = {
                 'success': True,
                 'products': data,
                 'total': total,
@@ -794,6 +821,12 @@ class QuelyosAPI(http.Controller):
                     'price_range': {'min': 0, 'max': 1000}
                 }
             }
+
+            # Stocker dans le cache (TTL: 5 minutes)
+            cache.set(cache_key, result, CacheTTL.PRODUCTS_LIST)
+            _logger.debug(f"✅ Cache SET for products list (TTL: {CacheTTL.PRODUCTS_LIST}s)")
+
+            return result
 
         except Exception as e:
             _logger.error(f"Get products error: {e}")
