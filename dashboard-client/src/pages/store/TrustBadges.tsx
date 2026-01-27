@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout'
 import { useTrustBadges, useCreateTrustBadge, useUpdateTrustBadge, useDeleteTrustBadge, TrustBadge } from '../../hooks/useTrustBadges'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 
 const ICON_OPTIONS = [
   { value: 'creditcard', label: 'Carte bancaire (Paiement sécurisé)' },
@@ -91,8 +91,7 @@ export default function TrustBadges() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Badges Confiance' },
         ]}
       />
@@ -102,7 +101,7 @@ export default function TrustBadges() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.trustBadges} className="mb-6" />
+        <PageNotice config={storeNotices.trustBadges} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}

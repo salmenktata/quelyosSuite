@@ -21,132 +21,203 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
     title: 'Ma Boutique - Personnalisation',
     purpose:
       'Personnalisez l\'apparence de votre boutique en ligne : couleurs, logo, typographie, SEO et fonctionnalités.',
-    features: [
-      { icon: Palette, text: 'Thèmes prédéfinis et personnalisables' },
-      { icon: Image, text: 'Upload logo et favicon' },
-      { icon: Settings, text: 'Configuration complète du site' },
-    ],
-    actions: [
+    icon: Palette,
+    moduleColor: 'indigo',
+    sections: [
       {
-        label: 'Appliquer un thème',
-        description: 'Choisissez un thème prédéfini pour un changement rapide',
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Thèmes prédéfinis et personnalisables',
+          'Upload logo et favicon',
+          'Configuration complète du site',
+        ]
       },
       {
-        label: 'Personnaliser les couleurs',
-        description: 'Ajustez chaque couleur individuellement',
-      },
-      {
-        label: 'Configurer le SEO',
-        description: 'Optimisez votre référencement naturel',
-      },
-    ],
-    color: 'indigo',
+        title: 'Actions recommandées',
+        items: [
+          'Appliquer un thème : Choisissez un thème prédéfini pour un changement rapide',
+          'Personnaliser les couleurs : Ajustez chaque couleur individuellement',
+          'Configurer le SEO : Optimisez votre référencement naturel',
+        ]
+      }
+    ]
   },
   products: {
     pageId: 'store-products',
     title: 'Produits',
     purpose: 'Gérez votre catalogue de produits : ajoutez, modifiez et organisez vos articles.',
-    features: [
-      { icon: Package, text: 'Gestion du catalogue produits' },
-      { icon: Image, text: 'Images et galeries' },
-      { icon: Settings, text: 'Variantes et options' },
-    ],
-    actions: [
-      { label: 'Ajouter un produit', description: 'Créez une nouvelle fiche produit' },
-      { label: 'Gérer les catégories', description: 'Organisez vos produits' },
-    ],
-    color: 'indigo',
+    icon: Package,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Gestion du catalogue produits',
+          'Images et galeries',
+          'Variantes et options',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Ajouter un produit : Créez une nouvelle fiche produit',
+          'Gérer les catégories : Organisez vos produits',
+        ]
+      }
+    ]
   },
   orders: {
     pageId: 'store-orders',
     title: 'Commandes',
     purpose: 'Suivez et gérez toutes les commandes de votre boutique.',
-    features: [
-      { icon: ShoppingCart, text: 'Suivi des commandes' },
-      { icon: Package, text: 'Gestion des livraisons' },
-    ],
-    actions: [
-      { label: 'Traiter une commande', description: 'Passez à l\'étape suivante' },
-    ],
-    color: 'indigo',
+    icon: ShoppingCart,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Package,
+        items: [
+          'Suivi des commandes',
+          'Gestion des livraisons',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Traiter une commande : Passez à l\'étape suivante',
+        ]
+      }
+    ]
   },
   productDetail: {
     pageId: 'store-product-detail',
     title: 'Détails Produit',
     purpose: 'Consultez toutes les informations détaillées d\'un produit : stock, prix, images, variantes.',
-    features: [
-      { icon: Package, text: 'Informations produit complètes' },
-      { icon: Image, text: 'Galerie d\'images' },
-      { icon: Settings, text: 'Variantes et options' },
-    ],
-    actions: [
-      { label: 'Modifier', description: 'Éditez les informations du produit' },
-      { label: 'Voir sur le site', description: 'Aperçu du rendu public' },
-    ],
-    color: 'indigo',
+    icon: Package,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Informations produit complètes',
+          'Galerie d\'images',
+          'Variantes et options',
+        ]
+      },
+      {
+        title: 'Actions disponibles',
+        items: [
+          'Modifier : Éditez les informations du produit',
+          'Voir sur le site : Aperçu du rendu public',
+        ]
+      }
+    ]
   },
   orderDetail: {
     pageId: 'store-order-detail',
     title: 'Détails Commande',
     purpose: 'Consultez et gérez une commande : articles, client, paiement, livraison.',
-    features: [
-      { icon: ShoppingCart, text: 'Détails de la commande' },
-      { icon: Package, text: 'Articles commandés' },
-      { icon: Settings, text: 'Statut et suivi' },
-    ],
-    actions: [
-      { label: 'Traiter', description: 'Passez à l\'étape suivante' },
-      { label: 'Imprimer', description: 'Imprimez la commande' },
-    ],
-    color: 'indigo',
+    icon: ShoppingCart,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Package,
+        items: [
+          'Détails de la commande',
+          'Articles commandés',
+          'Statut et suivi',
+        ]
+      },
+      {
+        title: 'Actions disponibles',
+        items: [
+          'Traiter : Passez à l\'étape suivante',
+          'Imprimer : Imprimez la commande',
+        ]
+      }
+    ]
   },
   productForm: {
     pageId: 'store-product-form',
     title: 'Formulaire Produit',
     purpose: 'Créez ou modifiez un produit : informations, prix, images, variantes et stock.',
-    features: [
-      { icon: Package, text: 'Informations produit complètes' },
-      { icon: Image, text: 'Galerie d\'images multi-upload' },
-      { icon: Settings, text: 'Variantes et gestion du stock' },
-    ],
-    actions: [
-      { label: 'Remplir les informations', description: 'Nom, prix, description, catégorie' },
-      { label: 'Ajouter des images', description: 'Upload et réorganisation des photos' },
-      { label: 'Gérer les variantes', description: 'Tailles, couleurs, options' },
-    ],
-    color: 'indigo',
+    icon: Package,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Informations produit complètes',
+          'Galerie d\'images multi-upload',
+          'Variantes et gestion du stock',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Remplir les informations : Nom, prix, description, catégorie',
+          'Ajouter des images : Upload et réorganisation des photos',
+          'Gérer les variantes : Tailles, couleurs, options',
+        ]
+      }
+    ]
   },
   siteConfig: {
     pageId: 'store-site-config',
     title: 'Configuration Site',
     purpose: 'Configurez votre boutique en ligne : fonctionnalités, contact, livraison, paiement.',
-    features: [
-      { icon: Settings, text: 'Fonctionnalités activables/désactivables' },
-      { icon: Store, text: 'Informations de contact et livraison' },
-      { icon: Package, text: 'Modes de paiement et garantie' },
-    ],
-    actions: [
-      { label: 'Activer des fonctionnalités', description: 'Comparateur, wishlist, avis, newsletter' },
-      { label: 'Configurer la livraison', description: 'Délais et seuil livraison gratuite' },
-      { label: 'Modes de paiement', description: 'Carte, espèces, virement, mobile money' },
-    ],
-    color: 'indigo',
+    icon: Settings,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Store,
+        items: [
+          'Fonctionnalités activables/désactivables',
+          'Informations de contact et livraison',
+          'Modes de paiement et garantie',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Activer des fonctionnalités : Comparateur, wishlist, avis, newsletter',
+          'Configurer la livraison : Délais et seuil livraison gratuite',
+          'Modes de paiement : Carte, espèces, virement, mobile money',
+        ]
+      }
+    ]
   },
   couponForm: {
     pageId: 'store-coupon-form',
     title: 'Formulaire Coupon',
     purpose: 'Créez ou modifiez un code promo : réduction, conditions d\'utilisation et période de validité.',
-    features: [
-      { icon: Tag, text: 'Code promo personnalisable' },
-      { icon: Settings, text: 'Conditions et restrictions' },
-      { icon: Package, text: 'Applicabilité par produit/catégorie' },
-    ],
-    actions: [
-      { label: 'Définir le code', description: 'Nom unique et mémorable' },
-      { label: 'Configurer la réduction', description: 'Pourcentage ou montant fixe' },
-      { label: 'Définir la période', description: 'Dates de début et fin' },
-    ],
-    color: 'indigo',
+    icon: Tag,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Code promo personnalisable',
+          'Conditions et restrictions',
+          'Applicabilité par produit/catégorie',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Définir le code : Nom unique et mémorable',
+          'Configurer la réduction : Pourcentage ou montant fixe',
+          'Définir la période : Dates de début et fin',
+        ]
+      }
+    ]
   },
   delivery: {
     pageId: 'store-delivery-methods',

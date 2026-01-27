@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout'
 import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '../../hooks/useHeroSlides'
 import { Button, ToastContainer, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 import { HeroSlideTable } from '../../components/HeroSlideTable'
 import { HeroSlideForm, HeroSlideFormData } from '../../components/HeroSlideForm'
 
@@ -92,8 +92,7 @@ export default function HeroSlides() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Hero Slides' },
         ]}
       />
@@ -106,7 +105,7 @@ export default function HeroSlides() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.heroSlides} className="mb-6" />
+        <PageNotice config={storeNotices.heroSlides} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           <HeroSlideTable

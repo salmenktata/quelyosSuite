@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Layout } from '../../components/Layout'
 import { usePromoBanners, useCreatePromoBanner, useUpdatePromoBanner, useDeletePromoBanner, PromoBanner } from '../../hooks/usePromoBanners'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
-import { ecommerceNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
 
 export default function PromoBanners() {
@@ -86,8 +86,7 @@ export default function PromoBanners() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Bannières Promo' },
         ]}
       />
@@ -97,7 +96,7 @@ export default function PromoBanners() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={ecommerceNotices.promoBanners} className="mb-6" />
+        <PageNotice config={storeNotices.promoBanners} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}

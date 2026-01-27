@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout'
 import { useStaticPages, useCreateStaticPage, useUpdateStaticPage, useDeleteStaticPage, StaticPage } from '../../hooks/useStaticPages'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 
 export default function StaticPagesPage() {
   const [editingPage, setEditingPage] = useState<StaticPage | null>(null)
@@ -124,8 +124,7 @@ export default function StaticPagesPage() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Pages Statiques' },
         ]}
       />
@@ -138,7 +137,7 @@ export default function StaticPagesPage() {
           {!showForm && <Button onClick={handleNew}>Nouvelle page</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.staticPages} className="mb-6" />
+        <PageNotice config={storeNotices.staticPages} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}

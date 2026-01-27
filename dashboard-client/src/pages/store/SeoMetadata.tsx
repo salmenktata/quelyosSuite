@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout'
 import { useSeoMetadataList, useCreateSeoMetadata, useUpdateSeoMetadata, useDeleteSeoMetadata, SeoMetadata } from '../../hooks/useSeoMetadata'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 
 export default function SeoMetadataPage() {
   const [editingMetadata, setEditingMetadata] = useState<SeoMetadata | null>(null)
@@ -120,8 +120,7 @@ export default function SeoMetadataPage() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'SEO Métadonnées' },
         ]}
       />
@@ -134,7 +133,7 @@ export default function SeoMetadataPage() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.seoMetadata} className="mb-6" />
+        <PageNotice config={storeNotices.seoMetadata} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}

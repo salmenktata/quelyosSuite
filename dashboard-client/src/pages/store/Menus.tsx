@@ -9,7 +9,7 @@ import {
   type MenuItem,
 } from '../../hooks/useMenus'
 import { PageNotice, Breadcrumbs } from '../../components/common'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 import { Badge, Button, SkeletonTable } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
 
@@ -152,8 +152,7 @@ export default function Menus() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Menus Navigation' },
         ]}
       />
@@ -166,7 +165,7 @@ export default function Menus() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.menus} className="mb-6" />
+        <PageNotice config={storeNotices.menus} className="mb-6" />
 
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-800 dark:text-red-300">

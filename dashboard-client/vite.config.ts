@@ -19,5 +19,12 @@ export default defineConfig({
     fs: {
       allow: [fileURLToPath(new URL('..', import.meta.url))],
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8069',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })

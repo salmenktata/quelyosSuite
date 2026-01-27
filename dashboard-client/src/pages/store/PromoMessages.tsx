@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout'
 import { usePromoMessages, useCreatePromoMessage, useUpdatePromoMessage, useDeletePromoMessage, PromoMessage } from '../../hooks/usePromoMessages'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
-import { marketingNotices } from '@/lib/notices'
+import { storeNotices } from '@/lib/notices'
 
 const ICON_OPTIONS = [
   { value: 'truck', label: 'Camion (Livraison)' },
@@ -88,8 +88,7 @@ export default function PromoMessages() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Accueil', href: '/dashboard' },
-          { label: 'Boutique', href: '/store/my-shop' },
+          { label: 'Tableau de bord', href: '/dashboard' },
           { label: 'Messages Promo' },
         ]}
       />
@@ -99,7 +98,7 @@ export default function PromoMessages() {
           {!showForm && <Button onClick={handleNew}>Nouveau</Button>}
         </div>
 
-        <PageNotice config={marketingNotices.promoMessages} className="mb-6" />
+        <PageNotice config={storeNotices.promoMessages} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}
