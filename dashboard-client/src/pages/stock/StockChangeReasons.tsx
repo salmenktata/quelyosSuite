@@ -12,6 +12,11 @@ import type { StockChangeReason } from '@/types/stock'
 export default function StockChangeReasons() {
   const { data, isLoading, error } = useStockChangeReasons()
 
+  // Debug logs
+  console.log('[StockChangeReasons] data:', data)
+  console.log('[StockChangeReasons] isLoading:', isLoading)
+  console.log('[StockChangeReasons] error:', error)
+
   const reasons = data?.success ? data.data.reasons : []
   const isModuleInstalled = data?.success !== false || data?.error_code !== 'MODULE_NOT_INSTALLED'
 
