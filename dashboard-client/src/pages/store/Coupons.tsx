@@ -191,7 +191,7 @@ export default function Coupons() {
             <div className="p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des coupons
             </div>
-          ) : data?.data.coupons && (data.data.coupons as import('../types').Coupon[]).length > 0 ? (
+          ) : data?.data?.coupons && (data.data.coupons as import('../types').Coupon[]).length > 0 ? (
             <>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

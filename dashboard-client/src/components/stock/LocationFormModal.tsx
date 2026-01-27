@@ -16,7 +16,7 @@ import { useMemo } from 'react'
 
 const schema = z.object({
   name: z.string().min(1, 'Nom requis'),
-  usage: z.enum(['internal', 'view']),
+  usage: z.enum(['internal', 'view', 'supplier', 'customer', 'inventory', 'transit']),
   warehouse_id: z.number().min(1, 'Entrepôt requis'),
   parent_id: z.number().optional(),
   barcode: z.string().optional(),
