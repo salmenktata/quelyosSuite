@@ -158,6 +158,50 @@ Parité     Packaging  Légal          Commercial  Lancement
 **Score global** : **~78%** (audit `/parity` révèle gaps Pricelists + Stock)
 **Production-ready** : 🔴 5 gaps P0 bloquent segmentation clients (Pricelists) + gestion stock quotidienne
 
+### Phase 1.5 : Opportunités Premium (Audit `/parity` 2026-01-27)
+
+> **Stratégie** : S'inspirer de l'écosystème Odoo 19 (Community + Enterprise) pour enrichir Quelyos Suite avec des fonctionnalités premium **GRATUITEMENT**, créant un avantage concurrentiel majeur.
+
+#### 🎯 Avantage Concurrentiel
+
+```
+Quelyos Suite = Odoo Community
+                + Fonctionnalités Enterprise (incluses ⭐)
+                + UX moderne supérieure
+                + Sans modifier Odoo
+
+Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
+```
+
+#### ⭐ Top 5 Fonctionnalités Premium à Implémenter
+
+| Module | Type Odoo | Impact | Effort | Priorité Cible |
+|--------|-----------|--------|--------|----------------|
+| **Subscription Management** | Enterprise ⭐ | ★★★★★ | 2-3 sem | E-commerce |
+| **Marketing Automation** | Enterprise ⭐ | ★★★★★ | 2-3 sem | Backoffice |
+| **Bank Sync + OCR** | Enterprise ⭐ | ★★★★★ | 3-4 sem | Backoffice |
+| **Odoo Studio (No-Code)** | Enterprise ⭐ | ★★★★☆ | 3-4 sem | Backoffice |
+| **Field Service** | Enterprise ⭐ | ★★★☆☆ | 2-3 sem | Backoffice |
+
+**Différenciation** : Inclure des fonctionnalités Enterprise (~$30-50/user/mois dans Odoo) dans l'offre Quelyos Suite
+
+#### 🚀 Modules Community à Ajouter
+
+| Module | Type | Effort | Priorité Cible |
+|--------|------|--------|----------------|
+| **Project Management** | Community | 2 sem | Backoffice |
+| **ESG Module** (nouveau 19) | Community | 1-2 sem | Backoffice |
+| **Blog & Content Marketing** | Community | 1-2 sem | Vitrine |
+
+#### 📊 Opportunités Identifiées (Audit complet)
+
+- **12 modules/fonctionnalités** Odoo 19 identifiés
+- **8 fonctionnalités Enterprise ⭐** : Marketing Automation, Subscriptions, Bank Sync, SMS Marketing, Social Media, Field Service, Studio, Website Builder avancé
+- **4 fonctionnalités Community** : Project, ESG, Blog, modules industrie
+- **Priorisation** : Backoffice (P1) > E-commerce (P2) > Vitrine (P3)
+
+**Voir détails complets** : Issue #[TBD] - Roadmap Fonctionnalités Premium
+
 ### Phase 2 : Packaging Produit (3-4 semaines)
 
 - [ ] Installation one-click (`curl -fsSL https://get.quelyos.com | bash`)
