@@ -1,0 +1,109 @@
+#!/bin/sh
+# Pre-commit hook - Vérification UI/UX automatique
+
+echo "🔍 Vérification UI/UX des fichiers modifiés..."
+
+# Récupérer fichiers .tsx/.jsx modifiés
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(tsx|jsx)$')
+
+if [ -z "$CHANGED_FILES" ]; then
+  echo "✅ Aucun fichier React modifié"
+  exit 0
+fi
+
+ERRORS=0
+WARNINGS=0
+
+for file in $CHANGED_FILES; do
+  if [ ! -f "$file" ]; then
+    continue
+  fi
+
+  echo "📄 Analyse: $file"
+
+  # Vérification 1 : bg-white sans dark:bg-
+  if grep -q "className.*bg-white[^/-]" "$file"; then
+    if ! grep -q "dark:bg-" "$file"; then
+      echo "  ❌ ERREUR: bg-white sans variante dark:bg-gray-800"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Vérification 2 : text-gray-900 sans dark:text-white
+  if grep -q "className.*text-gray-900" "$file"; then
+    LINE_CONTEXT=$(grep -n "text-gray-900" "$file" | head -1)
+    if ! echo "$LINE_CONTEXT" | grep -q "dark:text-white"; then
+      echo "  ❌ ERREUR: text-gray-900 sans dark:text-white"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Vérification 3 : border-gray-200 sans dark:border-gray-700
+  if grep -q "border-gray-200" "$file"; then
+    if ! grep -q "dark:border-gray-700" "$file"; then
+      echo "  ⚠️  WARNING: border-gray-200 sans dark:border-gray-700"
+      WARNINGS=$((WARNINGS + 1))
+    fi
+  fi
+
+  # Vérification 4 : Labels avec text-gray-700 (incorrect)
+  if grep -q "<label" "$file"; then
+    # Chercher text-gray-700 qui n'est PAS un hover/focus state
+    LABEL_LINES=$(grep -A 3 "<label" "$file" | grep "text-gray-700" | grep -v "hover:" | grep -v "focus:")
+    if [ -n "$LABEL_LINES" ]; then
+      echo "  ❌ ERREUR: Label avec text-gray-700 (utiliser text-gray-900 dark:text-white)"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Vérification 5 : Inputs sans variantes dark
+  if grep -qE "<input|<select|<textarea" "$file"; then
+    if grep -q "bg-white" "$file" && ! grep -qE "dark:bg-gray|dark:bg-white/10" "$file"; then
+      echo "  ⚠️  WARNING: Input/Select sans dark:bg-"
+      WARNINGS=$((WARNINGS + 1))
+    fi
+  fi
+
+  # Vérification 6 : GlassPanel sans padding
+  if grep -qE "GlassPanel|GlassCard" "$file"; then
+    CONTEXT=$(grep -A 2 -E "GlassPanel|GlassCard" "$file")
+    if ! echo "$CONTEXT" | grep -q "className.*p-[0-9]"; then
+      echo "  ⚠️  WARNING: GlassPanel/GlassCard sans padding"
+      WARNINGS=$((WARNINGS + 1))
+    fi
+  fi
+
+  # Vérification 7 : text-white isolé (potentiellement invisible en light)
+  if grep -q 'className="[^"]*text-white[^"]*"' "$file"; then
+    if ! grep -qE "text-gray-.*dark:text-white|dark:text-white.*text-gray" "$file"; then
+      echo "  ⚠️  WARNING: text-white sans contrepartie light mode"
+      WARNINGS=$((WARNINGS + 1))
+    fi
+  fi
+done
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ $ERRORS -eq 0 ] && [ $WARNINGS -eq 0 ]; then
+  echo "✅ Toutes les vérifications UI/UX sont passées"
+  exit 0
+elif [ $ERRORS -eq 0 ]; then
+  echo "⚠️  $WARNINGS warning(s) détecté(s) - Commit autorisé"
+  echo ""
+  echo "💡 Conseil: Corrigez les warnings pour améliorer l'accessibilité"
+  exit 0
+else
+  echo "❌ $ERRORS erreur(s) critique(s) détectée(s)"
+  if [ $WARNINGS -gt 0 ]; then
+    echo "⚠️  $WARNINGS warning(s) supplémentaire(s)"
+  fi
+  echo ""
+  echo "🔧 Corrections requises avant le commit:"
+  echo "   - Ajouter variantes dark: pour tous les backgrounds"
+  echo "   - Corriger les labels avec text-gray-900 dark:text-white"
+  echo "   - Vérifier que tous les textes sont lisibles en light ET dark"
+  echo ""
+  echo "💡 Astuce: Lancer /uiux pour audit complet"
+  exit 1
+fi

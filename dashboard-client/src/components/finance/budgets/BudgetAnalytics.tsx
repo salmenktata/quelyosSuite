@@ -58,8 +58,8 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, formatCurrency }: CustomTooltipProps) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-indigo-950/95 backdrop-blur-xl border border-white/15 rounded-lg p-3 shadow-xl">
-        <p className="font-medium text-white mb-2">{payload[0].payload?.name}</p>
+      <div className="bg-white dark:bg-indigo-950/95 backdrop-blur-xl border border-gray-200 dark:border-white/15 rounded-lg p-3 shadow-xl">
+        <p className="font-medium text-gray-900 dark:text-white mb-2">{payload[0].payload?.name}</p>
         {payload.map((entry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {formatCurrency(entry.value || 0)}
@@ -156,8 +156,8 @@ export function BudgetAnalytics({ budgets, isExpanded, onToggle, formatCurrency 
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-lg font-semibold text-white">Analyses & Comparaisons</h3>
+            <TrendingUp className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Analyses & Comparaisons</h3>
           </div>
           <GlassButton
             onClick={onToggle}
@@ -249,7 +249,7 @@ export function BudgetAnalytics({ budgets, isExpanded, onToggle, formatCurrency 
                       className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <div className="font-medium text-white">{budget.name}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">{budget.name}</div>
                         <div className={`text-xs px-2 py-1 rounded ${
                           budget.status === "EXCEEDED"
                             ? "bg-rose-500/20 text-rose-300"

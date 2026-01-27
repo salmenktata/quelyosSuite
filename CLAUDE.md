@@ -48,6 +48,37 @@
 ## Langue
 Français pour communications. Code en anglais.
 
+## 🌓 DARK/LIGHT MODE - VÉRIFICATION AUTOMATIQUE OBLIGATOIRE
+**RÉFLEXE ABSOLU** : TOUJOURS vérifier les deux modes sans rappel
+- **Chaque modification UI** : Tester light ET dark automatiquement
+- **Chaque nouveau composant** : Variantes `dark:` sur TOUS les éléments
+- **Chaque correction** : Vérifier que le fix fonctionne dans les 2 modes
+- **Ne JAMAIS attendre** : "vérifie en mode clair" ou "vérifie en mode dark"
+
+**Pattern obligatoire pour tous les éléments visuels** :
+```tsx
+// ✅ BON - Adaptatif automatique
+bg-white dark:bg-gray-800
+text-gray-900 dark:text-white
+border-gray-200 dark:border-gray-700
+
+// ❌ MAUVAIS - Mode unique
+bg-white
+text-gray-900
+text-indigo-100  // invisible en light mode !
+```
+
+**Checklist systématique** :
+1. ✅ Backgrounds : light opaque + dark transparent/gradient
+2. ✅ Textes : dark text en light, light text en dark
+3. ✅ Borders : visible dans les deux modes
+4. ✅ Inputs/Forms : lisibles dans les deux modes
+5. ✅ Hovers/Focus : états visibles partout
+6. ✅ Icônes : contraste suffisant
+7. ✅ Erreurs/Success : messages lisibles
+
+**Si oublié** : L'utilisateur ne devrait JAMAIS avoir à rappeler cette règle.
+
 ## 🛣️ CONVENTIONS ROUTING - RÈGLE ABSOLUE
 **TOUJOURS utiliser l'anglais pour les routes et identifiants techniques**
 - **Routes/URLs** : `/store/products`, `/crm/customers`, `/hr/employees` (anglais)

@@ -130,28 +130,28 @@ export function BudgetExport({ allBudgets, filteredBudgets, formatCurrency }: Bu
           />
 
           {/* Dropdown menu */}
-          <div className="absolute right-0 mt-2 w-64 z-20 rounded-xl border border-white/15 bg-indigo-950/95 backdrop-blur-xl shadow-xl overflow-hidden">
+          <div className="absolute right-0 mt-2 w-64 z-20 rounded-xl border border-gray-200 dark:border-white/15 bg-white dark:bg-indigo-950/95 backdrop-blur-xl shadow-xl overflow-hidden">
             <div className="p-2">
               <button
                 onClick={handleExportAll}
-                className="w-full px-3 py-2.5 text-left text-sm text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
+                className="w-full px-3 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
               >
-                <FileDown className="w-4 h-4 text-indigo-300" />
+                <FileDown className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
                 <div>
                   <div className="font-medium">Tous les budgets</div>
-                  <div className="text-xs text-indigo-100/60">{allBudgets.length} budget{allBudgets.length > 1 ? "s" : ""}</div>
+                  <div className="text-xs text-gray-600 dark:text-indigo-100/60">{allBudgets.length} budget{allBudgets.length > 1 ? "s" : ""}</div>
                 </div>
               </button>
 
               {hasFilters && (
                 <button
                   onClick={handleExportFiltered}
-                  className="w-full px-3 py-2.5 text-left text-sm text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3 mt-1"
+                  className="w-full px-3 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3 mt-1"
                 >
-                  <Filter className="w-4 h-4 text-indigo-300" />
+                  <Filter className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
                   <div>
                     <div className="font-medium">Budgets filtrés</div>
-                    <div className="text-xs text-indigo-100/60">{filteredBudgets.length} budget{filteredBudgets.length > 1 ? "s" : ""}</div>
+                    <div className="text-xs text-gray-600 dark:text-indigo-100/60">{filteredBudgets.length} budget{filteredBudgets.length > 1 ? "s" : ""}</div>
                   </div>
                 </button>
               )}

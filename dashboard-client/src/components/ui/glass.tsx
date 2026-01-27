@@ -42,13 +42,24 @@ export function GlassCard({ children, className = '', gradient, title, subtitle,
 
 // GlassPanel - Panneau glassmorphism
 export function GlassPanel({ children, className = '', gradient, title, subtitle, onClick, ...rest }: GlassProps) {
-  const baseClass = gradient
-    ? `bg-gradient-to-br ${gradient}`
-    : 'bg-white/70 dark:bg-gray-800/70'
+  // Gradients adaptatifs : couleurs opaques en light, transparents en dark
+  const adaptiveGradients: Record<string, string> = {
+    'indigo': 'bg-gradient-to-br from-indigo-50/95 to-indigo-100/95 dark:from-indigo-500/20 dark:to-purple-500/20',
+    'violet': 'bg-gradient-to-br from-violet-50/95 to-violet-100/95 dark:from-violet-500/20 dark:to-purple-500/20',
+    'orange': 'bg-gradient-to-br from-orange-50/95 to-orange-100/95 dark:from-orange-500/20 dark:to-amber-600/20',
+    'emerald': 'bg-gradient-to-br from-emerald-50/95 to-emerald-100/95 dark:from-emerald-500/20 dark:to-green-600/20',
+    'rose': 'bg-gradient-to-br from-rose-50/95 to-rose-100/95 dark:from-rose-500/20 dark:to-pink-600/20',
+  }
+
+  const backgroundClasses = gradient && adaptiveGradients[gradient]
+    ? adaptiveGradients[gradient]
+    : gradient
+      ? `bg-gradient-to-br ${gradient}`
+      : 'bg-white/70 dark:bg-gray-800/70'
 
   return (
     <div
-      className={`${baseClass} backdrop-blur-md rounded-lg border border-gray-100/50 dark:border-gray-700/50 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`${backgroundClasses} backdrop-blur-md rounded-lg border border-gray-200/50 dark:border-gray-700/50 ${onClick ? 'cursor-pointer' : ''} ${className}`}
       onClick={onClick}
       {...rest}
     >

@@ -74,8 +74,8 @@ export default function BudgetRecommendationCard({
       transition={{ duration: 0.4 }}
       className="
         relative overflow-hidden rounded-xl
-        bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-slate-900/50
-        border border-indigo-500/20
+        bg-gradient-to-br from-indigo-50/95 to-indigo-100/95 dark:from-indigo-500/10 dark:via-purple-500/5 dark:to-slate-900/50
+        border border-indigo-200 dark:border-indigo-500/20
         backdrop-blur-sm
         p-6
       "
@@ -83,12 +83,12 @@ export default function BudgetRecommendationCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-indigo-500/20 border border-indigo-500/30">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
+          <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/30">
+            <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Recommandation ML</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recommandation ML</h3>
+            <p className="text-xs text-gray-600 dark:text-slate-400">
               Basée sur {recommendation.analysisMonths} mois d&apos;historique
             </p>
           </div>
@@ -98,7 +98,7 @@ export default function BudgetRecommendationCard({
         <div
           className={`
             px-3 py-1.5 rounded-full
-            bg-white/5 border border-white/10
+            bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10
             flex items-center gap-2
           `}
         >
@@ -119,9 +119,9 @@ export default function BudgetRecommendationCard({
 
       {/* Recommended Amount */}
       <div className="mb-6">
-        <p className="text-sm text-slate-400 mb-2">Montant recommandé</p>
+        <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">Montant recommandé</p>
         <div className="flex items-baseline gap-3">
-          <p className="text-4xl font-bold text-white">
+          <p className="text-4xl font-bold text-gray-900 dark:text-white">
             {formatMoney(recommendation.recommendedAmount)}
           </p>
           {isDifferentFromCurrent && currentBudget !== undefined && (
@@ -149,21 +149,21 @@ export default function BudgetRecommendationCard({
 
       {/* Statistics Breakdown */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-slate-400 mb-1">Minimum</p>
-          <p className="text-sm font-semibold text-white">
+        <div className="p-3 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+          <p className="text-xs text-gray-600 dark:text-slate-400 mb-1">Minimum</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             {formatMoney(recommendation.breakdown.min)}
           </p>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-slate-400 mb-1">Médiane</p>
-          <p className="text-sm font-semibold text-white">
+        <div className="p-3 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+          <p className="text-xs text-gray-600 dark:text-slate-400 mb-1">Médiane</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             {formatMoney(recommendation.breakdown.median)}
           </p>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-slate-400 mb-1">Maximum</p>
-          <p className="text-sm font-semibold text-white">
+        <div className="p-3 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+          <p className="text-xs text-gray-600 dark:text-slate-400 mb-1">Maximum</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             {formatMoney(recommendation.breakdown.max)}
           </p>
         </div>
@@ -171,8 +171,8 @@ export default function BudgetRecommendationCard({
 
       {/* Seasonal Pattern (if available) */}
       {recommendation.seasonalFactors?.monthlyAmounts && (
-        <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-slate-400 mb-3">Variations mensuelles détectées</p>
+        <div className="mb-6 p-4 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+          <p className="text-xs text-gray-600 dark:text-slate-400 mb-3">Variations mensuelles détectées</p>
           <div className="flex items-end gap-1 h-16">
             {Object.entries(recommendation.seasonalFactors.monthlyAmounts)
               .sort(([a], [b]) => Number(a) - Number(b))
@@ -208,7 +208,7 @@ export default function BudgetRecommendationCard({
           ${
             loading || !isDifferentFromCurrent
               ? "bg-slate-700 text-slate-500 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-500 text-white"
+              : "bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white"
           }
         `}
       >

@@ -145,7 +145,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
             <GlassCard className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               {editingId ? "Modifier le budget" : "Créer un budget"}
             </h2>
             <button
@@ -153,7 +153,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
               className="p-1 hover:bg-white/10 rounded transition-colors"
               aria-label="Fermer"
             >
-              <X className="w-5 h-5 text-indigo-300" />
+              <X className="w-5 h-5 text-gray-600 dark:text-indigo-300" />
             </button>
           </div>
 
@@ -161,7 +161,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Nom du budget <span className="text-rose-400">*</span>
               </label>
               <input
@@ -169,14 +169,14 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="ex: Marketing Q1, Dépenses fixes..."
-                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white placeholder:text-indigo-100/60 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
+                className="w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-indigo-100/60 focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/40 backdrop-blur-sm"
                 required
               />
             </div>
 
             {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Montant <span className="text-rose-400">*</span>
               </label>
               <div className="relative">
@@ -190,7 +190,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
                   className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 pr-12 text-white placeholder:text-indigo-100/60 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
                   required
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-100/60">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-indigo-100/60">
                   €
                 </span>
               </div>
@@ -198,13 +198,13 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Catégorie (optionnel)
               </label>
               <select
                 value={formData.categoryId || ""}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value ? Number(e.target.value) : null })}
-                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
+                className="w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/40 backdrop-blur-sm"
               >
                 <option value="">Toutes catégories</option>
                 {categories
@@ -215,20 +215,20 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
                     </option>
                   ))}
               </select>
-              <p className="mt-1 text-xs text-indigo-100/60">
+              <p className="mt-1 text-xs text-gray-600 dark:text-indigo-100/60">
                 Suivre uniquement les dépenses de cette catégorie
               </p>
             </div>
 
             {/* Period */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Période <span className="text-rose-400">*</span>
               </label>
               <select
                 value={formData.period}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value as BudgetPeriod })}
-                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
+                className="w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/40 backdrop-blur-sm"
                 required
               >
                 <option value="WEEKLY">Hebdomadaire</option>
@@ -241,14 +241,14 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
 
             {/* Start Date */}
             <div>
-              <label className="block text-sm font-medium text-indigo-100 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Date de début <span className="text-rose-400">*</span>
               </label>
               <input
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
+                className="w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/40 backdrop-blur-sm"
                 required
               />
             </div>
@@ -256,7 +256,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
             {/* End Date (only for CUSTOM period) */}
             {formData.period === "CUSTOM" && (
               <div>
-                <label className="block text-sm font-medium text-indigo-100 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                   Date de fin <span className="text-rose-400">*</span>
                 </label>
                 <input
@@ -264,7 +264,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                   min={formData.startDate}
-                  className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 backdrop-blur-sm"
+                  className="w-full rounded-xl border border-gray-300 dark:border-white/15 bg-white dark:bg-white/10 px-4 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-400/40 backdrop-blur-sm"
                   required={formData.period === "CUSTOM"}
                 />
               </div>
@@ -272,8 +272,8 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
 
             {/* Error Message */}
             {error && (
-              <GlassCard variant="subtle" className="border-rose-500/30 bg-rose-500/10 px-4 py-3">
-                <p className="text-sm text-rose-200">{error}</p>
+              <GlassCard variant="subtle" className="border-rose-300 dark:border-rose-500/30 bg-rose-100 dark:bg-rose-500/10 px-4 py-3">
+                <p className="text-sm text-rose-800 dark:text-rose-200">{error}</p>
               </GlassCard>
             )}
 

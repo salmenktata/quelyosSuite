@@ -90,25 +90,25 @@ export const BudgetFormModal = memo(function BudgetFormModal({
   const buttonGradient = isCreate
     ? "from-indigo-500 to-violet-500 hover:from-indigo-400 hover:to-violet-400 shadow-indigo-500/25 hover:shadow-indigo-500/40"
     : "from-violet-500 to-purple-500 hover:from-violet-400 hover:to-purple-400 shadow-violet-500/25 hover:shadow-violet-500/40";
-  const iconColor = isCreate ? "text-indigo-400" : "text-violet-400";
+  const iconColor = isCreate ? "text-indigo-600 dark:text-indigo-400" : "text-violet-600 dark:text-violet-400";
   const focusRing = isCreate
-    ? "focus:border-indigo-400 focus:ring-indigo-400/40"
-    : "focus:border-violet-400 focus:ring-violet-400/40";
+    ? "focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500/40"
+    : "focus:border-violet-500 dark:focus:border-violet-400 focus:ring-violet-500/40";
 
   return (
     <div className="relative animate-in slide-in-from-top-4 fade-in duration-300">
-      <GlassPanel gradient={gradient}>
+      <GlassPanel gradient={gradient} className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Sparkles className={`w-5 h-5 ${iconColor}`} />
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {isCreate ? "Nouveau budget" : "Modifier le budget"}
             </h3>
           </div>
           {!isCreate && (
             <button
               onClick={onCancel}
-              className="text-sm text-indigo-100/60 hover:text-white transition-colors"
+              className="text-sm text-gray-600 dark:text-indigo-100/60 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               ✕ Fermer
             </button>
@@ -249,7 +249,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="text-sm text-indigo-100/60 hover:text-white transition-colors hover:underline"
+                  className="text-sm text-gray-600 dark:text-indigo-100/60 hover:text-gray-900 dark:hover:text-white transition-colors hover:underline"
                 >
                   Réinitialiser
                 </button>
@@ -260,7 +260,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
                   type="button"
                   onClick={onCancel}
                   disabled={isSubmitting}
-                  className="text-sm text-indigo-100/60 hover:text-white transition-colors hover:underline"
+                  className="text-sm text-gray-600 dark:text-indigo-100/60 hover:text-gray-900 dark:hover:text-white transition-colors hover:underline"
                 >
                   Annuler
                 </button>
@@ -270,7 +270,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
             <button
               type="button"
               onClick={onCancel}
-              className="text-sm text-indigo-100/40 hover:text-indigo-100/80 transition-colors"
+              className="text-sm text-gray-500 dark:text-indigo-100/40 hover:text-gray-900 dark:hover:text-indigo-100/80 transition-colors"
             >
               Échap pour annuler
             </button>
@@ -278,12 +278,12 @@ export const BudgetFormModal = memo(function BudgetFormModal({
 
           {error && (
             <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-              <GlassCard variant="subtle" className="border-rose-500/30 bg-rose-500/10 px-4 py-3">
+              <GlassCard variant="subtle" className="border-rose-300 dark:border-rose-500/30 bg-rose-100 dark:bg-rose-500/10 px-4 py-3">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center mt-0.5">
-                    <span className="text-rose-300 text-xs">!</span>
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-rose-200 dark:bg-rose-500/20 flex items-center justify-center mt-0.5">
+                    <span className="text-rose-700 dark:text-rose-300 text-xs">!</span>
                   </div>
-                  <p className="text-sm text-rose-200 flex-1">{error}</p>
+                  <p className="text-sm text-rose-800 dark:text-rose-200 flex-1">{error}</p>
                 </div>
               </GlassCard>
             </div>

@@ -102,7 +102,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
         <button
           type="button"
           onClick={() => setShowExtended(!showExtended)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
         >
           <Filter className="h-4 w-4" />
           Filtres
@@ -132,7 +132,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-4">
           {/* Category Multi-Select */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
               Catégories
             </label>
             <div className="flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       filters.categoryIds.includes(category.id)
                         ? "bg-indigo-500 text-white"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     {category.name}
@@ -160,7 +160,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
           {/* Date Range */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Période active - Du
               </label>
               <input
@@ -171,7 +171,7 @@ export function BudgetFilters({ filters, onFilterChange, categories }: BudgetFil
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Au
               </label>
               <input

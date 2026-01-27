@@ -13,6 +13,29 @@ Effectuer un audit complet d'une page du dashboard pour vérifier :
 6. Cohérence visuelle et responsive
 7. **Composants enfants** (audit récursif des composants importés)
 
+## ⚠️ IMPORTANT - Vérification Dark/Light Automatique
+
+**RÉFLEXE OBLIGATOIRE** : Chaque audit DOIT vérifier les deux modes sans rappel.
+
+Pour chaque élément visuel détecté :
+1. ✅ Vérifier existence variante `dark:`
+2. ✅ Simuler rendu en mode clair (textes sombres sur fond clair)
+3. ✅ Simuler rendu en mode dark (textes clairs sur fond sombre)
+4. ❌ Pénaliser SYSTÉMATIQUEMENT si un seul mode fonctionne
+
+**Pattern attendu partout** :
+- Textes : `text-gray-900 dark:text-white`
+- Backgrounds : `bg-white dark:bg-gray-800`
+- Borders : `border-gray-200 dark:border-gray-700`
+- Labels forms : `text-gray-900 dark:text-white` (jamais `text-gray-700` seul)
+- Inputs : `bg-white dark:bg-white/10 text-gray-900 dark:text-white`
+
+**Ne JAMAIS tolérer** :
+- ❌ `text-white` seul (invisible en light mode)
+- ❌ `text-gray-700` seul (peu lisible)
+- ❌ `bg-gradient-to-br from-indigo-500/20` seul (fond transparent invalide en light)
+- ❌ Absence de variante `dark:` sur un élément visible
+
 ## Paramètre requis
 
 $ARGUMENTS
