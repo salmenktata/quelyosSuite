@@ -60,7 +60,7 @@ export async function api<T = unknown>(
     fetchOptions.body = JSON.stringify(body)
   }
 
-  const fullUrl = `${API_BASE_URL}/api/ecommerce${endpoint}`
+  const fullUrl = `${API_BASE_URL}/api/finance${endpoint}`
   logger.debug('Finance API Calling:', { fullUrl, method, API_BASE_URL, endpoint })
 
   try {

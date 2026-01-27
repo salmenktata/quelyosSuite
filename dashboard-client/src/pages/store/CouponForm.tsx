@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Layout } from '../../components/Layout'
 import { useCreateCoupon } from '../../hooks/useCoupons'
 import type { CouponCreate } from '@/types'
-import { Button, Input, Breadcrumbs } from '../../components/common'
+import { Button, Input, Breadcrumbs, PageNotice } from '../../components/common'
+import { storeNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
 import { ToastContainer } from '../../components/common/Toast'
 import { logger } from '@quelyos/logger'
@@ -123,10 +124,12 @@ export default function CouponForm() {
           ]}
         />
 
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Nouveau coupon</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">Créer un code promo pour vos clients</p>
         </div>
+
+        <PageNotice config={storeNotices.couponForm} className="mb-6" />
 
         <div className="max-w-2xl">
           <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">

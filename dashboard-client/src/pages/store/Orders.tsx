@@ -107,9 +107,7 @@ export default function Orders() {
           ]}
         />
 
-        <PageNotice config={ecommerceNotices.orders} className="mb-6" />
-
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Commandes</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -119,30 +117,36 @@ export default function Orders() {
 
           {/* Toggle Vue Liste/Kanban */}
           <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setViewMode('list')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
                 viewMode === 'list'
                   ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
+              icon={<TableCellsIcon className="h-5 w-5" />}
             >
-              <TableCellsIcon className="h-5 w-5" />
               Liste
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setViewMode('kanban')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
                 viewMode === 'kanban'
                   ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
+              icon={<Squares2X2Icon className="h-5 w-5" />}
             >
-              <Squares2X2Icon className="h-5 w-5" />
               Kanban
-            </button>
+            </Button>
           </div>
         </div>
+
+        <PageNotice config={ecommerceNotices.orders} className="mb-6" />
 
         {/* Filtres rapides par état (Pills) */}
         <div className="mb-6">
@@ -150,7 +154,9 @@ export default function Orders() {
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Filtres rapides :
             </span>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('')
                 setPage(0)
@@ -162,8 +168,10 @@ export default function Orders() {
               }`}
             >
               Tous
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('draft')
                 setPage(0)
@@ -175,8 +183,10 @@ export default function Orders() {
               }`}
             >
               📝 Brouillons
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('sent')
                 setPage(0)
@@ -188,8 +198,10 @@ export default function Orders() {
               }`}
             >
               📧 Envoyés
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('sale')
                 setPage(0)
@@ -201,8 +213,10 @@ export default function Orders() {
               }`}
             >
               ✅ Confirmés
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('done')
                 setPage(0)
@@ -214,8 +228,10 @@ export default function Orders() {
               }`}
             >
               🎉 Terminés
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setStatusFilter('cancel')
                 setPage(0)
@@ -227,7 +243,7 @@ export default function Orders() {
               }`}
             >
               ❌ Annulés
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -326,58 +342,66 @@ export default function Orders() {
                 {search && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm">
                     Recherche : "{search}"
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setSearch('')
                         setSearchInput('')
                         setPage(0)
                       }}
-                      className="ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
+                      className="!p-0 ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
                     >
                       ×
-                    </button>
+                    </Button>
                   </span>
                 )}
                 {statusFilter && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm">
                     Statut : {getStatusLabel(statusFilter)}
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setStatusFilter('')
                         setPage(0)
                       }}
-                      className="ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
+                      className="!p-0 ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
                     >
                       ×
-                    </button>
+                    </Button>
                   </span>
                 )}
                 {dateFrom && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm">
                     À partir du : {formatDate(dateFrom)}
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setDateFrom('')
                         setPage(0)
                       }}
-                      className="ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
+                      className="!p-0 ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
                     >
                       ×
-                    </button>
+                    </Button>
                   </span>
                 )}
                 {dateTo && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm">
                     Jusqu'au : {formatDate(dateTo)}
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setDateTo('')
                         setPage(0)
                       }}
-                      className="ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
+                      className="!p-0 ml-1 hover:text-indigo-900 dark:hover:text-indigo-100"
                     >
                       ×
-                    </button>
+                    </Button>
                   </span>
                 )}
               </div>

@@ -1,5 +1,3 @@
-"use client";
-
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ImportWizardStepsProps } from "@/types/import";
@@ -68,8 +66,10 @@ export function ImportWizardSteps({
                 >
                   {status === 'completed' ? (
                     <Check className="h-6 w-6 text-white" />
-                  ) : (
+                  ) : Icon ? (
                     <Icon className="h-6 w-6 text-current" />
+                  ) : (
+                    <span className="text-sm font-bold">{idx + 1}</span>
                   )}
                 </div>
                 <span className={cn("text-sm transition-colors", styles.text)}>
@@ -120,8 +120,10 @@ export function ImportWizardSteps({
                 >
                   {status === 'completed' ? (
                     <Check className="h-5 w-5 text-white" />
-                  ) : (
+                  ) : Icon ? (
                     <Icon className="h-5 w-5 text-current" />
+                  ) : (
+                    <span className="text-xs font-bold">{idx + 1}</span>
                   )}
                 </div>
 

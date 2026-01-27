@@ -5,6 +5,8 @@ import {
   Palette,
   Image,
   Settings,
+  Tag,
+  Truck,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -127,6 +129,38 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       { label: 'Activer des fonctionnalités', description: 'Comparateur, wishlist, avis, newsletter' },
       { label: 'Configurer la livraison', description: 'Délais et seuil livraison gratuite' },
       { label: 'Modes de paiement', description: 'Carte, espèces, virement, mobile money' },
+    ],
+    color: 'indigo',
+  },
+  couponForm: {
+    pageId: 'store-coupon-form',
+    title: 'Formulaire Coupon',
+    purpose: 'Créez ou modifiez un code promo : réduction, conditions d\'utilisation et période de validité.',
+    features: [
+      { icon: Tag, text: 'Code promo personnalisable' },
+      { icon: Settings, text: 'Conditions et restrictions' },
+      { icon: Package, text: 'Applicabilité par produit/catégorie' },
+    ],
+    actions: [
+      { label: 'Définir le code', description: 'Nom unique et mémorable' },
+      { label: 'Configurer la réduction', description: 'Pourcentage ou montant fixe' },
+      { label: 'Définir la période', description: 'Dates de début et fin' },
+    ],
+    color: 'indigo',
+  },
+  delivery: {
+    pageId: 'store-delivery-methods',
+    title: 'Méthodes de Livraison',
+    purpose: 'Configurez les options de livraison : prix, délais et seuils de gratuité.',
+    features: [
+      { icon: Truck, text: 'Méthodes de livraison multiples' },
+      { icon: Settings, text: 'Prix fixe ou par règles' },
+      { icon: Package, text: 'Livraison gratuite conditionnelle' },
+    ],
+    actions: [
+      { label: 'Ajouter une méthode', description: 'Standard, express, retrait en magasin' },
+      { label: 'Configurer les prix', description: 'Prix fixe par zone' },
+      { label: 'Activer la gratuité', description: 'Seuil de montant pour livraison gratuite' },
     ],
     color: 'indigo',
   },

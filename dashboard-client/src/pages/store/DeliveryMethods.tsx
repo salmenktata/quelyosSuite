@@ -6,8 +6,8 @@ import {
   useUpdateDeliveryMethod,
   useDeleteDeliveryMethod,
 } from '../../hooks/useDelivery'
-import { Badge, Breadcrumbs, Skeleton, Button, Modal, PageNotice } from '../../components/common'
-import { ecommerceNotices } from '@/lib/notices'
+import { Badge, Breadcrumbs, SkeletonTable, Button, Modal, PageNotice } from '../../components/common'
+import { storeNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
 
 interface FormData {
@@ -145,9 +145,7 @@ export default function DeliveryMethods() {
           ]}
         />
 
-        <PageNotice config={ecommerceNotices.delivery} className="mb-6" />
-
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Methodes de livraison
@@ -161,11 +159,11 @@ export default function DeliveryMethods() {
           </Button>
         </div>
 
+        <PageNotice config={storeNotices.delivery} className="mb-6" />
+
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
           {isLoading ? (
-            <div className="p-6 space-y-4">
-              <Skeleton count={3} height={100} />
-            </div>
+            <SkeletonTable rows={3} columns={4} />
           ) : error ? (
             <div className="p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des methodes de livraison

@@ -401,14 +401,14 @@ export default function BudgetsPage() {
             </div>
           ) : (
             <BudgetTable
-              budgets={sortedBudgets}
+              budgets={sortedBudgets as any}
               formatCurrency={formatAmount}
               sortBy={sortBy}
               sortDir={sortDir}
               onSort={handleSort}
-              onEdit={handleEdit}
-              onDuplicate={handleDuplicate}
-              onDelete={handleDelete}
+              onEdit={handleEdit as any}
+              onDuplicate={handleDuplicate as any}
+              onDelete={handleDelete as any}
             />
           )}
 
@@ -462,11 +462,11 @@ export default function BudgetsPage() {
             sortedBudgets.map((budget) => (
               <BudgetCard
                 key={budget.id}
-                budget={budget}
+                budget={budget as any}
                 formatCurrency={formatAmount}
-                onEdit={handleEdit}
-                onDuplicate={handleDuplicate}
-                onDelete={handleDelete}
+                onEdit={handleEdit as any}
+                onDuplicate={handleDuplicate as any}
+                onDelete={handleDelete as any}
               />
             ))}
         </div>

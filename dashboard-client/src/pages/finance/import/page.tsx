@@ -156,10 +156,10 @@ function importReducer(state: ImportState, action: ImportAction): ImportState {
 
 // Step configuration
 const STEPS: StepInfo[] = [
-  { id: "upload", label: "Téléversement", icon: Upload },
-  { id: "mapping", label: "Correspondance", icon: FileSpreadsheet },
-  { id: "validation", label: "Validation", icon: CheckSquare },
-  { id: "complete", label: "Terminé", icon: CheckCircle },
+  { id: "upload", label: "Téléversement", icon: Upload, completed: false },
+  { id: "mapping", label: "Correspondance", icon: FileSpreadsheet, completed: false },
+  { id: "validation", label: "Validation", icon: CheckSquare, completed: false },
+  { id: "complete", label: "Terminé", icon: CheckCircle, completed: false },
 ];
 
 const REQUIRED_FIELDS: import("@/types/import").FieldType[] = ["date", "description"];
@@ -316,7 +316,7 @@ export default function ImportPage() {
 
         {/* Error Display */}
         {state.error && (
-          <Card gradient="violet" className="p-6">
+          <Card  className="p-6">
             <div className="flex items-start gap-3">
               <div className="text-rose-400">⚠️</div>
               <div className="flex-1">
@@ -334,7 +334,7 @@ export default function ImportPage() {
         )}
 
         {/* Step Content */}
-        <Card gradient="indigo" className="p-8">
+        <Card  className="p-8">
           {/* Step 1: Upload */}
           {state.currentStep === "upload" && (
             <div className="space-y-6">
@@ -438,7 +438,7 @@ export default function ImportPage() {
               </div>
 
               {/* Preview Summary */}
-              <Card gradient="indigo" className="p-6">
+              <Card  className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div>
                     <p className="text-2xl font-bold text-white">{state.previewData.totalRows}</p>

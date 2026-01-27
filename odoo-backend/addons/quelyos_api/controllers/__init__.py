@@ -12,3 +12,4 @@ from . import subscription
 from . import tenant
 from . import theme_preset
 from . import api_settings
+from . import finance

@@ -1,5 +1,3 @@
-"use client";
-
 import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { downloadCSV, dateKey } from "@/lib/utils/export";

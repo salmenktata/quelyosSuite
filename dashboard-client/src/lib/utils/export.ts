@@ -56,3 +56,27 @@ function downloadBlob(blob: Blob, filename: string): void {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Format a date as a key for filenames (YYYYMMDD)
+ */
+export function dateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+}
+
+/**
+ * Download array data as CSV
+ */
+export function downloadCSV(data: any[][], filename: string): void {
+  const csvContent = data.map(row => row.map(cell => {
+    const value = cell == null ? '' : String(cell);
+    return value.includes(',') || value.includes('"') || value.includes('\n')
+      ? `"${value.replace(/"/g, '""')}"`
+      : value;
+  }).join(',')).join('\n');
+
+  downloadBlob(new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }), filename);
+}
