@@ -13,7 +13,7 @@ import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveTypes, type LeaveType } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { odooColorToHex } from '@/lib/odooColors'
+import { colorIndexToHex } from '@/lib/colorPalette'
 import { Tag, Plus, Edit } from 'lucide-react'
 
 export default function LeaveTypesPage() {
@@ -136,7 +136,7 @@ function LeaveTypeCard({ leaveType, onEdit }: { leaveType: LeaveType; onEdit: ()
         <div className="flex items-center gap-3">
           <div
             className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: odooColorToHex(leaveType.color) }}
+            style={{ backgroundColor: colorIndexToHex(leaveType.color) }}
           />
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">

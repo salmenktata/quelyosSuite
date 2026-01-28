@@ -123,7 +123,7 @@ const plans = [
       "Commandes illimitées",
       "Stockage illimité",
       "Boutiques illimitées",
-      "Instance Odoo dédiée",
+      "Instance dédiée isolée",
       "Support dédié (2h)",
       "Backup temps réel",
       "White-label complet",
@@ -248,7 +248,7 @@ const faqs = [
   },
   {
     question: "Comment fonctionne le plan Enterprise ?",
-    answer: "Le plan Enterprise offre une instance Odoo dédiée (serveur isolé), un support prioritaire avec un interlocuteur dédié, et des configurations sur-mesure. Contactez-nous pour un devis personnalisé.",
+    answer: "Le plan Enterprise offre une instance dédiée (serveur isolé), un support prioritaire avec un interlocuteur dédié, et des configurations sur-mesure. Contactez-nous pour un devis personnalisé.",
   },
   {
     question: "Proposez-vous des remises annuelles ?",

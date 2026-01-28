@@ -13,7 +13,7 @@ import { Breadcrumbs, PageNotice } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeavesCalendar, useDepartments } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { odooColorToHex } from '@/lib/odooColors'
+import { colorIndexToHex } from '@/lib/colorPalette'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function LeavesCalendarPage() {
@@ -164,7 +164,7 @@ export default function LeavesCalendarPage() {
                         </div>
                         <div className="space-y-1">
                           {leaves.slice(0, 3).map((leave, i) => {
-                            const colorHex = odooColorToHex((leave as { leave_type_color?: number | string }).leave_type_color)
+                            const colorHex = colorIndexToHex((leave as { leave_type_color?: number | string }).leave_type_color)
                             return (
                               <div
                                 key={i}
@@ -203,7 +203,7 @@ export default function LeavesCalendarPage() {
             <div className="flex flex-wrap gap-3">
               {Array.from(new Set(calendarData.map(l => l.leave_type_name || l.leave_type))).map(typeName => {
                 const leave = calendarData.find(l => (l.leave_type_name || l.leave_type) === typeName)
-                const colorHex = odooColorToHex((leave as { leave_type_color?: number | string } | undefined)?.leave_type_color)
+                const colorHex = colorIndexToHex((leave as { leave_type_color?: number | string } | undefined)?.leave_type_color)
                 return (
                   <div key={typeName} className="flex items-center gap-2">
                     <div

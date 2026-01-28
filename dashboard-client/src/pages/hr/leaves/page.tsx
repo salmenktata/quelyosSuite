@@ -14,7 +14,7 @@ import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaves, useApproveLeave, useRefuseLeave, useLeaveTypes, type Leave } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { odooColorToHex } from '@/lib/odooColors'
+import { colorIndexToHex } from '@/lib/colorPalette'
 import {
   CalendarOff,
   Plus,
@@ -203,7 +203,7 @@ export default function LeavesPage() {
                     </td>
                     <td className="px-4 py-3">
                       {(() => {
-                        const colorHex = odooColorToHex((leave as { leave_type_color?: number | string }).leave_type_color)
+                        const colorHex = colorIndexToHex((leave as { leave_type_color?: number | string }).leave_type_color)
                         return (
                           <span
                             className="px-2 py-1 text-xs rounded-full"

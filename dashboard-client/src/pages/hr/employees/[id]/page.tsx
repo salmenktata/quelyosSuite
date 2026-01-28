@@ -22,7 +22,7 @@ import {
   useJobs,
 } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { odooColorToHex } from '@/lib/odooColors'
+import { colorIndexToHex } from '@/lib/colorPalette'
 import {
   Edit,
   Save,
@@ -502,7 +502,7 @@ export default function EmployeeDetailPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {leaves.map(leave => {
-                    const colorHex = odooColorToHex((leave as { leave_type_color?: number | string }).leave_type_color)
+                    const colorHex = colorIndexToHex((leave as { leave_type_color?: number | string }).leave_type_color)
                     return (
                       <tr key={leave.id}>
                         <td className="px-4 py-3">

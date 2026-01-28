@@ -13,7 +13,7 @@ import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveAllocations, useLeaveBalances, useLeaveTypes, useBulkCreateAllocations } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { odooColorToHex } from '@/lib/odooColors'
+import { colorIndexToHex } from '@/lib/colorPalette'
 import { PieChart, Users, Calendar, X } from 'lucide-react'
 
 export default function AllocationsPage() {
@@ -97,7 +97,7 @@ export default function AllocationsPage() {
                 const avgBalance = typeBalances.length > 0
                   ? typeBalances.reduce((sum, b) => sum + (b.remaining_leaves ?? 0), 0) / typeBalances.length
                   : 0
-                const colorHex = odooColorToHex(type.color)
+                const colorHex = colorIndexToHex(type.color)
                 return (
                   <div key={type.id} className="text-center">
                     <div
@@ -154,7 +154,7 @@ export default function AllocationsPage() {
                     </td>
                     <td className="px-4 py-3">
                       {(() => {
-                        const colorHex = odooColorToHex(alloc.leave_type_color)
+                        const colorHex = colorIndexToHex(alloc.leave_type_color)
                         return (
                           <span
                             className="px-2 py-1 text-xs rounded-full"

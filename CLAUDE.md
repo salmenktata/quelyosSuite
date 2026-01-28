@@ -140,7 +140,18 @@ Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, pari
 Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
 ## 🔒 ANONYMISATION ODOO - RÈGLES STRICTES
-**Objectif** : Masquer toute trace d'Odoo dans TOUS les frontends (vitrine-client ET dashboard-client)
+**Objectif** : Masquer toute trace d'Odoo dans TOUS les frontends (vitrine-client, dashboard-client ET vitrine-quelyos)
+
+### ⚠️ RÈGLE ABSOLUE - À RESPECTER LORS DE L'ÉCRITURE DU CODE
+**JAMAIS écrire "Odoo" ou "odoo" dans** :
+1. **Strings UI** : `"Instance Odoo"` → `"Instance dédiée"` (visible utilisateur)
+2. **Noms de fichiers** : `odooColors.ts` → `colorPalette.ts`
+3. **Noms de fonctions** : `odooColorToHex()` → `colorIndexToHex()`
+4. **Imports/Exports** : `import { ... } from '@/lib/odoo'` → `'@/lib/backend'`
+5. **Commentaires .env** : `# Backend API (Odoo)` → `# Backend API`
+6. **Variables** : `ODOO_URL` → `BACKEND_URL`
+
+**Exception unique** : `vitrine-client/src/app/legal/page.tsx` (conformité LGPL)
 
 ### Champs API
 **TOUJOURS utiliser les noms standards** :
@@ -194,6 +205,12 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 | `/api/backend-sso-redirect` | Proxy SSO vers backend |
 | `/api/backend-passkey-redirect` | Proxy Passkey vers backend |
 | `/api/backend-auth` | Auth (NE JAMAIS exposer `odooUrl` dans la réponse) |
+
+### Contenu Marketing/Pricing
+**Dans les pages commerciales (pricing, features, FAQ)** :
+- ❌ `"Instance Odoo dédiée"` → ✅ `"Instance dédiée isolée"`
+- ❌ `"basé sur Odoo"` → ✅ `"infrastructure ERP"`
+- ❌ `"technologie Odoo"` → ✅ `"technologie open-source"`
 
 ### Vérification
 Lancer `/no-odoo` avant chaque commit pour vérifier conformité dans vitrine-client, dashboard-client ET vitrine-quelyos.

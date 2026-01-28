@@ -1,10 +1,10 @@
 /**
- * Utilitaire de conversion des couleurs Odoo
- * Odoo utilise des index de couleur (0-11) pour les types de congé, etc.
+ * Utilitaire de conversion des index de couleur système
+ * Le backend utilise des index de couleur (0-11) pour les types de congé, etc.
  */
 
-// Palette de couleurs Odoo (index 0-11)
-const ODOO_COLOR_PALETTE: Record<number, string> = {
+// Palette de couleurs système (index 0-11)
+const COLOR_PALETTE: Record<number, string> = {
   0: '#FFFFFF',   // White
   1: '#F06050',   // Red
   2: '#F4A460',   // Orange
@@ -20,9 +20,9 @@ const ODOO_COLOR_PALETTE: Record<number, string> = {
 }
 
 /**
- * Convertit un index de couleur Odoo en couleur hexadécimale
+ * Convertit un index de couleur en couleur hexadécimale
  */
-export function odooColorToHex(colorIndex: number | string | undefined | null, defaultColor = '#6b7280'): string {
+export function colorIndexToHex(colorIndex: number | string | undefined | null, defaultColor = '#6b7280'): string {
   if (colorIndex === undefined || colorIndex === null) {
     return defaultColor
   }
@@ -32,5 +32,5 @@ export function odooColorToHex(colorIndex: number | string | undefined | null, d
     return colorIndex
   }
 
-  return ODOO_COLOR_PALETTE[colorIndex] ?? defaultColor
+  return COLOR_PALETTE[colorIndex] ?? defaultColor
 }
