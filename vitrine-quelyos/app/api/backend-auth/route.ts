@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const ODOO_URL = process.env.ODOO_URL || 'http://localhost:8069';
-const ODOO_DB = process.env.ODOO_DB || 'quelyos';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069';
+const BACKEND_DB = process.env.BACKEND_DB || 'quelyos';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,13 +11,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Login et mot de passe requis' }, { status: 400 });
     }
 
-    const response = await fetch(`${ODOO_URL}/web/session/authenticate`, {
+    const response = await fetch(`${BACKEND_URL}/web/session/authenticate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'call',
-        params: { db: ODOO_DB, login, password },
+        params: { db: BACKEND_DB, login, password },
         id: 1,
       }),
     });
@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
       name: data.result.name,
       username: data.result.username || login,
       session_id: sessionId,
-      odooUrl: ODOO_URL,
     });
   } catch {
     return NextResponse.json(

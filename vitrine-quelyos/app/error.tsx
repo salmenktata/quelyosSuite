@@ -12,17 +12,18 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    logger.error(error);
+    // Log only digest, not full error message (security)
+    logger.error('Page error:', { digest: error.digest });
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
       <div className="text-center px-4">
-        <h1 className="text-6xl font-bold text-white mb-4">Erreur</h1>
-        <h2 className="text-2xl font-semibold text-slate-300 mb-4">
+        <h1 className="text-6xl font-bold text-slate-900 dark:text-white mb-4">Erreur</h1>
+        <h2 className="text-2xl font-semibold text-slate-600 dark:text-slate-300 mb-4">
           Une erreur s&apos;est produite
         </h2>
-        <p className="text-slate-400 mb-8">
+        <p className="text-slate-500 dark:text-slate-400 mb-8">
           Quelque chose ne s&apos;est pas passé comme prévu.
         </p>
         <div className="flex gap-4 justify-center">
@@ -34,7 +35,7 @@ export default function Error({
           </button>
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
+            className="inline-block px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
           >
             Retour à l&apos;accueil
           </Link>

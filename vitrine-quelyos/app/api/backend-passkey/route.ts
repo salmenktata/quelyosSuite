@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
-const ODOO_URL = process.env.ODOO_URL || 'http://localhost:8069';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'start-auth') {
       // Get passkey authentication options from backend
-      const response = await fetch(`${ODOO_URL}/auth/passkey/start-auth`, {
+      const response = await fetch(`${BACKEND_URL}/auth/passkey/start-auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'verify') {
       // Verify passkey response with backend
-      const response = await fetch(`${ODOO_URL}/web/login`, {
+      const response = await fetch(`${BACKEND_URL}/web/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ webauthn_response: webauthnResponse }),
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         const setCookie = response.headers.get('set-cookie');
         return NextResponse.json({
           success: true,
-          redirect: `${ODOO_URL}/web`,
+          redirect: '/api/backend-passkey-redirect',
           sessionCookie: setCookie,
         });
       }

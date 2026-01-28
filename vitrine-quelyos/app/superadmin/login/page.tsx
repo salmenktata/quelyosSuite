@@ -2,8 +2,6 @@
 
 import { FormEvent, useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { config } from '@/app/lib/config';
 
 const Shield = ({ className }: { className?: string }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,30 +62,16 @@ function LoginLoading() {
 }
 
 function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/superadmin/dashboard';
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [passkeyLoading, setPasskeyLoading] = useState(false);
-  const [passkeySupported, setPasskeySupported] = useState(false);
-
-  // Check if passkey is supported
-  useState(() => {
-    if (typeof window !== 'undefined' && window.PublicKeyCredential) {
-      setPasskeySupported(true);
-    }
-  });
-
-  const odooUrl = process.env.NEXT_PUBLIC_ODOO_URL || 'http://localhost:8069';
+  const [passkeyLoading] = useState(false);
 
   function handlePasskeyLogin() {
-    // Redirect to backend passkey page (same origin as passkey registration)
-    window.location.href = `${odooUrl}/auth/passkey-page?redirect=/web`;
+    // Redirect via proxy to hide backend URL
+    window.location.href = '/api/backend-passkey-redirect';
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -110,13 +94,10 @@ function LoginForm() {
         return;
       }
 
-      // Redirect via SSO endpoint (creates Backend session and redirects)
-      const odooUrl = data.odooUrl || 'http://localhost:8069';
-
-      // Create form to POST to backend SSO endpoint
+      // Redirect via proxy SSO endpoint (hides backend URL)
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = `${odooUrl}/api/auth/sso-redirect`;
+      form.action = '/api/backend-sso-redirect';
 
       const loginInput = document.createElement('input');
       loginInput.type = 'hidden';
