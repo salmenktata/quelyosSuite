@@ -135,10 +135,10 @@ from .graceful_degradation import get_degradation_manager, DegradationLevel
 from .cache_headers import with_cache_headers, CacheControl, cache_preset
 from .api_analytics import track_api_call, get_analytics
 from .chaos import chaos_enabled, get_chaos_monkey, ChaosType
-from .sharding import sharded, get_shard_router, ShardingStrategy
+from .sharding import get_shard_router, ShardingStrategy
 from .cdn import purge_on_change, get_cdn_manager
-from .batching import get_batch_processor, DataLoader, create_dataloader
+from .batching import BatchProcessor, DataLoader
 from .circuit_dashboard import get_circuit_dashboard, CircuitState
 from .mocking import mock_response, get_mock_server
 from .load_shedding import get_load_shedder, LoadLevel
-from .priority_queue import prioritized, get_priority_queue, Priority
+from .priority_queue import Priority, PriorityQueue
