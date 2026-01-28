@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs } from '@/components/common';
@@ -549,7 +550,7 @@ export default function NewCampaignPage() {
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div
                       className="text-sm text-gray-600 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: formData.content }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formData.content) }}
                     />
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { MessageSquare, Clock, User, Filter, Send, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { useModule } from '@/components/ModularLayout';
 
@@ -332,7 +333,7 @@ export default function Tickets() {
                     }`}
                   >
                     <p className="text-sm font-medium mb-1">{message.authorName}</p>
-                    <div className="text-sm" dangerouslySetInnerHTML={{ __html: message.content }} />
+                    <div className="text-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content) }} />
                     <p className={`text-xs mt-2 ${message.isStaff ? 'text-blue-100' : 'text-gray-500'}`}>
                       {new Date(message.createdAt).toLocaleString('fr-FR')}
                     </p>

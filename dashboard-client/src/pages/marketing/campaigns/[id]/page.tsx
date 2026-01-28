@@ -1,4 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Badge, Skeleton, ConfirmModal } from '@/components/common';
 import { useCampaign, useSendCampaign, useDeleteCampaign } from '@/hooks/useMarketingCampaigns';
@@ -220,7 +221,7 @@ export default function CampaignDetailPage() {
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Contenu</label>
                     <div
                       className="mt-2 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 prose dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: campaign.content || '<p>Aucun contenu</p>' }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaign.content || '<p>Aucun contenu</p>') }}
                     />
                   </div>
                 </div>

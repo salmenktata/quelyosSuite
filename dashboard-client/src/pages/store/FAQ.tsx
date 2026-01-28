@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { Plus, Edit, Trash2, ChevronDown, ChevronRight, HelpCircle } from 'lucide-react';
 import { useModule } from '@/components/ModularLayout';
 
@@ -253,7 +254,7 @@ export default function FAQPage() {
                   <div className="px-4 pb-4 pl-11">
                     <div
                       className="prose dark:prose-invert prose-sm max-w-none text-gray-600 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: faq.answer }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.answer) }}
                     />
                   </div>
                 )}
