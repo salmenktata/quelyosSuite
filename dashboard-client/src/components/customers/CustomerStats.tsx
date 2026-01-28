@@ -1,4 +1,4 @@
-import { UserGroupIcon, CurrencyEuroIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { Users, Euro, BarChart3 } from 'lucide-react'
 import { formatPrice } from '../../lib/utils/formatters'
 
 interface CustomerStatsProps {
@@ -19,7 +19,7 @@ export function CustomerStats({ totalCustomers, totalRevenue, avgBasket }: Custo
             </p>
           </div>
           <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-            <UserGroupIcon className="h-6 w-6 md:h-8 md:w-8 text-indigo-600 dark:text-indigo-400" />
+            <Users className="h-6 w-6 md:h-8 md:w-8 text-indigo-600 dark:text-indigo-400" />
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@ export function CustomerStats({ totalCustomers, totalRevenue, avgBasket }: Custo
             </p>
           </div>
           <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-            <CurrencyEuroIcon className="h-6 w-6 md:h-8 md:w-8 text-green-600 dark:text-green-400" />
+            <Euro className="h-6 w-6 md:h-8 md:w-8 text-green-600 dark:text-green-400" />
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@ export function CustomerStats({ totalCustomers, totalRevenue, avgBasket }: Custo
             </p>
           </div>
           <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-            <ChartBarIcon className="h-6 w-6 md:h-8 md:w-8 text-amber-600 dark:text-amber-400" />
+            <BarChart3 className="h-6 w-6 md:h-8 md:w-8 text-amber-600 dark:text-amber-400" />
           </div>
         </div>
       </div>

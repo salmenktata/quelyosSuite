@@ -7,7 +7,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
-import { XMarkIcon, ArrowDownTrayIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
+import { X, Download, CheckCircle } from 'lucide-react'
 import { useExportStock } from '../../hooks/useStock'
 import { useToast } from '../../hooks/useToast'
 import { exportToCSV } from '../../lib/csv-utils'
@@ -90,7 +90,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                      <ArrowDownTrayIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+                      <Download className="w-6 h-6 text-green-600 dark:text-green-400" />
                     </div>
                     <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
                       Exporter le stock (CSV)
@@ -101,7 +101,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     aria-label="Fermer"
                   >
-                    <XMarkIcon className="w-5 h-5" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -183,7 +183,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
                         </>
                       ) : (
                         <>
-                          <ArrowDownTrayIcon className="w-5 h-5" />
+                          <Download className="w-5 h-5" />
                           Exporter CSV
                         </>
                       )}

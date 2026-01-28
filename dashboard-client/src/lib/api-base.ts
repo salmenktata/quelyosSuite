@@ -2,31 +2,118 @@
  * API Base - Utilitaires pour les appels API
  */
 
+import {
+  backendCircuitBreaker,
+  CircuitBreakerError,
+} from './api/circuitBreaker'
+
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8069'
 
+/**
+ * Options pour fetchApi
+ */
+export interface FetchApiOptions extends RequestInit {
+  /** Désactiver le circuit breaker pour cet appel */
+  skipCircuitBreaker?: boolean
+  /** Nombre de retries en cas d'échec */
+  retries?: number
+  /** Délai entre les retries (ms) */
+  retryDelay?: number
+}
+
+/**
+ * Fetch avec circuit breaker et retry automatique
+ */
 export async function fetchApi<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: FetchApiOptions = {}
 ): Promise<T> {
+  const {
+    skipCircuitBreaker = false,
+    retries = 0,
+    retryDelay = 1000,
+    ...fetchOptions
+  } = options
+
   // Utiliser session_id (auth principale) ou backend_session_token (legacy)
   const token = localStorage.getItem('session_id') || localStorage.getItem('backend_session_token')
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
-    ...options.headers,
+    ...fetchOptions.headers,
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  })
+  const doFetch = async (): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...fetchOptions,
+      headers,
+    })
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`)
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => '')
+      throw new ApiError(
+        `API Error: ${response.status}`,
+        response.status,
+        errorBody
+      )
+    }
+
+    return response.json()
   }
 
-  return response.json()
+  // Avec circuit breaker
+  const executeWithRetry = async (attempt: number = 0): Promise<T> => {
+    try {
+      if (skipCircuitBreaker) {
+        return await doFetch()
+      }
+      return await backendCircuitBreaker.execute(doFetch)
+    } catch (error) {
+      // Ne pas retry sur circuit breaker open
+      if (error instanceof CircuitBreakerError) {
+        throw error
+      }
+
+      // Retry si configuré
+      if (attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay))
+        return executeWithRetry(attempt + 1)
+      }
+
+      throw error
+    }
+  }
+
+  return executeWithRetry()
+}
+
+/**
+ * Erreur API avec détails
+ */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public responseBody?: string
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+/**
+ * Vérifie si le backend est disponible
+ */
+export function isBackendAvailable(): boolean {
+  return backendCircuitBreaker.getState() !== 'OPEN'
+}
+
+/**
+ * Récupère les stats du circuit breaker
+ */
+export function getBackendHealth() {
+  return backendCircuitBreaker.getStats()
 }
 
 export function buildQueryString(params: Record<string, unknown>): string {

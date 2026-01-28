@@ -6,6 +6,12 @@ import logging
 from odoo import http
 from odoo.http import request
 from ..config import is_origin_allowed, get_cors_headers
+from ..lib.rate_limiter import (
+    check_rate_limit,
+    RateLimitConfig,
+    rate_limit_key,
+    get_rate_limiter
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -151,6 +157,25 @@ class BaseController(http.Controller):
             }
 
         return None
+
+    def _check_rate_limit(self, limit_config=None, endpoint_name="api"):
+        """
+        Vérifie le rate limit pour la requête courante.
+
+        Args:
+            limit_config: Tuple (max_requests, window_seconds)
+                         Utiliser RateLimitConfig.* pour les valeurs prédéfinies
+            endpoint_name: Nom de l'endpoint pour le logging
+
+        Returns:
+            dict d'erreur si limite dépassée, None si OK
+
+        Usage:
+            error = self._check_rate_limit(RateLimitConfig.LOGIN, 'login')
+            if error:
+                return error
+        """
+        return check_rate_limit(request, limit_config, endpoint_name)
 
     def _require_admin(self):
         """

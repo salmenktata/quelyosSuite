@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Badge, Skeleton } from '../common'
-import { ChevronRightIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { ChevronRight, Clock } from 'lucide-react'
 import { formatPrice, formatDate } from '../../lib/utils/formatters'
 import { getOrderStatusVariant, getOrderStatusLabel } from '../../lib/utils/order-status'
 import type { RecentOrder } from '../../hooks/useDashboard'
@@ -19,7 +19,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6">
         <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <ClockIcon className="w-5 h-5" aria-hidden="true" />
+          <Clock className="w-5 h-5" aria-hidden="true" />
           Commandes récentes
         </h3>
         <div className="space-y-3">
@@ -35,7 +35,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6">
         <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <ClockIcon className="w-5 h-5" aria-hidden="true" />
+          <Clock className="w-5 h-5" aria-hidden="true" />
           Commandes récentes
         </h3>
         <div className="text-center py-8">
@@ -55,7 +55,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <ClockIcon className="w-5 h-5" aria-hidden="true" />
+          <Clock className="w-5 h-5" aria-hidden="true" />
           Commandes récentes
         </h3>
         <Link
@@ -87,7 +87,7 @@ export function DashboardRecentOrders({ orders, isLoading }: DashboardRecentOrde
               <p className="text-sm font-semibold text-gray-900 dark:text-white">
                 {formatPrice(order.amount_total)}
               </p>
-              <ChevronRightIcon className="w-5 h-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
+              <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
             </div>
           </Link>
         ))}

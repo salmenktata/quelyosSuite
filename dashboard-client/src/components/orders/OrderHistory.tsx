@@ -1,5 +1,5 @@
 import { Skeleton } from '../common'
-import { ClockIcon } from '@heroicons/react/24/outline'
+import { Clock } from 'lucide-react'
 import { formatDate } from '../../lib/utils/formatters'
 
 interface TrackingValue {
@@ -39,7 +39,7 @@ export function OrderHistory({ history, isLoading }: OrderHistoryProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 md:p-6">
       <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-        <ClockIcon className="h-5 w-5" aria-hidden="true" />
+        <Clock className="h-5 w-5" aria-hidden="true" />
         Historique
       </h2>
       <div className="space-y-4 max-h-96 overflow-y-auto" role="log" aria-label="Historique des modifications">

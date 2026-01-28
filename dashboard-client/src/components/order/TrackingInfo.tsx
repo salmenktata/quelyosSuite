@@ -1,6 +1,6 @@
 import { useShippingTracking } from '../../hooks/useOrders'
 import { Button } from '../common'
-import { TruckIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
+import { Truck, AlertCircle } from 'lucide-react'
 
 interface TrackingInfoProps {
   orderId: number
@@ -27,11 +27,11 @@ export function TrackingInfo({ orderId }: TrackingInfoProps) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <TruckIcon className="h-5 w-5" />
+          <Truck className="h-5 w-5" />
           Suivi de livraison
         </h3>
         <div className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-          <ExclamationCircleIcon className="h-6 w-6 text-gray-400 shrink-0 mt-0.5" />
+          <AlertCircle className="h-6 w-6 text-gray-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {data?.data?.message || 'Aucun suivi disponible pour cette commande'}
@@ -47,7 +47,7 @@ export function TrackingInfo({ orderId }: TrackingInfoProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-        <TruckIcon className="h-5 w-5" />
+        <Truck className="h-5 w-5" />
         Suivi de livraison
       </h3>
 

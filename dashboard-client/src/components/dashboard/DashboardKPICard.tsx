@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { ArrowTrendingUpIcon, ArrowTrendingDownIcon } from '@heroicons/react/24/outline'
+import { TrendingUp, TrendingDown } from 'lucide-react'
 import { formatPrice, formatNumber } from '../../lib/utils/formatters'
 
 interface DashboardKPICardProps {
@@ -41,9 +41,9 @@ export function DashboardKPICard({
             }`}
           >
             {variation > 0 ? (
-              <ArrowTrendingUpIcon className="w-4 h-4" aria-hidden="true" />
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />
             ) : (
-              <ArrowTrendingDownIcon className="w-4 h-4" aria-hidden="true" />
+              <TrendingDown className="w-4 h-4" aria-hidden="true" />
             )}
             <span>{Math.abs(variation).toFixed(1)}%</span>
           </div>

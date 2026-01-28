@@ -1,5 +1,5 @@
 import { formatPrice } from '../../lib/utils/formatters'
-import { ShoppingBagIcon } from '@heroicons/react/24/outline'
+import { ShoppingBag } from 'lucide-react'
 
 interface OrderLine {
   id: number
@@ -24,7 +24,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
   if (!lines || lines.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 text-center">
-        <ShoppingBagIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" aria-hidden="true" />
+        <ShoppingBag className="w-16 h-16 mx-auto text-gray-400 mb-4" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Aucun article</h3>
         <p className="text-gray-600 dark:text-gray-400">Cette commande ne contient aucun article.</p>
       </div>
@@ -81,7 +81,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
                       />
                     ) : (
                       <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-4">
-                        <ShoppingBagIcon className="w-6 h-6 text-gray-400" aria-hidden="true" />
+                        <ShoppingBag className="w-6 h-6 text-gray-400" aria-hidden="true" />
                       </div>
                     )}
                     <div className="text-sm font-medium text-gray-900 dark:text-white">{line.product.name}</div>
@@ -121,7 +121,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
                 />
               ) : (
                 <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                  <ShoppingBagIcon className="w-8 h-8 text-gray-400" aria-hidden="true" />
+                  <ShoppingBag className="w-8 h-8 text-gray-400" aria-hidden="true" />
                 </div>
               )}
               <div className="flex-1 min-w-0">

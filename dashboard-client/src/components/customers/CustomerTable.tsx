@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Badge } from '../common'
-import { EyeIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
+import { Eye, ArrowUp, ArrowDown } from 'lucide-react'
 import type { CustomerListItem } from '@/types'
 import { formatDate, formatPrice } from '../../lib/utils/formatters'
 
@@ -17,9 +17,9 @@ interface CustomerTableProps {
 function SortIcon({ field, sortField, sortOrder }: { field: SortField; sortField: SortField; sortOrder: SortOrder }) {
   if (sortField !== field) return null
   return sortOrder === 'asc' ? (
-    <ArrowUpIcon className="h-4 w-4 inline ml-1" aria-hidden="true" />
+    <ArrowUp className="h-4 w-4 inline ml-1" aria-hidden="true" />
   ) : (
-    <ArrowDownIcon className="h-4 w-4 inline ml-1" aria-hidden="true" />
+    <ArrowDown className="h-4 w-4 inline ml-1" aria-hidden="true" />
   )
 }
 
@@ -165,7 +165,7 @@ export function CustomerTable({ customers, sortField, sortOrder, onSort }: Custo
                     className="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-2 py-1"
                     aria-label={`Voir les détails de ${customer.name}`}
                   >
-                    <EyeIcon className="h-4 w-4" aria-hidden="true" />
+                    <Eye className="h-4 w-4" aria-hidden="true" />
                     Détails
                   </Link>
                 </td>
@@ -231,7 +231,7 @@ export function CustomerTable({ customers, sortField, sortOrder, onSort }: Custo
               className="mt-3 w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-lg font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
               aria-label={`Voir les détails de ${customer.name}`}
             >
-              <EyeIcon className="h-5 w-5" aria-hidden="true" />
+              <Eye className="h-5 w-5" aria-hidden="true" />
               Voir les détails
             </Link>
           </div>

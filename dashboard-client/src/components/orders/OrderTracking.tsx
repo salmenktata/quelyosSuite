@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Badge, Button, Skeleton } from '../common'
-import { TruckIcon, PencilIcon } from '@heroicons/react/24/outline'
+import { Truck, Pencil } from 'lucide-react'
 
 interface TrackingInfo {
   picking_id: number
@@ -48,7 +48,7 @@ export function OrderTracking({ trackingInfo, isLoading, onUpdateTracking, isUpd
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 md:p-6">
       <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-        <TruckIcon className="h-5 w-5" aria-hidden="true" />
+        <Truck className="h-5 w-5" aria-hidden="true" />
         Suivi colis
       </h2>
       <div className="space-y-4">
@@ -117,7 +117,7 @@ export function OrderTracking({ trackingInfo, isLoading, onUpdateTracking, isUpd
                     <Button
                       size="sm"
                       variant="ghost"
-                      icon={<PencilIcon className="h-4 w-4" />}
+                      icon={<Pencil className="h-4 w-4" />}
                       onClick={() =>
                         setEditingTracking({
                           pickingId: tracking.picking_id,

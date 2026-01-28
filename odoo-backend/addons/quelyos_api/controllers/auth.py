@@ -9,6 +9,7 @@ from odoo import http
 from odoo.http import request
 from odoo.addons.web.controllers.home import Home
 from ..config import get_cors_headers
+from ..lib.rate_limiter import check_rate_limit, RateLimitConfig, rate_limit_key, get_rate_limiter
 
 _logger = logging.getLogger(__name__)
 
@@ -67,6 +68,12 @@ class AuthController(http.Controller):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=cors_headers)
 
+        # Rate limiting - protection brute force
+        rate_error = check_rate_limit(request, RateLimitConfig.LOGIN, 'login')
+        if rate_error:
+            _logger.warning(f"Rate limit exceeded for login attempt from {request.httprequest.remote_addr}")
+            return rate_error
+
         try:
             params = request.params if hasattr(request, 'params') and request.params else {}
             login = params.get('login', '').strip()
@@ -80,6 +87,10 @@ class AuthController(http.Controller):
             uid = request.session.authenticate(request.env, {'db': db, 'login': login, 'password': password})
 
             if not uid:
+                # Track failed login attempts with stricter limit
+                fail_key = rate_limit_key(request, 'login_failed')
+                limiter = get_rate_limiter()
+                limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
                 return {'success': False, 'error': 'Identifiants invalides'}
 
             # Get session info

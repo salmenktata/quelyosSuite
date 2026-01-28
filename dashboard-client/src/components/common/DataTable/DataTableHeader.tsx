@@ -1,4 +1,4 @@
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
+import { ArrowUp, ArrowDown } from 'lucide-react'
 import type { DataTableColumn, SortOrder } from '@/types'
 
 interface DataTableHeaderProps<T> {
@@ -90,9 +90,9 @@ export function DataTableHeader<T>({
                 {isSortable && isCurrentSort && (
                   <span aria-hidden="true">
                     {sortOrder === 'asc' ? (
-                      <ArrowUpIcon className="h-4 w-4 inline" />
+                      <ArrowUp className="h-4 w-4 inline" />
                     ) : (
-                      <ArrowDownIcon className="h-4 w-4 inline" />
+                      <ArrowDown className="h-4 w-4 inline" />
                     )}
                   </span>
                 )}

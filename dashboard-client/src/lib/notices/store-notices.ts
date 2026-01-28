@@ -502,4 +502,108 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       }
     ]
   },
+  bundles: {
+    pageId: 'store-bundles',
+    title: 'Packs & Bundles',
+    purpose: 'Créez des packs de produits à prix réduit pour augmenter le panier moyen.',
+    icon: Package,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Packs multi-produits avec réduction',
+          'Calcul automatique des économies',
+          'Gestion du stock par pack',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Créer un pack : Combinez plusieurs produits',
+          'Définir le prix : Appliquez une réduction',
+          'Publier : Rendez le pack visible',
+        ]
+      }
+    ]
+  },
+  productImport: {
+    pageId: 'store-product-import',
+    title: 'Import/Export Produits',
+    purpose: 'Gérez vos produits en masse via des fichiers CSV.',
+    icon: FileText,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Export CSV de tous les produits',
+          'Import avec prévisualisation',
+          'Création et mise à jour en masse',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Exporter : Téléchargez votre catalogue',
+          'Préparer le CSV : Suivez le format indiqué',
+          'Importer : Vérifiez l\'aperçu avant validation',
+        ]
+      }
+    ]
+  },
+  flashSales: {
+    pageId: 'store-flash-sales',
+    title: 'Ventes Flash',
+    purpose: 'Créez des promotions limitées dans le temps.',
+    icon: Megaphone,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Ventes à durée limitée',
+          'Réductions personnalisées par produit',
+          'Suivi des performances',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Créer une vente : Définissez dates et produits',
+          'Programmer : Planifiez à l\'avance',
+          'Analyser : Suivez le CA',
+        ]
+      }
+    ]
+  },
+  reviews: {
+    pageId: 'store-reviews',
+    title: 'Avis Clients',
+    purpose: 'Modérez et répondez aux avis de vos clients.',
+    icon: Megaphone,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Modération des avis',
+          'Réponse aux clients',
+          'Statistiques et note moyenne',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Modérer : Approuvez les avis conformes',
+          'Répondre : Engagez avec vos clients',
+          'Analyser : Suivez la satisfaction',
+        ]
+      }
+    ]
+  },
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '../common'
-import { ArrowDownTrayIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { Download, Search } from 'lucide-react'
 import { useDebounce } from '../../hooks/useDebounce'
 
 interface CustomerFiltersProps {
@@ -50,7 +50,7 @@ export function CustomerFilters({
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
             </div>
             <input
               id="customer-search"
@@ -79,7 +79,7 @@ export function CustomerFilters({
             onClick={onExportCSV}
             loading={isExporting}
             disabled={isExporting}
-            icon={<ArrowDownTrayIcon className="h-5 w-5" />}
+            icon={<Download className="h-5 w-5" />}
             className="w-full sm:w-auto"
             aria-label="Exporter les clients en CSV"
           >

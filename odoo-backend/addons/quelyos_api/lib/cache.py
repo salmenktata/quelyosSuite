@@ -222,3 +222,156 @@ class CacheTTL:
     CART = 300               # 5 minutes - Panier
     SITE_CONFIG = 3600       # 1 heure - Configuration site
     SEARCH_RESULTS = 180     # 3 minutes - Résultats recherche
+    PRICELISTS = 1800        # 30 minutes - Listes de prix
+    STOCK_SUMMARY = 60       # 1 minute - Résumé stock (données volatiles)
+    DASHBOARD_STATS = 300    # 5 minutes - Stats dashboard
+
+
+# =============================================================================
+# HELPERS DE CACHE STRATÉGIQUES
+# =============================================================================
+
+def cached(prefix: str, ttl: int = 300, key_args: list = None):
+    """
+    Décorateur pour cacher le résultat d'une fonction.
+
+    Usage:
+        @cached('products', ttl=CacheTTL.PRODUCTS_LIST, key_args=['category_id', 'limit'])
+        def get_products(self, category_id=None, limit=20):
+            ...
+
+    Args:
+        prefix: Préfixe de la clé cache
+        ttl: Time-To-Live en secondes
+        key_args: Liste des arguments à inclure dans la clé cache
+    """
+    from functools import wraps
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            cache = get_cache_service()
+
+            # Construire la clé
+            if key_args:
+                key_params = {k: kwargs.get(k) for k in key_args if k in kwargs}
+            else:
+                key_params = kwargs
+
+            cache_key = cache._generate_key(prefix, **key_params)
+
+            # Vérifier le cache
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+
+            # Exécuter et cacher
+            result = func(*args, **kwargs)
+
+            if result is not None:
+                cache.set(cache_key, result, ttl)
+
+            return result
+
+        # Ajouter méthode pour invalider
+        def invalidate(**kwargs):
+            cache = get_cache_service()
+            if kwargs:
+                cache_key = cache._generate_key(prefix, **kwargs)
+                cache.delete(cache_key)
+            else:
+                cache.invalidate_pattern(f"{prefix}:*")
+
+        wrapper.invalidate = invalidate
+        wrapper.cache_prefix = prefix
+
+        return wrapper
+    return decorator
+
+
+class CacheStrategies:
+    """
+    Stratégies de cache prédéfinies pour les cas d'usage courants.
+    """
+
+    @staticmethod
+    def cache_products_list(result: dict, params: dict) -> bool:
+        """Cache la liste des produits"""
+        cache = get_cache_service()
+        key = cache._generate_key('products:list', **params)
+        return cache.set(key, result, CacheTTL.PRODUCTS_LIST)
+
+    @staticmethod
+    def get_cached_products_list(params: dict) -> dict | None:
+        """Récupère la liste des produits depuis le cache"""
+        cache = get_cache_service()
+        key = cache._generate_key('products:list', **params)
+        return cache.get(key)
+
+    @staticmethod
+    def cache_product_detail(product_id: int, result: dict) -> bool:
+        """Cache le détail d'un produit"""
+        cache = get_cache_service()
+        key = f"products:detail:{product_id}"
+        return cache.set(key, result, CacheTTL.PRODUCT_DETAIL)
+
+    @staticmethod
+    def get_cached_product_detail(product_id: int) -> dict | None:
+        """Récupère le détail d'un produit depuis le cache"""
+        cache = get_cache_service()
+        key = f"products:detail:{product_id}"
+        return cache.get(key)
+
+    @staticmethod
+    def invalidate_product(product_id: int = None):
+        """Invalide le cache d'un produit ou de tous les produits"""
+        cache = get_cache_service()
+        if product_id:
+            cache.delete(f"products:detail:{product_id}")
+        cache.invalidate_pattern("products:list:*")
+
+    @staticmethod
+    def cache_categories(result: list) -> bool:
+        """Cache les catégories"""
+        cache = get_cache_service()
+        return cache.set("categories:all", result, CacheTTL.CATEGORIES)
+
+    @staticmethod
+    def get_cached_categories() -> list | None:
+        """Récupère les catégories depuis le cache"""
+        cache = get_cache_service()
+        return cache.get("categories:all")
+
+    @staticmethod
+    def invalidate_categories():
+        """Invalide le cache des catégories"""
+        cache = get_cache_service()
+        cache.invalidate_pattern("categories:*")
+
+    @staticmethod
+    def cache_site_config(tenant_id: int, config: dict) -> bool:
+        """Cache la configuration site d'un tenant"""
+        cache = get_cache_service()
+        key = f"config:tenant:{tenant_id}"
+        return cache.set(key, config, CacheTTL.SITE_CONFIG)
+
+    @staticmethod
+    def get_cached_site_config(tenant_id: int) -> dict | None:
+        """Récupère la configuration site depuis le cache"""
+        cache = get_cache_service()
+        key = f"config:tenant:{tenant_id}"
+        return cache.get(key)
+
+    @staticmethod
+    def cache_dashboard_stats(user_id: int, stats: dict) -> bool:
+        """Cache les stats dashboard d'un utilisateur"""
+        cache = get_cache_service()
+        key = f"dashboard:stats:{user_id}"
+        return cache.set(key, stats, CacheTTL.DASHBOARD_STATS)
+
+    @staticmethod
+    def get_cached_dashboard_stats(user_id: int) -> dict | None:
+        """Récupère les stats dashboard depuis le cache"""
+        cache = get_cache_service()
+        key = f"dashboard:stats:{user_id}"
+        return cache.get(key)
