@@ -380,7 +380,7 @@ export default function BureauEtudesPage() {
               <ArrowRight size={16} />
             </Link>
             <Link
-              href="/finance/contact"
+              href="/contact"
               className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-6 py-3 font-semibold text-white transition-all hover:bg-white/10"
             >
               Demander une démo

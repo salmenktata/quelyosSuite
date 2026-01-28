@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, Sparkles } from "lucide-react";
 import Container from "./Container";
 
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-slate-900/50">
       <Container className="py-12">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-5">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -83,6 +83,40 @@ export default function Footer() {
                   className="text-sm text-slate-400 hover:text-white"
                 >
                   Marketing
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Démarrer */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
+              Démarrer
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/marketing/register"
+                  className="flex items-center gap-2 text-sm text-fuchsia-400 hover:text-fuchsia-300"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  Essai gratuit
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/tarifs"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  Voir les tarifs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  Nous contacter
                 </Link>
               </li>
             </ul>

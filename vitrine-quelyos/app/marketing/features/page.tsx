@@ -125,7 +125,7 @@ export default function FeaturesPage() {
               Fonctionnalités
             </Link>
             <Link
-              href="/marketing/tarifs"
+              href="/tarifs"
               className="text-gray-400 hover:text-white text-sm transition-colors"
             >
               Tarifs

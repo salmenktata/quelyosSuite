@@ -48,16 +48,41 @@ const quelyosDebrandService = {
     },
 
     _replaceOdooReferences() {
-        // Text replacements mapping
+        // Text replacements mapping - comprehensive
         const replacements = [
+            // Bot names
             { from: /OdooBot/gi, to: 'QuelyosBot' },
+            { from: /Odoo Bot/gi, to: 'Quelyos Bot' },
+            // Domain references
             { from: /Odoo\.com/gi, to: 'Quelyos' },
-            { from: /Powered by Odoo/gi, to: '' },
+            { from: /odoo\.com/gi, to: 'quelyos.com' },
+            { from: /www\.odoo\.com/gi, to: 'quelyos.com' },
+            // Powered by
+            { from: /Powered by Odoo/gi, to: 'Powered by Quelyos' },
+            { from: /Propulsé par Odoo/gi, to: 'Propulsé par Quelyos' },
+            // About & Documentation
             { from: /About Odoo/gi, to: 'À propos' },
+            { from: /À propos d'Odoo/gi, to: 'À propos' },
             { from: /Odoo Documentation/gi, to: 'Documentation' },
+            { from: /Documentation Odoo/gi, to: 'Documentation' },
+            // Error messages
             { from: /Odoo Server Error/gi, to: 'Erreur Serveur' },
+            { from: /Erreur Serveur Odoo/gi, to: 'Erreur Serveur' },
+            { from: /Odoo Error/gi, to: 'Erreur' },
+            // Login related
             { from: /Log in with Odoo\.com/gi, to: '' },
+            { from: /Se connecter avec Odoo/gi, to: '' },
             { from: /My Odoo\.com account/gi, to: '' },
+            { from: /Mon compte Odoo/gi, to: '' },
+            // Generic Odoo text
+            { from: /Odoo S\.A\./gi, to: 'Quelyos' },
+            { from: /Odoo SA/gi, to: 'Quelyos' },
+            { from: /Odoo ERP/gi, to: 'Quelyos Suite' },
+            { from: /Odoo Community/gi, to: 'Quelyos Suite' },
+            { from: /Odoo Enterprise/gi, to: 'Quelyos Suite Pro' },
+            // Welcome messages
+            { from: /Bienvenue sur Odoo/gi, to: 'Bienvenue sur Quelyos' },
+            { from: /Welcome to Odoo/gi, to: 'Welcome to Quelyos' },
         ];
 
         // Elements to search for text replacement

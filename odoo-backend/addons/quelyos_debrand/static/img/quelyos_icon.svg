@@ -1,19 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
   <defs>
-    <linearGradient id="suiteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1"/>
-      <stop offset="50%" style="stop-color:#8b5cf6"/>
-      <stop offset="100%" style="stop-color:#a855f7"/>
+    <linearGradient id="quelyosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d946ef"/>
+      <stop offset="100%" style="stop-color:#f97316"/>
     </linearGradient>
   </defs>
-  
-  <!-- Fond -->
-  <rect width="48" height="48" rx="12" fill="url(#suiteGrad)"/>
-  
+
+  <!-- Fond gradient fuchsia → orange -->
+  <rect width="48" height="48" rx="12" fill="url(#quelyosGrad)"/>
+
   <!-- Q stylisé blanc -->
   <circle cx="24" cy="22" r="11" stroke="white" stroke-width="3" fill="none"/>
   <line x1="30" y1="28" x2="37" y2="37" stroke="white" stroke-width="3" stroke-linecap="round"/>
-  
-  <!-- Accent -->
-  <circle cx="38" cy="10" r="4" fill="white" opacity="0.4"/>
+
+  <!-- Sparkle accent -->
+  <path d="M38 8 L39 11 L42 12 L39 13 L38 16 L37 13 L34 12 L37 11 Z" fill="white" opacity="0.6"/>
 </svg>

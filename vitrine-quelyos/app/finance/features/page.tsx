@@ -593,7 +593,7 @@ export default function FeaturesPage() {
                   <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
-                  href="/finance/contact"
+                  href="/contact"
                   className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-lg font-medium text-white backdrop-blur-sm transition-all hover:bg-white/10"
                 >
                   Parler à un expert

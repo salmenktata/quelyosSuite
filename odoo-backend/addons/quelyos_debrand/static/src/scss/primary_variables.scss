@@ -1,32 +1,11 @@
 // =============================================================================
 // Quelyos Debrand - Primary Variables Override
-// Replaces Odoo purple (#714B67) with Quelyos Indigo palette
+// Only navbar and sidebar customization
 // =============================================================================
 
-// Brand colors - Quelyos Indigo palette
-$o-brand-odoo: #6366F1 !default;
-$o-brand-primary: #6366F1 !default;
-$o-brand-secondary: #8B5CF6 !default;
+// Brand colors - Quelyos Fuchsia/Orange
+$o-brand-odoo: #d946ef !default;
+$o-brand-primary: #d946ef !default;
 
-// Enterprise color (same as brand for consistency)
-$o-enterprise-color: #6366F1 !default;
-
-// Action/Link colors
-$o-action-color: #6366F1 !default;
-
-// Status colors
-$o-success-color: #10B981 !default;
-$o-warning-color: #F59E0B !default;
-$o-danger-color: #EF4444 !default;
-$o-info-color: #3B82F6 !default;
-
-// Navbar and main menu
-$o-navbar-background: #1E1B4B !default;
-$o-main-menu-bg: #312E81 !default;
-
-// Background colors
-$o-webclient-background: #F9FAFB !default;
-$o-view-background-color: #FFFFFF !default;
-
-// Community color (remove enterprise upsell styling)
-$o-community-color: #6366F1 !default;
+// Navbar - Dark with fuchsia accent
+$o-navbar-background: #030712 !default;

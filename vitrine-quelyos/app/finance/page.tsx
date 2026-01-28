@@ -385,7 +385,7 @@ export default function FinancePage() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
-                href="/finance/contact"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition-all hover:bg-white/10"
               >
                 Demander une démo

@@ -8,7 +8,7 @@
         <field name="priority">100</field>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app data-string="Quelyos" string="Quelyos" name="quelyos_debrand" groups="base.group_system">
+                <app data-string="Quelyos" string="Quelyos" name="quelyos_debrand" groups="base.group_system" logo="/quelyos_debrand/static/img/quelyos_icon.svg">
                     <block title="Personnalisation Quelyos" name="quelyos_branding">
                         <setting id="quelyos_system_name_setting" title="Nom affiché dans l'interface">
                             <field name="quelyos_system_name"/>

@@ -800,7 +800,7 @@ export default function PricingPage() {
                 <ArrowRight size={16} />
               </Link>
               <Link
-                href="/finance/contact"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-lg px-6 py-4 text-sm font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:bg-white/5"
               >
                 Parler à un expert

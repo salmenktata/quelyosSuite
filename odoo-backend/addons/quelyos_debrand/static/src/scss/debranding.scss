@@ -1,186 +1,263 @@
 // =============================================================================
-// Quelyos Debrand - Custom Styles
+// Quelyos Debrand - Navbar & Sidebar Only
 // =============================================================================
 
-// Hide Odoo branding elements
+$quelyos-fuchsia: #d946ef;
+$quelyos-orange: #f97316;
+$quelyos-dark: #030712;
+
+// =============================================================================
+// Hide ALL Odoo branding elements
+// =============================================================================
+
 .o_odoo_logo,
 .o_odoo_icon,
 .o_footer_poweredby,
 .o_database_manager_link,
+.o_odoo_about_link,
 [href*="odoo.com"],
-.o_odoo_about_link {
-    display: none !important;
-}
-
-// Login page - Hide powered by Odoo footer and replace logo
-.o_database_list {
-    // Hide the footer with "Powered by Odoo"
-    .card-body > .text-center.small.border-top {
-        display: none !important;
-    }
-
-    // Replace company logo with Quelyos logo via CSS background
-    .card-body > .text-center.pb-3.border-bottom img {
-        content: url('/quelyos_debrand/static/img/quelyos_logo.svg') !important;
-        max-height: 80px !important;
-    }
-}
-
-// Login page customization
-.o_login_background {
-    background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #6366F1 100%) !important;
-}
-
-.o_login_panel {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 16px !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-}
-
-// Hide "Powered by Odoo" footer
+[href*="www.odoo.com"],
+[href*="accounts.odoo.com"],
+// About dialog links
+.o_dialog a[href*="odoo"],
+// Login page Odoo links
+.o_login_auth a[href*="odoo"],
+// Footer credits
 .o_login_footer,
-.o_footer,
-footer.o_footer {
-    display: none !important;
-}
-
-// Primary button styling
-.btn-primary {
-    background-color: #6366F1 !important;
-    border-color: #6366F1 !important;
-
-    &:hover, &:focus {
-        background-color: #4F46E5 !important;
-        border-color: #4F46E5 !important;
-    }
-
-    &:active {
-        background-color: #4338CA !important;
-        border-color: #4338CA !important;
-    }
-}
-
-// Secondary styling
-.btn-secondary {
-    border-color: #6366F1 !important;
-    color: #6366F1 !important;
-
-    &:hover {
-        background-color: #6366F1 !important;
-        color: white !important;
-    }
-}
-
-// Link colors
-a:not(.btn) {
-    color: #6366F1;
-
-    &:hover {
-        color: #4F46E5;
-    }
-}
-
-// Navbar styling
-.o_main_navbar {
-    background-color: #1E1B4B !important;
-
-    .o_menu_brand {
-        color: white !important;
-    }
-
-    .o_navbar_apps_menu .dropdown-toggle {
-        color: white !important;
-    }
-}
-
-// App menu icons
-.o_app_icon {
-    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%) !important;
-}
-
-// Kanban view cards
-.o_kanban_record {
-    border-left-color: #6366F1 !important;
-}
-
-// Selection highlight
-::selection {
-    background-color: rgba(99, 102, 241, 0.3);
-}
-
-// Form view styling
-.o_form_view {
-    .o_form_uri {
-        color: #6366F1;
-    }
-}
-
-// Calendar event colors
-.fc-event {
-    background-color: #6366F1 !important;
-    border-color: #4F46E5 !important;
-}
-
-// Chatter styling
-.o_Discuss_chatWindow {
-    .o_ChatWindow_header {
-        background-color: #1E1B4B !important;
-    }
-}
-
-// Remove enterprise upgrade prompts
+footer.o_footer,
+// My Odoo.com account menu item
+.dropdown-item[data-menu*="odoo"],
+.o_user_menu a[href*="odoo"],
+// Enterprise upgrade prompts
 .o_enterprise_upgrade,
 .o_ee_warning,
 .o_enterprise_label,
+.badge-enterprise,
 [data-tooltip*="enterprise"],
-.badge:contains("Enterprise") {
+// Database manager Odoo references
+.o_database_manager .text-muted,
+// Version info with Odoo
+.o_about_odoo,
+.o_version_info {
     display: none !important;
 }
 
-// Loading spinner color
-.o_loading {
-    background-color: #6366F1 !important;
+// Hide "Powered by" text in login
+.card-body > .text-center.small.border-top,
+.card-footer .text-muted {
+    display: none !important;
 }
 
-// Progress bars
-.progress-bar {
-    background-color: #6366F1 !important;
-}
+// =============================================================================
+// Main Navbar (top bar)
+// =============================================================================
 
-// Toggle switches
-.o_boolean_toggle {
-    &.active {
-        background-color: #6366F1 !important;
+.o_main_navbar {
+    background: linear-gradient(90deg, $quelyos-dark 0%, #0f0515 100%) !important;
+    border-bottom: 1px solid rgba($quelyos-fuchsia, 0.3) !important;
+
+    // Logo/Brand
+    .o_menu_brand {
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    // App menu button
+    .o_navbar_apps_menu .dropdown-toggle {
+        color: white !important;
+
+        &:hover {
+            background: rgba($quelyos-fuchsia, 0.2) !important;
+        }
+    }
+
+    // Menu sections
+    .o_menu_sections a,
+    .o_menu_sections .dropdown-toggle {
+        color: rgba(255, 255, 255, 0.8) !important;
+
+        &:hover {
+            color: white !important;
+            background: rgba($quelyos-fuchsia, 0.15) !important;
+        }
+    }
+
+    // User menu & systray
+    .o_navbar_systray .dropdown-toggle,
+    .o_user_menu .dropdown-toggle {
+        color: white !important;
     }
 }
 
-// Notification badges
-.badge-primary,
-.badge.bg-primary {
-    background-color: #6366F1 !important;
+// =============================================================================
+// Home Menu (App Launcher)
+// =============================================================================
+
+.o_home_menu_background {
+    background: radial-gradient(ellipse at top right, rgba($quelyos-fuchsia, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba($quelyos-orange, 0.1) 0%, transparent 50%),
+                $quelyos-dark !important;
 }
 
-// Tabs styling
-.nav-tabs .nav-link.active {
-    border-bottom-color: #6366F1 !important;
-    color: #6366F1 !important;
+.o_home_menu {
+    .o_app {
+        .o_app_icon {
+            background: linear-gradient(135deg, $quelyos-fuchsia 0%, $quelyos-orange 100%) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 20px rgba($quelyos-fuchsia, 0.3) !important;
+        }
+
+        .o_caption {
+            color: white !important;
+        }
+
+        &:hover .o_app_icon {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba($quelyos-orange, 0.4) !important;
+        }
+    }
+
+    // Search bar in home menu
+    .o_home_menu_search input {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba($quelyos-fuchsia, 0.3) !important;
+        color: white !important;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        &:focus {
+            border-color: $quelyos-fuchsia !important;
+            box-shadow: 0 0 0 3px rgba($quelyos-fuchsia, 0.2) !important;
+        }
+    }
 }
 
-// Dropdown active items
-.dropdown-item.active,
-.dropdown-item:active {
-    background-color: #6366F1 !important;
+// =============================================================================
+// Sidebar / Menu Latéral
+// =============================================================================
+
+.o_main_navbar .o_menu_sections {
+    .dropdown-menu {
+        background: $quelyos-dark !important;
+        border: 1px solid rgba($quelyos-fuchsia, 0.2) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.8) !important;
+
+            &:hover {
+                background: rgba($quelyos-fuchsia, 0.2) !important;
+                color: white !important;
+            }
+
+            &.active {
+                background: linear-gradient(135deg, $quelyos-fuchsia 0%, $quelyos-orange 100%) !important;
+                color: white !important;
+            }
+        }
+
+        .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+    }
 }
 
-// Focus states
-*:focus {
-    outline-color: #6366F1 !important;
+// User menu dropdown
+.o_user_menu .dropdown-menu,
+.o_navbar_systray .dropdown-menu {
+    background: $quelyos-dark !important;
+    border: 1px solid rgba($quelyos-fuchsia, 0.2) !important;
+    border-radius: 12px !important;
+
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8) !important;
+
+        &:hover {
+            background: rgba($quelyos-fuchsia, 0.2) !important;
+            color: white !important;
+        }
+    }
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #6366F1 !important;
-    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+// =============================================================================
+// Settings Menu - Quelyos Icon
+// =============================================================================
+
+// Icon for Quelyos settings menu (sidebar)
+.o_base_settings [data-key="quelyos_debrand"]::before,
+.settings_tab [data-key="quelyos_debrand"] .o_setting_tab::before,
+[data-key="quelyos_debrand"] .o_setting_app_icon,
+.o_settings_container .app_settings_block[data-key="quelyos_debrand"]::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, $quelyos-fuchsia 0%, $quelyos-orange 100%);
+    border-radius: 8px;
+    margin-right: 8px;
+    vertical-align: middle;
+    -webkit-mask: url('/quelyos_debrand/static/img/quelyos_icon.svg') center/contain no-repeat;
+    mask: url('/quelyos_debrand/static/img/quelyos_icon.svg') center/contain no-repeat;
+}
+
+// Fallback: direct background
+.o_base_settings .o_setting_container [data-key="quelyos_debrand"] {
+    .o_setting_app_icon {
+        background: url('/quelyos_debrand/static/img/quelyos_icon.svg') center/contain no-repeat !important;
+        width: 48px !important;
+        height: 48px !important;
+    }
+}
+
+// Settings sidebar item with Quelyos branding
+.o_base_settings .settings_tab [data-key="quelyos_debrand"],
+.o_settings_panel .o_setting_container [data-key="quelyos_debrand"] {
+    .app-settings-sidebar-item,
+    .o_setting_tab {
+        position: relative;
+        padding-left: 44px !important;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, $quelyos-fuchsia 0%, $quelyos-orange 100%);
+            border-radius: 6px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='24' cy='22' r='11' stroke='white' stroke-width='3' fill='none'/%3E%3Cline x1='30' y1='28' x2='37' y2='37' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-size: 18px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    }
+}
+
+// =============================================================================
+// Login Page Customization
+// =============================================================================
+
+.o_login_form,
+.oe_login_form {
+    // Custom logo
+    .card-body > .text-center.pb-3.border-bottom img,
+    .o_login_logo {
+        content: url('/quelyos_debrand/static/img/quelyos_logo.svg') !important;
+        max-height: 60px !important;
+        width: auto !important;
+    }
+}
+
+// Login page background with subtle branding
+body.o_home_menu_background,
+.o_web_client.o_login,
+.o_login_background {
+    background: radial-gradient(ellipse at top right, rgba($quelyos-fuchsia, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba($quelyos-orange, 0.05) 0%, transparent 50%),
+                #f8fafc !important;
 }

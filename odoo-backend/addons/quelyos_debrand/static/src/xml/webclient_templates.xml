@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-
-    <!-- Override NavBar to use Quelyos branding -->
-    <t t-name="quelyos_debrand.NavBar" t-inherit="web.NavBar" t-inherit-mode="extension">
-        <xpath expr="//span[hasclass('o_menu_brand')]" position="replace">
-            <span class="o_menu_brand" t-if="currentApp">
-                <t t-esc="currentApp.name"/>
-            </span>
-            <span class="o_menu_brand" t-else="">Quelyos Suite</span>
-        </xpath>
-    </t>
-
-    <!-- Override SystemTray to hide Odoo.com links -->
-    <t t-name="quelyos_debrand.UserMenu" t-inherit="web.UserMenu" t-inherit-mode="extension">
-        <xpath expr="//DropdownItem[contains(@href, 'odoo.com')]" position="replace"/>
-    </t>
-
+    <!-- Odoo 19: NavBar template structure changed -->
+    <!-- XPath overrides removed - branding handled via CSS -->
 </templates>
