@@ -396,8 +396,8 @@ function Step3Store({
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
-    setFormData(prev => ({ ...prev, storeSlug: slug }));
-  }, [storeName, setFormData]);
+    setFormData({ ...formData, storeSlug: slug });
+  }, [storeName]);
 
   return (
     <motion.div

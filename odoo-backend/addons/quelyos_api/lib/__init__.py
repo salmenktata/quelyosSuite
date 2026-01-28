@@ -40,6 +40,14 @@ Bibliothèques utilitaires pour l'API Quelyos:
 - graceful_degradation: Graceful Degradation
 - cache_headers: HTTP Cache Headers
 - api_analytics: API Analytics
+- chaos: Chaos Engineering
+- sharding: Database Sharding
+- cdn: CDN Integration
+- batching: Request Batching
+- circuit_dashboard: Circuit Breaker Dashboard
+- mocking: API Mocking
+- load_shedding: Load Shedding
+- priority_queue: Request Prioritization
 """
 
 from . import cache
@@ -79,6 +87,14 @@ from . import deduplication
 from . import graceful_degradation
 from . import cache_headers
 from . import api_analytics
+from . import chaos
+from . import sharding
+from . import cdn
+from . import batching
+from . import circuit_dashboard
+from . import mocking
+from . import load_shedding
+from . import priority_queue
 
 # Raccourcis pratiques
 from .rate_limiter import rate_limited, RateLimitConfig
@@ -118,3 +134,11 @@ from .deduplication import deduplicate, get_deduplicator
 from .graceful_degradation import with_fallback, degradable, DegradationLevel
 from .cache_headers import with_cache_headers, CacheControl, cache_preset
 from .api_analytics import track_api_call, get_analytics
+from .chaos import chaos_enabled, get_chaos_monkey, ChaosType
+from .sharding import sharded, get_shard_router, ShardingStrategy
+from .cdn import purge_on_change, get_cdn_manager
+from .batching import get_batch_processor, DataLoader, create_dataloader
+from .circuit_dashboard import get_circuit_dashboard, CircuitState
+from .mocking import mock_response, with_mocking, get_mock_server
+from .load_shedding import shed_on_load, get_load_shedder, LoadLevel
+from .priority_queue import prioritized, get_priority_queue, Priority
