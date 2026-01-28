@@ -92,26 +92,6 @@ const useCases = [
   { emoji: "🔧", name: "Artisans BTP", desc: "Devis et commandes chantier" },
 ];
 
-const timeline = [
-  {
-    quarter: "Q1 2026",
-    title: "MVP Alpha",
-    desc: "Carnet de commandes + WhatsApp",
-    status: "upcoming",
-  },
-  {
-    quarter: "Q2 2026",
-    title: "Beta Publique",
-    desc: "Instagram + Facebook + Facturation",
-    status: "planned",
-  },
-  {
-    quarter: "Q3 2026",
-    title: "Lancement",
-    desc: "Paiements + Stock + Sync Finance",
-    status: "planned",
-  },
-];
 
 export default function EcommercePage() {
   return (
@@ -290,7 +270,7 @@ export default function EcommercePage() {
         {/* Features */}
         <Container className="py-16">
           <h2 className="text-2xl font-bold text-white mb-4 text-center">
-            Fonctionnalités prévues
+            Fonctionnalités
           </h2>
           <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
             Un order hub complet pour centraliser toutes vos ventes, facturer
@@ -320,42 +300,6 @@ export default function EcommercePage() {
           </div>
         </Container>
 
-        {/* Timeline */}
-        <Container className="py-16">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            Roadmap
-          </h2>
-          <div className="flex flex-col md:flex-row justify-center gap-6">
-            {timeline.map((item, index) => (
-              <motion.div
-                key={item.quarter}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`flex-1 max-w-sm rounded-xl border p-6 ${
-                  item.status === "upcoming"
-                    ? "border-amber-500/50 bg-amber-500/10"
-                    : "border-white/10 bg-white/5"
-                }`}
-              >
-                <p
-                  className={`text-sm font-medium mb-2 ${
-                    item.status === "upcoming"
-                      ? "text-amber-400"
-                      : "text-slate-400"
-                  }`}
-                >
-                  {item.quarter}
-                </p>
-                <h3 className="text-lg font-bold text-white mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-slate-400">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
 
         {/* Synergies */}
         <Container className="py-16">

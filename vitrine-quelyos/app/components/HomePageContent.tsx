@@ -3,27 +3,116 @@
 import Link from "next/link";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import {
-  TrendingUp,
-  Instagram,
+  Wallet,
+  Store,
+  UserCircle,
+  Boxes,
+  UsersRound,
+  Monitor,
+  Megaphone,
   ArrowRight,
-  DollarSign,
   Sparkles,
   Mail,
   Zap,
   Shield,
   Users,
-  BarChart3,
-  Calendar,
-  MessageSquare,
-  ShoppingCart,
-  Smartphone,
-  Receipt,
-  Package,
+  Server,
+  Database,
+  Layers,
 } from "lucide-react";
 import Footer from "./Footer";
 import Container from "./Container";
 import Header from "./Header";
-import config from "@/app/lib/config";
+
+const modules = [
+  {
+    id: "finance",
+    name: "Finance",
+    tagline: "Trésorerie & Prévisions IA",
+    description: "Pilotez votre trésorerie à 90 jours avec l'IA. Budgets, reporting, multi-comptes.",
+    features: ["Prévisions IA", "Budgets", "Rapports PDF", "Multi-comptes"],
+    status: "production",
+    color: "emerald",
+    icon: Wallet,
+    href: "/finance",
+  },
+  {
+    id: "store",
+    name: "Boutique",
+    tagline: "E-commerce complet",
+    description: "Gérez votre catalogue, commandes, promotions et avis clients.",
+    features: ["Catalogue produits", "Commandes", "Promos", "Avis clients"],
+    status: "production",
+    color: "indigo",
+    icon: Store,
+    href: "/ecommerce",
+  },
+  {
+    id: "crm",
+    name: "CRM",
+    tagline: "Clients & Pipeline",
+    description: "Suivez vos opportunités, gérez vos clients, facturez simplement.",
+    features: ["Pipeline ventes", "Fiches clients", "Facturation", "Paiements"],
+    status: "production",
+    color: "violet",
+    icon: UserCircle,
+    href: "/crm",
+  },
+  {
+    id: "stock",
+    name: "Stock",
+    tagline: "Inventaire multi-sites",
+    description: "Mouvements, transferts, réapprovisionnement automatique.",
+    features: ["Multi-entrepôts", "Mouvements", "Valorisation", "Alertes"],
+    status: "production",
+    color: "orange",
+    icon: Boxes,
+    href: "/stock",
+  },
+  {
+    id: "hr",
+    name: "RH",
+    tagline: "Gestion du personnel",
+    description: "Employés, contrats, congés, présences, évaluations.",
+    features: ["Employés", "Congés", "Présences", "Évaluations"],
+    status: "production",
+    color: "cyan",
+    icon: UsersRound,
+    href: "/hr",
+  },
+  {
+    id: "pos",
+    name: "Point de Vente",
+    tagline: "Caisse & Click & Collect",
+    description: "Terminal de caisse moderne, mode rush, écran cuisine.",
+    features: ["Terminal", "Click & Collect", "Sessions", "Analytics"],
+    status: "production",
+    color: "teal",
+    icon: Monitor,
+    href: "/pos",
+  },
+  {
+    id: "marketing",
+    name: "Marketing",
+    tagline: "Campagnes Email & SMS",
+    description: "Créez et envoyez vos campagnes marketing facilement.",
+    features: ["Email", "SMS", "Templates", "Audiences"],
+    status: "beta",
+    color: "pink",
+    icon: Megaphone,
+    href: "/marketing",
+  },
+];
+
+const colorClasses: Record<string, { bg: string; text: string; border: string; gradient: string }> = {
+  emerald: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30", gradient: "from-emerald-500 to-emerald-600" },
+  indigo: { bg: "bg-indigo-500/20", text: "text-indigo-400", border: "border-indigo-500/30", gradient: "from-indigo-500 to-indigo-600" },
+  violet: { bg: "bg-violet-500/20", text: "text-violet-400", border: "border-violet-500/30", gradient: "from-violet-500 to-violet-600" },
+  orange: { bg: "bg-orange-500/20", text: "text-orange-400", border: "border-orange-500/30", gradient: "from-orange-500 to-orange-600" },
+  cyan: { bg: "bg-cyan-500/20", text: "text-cyan-400", border: "border-cyan-500/30", gradient: "from-cyan-500 to-cyan-600" },
+  teal: { bg: "bg-teal-500/20", text: "text-teal-400", border: "border-teal-500/30", gradient: "from-teal-500 to-teal-600" },
+  pink: { bg: "bg-pink-500/20", text: "text-pink-400", border: "border-pink-500/30", gradient: "from-pink-500 to-pink-600" },
+};
 
 export default function HomePageContent() {
   return (
@@ -41,222 +130,108 @@ export default function HomePageContent() {
               className="text-center"
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
-                <Sparkles className="h-4 w-4" />2 plateformes SaaS complémentaires
+                <Sparkles className="h-4 w-4" />
+                Suite ERP complète pour PME
               </div>
               <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
-                La Suite Quelyos pour{" "}
+                L&apos;ERP moderne qui{" "}
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  piloter votre TPE
+                  simplifie votre gestion
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
-                Gérez votre trésorerie avec l&apos;IA et automatisez votre
-                marketing digital. Deux outils pensés pour les TPE/PME qui veulent
-                se concentrer sur leur métier.
+                Finance, Commerce, CRM, Stock, RH, Point de vente — tous vos outils
+                métier réunis en une seule plateforme. Conçu en France. Pensé pour les PME.
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/finance"
+                  href="#modules"
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
                 >
-                  <DollarSign className="h-5 w-5" />
-                  Découvrir Finance
+                  <Layers className="h-5 w-5" />
+                  Découvrir les modules
                 </Link>
                 <Link
-                  href="/marketing"
-                  className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-pink-600 hover:to-purple-700"
+                  href="/finance/register"
+                  className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-lg font-medium text-white transition-all hover:bg-white/10"
                 >
-                  <Instagram className="h-5 w-5" />
-                  Découvrir Marketing
+                  Essai gratuit
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
               </div>
             </m.div>
           </Container>
         </section>
 
-        {/* Plateformes */}
-        <section className="relative py-20">
+        {/* Modules */}
+        <section id="modules" className="relative py-20">
           <Container>
-            <div className="grid gap-8 lg:grid-cols-2">
-              {/* Finance */}
-              <m.div
-                id="finance"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="group relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/50 to-slate-900/50 p-8 backdrop-blur-sm transition-all hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/20"
-              >
-                <div className="absolute right-0 top-0 h-64 w-64 bg-gradient-to-br from-indigo-500/20 to-transparent blur-3xl" />
-                <div className="relative">
-                  <div className="mb-6 inline-flex rounded-xl bg-indigo-500/20 p-4">
-                    <DollarSign className="h-10 w-10 text-indigo-400" />
-                  </div>
-                  <h2 className="mb-3 text-3xl font-bold text-white">
-                    Quelyos Finance
-                  </h2>
-                  <p className="mb-2 text-lg font-medium text-indigo-300">
-                    Pilotage trésorerie & prévisions IA
-                  </p>
-                  <p className="mb-6 text-slate-400">
-                    &quot;Dormez tranquille : votre trésorerie TPE pilotée 90
-                    jours à l&apos;avance.&quot;
-                  </p>
-                  <ul className="mb-8 space-y-3">
-                    {[
-                      { icon: TrendingUp, text: "Prévisions IA fiables à 85-90%" },
-                      { icon: BarChart3, text: "Dashboard KPIs temps réel" },
-                      { icon: Calendar, text: "Import automatique transactions" },
-                      { icon: Shield, text: "Rapports & budgets intelligents" },
-                    ].map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-slate-300">
-                        <feature.icon className="h-5 w-5 text-indigo-400" />
-                        <span>{feature.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      href="/finance"
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-3 font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
-                    >
-                      En savoir plus
-                      <ArrowRight className="h-5 w-5" />
-                    </Link>
-                    <Link
-                      href={config.finance.login}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-indigo-500/50 bg-indigo-500/10 px-6 py-3 font-medium text-indigo-300 transition-all hover:bg-indigo-500/20"
-                    >
-                      Accéder à l&apos;app
-                    </Link>
-                  </div>
-                  <div className="mt-4 flex items-center gap-2 text-sm text-slate-400">
-                    <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-                    En production • 43 features
-                  </div>
-                </div>
-              </m.div>
-
-              {/* Marketing */}
-              <m.div
-                id="marketing"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="group relative overflow-hidden rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/50 to-slate-900/50 p-8 backdrop-blur-sm transition-all hover:border-pink-500/50 hover:shadow-2xl hover:shadow-pink-500/20"
-              >
-                <div className="absolute right-0 top-0 h-64 w-64 bg-gradient-to-br from-pink-500/20 to-transparent blur-3xl" />
-                <div className="relative">
-                  <div className="mb-6 inline-flex rounded-xl bg-pink-500/20 p-4">
-                    <Instagram className="h-10 w-10 text-pink-400" />
-                  </div>
-                  <h2 className="mb-3 text-3xl font-bold text-white">
-                    Quelyos Marketing
-                  </h2>
-                  <p className="mb-2 text-lg font-medium text-pink-300">
-                    Marketing social media automatisé
-                  </p>
-                  <p className="mb-6 text-slate-400">
-                    &quot;20 minutes par semaine, zéro expertise, des clients en
-                    plus.&quot;
-                  </p>
-                  <ul className="mb-8 space-y-3">
-                    {[
-                      { icon: Sparkles, text: "IA génération contenu secteur" },
-                      { icon: Calendar, text: "Publication automatique multi-réseaux" },
-                      { icon: MessageSquare, text: "Inbox unifiée + réponses IA" },
-                      { icon: BarChart3, text: "Analytics business & engagement" },
-                    ].map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-slate-300">
-                        <feature.icon className="h-5 w-5 text-pink-400" />
-                        <span>{feature.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      href="/marketing"
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 font-medium text-white transition-all hover:from-pink-600 hover:to-purple-700"
-                    >
-                      En savoir plus
-                      <ArrowRight className="h-5 w-5" />
-                    </Link>
-                    <Link
-                      href={config.marketing.login}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-pink-500/50 bg-pink-500/10 px-6 py-3 font-medium text-pink-300 transition-all hover:bg-pink-500/20"
-                    >
-                      Rejoindre la waitlist
-                    </Link>
-                  </div>
-                  <div className="mt-4 flex items-center gap-2 text-sm text-slate-400">
-                    <span className="flex h-2 w-2 animate-pulse rounded-full bg-yellow-500" />
-                    MVP en développement • Lancement Q1 2026
-                  </div>
-                </div>
-              </m.div>
-            </div>
-
-            {/* E-Commerce Coming Soon */}
             <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-8"
+              className="mb-12 text-center"
             >
-              <div className="group relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/50 p-8 backdrop-blur-sm transition-all hover:border-amber-500/50">
-                <div className="absolute right-0 top-0 h-64 w-64 bg-gradient-to-br from-amber-500/10 to-transparent blur-3xl" />
-                <div className="absolute top-4 right-4 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-300">
-                  Coming Soon 2026
-                </div>
-                <div className="relative flex flex-col lg:flex-row lg:items-center lg:gap-12">
-                  <div className="mb-6 lg:mb-0 lg:w-1/2">
-                    <div className="mb-4 inline-flex rounded-xl bg-amber-500/20 p-4">
-                      <ShoppingCart className="h-10 w-10 text-amber-400" />
-                    </div>
-                    <h2 className="mb-3 text-3xl font-bold text-white">
-                      Quelyos E-Commerce
-                    </h2>
-                    <p className="mb-2 text-lg font-medium text-amber-300">
-                      Order Hub Omnicanal pour TPE
-                    </p>
-                    <p className="mb-6 text-slate-400">
-                      &quot;Transformez chaque conversation en commande. Sans site
-                      web. Depuis tous vos canaux.&quot;
-                    </p>
-                    <p className="text-sm text-slate-500 mb-6">
-                      L&apos;anti-Shopify pour ceux qui vendent via WhatsApp,
-                      Instagram et Messenger. Centralisez vos commandes, facturez
-                      automatiquement, synchronisez votre trésorerie.
-                    </p>
-                    <Link
-                      href="/ecommerce"
-                      className="inline-flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-500/10 px-6 py-3 font-medium text-amber-300 transition-all hover:bg-amber-500/20"
-                    >
-                      Rejoindre la waitlist
-                      <ArrowRight className="h-5 w-5" />
-                    </Link>
-                  </div>
-                  <div className="lg:w-1/2">
-                    <div className="grid grid-cols-2 gap-4">
-                      {[
-                        { icon: Smartphone, text: "WhatsApp, Instagram, Messenger", desc: "Capture omnicanale" },
-                        { icon: Receipt, text: "Facturation auto", desc: "Devis & factures" },
-                        { icon: Package, text: "Gestion stock", desc: "Temps réel" },
-                        { icon: TrendingUp, text: "Sync Finance", desc: "Trésorerie à jour" },
-                      ].map((feature, i) => (
-                        <div key={i} className="rounded-xl bg-white/5 p-4">
-                          <feature.icon className="h-6 w-6 text-amber-400 mb-2" />
-                          <p className="text-sm font-medium text-white">{feature.text}</p>
-                          <p className="text-xs text-slate-400">{feature.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                Tous vos outils métier en un seul endroit
+              </h2>
+              <p className="mt-4 text-lg text-slate-400">
+                7 modules intégrés pour gérer l&apos;ensemble de votre activité
+              </p>
             </m.div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {modules.map((mod, index) => {
+                const colors = colorClasses[mod.color];
+                return (
+                  <m.div
+                    key={mod.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`group relative overflow-hidden rounded-xl border ${colors.border} bg-slate-900/50 p-6 backdrop-blur-sm transition-all hover:border-opacity-70 hover:shadow-lg`}
+                  >
+                    <div className="relative">
+                      <div className={`mb-4 inline-flex rounded-xl ${colors.bg} p-3`}>
+                        <mod.icon className={`h-8 w-8 ${colors.text}`} />
+                      </div>
+                      <h3 className="mb-1 text-xl font-bold text-white">
+                        {mod.name}
+                      </h3>
+                      <p className={`mb-3 text-sm font-medium ${colors.text}`}>
+                        {mod.tagline}
+                      </p>
+                      <p className="mb-4 text-sm text-slate-400">
+                        {mod.description}
+                      </p>
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {mod.features.map((feature) => (
+                          <span
+                            key={feature}
+                            className="rounded-full bg-white/5 px-2 py-1 text-xs text-slate-300"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Link
+                          href={mod.href}
+                          className={`inline-flex items-center gap-1 text-sm font-medium ${colors.text} transition-all hover:underline`}
+                        >
+                          En savoir plus
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                          <span className={`h-2 w-2 rounded-full ${mod.status === "production" ? "bg-emerald-500" : "bg-yellow-500 animate-pulse"}`} />
+                          {mod.status === "production" ? "Disponible" : "Beta"}
+                        </div>
+                      </div>
+                    </div>
+                  </m.div>
+                );
+              })}
+            </div>
           </Container>
         </section>
 
@@ -276,12 +251,14 @@ export default function HomePageContent() {
                 Une suite pensée pour les TPE/PME qui veulent se concentrer sur leur métier
               </p>
             </m.div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[
-                { icon: Zap, title: "Simple & rapide", desc: "Prise en main en 10 minutes, pas besoin de formation", color: "text-yellow-400" },
-                { icon: Shield, title: "Données sécurisées", desc: "Hébergement France, RGPD compliant, chiffrement", color: "text-emerald-400" },
-                { icon: Users, title: "Support humain", desc: "Accompagnement personnalisé pour chaque client", color: "text-blue-400" },
-                { icon: DollarSign, title: "Prix accessible", desc: "Tarifs adaptés TPE, pas d'engagement annuel", color: "text-purple-400" },
+                { icon: Layers, title: "Tout-en-un", desc: "Un seul outil au lieu de 5 abonnements séparés. Finance, vente, stock, RH, marketing.", color: "text-indigo-400" },
+                { icon: Zap, title: "Simple & rapide", desc: "Prise en main en 10 minutes, pas besoin de formation. Interface moderne.", color: "text-yellow-400" },
+                { icon: Shield, title: "Données sécurisées", desc: "Hébergement France, RGPD compliant, chiffrement bout-en-bout.", color: "text-emerald-400" },
+                { icon: Database, title: "Open Data", desc: "Vos données vous appartiennent. API REST ouverte, export illimité.", color: "text-cyan-400" },
+                { icon: Users, title: "Support humain", desc: "Accompagnement personnalisé pour chaque client. Pas de chatbot.", color: "text-blue-400" },
+                { icon: Server, title: "Multi-tenant SaaS", desc: "Architecture moderne, mises à jour automatiques, zéro maintenance.", color: "text-purple-400" },
               ].map((item, i) => (
                 <m.div
                   key={i}
@@ -305,10 +282,10 @@ export default function HomePageContent() {
           <Container>
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
               {[
-                { label: "Features Finance", value: "43", icon: TrendingUp },
-                { label: "Features Marketing", value: "8", icon: Instagram },
-                { label: "Marchés ciblés", value: "5", icon: DollarSign },
-                { label: "Objectif ARR 2026", value: "115k€", icon: Sparkles },
+                { label: "Modules intégrés", value: "8", icon: Layers },
+                { label: "Fonctionnalités", value: "+200", icon: Sparkles },
+                { label: "API REST", value: "100%", icon: Server },
+                { label: "Multi-tenant", value: "SaaS", icon: Database },
               ].map((stat, i) => (
                 <m.div
                   key={i}

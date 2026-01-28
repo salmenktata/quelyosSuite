@@ -23,10 +23,10 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Produits */}
+          {/* Modules */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
-              Produits
+              Modules
             </h3>
             <ul className="space-y-2">
               <li>
@@ -34,7 +34,47 @@ export default function Footer() {
                   href="/finance"
                   className="text-sm text-slate-400 hover:text-white"
                 >
-                  Quelyos Finance
+                  Finance
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ecommerce"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  Boutique
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/crm"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  CRM
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/stock"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  Stock
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/hr"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  RH
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/pos"
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  Point de Vente
                 </Link>
               </li>
               <li>
@@ -42,15 +82,7 @@ export default function Footer() {
                   href="/marketing"
                   className="text-sm text-slate-400 hover:text-white"
                 >
-                  Quelyos Marketing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/tarifs"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Tarifs & Bundles
+                  Marketing
                 </Link>
               </li>
             </ul>

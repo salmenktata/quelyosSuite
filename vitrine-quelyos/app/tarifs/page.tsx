@@ -8,6 +8,7 @@ import {
   Instagram,
   Sparkles,
   ArrowRight,
+  Layers,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -16,6 +17,63 @@ import config from "@/app/lib/config";
 
 export default function TarifsPage() {
   const plans = {
+    suite: [
+      {
+        name: "Starter",
+        price: "49€",
+        period: "/mois",
+        description: "Pour démarrer avec l'essentiel",
+        features: [
+          "Finance complet",
+          "1 module au choix (Boutique, CRM, Stock, RH ou POS)",
+          "Support email",
+          "Mises à jour incluses",
+          "1 utilisateur admin",
+        ],
+        limitations: ["Marketing non inclus", "API limitée"],
+        cta: "Commencer l'essai gratuit",
+        href: "/finance/register",
+        highlight: false,
+      },
+      {
+        name: "Business",
+        price: "99€",
+        period: "/mois",
+        description: "Tous les modules inclus",
+        features: [
+          "Tous les 8 modules inclus",
+          "Finance, Boutique, CRM, Stock, RH, POS, Marketing, Home",
+          "API REST complète",
+          "5 utilisateurs inclus",
+          "Support prioritaire",
+          "Formations en ligne",
+        ],
+        limitations: [],
+        cta: "Essai gratuit 14 jours",
+        href: "/finance/register",
+        highlight: true,
+        badge: "Recommandé",
+      },
+      {
+        name: "Enterprise",
+        price: "Sur devis",
+        period: "",
+        description: "Solution sur mesure",
+        features: [
+          "Tous les modules Business",
+          "Utilisateurs illimités",
+          "SLA garanti 99.9%",
+          "Personnalisation interface",
+          "Intégrations sur mesure",
+          "Account manager dédié",
+          "Formation sur site",
+        ],
+        limitations: [],
+        cta: "Contacter commercial",
+        href: "/contact",
+        highlight: false,
+      },
+    ],
     finance: [
       {
         name: "Freemium",
@@ -198,14 +256,97 @@ export default function TarifsPage() {
         </Container>
       </section>
 
+      {/* Suite Pricing */}
+      <section className="relative border-b border-white/10 bg-slate-900/30 py-16">
+        <Container>
+          <div className="mb-8 flex items-center gap-3">
+            <div className="rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-2">
+              <Layers className="h-6 w-6 text-indigo-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-white">Suite Quelyos</h2>
+            <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-400">
+              ERP Complet
+            </span>
+          </div>
+          <p className="mb-8 max-w-2xl text-slate-400">
+            Accédez à tous nos modules dans une suite intégrée : Finance, Boutique, CRM, Stock, RH, Point de Vente et Marketing.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {plans.suite.map((plan, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative rounded-2xl p-8 ${
+                  plan.highlight
+                    ? "border-2 border-indigo-500 bg-gradient-to-br from-indigo-950/50 to-purple-950/50"
+                    : "border border-white/10 bg-slate-900/50"
+                }`}
+              >
+                {plan.badge && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-1 text-xs font-medium text-white">
+                    {plan.badge}
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                <p className="mt-1 text-sm text-slate-400">
+                  {plan.description}
+                </p>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold text-white">
+                    {plan.price}
+                  </span>
+                  <span className="text-slate-400">{plan.period}</span>
+                </div>
+                <ul className="mt-6 space-y-3">
+                  {plan.features.map((feature, j) => (
+                    <li
+                      key={j}
+                      className="flex items-center gap-2 text-sm text-slate-300"
+                    >
+                      <CheckCircle className="h-4 w-4 text-indigo-400" />
+                      {feature}
+                    </li>
+                  ))}
+                  {plan.limitations.map((limitation, j) => (
+                    <li
+                      key={j}
+                      className="flex items-center gap-2 text-sm text-slate-500"
+                    >
+                      <span className="h-4 w-4 text-center">✗</span>
+                      {limitation}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={plan.href}
+                  className={`mt-8 block w-full rounded-lg py-3 text-center font-medium transition-all ${
+                    plan.highlight
+                      ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600"
+                      : "border border-white/20 text-white hover:bg-white/10"
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       {/* Finance Pricing */}
       <section className="relative py-12">
         <Container>
+          <div className="mb-4 text-center">
+            <p className="text-sm text-slate-500">Ou choisissez un module individuel</p>
+          </div>
           <div className="mb-8 flex items-center gap-3">
-            <div className="rounded-lg bg-indigo-500/20 p-2">
-              <DollarSign className="h-6 w-6 text-indigo-400" />
+            <div className="rounded-lg bg-emerald-500/20 p-2">
+              <DollarSign className="h-6 w-6 text-emerald-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Quelyos Finance</h2>
+            <h2 className="text-2xl font-bold text-white">Finance seul</h2>
             <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-400">
               Disponible
             </span>

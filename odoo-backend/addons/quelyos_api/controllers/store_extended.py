@@ -52,6 +52,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/reviews/<int:review_id>/approve', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def approve_review(self, review_id):
         """Approuver un avis"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             review = request.env['quelyos.product.review'].sudo().browse(review_id)
             if review.exists():
@@ -64,6 +67,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/reviews/<int:review_id>/reject', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reject_review(self, review_id, reason=None):
         """Rejeter un avis"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             review = request.env['quelyos.product.review'].sudo().browse(review_id)
             if review.exists():
@@ -273,6 +279,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/faq/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_faq(self, **kwargs):
         """Créer/modifier une FAQ"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             FAQ = request.env['quelyos.faq'].sudo()
 
@@ -298,6 +307,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/faq/<int:faq_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def delete_faq(self, faq_id):
         """Supprimer une FAQ"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             faq = request.env['quelyos.faq'].sudo().browse(faq_id)
             if faq.exists():
@@ -374,6 +386,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/collections/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_collection(self, **kwargs):
         """Créer/modifier une collection"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Collection = request.env['quelyos.collection'].sudo()

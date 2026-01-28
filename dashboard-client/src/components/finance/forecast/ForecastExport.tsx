@@ -16,154 +16,124 @@ export function ForecastExport({ data }: ForecastExportProps) {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      // Lazy load xlsx (~500KB) only when user clicks export
-      const XLSX = await import("xlsx");
-      const wb = XLSX.utils.book_new();
+      // Lazy load exceljs (plus sécurisé que xlsx)
+      const ExcelJS = await import("exceljs");
+      const wb = new ExcelJS.Workbook();
 
       // ========== Sheet 1: Daily Forecast Data ==========
-      const dailyData = data.forecast.map((day) => ({
-        Date: day.date,
-        "Prévision": day.predicted || day.projectedBalance,
-        "Optimiste (+15%)": day.scenarios?.optimistic || 0,
-        "Pessimiste (-15%)": day.scenarios?.pessimistic || 0,
-        "Conf. 80% (Haut)": day.confidence80?.upper || 0,
-        "Conf. 80% (Bas)": day.confidence80?.lower || 0,
-        "Conf. 95% (Haut)": day.confidence95?.upper || 0,
-        "Conf. 95% (Bas)": day.confidence95?.lower || 0,
-        Tendance: day.components?.trend || 0,
-        Saisonnier: day.components?.seasonal || 0,
-        Planifié: day.components?.planned || 0,
-      }));
-
-      const ws1 = XLSX.utils.json_to_sheet(dailyData);
-
-      // Column widths
-      ws1["!cols"] = [
-        { wch: 12 }, // Date
-        { wch: 15 }, // Prévision
-        { wch: 18 }, // Optimiste
-        { wch: 18 }, // Pessimiste
-        { wch: 18 }, // Conf. 80% Haut
-        { wch: 18 }, // Conf. 80% Bas
-        { wch: 18 }, // Conf. 95% Haut
-        { wch: 18 }, // Conf. 95% Bas
-        { wch: 12 }, // Tendance
-        { wch: 12 }, // Saisonnier
-        { wch: 12 }, // Planifié
+      const ws1 = wb.addWorksheet("Prévisions quotidiennes");
+      ws1.columns = [
+        { header: "Date", key: "date", width: 12 },
+        { header: "Prévision", key: "prediction", width: 15 },
+        { header: "Optimiste (+15%)", key: "optimistic", width: 18 },
+        { header: "Pessimiste (-15%)", key: "pessimistic", width: 18 },
+        { header: "Conf. 80% (Haut)", key: "conf80Upper", width: 18 },
+        { header: "Conf. 80% (Bas)", key: "conf80Lower", width: 18 },
+        { header: "Conf. 95% (Haut)", key: "conf95Upper", width: 18 },
+        { header: "Conf. 95% (Bas)", key: "conf95Lower", width: 18 },
+        { header: "Tendance", key: "trend", width: 12 },
+        { header: "Saisonnier", key: "seasonal", width: 12 },
+        { header: "Planifié", key: "planned", width: 12 },
       ];
 
-      XLSX.utils.book_append_sheet(wb, ws1, "Prévisions quotidiennes");
+      data.forecast.forEach((day) => {
+        ws1.addRow({
+          date: day.date,
+          prediction: day.predicted || day.projectedBalance,
+          optimistic: day.scenarios?.optimistic || 0,
+          pessimistic: day.scenarios?.pessimistic || 0,
+          conf80Upper: day.confidence80?.upper || 0,
+          conf80Lower: day.confidence80?.lower || 0,
+          conf95Upper: day.confidence95?.upper || 0,
+          conf95Lower: day.confidence95?.lower || 0,
+          trend: day.components?.trend || 0,
+          seasonal: day.components?.seasonal || 0,
+          planned: day.components?.planned || 0,
+        });
+      });
+
+      // Style header row
+      ws1.getRow(1).font = { bold: true };
 
       // ========== Sheet 2: Summary ==========
-      const finalForecast = data.forecast[data.forecast.length - 1];
-
-      const summary = [
-        { Métrique: "Période", Valeur: `${data.range.from} → ${data.range.to}` },
-        { Métrique: "", Valeur: "" }, // Empty row
-        { Métrique: "Solde actuel", Valeur: data.currentBalance },
-        { Métrique: "Projection finale", Valeur: data.projectedBalance },
-        { Métrique: "Impact futur", Valeur: data.futureImpact },
-        { Métrique: "", Valeur: "" }, // Empty row
-        {
-          Métrique: "Scénario optimiste (fin)",
-          Valeur: finalForecast?.scenarios?.optimistic || 0,
-        },
-        {
-          Métrique: "Scénario pessimiste (fin)",
-          Valeur: finalForecast?.scenarios?.pessimistic || 0,
-        },
-        { Métrique: "", Valeur: "" }, // Empty row
-        { Métrique: "Solde minimum", Valeur: data.minBalance },
-        { Métrique: "Solde maximum", Valeur: data.maxBalance },
-        {
-          Métrique: "Runway (jours)",
-          Valeur: data.runwayDays !== null ? data.runwayDays : "N/A",
-        },
-        { Métrique: "", Valeur: "" }, // Empty row
-        { Métrique: "Modèle utilisé", Valeur: data.model.type },
-        {
-          Métrique: "Historique utilisé (jours)",
-          Valeur: data.model.trainedOn,
-        },
-        { Métrique: "Horizon (jours)", Valeur: data.model.horizonDays },
-        {
-          Métrique: "Précision (MAPE)",
-          Valeur: data.model.accuracy?.mape
-            ? `${data.model.accuracy.mape.toFixed(2)}%`
-            : "N/A",
-        },
-        { Métrique: "", Valeur: "" }, // Empty row
-        {
-          Métrique: "Revenu quotidien moyen",
-          Valeur: data.trends.avgDailyIncome,
-        },
-        {
-          Métrique: "Dépense quotidienne moyenne",
-          Valeur: data.trends.avgDailyExpense,
-        },
-        { Métrique: "Flux net quotidien", Valeur: data.trends.avgDailyNet },
+      const ws2 = wb.addWorksheet("Résumé");
+      ws2.columns = [
+        { header: "Métrique", key: "metric", width: 30 },
+        { header: "Valeur", key: "value", width: 20 },
       ];
 
-      const ws2 = XLSX.utils.json_to_sheet(summary);
-      ws2["!cols"] = [{ wch: 30 }, { wch: 20 }];
-      XLSX.utils.book_append_sheet(wb, ws2, "Résumé");
+      const finalForecast = data.forecast[data.forecast.length - 1];
+      const summaryRows = [
+        { metric: "Période", value: `${data.range.from} → ${data.range.to}` },
+        { metric: "", value: "" },
+        { metric: "Solde actuel", value: data.currentBalance },
+        { metric: "Projection finale", value: data.projectedBalance },
+        { metric: "Impact futur", value: data.futureImpact },
+        { metric: "", value: "" },
+        { metric: "Scénario optimiste (fin)", value: finalForecast?.scenarios?.optimistic || 0 },
+        { metric: "Scénario pessimiste (fin)", value: finalForecast?.scenarios?.pessimistic || 0 },
+        { metric: "", value: "" },
+        { metric: "Solde minimum", value: data.minBalance },
+        { metric: "Solde maximum", value: data.maxBalance },
+        { metric: "Runway (jours)", value: data.runwayDays !== null ? data.runwayDays : "N/A" },
+        { metric: "", value: "" },
+        { metric: "Modèle utilisé", value: data.model.type },
+        { metric: "Historique utilisé (jours)", value: data.model.trainedOn },
+        { metric: "Horizon (jours)", value: data.model.horizonDays },
+        { metric: "Précision (MAPE)", value: data.model.accuracy?.mape ? `${data.model.accuracy.mape.toFixed(2)}%` : "N/A" },
+        { metric: "", value: "" },
+        { metric: "Revenu quotidien moyen", value: data.trends.avgDailyIncome },
+        { metric: "Dépense quotidienne moyenne", value: data.trends.avgDailyExpense },
+        { metric: "Flux net quotidien", value: data.trends.avgDailyNet },
+      ];
+
+      summaryRows.forEach((row) => ws2.addRow(row));
+      ws2.getRow(1).font = { bold: true };
 
       // ========== Sheet 3: Events ==========
       if (data.events && data.events.length > 0) {
-        const eventsData = data.events.map((e) => ({
-          Date: e.date,
-          Événement: e.label,
-          Type:
-            e.type === "auto"
-              ? "Détection auto"
-              : e.type === "manual"
-              ? "Manuel"
-              : "Importé",
-          Confiance: e.confidence
-            ? `${Math.round(e.confidence * 100)}%`
-            : "-",
-          Description: e.description || "",
-        }));
-
-        const ws3 = XLSX.utils.json_to_sheet(eventsData);
-        ws3["!cols"] = [
-          { wch: 12 },
-          { wch: 30 },
-          { wch: 15 },
-          { wch: 12 },
-          { wch: 40 },
+        const ws3 = wb.addWorksheet("Événements");
+        ws3.columns = [
+          { header: "Date", key: "date", width: 12 },
+          { header: "Événement", key: "event", width: 30 },
+          { header: "Type", key: "type", width: 15 },
+          { header: "Confiance", key: "confidence", width: 12 },
+          { header: "Description", key: "description", width: 40 },
         ];
-        XLSX.utils.book_append_sheet(wb, ws3, "Événements");
+
+        data.events.forEach((e) => {
+          ws3.addRow({
+            date: e.date,
+            event: e.label,
+            type: e.type === "auto" ? "Détection auto" : e.type === "manual" ? "Manuel" : "Importé",
+            confidence: e.confidence ? `${Math.round(e.confidence * 100)}%` : "-",
+            description: e.description || "",
+          });
+        });
+        ws3.getRow(1).font = { bold: true };
       }
 
       // ========== Sheet 4: Alerts ==========
-      const alertsData = [
-        {
-          Alerte: "Trésorerie faible",
-          Statut: data.alerts.lowCash ? "⚠️ OUI" : "✅ Non",
-        },
-        {
-          Alerte: "Solde négatif prévu",
-          Statut: data.alerts.negativeBalance ? "🔴 OUI" : "✅ Non",
-        },
-        {
-          Alerte: "Runway (jours)",
-          Statut:
-            data.alerts.runwayDays !== null
-              ? `${data.alerts.runwayDays} jours`
-              : "Illimité",
-        },
+      const ws4 = wb.addWorksheet("Alertes");
+      ws4.columns = [
+        { header: "Alerte", key: "alert", width: 25 },
+        { header: "Statut", key: "status", width: 20 },
       ];
 
-      const ws4 = XLSX.utils.json_to_sheet(alertsData);
-      ws4["!cols"] = [{ wch: 25 }, { wch: 20 }];
-      XLSX.utils.book_append_sheet(wb, ws4, "Alertes");
+      ws4.addRow({ alert: "Trésorerie faible", status: data.alerts.lowCash ? "OUI" : "Non" });
+      ws4.addRow({ alert: "Solde négatif prévu", status: data.alerts.negativeBalance ? "OUI" : "Non" });
+      ws4.addRow({ alert: "Runway (jours)", status: data.alerts.runwayDays !== null ? `${data.alerts.runwayDays} jours` : "Illimité" });
+      ws4.getRow(1).font = { bold: true };
 
       // ========== Export ==========
-      const filename = `previsions-tresorerie-${new Date()
-        .toISOString()
-        .slice(0, 10)}.xlsx`;
-      XLSX.writeFile(wb, filename);
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `previsions-tresorerie-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
     } finally {
       setIsExporting(false);
     }

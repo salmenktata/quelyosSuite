@@ -9,6 +9,7 @@ from odoo.http import request
 from passlib.context import CryptContext
 from ..config import is_origin_allowed, get_cors_headers
 from ..lib.cache import get_cache_service, CacheTTL
+from ..lib.rate_limiter import check_rate_limit, RateLimitConfig
 from .base import BaseController
 
 _logger = logging.getLogger(__name__)

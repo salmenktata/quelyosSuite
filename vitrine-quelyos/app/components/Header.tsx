@@ -9,9 +9,7 @@ import {
   X,
   ChevronDown,
   BarChart3,
-  Target,
   FileText,
-  Code,
   Megaphone,
   Sparkles,
   LogIn,
@@ -28,17 +26,33 @@ import {
   Mail,
   Shield,
   Info,
-  Calendar,
+  Wallet,
+  Store,
+  UserCircle,
+  Boxes,
+  UsersRound,
+  Monitor,
+  Layers,
 } from "lucide-react";
 import config from "../lib/config";
 import Container from "./Container";
 
+// Modules pour le dropdown
+const modulesNav = [
+  { id: "finance", name: "Finance", tagline: "Trésorerie & Prévisions IA", icon: Wallet, href: "/finance", color: "text-emerald-400" },
+  { id: "store", name: "Boutique", tagline: "E-commerce complet", icon: Store, href: "/ecommerce", color: "text-indigo-400" },
+  { id: "crm", name: "CRM", tagline: "Clients & Pipeline", icon: UserCircle, href: "/crm", color: "text-violet-400" },
+  { id: "stock", name: "Stock", tagline: "Inventaire multi-sites", icon: Boxes, href: "/stock", color: "text-orange-400" },
+  { id: "hr", name: "RH", tagline: "Gestion du personnel", icon: UsersRound, href: "/hr", color: "text-cyan-400" },
+  { id: "pos", name: "Point de Vente", tagline: "Caisse & Click & Collect", icon: Monitor, href: "/pos", color: "text-teal-400" },
+  { id: "marketing", name: "Marketing", tagline: "Campagnes Email & SMS", icon: Megaphone, href: "/marketing", color: "text-pink-400" },
+];
+
 export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [modulesDropdown, setModulesDropdown] = useState(false);
   const [financeDropdown, setFinanceDropdown] = useState(false);
-  const [marketingDropdown, setMarketingDropdown] = useState(false);
-  const [ecommerceDropdown, setEcommerceDropdown] = useState(false);
 
   // Menu Finance - organisé par catégories
   const financePages = [
@@ -112,12 +126,6 @@ export default function Header() {
           icon: FileText,
           desc: "Features à venir",
         },
-        {
-          href: "/finance/backlog-technique",
-          label: "Backlog Technique",
-          icon: Code,
-          desc: "Roadmap tech",
-        },
       ],
     },
     // RESSOURCES
@@ -147,12 +155,6 @@ export default function Header() {
           label: "À propos",
           icon: Building2,
           desc: "Notre mission",
-        },
-        {
-          href: "/finance/strategie",
-          label: "Stratégie",
-          icon: Target,
-          desc: "Vision produit",
         },
         {
           href: "/finance/roadmap",
@@ -218,24 +220,6 @@ export default function Header() {
           icon: FileText,
           desc: "Features à venir",
         },
-        {
-          href: "/marketing/backlog-technique",
-          label: "Backlog Technique",
-          icon: Code,
-          desc: "Roadmap tech",
-        },
-      ],
-    },
-    // ENTREPRISE
-    {
-      category: "Entreprise",
-      items: [
-        {
-          href: "/marketing/strategie",
-          label: "Stratégie",
-          icon: Target,
-          desc: "Notre vision",
-        },
       ],
     },
     // LÉGAL
@@ -285,16 +269,49 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 lg:flex">
-            <Link
-              href="/"
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                pathname === "/"
-                  ? "bg-white/10 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
-              }`}
+            {/* Modules Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setModulesDropdown(true)}
+              onMouseLeave={() => setModulesDropdown(false)}
             >
-              Accueil
-            </Link>
+              <button
+                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all text-slate-300 hover:bg-white/5 hover:text-white`}
+              >
+                <Layers className="h-4 w-4 text-indigo-400" />
+                Modules
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${modulesDropdown ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {modulesDropdown && (
+                <div className="absolute left-0 top-full pt-2">
+                  <div className="w-[320px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
+                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Suite ERP complète
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      {modulesNav.map((mod) => (
+                        <Link
+                          key={mod.id}
+                          href={mod.href}
+                          className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                        >
+                          <mod.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${mod.color}`} />
+                          <div>
+                            <p className="text-sm font-medium text-white">{mod.name}</p>
+                            <p className="text-xs text-slate-400">{mod.tagline}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Finance Dropdown */}
             <div
@@ -374,167 +391,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* Marketing Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setMarketingDropdown(true)}
-              onMouseLeave={() => setMarketingDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  pathname.startsWith("/marketing")
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                Marketing
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${marketingDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {marketingDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[500px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
-                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
-                      <Link
-                        href="/marketing"
-                        className="flex items-center gap-2 text-sm font-semibold text-orange-400 hover:text-orange-300"
-                      >
-                        <Image
-                          src="/logos/icon-marketing.svg"
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                        Quelyos Marketing
-                      </Link>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {marketingPages.map((section) => (
-                        <div key={section.category}>
-                          <div className="mb-2 px-3">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                              {section.category}
-                            </p>
-                          </div>
-                          <div className="space-y-1">
-                            {section.items.map((page) => {
-                              const isExternal = "external" in page && page.external;
-                              const LinkComponent = isExternal ? "a" : Link;
-                              return (
-                                <LinkComponent
-                                  key={page.href}
-                                  href={page.href}
-                                  {...(isExternal
-                                    ? { target: "_blank", rel: "noopener noreferrer" }
-                                    : {})}
-                                  className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                                >
-                                  <page.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-orange-400" />
-                                  <div>
-                                    <p className="text-sm font-medium text-white">
-                                      {page.label}
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                      {page.desc}
-                                    </p>
-                                  </div>
-                                </LinkComponent>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 border-t border-white/10 pt-2">
-                      <span className="px-3 text-xs text-slate-500">
-                        📌 MVP en développement • Lancement Q1 2026
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* E-Commerce Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setEcommerceDropdown(true)}
-              onMouseLeave={() => setEcommerceDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  pathname.startsWith("/ecommerce")
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <ShoppingCart className="h-4 w-4 text-amber-400" />
-                E-Commerce
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${ecommerceDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {ecommerceDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[280px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
-                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
-                      <Link
-                        href="/ecommerce"
-                        className="flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-amber-300"
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        Quelyos E-Commerce
-                      </Link>
-                    </div>
-                    <div className="space-y-1">
-                      <Link
-                        href="/ecommerce"
-                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                      >
-                        <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
-                        <div>
-                          <p className="text-sm font-medium text-white">Présentation</p>
-                          <p className="text-xs text-slate-400">Vue d&apos;ensemble</p>
-                        </div>
-                      </Link>
-                      <Link
-                        href="/ecommerce/pricing"
-                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                      >
-                        <DollarSign className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
-                        <div>
-                          <p className="text-sm font-medium text-white">Tarifs</p>
-                          <p className="text-xs text-slate-400">Plans & pricing</p>
-                        </div>
-                      </Link>
-                      <Link
-                        href="/ecommerce/signup"
-                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                      >
-                        <Zap className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
-                        <div>
-                          <p className="text-sm font-medium text-white">Créer ma boutique</p>
-                          <p className="text-xs text-slate-400">14 jours gratuits</p>
-                        </div>
-                      </Link>
-                    </div>
-                    <div className="mt-3 border-t border-white/10 pt-3">
-                      <Link
-                        href="/ecommerce/signup?plan=pro"
-                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-400"
-                      >
-                        <Zap className="h-4 w-4" />
-                        Essai gratuit
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
             <Link
               href="/tarifs"
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
@@ -557,28 +413,14 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* CTA Desktop - Boutons Login */}
+          {/* CTA Desktop - Bouton Connexion unique */}
           <div className="hidden items-center gap-3 lg:flex">
             <a
               href={config.finance.login}
-              className="flex items-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300 transition-all hover:bg-emerald-500/20"
+              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2 text-sm font-medium text-white transition-all hover:from-indigo-600 hover:to-purple-700"
             >
               <LogIn className="h-4 w-4" />
-              Connexion Finance
-            </a>
-            <a
-              href={config.marketing.login}
-              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-sm font-medium text-white transition-all hover:from-orange-600 hover:to-amber-600"
-            >
-              <LogIn className="h-4 w-4" />
-              Connexion Marketing
-            </a>
-            <a
-              href={config.superadmin.login}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-600/50 bg-slate-800/50 text-slate-400 transition-all hover:border-slate-500 hover:bg-slate-700/50 hover:text-white"
-              title="Super Admin"
-            >
-              <Shield className="h-4 w-4" />
+              Connexion
             </a>
           </div>
 
@@ -605,93 +447,24 @@ export default function Header() {
             className="mt-4 border-t border-white/10 pt-4 lg:hidden"
           >
             <nav className="flex flex-col gap-2">
-              <Link
-                href="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`rounded-lg px-4 py-3 text-sm font-medium ${pathname === "/" ? "bg-white/10 text-white" : "text-slate-300"}`}
-              >
-                Accueil
-              </Link>
-
-              {/* Finance Section Mobile */}
+              {/* Modules Section Mobile */}
               <div className="rounded-lg bg-white/5 p-3">
-                <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                  <Image
-                    src="/logos/icon-finance.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                  />
-                  Finance
+                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-indigo-400">
+                  <Layers className="h-4 w-4" />
+                  Modules ERP
                 </p>
-                <div className="flex flex-col gap-3">
-                  {financePages.slice(0, 3).map((section) => (
-                    <div key={section.category}>
-                      <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        {section.category}
-                      </p>
-                      <div className="flex flex-col gap-1 pl-6">
-                        {section.items.map((page) => (
-                          <Link
-                            key={page.href}
-                            href={page.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-sm text-slate-300 hover:text-white"
-                          >
-                            {page.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {modulesNav.map((mod) => (
+                    <Link
+                      key={mod.id}
+                      href={mod.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+                    >
+                      <mod.icon className={`h-4 w-4 ${mod.color}`} />
+                      {mod.name}
+                    </Link>
                   ))}
-                  <Link
-                    href="/finance"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 text-xs text-emerald-400 hover:text-emerald-300"
-                  >
-                    → Voir tout
-                  </Link>
-                </div>
-              </div>
-
-              {/* Marketing Section Mobile */}
-              <div className="rounded-lg bg-white/5 p-3">
-                <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-orange-400">
-                  <Image
-                    src="/logos/icon-marketing.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                  />
-                  Marketing
-                </p>
-                <div className="flex flex-col gap-3">
-                  {marketingPages.slice(0, 2).map((section) => (
-                    <div key={section.category}>
-                      <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        {section.category}
-                      </p>
-                      <div className="flex flex-col gap-1 pl-6">
-                        {section.items.map((page) => (
-                          <Link
-                            key={page.href}
-                            href={page.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-sm text-slate-300 hover:text-white"
-                          >
-                            {page.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  <Link
-                    href="/marketing"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 text-xs text-orange-400 hover:text-orange-300"
-                  >
-                    → Voir tout
-                  </Link>
                 </div>
               </div>
 
@@ -710,27 +483,13 @@ export default function Header() {
                 Contact
               </Link>
 
-              <div className="mt-4 flex flex-col gap-2">
+              <div className="mt-4">
                 <a
                   href={config.finance.login}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-300"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-3 text-sm font-medium text-white"
                 >
                   <LogIn className="h-4 w-4" />
-                  Connexion Finance
-                </a>
-                <a
-                  href={config.marketing.login}
-                  className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 text-sm font-medium text-white"
-                >
-                  <LogIn className="h-4 w-4" />
-                  Connexion Marketing
-                </a>
-                <a
-                  href={config.superadmin.login}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-slate-600/50 bg-slate-800/50 px-4 py-2 text-xs font-medium text-slate-400"
-                >
-                  <Shield className="h-3 w-3" />
-                  Super Admin
+                  Connexion
                 </a>
               </div>
             </nav>

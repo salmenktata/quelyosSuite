@@ -218,6 +218,46 @@ class BaseController(http.Controller):
 
         return None
 
+    def _require_backoffice_auth(self):
+        """
+        Authentifie un utilisateur backoffice via header et vérifie ses droits.
+        Combine _authenticate_from_header() avec vérification utilisateur non-public.
+
+        Pour endpoints auth='public' qui nécessitent authentification backoffice.
+
+        Returns:
+            dict d'erreur si authentification échouée ou droits insuffisants, None si OK
+
+        Usage:
+            error = self._require_backoffice_auth()
+            if error:
+                return error
+        """
+        # Authentifier via header Authorization
+        auth_error = self._authenticate_from_header()
+        if auth_error:
+            return auth_error
+
+        # Vérifier que l'utilisateur n'est pas public
+        if request.env.user._is_public():
+            _logger.warning("Backoffice auth failed: public user after header auth")
+            return {
+                'success': False,
+                'error': 'Authentification requise',
+                'error_code': 'AUTH_REQUIRED'
+            }
+
+        # Vérifier que l'utilisateur appartient à une company valide
+        if not request.env.user.company_id:
+            _logger.warning(f"Backoffice auth failed: user {request.env.user.id} has no company")
+            return {
+                'success': False,
+                'error': 'Utilisateur non associé à une entreprise',
+                'error_code': 'NO_COMPANY'
+            }
+
+        return None
+
     def _validate_customer_ownership(self, customer_id):
         """
         Vérifie que l'utilisateur a le droit de modifier les données du client.
