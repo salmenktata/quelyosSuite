@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 interface VoteButtonProps {
   itemId: string;

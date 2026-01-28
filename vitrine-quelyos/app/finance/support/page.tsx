@@ -33,9 +33,9 @@ import {
 } from "lucide-react";
 
 // Discord SVG Icon
-const DiscordIcon = ({ size = 24 }: { size?: number }) => (
+const DiscordIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
-    className={`h-${size === 24 ? 6 : 5} w-${size === 24 ? 6 : 5}`}
+    {...props}
     viewBox="0 0 24 24"
     fill="currentColor"
   >
@@ -367,7 +367,7 @@ export default function SupportPage() {
                 className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 transition-all hover:border-indigo-500/30 hover:bg-slate-900/80"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 transition-transform group-hover:scale-110">
-                  <method.icon size={24} />
+                  <method.icon className="h-6 w-6" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">
                   {method.title}

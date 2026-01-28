@@ -17,6 +17,7 @@ import {
   Shield,
   GitBranch,
 } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 type StoryStatus = "todo" | "in-progress" | "done";
 type StoryPriority =

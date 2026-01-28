@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { logger } from "@/lib/logger";
 
 const VOTES_FILE = path.join(process.cwd(), "data", "votes.json");
 
