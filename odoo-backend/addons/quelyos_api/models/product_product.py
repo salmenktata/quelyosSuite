@@ -6,6 +6,18 @@ from datetime import datetime, timedelta
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MULTI-TENANT (hérité de product.template)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    tenant_id = fields.Many2one(
+        'quelyos.tenant',
+        string='Tenant',
+        related='product_tmpl_id.tenant_id',
+        store=True,
+        index=True,
+    )
+
     qty_available_unreserved = fields.Float(
         string='Stock Disponible Non Réservé',
         compute='_compute_qty_available_unreserved',

@@ -39,6 +39,7 @@ export interface Job {
   requirements: string
   expected_employees: number
   current_employees: number
+  no_of_employee?: number
   open_positions: number
   active: boolean
 }

@@ -6,18 +6,26 @@ import csv
 import io
 import base64
 from datetime import datetime, timedelta
+from .base import BaseController
 
 
-class MarketingCampaignController(http.Controller):
+class MarketingCampaignController(BaseController):
     """API endpoints for marketing campaigns"""
+
+    def _auth_check(self):
+        """Vérification d'authentification commune"""
+        return self._authenticate_from_header()
 
     # =========================================================================
     # CAMPAIGNS
     # =========================================================================
 
-    @http.route('/api/marketing/campaigns', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns', type='json', auth='public', csrf=False, methods=['POST'])
     def get_campaigns(self, **kwargs):
         """Liste des campagnes avec filtres optionnels"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
         try:
             channel = kwargs.get('channel')  # 'email', 'sms' ou None pour tous
             status = kwargs.get('status')
@@ -44,7 +52,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/create', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/create', type='json', auth='public', csrf=False, methods=['POST'])
     def create_campaign(self, **kwargs):
         """Crée une nouvelle campagne"""
         try:
@@ -80,7 +88,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>', type='json', auth='public', csrf=False, methods=['POST'])
     def get_campaign(self, campaign_id, **kwargs):
         """Détail d'une campagne"""
         try:
@@ -95,7 +103,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/update', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/update', type='json', auth='public', csrf=False, methods=['POST'])
     def update_campaign(self, campaign_id, **kwargs):
         """Met à jour une campagne"""
         try:
@@ -123,7 +131,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/send', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/send', type='json', auth='public', csrf=False, methods=['POST'])
     def send_campaign(self, campaign_id, **kwargs):
         """Envoie une campagne"""
         try:
@@ -143,7 +151,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/schedule', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/schedule', type='json', auth='public', csrf=False, methods=['POST'])
     def schedule_campaign(self, campaign_id, **kwargs):
         """Planifie une campagne"""
         try:
@@ -165,7 +173,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/duplicate', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/duplicate', type='json', auth='public', csrf=False, methods=['POST'])
     def duplicate_campaign(self, campaign_id, **kwargs):
         """Duplique une campagne"""
         try:
@@ -182,7 +190,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/delete', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/delete', type='json', auth='public', csrf=False, methods=['POST'])
     def delete_campaign(self, campaign_id, **kwargs):
         """Supprime une campagne"""
         try:
@@ -200,7 +208,7 @@ class MarketingCampaignController(http.Controller):
     # CONTACT LISTS
     # =========================================================================
 
-    @http.route('/api/marketing/contact-lists', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contact-lists', type='json', auth='public', csrf=False, methods=['POST'])
     def get_contact_lists(self, **kwargs):
         """Liste des listes de contacts"""
         try:
@@ -219,7 +227,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/contact-lists/create', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contact-lists/create', type='json', auth='public', csrf=False, methods=['POST'])
     def create_contact_list(self, **kwargs):
         """Crée une nouvelle liste de contacts"""
         try:
@@ -247,7 +255,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>', type='json', auth='public', csrf=False, methods=['POST'])
     def get_contact_list(self, list_id, **kwargs):
         """Détail d'une liste avec ses contacts"""
         try:
@@ -273,7 +281,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>/update', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>/update', type='json', auth='public', csrf=False, methods=['POST'])
     def update_contact_list(self, list_id, **kwargs):
         """Met à jour une liste de contacts"""
         try:
@@ -301,7 +309,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>/delete', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>/delete', type='json', auth='public', csrf=False, methods=['POST'])
     def delete_contact_list(self, list_id, **kwargs):
         """Supprime une liste de contacts"""
         try:
@@ -319,9 +327,12 @@ class MarketingCampaignController(http.Controller):
     # EMAIL TEMPLATES
     # =========================================================================
 
-    @http.route('/api/marketing/email-templates', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/email-templates', type='json', auth='public', csrf=False, methods=['POST'])
     def get_email_templates(self, **kwargs):
         """Liste des templates email"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
         try:
             category = kwargs.get('category')
 
@@ -342,9 +353,12 @@ class MarketingCampaignController(http.Controller):
     # DASHBOARD
     # =========================================================================
 
-    @http.route('/api/marketing/dashboard', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/dashboard', type='json', auth='public', csrf=False, methods=['POST'])
     def get_dashboard(self, **kwargs):
         """Statistiques dashboard marketing"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
         try:
             Campaign = request.env['quelyos.marketing.campaign'].sudo()
             ContactList = request.env['quelyos.contact.list'].sudo()
@@ -434,7 +448,7 @@ class MarketingCampaignController(http.Controller):
     # IMPORT CSV CONTACTS
     # =========================================================================
 
-    @http.route('/api/marketing/contacts/import/preview', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contacts/import/preview', type='json', auth='public', csrf=False, methods=['POST'])
     def preview_csv_import(self, **kwargs):
         """Parse CSV et retourne un aperçu des données"""
         try:
@@ -494,7 +508,7 @@ class MarketingCampaignController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/marketing/contacts/import', type='json', auth='user', methods=['POST'])
+    @http.route('/api/marketing/contacts/import', type='json', auth='public', csrf=False, methods=['POST'])
     def import_csv_contacts(self, **kwargs):
         """Importe les contacts depuis un CSV dans une liste"""
         try:

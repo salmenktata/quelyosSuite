@@ -262,9 +262,10 @@ class QuelyosCheckout(http.Controller):
         """
         try:
             params = self._get_params()
+            tenant_id = params.get('tenant_id')
             guest_email = params.get('guest_email')
 
-            _logger.info(f"Validating cart for guest_email: {guest_email}")
+            _logger.info(f"Validating cart for guest_email: {guest_email}, tenant_id: {tenant_id}")
 
             # SUDO justifié : Endpoint public permettant validation panier invité.
             # sudo() nécessaire pour accéder aux paniers sans session utilisateur (guests).
@@ -272,8 +273,10 @@ class QuelyosCheckout(http.Controller):
             # Récupérer le panier
             Order = request.env['sale.order'].sudo()
 
-            # Chercher le panier actif
+            # Chercher le panier actif avec filtrage multi-tenant
             domain = [('state', '=', 'draft')]
+            if tenant_id:
+                domain.append(('tenant_id', '=', tenant_id))
             if request.session.uid:
                 domain.append(('partner_id', '=', request.session.uid))
             elif guest_email:

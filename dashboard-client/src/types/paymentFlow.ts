@@ -2,7 +2,7 @@
  * Types pour les flux de paiement (Payment Flows)
  */
 
-export type FlowType = 'income' | 'expense' | 'transfer' | 'recurring' | 'CASH' | 'CARD' | 'CHECK' | 'TRANSFER' | 'MOBILE' | 'OTHER' | 'DIRECT_DEBIT' | 'WIRE_TRANSFER' | 'BILL_OF_EXCHANGE'
+export type FlowType = 'income' | 'expense' | 'transfer' | 'recurring' | 'CASH' | 'CARD' | 'CHECK' | 'TRANSFER' | 'MOBILE' | 'OTHER' | 'DIRECT_DEBIT' | 'WIRE_TRANSFER' | 'BILL_OF_EXCHANGE' | 'PROMISSORY_NOTE' | 'BANK_CHARGE'
 
 export interface PaymentFlow {
   id: number

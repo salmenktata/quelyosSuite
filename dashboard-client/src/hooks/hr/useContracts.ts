@@ -10,6 +10,7 @@ export interface Contract {
   department_name: string | null
   job_id: number | null
   job_title: string | null
+  job_name?: string | null
   contract_type: 'cdi' | 'cdd' | 'stage' | 'interim' | 'apprenticeship' | 'freelance'
   contract_type_label: string
   date_start: string
@@ -33,6 +34,7 @@ export interface ContractFilters {
   department_id?: number
   contract_type?: string
   state?: string
+  search?: string
   limit?: number
   offset?: number
 }

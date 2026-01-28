@@ -631,6 +631,7 @@ class QuelyosAPI(BaseController):
         """Liste des produits avec recherche, filtres et tri (GET via JSON-RPC)"""
         try:
             params = self._get_params()
+            tenant_id = params.get('tenant_id')
             limit = int(params.get('limit', 20))
             offset = int(params.get('offset', 0))
             category_id = params.get('category_id')
@@ -647,6 +648,7 @@ class QuelyosAPI(BaseController):
             cache = get_cache_service()
             cache_key = cache._generate_key(
                 'products',
+                tenant_id=tenant_id,
                 limit=limit,
                 offset=offset,
                 category_id=category_id,
@@ -674,6 +676,10 @@ class QuelyosAPI(BaseController):
                 ProductTemplate = ProductTemplate.with_context(active_test=False)
 
             domain = [('sale_ok', '=', True)]
+
+            # Filtre par tenant (multi-tenant isolation)
+            if tenant_id:
+                domain.append(('tenant_id', '=', tenant_id))
 
             # Filtre par statut actif/archivé
             if include_archived and params.get('archived_only'):
@@ -946,6 +952,7 @@ class QuelyosAPI(BaseController):
                 return error
 
             params = self._get_params()
+            tenant_id = params.get('tenant_id')
             name = params.get('name')
             price = params.get('price', 0.0)
             description = params.get('description', '')
@@ -956,7 +963,6 @@ class QuelyosAPI(BaseController):
                     'success': False,
                     'error': 'Product name is required'
                 }
-            pass
 
             product_data = {
                 'name': name,
@@ -965,6 +971,10 @@ class QuelyosAPI(BaseController):
                 'sale_ok': True,
                 'purchase_ok': True,
             }
+
+            # Tenant multi-tenant
+            if tenant_id:
+                product_data['tenant_id'] = tenant_id
 
             if category_id:
                 product_data['categ_id'] = int(category_id)
@@ -4357,7 +4367,7 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/customers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_customers_list(self, **kwargs):
-        """Liste de tous les clients (admin uniquement)"""
+        """Liste de tous les clients (admin uniquement) avec filtrage multi-tenant"""
         try:
             # Vérifier les permissions admin
             # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
@@ -4366,12 +4376,17 @@ class QuelyosAPI(BaseController):
             pass
 
             params = self._get_params()
+            tenant_id = params.get('tenant_id')
             limit = int(params.get('limit', 20))
             offset = int(params.get('offset', 0))
             search = params.get('search', '').strip()
 
             # Construire le domaine de recherche
             domain = [('customer_rank', '>', 0)]  # Uniquement les clients
+
+            # Filtre multi-tenant
+            if tenant_id:
+                domain.append(('tenant_id', '=', tenant_id))
 
             if search:
                 domain = ['&'] + domain + [
@@ -11290,18 +11305,45 @@ class QuelyosAPI(BaseController):
             Liste des factures à venir
         """
         try:
+            from datetime import datetime, timedelta
             params = self._get_http_params()
             days = int(params.get('days', 60))
 
-            # TODO: Implémenter avec account.move (supplier invoices)
+            today = datetime.now().date()
+            future_date = today + timedelta(days=days)
 
-            response_data = {
-                'invoices': [],
-                'totalAmount': 0.0,
-                'currency': 'EUR'
-            }
+            domain = [
+                ('move_type', 'in', ['in_invoice', 'in_refund']),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('invoice_date_due', '>=', today),
+                ('invoice_date_due', '<=', future_date),
+            ]
 
-            return request.make_json_response(response_data)
+            AccountMove = request.env['account.move'].sudo()
+            invoices = AccountMove.search(domain, order='invoice_date_due asc')
+
+            data = []
+            total_amount = 0.0
+            currency = 'EUR'
+
+            for inv in invoices:
+                total_amount += inv.amount_residual
+                currency = inv.currency_id.name if inv.currency_id else 'EUR'
+                data.append({
+                    'id': inv.id,
+                    'name': inv.name or '',
+                    'supplierName': inv.partner_id.name if inv.partner_id else '',
+                    'dueDate': inv.invoice_date_due.isoformat() if inv.invoice_date_due else None,
+                    'amountResidual': inv.amount_residual,
+                    'daysUntilDue': (inv.invoice_date_due - today).days if inv.invoice_date_due else 0,
+                })
+
+            return request.make_json_response({
+                'invoices': data,
+                'totalAmount': total_amount,
+                'currency': currency
+            })
 
         except Exception as e:
             _logger.error(f"Get upcoming supplier invoices error: {e}")
@@ -11320,15 +11362,42 @@ class QuelyosAPI(BaseController):
             Liste des factures en retard
         """
         try:
-            # TODO: Implémenter avec account.move (overdue invoices)
+            from datetime import datetime
+            today = datetime.now().date()
 
-            response_data = {
-                'invoices': [],
-                'totalAmount': 0.0,
-                'currency': 'EUR'
-            }
+            domain = [
+                ('move_type', 'in', ['in_invoice', 'in_refund']),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('invoice_date_due', '<', today),
+            ]
 
-            return request.make_json_response(response_data)
+            AccountMove = request.env['account.move'].sudo()
+            invoices = AccountMove.search(domain, order='invoice_date_due asc')
+
+            data = []
+            total_amount = 0.0
+            currency = 'EUR'
+
+            for inv in invoices:
+                total_amount += inv.amount_residual
+                currency = inv.currency_id.name if inv.currency_id else 'EUR'
+                days_overdue = (today - inv.invoice_date_due).days if inv.invoice_date_due else 0
+                data.append({
+                    'id': inv.id,
+                    'name': inv.name or '',
+                    'supplierName': inv.partner_id.name if inv.partner_id else '',
+                    'dueDate': inv.invoice_date_due.isoformat() if inv.invoice_date_due else None,
+                    'amountResidual': inv.amount_residual,
+                    'daysOverdue': days_overdue,
+                    'urgency': 'critical' if days_overdue > 30 else 'warning' if days_overdue > 7 else 'low',
+                })
+
+            return request.make_json_response({
+                'invoices': data,
+                'totalAmount': total_amount,
+                'currency': currency
+            })
 
         except Exception as e:
             _logger.error(f"Get overdue supplier invoices error: {e}")
@@ -16382,10 +16451,20 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/stages', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_stages(self, **kwargs):
-        """Récupérer les stages (colonnes) du pipeline CRM"""
+        """Récupérer les stages (colonnes) du pipeline CRM pour un tenant"""
         try:
+            params = self._get_params()
+            tenant_id = params.get('tenant_id')
+
             Stage = request.env['crm.stage'].sudo()
-            stages = Stage.search([], order='sequence asc')
+
+            # Filtrer par tenant (stages du tenant + stages globaux)
+            if tenant_id:
+                domain = ['|', ('tenant_id', '=', tenant_id), ('tenant_id', '=', False)]
+            else:
+                domain = [('tenant_id', '=', False)]
+
+            stages = Stage.search(domain, order='sequence asc')
 
             data = []
             for stage in stages:
@@ -16394,7 +16473,9 @@ class QuelyosAPI(BaseController):
                     'name': stage.name,
                     'sequence': stage.sequence,
                     'fold': stage.fold,
-                    'is_won': stage.is_won
+                    'is_won': stage.is_won,
+                    'tenant_id': stage.tenant_id.id if stage.tenant_id else None,
+                    'is_global': not stage.tenant_id
                 })
 
             return {
@@ -16412,19 +16493,28 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/leads', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_leads(self, **kwargs):
-        """Récupérer les leads (opportunités) avec pagination"""
+        """Récupérer les leads (opportunités) avec pagination et filtrage par tenant"""
         try:
             params = self._get_params()
             limit = params.get('limit', 20)
             offset = params.get('offset', 0)
             search_term = params.get('search', '').strip()
+            tenant_id = params.get('tenant_id')
+
+            # tenant_id obligatoire pour isoler les données
+            if not tenant_id:
+                return {
+                    'success': False,
+                    'error': 'tenant_id est obligatoire',
+                    'errorCode': 'MISSING_TENANT'
+                }
 
             Lead = request.env['crm.lead'].sudo()
 
-            # Construire domaine de recherche
-            domain = []
+            # Construire domaine de recherche avec filtrage tenant
+            domain = [('tenant_id', '=', tenant_id)]
             if search_term:
-                domain = [
+                domain += [
                     '|', '|',
                     ('name', 'ilike', search_term),
                     ('partner_name', 'ilike', search_term),
@@ -16451,7 +16541,8 @@ class QuelyosAPI(BaseController):
                     'user_id': lead.user_id.id if lead.user_id else None,
                     'user_name': lead.user_id.name if lead.user_id else None,
                     'date_deadline': lead.date_deadline.isoformat() if lead.date_deadline else None,
-                    'create_date': lead.create_date.isoformat() if lead.create_date else None
+                    'create_date': lead.create_date.isoformat() if lead.create_date else None,
+                    'tenant_id': lead.tenant_id.id if lead.tenant_id else None
                 })
 
             return {
@@ -16474,8 +16565,11 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_crm_lead_detail(self, lead_id, **kwargs):
-        """Récupérer le détail d'un lead"""
+        """Récupérer le détail d'un lead avec vérification tenant"""
         try:
+            params = self._get_params()
+            tenant_id = params.get('tenant_id')
+
             Lead = request.env['crm.lead'].sudo()
             lead = Lead.browse(lead_id)
 
@@ -16484,6 +16578,14 @@ class QuelyosAPI(BaseController):
                     'success': False,
                     'error': 'Lead introuvable',
                     'errorCode': 'NOT_FOUND'
+                }
+
+            # Vérifier appartenance au tenant
+            if tenant_id and lead.tenant_id and lead.tenant_id.id != tenant_id:
+                return {
+                    'success': False,
+                    'error': 'Lead non accessible pour ce tenant',
+                    'errorCode': 'FORBIDDEN'
                 }
 
             return {
@@ -16505,7 +16607,8 @@ class QuelyosAPI(BaseController):
                     'description': lead.description or '',
                     'email': lead.email_from or '',
                     'phone': lead.phone or '',
-                    'mobile': lead.mobile or ''
+                    'mobile': lead.mobile or '',
+                    'tenant_id': lead.tenant_id.id if lead.tenant_id else None
                 }
             }
 
@@ -16519,7 +16622,7 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/leads/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_crm_lead(self, **kwargs):
-        """Créer un nouveau lead"""
+        """Créer un nouveau lead avec tenant obligatoire"""
         try:
             # Vérifier session
             session_error = self._check_session()
@@ -16528,6 +16631,7 @@ class QuelyosAPI(BaseController):
 
             params = self._get_params()
             name = params.get('name', '').strip()
+            tenant_id = params.get('tenant_id')
 
             if not name:
                 return {
@@ -16536,12 +16640,29 @@ class QuelyosAPI(BaseController):
                     'errorCode': 'MISSING_REQUIRED_FIELD'
                 }
 
+            if not tenant_id:
+                return {
+                    'success': False,
+                    'error': 'tenant_id est obligatoire',
+                    'errorCode': 'MISSING_TENANT'
+                }
+
+            # Vérifier que le tenant existe
+            Tenant = request.env['quelyos.tenant'].sudo()
+            if not Tenant.browse(tenant_id).exists():
+                return {
+                    'success': False,
+                    'error': 'Tenant introuvable',
+                    'errorCode': 'INVALID_TENANT'
+                }
+
             Lead = request.env['crm.lead'].sudo()
 
             # Construire valeurs
             vals = {
                 'name': name,
-                'user_id': request.session.uid
+                'user_id': request.session.uid,
+                'tenant_id': tenant_id
             }
 
             # Champs optionnels
@@ -16566,7 +16687,7 @@ class QuelyosAPI(BaseController):
 
             # Créer lead
             lead = Lead.create(vals)
-            _logger.info(f"CRM lead created: {lead.name} (id: {lead.id})")
+            _logger.info(f"CRM lead created: {lead.name} (id: {lead.id}) for tenant {tenant_id}")
 
             return {
                 'success': True,
@@ -16574,7 +16695,8 @@ class QuelyosAPI(BaseController):
                     'id': lead.id,
                     'name': lead.name,
                     'stage_id': lead.stage_id.id if lead.stage_id else None,
-                    'stage_name': lead.stage_id.name if lead.stage_id else 'Non défini'
+                    'stage_name': lead.stage_id.name if lead.stage_id else 'Non défini',
+                    'tenant_id': lead.tenant_id.id
                 }
             }
 
@@ -16588,7 +16710,7 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_crm_lead(self, lead_id, **kwargs):
-        """Mettre à jour un lead"""
+        """Mettre à jour un lead avec vérification tenant"""
         try:
             # Vérifier session
             session_error = self._check_session()
@@ -16596,6 +16718,8 @@ class QuelyosAPI(BaseController):
                 return session_error
 
             params = self._get_params()
+            tenant_id = params.get('tenant_id')
+
             Lead = request.env['crm.lead'].sudo()
             lead = Lead.browse(lead_id)
 
@@ -16604,6 +16728,14 @@ class QuelyosAPI(BaseController):
                     'success': False,
                     'error': 'Lead introuvable',
                     'errorCode': 'NOT_FOUND'
+                }
+
+            # Vérifier appartenance au tenant
+            if tenant_id and lead.tenant_id and lead.tenant_id.id != tenant_id:
+                return {
+                    'success': False,
+                    'error': 'Lead non accessible pour ce tenant',
+                    'errorCode': 'FORBIDDEN'
                 }
 
             # Construire dict de mise à jour
@@ -16654,7 +16786,7 @@ class QuelyosAPI(BaseController):
 
     @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
     def update_lead_stage(self, lead_id, **kwargs):
-        """Mettre à jour le stage d'un lead (drag & drop)"""
+        """Mettre à jour le stage d'un lead (drag & drop) avec vérification tenant"""
         try:
             # Vérifier session
             session_error = self._check_session()
@@ -16663,6 +16795,7 @@ class QuelyosAPI(BaseController):
 
             params = self._get_params()
             stage_id = params.get('stage_id')
+            tenant_id = params.get('tenant_id')
 
             if not stage_id:
                 return {
@@ -16681,6 +16814,14 @@ class QuelyosAPI(BaseController):
                     'errorCode': 'NOT_FOUND'
                 }
 
+            # Vérifier appartenance au tenant
+            if tenant_id and lead.tenant_id and lead.tenant_id.id != tenant_id:
+                return {
+                    'success': False,
+                    'error': 'Lead non accessible pour ce tenant',
+                    'errorCode': 'FORBIDDEN'
+                }
+
             # Vérifier que le stage existe
             Stage = request.env['crm.stage'].sudo()
             stage = Stage.browse(stage_id)
@@ -16689,6 +16830,14 @@ class QuelyosAPI(BaseController):
                     'success': False,
                     'error': 'Stage introuvable',
                     'errorCode': 'NOT_FOUND'
+                }
+
+            # Vérifier que le stage appartient au même tenant ou est global
+            if stage.tenant_id and lead.tenant_id and stage.tenant_id.id != lead.tenant_id.id:
+                return {
+                    'success': False,
+                    'error': 'Stage non accessible pour ce tenant',
+                    'errorCode': 'FORBIDDEN'
                 }
 
             # Mettre à jour le stage
@@ -16700,12 +16849,89 @@ class QuelyosAPI(BaseController):
                 'data': {
                     'id': lead.id,
                     'stage_id': stage.id,
-                    'stage_name': stage.name
+                    'stage_name': stage.name,
+                    'tenant_id': lead.tenant_id.id if lead.tenant_id else None
                 }
             }
 
         except Exception as e:
             _logger.error(f"Update lead stage error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'errorCode': 'SERVER_ERROR'
+            }
+
+    @http.route('/api/ecommerce/crm/stages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    def create_crm_stage(self, **kwargs):
+        """Créer un nouveau stage CRM pour un tenant"""
+        try:
+            # Vérifier session
+            session_error = self._check_session()
+            if session_error:
+                return session_error
+
+            params = self._get_params()
+            name = params.get('name', '').strip()
+            tenant_id = params.get('tenant_id')
+
+            if not name:
+                return {
+                    'success': False,
+                    'error': 'Le nom du stage est obligatoire',
+                    'errorCode': 'MISSING_REQUIRED_FIELD'
+                }
+
+            if not tenant_id:
+                return {
+                    'success': False,
+                    'error': 'tenant_id est obligatoire',
+                    'errorCode': 'MISSING_TENANT'
+                }
+
+            # Vérifier que le tenant existe
+            Tenant = request.env['quelyos.tenant'].sudo()
+            if not Tenant.browse(tenant_id).exists():
+                return {
+                    'success': False,
+                    'error': 'Tenant introuvable',
+                    'errorCode': 'INVALID_TENANT'
+                }
+
+            Stage = request.env['crm.stage'].sudo()
+
+            # Calculer la séquence (après le dernier stage du tenant)
+            last_stage = Stage.search([
+                '|',
+                ('tenant_id', '=', tenant_id),
+                ('tenant_id', '=', False)
+            ], order='sequence desc', limit=1)
+            sequence = (last_stage.sequence + 10) if last_stage else 10
+
+            # Créer le stage
+            stage = Stage.create({
+                'name': name,
+                'tenant_id': tenant_id,
+                'sequence': sequence,
+                'fold': params.get('fold', False),
+                'is_won': params.get('is_won', False),
+            })
+            _logger.info(f"CRM stage created: {stage.name} (id: {stage.id}) for tenant {tenant_id}")
+
+            return {
+                'success': True,
+                'data': {
+                    'id': stage.id,
+                    'name': stage.name,
+                    'sequence': stage.sequence,
+                    'fold': stage.fold,
+                    'is_won': stage.is_won,
+                    'tenant_id': stage.tenant_id.id
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Create CRM stage error: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e),

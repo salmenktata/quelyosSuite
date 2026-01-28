@@ -6,6 +6,18 @@ from odoo.exceptions import UserError
 class StockLocation(models.Model):
     _inherit = 'stock.location'
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MULTI-TENANT
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    tenant_id = fields.Many2one(
+        'quelyos.tenant',
+        string='Tenant',
+        index=True,
+        ondelete='cascade',
+        help='Tenant propriétaire de cet emplacement',
+    )
+
     is_locked = fields.Boolean(
         string='Verrouillée',
         default=False,

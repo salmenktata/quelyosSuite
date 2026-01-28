@@ -152,14 +152,14 @@ export default function ArchivesPage() {
               </p>
             </div>
           </div>
-          <Button
-            as={Link}
-            to={ROUTES.FINANCE.DASHBOARD.HOME}
-            variant="secondary"
-            icon={<ArrowUpRight size={16} />}
-          >
-            Retour dashboard
-          </Button>
+          <Link to={ROUTES.FINANCE.DASHBOARD.HOME}>
+            <Button
+              variant="secondary"
+              icon={<ArrowUpRight size={16} />}
+            >
+              Retour dashboard
+            </Button>
+          </Link>
         </div>
 
         <PageNotice config={financeNotices.archives} className="mb-6" />

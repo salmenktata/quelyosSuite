@@ -1,10 +1,26 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import { afterEach, afterAll, beforeAll, vi } from 'vitest'
+import { server } from './mocks/server'
+
+// Mock @quelyos/logger
+vi.mock('@quelyos/logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  },
+}))
+
+// MSW Server lifecycle
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
+afterAll(() => server.close())
 
 // Cleanup après chaque test
 afterEach(() => {
   cleanup()
+  server.resetHandlers()
 })
 
 // Mock localStorage

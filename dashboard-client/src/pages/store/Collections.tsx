@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, EyeOff, Image, Package } from 'lucide-react';
-import { useModule } from '@/components/ModularLayout';
+import { Layout } from '@/components/Layout';
+import { Breadcrumbs } from '@/components/common';
 
 interface Collection {
   id: number;
@@ -17,13 +18,11 @@ interface Collection {
 }
 
 export default function Collections() {
-  const { setTitle } = useModule();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Collection | null>(null);
 
   useEffect(() => {
-    setTitle('Collections');
     fetchCollections();
   }, []);
 
@@ -80,23 +79,37 @@ export default function Collections() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Chargement...</div>;
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-64">Chargement...</div>
+      </Layout>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <p className="text-gray-500 dark:text-gray-400">
-          Groupez vos produits par thème ou saison
-        </p>
-        <button
-          onClick={newCollection}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4" />
-          Nouvelle collection
-        </button>
-      </div>
+    <Layout>
+      <Breadcrumbs
+        items={[
+          { label: 'Boutique', href: '/store' },
+          { label: 'Collections' },
+        ]}
+      />
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Collections</h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Groupez vos produits par thème ou saison
+            </p>
+          </div>
+          <button
+            onClick={newCollection}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4" />
+            Nouvelle collection
+          </button>
+        </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {collections.map((collection) => (
@@ -276,6 +289,7 @@ export default function Collections() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </Layout>
   );
 }

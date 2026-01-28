@@ -51,7 +51,7 @@ echo -e "${GREEN}✓ Variables chargées${NC}\n"
 # ----------------------------------------------
 # 3. Créer les dossiers nécessaires
 # ----------------------------------------------
-echo -e "${YELLOW}[3/6] Création des dossiers...${NC}"
+echo -e "${YELLOW}[3/8] Création des dossiers...${NC}"
 mkdir -p nginx/ssl
 mkdir -p nginx/certbot/www
 mkdir -p nginx/certbot/conf
@@ -62,32 +62,72 @@ echo -e "${GREEN}✓ Dossiers créés${NC}\n"
 # ----------------------------------------------
 # 4. Build des images Docker
 # ----------------------------------------------
-echo -e "${YELLOW}[4/6] Construction des images Docker...${NC}"
+echo -e "${YELLOW}[4/8] Construction des images Docker...${NC}"
 docker-compose -f docker-compose.prod.yml build --no-cache
 echo -e "${GREEN}✓ Images construites${NC}\n"
 
 # ----------------------------------------------
-# 5. Démarrage des services
+# 5. Démarrage des services (HTTP uniquement pour Certbot)
 # ----------------------------------------------
-echo -e "${YELLOW}[5/6] Démarrage des services...${NC}"
+echo -e "${YELLOW}[5/8] Démarrage des services...${NC}"
 docker-compose -f docker-compose.prod.yml up -d
 
 echo -e "${GREEN}✓ Services démarrés${NC}\n"
 
-# Attendre que les services soient prêts
-echo -e "${YELLOW}Attente du démarrage complet des services (30s)...${NC}"
-sleep 30
+# Attendre que Nginx soit prêt
+echo -e "${YELLOW}Attente du démarrage de Nginx (15s)...${NC}"
+sleep 15
 
 # ----------------------------------------------
-# 6. Vérification du statut
+# 6. Génération automatique SSL (Let's Encrypt)
 # ----------------------------------------------
-echo -e "${YELLOW}[6/6] Vérification du statut...${NC}\n"
+echo -e "${YELLOW}[6/8] Configuration SSL Let's Encrypt...${NC}"
+
+if [ -f "nginx/ssl/fullchain.pem" ] && [ -f "nginx/ssl/privkey.pem" ]; then
+    echo -e "${GREEN}✓ Certificats SSL existants détectés${NC}\n"
+else
+    echo -e "${YELLOW}Génération des certificats SSL pour ${DOMAIN}...${NC}"
+
+    # Obtenir le certificat avec Certbot
+    docker-compose -f docker-compose.prod.yml run --rm certbot certonly \
+        --webroot \
+        --webroot-path=/var/www/certbot \
+        --email ${LETSENCRYPT_EMAIL} \
+        --agree-tos \
+        --no-eff-email \
+        --non-interactive \
+        -d ${DOMAIN} \
+        -d www.${DOMAIN} || {
+            echo -e "${RED}⚠ Échec génération SSL - vérifiez que le domaine pointe vers ce serveur${NC}"
+            echo -e "${YELLOW}Continuant sans SSL...${NC}"
+        }
+
+    # Créer les liens symboliques si les certificats ont été générés
+    if [ -d "nginx/certbot/conf/live/${DOMAIN}" ]; then
+        ln -sf $(pwd)/nginx/certbot/conf/live/${DOMAIN}/fullchain.pem nginx/ssl/fullchain.pem
+        ln -sf $(pwd)/nginx/certbot/conf/live/${DOMAIN}/privkey.pem nginx/ssl/privkey.pem
+        echo -e "${GREEN}✓ Certificats SSL configurés${NC}"
+
+        # Redémarrer Nginx pour charger les certificats
+        docker-compose -f docker-compose.prod.yml restart nginx
+        echo -e "${GREEN}✓ Nginx redémarré avec SSL${NC}\n"
+    fi
+fi
+
+# Attendre la stabilisation
+echo -e "${YELLOW}Attente de la stabilisation (15s)...${NC}"
+sleep 15
+
+# ----------------------------------------------
+# 7. Vérification du statut
+# ----------------------------------------------
+echo -e "${YELLOW}[7/8] Vérification du statut...${NC}\n"
 docker-compose -f docker-compose.prod.yml ps
 
 # ----------------------------------------------
-# Healthchecks
+# 8. Healthchecks
 # ----------------------------------------------
-echo -e "\n${YELLOW}Healthchecks:${NC}"
+echo -e "${YELLOW}[8/8] Healthchecks...${NC}"
 
 # Frontend
 if curl -f http://localhost:3000/api/health &> /dev/null; then
@@ -130,8 +170,8 @@ echo -e "  • Stop:       docker-compose -f docker-compose.prod.yml down"
 echo -e "  • Status:     docker-compose -f docker-compose.prod.yml ps"
 
 echo -e "\n${YELLOW}Prochaines étapes:${NC}"
-echo -e "  1. Configurer SSL avec: ./ssl-init.sh"
-echo -e "  2. Vérifier les logs pour détecter d'éventuelles erreurs"
-echo -e "  3. Configurer les sauvegardes automatiques avec: ./backup.sh"
+echo -e "  1. Vérifier les logs pour détecter d'éventuelles erreurs"
+echo -e "  2. Configurer les sauvegardes automatiques avec: ./scripts/backup.sh"
+echo -e "  3. Configurer Stripe dans .env.production (si non fait)"
 
 echo ""

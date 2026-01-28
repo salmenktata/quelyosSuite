@@ -244,7 +244,7 @@ export default function ContactListsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+            <h1 data-testid="page-title" className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
                 <Users className="w-6 h-6 text-violet-600 dark:text-violet-400" />
               </div>
@@ -256,6 +256,7 @@ export default function ContactListsPage() {
           </div>
           <div className="flex gap-3">
             <button
+              data-testid="btn-import-csv"
               onClick={() => setShowImportModal(true)}
               className="inline-flex items-center gap-2 px-4 py-2 border border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20 transition text-sm font-medium"
             >
@@ -263,6 +264,7 @@ export default function ContactListsPage() {
               Importer CSV
             </button>
             <button
+              data-testid="btn-create-list"
               onClick={() => setShowCreateModal(true)}
               className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition text-sm font-medium"
             >
@@ -313,6 +315,7 @@ export default function ContactListsPage() {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
+            data-testid="search-input"
             type="text"
             placeholder="Rechercher une liste..."
             value={searchTerm}
@@ -347,10 +350,11 @@ export default function ContactListsPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div data-testid="contact-lists" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredLists.map((list) => (
               <div
                 key={list.id}
+                data-testid={`list-card-${list.id}`}
                 className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:border-violet-300 dark:hover:border-violet-600 transition group"
               >
                 <div className="flex items-start justify-between mb-4">
@@ -370,6 +374,7 @@ export default function ContactListsPage() {
                     </div>
                   </div>
                   <button
+                    data-testid={`btn-delete-${list.id}`}
                     onClick={() => setDeleteId(list.id)}
                     className="p-2 text-gray-400 hover:text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition"
                   >
@@ -414,6 +419,7 @@ export default function ContactListsPage() {
                     Nom *
                   </label>
                   <input
+                    data-testid="input-list-name"
                     type="text"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
@@ -473,6 +479,7 @@ export default function ContactListsPage() {
                   Annuler
                 </button>
                 <button
+                  data-testid="btn-submit-create"
                   onClick={handleCreate}
                   disabled={createMutation.isPending || !newListName.trim()}
                   className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition"

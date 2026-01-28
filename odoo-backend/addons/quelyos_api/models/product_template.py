@@ -6,6 +6,18 @@ class ProductTemplate(models.Model):
     """Extension du modèle product.template pour les fonctionnalités e-commerce."""
     _inherit = 'product.template'
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MULTI-TENANT
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    tenant_id = fields.Many2one(
+        'quelyos.tenant',
+        string='Tenant',
+        index=True,
+        ondelete='cascade',
+        help='Tenant propriétaire de ce produit',
+    )
+
     qty_available_unreserved = fields.Float(
         string='Stock Disponible Non Réservé',
         compute='_compute_qty_available_unreserved',

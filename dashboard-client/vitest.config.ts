@@ -32,6 +32,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@quelyos/logger': path.resolve(__dirname, './src/test/mocks/logger.ts'),
     },
   },
 })

@@ -14,7 +14,7 @@ export default defineConfig({
   timeout: 30 * 1000, // 30s par test
 
   use: {
-    baseURL: 'http://localhost:5173', // Vite dev server backoffice
+    baseURL: 'http://localhost:5175', // Vite dev server backoffice
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -28,9 +28,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    command: 'pnpm dev',
+    url: 'http://localhost:5175',
+    reuseExistingServer: true, // Utiliser le serveur existant
     timeout: 120 * 1000,
   },
 });

@@ -10,6 +10,18 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MULTI-TENANT
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    tenant_id = fields.Many2one(
+        'quelyos.tenant',
+        string='Tenant',
+        index=True,
+        ondelete='cascade',
+        help='Tenant propriétaire de cette commande',
+    )
+
     # Token de récupération sécurisé pour le lien email
     recovery_token = fields.Char(
         string='Token de récupération',

@@ -57,3 +57,11 @@ from . import pos_payment_method
 from . import pos_config
 from . import pos_session
 from . import pos_order
+# CRM Multi-tenant
+from . import crm_lead
+# Multi-tenant pour tous les modèles custom
+from . import tenant_mixin
+# Finance multi-tenant
+from . import account_move
+# Contacts multi-tenant
+from . import res_partner

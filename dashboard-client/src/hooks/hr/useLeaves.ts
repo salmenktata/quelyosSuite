@@ -54,6 +54,7 @@ export interface LeaveAllocation {
   leave_type_id: number
   leave_type_name: string
   leave_type_code: string
+  leave_type_color?: number
   number_of_days: number
   leaves_taken: number
   remaining_leaves: number
@@ -61,6 +62,7 @@ export interface LeaveAllocation {
   date_to: string
   allocation_type: string
   state: 'draft' | 'validate' | 'cancel'
+  state_label?: string
   notes: string
 }
 
@@ -68,9 +70,11 @@ export interface LeaveBalance {
   leave_type_id: number
   leave_type_name: string
   leave_type_code: string
+  leave_type_color?: number
   allocated: number
   taken: number
   remaining: number
+  remaining_leaves?: number
 }
 
 export interface CalendarEvent {
@@ -78,7 +82,10 @@ export interface CalendarEvent {
   title: string
   start: string
   end: string
+  date_from?: string
+  date_to?: string
   color: number
+  leave_type_color?: number
   employee_id: number
   employee_name: string
   leave_type: string

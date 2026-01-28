@@ -42,6 +42,7 @@ const API_URL = import.meta.env.VITE_API_URL || ''
 class ApiClient {
   private baseUrl: string
   private sessionId: string | null = null
+  private tenantId: number | null = null
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl
@@ -54,6 +55,30 @@ class ApiClient {
       this.sessionId = null
       localStorage.removeItem('session_id')
     }
+    // Récupérer le tenant_id du localStorage
+    const storedTenantId = localStorage.getItem('tenant_id')
+    if (storedTenantId && storedTenantId !== 'null') {
+      this.tenantId = parseInt(storedTenantId, 10)
+    }
+  }
+
+  /**
+   * Définir le tenant courant pour toutes les requêtes API
+   */
+  setTenantId(tenantId: number | null): void {
+    this.tenantId = tenantId
+    if (tenantId) {
+      localStorage.setItem('tenant_id', String(tenantId))
+    } else {
+      localStorage.removeItem('tenant_id')
+    }
+  }
+
+  /**
+   * Récupérer le tenant_id courant
+   */
+  getTenantId(): number | null {
+    return this.tenantId
   }
 
   async request<T>(endpoint: string, data?: unknown): Promise<T> {
@@ -80,7 +105,11 @@ class ApiClient {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'call',
-        params: data || {},
+        params: {
+          ...(data || {}),
+          // Injecter automatiquement tenant_id si défini
+          ...(this.tenantId ? { tenant_id: this.tenantId } : {}),
+        },
         id: Math.random(),
       }),
     })
