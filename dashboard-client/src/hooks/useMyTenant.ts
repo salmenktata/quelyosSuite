@@ -28,11 +28,20 @@ function getAuthHeaders(): HeadersInit {
 }
 
 /**
+ * Vérifie si l'utilisateur a une session valide
+ */
+function hasValidSession(): boolean {
+  const sessionId = localStorage.getItem('session_id')
+  return !!(sessionId && sessionId !== 'null' && sessionId !== 'undefined')
+}
+
+/**
  * Récupère le tenant de l'utilisateur connecté
  */
 export function useMyTenant() {
   const query = useQuery<TenantConfig>({
     queryKey: ['my-tenant'],
+    enabled: hasValidSession(),
     queryFn: async () => {
       const response = await fetch(`${API_URL}/api/ecommerce/tenant/my`, {
         method: 'GET',
