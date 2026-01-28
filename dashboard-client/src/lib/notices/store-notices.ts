@@ -13,6 +13,7 @@ import {
   Shield,
   Search,
   Quote,
+  Award,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -630,6 +631,33 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
           'Ajouter : Créez des témoignages clients',
           'Publier : Activez les meilleurs témoignages',
           'Mettre en avant : Sélectionnez les plus impactants',
+        ]
+      }
+    ]
+  },
+  loyalty: {
+    pageId: 'store-loyalty',
+    title: 'Programme Fidélité',
+    purpose: 'Récompensez vos clients fidèles avec un système de points et niveaux.',
+    icon: Award,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Système de points configurable',
+          'Niveaux de fidélité avec avantages',
+          'Suivi des membres et statistiques',
+          'Rédemption de points en réductions',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Configurer : Définir les règles de points',
+          'Créer niveaux : Bronze, Argent, Or, Platine',
+          'Analyser : Suivre l\'engagement des membres',
         ]
       }
     ]
