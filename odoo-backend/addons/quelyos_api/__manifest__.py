@@ -36,7 +36,6 @@
         'data/email_templates_data.xml',
         'data/hr_sequence.xml',
         'data/ticket_sequence.xml',
-        'data/store_demo_data.xml',
         'views/subscription_views.xml',
         'views/subscription_plan_views.xml',
         'views/tenant_views.xml',

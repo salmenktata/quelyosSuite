@@ -234,36 +234,36 @@
         <!-- =================================================================== -->
         <record id="collection_bestsellers" model="quelyos.collection">
             <field name="name">Meilleures Ventes</field>
-            <field name="code">bestsellers</field>
+            <field name="slug">bestsellers</field>
             <field name="description">Decouvrez nos produits les plus populaires</field>
-            <field name="is_active">True</field>
+            <field name="is_published">True</field>
             <field name="is_featured">True</field>
             <field name="sequence">1</field>
         </record>
 
         <record id="collection_new" model="quelyos.collection">
             <field name="name">Nouveautes</field>
-            <field name="code">new-arrivals</field>
+            <field name="slug">new-arrivals</field>
             <field name="description">Les dernieres nouveautes de notre catalogue</field>
-            <field name="is_active">True</field>
+            <field name="is_published">True</field>
             <field name="is_featured">True</field>
             <field name="sequence">2</field>
         </record>
 
         <record id="collection_promo" model="quelyos.collection">
             <field name="name">Promotions</field>
-            <field name="code">promotions</field>
+            <field name="slug">promotions</field>
             <field name="description">Profitez de nos offres speciales</field>
-            <field name="is_active">True</field>
+            <field name="is_published">True</field>
             <field name="is_featured">True</field>
             <field name="sequence">3</field>
         </record>
 
         <record id="collection_summer" model="quelyos.collection">
             <field name="name">Collection Ete</field>
-            <field name="code">summer-collection</field>
+            <field name="slug">summer-collection</field>
             <field name="description">Selection speciale pour l'ete</field>
-            <field name="is_active">True</field>
+            <field name="is_published">True</field>
             <field name="sequence">4</field>
         </record>
 
