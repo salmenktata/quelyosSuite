@@ -186,35 +186,51 @@ export const MODULES: Module[] = [
     basePath: '/store',
     sections: [
       {
-        title: 'Gestion',
+        title: 'Tableau de bord',
         items: [
-          { name: 'Ma Boutique', path: '/store/my-shop', icon: Store },
+          { name: 'Vue d\'ensemble', path: '/store', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Ventes',
+        items: [
           { name: 'Commandes', path: '/store/orders', icon: ShoppingCart },
-          { name: 'Produits', path: '/store/products', icon: Package },
-          { name: 'Catégories', path: '/store/categories', icon: Tag },
           { name: 'Paniers Abandonnés', path: '/store/abandoned-carts', icon: ShoppingCart },
         ],
       },
       {
-        title: 'Marketing',
+        title: 'Catalogue',
         items: [
-          { name: 'Produits Vedette', path: '/store/featured', icon: Sparkles },
+          { name: 'Produits', path: '/store/products', icon: Package },
+          { name: 'Catégories', path: '/store/categories', icon: Tag },
+        ],
+      },
+      {
+        title: 'Promotions',
+        items: [
           { name: 'Codes Promo', path: '/store/coupons', icon: Ticket },
+          { name: 'Produits Vedette', path: '/store/featured', icon: Sparkles },
           { name: 'Bannières', path: '/store/promo-banners', icon: Image },
           { name: 'Hero Slides', path: '/store/hero-slides', icon: Image },
+          { name: 'Popups Marketing', path: '/store/marketing-popups', icon: Zap },
+        ],
+      },
+      {
+        title: 'Contenu',
+        items: [
+          { name: 'Pages Statiques', path: '/store/static-pages', icon: FileText },
+          { name: 'Menus Navigation', path: '/store/menus', icon: List },
+          { name: 'Messages Promo', path: '/store/promo-messages', icon: MessageSquare },
+          { name: 'Badges Confiance', path: '/store/trust-badges', icon: Award },
         ],
       },
       {
         title: 'Configuration',
         items: [
+          { name: 'Ma Boutique', path: '/store/my-shop', icon: Store },
           { name: 'Livraison', path: '/store/delivery', icon: Truck },
+          { name: 'SEO', path: '/store/seo-metadata', icon: Globe },
           { name: 'Paramètres', path: '/store/settings', icon: Settings },
-          { name: 'Pages Statiques', path: '/store/static-pages', icon: FileText },
-          { name: 'Menus Navigation', path: '/store/menus', icon: List },
-          { name: 'Messages Promo', path: '/store/promo-messages', icon: MessageSquare },
-          { name: 'Badges Confiance', path: '/store/trust-badges', icon: Award },
-          { name: 'SEO Métadonnées', path: '/store/seo-metadata', icon: Globe },
-          { name: 'Popups Marketing', path: '/store/marketing-popups', icon: Zap },
         ],
       },
     ],
