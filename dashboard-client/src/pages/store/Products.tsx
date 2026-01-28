@@ -1095,7 +1095,9 @@ export default function Products() {
                               }
                               title="Dupliquer"
                               icon={<Copy className="w-4 h-4" />}
-                            />
+                            >
+                              <span className="sr-only">Dupliquer</span>
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -1124,7 +1126,9 @@ export default function Products() {
                                   <Archive className="w-4 h-4" />
                                 )
                               }
-                            />
+                            >
+                              <span className="sr-only">{product.active === false ? 'Désarchiver' : 'Archiver'}</span>
+                            </Button>
                             <Link to={`/products/${product.id}/edit`}>
                               <Button variant="ghost" size="sm">
                                 Modifier

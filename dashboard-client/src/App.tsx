@@ -27,7 +27,6 @@ import StockTransfers from './pages/StockTransfers'
 import StockLocations from './pages/StockLocations'
 import ReorderingRules from './pages/stock/ReorderingRules'
 import DeliveryMethods from './pages/store/DeliveryMethods'
-import SiteConfig from './pages/store/SiteConfig'
 import Payments from './pages/Payments'
 import Featured from './pages/store/Featured'
 import Analytics from './pages/Analytics'
@@ -38,14 +37,14 @@ import PricelistDetail from './pages/PricelistDetail'
 import CustomerCategories from './pages/crm/CustomerCategories'
 import Warehouses from './pages/Warehouses'
 import WarehouseDetail from './pages/WarehouseDetail'
-import MyShop from './pages/store/MyShop'
+import StoreDashboard from './pages/store/StoreDashboard'
 // import Tenants from './pages/Tenants' // Désactivé - réservé super-admin
 import Menus from './pages/store/Menus'
 import HeroSlides from './pages/store/HeroSlides'
 import PromoBanners from './pages/store/PromoBanners'
 import PromoMessages from './pages/store/PromoMessages'
 import TrustBadges from './pages/store/TrustBadges'
-import SeoMetadata from './pages/store/SeoMetadata'
+// SeoMetadata fusionné dans /store/settings/seo
 import MarketingPopups from './pages/store/MarketingPopups'
 import StaticPages from './pages/store/StaticPages'
 import ApiGuide from './pages/ApiGuide'
@@ -106,6 +105,7 @@ import StoreSettings from './pages/store/settings/page'
 import StoreSettingsBrand from './pages/store/settings/brand/page'
 import StoreSettingsContact from './pages/store/settings/contact/page'
 import StoreSettingsShipping from './pages/store/settings/shipping/page'
+import StoreSettingsShippingZones from './pages/store/settings/shipping-zones/page'
 import StoreSettingsFeatures from './pages/store/settings/features/page'
 import StoreSettingsReturns from './pages/store/settings/returns/page'
 import StoreSettingsSocial from './pages/store/settings/social/page'
@@ -173,7 +173,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/store" element={<Navigate to="/store/my-shop" replace />} />
+              <Route
+                path="/store"
+                element={
+                  <ProtectedRoute>
+                    <StoreDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/store/orders"
                 element={
@@ -369,6 +376,7 @@ export default function App() {
                 <Route path="brand" element={<StoreSettingsBrand />} />
                 <Route path="contact" element={<StoreSettingsContact />} />
                 <Route path="shipping" element={<StoreSettingsShipping />} />
+                <Route path="shipping-zones" element={<StoreSettingsShippingZones />} />
                 <Route path="features" element={<StoreSettingsFeatures />} />
                 <Route path="returns" element={<StoreSettingsReturns />} />
                 <Route path="social" element={<StoreSettingsSocial />} />
@@ -550,14 +558,8 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/store/seo-metadata"
-                element={
-                  <ProtectedRoute>
-                    <SeoMetadata />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Redirection après fusion avec settings/seo */}
+              <Route path="/store/seo-metadata" element={<Navigate to="/store/settings/seo" replace />} />
               <Route
                 path="/store/marketing-popups"
                 element={
@@ -574,14 +576,8 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/store/my-shop"
-                element={
-                  <ProtectedRoute>
-                    <MyShop />
-                  </ProtectedRoute>
-                }
-              />
+              {/* /store/my-shop redirige vers /store/settings/brand après suppression */}
+              <Route path="/store/my-shop" element={<Navigate to="/store/settings/brand" replace />} />
               {/* Finance routes */}
               <Route
                 path="/finance"
