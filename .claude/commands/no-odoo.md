@@ -391,3 +391,133 @@ grep -rn "sku\|stock_quantity\|created_at" vitrine-client/src/components --inclu
 3. Utilise toujours les noms Odoo originaux
 
 Les types `@quelyos/types` supportent les deux conventions (alias).
+
+### Phase 3 - Anonymisation Site Vitrine (vitrine-quelyos) ✅ (2026-01-28)
+
+**Objectif** : Masquer toute référence Odoo dans le site vitrine (port 3000)
+
+#### **P0-VITRINE - Exposition URL Backend**
+
+**1. Variables d'environnement**
+```bash
+# Vérifier qu'aucune variable ODOO_* n'est utilisée
+grep -rn "ODOO_URL\|ODOO_DB\|NEXT_PUBLIC_ODOO" vitrine-quelyos/app \
+  --include="*.ts" --include="*.tsx"
+# Attendu : Aucun résultat
+```
+
+**Mapping obligatoire** :
+| Interdit | → Utiliser |
+|----------|-----------|
+| `ODOO_URL` | `BACKEND_URL` |
+| `ODOO_DB` | `BACKEND_DB` |
+| `NEXT_PUBLIC_ODOO_URL` | (supprimer - jamais côté client) |
+
+**2. Réponses API - Ne jamais exposer l'URL backend**
+```bash
+# Vérifier qu'aucune API ne renvoie odooUrl
+grep -rn "odooUrl" vitrine-quelyos/app/api \
+  --include="*.ts"
+# Attendu : Aucun résultat
+```
+
+**Fichier critique** : `app/api/backend-auth/route.ts`
+```typescript
+// ❌ INTERDIT
+return NextResponse.json({
+  success: true,
+  odooUrl: BACKEND_URL,  // JAMAIS exposer
+});
+
+// ✅ CORRECT
+return NextResponse.json({
+  success: true,
+  // URL backend uniquement côté serveur
+});
+```
+
+**3. Routes Proxy Authentification**
+```bash
+# Vérifier existence des routes proxy
+ls vitrine-quelyos/app/api/backend-sso-redirect/route.ts
+ls vitrine-quelyos/app/api/backend-passkey-redirect/route.ts
+# Les deux doivent exister
+```
+
+**Routes obligatoires** :
+| Route | Fonction |
+|-------|----------|
+| `/api/backend-sso-redirect` | Proxy POST vers `${BACKEND_URL}/api/auth/sso-redirect` |
+| `/api/backend-passkey-redirect` | Redirect GET vers `${BACKEND_URL}/auth/passkey-page` |
+
+**4. Page SuperAdmin Login**
+```bash
+# Vérifier qu'aucune URL backend n'est construite côté client
+grep -n "odooUrl\|NEXT_PUBLIC_ODOO\|:8069" vitrine-quelyos/app/superadmin/login/page.tsx
+# Attendu : Aucun résultat
+```
+
+**Pattern correct** :
+```typescript
+// ❌ INTERDIT
+const odooUrl = process.env.NEXT_PUBLIC_ODOO_URL;
+form.action = `${odooUrl}/api/auth/sso-redirect`;
+
+// ✅ CORRECT
+form.action = '/api/backend-sso-redirect';
+window.location.href = '/api/backend-passkey-redirect';
+```
+
+#### **P1-VITRINE - Pages d'erreur**
+
+**5. Pages d'erreur anonymisées avec dark/light mode**
+```bash
+# Vérifier support dark mode
+grep -n "dark:" vitrine-quelyos/app/error.tsx vitrine-quelyos/app/global-error.tsx
+# Attendu : Classes dark: présentes
+```
+
+**Pattern obligatoire** :
+```tsx
+// error.tsx
+<div className="bg-slate-50 dark:bg-slate-950">
+  <h1 className="text-slate-900 dark:text-white">Erreur</h1>
+</div>
+
+// global-error.tsx (CSS inline pour fallback)
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #020617; --text: #f8fafc; }
+}
+```
+
+#### **Vérifications Automatiques Phase 3**
+
+```bash
+# Test 1 : Aucune variable ODOO dans app/
+grep -rn "ODOO" vitrine-quelyos/app --include="*.ts" --include="*.tsx" | grep -v node_modules
+# Attendu : 0 résultats
+
+# Test 2 : Routes proxy existent
+test -f vitrine-quelyos/app/api/backend-sso-redirect/route.ts && echo "✅ SSO proxy OK"
+test -f vitrine-quelyos/app/api/backend-passkey-redirect/route.ts && echo "✅ Passkey proxy OK"
+
+# Test 3 : Pas d'URL backend exposée dans login
+grep -c "localhost:8069\|:8069\|odooUrl" vitrine-quelyos/app/superadmin/login/page.tsx
+# Attendu : 0
+
+# Test 4 : Dark mode présent sur pages erreur
+grep -c "dark:" vitrine-quelyos/app/error.tsx
+# Attendu : > 0
+```
+
+#### **Fichiers modifiés (Phase 3)**
+
+| Fichier | Action |
+|---------|--------|
+| `app/api/backend-auth/route.ts` | `ODOO_*` → `BACKEND_*`, supprimé `odooUrl` réponse |
+| `app/api/backend-passkey/route.ts` | `ODOO_URL` → `BACKEND_URL`, redirect anonymisé |
+| `app/api/backend-sso-redirect/route.ts` | **NOUVEAU** - Proxy SSO |
+| `app/api/backend-passkey-redirect/route.ts` | **NOUVEAU** - Proxy Passkey |
+| `app/superadmin/login/page.tsx` | Utilise routes proxy, supprimé var `odooUrl` |
+| `app/error.tsx` | Support dark/light mode |
+| `app/global-error.tsx` | CSS inline dark mode |

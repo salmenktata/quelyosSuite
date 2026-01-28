@@ -11,6 +11,8 @@ import {
   Tag,
   Settings,
   UserPlus,
+  ClipboardCheck,
+  Layers,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -289,6 +291,65 @@ export const hrNotices: Record<string, PageNoticeConfig> = {
           'Dates de début et fin',
           'Poste et département',
           'Conditions salariales',
+        ],
+      },
+    ],
+  },
+
+  appraisals: {
+    pageId: 'hr-appraisals',
+    title: 'Évaluations',
+    purpose: "Gérez les entretiens annuels et bilans de performance de vos collaborateurs.",
+    icon: ClipboardCheck as LucideIcon,
+    moduleColor: 'violet',
+    sections: [
+      {
+        title: 'Suivi des évaluations',
+        icon: ClipboardCheck,
+        items: [
+          'Planification des entretiens annuels',
+          'Suivi des objectifs et performances',
+          'Notes et recommandations',
+          'Historique des évaluations',
+        ],
+      },
+    ],
+  },
+
+  appraisalDetail: {
+    pageId: 'hr-appraisal-detail',
+    title: 'Détail évaluation',
+    purpose: "Consultez et complétez l'évaluation d'un collaborateur.",
+    icon: ClipboardCheck as LucideIcon,
+    moduleColor: 'violet',
+    sections: [
+      {
+        title: 'Contenu',
+        icon: ClipboardCheck,
+        items: [
+          'Auto-évaluation et évaluation manager',
+          'Objectifs et progression',
+          'Points forts et axes d\'amélioration',
+          'Plan de développement',
+        ],
+      },
+    ],
+  },
+
+  skills: {
+    pageId: 'hr-skills',
+    title: 'Compétences',
+    purpose: "Gérez le référentiel de compétences de l'entreprise.",
+    icon: Layers as LucideIcon,
+    moduleColor: 'violet',
+    sections: [
+      {
+        title: 'Référentiel',
+        icon: Layers,
+        items: [
+          'Types de compétences (techniques, soft skills...)',
+          'Catalogue de compétences',
+          'Association aux postes et employés',
         ],
       },
     ],

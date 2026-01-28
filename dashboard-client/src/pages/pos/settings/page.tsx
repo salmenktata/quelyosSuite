@@ -1,9 +1,18 @@
 /**
  * Paramètres généraux POS
+ *
+ * Fonctionnalités :
+ * - Accès aux configurations terminaux
+ * - Gestion des méthodes de paiement
+ * - Personnalisation des tickets
+ * - Configuration globale du module
+ * - Raccourcis vers toutes les sections
  */
 
-import { Settings, Monitor, Banknote, Printer } from 'lucide-react'
+import { Monitor, Banknote, Printer } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Layout } from '../../../components/Layout'
+import { Breadcrumbs } from '../../../components/common'
 
 const settingsSections = [
   {
@@ -31,42 +40,54 @@ const settingsSections = [
 
 export default function POSSettings() {
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Paramètres POS
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400">
-          Configuration du module Point de Vente
-        </p>
-      </div>
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'POS', href: '/pos' },
+            { label: 'Paramètres' },
+          ]}
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {settingsSections.map((section) => {
-          const Icon = section.icon
-          return (
-            <Link
-              key={section.path}
-              to={section.path}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:border-teal-500 dark:hover:border-teal-500 transition-colors group"
-            >
-              <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-lg ${section.color}`}>
-                  <Icon className="h-6 w-6" />
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Paramètres POS
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            Configuration du module Point de Vente
+          </p>
+        </div>
+
+        {/* Settings sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {settingsSections.map((section) => {
+            const Icon = section.icon
+            return (
+              <Link
+                key={section.path}
+                to={section.path}
+                className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:border-teal-500 dark:hover:border-teal-500 transition-colors group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-lg ${section.color}`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400">
+                      {section.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {section.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400">
-                    {section.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {section.description}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          )
-        })}
+              </Link>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </Layout>
   )
 }

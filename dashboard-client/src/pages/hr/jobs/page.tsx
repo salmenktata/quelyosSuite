@@ -1,160 +1,181 @@
+/**
+ * Postes - Gestion des postes de l'entreprise
+ *
+ * Fonctionnalités :
+ * - Liste des postes avec nombre d'employés
+ * - Création et modification de postes
+ * - Rattachement aux départements
+ * - Description et exigences par poste
+ */
 import { useState } from 'react'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useJobs, useCreateJob, useDepartments, type Job } from '@/hooks/hr'
-import { Plus, Briefcase, Users, Building2, Edit, Trash2, X } from 'lucide-react'
+import { hrNotices } from '@/lib/notices'
+import {
+  Plus,
+  Briefcase,
+  Users,
+  Building2,
+  X,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react'
 
 export default function JobsPage() {
   const { tenant } = useMyTenant()
   const [showModal, setShowModal] = useState(false)
   const [editingJob, setEditingJob] = useState<Job | null>(null)
 
-  const { data: jobsData, isLoading } = useJobs(tenant?.id || null)
+  const { data: jobsData, isLoading, isError } = useJobs(tenant?.id || null)
   const { data: departmentsData } = useDepartments(tenant?.id || null)
-  const { mutate: createJob } = useCreateJob()
+  const { mutate: createJob, isPending } = useCreateJob()
 
   const jobs = jobsData?.jobs || []
   const departments = departmentsData?.departments || []
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-40" />
+            ))}
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Postes
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            {jobsData?.total || 0} postes définis
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            setEditingJob(null)
-            setShowModal(true)
-          }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-        >
-          <Plus className="w-4 h-4" />
-          Nouveau poste
-        </button>
-      </div>
-
-      {/* Loading */}
-      {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-40" />
-          ))}
-        </div>
-      )}
-
-      {/* Liste des postes */}
-      {!isLoading && jobs.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {jobs.map(job => (
-            <JobCard
-              key={job.id}
-              job={job}
-              onEdit={() => {
-                setEditingJob(job)
-                setShowModal(true)
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Empty */}
-      {!isLoading && jobs.length === 0 && (
-        <div className="text-center py-12">
-          <Briefcase className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Aucun poste défini
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">
-            Créez vos premiers postes pour structurer votre organisation
-          </p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-          >
-            <Plus className="w-4 h-4" />
-            Créer un poste
-          </button>
-        </div>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <JobModal
-          job={editingJob}
-          departments={departments}
-          onClose={() => {
-            setShowModal(false)
-            setEditingJob(null)
-          }}
-          onSave={(data) => {
-            if (tenant?.id) {
-              createJob({ tenant_id: tenant.id, ...data })
-              setShowModal(false)
-              setEditingJob(null)
-            }
-          }}
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Accueil', href: '/' },
+            { label: 'RH', href: '/hr' },
+            { label: 'Postes' },
+          ]}
         />
-      )}
-    </div>
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Postes
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              {jobsData?.total || 0} postes définis
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => {
+              setEditingJob(null)
+              setShowModal(true)
+            }}
+          >
+            Nouveau poste
+          </Button>
+        </div>
+
+        {/* PageNotice */}
+        <PageNotice config={hrNotices.jobs} className="mb-2" />
+
+        {/* Error State */}
+        {isError && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des postes.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => window.location.reload()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Jobs Grid */}
+        {jobs.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {jobs.map(job => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+        )}
+
+        {/* Empty */}
+        {jobs.length === 0 && (
+          <div className="text-center py-12">
+            <Briefcase className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Aucun poste
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              Créez votre premier poste
+            </p>
+            <Button
+              variant="primary"
+              icon={<Plus className="w-4 h-4" />}
+              onClick={() => setShowModal(true)}
+            >
+              Créer un poste
+            </Button>
+          </div>
+        )}
+
+        {/* Modal */}
+        {showModal && (
+          <JobModal
+            job={editingJob}
+            departments={departments}
+            onClose={() => setShowModal(false)}
+            onSave={(data) => {
+              createJob({ tenant_id: tenant?.id || 0, ...data })
+              setShowModal(false)
+            }}
+            isPending={isPending}
+          />
+        )}
+      </div>
+    </Layout>
   )
 }
 
-function JobCard({ job, onEdit }: { job: Job; onEdit: () => void }) {
-  const filledPercentage = job.expected_employees > 0
-    ? Math.min(100, (job.no_of_employee / job.expected_employees) * 100)
-    : 0
-
+function JobCard({ job }: { job: Job }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg">
-            <Briefcase className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
+            <Briefcase className="w-5 h-5 text-cyan-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
-              {job.name}
-            </h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">{job.name}</h3>
             {job.department_name && (
-              <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
                 <Building2 className="w-3 h-3" />
                 {job.department_name}
-              </div>
+              </p>
             )}
           </div>
         </div>
-        <button
-          onClick={onEdit}
-          className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-        >
-          <Edit className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="mt-4">
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-gray-500 dark:text-gray-400">Effectif</span>
-          <span className="font-medium text-gray-900 dark:text-white">
-            {job.no_of_employee} / {job.expected_employees || '∞'}
-          </span>
-        </div>
-        {job.expected_employees > 0 && (
-          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all ${
-                filledPercentage >= 100 ? 'bg-emerald-500' : 'bg-cyan-500'
-              }`}
-              style={{ width: `${filledPercentage}%` }}
-            />
-          </div>
-        )}
       </div>
 
       {job.description && (
@@ -162,6 +183,11 @@ function JobCard({ job, onEdit }: { job: Job; onEdit: () => void }) {
           {job.description}
         </p>
       )}
+
+      <div className="mt-4 flex items-center gap-2 text-gray-600 dark:text-gray-400">
+        <Users className="w-4 h-4" />
+        <span className="text-sm">{job.no_of_employee || 0} employés</span>
+      </div>
     </div>
   )
 }
@@ -171,36 +197,39 @@ function JobModal({
   departments,
   onClose,
   onSave,
+  isPending,
 }: {
   job: Job | null
-  departments: any[]
+  departments: { id: number; name: string }[]
   onClose: () => void
-  onSave: (data: any) => void
+  onSave: (data: { name: string; department_id?: number; description?: string }) => void
+  isPending: boolean
 }) {
   const [formData, setFormData] = useState({
     name: job?.name || '',
     department_id: job?.department_id || '',
-    expected_employees: job?.expected_employees || 1,
     description: job?.description || '',
-    requirements: job?.requirements || '',
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({
-      ...formData,
-      department_id: formData.department_id ? Number(formData.department_id) : undefined,
-    })
+    if (formData.name.trim()) {
+      onSave({
+        name: formData.name.trim(),
+        department_id: formData.department_id ? Number(formData.department_id) : undefined,
+        description: formData.description.trim() || undefined,
+      })
+    }
   }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full mx-4 shadow-xl">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {job ? 'Modifier le poste' : 'Nouveau poste'}
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -208,14 +237,14 @@ function JobModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Intitulé du poste *
+              Nom du poste *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
               required
+              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
             />
           </div>
 
@@ -228,24 +257,11 @@ function JobModal({
               onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
               className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
             >
-              <option value="">Aucun</option>
+              <option value="">Aucun département</option>
               {departments.map(d => (
                 <option key={d.id} value={d.id}>{d.name}</option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Effectif prévu
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={formData.expected_employees}
-              onChange={(e) => setFormData({ ...formData, expected_employees: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
-            />
           </div>
 
           <div>
@@ -261,19 +277,17 @@ function JobModal({
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
-            >
+            <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
               Annuler
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
+              variant="primary"
+              className="flex-1"
+              disabled={isPending || !formData.name.trim()}
             >
-              {job ? 'Modifier' : 'Créer'}
-            </button>
+              {isPending ? 'Enregistrement...' : job ? 'Modifier' : 'Créer'}
+            </Button>
           </div>
         </form>
       </div>

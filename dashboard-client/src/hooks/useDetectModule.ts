@@ -39,6 +39,9 @@ export function useDetectModule(
     if (pathname.startsWith('/hr'))
       return accessibleModules.find(m => m.id === 'hr') || accessibleModules[0] || MODULES[0]
 
+    if (pathname.startsWith('/pos'))
+      return accessibleModules.find(m => m.id === 'pos') || accessibleModules[0] || MODULES[0]
+
     // Fallback: Home module
     return accessibleModules.find(m => m.id === 'home') || accessibleModules[0] || MODULES[0]
   }, [accessibleModules, pathname])
