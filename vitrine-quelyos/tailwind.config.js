@@ -3,9 +3,8 @@ module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    // UI package - exclure node_modules pour accélérer la compilation
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-    "../../packages/ui/lib/**/*.{js,ts,jsx,tsx}",
+    // UI package via node_modules (résolu par workspace)
+    "./node_modules/@quelyos/ui/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

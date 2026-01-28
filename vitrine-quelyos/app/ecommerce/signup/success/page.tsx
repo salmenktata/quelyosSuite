@@ -18,27 +18,29 @@ import Container from "@/app/components/Container";
 export default function SignupSuccessPage() {
   const searchParams = useSearchParams();
   const storeSlug = searchParams.get("store") || "ma-boutique";
+  const storeUrl = searchParams.get("store_url") || `https://${storeSlug}.quelyos.shop`;
+  const adminUrl = searchParams.get("admin_url") || `https://admin.${storeSlug}.quelyos.shop`;
 
   const nextSteps = [
     {
       icon: Package,
       title: "Ajoutez vos produits",
       description: "Importez ou créez vos premiers produits",
-      href: `/admin/${storeSlug}/products/new`,
+      href: `${adminUrl}/store/products/new`,
       color: "text-emerald-400",
     },
     {
       icon: Settings,
       title: "Personnalisez votre thème",
       description: "Logo, couleurs, typographie",
-      href: `/admin/${storeSlug}/settings/theme`,
+      href: `${adminUrl}/settings/theme`,
       color: "text-indigo-400",
     },
     {
       icon: CreditCard,
       title: "Configurez les paiements",
       description: "Stripe, PayPal, ou autres",
-      href: `/admin/${storeSlug}/settings/payments`,
+      href: `${adminUrl}/settings/payments`,
       color: "text-violet-400",
     },
   ];
@@ -105,7 +107,7 @@ export default function SignupSuccessPage() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href={`https://${storeSlug}.quelyos.shop`}
+                href={storeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-colors"
@@ -113,13 +115,15 @@ export default function SignupSuccessPage() {
                 <ExternalLink className="w-4 h-4" />
                 Voir ma boutique
               </a>
-              <Link
-                href={`/admin/${storeSlug}`}
+              <a
+                href={adminUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors"
               >
                 Accéder au backoffice
                 <ArrowRight className="w-4 h-4" />
-              </Link>
+              </a>
             </div>
           </motion.div>
 
@@ -149,10 +153,12 @@ export default function SignupSuccessPage() {
               Prochaines étapes
             </h3>
             <div className="space-y-3">
-              {nextSteps.map((step, index) => (
-                <Link
+              {nextSteps.map((step) => (
+                <a
                   key={step.title}
                   href={step.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-4 p-4 rounded-xl bg-gray-900/30 border border-white/10 hover:border-white/20 transition-colors group"
                 >
                   <div className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center ${step.color}`}>
@@ -165,7 +171,7 @@ export default function SignupSuccessPage() {
                     <p className="text-sm text-gray-400">{step.description}</p>
                   </div>
                   <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </Link>
+                </a>
               ))}
             </div>
           </motion.div>

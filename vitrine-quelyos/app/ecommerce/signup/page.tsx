@@ -12,12 +12,10 @@ import {
   Rocket,
   Crown,
   Building2,
-  User,
   Mail,
   Lock,
   Eye,
   EyeOff,
-  Palette,
   Globe,
   Loader2,
   CheckCircle2,
@@ -25,7 +23,11 @@ import {
   Sparkles,
 } from "lucide-react";
 import Container from "@/app/components/Container";
-import { createTenant, checkSlugAvailability } from "@/app/lib/onboarding-api";
+import {
+  createTenantAsync,
+  pollJobStatus,
+  type ProvisioningJob
+} from "@/app/lib/onboarding-api";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -196,7 +198,7 @@ function Step1Plan({
           Choisissez votre plan
         </h2>
         <p className="text-gray-400">
-          14 jours d'essai gratuit, sans carte bancaire
+          14 jours d&apos;essai gratuit, sans carte bancaire
         </p>
       </div>
 
@@ -337,7 +339,7 @@ function Step2Account({
             className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-900 text-indigo-500 focus:ring-indigo-500"
           />
           <label htmlFor="terms" className="text-sm text-gray-400">
-            J'accepte les{" "}
+            J&apos;accepte les{" "}
             <Link href="/cgu" className="text-indigo-400 hover:underline">
               conditions générales
             </Link>{" "}
@@ -386,15 +388,16 @@ function Step3Store({
   errors: Record<string, string>;
 }) {
   // Auto-generate slug from store name
+  const storeName = formData.storeName;
   useEffect(() => {
-    const slug = formData.storeName
+    const slug = storeName
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
-    setFormData({ ...formData, storeSlug: slug });
-  }, [formData.storeName]);
+    setFormData(prev => ({ ...prev, storeSlug: slug }));
+  }, [storeName, setFormData]);
 
   return (
     <motion.div
@@ -458,7 +461,7 @@ function Step3Store({
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Secteur d'activité
+            Secteur d&apos;activité
           </label>
           <div className="grid grid-cols-3 gap-2">
             {sectors.map((sector) => (
@@ -522,35 +525,21 @@ function Step3Store({
 
 function Step4Creating({ formData }: { formData: FormData }) {
   const [progress, setProgress] = useState(0);
-  const [currentTask, setCurrentTask] = useState("Création de votre compte...");
+  const [currentTask, setCurrentTask] = useState("Initialisation...");
+  const [completedSteps, setCompletedSteps] = useState(0);
+  const [totalSteps, setTotalSteps] = useState(12);
   const [error, setError] = useState<string | null>(null);
+  const [jobState, setJobState] = useState<'pending' | 'running' | 'completed' | 'failed'>('pending');
   const router = useRouter();
-
-  const tasks = [
-    "Création de votre compte...",
-    "Configuration de votre boutique...",
-    "Génération du thème personnalisé...",
-    "Configuration des paiements...",
-    "Finalisation...",
-  ];
 
   useEffect(() => {
     let isMounted = true;
 
     async function performOnboarding() {
       try {
-        // Animation des tâches pendant l'appel API
-        let taskIndex = 0;
-        const animationInterval = setInterval(() => {
-          taskIndex++;
-          if (taskIndex < tasks.length && isMounted) {
-            setCurrentTask(tasks[taskIndex]);
-            setProgress((taskIndex / tasks.length) * 80); // Max 80% pendant l'attente
-          }
-        }, 800);
-
-        // Appel API réel
-        const response = await createTenant({
+        // Étape 1: Créer le tenant et démarrer le job async
+        setCurrentTask("Création de votre compte...");
+        const response = await createTenantAsync({
           name: formData.storeName,
           slug: formData.storeSlug,
           email: formData.email,
@@ -560,24 +549,53 @@ function Step4Creating({ formData }: { formData: FormData }) {
           primary_color: formData.primaryColor,
         });
 
-        clearInterval(animationInterval);
+        if (!isMounted) return;
+
+        if (!response.success || !response.job_id) {
+          setError(response.error || "Une erreur est survenue lors de la création");
+          return;
+        }
+
+        // Étape 2: Polling du job pour suivre la progression
+        setJobState('running');
+
+        const finalJob = await pollJobStatus(
+          response.job_id,
+          (job: ProvisioningJob) => {
+            if (!isMounted) return;
+
+            setProgress(job.progress);
+            setCurrentTask(job.current_step);
+            setCompletedSteps(job.completed_steps);
+            setTotalSteps(job.total_steps);
+            setJobState(job.state);
+          },
+          1500 // Poll toutes les 1.5 secondes
+        );
 
         if (!isMounted) return;
 
-        if (response.success) {
+        // Job terminé avec succès
+        if (finalJob.state === 'completed') {
           setProgress(100);
           setCurrentTask("Votre boutique est prête !");
+          setJobState('completed');
 
-          // Redirect to success page
+          // Redirect to success page avec les URLs
           setTimeout(() => {
-            router.push(`/ecommerce/signup/success?store=${formData.storeSlug}`);
-          }, 1000);
-        } else {
-          setError(response.error || "Une erreur est survenue");
+            const params = new URLSearchParams({
+              store: formData.storeSlug,
+              store_url: finalJob.store_url || '',
+              admin_url: finalJob.admin_url || '',
+            });
+            router.push(`/ecommerce/signup/success?${params.toString()}`);
+          }, 1500);
         }
       } catch (err) {
         if (isMounted) {
-          setError("Erreur de connexion au serveur");
+          const errorMessage = err instanceof Error ? err.message : "Erreur de connexion au serveur";
+          setError(errorMessage);
+          setJobState('failed');
         }
       }
     }
@@ -613,26 +631,41 @@ function Step4Creating({ formData }: { formData: FormData }) {
     );
   }
 
+  const isCompleted = jobState === 'completed';
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="text-center py-12"
     >
-      <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+      <div className={`w-20 h-20 mx-auto mb-8 rounded-full flex items-center justify-center ${
+        isCompleted ? 'bg-emerald-500/20' : 'bg-indigo-500/20'
+      }`}>
+        {isCompleted ? (
+          <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+        ) : (
+          <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+        )}
       </div>
 
       <h2 className="text-2xl font-bold text-white mb-4">
-        Création de votre boutique en cours...
+        {isCompleted
+          ? "Votre boutique est prête !"
+          : "Création de votre boutique en cours..."}
       </h2>
 
-      <p className="text-gray-400 mb-8">{currentTask}</p>
+      <p className="text-gray-400 mb-2">{currentTask}</p>
+      {!isCompleted && (
+        <p className="text-sm text-gray-500 mb-8">
+          Étape {completedSteps + 1} sur {totalSteps}
+        </p>
+      )}
 
       <div className="max-w-md mx-auto">
         <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-indigo-500"
+            className={`h-full ${isCompleted ? 'bg-emerald-500' : 'bg-indigo-500'}`}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
@@ -653,8 +686,23 @@ function Step4Creating({ formData }: { formData: FormData }) {
             <p className="font-medium text-white">{formData.storeName || "Ma boutique"}</p>
             <p className="text-sm text-gray-400">{formData.storeSlug}.quelyos.shop</p>
           </div>
+          {isCompleted && (
+            <div className="ml-auto">
+              <Sparkles className="w-5 h-5 text-amber-400" />
+            </div>
+          )}
         </div>
       </div>
+
+      {isCompleted && (
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-sm text-gray-400 mt-6"
+        >
+          Redirection vers votre tableau de bord...
+        </motion.p>
+      )}
     </motion.div>
   );
 }
@@ -665,7 +713,6 @@ function Step4Creating({ formData }: { formData: FormData }) {
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
 

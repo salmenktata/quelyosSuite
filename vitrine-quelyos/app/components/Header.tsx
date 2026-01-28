@@ -38,6 +38,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [financeDropdown, setFinanceDropdown] = useState(false);
   const [marketingDropdown, setMarketingDropdown] = useState(false);
+  const [ecommerceDropdown, setEcommerceDropdown] = useState(false);
 
   // Menu Finance - organisé par catégories
   const financePages = [
@@ -456,21 +457,83 @@ export default function Header() {
               )}
             </div>
 
-            {/* E-Commerce Coming Soon */}
-            <Link
-              href="/ecommerce"
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                pathname === "/ecommerce"
-                  ? "bg-white/10 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
-              }`}
+            {/* E-Commerce Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setEcommerceDropdown(true)}
+              onMouseLeave={() => setEcommerceDropdown(false)}
             >
-              <ShoppingCart className="h-4 w-4 text-amber-400" />
-              E-Commerce
-              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs text-amber-300">
-                Soon
-              </span>
-            </Link>
+              <button
+                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  pathname.startsWith("/ecommerce")
+                    ? "bg-white/10 text-white"
+                    : "text-slate-300 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                <ShoppingCart className="h-4 w-4 text-amber-400" />
+                E-Commerce
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${ecommerceDropdown ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {ecommerceDropdown && (
+                <div className="absolute left-0 top-full pt-2">
+                  <div className="w-[280px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
+                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
+                      <Link
+                        href="/ecommerce"
+                        className="flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-amber-300"
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                        Quelyos E-Commerce
+                      </Link>
+                    </div>
+                    <div className="space-y-1">
+                      <Link
+                        href="/ecommerce"
+                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                      >
+                        <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
+                        <div>
+                          <p className="text-sm font-medium text-white">Présentation</p>
+                          <p className="text-xs text-slate-400">Vue d&apos;ensemble</p>
+                        </div>
+                      </Link>
+                      <Link
+                        href="/ecommerce/pricing"
+                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                      >
+                        <DollarSign className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
+                        <div>
+                          <p className="text-sm font-medium text-white">Tarifs</p>
+                          <p className="text-xs text-slate-400">Plans & pricing</p>
+                        </div>
+                      </Link>
+                      <Link
+                        href="/ecommerce/signup"
+                        className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                      >
+                        <Zap className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
+                        <div>
+                          <p className="text-sm font-medium text-white">Créer ma boutique</p>
+                          <p className="text-xs text-slate-400">14 jours gratuits</p>
+                        </div>
+                      </Link>
+                    </div>
+                    <div className="mt-3 border-t border-white/10 pt-3">
+                      <Link
+                        href="/ecommerce/signup?plan=pro"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-400"
+                      >
+                        <Zap className="h-4 w-4" />
+                        Essai gratuit
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <Link
               href="/tarifs"

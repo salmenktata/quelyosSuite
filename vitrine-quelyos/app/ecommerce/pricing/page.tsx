@@ -501,7 +501,7 @@ export default function EcommercePricingPage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm mb-6"
           >
             <Sparkles className="w-4 h-4" />
-            <span>14 jours d'essai gratuit</span>
+            <span>14 jours d&apos;essai gratuit</span>
           </motion.div>
 
           <motion.h1

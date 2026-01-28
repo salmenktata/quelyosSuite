@@ -65,3 +65,5 @@ from . import tenant_mixin
 from . import account_move
 # Contacts multi-tenant
 from . import res_partner
+# Provisioning async
+from . import provisioning_job

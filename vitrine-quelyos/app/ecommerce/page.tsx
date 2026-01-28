@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,9 +12,6 @@ import {
   TrendingUp,
   Users,
   Sparkles,
-  CheckCircle2,
-  Clock,
-  Bell,
   Instagram,
 } from "lucide-react";
 import Header from "@/app/components/Header";
@@ -118,18 +114,6 @@ const timeline = [
 ];
 
 export default function EcommercePage() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Envoyer à l'API
-    if (process.env.NODE_ENV === 'development') {
-      console.log("Waitlist email:", email);
-    }
-    setSubmitted(true);
-  };
-
   return (
     <>
       <Header />
@@ -155,9 +139,9 @@ export default function EcommercePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-sm text-amber-300 mb-6">
-                  <Clock className="h-4 w-4" />
-                  Coming Soon — Lancement prévu 2026
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 text-sm text-emerald-300 mb-6">
+                  <Sparkles className="h-4 w-4" />
+                  14 jours d&apos;essai gratuit
                 </div>
 
                 <div className="flex items-center gap-4 mb-6">
@@ -187,48 +171,26 @@ export default function EcommercePage() {
                   Finance.
                 </p>
 
-                {/* Waitlist Form */}
-                {!submitted ? (
-                  <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col sm:flex-row gap-3 mb-6"
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                  <Link
+                    href="/ecommerce/signup?plan=pro"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
                   >
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Votre email professionnel"
-                      required
-                      className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50"
-                    />
-                    <button
-                      type="submit"
-                      className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
-                    >
-                      <Bell className="h-5 w-5" />
-                      Me prévenir du lancement
-                    </button>
-                  </form>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center gap-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-6 py-4 mb-6"
+                    <Sparkles className="h-5 w-5" />
+                    Créer ma boutique gratuitement
+                  </Link>
+                  <Link
+                    href="/ecommerce/pricing"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-3 font-semibold text-white hover:bg-white/10 transition-all"
                   >
-                    <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-                    <div>
-                      <p className="font-medium text-emerald-300">
-                        Merci ! Vous êtes sur la liste.
-                      </p>
-                      <p className="text-sm text-emerald-400/70">
-                        Nous vous préviendrons dès le lancement.
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
+                    Voir les tarifs
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </div>
 
                 <p className="text-sm text-slate-500">
-                  Pas de spam. Un seul email lors du lancement.
+                  Sans carte bancaire • Annulez à tout moment
                 </p>
               </motion.div>
 
@@ -440,41 +402,28 @@ export default function EcommercePage() {
             className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-900/20 to-orange-900/20 p-8 text-center"
           >
             <h2 className="text-2xl font-bold text-white mb-4">
-              Soyez parmi les premiers utilisateurs
+              Prêt à lancer votre boutique ?
             </h2>
             <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-              Inscrivez-vous à la waitlist pour être informé du lancement et
-              bénéficier d&apos;un tarif early adopter.
+              Commencez votre essai gratuit de 14 jours et créez votre boutique
+              en quelques minutes.
             </p>
-            {!submitted ? (
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto"
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/ecommerce/signup?plan=pro"
+                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
               >
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Votre email"
-                  required
-                  className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50"
-                />
-                <button
-                  type="submit"
-                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
-                >
-                  Rejoindre
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-              </form>
-            ) : (
-              <div className="inline-flex items-center gap-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-6 py-4">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-                <p className="font-medium text-emerald-300">
-                  Vous êtes inscrit ! À très bientôt.
-                </p>
-              </div>
-            )}
+                <Sparkles className="h-5 w-5" />
+                Créer ma boutique
+              </Link>
+              <Link
+                href="/ecommerce/pricing"
+                className="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-8 py-3 font-semibold text-white hover:bg-white/10 transition-all"
+              >
+                Comparer les plans
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
           </motion.div>
         </Container>
       </div>

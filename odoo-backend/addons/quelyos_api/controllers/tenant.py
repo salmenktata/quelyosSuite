@@ -750,3 +750,150 @@ class TenantController(BaseController):
                 values['favicon_filename'] = data['favicon_filename']
 
         return values
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ENDPOINTS PROVISIONING ASYNCHRONE
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    @http.route(
+        '/api/onboarding/create-tenant-async',
+        type='http',
+        auth='public',
+        methods=['POST', 'OPTIONS'],
+        csrf=False,
+    )
+    def create_tenant_async(self, **kwargs):
+        """
+        Crée un tenant avec provisioning asynchrone.
+        Retourne immédiatement un job_id pour suivre la progression.
+
+        Body JSON: Même format que create_tenant_self_service
+
+        Returns:
+            {
+                "success": true,
+                "job_id": 123,
+                "tenant_code": "ma-boutique",
+                "status_url": "/api/onboarding/job-status/123"
+            }
+        """
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=cors_headers)
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8'))
+
+            # Validation
+            required_fields = ['name', 'slug', 'email']
+            missing = [f for f in required_fields if not data.get(f)]
+            if missing:
+                return request.make_json_response({
+                    'success': False,
+                    'error': f"Champs requis: {', '.join(missing)}",
+                }, status=400, headers=cors_headers)
+
+            import re
+            slug = re.sub(r'[^a-z0-9-]', '', data.get('slug', '').lower())
+
+            # Vérifier disponibilité
+            existing = request.env['quelyos.tenant'].sudo().search([('code', '=', slug)], limit=1)
+            if existing:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Ce nom de boutique est déjà pris',
+                }, status=409, headers=cors_headers)
+
+            # Trouver le plan
+            plan = request.env['quelyos.subscription.plan'].sudo().search([
+                ('code', '=', data.get('plan', 'starter'))
+            ], limit=1)
+
+            # Créer le tenant (sans provisioning lourd)
+            domain = f"{slug}.quelyos.shop"
+            tenant = request.env['quelyos.tenant'].sudo().create({
+                'name': data.get('name'),
+                'code': slug,
+                'domain': domain,
+                'backoffice_domain': f"admin.{slug}.quelyos.shop",
+                'plan_id': plan.id if plan else False,
+                'admin_email': data.get('email'),
+                'primary_color': data.get('primary_color', '#6366f1'),
+                'status': 'provisioning',
+                'deployment_tier': 'shared',
+            })
+
+            # Créer le job de provisioning
+            job = request.env['quelyos.provisioning.job'].sudo().create({
+                'tenant_id': tenant.id,
+            })
+
+            # Démarrer le provisioning en background
+            job.action_start()
+
+            return request.make_json_response({
+                'success': True,
+                'job_id': job.id,
+                'tenant_code': tenant.code,
+                'status_url': f"/api/onboarding/job-status/{job.id}",
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Error creating tenant async: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': 'Erreur serveur',
+            }, status=500, headers=cors_headers)
+
+    @http.route(
+        '/api/onboarding/job-status/<int:job_id>',
+        type='http',
+        auth='public',
+        methods=['GET', 'OPTIONS'],
+        csrf=False,
+    )
+    def get_job_status(self, job_id, **kwargs):
+        """
+        Retourne le statut d'un job de provisioning.
+
+        Returns:
+            {
+                "success": true,
+                "job": {
+                    "state": "running",
+                    "progress": 45,
+                    "current_step": "Configuration des paiements...",
+                    ...
+                }
+            }
+        """
+        from ..config import get_cors_headers
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=cors_headers)
+
+        try:
+            job = request.env['quelyos.provisioning.job'].sudo().browse(job_id)
+
+            if not job.exists():
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Job non trouvé',
+                }, status=404, headers=cors_headers)
+
+            return request.make_json_response({
+                'success': True,
+                'job': job.to_dict(),
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Error getting job status: {e}")
+            return request.make_json_response({
+                'success': False,
+                'error': 'Erreur serveur',
+            }, status=500, headers=cors_headers)

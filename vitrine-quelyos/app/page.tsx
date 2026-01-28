@@ -1,3 +1,5 @@
+"use client";
+
 import HomePageContentServer from "./components/HomePageContent.server";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
