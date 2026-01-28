@@ -1,7 +1,27 @@
+/**
+ * Compétences - Référentiel de compétences de l'entreprise
+ *
+ * Fonctionnalités :
+ * - Liste des compétences par type
+ * - Création de types de compétences avec couleurs
+ * - Création de compétences avec descriptions
+ * - Filtrage par type de compétence
+ * - Association aux postes et employés
+ */
 import { useState } from 'react'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useSkillTypes, useSkills, useCreateSkillType, useCreateSkill, type SkillType, type Skill } from '@/hooks/hr'
-import { Layers, Plus, Palette, Tag, ChevronRight } from 'lucide-react'
+import { hrNotices } from '@/lib/notices'
+import {
+  Layers,
+  Plus,
+  Palette,
+  Tag,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react'
 
 export default function SkillsPage() {
   const { tenant } = useMyTenant()
@@ -9,8 +29,8 @@ export default function SkillsPage() {
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null)
 
-  const { data: skillTypes, isLoading: isLoadingTypes } = useSkillTypes(tenant?.id || null)
-  const { data: skills, isLoading: isLoadingSkills } = useSkills(tenant?.id || null, selectedTypeId || undefined)
+  const { data: skillTypes, isLoading: isLoadingTypes, isError: isErrorTypes } = useSkillTypes(tenant?.id || null)
+  const { data: skills, isLoading: isLoadingSkills, isError: isErrorSkills } = useSkills(tenant?.id || null, selectedTypeId || undefined)
 
   const { mutate: createType, isPending: isCreatingType } = useCreateSkillType()
   const { mutate: createSkill, isPending: isCreatingSkill } = useCreateSkill()
@@ -33,53 +53,102 @@ export default function SkillsPage() {
     ? skills?.filter(s => s.skill_type_id === selectedTypeId)
     : skills
 
+  const isLoading = isLoadingTypes || isLoadingSkills
+  const isError = isErrorTypes || isErrorSkills
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-48" />
+            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-24" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Compétences
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Gérez le référentiel de compétences de l'entreprise
-          </p>
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Accueil', href: '/' },
+            { label: 'RH', href: '/hr' },
+            { label: 'Compétences' },
+          ]}
+        />
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Compétences
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Gérez le référentiel de compétences de l'entreprise
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              icon={<Palette className="w-4 h-4" />}
+              onClick={() => setShowTypeModal(true)}
+            >
+              Nouveau type
+            </Button>
+            <Button
+              variant="primary"
+              icon={<Plus className="w-4 h-4" />}
+              onClick={() => setShowSkillModal(true)}
+            >
+              Nouvelle compétence
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowTypeModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
+
+        {/* PageNotice */}
+        <PageNotice config={hrNotices.skills} className="mb-2" />
+
+        {/* Error State */}
+        {isError && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <Palette className="w-4 h-4" />
-            Nouveau type
-          </button>
-          <button
-            onClick={() => setShowSkillModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-          >
-            <Plus className="w-4 h-4" />
-            Nouvelle compétence
-          </button>
-        </div>
-      </div>
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des compétences.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => window.location.reload()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Types de compétences (sidebar) */}
-        <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Types de compétences
-            </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Types de compétences (sidebar) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                Types de compétences
+              </h3>
 
-            {isLoadingTypes && (
-              <div className="space-y-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="animate-pulse h-10 bg-gray-200 dark:bg-gray-700 rounded" />
-                ))}
-              </div>
-            )}
-
-            {!isLoadingTypes && (
               <div className="space-y-1">
                 <button
                   onClick={() => setSelectedTypeId(null)}
@@ -114,84 +183,76 @@ export default function SkillsPage() {
                   </button>
                 ))}
               </div>
+
+              {(!skillTypes || skillTypes.length === 0) && (
+                <div className="text-center py-4">
+                  <Layers className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Aucun type</p>
+                  <button
+                    onClick={() => setShowTypeModal(true)}
+                    className="text-cyan-600 text-sm hover:underline mt-1"
+                  >
+                    Créer un type
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Liste des compétences */}
+          <div className="lg:col-span-3">
+            {filteredSkills && filteredSkills.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredSkills.map(skill => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
+              </div>
             )}
 
-            {!isLoadingTypes && (!skillTypes || skillTypes.length === 0) && (
-              <div className="text-center py-4">
-                <Layers className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                <p className="text-sm text-gray-500">Aucun type</p>
-                <button
-                  onClick={() => setShowTypeModal(true)}
-                  className="text-cyan-600 text-sm hover:underline mt-1"
+            {(!filteredSkills || filteredSkills.length === 0) && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-12 border border-gray-200 dark:border-gray-700 text-center">
+                <Tag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  Aucune compétence
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  {selectedTypeId
+                    ? 'Aucune compétence dans cette catégorie'
+                    : 'Créez vos premières compétences'}
+                </p>
+                <Button
+                  variant="primary"
+                  icon={<Plus className="w-4 h-4" />}
+                  onClick={() => setShowSkillModal(true)}
                 >
-                  Créer un type
-                </button>
+                  Ajouter une compétence
+                </Button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Liste des compétences */}
-        <div className="lg:col-span-3">
-          {isLoadingSkills && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="animate-pulse h-24 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-              ))}
-            </div>
-          )}
+        {/* Modal type */}
+        {showTypeModal && (
+          <CreateTypeModal
+            onClose={() => setShowTypeModal(false)}
+            onCreate={handleCreateType}
+            isLoading={isCreatingType}
+          />
+        )}
 
-          {!isLoadingSkills && filteredSkills && filteredSkills.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredSkills.map(skill => (
-                <SkillCard key={skill.id} skill={skill} />
-              ))}
-            </div>
-          )}
-
-          {!isLoadingSkills && (!filteredSkills || filteredSkills.length === 0) && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-12 border border-gray-200 dark:border-gray-700 text-center">
-              <Tag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                Aucune compétence
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {selectedTypeId
-                  ? 'Aucune compétence dans cette catégorie'
-                  : 'Créez vos premières compétences'}
-              </p>
-              <button
-                onClick={() => setShowSkillModal(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg"
-              >
-                <Plus className="w-4 h-4" />
-                Ajouter une compétence
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Modal compétence */}
+        {showSkillModal && skillTypes && (
+          <CreateSkillModal
+            skillTypes={skillTypes}
+            selectedTypeId={selectedTypeId}
+            onClose={() => setShowSkillModal(false)}
+            onCreate={handleCreateSkill}
+            isLoading={isCreatingSkill}
+          />
+        )}
       </div>
-
-      {/* Modal type */}
-      {showTypeModal && (
-        <CreateTypeModal
-          onClose={() => setShowTypeModal(false)}
-          onCreate={handleCreateType}
-          isLoading={isCreatingType}
-        />
-      )}
-
-      {/* Modal compétence */}
-      {showSkillModal && skillTypes && (
-        <CreateSkillModal
-          skillTypes={skillTypes}
-          selectedTypeId={selectedTypeId}
-          onClose={() => setShowSkillModal(false)}
-          onCreate={handleCreateSkill}
-          isLoading={isCreatingSkill}
-        />
-      )}
-    </div>
+    </Layout>
   )
 }
 
@@ -287,20 +348,22 @@ function CreateTypeModal({
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              className="flex-1"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
             >
               Annuler
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
+              className="flex-1"
               disabled={isLoading || !name.trim()}
-              className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white rounded-lg"
             >
               {isLoading ? 'Création...' : 'Créer'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -390,20 +453,22 @@ function CreateSkillModal({
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              className="flex-1"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
             >
               Annuler
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
+              className="flex-1"
               disabled={isLoading || !formData.name.trim() || !formData.skill_type_id}
-              className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white rounded-lg"
             >
               {isLoading ? 'Création...' : 'Créer'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
