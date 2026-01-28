@@ -98,8 +98,16 @@ class BaseController(http.Controller):
             # Récupérer le store de sessions
             session_store = root.session_store
 
-            # Charger la session
-            session = session_store.get(session_id)
+            # Charger la session - gérer les erreurs de format d'ID
+            try:
+                session = session_store.get(session_id)
+            except Exception as store_error:
+                _logger.warning(f"Session store error for id {session_id[:20]}...: {store_error}")
+                return {
+                    'success': False,
+                    'error': 'Session invalide. Veuillez vous reconnecter.',
+                    'error_code': 'SESSION_INVALID'
+                }
 
             if not session or not session.uid:
                 _logger.warning(f"Invalid or expired session: {session_id[:20]}...")
