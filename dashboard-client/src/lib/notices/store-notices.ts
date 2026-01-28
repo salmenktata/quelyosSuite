@@ -744,4 +744,31 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       }
     ]
   },
+  salesReports: {
+    pageId: 'store-sales-reports',
+    title: 'Rapports de Ventes',
+    purpose: 'Analysez vos performances commerciales et identifiez vos meilleurs produits.',
+    icon: ShoppingCart,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'KPIs clés (CA, commandes, panier moyen)',
+          'Top 10 produits par chiffre d\'affaires',
+          'Filtrage par période personnalisable',
+          'Visualisation des parts de marché',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Analyser régulièrement : Suivez vos KPIs chaque semaine',
+          'Identifier les tendances : Comparez les périodes',
+          'Optimiser : Mettez en avant vos meilleurs produits',
+        ]
+      }
+    ]
+  },
 };
