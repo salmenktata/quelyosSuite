@@ -1,11 +1,6 @@
 import { DashboardKPICard } from './DashboardKPICard'
 import { Skeleton } from '../common'
-import {
-  CurrencyEuroIcon,
-  ShoppingBagIcon,
-  UserGroupIcon,
-  CubeIcon,
-} from '@heroicons/react/24/outline'
+import { Euro, ShoppingBag, Users, Package } from 'lucide-react'
 import type { DashboardStats } from '../../hooks/useDashboard'
 
 interface DashboardKPIsProps {
@@ -40,7 +35,7 @@ export function DashboardKPIs({ stats, isLoading }: DashboardKPIsProps) {
         title="Chiffre d'affaires"
         value={stats.revenue.total}
         variation={stats.revenue.variation}
-        icon={<CurrencyEuroIcon className="w-5 h-5 md:w-6 md:h-6" />}
+        icon={<Euro className="w-5 h-5 md:w-6 md:h-6" />}
         colorClass="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
         formatType="price"
       />
@@ -50,7 +45,7 @@ export function DashboardKPIs({ stats, isLoading }: DashboardKPIsProps) {
         title="Commandes"
         value={stats.orders.total}
         variation={stats.orders.variation}
-        icon={<ShoppingBagIcon className="w-5 h-5 md:w-6 md:h-6" />}
+        icon={<ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />}
         colorClass="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
         formatType="number"
         subtitle={stats.orders.pending > 0 ? `${stats.orders.pending} en attente` : undefined}
@@ -61,7 +56,7 @@ export function DashboardKPIs({ stats, isLoading }: DashboardKPIsProps) {
         title="Clients"
         value={stats.customers.total}
         variation={stats.customers.variation}
-        icon={<UserGroupIcon className="w-5 h-5 md:w-6 md:h-6" />}
+        icon={<Users className="w-5 h-5 md:w-6 md:h-6" />}
         colorClass="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
         formatType="number"
         subtitle={
@@ -73,7 +68,7 @@ export function DashboardKPIs({ stats, isLoading }: DashboardKPIsProps) {
       <DashboardKPICard
         title="Produits"
         value={stats.products.total}
-        icon={<CubeIcon className="w-5 h-5 md:w-6 md:h-6" />}
+        icon={<Package className="w-5 h-5 md:w-6 md:h-6" />}
         colorClass="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
         formatType="number"
         subtitle={

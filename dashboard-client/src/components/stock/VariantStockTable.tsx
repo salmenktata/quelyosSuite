@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { useUpdateVariantStock } from '../../hooks/useStock'
 import { useToast } from '../../hooks/useToast'
-import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Pencil, Check, X } from 'lucide-react'
 
 interface ProductVariant {
   id: number
@@ -199,7 +199,7 @@ export function VariantStockTable({ productId, variants, onStockUpdated }: Props
                         disabled={updateStockMutation.isPending}
                         className="inline-flex items-center gap-1 px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded transition-colors disabled:opacity-50"
                       >
-                        <CheckIcon className="h-4 w-4" />
+                        <Check className="h-4 w-4" />
                         Valider
                       </button>
                       <button
@@ -207,7 +207,7 @@ export function VariantStockTable({ productId, variants, onStockUpdated }: Props
                         disabled={updateStockMutation.isPending}
                         className="inline-flex items-center gap-1 px-2 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition-colors disabled:opacity-50"
                       >
-                        <XMarkIcon className="h-4 w-4" />
+                        <X className="h-4 w-4" />
                         Annuler
                       </button>
                     </div>
@@ -216,7 +216,7 @@ export function VariantStockTable({ productId, variants, onStockUpdated }: Props
                       onClick={() => handleStartEdit(variant.id, variant.qty_available)}
                       className="inline-flex items-center gap-1 px-2 py-1 text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
                     >
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                       Modifier
                     </button>
                   )}

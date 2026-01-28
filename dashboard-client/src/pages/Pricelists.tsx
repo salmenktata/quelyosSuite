@@ -22,18 +22,18 @@ import { PageNotice } from '../components/common';
 import { crmNotices } from '@/lib/notices';
 import { PricelistFormModal } from '../components/pricelists/PricelistFormModal';
 import {
-  CurrencyDollarIcon,
-  TagIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  MagnifyingGlassIcon,
-  XMarkIcon,
-  FunnelIcon,
-  ArrowsUpDownIcon,
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+  DollarSign,
+  Tag,
+  CheckCircle,
+  XCircle,
+  Search,
+  X,
+  Filter,
+  ArrowUpDown,
+  Plus,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 
 // Options de tri
 type SortOption = 'name' | 'currency' | 'policy';
@@ -173,7 +173,7 @@ export default function Pricelists() {
       <Layout>
         <div className="p-4 md:p-8">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-            <XCircleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
               Erreur de chargement
             </h2>
@@ -205,7 +205,7 @@ export default function Pricelists() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <CurrencyDollarIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+              <DollarSign className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
               Listes de Prix
             </h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -219,7 +219,7 @@ export default function Pricelists() {
               onClick={() => setIsCreateModalOpen(true)}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-sm hover:shadow-md"
             >
-              <PlusIcon className="w-5 h-5" />
+              <Plus className="w-5 h-5" />
               <span className="hidden sm:inline">Nouvelle liste</span>
             </button>
 
@@ -243,7 +243,7 @@ export default function Pricelists() {
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Recherche */}
           <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               id="pricelist-search"
               type="text"
@@ -262,7 +262,7 @@ export default function Pricelists() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 aria-label="Effacer la recherche"
               >
-                <XMarkIcon className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>
@@ -279,7 +279,7 @@ export default function Pricelists() {
               <option value="currency">Devise</option>
               <option value="policy">Politique</option>
             </select>
-            <ArrowsUpDownIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+            <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -297,7 +297,7 @@ export default function Pricelists() {
               onChange={(e) => setActiveOnly(e.target.checked)}
               className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
             />
-            <FunnelIcon className="w-4 h-4 text-gray-400" />
+            <Filter className="w-4 h-4 text-gray-400" />
             <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
               Actives uniquement
             </span>
@@ -314,7 +314,7 @@ export default function Pricelists() {
                 <p className="mt-1 text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
               <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                <TagIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                <Tag className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
               </div>
             </div>
           </div>
@@ -327,7 +327,7 @@ export default function Pricelists() {
                 <p className="mt-1 text-3xl font-bold text-green-600 dark:text-green-400">{stats.active}</p>
               </div>
               <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                <CheckCircleIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
@@ -340,7 +340,7 @@ export default function Pricelists() {
                 <p className="mt-1 text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.currencies}</p>
               </div>
               <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                <CurrencyDollarIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <DollarSign className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </div>
@@ -364,7 +364,7 @@ export default function Pricelists() {
           </div>
         ) : (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <CurrencyDollarIcon className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <DollarSign className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               Aucune liste de prix trouvée
             </h3>
@@ -422,18 +422,18 @@ function PricelistCard({ pricelist, onClick, onDelete }: PricelistCardProps) {
             className="p-1.5 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
             aria-label="Supprimer"
           >
-            <TrashIcon className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
           </button>
 
           {/* Badge statut */}
           {pricelist.active ? (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-              <CheckCircleIcon className="w-3.5 h-3.5" />
+              <CheckCircle className="w-3.5 h-3.5" />
               Active
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-              <XCircleIcon className="w-3.5 h-3.5" />
+              <XCircle className="w-3.5 h-3.5" />
               Inactive
             </span>
           )}

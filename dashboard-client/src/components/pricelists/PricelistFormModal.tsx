@@ -8,12 +8,7 @@
 import { Fragment, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useForm } from 'react-hook-form';
-import {
-  XMarkIcon,
-  CurrencyDollarIcon,
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-} from '@heroicons/react/24/outline';
+import { X, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
 import { useCurrencies } from '../../hooks/useCurrencies';
 import { useCreatePricelist, useUpdatePricelist, type Pricelist } from '../../hooks/usePricelists';
 import { useToast } from '../../hooks/useToast';
@@ -134,7 +129,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                      <CurrencyDollarIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                      <DollarSign className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
                       {isEditing ? 'Modifier la liste de prix' : 'Nouvelle liste de prix'}
@@ -145,7 +140,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     aria-label="Fermer"
                   >
-                    <XMarkIcon className="w-5 h-5" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -171,7 +166,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                     />
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                        <ExclamationCircleIcon className="w-4 h-4" />
+                        <AlertCircle className="w-4 h-4" />
                         {errors.name.message}
                       </p>
                     )}
@@ -203,7 +198,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                     </select>
                     {errors.currency_id && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                        <ExclamationCircleIcon className="w-4 h-4" />
+                        <AlertCircle className="w-4 h-4" />
                         {errors.currency_id.message}
                       </p>
                     )}
@@ -267,7 +262,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                         </>
                       ) : (
                         <>
-                          <CheckCircleIcon className="w-5 h-5" />
+                          <CheckCircle className="w-5 h-5" />
                           {isEditing ? 'Mettre à jour' : 'Créer'}
                         </>
                       )}

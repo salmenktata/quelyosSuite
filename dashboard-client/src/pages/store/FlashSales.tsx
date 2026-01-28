@@ -267,7 +267,7 @@ export default function FlashSales() {
             <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <Zap className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-gray-500 dark:text-gray-400">Aucune vente flash</p>
-              <Button variant="link" onClick={newFlashSale} className="mt-4">
+              <Button variant="ghost" onClick={newFlashSale} className="mt-4">
                 Créer votre première vente flash
               </Button>
             </div>

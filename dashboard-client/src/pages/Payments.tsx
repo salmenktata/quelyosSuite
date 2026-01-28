@@ -4,7 +4,7 @@ import { Layout } from '../components/Layout'
 import { usePaymentTransactions, useRefundTransaction, PaymentTransaction } from '../hooks/usePayments'
 import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../components/common'
 import { crmNotices } from '@/lib/notices'
-import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import { RefreshCw } from 'lucide-react'
 
 export default function Payments() {
   const [page, setPage] = useState(0)
@@ -328,7 +328,7 @@ export default function Payments() {
                               size="sm"
                               variant="secondary"
                               onClick={() => handleOpenRefundModal(transaction)}
-                              icon={<ArrowPathIcon className="h-4 w-4" />}
+                              icon={<RefreshCw className="h-4 w-4" />}
                             >
                               Rembourser
                             </Button>

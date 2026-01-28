@@ -21,22 +21,22 @@ import {
 import { Layout } from '../components/Layout';
 import { PricelistItemFormModal } from '../components/pricelists/PricelistItemFormModal';
 import {
-  ArrowLeftIcon,
-  CurrencyDollarIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  TagIcon,
-  CalculatorIcon,
-  CubeIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  MagnifyingGlassIcon,
-  XMarkIcon,
-  InformationCircleIcon,
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+  ArrowLeft,
+  DollarSign,
+  CheckCircle,
+  XCircle,
+  Tag,
+  Calculator,
+  Package,
+  Folder,
+  Globe,
+  Search,
+  X,
+  Info,
+  Plus,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 
 export default function PricelistDetail() {
   const { id } = useParams<{ id: string }>();
@@ -95,15 +95,15 @@ export default function PricelistDetail() {
   const getAppliedOnIcon = (appliedOn: string) => {
     switch (appliedOn) {
       case '3_global':
-        return <GlobeAltIcon className="w-5 h-5" />;
+        return <Globe className="w-5 h-5" />;
       case '2_product_category':
-        return <FolderIcon className="w-5 h-5" />;
+        return <Folder className="w-5 h-5" />;
       case '1_product':
-        return <CubeIcon className="w-5 h-5" />;
+        return <Package className="w-5 h-5" />;
       case '0_product_variant':
-        return <TagIcon className="w-5 h-5" />;
+        return <Tag className="w-5 h-5" />;
       default:
-        return <CubeIcon className="w-5 h-5" />;
+        return <Package className="w-5 h-5" />;
     }
   };
 
@@ -176,7 +176,7 @@ export default function PricelistDetail() {
       <Layout>
         <div className="p-4 md:p-8">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-            <XCircleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
               Liste de prix introuvable
             </h2>
@@ -187,7 +187,7 @@ export default function PricelistDetail() {
               onClick={() => navigate('/pricelists')}
               className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
             >
-              <ArrowLeftIcon className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
               Retour aux listes de prix
             </button>
           </div>
@@ -204,7 +204,7 @@ export default function PricelistDetail() {
           onClick={() => navigate('/pricelists')}
           className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
-          <ArrowLeftIcon className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5" />
           Retour aux listes de prix
         </button>
 
@@ -213,7 +213,7 @@ export default function PricelistDetail() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                <CurrencyDollarIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                <DollarSign className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{pricelist.name}</h1>
@@ -224,12 +224,12 @@ export default function PricelistDetail() {
             {/* Badge statut */}
             {pricelist.active ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                <CheckCircleIcon className="w-4 h-4" />
+                <CheckCircle className="w-4 h-4" />
                 Active
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                <XCircleIcon className="w-4 h-4" />
+                <XCircle className="w-4 h-4" />
                 Inactive
               </span>
             )}
@@ -268,7 +268,7 @@ export default function PricelistDetail() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <CalculatorIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <Calculator className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   Règles de prix
                 </h2>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -283,12 +283,12 @@ export default function PricelistDetail() {
                   onClick={() => setIsAddRuleModalOpen(true)}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm shadow-sm hover:shadow-md"
                 >
-                  <PlusIcon className="w-4 h-4" />
+                  <Plus className="w-4 h-4" />
                   Ajouter une règle
                 </button>
                 {/* Recherche */}
                 <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Rechercher..."
@@ -301,7 +301,7 @@ export default function PricelistDetail() {
                       onClick={() => setSearchQuery('')}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
-                      <XMarkIcon className="w-4 h-4" />
+                      <X className="w-4 h-4" />
                     </button>
                   )}
                 </div>
@@ -375,7 +375,7 @@ export default function PricelistDetail() {
             </div>
           ) : (
             <div className="p-12 text-center">
-              <CalculatorIcon className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <Calculator className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {searchQuery || filterType !== 'all'
                   ? 'Aucune règle correspondante'
@@ -497,14 +497,14 @@ function PricelistItemRow({
           className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4"
           aria-label="Modifier"
         >
-          <PencilIcon className="h-5 w-5 inline" />
+          <Pencil className="h-5 w-5 inline" />
         </button>
         <button
           onClick={() => onDelete(item.id)}
           className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
           aria-label="Supprimer"
         >
-          <TrashIcon className="h-5 w-5 inline" />
+          <Trash2 className="h-5 w-5 inline" />
         </button>
       </td>
     </tr>

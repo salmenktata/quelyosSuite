@@ -1,10 +1,5 @@
 import { Button } from '../common'
-import {
-  DocumentArrowDownIcon,
-  EnvelopeIcon,
-  DocumentTextIcon,
-  ArrowUturnLeftIcon,
-} from '@heroicons/react/24/outline'
+import { Download, Mail, FileText, Undo2 } from 'lucide-react'
 import {
   canConfirmOrder,
   canCancelOrder,
@@ -107,7 +102,7 @@ export function OrderActions({
             onClick={onSendQuotation}
             disabled={isSendingQuote}
             loading={isSendingQuote}
-            icon={<EnvelopeIcon className="h-5 w-5" />}
+            icon={<Mail className="h-5 w-5" />}
           >
             Envoyer devis par email
           </Button>
@@ -121,7 +116,7 @@ export function OrderActions({
             onClick={onCreateInvoice}
             disabled={isCreatingInvoice}
             loading={isCreatingInvoice}
-            icon={<DocumentTextIcon className="h-5 w-5" />}
+            icon={<FileText className="h-5 w-5" />}
           >
             Créer facture
           </Button>
@@ -133,7 +128,7 @@ export function OrderActions({
             variant="secondary"
             className="w-full"
             onClick={onDownloadDeliverySlip}
-            icon={<DocumentArrowDownIcon className="h-5 w-5" />}
+            icon={<Download className="h-5 w-5" />}
           >
             Télécharger bon de livraison
           </Button>
@@ -147,7 +142,7 @@ export function OrderActions({
             onClick={onUnlock}
             disabled={isUnlocking}
             loading={isUnlocking}
-            icon={<ArrowUturnLeftIcon className="h-5 w-5" />}
+            icon={<Undo2 className="h-5 w-5" />}
           >
             Remettre en brouillon
           </Button>

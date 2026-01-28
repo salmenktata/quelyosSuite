@@ -6,7 +6,7 @@ import { useDashboardStats, useDashboardRecentOrders } from '../hooks/useDashboa
 import { DashboardKPIs } from '../components/dashboard/DashboardKPIs'
 import { DashboardRecentOrders } from '../components/dashboard/DashboardRecentOrders'
 import { DashboardQuickActions } from '../components/dashboard/DashboardQuickActions'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { AlertTriangle } from 'lucide-react'
 import type { AnalyticsStats } from '@/types'
 
 type StockAlert = AnalyticsStats['stock_alerts'][number]
@@ -47,7 +47,7 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6 mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-              <ExclamationTriangleIcon className="w-5 h-5 text-amber-500" aria-hidden="true" />
+              <AlertTriangle className="w-5 h-5 text-amber-500" aria-hidden="true" />
               Alertes de stock
             </h3>
             {totals && (totals.out_of_stock_products > 0 || totals.low_stock_products > 0) && (

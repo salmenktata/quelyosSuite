@@ -5,13 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ModularLayout } from "@/components/ModularLayout";
 import { PageHeader } from "@/components/finance/PageHeader";
 import { Button } from "@/components/ui/button";
-import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  BuildingOfficeIcon,
-  DocumentTextIcon,
-  CreditCardIcon,
-} from "@heroicons/react/24/outline";
+import { Plus, Search, Building2, FileText, CreditCard } from "lucide-react";
 import SupplierCard from "./SupplierCard";
 
 interface Supplier {
@@ -100,7 +94,7 @@ export default function SupplierListPage() {
     <ModularLayout>
       <div className="p-8 space-y-6">
         <PageHeader
-          icon={BuildingOfficeIcon}
+          icon={Building2}
           title="Fournisseurs"
           description="Gérez vos fournisseurs et planifiez vos paiements"
           breadcrumbs={[
@@ -113,7 +107,7 @@ export default function SupplierListPage() {
               className="gap-2"
               onClick={() => navigate("/finance/suppliers/new")}
             >
-              <PlusIcon className="h-5 w-5" />
+              <Plus className="h-5 w-5" />
               Nouveau fournisseur
             </Button>
           }
@@ -124,7 +118,7 @@ export default function SupplierListPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <BuildingOfficeIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total fournisseurs</div>
@@ -136,7 +130,7 @@ export default function SupplierListPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                <BuildingOfficeIcon className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <Building2 className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Stratégiques</div>
@@ -148,7 +142,7 @@ export default function SupplierListPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <BuildingOfficeIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <Building2 className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Réguliers</div>
@@ -160,7 +154,7 @@ export default function SupplierListPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                <DocumentTextIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <FileText className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Factures actives</div>
@@ -174,7 +168,7 @@ export default function SupplierListPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
           <div className="grid gap-4 md:grid-cols-4">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Rechercher un fournisseur..."
@@ -212,7 +206,7 @@ export default function SupplierListPage() {
               onClick={() => navigate("/finance/payment-planning")}
               className="w-full gap-2"
             >
-              <CreditCardIcon className="h-4 w-4" />
+              <CreditCard className="h-4 w-4" />
               Planning paiements
             </Button>
           </div>
@@ -239,7 +233,7 @@ export default function SupplierListPage() {
         ) : suppliers.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
-              <BuildingOfficeIcon className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+              <Building2 className="h-8 w-8 text-gray-400 dark:text-gray-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Aucun fournisseur
@@ -254,7 +248,7 @@ export default function SupplierListPage() {
               className="gap-2"
               onClick={() => navigate("/finance/suppliers/new")}
             >
-              <PlusIcon className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Ajouter un fournisseur
             </Button>
           </div>

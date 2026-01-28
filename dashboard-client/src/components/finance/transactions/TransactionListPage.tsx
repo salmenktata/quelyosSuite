@@ -8,21 +8,21 @@ import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { PageHeader } from "@/components/finance/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
-  MagnifyingGlassIcon,
-  XMarkIcon,
-  TrashIcon,
-  PencilIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
-  ArchiveBoxIcon,
-  CurrencyDollarIcon,
-  CreditCardIcon,
-  WalletIcon,
-  FunnelIcon,
-  ChevronDownIcon,
-  PlusIcon,
-  ClockIcon,
-} from "@heroicons/react/24/outline";
+  Search,
+  X,
+  Trash2,
+  Pencil,
+  TrendingUp,
+  TrendingDown,
+  Archive,
+  DollarSign,
+  CreditCard,
+  Wallet,
+  Filter,
+  ChevronDown,
+  Plus,
+  Clock,
+} from "lucide-react";
 
 // Types
 type PaymentFlow =
@@ -53,13 +53,13 @@ type Category = {
 };
 
 const FLOW_ICONS: Record<PaymentFlow, any> = {
-  virement: CurrencyDollarIcon,
-  carte: CreditCardIcon,
-  especes: WalletIcon,
-  cheque: CurrencyDollarIcon,
-  prelevement: CreditCardIcon,
-  virement_bancaire: CurrencyDollarIcon,
-  wire_transfer: CurrencyDollarIcon,
+  virement: DollarSign,
+  carte: CreditCard,
+  especes: Wallet,
+  cheque: DollarSign,
+  prelevement: CreditCard,
+  virement_bancaire: DollarSign,
+  wire_transfer: DollarSign,
 };
 
 const statusConfig: Record<string, { label: string; className: string }> = {
@@ -86,8 +86,8 @@ interface TransactionListConfig {
   emptyMessage: string;
   addButtonLabel: string;
   color: "rose" | "emerald";
-  icon: typeof ArrowTrendingDownIcon | typeof ArrowTrendingUpIcon;
-  totalIcon: typeof ArchiveBoxIcon | typeof WalletIcon;
+  icon: typeof TrendingDown | typeof TrendingUp;
+  totalIcon: typeof Archive | typeof Wallet;
   amountPrefix: string;
   newRoute: string;
   dataGuide: string;
@@ -106,8 +106,8 @@ const CONFIGS: Record<"expense" | "income", TransactionListConfig> = {
     emptyMessage: "Aucune dépense trouvée",
     addButtonLabel: "Nouvelle dépense",
     color: "rose",
-    icon: ArrowTrendingDownIcon,
-    totalIcon: ArchiveBoxIcon,
+    icon: TrendingDown,
+    totalIcon: Archive,
     amountPrefix: "-",
     newRoute: ROUTES.FINANCE.DASHBOARD.EXPENSES.NEW,
     dataGuide: "expense",
@@ -124,8 +124,8 @@ const CONFIGS: Record<"expense" | "income", TransactionListConfig> = {
     emptyMessage: "Aucun revenu trouvé",
     addButtonLabel: "Nouveau revenu",
     color: "emerald",
-    icon: ArrowTrendingUpIcon,
-    totalIcon: WalletIcon,
+    icon: TrendingUp,
+    totalIcon: Wallet,
     amountPrefix: "+",
     newRoute: ROUTES.FINANCE.DASHBOARD.INCOMES.NEW,
     dataGuide: "income",
@@ -288,7 +288,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                 variant="primary"
                 className={`gap-2 ${type === "expense" ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-600 hover:bg-emerald-700"}`}
               >
-                <PlusIcon className="h-5 w-5" />
+                <Plus className="h-5 w-5" />
                 {config.addButtonLabel}
               </Button>
             </Link>
@@ -313,7 +313,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                 <p className="text-xs text-gray-500 dark:text-gray-400">En attente</p>
                 <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stats.pending}</p>
               </div>
-              <ClockIcon className="h-6 w-6 text-amber-500" />
+              <Clock className="h-6 w-6 text-amber-500" />
             </div>
           </div>
 
@@ -333,7 +333,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder={config.searchPlaceholder}
@@ -348,9 +348,9 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
             >
-              <FunnelIcon className="h-4 w-4" />
+              <Filter className="h-4 w-4" />
               {showFilters ? "Masquer" : "Afficher"} les filtres
-              <ChevronDownIcon className={`h-4 w-4 transition ${showFilters ? "rotate-180" : ""}`} />
+              <ChevronDown className={`h-4 w-4 transition ${showFilters ? "rotate-180" : ""}`} />
             </button>
 
             {showFilters && (
@@ -504,14 +504,14 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                                 to={`${config.newRoute}?id=${tx.id}`}
                                 className="rounded-lg border border-gray-300 dark:border-gray-600 p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                               >
-                                <PencilIcon className="h-3.5 w-3.5" />
+                                <Pencil className="h-3.5 w-3.5" />
                               </Link>
                               <button
                                 onClick={() => deleteTx(tx.id)}
                                 disabled={deletingId === tx.id}
                                 className="rounded-lg border border-red-300 dark:border-red-700 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition disabled:opacity-50"
                               >
-                                <TrashIcon className="h-3.5 w-3.5" />
+                                <Trash2 className="h-3.5 w-3.5" />
                               </button>
                             </div>
                           </td>
@@ -600,7 +600,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                 </p>
                 {selectedIds.length > 0 && (
                   <button onClick={archiveSelected} className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <ArchiveBoxIcon className="h-4 w-4" />
+                    <Archive className="h-4 w-4" />
                     Archiver ({selectedIds.length})
                   </button>
                 )}

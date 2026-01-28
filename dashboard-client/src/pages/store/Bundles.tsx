@@ -212,7 +212,7 @@ export default function Bundles() {
             <div className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <Package className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-gray-500 dark:text-gray-400">Aucun pack créé</p>
-              <Button variant="link" onClick={newBundle} className="mt-4">
+              <Button variant="ghost" onClick={newBundle} className="mt-4">
                 Créer votre premier pack
               </Button>
             </div>

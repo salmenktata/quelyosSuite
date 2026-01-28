@@ -9,11 +9,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useForm, Controller } from 'react-hook-form';
-import {
-  XMarkIcon,
-  CalculatorIcon,
-  CheckCircleIcon,
-} from '@heroicons/react/24/outline';
+import { X, Calculator, CheckCircle } from 'lucide-react';
 import {
   useCreatePricelistItem,
   useUpdatePricelistItem,
@@ -256,7 +252,7 @@ export function PricelistItemFormModal({
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                      <CalculatorIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                      <Calculator className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
                       {isEditing ? 'Modifier la règle de prix' : 'Ajouter une règle de prix'}
@@ -267,7 +263,7 @@ export function PricelistItemFormModal({
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     aria-label="Fermer"
                   >
-                    <XMarkIcon className="w-5 h-5" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -547,7 +543,7 @@ export function PricelistItemFormModal({
                         </>
                       ) : (
                         <>
-                          <CheckCircleIcon className="w-5 h-5" />
+                          <CheckCircle className="w-5 h-5" />
                           {isEditing ? 'Mettre à jour' : 'Ajouter la règle'}
                         </>
                       )}

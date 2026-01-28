@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom'
-import {
-  ShoppingBagIcon,
-  ClipboardDocumentListIcon,
-  UserGroupIcon,
-  ChartBarIcon,
-  TicketIcon,
-  CubeIcon,
-} from '@heroicons/react/24/outline'
+import { ShoppingBag, ClipboardList, Users, BarChart3, Ticket, Package } from 'lucide-react'
 
 interface QuickAction {
   title: string
@@ -21,42 +14,42 @@ const quickActions: QuickAction[] = [
     title: 'Produits',
     description: 'Gérer le catalogue de produits, catégories et stocks',
     href: '/store/products',
-    icon: <ShoppingBagIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
   },
   {
     title: 'Commandes',
     description: 'Suivre et gérer les commandes clients',
     href: '/store/orders',
-    icon: <ClipboardDocumentListIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <ClipboardList className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
   },
   {
     title: 'Clients',
     description: 'Gérer les comptes clients et leur historique',
     href: '/crm/customers',
-    icon: <UserGroupIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Users className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
   },
   {
     title: 'Analytics',
     description: 'Analyser les ventes et performances',
     href: '/analytics',
-    icon: <ChartBarIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <BarChart3 className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
   },
   {
     title: 'Coupons',
     description: 'Gérer les codes promo et réductions',
     href: '/store/coupons',
-    icon: <TicketIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Ticket className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
   },
   {
     title: 'Stock',
     description: 'Suivre les niveaux de stock et inventaire',
     href: '/stock',
-    icon: <CubeIcon className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Package className="w-5 h-5 md:w-6 md:h-6" />,
     colorClass: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
   },
 ]

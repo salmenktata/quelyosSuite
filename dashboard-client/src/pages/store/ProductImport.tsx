@@ -211,7 +211,7 @@ export default function ProductImport() {
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Aperçu: {previewData.length} lignes (sur {csvData.split('\n').length - 1} total)
                     </p>
-                    <Button variant="link" onClick={resetImport} className="text-red-600">
+                    <Button variant="ghost" onClick={resetImport} className="text-red-600">
                       Annuler
                     </Button>
                   </div>

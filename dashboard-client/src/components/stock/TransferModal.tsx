@@ -4,11 +4,7 @@ import { useStockLocations, useCreateTransfer } from '../../hooks/useStockTransf
 import { useWarehouses } from '../../hooks/useWarehouses'
 import { useStockProducts } from '../../hooks/useStock'
 import { useToast } from '../../contexts/ToastContext'
-import {
-  ArrowsRightLeftIcon,
-  MagnifyingGlassIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/outline'
+import { ArrowLeftRight, Search, AlertTriangle } from 'lucide-react'
 import type { StockProduct, StockLocation } from '@/types'
 
 interface TransferModalProps {
@@ -135,7 +131,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
       {step === 'product' && (
         <div className="space-y-4">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
               value={productSearch}
@@ -180,7 +176,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
                 />
                 {isOverStock && (
                   <p className="mt-1 text-sm text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                    <ExclamationTriangleIcon className="h-4 w-4" />
+                    <AlertTriangle className="h-4 w-4" />
                     Quantité supérieure au stock disponible
                   </p>
                 )}
@@ -285,7 +281,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
 
           {/* Arrow */}
           <div className="flex justify-center">
-            <ArrowsRightLeftIcon className="h-6 w-6 text-gray-400 rotate-90" />
+            <ArrowLeftRight className="h-6 w-6 text-gray-400 rotate-90" />
           </div>
 
           {/* Destination */}
@@ -403,7 +399,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
 
           {isOverStock && (
             <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 rounded-lg text-sm">
-              <ExclamationTriangleIcon className="h-5 w-5 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 flex-shrink-0" />
               <p>
                 La quantité demandée dépasse le stock disponible. Le transfert sera créé mais pourrait échouer à la validation.
               </p>
