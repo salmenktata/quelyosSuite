@@ -183,8 +183,20 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 | `sale.order` | `orders` |
 | `Werkzeug` | (supprimer) |
 
+### Routes Proxy Authentification (vitrine-quelyos)
+**TOUJOURS utiliser des routes proxy** pour masquer l'URL backend :
+- ❌ `form.action = \`${odooUrl}/api/auth/sso-redirect\``
+- ✅ `form.action = '/api/backend-sso-redirect'`
+
+**Routes obligatoires** :
+| Route | Fonction |
+|-------|----------|
+| `/api/backend-sso-redirect` | Proxy SSO vers backend |
+| `/api/backend-passkey-redirect` | Proxy Passkey vers backend |
+| `/api/backend-auth` | Auth (NE JAMAIS exposer `odooUrl` dans la réponse) |
+
 ### Vérification
-Lancer `/no-odoo` avant chaque commit pour vérifier conformité dans vitrine-client ET dashboard-client.
+Lancer `/no-odoo` avant chaque commit pour vérifier conformité dans vitrine-client, dashboard-client ET vitrine-quelyos.
 
 ## Commandes disponibles
 **DevOps** : `/ship`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`
