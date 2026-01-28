@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -12,10 +13,11 @@ import {
   CreditCard,
   Mail,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import Container from "@/app/components/Container";
 
-export default function SignupSuccessPage() {
+function SignupSuccessContent() {
   const searchParams = useSearchParams();
   const storeSlug = searchParams.get("store") || "ma-boutique";
   const storeUrl = searchParams.get("store_url") || `https://${storeSlug}.quelyos.shop`;
@@ -197,5 +199,18 @@ export default function SignupSuccessPage() {
         </Container>
       </main>
     </div>
+  );
+}
+
+// Export avec Suspense boundary pour useSearchParams
+export default function SignupSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    }>
+      <SignupSuccessContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -711,7 +711,7 @@ function Step4Creating({ formData }: { formData: FormData }) {
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════════════════════
 
-export default function SignupPage() {
+function SignupPageContent() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -842,5 +842,18 @@ export default function SignupPage() {
         </Container>
       </main>
     </div>
+  );
+}
+
+// Export avec Suspense boundary pour useSearchParams
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    }>
+      <SignupPageContent />
+    </Suspense>
   );
 }

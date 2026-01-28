@@ -7,10 +7,11 @@ import { logger } from '@/lib/logger';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
-  const path = params.path?.join('/') || '';
+  const { path: pathSegments } = await params;
+  const path = pathSegments?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;
 
   try {
@@ -39,10 +40,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
-  const path = params.path?.join('/') || '';
+  const { path: pathSegments } = await params;
+  const path = pathSegments?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;
 
   try {

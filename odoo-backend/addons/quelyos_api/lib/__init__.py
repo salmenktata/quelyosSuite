@@ -29,6 +29,9 @@ Bibliothèques utilitaires pour l'API Quelyos:
 - data_transfer: Import/Export
 - profiler: Performance Profiling
 - migrations: Database Migrations
+- service_registry: Service Discovery
+- rate_plans: Plans tarifaires API
+- coalescing: Request Coalescing
 """
 
 from . import cache
@@ -57,6 +60,9 @@ from . import bulk_operations
 from . import data_transfer
 from . import profiler
 from . import migrations
+from . import service_registry
+from . import rate_plans
+from . import coalescing
 
 # Raccourcis pratiques
 from .rate_limiter import rate_limited, RateLimitConfig
@@ -85,3 +91,6 @@ from .bulk_operations import bulk_create, bulk_update, bulk_delete
 from .data_transfer import DataExporter, DataImporter
 from .profiler import profile, profiler_middleware, enable_profiling
 from .migrations import MigrationRunner, migration
+from .service_registry import get_service_registry, register_service, discover_service
+from .rate_plans import get_rate_plan_manager, RatePlanTier
+from .coalescing import coalesce, get_coalescer
