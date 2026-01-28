@@ -150,3 +150,4 @@ backoffice/vite.config.d.ts
 backoffice/.env
 /tmp/quelyos-*.log
 /tmp/quelyos-*.pid
+docs/audits/
