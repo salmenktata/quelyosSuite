@@ -450,4 +450,30 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       }
     ]
   },
+  attributes: {
+    pageId: 'store-attributes',
+    title: 'Attributs Produits',
+    purpose: 'Définissez les attributs (Taille, Couleur, Matière...) pour créer des variantes de vos produits.',
+    icon: Tag,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Attributs personnalisés (Taille, Couleur, Matière...)',
+          'Valeurs multiples par attribut',
+          'Types d\'affichage (radio, liste, nuancier)',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Créer un attribut : Définissez Taille, Couleur ou autre',
+          'Ajouter des valeurs : S, M, L ou Rouge, Bleu, Vert...',
+          'Configurer l\'affichage : Choisissez le mode d\'affichage sur la boutique',
+        ]
+      }
+    ]
+  },
 };

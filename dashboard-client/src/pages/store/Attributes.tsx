@@ -1,6 +1,18 @@
+/**
+ * Page Attributs Produits - Gestion des attributs pour variantes
+ *
+ * Fonctionnalités :
+ * - Liste des attributs avec leurs valeurs
+ * - Création et modification d'attributs
+ * - Types d'affichage (radio, select, nuancier couleurs)
+ * - Gestion dynamique des valeurs d'attribut
+ * - Configuration des modes de création de variantes
+ */
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Palette, Tag } from 'lucide-react';
-import { useModule } from '@/components/ModularLayout';
+import { Layout } from '@/components/Layout';
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common';
+import { storeNotices } from '@/lib/notices';
 
 interface AttributeValue {
   id: number;
@@ -16,18 +28,18 @@ interface Attribute {
 }
 
 export default function Attributes() {
-  const { setTitle } = useModule();
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Attribute | null>(null);
   const [newValue, setNewValue] = useState('');
 
   useEffect(() => {
-    setTitle('Attributs Produits');
     fetchAttributes();
   }, []);
 
   const fetchAttributes = async () => {
+    setError(null);
     try {
       const res = await fetch('/api/admin/attributes', {
         method: 'POST',
@@ -37,9 +49,11 @@ export default function Attributes() {
       const data = await res.json();
       if (data.result?.success) {
         setAttributes(data.result.attributes);
+      } else {
+        setError('Erreur lors du chargement des attributs');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
+      setError('Impossible de charger les attributs');
     } finally {
       setLoading(false);
     }
@@ -57,9 +71,11 @@ export default function Attributes() {
       if (data.result?.success) {
         setEditing(null);
         fetchAttributes();
+      } else {
+        setError('Erreur lors de la sauvegarde');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
+      setError('Impossible de sauvegarder l\'attribut');
     }
   };
 
@@ -98,24 +114,57 @@ export default function Attributes() {
     }
   };
 
+  const breadcrumbItems = [
+    { label: 'Boutique', href: '/store' },
+    { label: 'Attributs Produits' }
+  ];
+
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Chargement...</div>;
+    return (
+      <Layout>
+        <Breadcrumbs items={breadcrumbItems} />
+        <div className="flex items-center justify-center h-64">
+          <SkeletonTable rows={3} columns={3} />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <Breadcrumbs items={breadcrumbItems} />
+        <div role="alert" className="mt-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
+          <p className="text-red-800 dark:text-red-200">{error}</p>
+          <Button variant="secondary" onClick={fetchAttributes} className="mt-3">
+            Réessayer
+          </Button>
+        </div>
+      </Layout>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <p className="text-gray-500 dark:text-gray-400">
-          Gérez les attributs pour créer des variantes produits
-        </p>
-        <button
-          onClick={newAttribute}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4" />
-          Nouvel attribut
-        </button>
-      </div>
+    <Layout>
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <div className="space-y-6 mt-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Attributs Produits</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Gérez les attributs pour créer des variantes produits
+            </p>
+          </div>
+          <Button onClick={newAttribute}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nouvel attribut
+          </Button>
+        </div>
+
+        {storeNotices.attributes && (
+          <PageNotice config={storeNotices.attributes} className="mb-6" />
+        )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {attributes.map((attr) => (
@@ -133,15 +182,21 @@ export default function Attributes() {
                 <h3 className="font-semibold text-gray-900 dark:text-white">{attr.name}</h3>
               </div>
               <div className="flex gap-1">
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setEditing(attr)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  className="p-1.5"
                 >
-                  <Edit className="w-4 h-4 text-gray-500" />
-                </button>
-                <button className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
-                  <Trash2 className="w-4 h-4 text-red-500" />
-                </button>
+                  <Edit className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500 dark:text-red-400" />
+                </Button>
               </div>
             </div>
 
@@ -170,13 +225,14 @@ export default function Attributes() {
         {attributes.length === 0 && (
           <div className="col-span-full text-center py-12">
             <Tag className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500">Aucun attribut défini</p>
-            <button
+            <p className="text-gray-500 dark:text-gray-400">Aucun attribut défini</p>
+            <Button
+              variant="ghost"
               onClick={newAttribute}
-              className="mt-4 text-blue-600 hover:underline"
+              className="mt-4 text-blue-600 dark:text-blue-400"
             >
               Créer un attribut
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -190,7 +246,7 @@ export default function Attributes() {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                   Nom
                 </label>
                 <input
@@ -202,7 +258,7 @@ export default function Attributes() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                   Type d'affichage
                 </label>
                 <select
@@ -216,7 +272,7 @@ export default function Attributes() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                   Création de variantes
                 </label>
                 <select
@@ -232,7 +288,7 @@ export default function Attributes() {
 
               {/* Values */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                   Valeurs
                 </label>
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -244,7 +300,7 @@ export default function Attributes() {
                       {value.name}
                       <button
                         onClick={() => removeValue(index)}
-                        className="text-gray-400 hover:text-red-500"
+                        className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
                       >
                         ×
                       </button>
@@ -260,32 +316,24 @@ export default function Attributes() {
                     placeholder="Ajouter une valeur..."
                     className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                   />
-                  <button
-                    onClick={addValue}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
-                  >
+                  <Button variant="subtle" onClick={addValue}>
                     Ajouter
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button
-                onClick={() => setEditing(null)}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-              >
+              <Button variant="secondary" onClick={() => setEditing(null)}>
                 Annuler
-              </button>
-              <button
-                onClick={saveAttribute}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
+              </Button>
+              <Button onClick={saveAttribute}>
                 Enregistrer
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </Layout>
   );
 }
