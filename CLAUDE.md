@@ -220,6 +220,7 @@ Lancer `/no-odoo` avant chaque commit pour vérifier conformité dans vitrine-cl
 **Odoo** : `/upgrade-odoo`, `/restart-odoo`, `/restart-backoffice`, `/restart-vitrine`, `/restart-ecommerce`, `/restart-all`
 **Qualité** : `/polish`, `/parity`, `/coherence`, `/clean`, `/analyze-page`, `/docs`, `/uiux`
 **Architecture** : `/leverage` (capitalisation sur existant Odoo vs custom), `/no-odoo` (anonymisation)
+**E-commerce** : `/ecommerce` (audit exploitation Backoffice + roadmap évolutions 2026)
 
 ## Essentiels
 1. Lire [README.md](README.md), [ARCHITECTURE.md](ARCHITECTURE.md) et [LOGME.md](docs/LOGME.md) en début de session
