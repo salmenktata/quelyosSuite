@@ -22,6 +22,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/reviews', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_reviews(self, **kwargs):
         """Liste des avis (admin)"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             domain = [('company_id', '=', company.id)]
@@ -225,6 +228,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/faq/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_faq_categories(self):
         """Liste des catégories FAQ"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             categories = request.env['quelyos.faq.category'].sudo().search([
@@ -268,6 +274,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/faq', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_faqs(self, category_id=None):
         """Liste des FAQ"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             domain = [('company_id', '=', company.id)]
@@ -377,6 +386,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/collections', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_collections(self):
         """Liste des collections"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             collections = request.env['quelyos.collection'].sudo().search([
@@ -431,6 +443,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/flash-sales', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_flash_sales(self):
         """Liste des ventes flash"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             sales = request.env['quelyos.flash.sale'].sudo().search([
@@ -492,6 +507,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/bundles', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_bundles(self):
         """Liste des bundles"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             bundles = request.env['quelyos.bundle'].sudo().search([
@@ -550,6 +568,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/testimonials', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_testimonials(self):
         """Liste des témoignages"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             testimonials = request.env['quelyos.testimonial'].sudo().search([
@@ -601,6 +622,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/blog/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_blog_categories(self):
         """Liste des catégories blog"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             categories = request.env['quelyos.blog.category'].sudo().search([
@@ -616,6 +640,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/blog/posts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_blog_posts(self, **kwargs):
         """Liste des articles blog"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             domain = [('company_id', '=', company.id)]
@@ -638,6 +665,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/blog/posts/<int:post_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_blog_post(self, post_id):
         """Détail d'un article"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             post = request.env['quelyos.blog.post'].sudo().browse(post_id)
             if post.exists():
@@ -682,6 +712,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/loyalty/program', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_loyalty_program(self):
         """Récupérer le programme de fidélité"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             program = request.env['quelyos.loyalty.program'].sudo().search([
@@ -739,6 +772,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/loyalty/members', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_loyalty_members(self, **kwargs):
         """Liste des membres fidélité"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             members = request.env['quelyos.loyalty.member'].sudo().search([
@@ -758,6 +794,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/tickets', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_tickets(self, **kwargs):
         """Liste des tickets"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             domain = [('company_id', '=', company.id)]
@@ -785,6 +824,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/tickets/<int:ticket_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_ticket(self, ticket_id):
         """Détail d'un ticket"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             ticket = request.env['quelyos.ticket'].sudo().browse(ticket_id)
             if ticket.exists():
@@ -846,6 +888,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/reports/sales', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_sales_report(self, date_from=None, date_to=None):
         """Rapport de ventes"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             domain = [
@@ -904,6 +949,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/analytics/wishlist', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_wishlist_analytics(self):
         """Analytiques wishlist - produits les plus ajoutés en favoris"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
 
@@ -943,6 +991,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/stock/alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_alerts(self, threshold=10):
         """Produits avec stock faible"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
 
@@ -994,6 +1045,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/attributes', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_attributes(self):
         """Liste des attributs produits"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             attributes = request.env['product.attribute'].sudo().search([])
             return {
