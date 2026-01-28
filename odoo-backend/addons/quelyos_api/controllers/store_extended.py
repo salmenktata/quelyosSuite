@@ -206,6 +206,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/reviews/<int:review_id>/reply', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reply_review(self, review_id, reply):
         """Répondre à un avis"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             review = request.env['quelyos.product.review'].sudo().browse(review_id)
             if review.exists():
@@ -237,6 +240,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/faq/categories/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_faq_category(self, **kwargs):
         """Créer/modifier une catégorie FAQ"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Category = request.env['quelyos.faq.category'].sudo()
@@ -440,6 +446,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/flash-sales/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_flash_sale(self, **kwargs):
         """Créer/modifier une vente flash"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             FlashSale = request.env['quelyos.flash.sale'].sudo()
@@ -498,6 +507,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/bundles/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_bundle(self, **kwargs):
         """Créer/modifier un bundle"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Bundle = request.env['quelyos.bundle'].sudo()
@@ -553,6 +565,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/testimonials/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_testimonial(self, **kwargs):
         """Créer/modifier un témoignage"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Testimonial = request.env['quelyos.testimonial'].sudo()
@@ -634,6 +649,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/blog/posts/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_blog_post(self, **kwargs):
         """Créer/modifier un article"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             Post = request.env['quelyos.blog.post'].sudo()
 
@@ -678,6 +696,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/loyalty/program/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_loyalty_program(self, **kwargs):
         """Créer/modifier le programme de fidélité"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Program = request.env['quelyos.loyalty.program'].sudo()
@@ -777,6 +798,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/tickets/<int:ticket_id>/reply', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reply_ticket(self, ticket_id, content):
         """Répondre à un ticket"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             ticket = request.env['quelyos.ticket'].sudo().browse(ticket_id)
             if ticket.exists():
@@ -795,6 +819,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/tickets/<int:ticket_id>/status', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def update_ticket_status(self, ticket_id, state, resolution=None):
         """Mettre à jour le statut d'un ticket"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             ticket = request.env['quelyos.ticket'].sudo().browse(ticket_id)
             if ticket.exists():
@@ -988,6 +1015,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/attributes/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_attribute(self, **kwargs):
         """Créer/modifier un attribut"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             Attribute = request.env['product.attribute'].sudo()
 
@@ -1033,6 +1063,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/products/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def export_products(self, format='csv'):
         """Exporter les produits"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             products = request.env['product.template'].sudo().search([
@@ -1066,6 +1099,9 @@ class StoreExtendedController(BaseController):
     @http.route('/api/admin/products/import', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def import_products(self, products):
         """Importer des produits"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
         try:
             company = self._get_company_from_tenant()
             Product = request.env['product.template'].sudo()

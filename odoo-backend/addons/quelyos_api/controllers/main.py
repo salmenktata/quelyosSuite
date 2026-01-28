@@ -630,6 +630,10 @@ class QuelyosAPI(BaseController):
     @http.route('/api/ecommerce/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
     def get_products_list(self, **kwargs):
         """Liste des produits avec recherche, filtres et tri (GET via JSON-RPC)"""
+        # Rate limiting: 60 req/min par IP (anti-scraping)
+        rate_error = check_rate_limit(request, RateLimitConfig.PRODUCTS_LIST, 'products_list')
+        if rate_error:
+            return rate_error
         try:
             params = self._get_params()
             tenant_id = params.get('tenant_id')

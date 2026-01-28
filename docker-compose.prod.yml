@@ -31,10 +31,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       HOST: db
       USER: ${DB_USER}
       PASSWORD: ${DB_PASSWORD}
+      # Redis configuration for rate limiting
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_RATE_LIMIT_DB: 1
       # Production optimizations
       WORKERS: ${ODOO_WORKERS:-4}
       MAX_CRON_THREADS: ${ODOO_MAX_CRON_THREADS:-2}
@@ -144,6 +150,23 @@ services:
     networks:
       - quelyos-network
 
+  # Redis for rate limiting and caching
+  redis:
+    image: redis:7-alpine
+    container_name: quelyos-redis-prod
+    restart: always
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - quelyos-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Pas de port exposé publiquement pour la sécurité
+
 volumes:
   postgres_data:
     driver: local
@@ -152,6 +175,8 @@ volumes:
   odoo_config:
     driver: local
   nginx_logs:
+    driver: local
+  redis_data:
     driver: local
 
 networks:
