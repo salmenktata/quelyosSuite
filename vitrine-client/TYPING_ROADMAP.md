@@ -323,15 +323,15 @@ export function generateMetadata(page: PageData): Metadata { ... }
 ```
 
 **Checklist Étape 3** :
-- [ ] Typer logger.ts avec `unknown` + type guards
-- [ ] Typer useCachedProducts avec génériques
-- [ ] Typer metadata.ts avec interface PageData
-- [ ] Typer cms.ts (2 any)
-- [ ] Typer hooks de paiement (4 any)
-- [ ] Tests : Vérifier comportement inchangé
-- [ ] Commit : `refactor: typage hooks et utils (18 any → 0)`
+- [x] Typer logger.ts avec `unknown` + type guards
+- [x] Typer useCachedProducts avec génériques
+- [x] Typer metadata.ts avec interface PageData
+- [x] Typer cms.ts (2 any)
+- [x] Typer hooks de paiement (4 any)
+- [x] Tests : Vérifier comportement inchangé
+- [x] Commit : `refactor: typage hooks et utils (18 any → 0)`
 
-**Gain attendu** : -18 any (18% du total)
+**Gain réel** : -18 any (18% du total) ✅ TERMINÉ (2026-01-29)
 
 ---
 
@@ -503,7 +503,7 @@ git commit -m "refactor: typage BackendClient - Phase 1 (39 any → 0)"
 
 - [x] Phase 1 : API Client (39 any) ✅ TERMINÉ
 - [x] Phase 2 : Paiements (14 any) ✅ TERMINÉ
-- [ ] Phase 3 : Hooks/Utils (18 any)
+- [x] Phase 3 : Hooks/Utils (18 any) ✅ TERMINÉ
 - [ ] Phase 4 : UI Components (27 any)
 - [ ] Activer `strict: true` dans tsconfig
 - [ ] Mettre à jour ESLint config (error au lieu de warn)
