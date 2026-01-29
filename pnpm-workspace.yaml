@@ -4,6 +4,7 @@ packages:
   - dashboard-client
   - vitrine-quelyos
   - vitrine-client
+  - super-admin-client
 
 overrides:
   cookie@<0.7.0: '>=0.7.0'

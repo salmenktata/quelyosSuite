@@ -366,6 +366,7 @@ export class GatewayError extends Error {
 
 // Instance singleton
 export const gateway = new APIGateway()
+export const api = gateway
 
 // Export par défaut
 export default gateway

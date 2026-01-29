@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cron: Check Trial Expiry (quotidien à 9h) -->
+    <record id="ir_cron_trial_expiry" model="ir.cron">
+        <field name="name">Check Trial Expiry</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_trial_expiry()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=9, minute=0, second=0)"/>
+    </record>
+
+    <!-- Cron: Send Trial Ending Reminders (quotidien à 9h) -->
+    <record id="ir_cron_trial_ending_reminders" model="ir.cron">
+        <field name="name">Send Trial Ending Reminders</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_trial_ending_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=9, minute=0, second=0)"/>
+    </record>
+
+    <!-- Cron: Check Quota Warnings (quotidien à 9h) -->
+    <record id="ir_cron_quota_warnings" model="ir.cron">
+        <field name="name">Check Quota Warnings</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_quota_warnings()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=9, minute=0, second=0)"/>
+    </record>
+</odoo>

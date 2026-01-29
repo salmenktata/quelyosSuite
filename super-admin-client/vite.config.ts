@@ -40,8 +40,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@quelyos/logger': fileURLToPath(new URL('../shared/logger/src', import.meta.url)),
-      '@quelyos/types': fileURLToPath(new URL('../shared/types/src', import.meta.url)),
     },
   },
   server: {

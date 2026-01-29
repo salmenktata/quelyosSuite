@@ -35,6 +35,7 @@
 | **Site Vitrine** | `vitrine-quelyos/` | 3000 | http://localhost:3000 | Site marketing principal (Next.js 14) |
 | **E-commerce** | `vitrine-client/` | 3001 | http://localhost:3001 | Boutique en ligne (Next.js 16) |
 | **Backoffice** | `dashboard-client/` | 5175 | http://localhost:5175 | Interface admin (React + Vite) |
+| **Super Admin** | `super-admin-client/` | 5176 | http://localhost:5176 | Admin SaaS (React + Vite) |
 | **Backend API** | `odoo-backend/` | 8069 | http://localhost:8069/api/* | API REST Odoo |
 | **Interface Odoo** | `odoo-backend/` | 8069 | http://localhost:8069 | Interface native Odoo (admin/admin) |
 | **PostgreSQL** | Docker | 5432 | localhost:5432 | Base de données principale |
@@ -53,6 +54,7 @@
 ./scripts/dev-start.sh backoffice
 ./scripts/dev-start.sh vitrine
 ./scripts/dev-start.sh ecommerce
+./scripts/dev-start.sh superadmin
 
 # Arrêter tous les services
 ./scripts/dev-stop.sh all
@@ -80,6 +82,9 @@ cd vitrine-quelyos && npm run dev
 
 # E-commerce
 cd vitrine-client && npm run dev
+
+# Super Admin
+cd super-admin-client && npm run dev
 ```
 
 ## Dépendances entre Services

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Email Template: Trial Ending Soon (7 jours avant expiration) -->
+    <record id="email_template_trial_ending_soon" model="mail.template">
+        <field name="name">Trial Ending Soon</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="subject">Votre essai gratuit expire dans 7 jours</field>
+        <field name="email_from">${object.company_id.email or 'noreply@quelyos.com'}</field>
+        <field name="email_to">${object.partner_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #14b8a6 0%, #10b981 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">Quelyos Suite</h1>
+                </div>
+                <div style="padding: 30px; background: #ffffff;">
+                    <h2 style="color: #1f2937;">Votre essai gratuit expire bientôt</h2>
+                    <p style="color: #4b5563; line-height: 1.6;">Bonjour,</p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Votre période d'essai gratuit de 14 jours prend fin le
+                        <strong>${object.trial_end_date.strftime('%d/%m/%Y') if object.trial_end_date else 'N/A'}</strong>.
+                    </p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Pour continuer à utiliser Quelyos Suite et conserver l'accès à toutes vos données,
+                        activez votre abonnement dès maintenant.
+                    </p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.get_checkout_url() if hasattr(object, 'get_checkout_url') else '#'}"
+                           style="display: inline-block; background: linear-gradient(135deg, #14b8a6 0%, #10b981 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            Activer mon abonnement
+                        </a>
+                    </div>
+                    <p style="color: #6b7280; font-size: 14px;">
+                        Besoin d'aide ? Contactez-nous à <a href="mailto:support@quelyos.com" style="color: #14b8a6;">support@quelyos.com</a>
+                    </p>
+                </div>
+                <div style="padding: 20px; background: #f9fafb; text-align: center; color: #9ca3af; font-size: 12px;">
+                    © ${datetime.datetime.now().year} Quelyos Suite - Tous droits réservés
+                </div>
+            </div>
+        ]]></field>
+    </record>
+
+    <!-- Email Template: Payment Failed -->
+    <record id="email_template_payment_failed" model="mail.template">
+        <field name="name">Payment Failed</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="subject">Problème de paiement - Action requise</field>
+        <field name="email_from">${object.company_id.email or 'noreply@quelyos.com'}</field>
+        <field name="email_to">${object.partner_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #ef4444; padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">Quelyos Suite</h1>
+                </div>
+                <div style="padding: 30px; background: #ffffff;">
+                    <h2 style="color: #dc2626;">Problème de paiement détecté</h2>
+                    <p style="color: #4b5563; line-height: 1.6;">Bonjour,</p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Le paiement de votre abonnement <strong>${object.plan_id.name}</strong> a échoué.
+                    </p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Pour éviter toute interruption de service, veuillez mettre à jour vos informations
+                        de paiement dès que possible.
+                    </p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.get_customer_portal_url() if hasattr(object, 'get_customer_portal_url') else '#'}"
+                           style="display: inline-block; background: #ef4444; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            Mettre à jour ma carte bancaire
+                        </a>
+                    </div>
+                    <p style="color: #6b7280; font-size: 14px;">
+                        Si vous avez déjà mis à jour vos informations, veuillez ignorer ce message.
+                    </p>
+                </div>
+                <div style="padding: 20px; background: #f9fafb; text-align: center; color: #9ca3af; font-size: 12px;">
+                    © ${datetime.datetime.now().year} Quelyos Suite - Tous droits réservés
+                </div>
+            </div>
+        ]]></field>
+    </record>
+
+    <!-- Email Template: Quota Warning (80% usage) -->
+    <record id="email_template_quota_warning" model="mail.template">
+        <field name="name">Quota Warning</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="subject">Alerte : Vous approchez de votre quota</field>
+        <field name="email_from">${object.company_id.email or 'noreply@quelyos.com'}</field>
+        <field name="email_to">${object.partner_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">Quelyos Suite</h1>
+                </div>
+                <div style="padding: 30px; background: #ffffff;">
+                    <h2 style="color: #ea580c;">Alerte quota</h2>
+                    <p style="color: #4b5563; line-height: 1.6;">Bonjour,</p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Votre abonnement <strong>${object.plan_id.name}</strong> approche de ses limites.
+                    </p>
+                    <div style="margin: 20px 0; padding: 20px; background: #fef3c7; border-radius: 8px;">
+                        <p style="color: #92400e; margin: 5px 0;">
+                            <strong>Utilisateurs :</strong> ${object.current_users_count}/${object.max_users}
+                            (${object.users_usage_percentage}%)
+                        </p>
+                        <p style="color: #92400e; margin: 5px 0;">
+                            <strong>Produits :</strong> ${object.current_products_count}/${object.max_products}
+                            (${object.products_usage_percentage}%)
+                        </p>
+                        <p style="color: #92400e; margin: 5px 0;">
+                            <strong>Commandes (année) :</strong> ${object.current_orders_count}/${object.max_orders_per_year}
+                            (${object.orders_usage_percentage}%)
+                        </p>
+                    </div>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Pensez à upgrader votre plan pour éviter toute interruption de service.
+                    </p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="https://quelyos.com/pricing"
+                           style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            Voir les plans disponibles
+                        </a>
+                    </div>
+                </div>
+                <div style="padding: 20px; background: #f9fafb; text-align: center; color: #9ca3af; font-size: 12px;">
+                    © ${datetime.datetime.now().year} Quelyos Suite - Tous droits réservés
+                </div>
+            </div>
+        ]]></field>
+    </record>
+
+    <!-- Email Template: Renewal Success -->
+    <record id="email_template_renewal_success" model="mail.template">
+        <field name="name">Renewal Success</field>
+        <field name="model_id" ref="model_quelyos_subscription"/>
+        <field name="subject">Abonnement renouvelé avec succès</field>
+        <field name="email_from">${object.company_id.email or 'noreply@quelyos.com'}</field>
+        <field name="email_to">${object.partner_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #14b8a6 0%, #10b981 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">Quelyos Suite</h1>
+                </div>
+                <div style="padding: 30px; background: #ffffff;">
+                    <h2 style="color: #059669;">Renouvellement confirmé</h2>
+                    <p style="color: #4b5563; line-height: 1.6;">Bonjour,</p>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Votre abonnement <strong>${object.plan_id.name}</strong> a été renouvelé avec succès.
+                    </p>
+                    <div style="margin: 20px 0; padding: 20px; background: #d1fae5; border-radius: 8px;">
+                        <p style="color: #065f46; margin: 5px 0;">
+                            <strong>Plan :</strong> ${object.plan_id.name}
+                        </p>
+                        <p style="color: #065f46; margin: 5px 0;">
+                            <strong>Montant :</strong> ${object.price}€
+                        </p>
+                        <p style="color: #065f46; margin: 5px 0;">
+                            <strong>Prochaine facturation :</strong>
+                            ${object.next_billing_date.strftime('%d/%m/%Y') if object.next_billing_date else 'N/A'}
+                        </p>
+                    </div>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Merci de votre confiance !
+                    </p>
+                </div>
+                <div style="padding: 20px; background: #f9fafb; text-align: center; color: #9ca3af; font-size: 12px;">
+                    © ${datetime.datetime.now().year} Quelyos Suite - Tous droits réservés
+                </div>
+            </div>
+        ]]></field>
+    </record>
+</odoo>

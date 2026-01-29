@@ -17,6 +17,7 @@ BACKEND_PORT=8069
 BACKOFFICE_PORT=5175
 VITRINE_PORT=3000
 ECOMMERCE_PORT=3001
+SUPERADMIN_PORT=5176
 
 # Répertoire racine
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -85,11 +86,19 @@ stop_ecommerce() {
     rm -f /tmp/quelyos-ecommerce.log
 }
 
+# Fonction pour arrêter le super admin
+stop_superadmin() {
+    stop_service_by_pid "/tmp/quelyos-superadmin.pid" "Super Admin"
+    stop_service_by_port $SUPERADMIN_PORT "Super Admin"
+    rm -f /tmp/quelyos-superadmin.log
+}
+
 # Parsing des arguments
 MODE="${1:-all}"
 
 case $MODE in
     all)
+        stop_superadmin
         stop_ecommerce
         stop_vitrine
         stop_backoffice
@@ -107,8 +116,11 @@ case $MODE in
     ecommerce)
         stop_ecommerce
         ;;
+    superadmin)
+        stop_superadmin
+        ;;
     *)
-        echo -e "${RED}Usage: $0 [all|backend|backoffice|vitrine|ecommerce]${NC}"
+        echo -e "${RED}Usage: $0 [all|backend|backoffice|vitrine|ecommerce|superadmin]${NC}"
         exit 1
         ;;
 esac

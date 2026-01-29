@@ -3,13 +3,17 @@ FROM odoo:19
 
 USER root
 
-# Install additional Python packages
-RUN pip3 install --no-cache-dir \
-    redis \
+# Copy requirements.txt pour installer toutes les dépendances Python
+COPY ./addons/quelyos_api/requirements.txt /tmp/quelyos_requirements.txt
+
+# Install Python packages from requirements.txt + packages additionnels
+RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed \
+    -r /tmp/quelyos_requirements.txt \
     prometheus-client \
     sentry-sdk \
     pyjwt \
-    python-dateutil
+    python-dateutil && \
+    rm /tmp/quelyos_requirements.txt
 
 # Copy custom addons
 COPY --chown=odoo:odoo ./addons /mnt/extra-addons

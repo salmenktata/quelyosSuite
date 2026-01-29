@@ -17,6 +17,7 @@ BACKEND_PORT=8069
 BACKOFFICE_PORT=5175
 VITRINE_PORT=3000
 ECOMMERCE_PORT=3001
+SUPERADMIN_PORT=5176
 
 # Répertoire racine
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -101,11 +102,13 @@ start_backend() {
 
 # Fonction pour démarrer le backoffice
 start_backoffice() {
-    echo -e "\n${BLUE}🚀 Démarrage Backoffice${NC}"
+    echo -e "\n${BLUE}🚀 Démarrage Backoffice (Port $BACKOFFICE_PORT)${NC}"
 
-    if ! check_port $BACKOFFICE_PORT "Backoffice"; then
-        echo -e "${YELLOW}Le backoffice semble déjà démarré${NC}"
-        return 0
+    # Nettoyer le port si occupé
+    if lsof -ti:$BACKOFFICE_PORT >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  Port $BACKOFFICE_PORT occupé, nettoyage...${NC}"
+        lsof -ti:$BACKOFFICE_PORT | xargs kill -9 2>/dev/null || true
+        sleep 1
     fi
 
     cd "$ROOT_DIR/dashboard-client"
@@ -117,11 +120,13 @@ start_backoffice() {
 
 # Fonction pour démarrer le site vitrine
 start_vitrine() {
-    echo -e "\n${BLUE}🚀 Démarrage Site Vitrine${NC}"
+    echo -e "\n${BLUE}🚀 Démarrage Site Vitrine (Port $VITRINE_PORT)${NC}"
 
-    if ! check_port $VITRINE_PORT "Site Vitrine"; then
-        echo -e "${YELLOW}Le site vitrine semble déjà démarré${NC}"
-        return 0
+    # Nettoyer le port si occupé
+    if lsof -ti:$VITRINE_PORT >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  Port $VITRINE_PORT occupé, nettoyage...${NC}"
+        lsof -ti:$VITRINE_PORT | xargs kill -9 2>/dev/null || true
+        sleep 1
     fi
 
     cd "$ROOT_DIR/vitrine-quelyos"
@@ -133,11 +138,13 @@ start_vitrine() {
 
 # Fonction pour démarrer la boutique e-commerce
 start_ecommerce() {
-    echo -e "\n${BLUE}🚀 Démarrage Boutique E-commerce${NC}"
+    echo -e "\n${BLUE}🚀 Démarrage Boutique E-commerce (Port $ECOMMERCE_PORT)${NC}"
 
-    if ! check_port $ECOMMERCE_PORT "E-commerce"; then
-        echo -e "${YELLOW}La boutique semble déjà démarrée${NC}"
-        return 0
+    # Nettoyer le port si occupé
+    if lsof -ti:$ECOMMERCE_PORT >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  Port $ECOMMERCE_PORT occupé, nettoyage...${NC}"
+        lsof -ti:$ECOMMERCE_PORT | xargs kill -9 2>/dev/null || true
+        sleep 1
     fi
 
     cd "$ROOT_DIR/vitrine-client"
@@ -145,6 +152,24 @@ start_ecommerce() {
     echo $! > /tmp/quelyos-ecommerce.pid
     wait_for_service "http://localhost:$ECOMMERCE_PORT" "E-commerce" 15
     echo -e "${GREEN}✅ E-commerce : http://localhost:$ECOMMERCE_PORT${NC}"
+}
+
+# Fonction pour démarrer le super admin
+start_superadmin() {
+    echo -e "\n${BLUE}🚀 Démarrage Super Admin Client (Port $SUPERADMIN_PORT)${NC}"
+
+    # Nettoyer le port si occupé
+    if lsof -ti:$SUPERADMIN_PORT >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  Port $SUPERADMIN_PORT occupé, nettoyage...${NC}"
+        lsof -ti:$SUPERADMIN_PORT | xargs kill -9 2>/dev/null || true
+        sleep 1
+    fi
+
+    cd "$ROOT_DIR/super-admin-client"
+    npm run dev > /tmp/quelyos-superadmin.log 2>&1 &
+    echo $! > /tmp/quelyos-superadmin.pid
+    wait_for_service "http://localhost:$SUPERADMIN_PORT" "Super Admin" 15
+    echo -e "${GREEN}✅ Super Admin : http://localhost:$SUPERADMIN_PORT${NC}"
 }
 
 # Parsing des arguments
@@ -156,6 +181,7 @@ case $MODE in
         start_backoffice
         start_vitrine
         start_ecommerce
+        start_superadmin
         ;;
     backend)
         start_backend
@@ -169,8 +195,11 @@ case $MODE in
     ecommerce)
         start_ecommerce
         ;;
+    superadmin)
+        start_superadmin
+        ;;
     *)
-        echo -e "${RED}Usage: $0 [all|backend|backoffice|vitrine|ecommerce]${NC}"
+        echo -e "${RED}Usage: $0 [all|backend|backoffice|vitrine|ecommerce|superadmin]${NC}"
         exit 1
         ;;
 esac
@@ -185,10 +214,12 @@ echo -e "  • Backend Odoo    : ${GREEN}http://localhost:$BACKEND_PORT${NC}"
 echo -e "  • Backoffice      : ${GREEN}http://localhost:$BACKOFFICE_PORT${NC}"
 echo -e "  • Site Vitrine    : ${GREEN}http://localhost:$VITRINE_PORT${NC}"
 echo -e "  • E-commerce      : ${GREEN}http://localhost:$ECOMMERCE_PORT${NC}"
+echo -e "  • Super Admin     : ${GREEN}http://localhost:$SUPERADMIN_PORT${NC}"
 echo ""
 echo -e "📝 Logs disponibles :"
 echo -e "  • tail -f /tmp/quelyos-backoffice.log"
 echo -e "  • tail -f /tmp/quelyos-vitrine.log"
 echo -e "  • tail -f /tmp/quelyos-ecommerce.log"
+echo -e "  • tail -f /tmp/quelyos-superadmin.log"
 echo -e "  • docker-compose logs -f (Backend)"
 echo ""

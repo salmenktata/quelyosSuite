@@ -326,10 +326,20 @@ class Subscription(models.Model):
             record.message_post(body=_("Abonnement annulé"))
 
     def action_mark_past_due(self):
-        """Marque l'abonnement en retard de paiement."""
+        """Marque l'abonnement en retard de paiement et envoie email."""
+        template = self.env.ref('quelyos_api.email_template_payment_failed', raise_if_not_found=False)
+
         for record in self:
             record.write({'state': 'past_due'})
             record.message_post(body=_("Paiement en retard"), subtype_xmlid='mail.mt_note')
+
+            # Envoyer email de relance
+            if template:
+                try:
+                    template.send_mail(record.id, force_send=True)
+                    _logger.info(f"Payment failed email sent for subscription {record.name}")
+                except Exception as e:
+                    _logger.error(f"Failed to send payment failed email for {record.name}: {e}")
 
     def action_expire(self):
         """Expire l'abonnement."""
@@ -486,3 +496,101 @@ class Subscription(models.Model):
                     subtype_xmlid='mail.mt_comment'
                 )
                 _logger.info(f"Quota warning sent for subscription {subscription.name}")
+
+    @api.model
+    def get_mrr_breakdown(self):
+        """
+        Calcule MRR par plan et retourne le total.
+        MRR = Monthly Recurring Revenue
+        """
+        plans = self.env['quelyos.subscription.plan'].search([])
+        result = {}
+        total_mrr = 0
+
+        for plan in plans:
+            # Subscriptions mensuelles actives
+            subs_monthly = self.search([
+                ('plan_id', '=', plan.id),
+                ('state', '=', 'active'),
+                ('billing_cycle', '=', 'monthly')
+            ])
+
+            # Subscriptions annuelles actives (diviser par 12 pour MRR)
+            subs_yearly = self.search([
+                ('plan_id', '=', plan.id),
+                ('state', '=', 'active'),
+                ('billing_cycle', '=', 'yearly')
+            ])
+
+            mrr_monthly = sum(s.plan_id.price_monthly for s in subs_monthly)
+            mrr_yearly = sum(s.plan_id.price_yearly / 12 for s in subs_yearly)
+            plan_mrr = mrr_monthly + mrr_yearly
+
+            result[plan.code] = plan_mrr
+            total_mrr += plan_mrr
+
+        result['total'] = total_mrr
+        return result
+
+    @api.model
+    def get_churn_analysis(self, months=12):
+        """
+        Calcule le churn rate sur N mois.
+        Churn rate = (Subscriptions annulées/expirées) / (Subscriptions actives début mois) * 100
+        """
+        result = []
+        today = fields.Date.today()
+
+        for i in range(months):
+            # Calculer le mois cible
+            start_month = today - timedelta(days=30 * (i + 1))
+            end_month = today - timedelta(days=30 * i)
+
+            # Subscriptions actives au début du mois
+            active_start = self.search_count([
+                ('state', '=', 'active'),
+                ('start_date', '<=', start_month)
+            ])
+
+            # Subscriptions qui ont churné pendant ce mois
+            churned = self.search_count([
+                ('state', 'in', ['cancelled', 'expired']),
+                ('end_date', '>=', start_month),
+                ('end_date', '<', end_month)
+            ])
+
+            # Calculer churn rate
+            churn_rate = (churned / active_start * 100) if active_start > 0 else 0
+
+            result.append({
+                'month': start_month.strftime('%Y-%m'),
+                'churn_rate': round(churn_rate, 2),
+                'churned_count': churned,
+                'active_start_count': active_start,
+            })
+
+        return result
+
+    @api.model
+    def _cron_send_trial_ending_reminders(self):
+        """
+        Envoie un email 7 jours avant la fin de la période d'essai.
+        À lancer quotidiennement.
+        """
+        target_date = fields.Date.today() + timedelta(days=7)
+        trials = self.search([
+            ('state', '=', 'trial'),
+            ('trial_end_date', '=', target_date)
+        ])
+
+        template = self.env.ref('quelyos_api.email_template_trial_ending_soon', raise_if_not_found=False)
+        if not template:
+            _logger.error("Email template 'email_template_trial_ending_soon' not found")
+            return
+
+        for sub in trials:
+            try:
+                template.send_mail(sub.id, force_send=True)
+                _logger.info(f"Trial ending reminder sent for subscription {sub.name}")
+            except Exception as e:
+                _logger.error(f"Failed to send trial ending email for {sub.name}: {e}")

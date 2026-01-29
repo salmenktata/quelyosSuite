@@ -18,9 +18,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@quelyos/logger": ["../shared/logger/src"],
-      "@quelyos/types": ["../shared/types/src"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],

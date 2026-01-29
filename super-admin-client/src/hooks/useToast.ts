@@ -1,21 +1,24 @@
 import { useState, useCallback } from 'react'
-import { ToastType } from '../components/common/Toast'
 
-interface Toast {
+export interface Toast {
   id: string
-  type: ToastType
+  type: 'success' | 'error' | 'warning' | 'info'
   message: string
-  duration?: number
+  duration: number
 }
 
 export function useToast() {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = useCallback((type: ToastType, message: string, duration = 3000) => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  const addToast = useCallback((type: Toast['type'], message: string, duration = 4000) => {
+    const id = Math.random().toString(36).substring(2, 9)
     const newToast: Toast = { id, type, message, duration }
 
     setToasts((prev) => [...prev, newToast])
+
+    setTimeout(() => {
+      removeToast(id)
+    }, duration)
 
     return id
   }, [])
@@ -24,33 +27,10 @@ export function useToast() {
     setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }, [])
 
-  const success = useCallback(
-    (message: string, duration?: number) => {
-      return addToast('success', message, duration)
-    },
-    [addToast]
-  )
-
-  const error = useCallback(
-    (message: string, duration?: number) => {
-      return addToast('error', message, duration || 5000)
-    },
-    [addToast]
-  )
-
-  const warning = useCallback(
-    (message: string, duration?: number) => {
-      return addToast('warning', message, duration)
-    },
-    [addToast]
-  )
-
-  const info = useCallback(
-    (message: string, duration?: number) => {
-      return addToast('info', message, duration)
-    },
-    [addToast]
-  )
+  const success = useCallback((message: string, duration?: number) => addToast('success', message, duration), [addToast])
+  const error = useCallback((message: string, duration?: number) => addToast('error', message, duration), [addToast])
+  const warning = useCallback((message: string, duration?: number) => addToast('warning', message, duration), [addToast])
+  const info = useCallback((message: string, duration?: number) => addToast('info', message, duration), [addToast])
 
   const clearAll = useCallback(() => {
     setToasts([])
@@ -58,12 +38,11 @@ export function useToast() {
 
   return {
     toasts,
-    addToast,
-    removeToast,
     success,
     error,
     warning,
     info,
+    removeToast,
     clearAll,
   }
 }
