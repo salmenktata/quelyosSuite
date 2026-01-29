@@ -9,7 +9,13 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { loadStripe, StripeElementStyleVariant } from '@stripe/stripe-js';
+import {
+  loadStripe,
+  StripeElementStyleVariant,
+  StripeCardNumberElementChangeEvent,
+  StripeCardExpiryElementChangeEvent,
+  StripeCardCvcElementChangeEvent,
+} from '@stripe/stripe-js';
 import { Button } from '@/components/common';
 import { useStripePayment } from '@/hooks/useStripePayment';
 
@@ -90,17 +96,17 @@ function StripePaymentFormContent({
     }
   }, [orderId, orderAmount, createPaymentIntent]);
 
-  const handleCardNumberChange = (event: any) => {
+  const handleCardNumberChange = (event: StripeCardNumberElementChangeEvent) => {
     setCardBrand(event.brand);
     setCardNumberComplete(event.complete);
     // Les erreurs de validation Stripe sont gérées par le hook useStripePayment
   };
 
-  const handleCardExpiryChange = (event: any) => {
+  const handleCardExpiryChange = (event: StripeCardExpiryElementChangeEvent) => {
     setCardExpiryComplete(event.complete);
   };
 
-  const handleCardCvcChange = (event: any) => {
+  const handleCardCvcChange = (event: StripeCardCvcElementChangeEvent) => {
     setCardCvcComplete(event.complete);
   };
 

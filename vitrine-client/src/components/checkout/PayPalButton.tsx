@@ -94,6 +94,7 @@ export function PayPalButton({
 
             return response.data.paypal_order_id;
           } catch (_err) {
+            const err = _err as Error;
             const errorMsg = err instanceof Error ? err.message : 'PayPal order creation failed';
             setError(errorMsg);
             onError(err instanceof Error ? err : new Error(errorMsg));
@@ -104,7 +105,7 @@ export function PayPalButton({
         },
 
         // Capture PayPal order after approval
-        onApprove: async (data: any) => {
+        onApprove: async (data: PayPalOnApproveData) => {
           try {
             setLoading(true);
             setError(null);
@@ -118,6 +119,7 @@ export function PayPalButton({
             // Payment successful
             onSuccess(response.data.transaction_id);
           } catch (_err) {
+            const err = _err as Error;
             const errorMsg = err instanceof Error ? err.message : 'PayPal payment capture failed';
             setError(errorMsg);
             onError(err instanceof Error ? err : new Error(errorMsg));
@@ -135,7 +137,7 @@ export function PayPalButton({
         },
 
         // Handle errors
-        onError: (err: any) => {
+        onError: (err: PayPalError) => {
           const errorMsg = err?.message || 'PayPal payment error';
           setError(errorMsg);
           onError(new Error(errorMsg));
@@ -200,9 +202,45 @@ export function PayPalButton({
   );
 }
 
-// TypeScript declaration for PayPal SDK
+// TypeScript declarations for PayPal SDK
+interface PayPalOnApproveData {
+  orderID: string;
+  payerID?: string;
+  paymentID?: string;
+  billingToken?: string;
+  facilitatorAccessToken?: string;
+}
+
+interface PayPalError {
+  message?: string;
+  name?: string;
+  stack?: string;
+}
+
+interface PayPalButtonStyle {
+  layout?: 'vertical' | 'horizontal';
+  color?: 'gold' | 'blue' | 'silver' | 'white' | 'black';
+  shape?: 'rect' | 'pill';
+  label?: 'paypal' | 'checkout' | 'buynow' | 'pay';
+  height?: number;
+}
+
+interface PayPalButtons {
+  style?: PayPalButtonStyle;
+  createOrder: () => Promise<string>;
+  onApprove: (data: PayPalOnApproveData) => Promise<void>;
+  onCancel?: () => void;
+  onError?: (err: PayPalError) => void;
+}
+
+interface PayPalNamespace {
+  Buttons: (config: PayPalButtons) => {
+    render: (container: HTMLElement) => void;
+  };
+}
+
 declare global {
   interface Window {
-    paypal?: any;
+    paypal?: PayPalNamespace;
   }
 }

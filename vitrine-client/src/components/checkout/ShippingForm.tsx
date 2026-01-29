@@ -6,6 +6,7 @@ import { GovernorateSelect } from './GovernorateSelect';
 import { AddressSelector } from './AddressSelector';
 import { backendClient } from '@/lib/backend/client';
 import { useAuthStore } from '@/store/authStore';
+import type { Address } from '@quelyos/types';
 import {
   GOVERNORATES,
   SHIPPING_ZONES,
@@ -47,8 +48,8 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
 }) => {
   const { isAuthenticated } = useAuthStore();
   const [addressMode, setAddressMode] = useState<'saved' | 'new'>('new');
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
-  const [selectedSavedAddress, setSelectedSavedAddress] = useState<any>(null);
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
+  const [selectedSavedAddress, setSelectedSavedAddress] = useState<Address | null>(null);
 
   const [data, setData] = useState<ShippingFormData>({
     firstName: initialData.firstName || '',
@@ -73,7 +74,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
           setSavedAddresses(response.addresses);
           setAddressMode('saved');
           // Pre-selectionner l'adresse par defaut
-          const defaultAddr = response.addresses.find((a: any) => a.is_default);
+          const defaultAddr = response.addresses.find((a) => a.is_default);
           if (defaultAddr) {
             handleSelectSavedAddress(defaultAddr);
           }
@@ -82,7 +83,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
     }
   }, [isAuthenticated]);
 
-  const handleSelectSavedAddress = (addr: any) => {
+  const handleSelectSavedAddress = (addr: Address) => {
     setSelectedSavedAddress(addr);
     // Remplir le formulaire avec l'adresse selectionnee
     const nameParts = (addr.name || '').split(' ');

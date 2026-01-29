@@ -89,18 +89,18 @@ export function WalletPaymentButton({
         setPaymentRequest(pr);
 
         // Handle payment method submission
-        pr.on('paymentmethod', async (event: any) => {
+        pr.on('paymentmethod', async (event: PaymentMethodEvent) => {
           await handlePaymentMethod(event, stripe);
         });
       } else {
         logger.debug('Wallet payment not available on this device/browser');
       }
     } catch (_error) {
-      logger.error('Error initializing payment request:', error);
+      logger.error('Error initializing payment request:', _error);
     }
   };
 
-  const handlePaymentMethod = async (event: any, stripeInstance: Stripe) => {
+  const handlePaymentMethod = async (event: PaymentMethodEvent, stripeInstance: Stripe) => {
     try {
       setProcessing(true);
 
@@ -150,10 +150,10 @@ export function WalletPaymentButton({
         router.push(`/checkout/confirmation?payment_intent=${paymentIntent.id}`);
       }
     } catch (_error: unknown) {
-      logger.error('Error processing wallet payment:', error);
+      logger.error('Error processing wallet payment:', _error);
       event.complete('fail');
       if (onError) {
-        onError(error instanceof Error ? error.message : 'Payment processing error');
+        onError(_error instanceof Error ? _error.message : 'Payment processing error');
       }
     } finally {
       setProcessing(false);
@@ -209,4 +209,32 @@ export function WalletPaymentButton({
   );
 }
 
-// Type definitions provided by @stripe/stripe-js package
+// Additional type definitions for PaymentRequest events
+interface PaymentMethodEvent {
+  complete: (status: 'success' | 'fail' | 'unknown') => void;
+  paymentMethod: {
+    id: string;
+    type: string;
+    card?: unknown;
+  };
+  shippingAddress?: {
+    addressLine?: string[];
+    city?: string;
+    country?: string;
+    dependentLocality?: string;
+    organization?: string;
+    phone?: string;
+    postalCode?: string;
+    recipient?: string;
+    region?: string;
+    sortingCode?: string;
+  };
+  shippingOption?: {
+    id: string;
+    label: string;
+    amount: number;
+  };
+  payerName?: string;
+  payerEmail?: string;
+  payerPhone?: string;
+}
