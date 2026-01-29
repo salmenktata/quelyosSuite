@@ -59,7 +59,8 @@ export default function PublicWishlistPage() {
       } else {
         setError(response.message || 'Failed to load wishlist');
       }
-    } catch (_err: any) {
+    } catch (_error: unknown) {
+      const err = _error as Error;
       logger.error('Error loading wishlist:', err);
       setError(err.message || 'Une erreur est survenue');
     } finally {

@@ -24,7 +24,7 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Mock data (sera remplacé par appel API Odoo)
+  // Mock data (sera remplacé par appel API backend)
   const products: Product[] = Array.from({ length: limit }, (_, i) => ({
     id: i + 1,
     name: `Produit ${i + 1}`,

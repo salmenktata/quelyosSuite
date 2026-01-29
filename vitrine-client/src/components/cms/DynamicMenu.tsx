@@ -172,7 +172,7 @@ const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
 
   // Utiliser label (API) ou name (fallback)
   const displayName = item.label || item.name || '';
-  // Icon peut être false depuis l'API (Odoo retourne false pour les champs vides)
+  // Icon peut être false depuis l'API (backend retourne false pour les champs vides)
   const hasIcon = showIcons && typeof item.icon === 'string' && item.icon.length > 0;
 
   const content = (

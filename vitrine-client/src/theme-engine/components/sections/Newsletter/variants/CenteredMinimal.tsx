@@ -22,7 +22,7 @@ export default function CenteredMinimal({ config, className = '', theme }: Cente
     setStatus('loading');
 
     try {
-      // TODO: Appel API backend Odoo pour inscription newsletter
+      // TODO: Appel API backend pour inscription newsletter
       // await fetch('/api/newsletter/subscribe', { method: 'POST', body: JSON.stringify({ email }) });
 
       // Simulation pour POC

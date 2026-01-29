@@ -76,7 +76,7 @@ export async function getProductSeoMetadata(productId: number): Promise<Metadata
       },
     };
   } catch (error) {
-    logger.error('Erreur lors de la récupération des métadonnées SEO:', _error);
+    logger.error('Erreur lors de la récupération des métadonnées SEO:', error);
     return getDefaultMetadata();
   }
 }
@@ -94,7 +94,7 @@ export async function getProductStructuredData(productId: number): Promise<strin
 
     return JSON.stringify(response.data.structured_data);
   } catch (error) {
-    logger.error('Erreur lors de la récupération des données structurées:', _error);
+    logger.error('Erreur lors de la récupération des données structurées:', error);
     return null;
   }
 }
@@ -112,7 +112,7 @@ export async function getBreadcrumbStructuredData(productId: number): Promise<st
 
     return JSON.stringify(response.data.structured_data);
   } catch (error) {
-    logger.error('Erreur lors de la récupération du fil d\'Ariane:', _error);
+    logger.error('Erreur lors de la récupération du fil d\'Ariane:', error);
     return null;
   }
 }
@@ -130,7 +130,7 @@ export async function getOrganizationStructuredData(): Promise<string | null> {
 
     return JSON.stringify(response.data.structured_data);
   } catch (error) {
-    logger.error('Erreur lors de la récupération des données de l\'organisation:', _error);
+    logger.error('Erreur lors de la récupération des données de l\'organisation:', error);
     return null;
   }
 }

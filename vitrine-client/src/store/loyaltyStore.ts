@@ -122,15 +122,15 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         };
       }
     } catch (_error: unknown) {
-      logger.error('Error redeeming points:', error);
+      logger.error('Error redeeming points:', _error);
       set({
-        error: error instanceof Error ? error.message : 'An error occurred while redeeming points',
+        error: _error instanceof Error ? _error.message : 'An error occurred while redeeming points',
         loading: false
       });
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'An error occurred while redeeming points',
+        error: _error instanceof Error ? _error.message : 'An error occurred while redeeming points',
       };
     }
   },
@@ -148,7 +148,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
 
       return { points: 0, program_active: false };
     } catch (_error: unknown) {
-      logger.error('Error calculating points:', error);
+      logger.error('Error calculating points:', _error);
       return { points: 0, program_active: false };
     }
   },

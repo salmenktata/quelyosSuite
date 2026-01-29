@@ -96,7 +96,7 @@ export function WalletPaymentButton({
         logger.debug('Wallet payment not available on this device/browser');
       }
     } catch (error) {
-      logger.error('Error initializing payment request:', _error);
+      logger.error('Error initializing payment request:', error);
     }
   };
 
@@ -150,10 +150,10 @@ export function WalletPaymentButton({
         router.push(`/checkout/confirmation?payment_intent=${paymentIntent.id}`);
       }
     } catch (error: unknown) {
-      logger.error('Error processing wallet payment:', _error);
+      logger.error('Error processing wallet payment:', error);
       event.complete('fail');
       if (onError) {
-        onError(_error instanceof Error ? _error.message : 'Payment processing error');
+        onError(error instanceof Error ? error.message : 'Payment processing error');
       }
     } finally {
       setProcessing(false);

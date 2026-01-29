@@ -119,7 +119,7 @@ export const useCartStore = create<CartState>()(
             return { success: false, message: response.error };
           }
         } catch (_error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error";
+          const errorMessage = _error instanceof Error ? _error.message : "Error";
           set({ error: errorMessage, isLoading: false });
           return { success: false, message: errorMessage };
         }
