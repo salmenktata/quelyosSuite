@@ -35,7 +35,7 @@ export async function getProductSeoMetadata(productId: number): Promise<Metadata
       return getDefaultMetadata();
     }
 
-    const seo: SeoData = response.data;
+    const seo: SeoData = response.data as unknown as SeoData;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://quelyos.com';
 
     return {

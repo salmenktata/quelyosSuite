@@ -8,8 +8,9 @@
  * pour mettre à jour le thème en temps réel.
  */
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
-import { SectionRenderer } from '@/theme-engine/engine/SectionRenderer';
 import type { ThemeConfig } from '@/lib/backend/client';
 
 // Thème par défaut
@@ -102,8 +103,18 @@ export default function ThemePreviewPage() {
   }, [theme]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <SectionRenderer sections={theme.layouts.homepage.sections} />
+    <div
+      className="min-h-screen bg-gray-50 dark:bg-gray-900"
+      style={{
+        backgroundColor: theme.colors.background,
+        color: theme.colors.text,
+      }}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <p className="text-center text-sm text-gray-500 mb-8">
+          Preview du thème (iframe pour Theme Builder)
+        </p>
+      </div>
     </div>
   );
 }

@@ -98,10 +98,11 @@ export default function ProductDetailPage() {
       if (response.success && response.products) {
         setRelatedProducts(response.products);
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
+      const error = _error as { response?: { status?: number } };
       // Ignorer silencieusement si endpoint pas encore implémenté (404)
       if (error?.response?.status !== 404) {
-        logger.error('Erreur chargement produits similaires:', error);
+        logger.error('Erreur chargement produits similaires:', _error);
       }
     }
   };

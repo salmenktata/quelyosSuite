@@ -55,18 +55,47 @@ wait_for_service() {
     return 1
 }
 
+# Fonction pour corriger les menus Odoo (Settings et Apps invisibles)
+fix_odoo_menus() {
+    echo -e "${BLUE}🔧 Application des corrections de menus Odoo...${NC}"
+
+    docker exec quelyos-db psql -U odoo -d quelyos -q <<'SQL' 2>/dev/null
+-- Assurer que l'admin a les groupes nécessaires
+INSERT INTO res_groups_users_rel (gid, uid)
+SELECT 2, 2 WHERE NOT EXISTS (SELECT 1 FROM res_groups_users_rel WHERE gid = 2 AND uid = 2);
+INSERT INTO res_groups_users_rel (gid, uid)
+SELECT 7, 2 WHERE NOT EXISTS (SELECT 1 FROM res_groups_users_rel WHERE gid = 7 AND uid = 2);
+
+-- Mettre Settings et Apps au début pour visibilité
+UPDATE ir_ui_menu SET sequence = 1 WHERE id = 1 AND name->>'en_US' = 'Settings';
+UPDATE ir_ui_menu SET sequence = 2 WHERE id = 15 AND name->>'en_US' = 'Apps';
+SQL
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Menus Odoo corrigés${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Correction des menus ignorée (DB peut-être vide)${NC}"
+    fi
+}
+
 # Fonction pour démarrer le backend
 start_backend() {
     echo -e "\n${BLUE}🚀 Démarrage Backend Odoo${NC}"
 
     if ! check_port $BACKEND_PORT "Backend Odoo"; then
         echo -e "${YELLOW}Le backend semble déjà démarré${NC}"
+        # Appliquer les corrections même si déjà démarré
+        fix_odoo_menus
         return 0
     fi
 
     cd "$ROOT_DIR/odoo-backend"
     docker-compose up -d
     wait_for_service "http://localhost:$BACKEND_PORT/web/health" "Odoo"
+
+    # Appliquer les corrections de menus automatiquement
+    fix_odoo_menus
+
     echo -e "${GREEN}✅ Backend Odoo : http://localhost:$BACKEND_PORT${NC}"
 }
 

@@ -142,7 +142,7 @@ export default function ThemesImportPage() {
               title: 'Informations',
               items: [
                 "Les thèmes JSON sont stockés dans vitrine-client/src/theme-engine/themes/",
-                "L'import crée les thèmes dans Odoo (quelyos.theme)",
+                "L'import crée les thèmes dans le système backend",
                 "Si un thème existe déjà (même code), sa configuration JSON sera mise à jour",
                 "Les thèmes importés sont publics et gratuits par défaut",
                 'Admin uniquement : droits "base.group_system" requis',

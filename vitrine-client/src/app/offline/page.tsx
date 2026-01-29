@@ -2,12 +2,9 @@
  * Page Offline - Affichée quand l'utilisateur est hors ligne
  */
 
-import Link from 'next/link';
+'use client';
 
-export const metadata = {
-  title: 'Hors ligne',
-  description: 'Vous êtes actuellement hors ligne',
-};
+import Link from 'next/link';
 
 export default function OfflinePage() {
   return (

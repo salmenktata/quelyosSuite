@@ -9,7 +9,7 @@
  * 5. Configuration de sections avec variants
  * 6. Preview temps réel (Phase 5)
  * 7. Export/Import JSON
- * 8. Sauvegarde vers Odoo (soumission draft)
+ * 8. Sauvegarde vers le système (soumission draft)
  */
 
 import { useState } from 'react';
@@ -172,7 +172,7 @@ function ActionsToolbar() {
         </Button>
         <Button variant="primary" size="sm" onClick={handleSave}>
           <Save className="w-4 h-4" />
-          Save to Odoo
+          Save to Backend
         </Button>
       </div>
     </>

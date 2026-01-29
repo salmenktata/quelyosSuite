@@ -89,8 +89,8 @@ export function WalletPaymentButton({
         setPaymentRequest(pr);
 
         // Handle payment method submission
-        pr.on('paymentmethod', async (event: PaymentMethodEvent) => {
-          await handlePaymentMethod(event, stripe);
+        pr.on('paymentmethod', async (event) => {
+          await handlePaymentMethod(event as unknown as PaymentMethodEvent, stripe);
         });
       } else {
         logger.debug('Wallet payment not available on this device/browser');
@@ -110,8 +110,16 @@ export function WalletPaymentButton({
       // Create payment intent on backend
       const response = await backendClient.createWalletPayment({
         amount: Math.round(amount * 100),
-        payment_method_id: paymentMethod.id,
-        shipping_address: shippingAddress,
+        payment_method_id: parseInt(paymentMethod.id, 10) || 0,
+        shipping_address: {
+          firstName: shippingAddress?.recipient?.split(' ')[0] || '',
+          lastName: shippingAddress?.recipient?.split(' ').slice(1).join(' ') || '',
+          address: shippingAddress?.addressLine?.[0] || '',
+          city: shippingAddress?.city || '',
+          postalCode: shippingAddress?.postalCode || '',
+          country: shippingAddress?.country || '',
+          phone: shippingAddress?.phone || '',
+        },
         order_id: orderId,
       });
 

@@ -32,11 +32,12 @@ export async function fetchVariantsLazy(productId: number): Promise<VariantsResp
 
     // Stocker en cache si succès
     if (response.success) {
+      const variantsResponse = { ...response, product_id: productId };
       variantsCache.set(productId, {
-        data: response,
+        data: variantsResponse as unknown as VariantsResponse,
         timestamp: Date.now(),
       });
-      return response;
+      return variantsResponse as unknown as VariantsResponse;
     }
 
     return null;

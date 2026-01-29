@@ -109,7 +109,7 @@ export function CompareDrawer({ isOpen, onClose }: CompareDrawerProps) {
   if (!isOpen) return null;
 
   const hasProducts = products.length > 0;
-  const scores = calculateProductScores(products);
+  const scores = calculateProductScores(products as unknown as CompareProduct[]);
   const maxScore = Math.max(...scores.map(s => s.score), 0);
   const bestProductId = scores.find(s => s.score === maxScore)?.id;
 

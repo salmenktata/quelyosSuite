@@ -101,7 +101,12 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
     try {
       const response = await backendClient.getProductReviews(productId);
       if (response.success) {
-        setData(response as ReviewsData);
+        setData({
+          reviews: response.reviews as unknown as Review[],
+          total: response.total,
+          avgRating: response.avgRating,
+          ratingDistribution: response.ratingDistribution,
+        });
       }
     } catch (error) {
       logger.error('Error fetching reviews:', error);

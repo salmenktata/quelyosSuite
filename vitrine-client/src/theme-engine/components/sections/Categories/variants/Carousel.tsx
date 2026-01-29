@@ -33,7 +33,7 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
       try {
         const response = await backendClient.getCategories({ limit });
         if (response.success && response.categories) {
-          setCategories(response.categories);
+          setCategories(response.categories as unknown as Category[]);
         }
       } catch (error) {
         logger.error('Error loading categories:', error);

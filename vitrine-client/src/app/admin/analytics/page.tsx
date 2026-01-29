@@ -60,7 +60,7 @@ export default function AnalyticsPage() {
       const response = await backendClient.getAnalyticsDashboard(period);
 
       if (response.success && response.data) {
-        setData(response.data);
+        setData(response.data as unknown as DashboardData);
       } else {
         setError(response.error || 'Failed to load analytics');
       }

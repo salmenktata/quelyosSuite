@@ -28,5 +28,5 @@ export function ThemeSections() {
     return null; // Pas de sections définies, on laisse le contenu par défaut
   }
 
-  return <SectionRenderer sections={theme.layouts.homepage.sections} />;
+  return <SectionRenderer sections={theme.layouts.homepage.sections as unknown as import('@/theme-engine/engine/types').SectionConfig[]} />;
 }

@@ -899,7 +899,7 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
           'Espacement et layout personnalisables',
           'Preview en temps réel',
           'Export/Import JSON',
-          'Sauvegarde vers Odoo',
+          'Sauvegarde vers le système',
         ]
       },
       {
@@ -978,7 +978,7 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
   'themes.builder': {
     pageId: 'store-themes-builder',
     title: 'Theme Builder Visuel',
-    purpose: 'Créez des thèmes visuellement sans coder avec interface drag & drop, export JSON et sauvegarde Odoo.',
+    purpose: 'Créez des thèmes visuellement sans coder avec interface drag & drop, export JSON et sauvegarde backend.',
     icon: Palette,
     moduleColor: 'indigo',
     sections: [
@@ -990,7 +990,7 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
           'Canvas pour organiser sections homepage',
           'Configuration de variants pour chaque section',
           'Export/Import JSON pour partage ou backup local',
-          'Sauvegarde vers Odoo comme soumission draft',
+          'Sauvegarde vers le système comme soumission draft',
         ]
       },
       {

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getProxiedImageUrl } from '@/lib/image-proxy';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 export const metadata = {

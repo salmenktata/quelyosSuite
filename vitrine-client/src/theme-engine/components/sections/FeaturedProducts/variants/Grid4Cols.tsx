@@ -108,7 +108,7 @@ export default function Grid4Cols({ config, className = '', theme }: Grid4ColsPr
                   className="text-xl font-bold"
                   style={{ color: theme.colors.primary }}
                 >
-                  {product.price.toFixed(2)} TND
+                  {(product.price || 0).toFixed(2)} TND
                 </p>
                 <button
                   className="mt-4 w-full py-2 px-4 rounded-lg font-semibold transition-all hover:scale-105"

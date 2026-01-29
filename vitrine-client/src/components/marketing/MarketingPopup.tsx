@@ -118,7 +118,7 @@ export function MarketingPopup() {
       const response = await backendClient.getActivePopups(pathname);
 
       if (response.success && response.data?.popup) {
-        setPopup(response.data.popup);
+        setPopup(response.data.popup as unknown as PopupCampaign);
       }
     } catch (error) {
       logger.error('Error loading popup:', error);

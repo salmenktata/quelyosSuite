@@ -113,7 +113,7 @@ export function ProductFilters({ categoryId, onFiltersChange }: ProductFiltersPr
       const response = await backendClient.getProductFacets(categoryId);
 
       if (response.success && response.data) {
-        setFacets(response.data);
+        setFacets(response.data as unknown as Facets);
       }
     } catch (error) {
       logger.error('Error loading facets:', error);

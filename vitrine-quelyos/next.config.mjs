@@ -7,7 +7,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  // output: "standalone" causes issues in dev, only use in production
+  ...(process.env.NODE_ENV === "production" && { output: "standalone" }),
   poweredByHeader: false,
   compress: true,
   typescript: {

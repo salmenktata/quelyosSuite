@@ -76,9 +76,9 @@ export function MegaMenu() {
         const categoriesList = response.categories || response.data?.categories || [];
         // Filter to get only top-level categories (no parent)
         const topLevelCategories = categoriesList.filter(
-          (cat: Category) => !cat.parent_id
+          (cat) => !cat.parent_id
         );
-        setCategories(topLevelCategories);
+        setCategories(topLevelCategories as unknown as Category[]);
       }
     } catch (error) {
       logger.error('Error loading categories:', error);

@@ -9,7 +9,7 @@ import { logger } from '@/lib/logger';
 import { sanitizeHighlight } from '@/lib/utils/sanitize';
 import { VisualSearch } from '@/components/search/VisualSearch';
 
-interface Product {
+interface SearchProduct {
   id: number;
   name: string;
   highlight: string;
@@ -21,7 +21,7 @@ interface Product {
   sku: string | null;
 }
 
-interface Category {
+interface SearchCategory {
   id: number;
   name: string;
   highlight: string;
@@ -70,8 +70,8 @@ export function SearchAutocomplete({
 }: SearchAutocompleteProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<{
-    products: Product[];
-    categories: Category[];
+    products: SearchProduct[];
+    categories: SearchCategory[];
   }>({ products: [], categories: [] });
   const [popularSearches, setPopularSearches] = useState<PopularSearch[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -134,8 +134,31 @@ export function SearchAutocomplete({
       const response = await backendClient.searchAutocomplete(searchQuery, 8, true);
 
       if (response.success) {
-        const products = response.data?.products || [];
-        const categories = response.data?.categories || [];
+        const apiProducts = response.data?.products || [];
+        const apiCategories = response.data?.categories || [];
+
+        // Map API products to SearchProduct
+        const products: SearchProduct[] = apiProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          highlight: p.name,
+          slug: p.slug,
+          image: p.image_url || p.image || '',
+          price: p.price || 0,
+          currency: typeof p.currency === 'string' ? p.currency : 'TND',
+          category: typeof p.category === 'object' && p.category ? p.category.name : null,
+          sku: p.sku || p.default_code || null,
+        }));
+
+        // Map API categories to SearchCategory
+        const categories: SearchCategory[] = apiCategories.map((c) => ({
+          id: c.id,
+          name: c.name,
+          highlight: c.name,
+          product_count: c.product_count || 0,
+          image: (c as { image_url?: string }).image_url || null,
+          parent_name: (c as { parent_name?: string }).parent_name || null,
+        }));
 
         // If few results, try semantic search for more suggestions
         if (products.length < 3 && searchQuery.length >= 3) {
@@ -143,16 +166,16 @@ export function SearchAutocomplete({
             const semanticResponse = await backendClient.searchSemantic(searchQuery, { limit: 5 });
             if (semanticResponse.success && semanticResponse.data) {
               // Add semantic results that aren't already in products
-              const existingIds = new Set(products.map((p: Product) => p.id));
+              const existingIds = new Set(products.map((p) => p.id));
               const semanticProducts = semanticResponse.data.products
-                .filter((sp: Product) => !existingIds.has(sp.id))
+                .filter((sp) => !existingIds.has(sp.id))
                 .slice(0, 5 - products.length)
-                .map((sp: Product) => ({
+                .map((sp): SearchProduct => ({
                   id: sp.id,
                   name: sp.name,
                   highlight: sp.name,
                   slug: sp.slug,
-                  image: (sp as { image_url?: string }).image_url || '',
+                  image: sp.image_url || '',
                   price: sp.price,
                   currency: 'TND',
                   category: sp.category,
@@ -286,7 +309,7 @@ export function SearchAutocomplete({
   };
 
   // Get item at index (category or product)
-  const getItemAtIndex = (index: number): Category | Product | null => {
+  const getItemAtIndex = (index: number): SearchCategory | SearchProduct | null => {
     if (index < results.categories.length) {
       return results.categories[index];
     }

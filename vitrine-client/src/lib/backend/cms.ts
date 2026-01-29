@@ -132,7 +132,7 @@ export const cmsService = {
   async getPages(options?: GetPagesOptions): Promise<PagesResponse> {
     const response = await jsonrpc<{ success: boolean; pages: CmsPageSummary[]; total: number; limit: number; offset: number; error?: string }>(
       '/pages',
-      options || {}
+      (options || {}) as Record<string, unknown>
     );
     if (response.success) {
       return {

@@ -151,8 +151,8 @@ export async function fetchSiteConfig(): Promise<SiteConfig> {
 
   try {
     const response = await backendClient.getSiteConfig();
-    if (response.success && response.data?.config) {
-      cachedConfig = response.data.config as SiteConfig;
+    if (response.success && response.data) {
+      cachedConfig = response.data as unknown as SiteConfig;
       cacheTimestamp = now;
       return cachedConfig;
     }

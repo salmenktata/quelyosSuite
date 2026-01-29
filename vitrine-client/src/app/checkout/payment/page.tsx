@@ -103,10 +103,12 @@ export default function CheckoutPaymentPage() {
       }
 
       const shipping = JSON.parse(shippingData);
+      const deliveryMethodId = shipping.delivery_method_id || 1; // Default à 1 si non défini
 
       // Confirmer la commande via l'API
       const result = await backendClient.completeCheckout({
         shipping_address: shipping,
+        delivery_method_id: deliveryMethodId,
         payment_method: methodId,
       });
 

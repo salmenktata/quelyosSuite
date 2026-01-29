@@ -18,6 +18,62 @@ QUELYOS_MODULES = [
 ]
 
 
+def _fix_menu_visibility(env):
+    """
+    Correction automatique de la visibilité des menus Settings et Apps.
+
+    Problème : Dans Odoo 19, les menus Settings et Apps ont des séquences élevées
+    (500+) qui les rendent invisibles ou difficiles à trouver dans l'interface.
+
+    Solution : Les placer au début (séquence 1 et 2) et s'assurer que l'admin
+    a les groupes requis (Access Rights, Technical Features).
+    """
+    try:
+        MenuObj = env['ir.ui.menu'].sudo()
+        GroupsUsersRel = env['res.groups.users.rel'].sudo()
+
+        # 1. Corriger les séquences des menus
+        settings_menu = MenuObj.search([('name', '=', 'Settings'), ('parent_id', '=', False)], limit=1)
+        apps_menu = MenuObj.search([('name', '=', 'Apps'), ('parent_id', '=', False)], limit=1)
+
+        if settings_menu:
+            settings_menu.write({'sequence': 1})
+            _logger.info("✓ Menu Settings déplacé en position 1")
+
+        if apps_menu:
+            apps_menu.write({'sequence': 2})
+            _logger.info("✓ Menu Apps déplacé en position 2")
+
+        # 2. S'assurer que l'admin (uid=2) a les groupes requis
+        GroupObj = env['res.groups'].sudo()
+
+        # Groupe "Access Rights" (requis pour voir Settings)
+        access_rights_group = GroupObj.search([('name', '=', 'Access Rights')], limit=1)
+        if access_rights_group:
+            env.cr.execute("""
+                INSERT INTO res_groups_users_rel (gid, uid)
+                VALUES (%s, 2)
+                ON CONFLICT DO NOTHING
+            """, (access_rights_group.id,))
+            _logger.info("✓ Groupe 'Access Rights' ajouté à l'admin")
+
+        # Groupe "Technical Features" (requis pour mode développeur)
+        tech_group = GroupObj.search([('name', '=', 'Technical Features')], limit=1)
+        if tech_group:
+            env.cr.execute("""
+                INSERT INTO res_groups_users_rel (gid, uid)
+                VALUES (%s, 2)
+                ON CONFLICT DO NOTHING
+            """, (tech_group.id,))
+            _logger.info("✓ Groupe 'Technical Features' ajouté à l'admin")
+
+        env.cr.commit()
+        _logger.info("✓ Corrections UI appliquées avec succès")
+
+    except Exception as e:
+        _logger.warning(f"Impossible d'appliquer les corrections UI : {str(e)}")
+
+
 def post_init_hook(env):
     """
     Hook exécuté après l'installation de quelyos_core.
@@ -135,5 +191,10 @@ def post_init_hook(env):
         )
     else:
         _logger.info("✓ Isolation vérifiée : aucun module OCA/tierce installé")
+
+    # 5. Corriger la visibilité des menus Settings et Apps
+    _logger.info("-"*80)
+    _logger.info("Application des corrections UI : menus Settings et Apps...")
+    _fix_menu_visibility(env)
 
     _logger.info("="*80)

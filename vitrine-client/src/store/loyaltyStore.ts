@@ -67,7 +67,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
       const response = await backendClient.getLoyaltyBalance();
 
       if (response.success && response.data) {
-        set({ balance: response.data, loading: false });
+        set({ balance: response.data as unknown as LoyaltyBalance, loading: false });
       } else {
         set({ error: response.message || 'Failed to fetch loyalty balance', loading: false });
       }
@@ -85,7 +85,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
       const response = await backendClient.getLoyaltyTiers();
 
       if (response.success && response.data) {
-        set({ tiers: response.data.tiers });
+        set({ tiers: response.data.tiers as unknown as LoyaltyTier[] });
       }
     } catch (_error: unknown) {
       logger.error('Error fetching loyalty tiers:', _error);
