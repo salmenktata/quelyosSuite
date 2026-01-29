@@ -9,6 +9,7 @@
  */
 
 import { create } from 'zustand'
+import { logger } from '@quelyos/logger'
 
 // Configuration
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8069/websocket'
@@ -118,7 +119,7 @@ class WebSocketClient {
       this.socket.onclose = this.handleClose.bind(this)
       this.socket.onerror = this.handleError.bind(this)
     } catch (error) {
-      console.error('[WS] Connection error:', error)
+      logger.error('[WS] Connection error:', error)
       this.scheduleReconnect()
     }
   }
@@ -245,7 +246,7 @@ class WebSocketClient {
   // Handlers privés
 
   private handleOpen(): void {
-    console.log('[WS] Connected')
+    logger.info('[WS] Connected')
     this.reconnectAttempts = 0
     useWebSocketStore.getState().setConnectionState('connected')
 
@@ -281,12 +282,12 @@ class WebSocketClient {
         this.handlers.get(message.channel)!.forEach((handler) => handler(message))
       }
     } catch (error) {
-      console.error('[WS] Message parse error:', error)
+      logger.error('[WS] Message parse error:', error)
     }
   }
 
   private handleClose(event: CloseEvent): void {
-    console.log('[WS] Disconnected:', event.code, event.reason)
+    logger.info('[WS] Disconnected:', event.code, event.reason)
     this.stopHeartbeat()
 
     if (event.code !== 1000) {
@@ -298,7 +299,7 @@ class WebSocketClient {
   }
 
   private handleError(event: Event): void {
-    console.error('[WS] Error:', event)
+    logger.error('[WS] Error:', event)
   }
 
   private startHeartbeat(): void {
@@ -322,7 +323,7 @@ class WebSocketClient {
       RECONNECT_MAX_DELAY
     )
 
-    console.log(`[WS] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts + 1})`)
+    logger.info(`[WS] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts + 1})`)
 
     this.reconnectTimeout = setTimeout(() => {
       this.reconnectAttempts++

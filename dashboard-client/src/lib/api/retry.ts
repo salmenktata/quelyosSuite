@@ -8,6 +8,8 @@
  * - Timeout par tentative
  */
 
+import { logger } from '@quelyos/logger'
+
 // =============================================================================
 // TYPES
 // =============================================================================
@@ -248,7 +250,7 @@ export async function withRetry<T>(
 
       // Log en développement
       if (import.meta.env.DEV) {
-        console.log(
+        logger.debug(
           `[Retry] Attempt ${attempt}/${mergedConfig.maxRetries} failed. ` +
             `Retrying in ${delay}ms...`,
           lastError.message

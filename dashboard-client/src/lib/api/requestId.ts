@@ -7,6 +7,8 @@
  * - Analyse de performance
  */
 
+import { logger } from '@quelyos/logger'
+
 // Use native crypto.randomUUID() instead of uuid package
 const uuidv4 = () => crypto.randomUUID()
 
@@ -80,7 +82,7 @@ export async function fetchWithRequestId(
 
     // Log en dev
     if (import.meta.env.DEV) {
-      console.log(
+      logger.debug(
         `[${requestId.slice(0, 8)}] ${init?.method || 'GET'} ${input} - ${response.status} (${duration.toFixed(0)}ms)`
       )
     }
@@ -90,7 +92,7 @@ export async function fetchWithRequestId(
     const duration = performance.now() - startTime
 
     // Log l'erreur avec le request ID
-    console.error(
+    logger.error(
       `[${requestId.slice(0, 8)}] ${init?.method || 'GET'} ${input} - FAILED (${duration.toFixed(0)}ms)`,
       error
     )
@@ -121,14 +123,14 @@ export function createRequestContext(): {
     correlationId,
     startTime,
     log: (message: string, ...args: unknown[]) => {
-      console.log(`${prefix} ${message}`, ...args)
+      logger.debug(`${prefix} ${message}`, ...args)
     },
     error: (message: string, ...args: unknown[]) => {
-      console.error(`${prefix} ${message}`, ...args)
+      logger.error(`${prefix} ${message}`, ...args)
     },
     end: () => {
       const duration = performance.now() - startTime
-      console.log(`${prefix} Completed in ${duration.toFixed(0)}ms`)
+      logger.debug(`${prefix} Completed in ${duration.toFixed(0)}ms`)
       return { duration }
     },
   }

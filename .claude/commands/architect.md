@@ -15,6 +15,8 @@ Analyse l'architecture technique de Quelyos Suite et propose des améliorations 
 - `security` - Focus sur la sécurité
 - `performance` - Focus sur les performances
 - `scalability` - Focus sur la scalabilité
+- `refactor` - Analyse factorisation, simplification et robustesse du code
+- `tenant-isolation` - Analyse isolation et sécurité multi-tenant
 
 ## Instructions
 
@@ -93,12 +95,18 @@ Selon l'option choisie, analyser et proposer:
 2. Vérifier les dépendances manquantes
 3. Identifier les patterns non utilisés
 4. Proposer des améliorations de cohérence
+5. **Inclure automatiquement** l'analyse refactor (factorisation, simplification, optimisation, robustesse)
+6. **Inclure automatiquement** l'analyse tenant-isolation (isolation multi-tenant complète)
 
 **Si `optimize`:**
 1. Analyser les performances potentielles
 2. Identifier les goulots d'étranglement
 3. Proposer des optimisations de cache
 4. Suggérer des améliorations de requêtes
+5. **Inclure automatiquement** :
+   - Analyse de factorisation (DRY pour réduire bundle size)
+   - Simplification (réduire complexité = meilleure performance)
+   - Optimisations spécifiques (lazy loading, memoization, code splitting)
 
 **Si `security`:**
 1. Vérifier les mécanismes d'authentification
@@ -118,6 +126,69 @@ Selon l'option choisie, analyser et proposer:
 3. Examiner le service registry
 4. Évaluer les bulk operations
 
+**Si `refactor`:**
+1. **Factorisation** - Identifier le code dupliqué:
+   - Fonctions similaires dans plusieurs fichiers
+   - Patterns répétés (ex: fetch + error handling)
+   - Composants UI avec logique similaire
+   - Modèles Odoo avec champs redondants
+   - Validation Zod répétée
+   - Hooks React personnalisés similaires
+2. **Simplification** - Réduire la complexité:
+   - Fonctions trop longues (>50 lignes)
+   - Imbrications excessives (>3 niveaux)
+   - Abstractions inutiles (over-engineering)
+   - Dépendances circulaires
+   - Code mort (imports/variables non utilisés)
+   - Conditions complexes simplifiables
+3. **Optimisation** - Améliorer les performances:
+   - Requêtes N+1 (backend Odoo)
+   - Re-renders React inutiles
+   - Bundles JS trop lourds (analyse Vite/Next)
+   - Images non optimisées
+   - Requêtes API non cachées
+   - useEffect avec deps manquantes/excessives
+   - Fetch waterfalls (charger en parallèle)
+4. **Robustesse** - Améliorer la fiabilité:
+   - Gestion d'erreurs manquante (try/catch)
+   - Validation de données insuffisante
+   - Types TypeScript any/unknown
+   - Conditions edge cases non gérées
+   - État UI incohérent (loading/error states)
+   - Race conditions (async/await)
+   - Memory leaks (subscriptions non nettoyées)
+
+**Si `tenant-isolation`:**
+1. **Isolation Base de Données** - Vérifier Single-DB stratégie:
+   - Vérifier que multitenancy.py utilise `tenant_id` dans toutes les requêtes
+   - Audit RLS (Row Level Security) PostgreSQL activée
+   - Vérifier tenant_id dans tous les modèles Odoo (champs obligatoires)
+   - Pas d'accès cross-tenant possible (tests unitaires)
+   - Index composites (tenant_id + autres colonnes) pour performances
+2. **Isolation API** - Sécurité endpoints:
+   - Vérifier que tenant_security.py filtre TOUS les endpoints
+   - Header X-Tenant-ID obligatoire et validé
+   - JWT tokens incluent tenant_id (vérifier dans auth.py)
+   - Rate limiting par tenant (rate_limiter.py)
+   - Logs audit incluent tenant_id (audit_log.py)
+3. **Isolation Frontend** - Contexte tenant:
+   - Vérifier TenantContext React toujours présent
+   - API calls incluent toujours tenant_id
+   - Pas de données cross-tenant en cache/localStorage
+   - Redirection logout si tenant_id invalide
+4. **Isolation Fichiers/Assets** - Stockage séparé:
+   - Uploads organisés par tenant_id (`/uploads/tenant_123/`)
+   - Pas d'accès direct fichiers autres tenants
+   - Vérifier getProxiedImageUrl inclut tenant check
+5. **Isolation Cache/Sessions** - Pas de fuites:
+   - Keys Redis incluent tenant_id (`tenant:123:cache:...`)
+   - Sessions isolées par tenant
+   - Invalidation cache ciblée par tenant
+6. **Tests d'isolation** - Vérifier qu'aucune fuite possible:
+   - Tests unitaires multi-tenant
+   - Tests tentatives accès cross-tenant (doivent échouer)
+   - Tests injection tenant_id malveillant
+
 ### Étape 5 : Rapport
 
 Générer un rapport avec:
@@ -126,7 +197,31 @@ Générer un rapport avec:
 - Actions recommandées
 - Estimation de complexité (simple/moyen/complexe)
 
+**Format spécifique pour `refactor`:**
+- **🔄 Factorisation** : X occurrences de duplication détectées
+  - Lister fichiers/fonctions similaires avec % de similarité
+  - Proposer extraction en utility/hook/composant partagé
+- **🎯 Simplification** : X opportunités identifiées
+  - Lister fonctions complexes avec score de complexité
+  - Proposer décomposition ou refactoring
+- **⚡ Optimisation** : X gains potentiels
+  - Lister bottlenecks avec impact estimé
+  - Proposer solutions concrètes (lazy load, memo, cache)
+- **🛡️ Robustesse** : X risques détectés
+  - Lister patterns fragiles avec niveau de risque
+  - Proposer corrections prioritaires
+
 ## Points d'amélioration potentiels
+
+### Outils d'analyse refactoring (à considérer):
+- **SonarQube/SonarCloud** - Analyse qualité code automatisée
+- **ESLint complexity rules** - Détection fonctions complexes
+- **Duplicate Code Detector** - Identification duplication
+- **Bundle Analyzer** - Analyse taille bundles (Vite/Next)
+- **React DevTools Profiler** - Détection re-renders inutiles
+- **TypeScript strict mode** - Élimination any/unknown
+- **Prettier + ESLint** - Formatage et linting automatique
+- **Husky + lint-staged** - Pre-commit hooks qualité
 
 ### Non encore implémentés (à considérer):
 - **Chaos Engineering** - Tests de résilience

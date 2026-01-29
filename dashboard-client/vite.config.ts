@@ -1,45 +1,92 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Bundle analyzer (généré à chaque build)
+    visualizer({
+      filename: './dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   build: {
+    // Minification agressive
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Supprimer console.log en production
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      },
+    },
+    // Source maps pour debugging (mais pas inline)
+    sourcemap: false,
+    // Taille optimale des chunks
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
+        // Noms de fichiers avec hash pour cache-busting
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks(id) {
-          // ExcelJS dans son propre chunk (lazy loaded)
+          // Vendor chunks (libs externes)
+          // ExcelJS dans son propre chunk (heavy, lazy loaded)
           if (id.includes('exceljs')) {
-            return 'exceljs';
+            return 'vendor-exceljs';
           }
-          // Recharts dans son propre chunk
+          // Recharts + D3 (heavy charting libs)
           if (id.includes('recharts') || id.includes('d3-')) {
-            return 'charts';
+            return 'vendor-charts';
           }
-          // Lucide icons séparément
+          // Framer Motion (animations)
+          if (id.includes('framer-motion')) {
+            return 'vendor-motion';
+          }
+          // Zod (validation)
+          if (id.includes('zod')) {
+            return 'vendor-validation';
+          }
+          // Lucide icons (split per 50 icons)
           if (id.includes('lucide-react')) {
-            return 'icons';
+            return 'vendor-icons';
           }
-          // React core
+          // React core (framework)
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-            return 'react-vendor';
+            return 'vendor-react';
           }
           // React Router
           if (id.includes('react-router')) {
-            return 'router';
+            return 'vendor-router';
           }
-          // TanStack (React Query, React Table)
+          // TanStack (React Query, etc.)
           if (id.includes('@tanstack')) {
-            return 'tanstack';
+            return 'vendor-tanstack';
           }
-          // Date-fns
+          // Date utilities
           if (id.includes('date-fns')) {
-            return 'date-fns';
+            return 'vendor-dates';
+          }
+          // DnD Kit
+          if (id.includes('@dnd-kit')) {
+            return 'vendor-dnd';
+          }
+          // Headless UI
+          if (id.includes('@headlessui')) {
+            return 'vendor-ui';
+          }
+          // Autres node_modules (regroupés)
+          if (id.includes('node_modules')) {
+            return 'vendor-common';
           }
         },
       },
     },
-    chunkSizeWarningLimit: 600,
   },
   resolve: {
     alias: {

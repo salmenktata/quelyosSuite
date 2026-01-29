@@ -8,6 +8,8 @@
  * - HALF_OPEN: Test de récupération, laisse passer quelques requêtes
  */
 
+import { logger } from '@quelyos/logger'
+
 export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN'
 
 export interface CircuitBreakerConfig {
@@ -157,7 +159,7 @@ export class CircuitBreaker {
     this.config.onStateChange?.(newState, previousState)
 
     // Log pour debugging
-    console.log(
+    logger.debug(
       `[CircuitBreaker] ${previousState} -> ${newState}`,
       `(failures: ${this.failureCount}, successes: ${this.successCount})`
     )
@@ -237,7 +239,7 @@ export function getCircuitBreaker(
       new CircuitBreaker({
         ...config,
         onStateChange: (state, prev) => {
-          console.warn(
+          logger.warn(
             `[${serviceName}] Circuit breaker: ${prev} -> ${state}`
           )
           // Notification utilisateur si ouvert

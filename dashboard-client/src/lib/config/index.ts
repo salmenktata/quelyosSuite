@@ -5,6 +5,7 @@
  */
 
 import { z } from 'zod'
+import { logger } from '@quelyos/logger'
 
 // =============================================================================
 // SCHÉMA DE CONFIGURATION
@@ -131,11 +132,11 @@ function loadConfig(): AppConfig {
   const result = configSchema.safeParse(rawConfig)
 
   if (!result.success) {
-    console.error('Configuration validation failed:', result.error.flatten())
+    logger.error('Configuration validation failed:', result.error.flatten())
 
     // En dev, afficher les erreurs mais continuer
     if (import.meta.env.DEV) {
-      console.warn('Using default values for invalid config fields')
+      logger.warn('Using default values for invalid config fields')
       return configSchema.parse({
         ...rawConfig,
         apiUrl: rawConfig.apiUrl || 'http://localhost:8069',
