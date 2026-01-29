@@ -48,16 +48,15 @@ def post_init_hook(env):
     install_sms_tn = IrConfigParam.get_param('quelyos.install_sms_tn', 'True') == 'True'
 
     _logger.info(f"Configuration détectée :")
-    _logger.info(f"  - quelyos_api: TOUJOURS (critique)")
+    _logger.info(f"  - quelyos_api: AUTOMATIQUE (dépendance directe)")
     _logger.info(f"  - quelyos_stock_advanced: {'OUI' if install_stock_advanced else 'NON'}")
     _logger.info(f"  - quelyos_finance: {'OUI' if install_finance else 'NON'}")
     _logger.info(f"  - quelyos_sms_tn: {'OUI' if install_sms_tn else 'NON'}")
 
-    # 2. Préparer liste des modules à installer
+    # 2. Préparer liste des modules optionnels à installer
+    # Note: quelyos_api est une dépendance directe de quelyos_core et sera installé automatiquement
     # Format: (module_name, is_critical, description)
-    modules_to_install = [
-        ('quelyos_api', True, 'Infrastructure multi-tenant et API REST'),
-    ]
+    modules_to_install = []
 
     if install_stock_advanced:
         modules_to_install.append(('quelyos_stock_advanced', False, 'Inventaire avancé'))
@@ -90,11 +89,11 @@ def post_init_hook(env):
             _logger.info(f"Module {module_name} déjà installé - Skip")
             continue
 
-        # Installer le module
-        _logger.info(f"Installation de {description}...")
+        # Marquer le module pour installation (sera installé au prochain redémarrage)
+        _logger.info(f"Marquage pour installation : {description}...")
         try:
-            module.button_immediate_install()
-            _logger.info(f"✓ Module {module_name} installé avec succès")
+            module.button_install()
+            _logger.info(f"✓ Module {module_name} marqué pour installation")
         except Exception as e:
             msg = f"Erreur installation {module_name}: {str(e)}"
             if is_critical:
@@ -106,7 +105,10 @@ def post_init_hook(env):
     _logger.info("="*80)
     _logger.info("QUELYOS SUITE ORCHESTRATOR - Installation terminée avec succès")
     _logger.info("="*80)
-    _logger.info("IMPORTANT: Redémarrer le serveur Odoo pour activer tous les modules")
+    if modules_to_install:
+        _logger.info("IMPORTANT: Modules optionnels marqués pour installation")
+        _logger.info("Redémarrer le serveur Odoo pour finaliser l'installation :")
+        _logger.info("  docker-compose restart odoo")
     _logger.info("="*80)
 
     # 4. Vérifier isolation : aucun module non-whitelisté installé

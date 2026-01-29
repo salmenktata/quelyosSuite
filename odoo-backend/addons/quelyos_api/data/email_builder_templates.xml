@@ -11,7 +11,7 @@
             <field name="primary_color">#4F46E5</field>
             <field name="secondary_color">#10B981</field>
             <field name="is_template" eval="True"/>
-            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Bienvenue","subtitle":"Merci de nous rejoindre","bg_color":"#4F46E5"},{"type":"text","content":"<p>Bonjour,</p><p>Nous sommes ravis de vous compter parmi nos clients.</p>","align":"left"},{"type":"button","text":"Découvrir nos produits","url":"https://example.com/shop","bg_color":"#4F46E5","align":"center"},{"type":"footer","content":"<p>Merci de votre confiance</p>","bg_color":"#f9fafb","text_color":"#6b7280"}]]></field>
+            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Bienvenue","subtitle":"Merci de nous rejoindre","bg_color":"#4F46E5"},{"type":"text","content":"<p>Bonjour,</p><p>Nous sommes ravis de vous compter parmi nos clients.</p>","align":"left"},{"type":"button","text":"Découvrir nos produits","url":"https://example.com/shop","bg_color":"#4F46E5","align":"center"},{"type":"footer","content":"<p>Merci de votre confiance</p>","bg_color":"#f9fafb","text_color":"#6b7280"}]]]></field>
         </record>
 
         <!-- Template Email Builder : Newsletter -->
@@ -23,7 +23,7 @@
             <field name="primary_color">#10B981</field>
             <field name="secondary_color">#F59E0B</field>
             <field name="is_template" eval="True"/>
-            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Newsletter","subtitle":"Les actualités du mois","bg_color":"#10B981"},{"type":"text","content":"<h2>Bonjour,</h2><p>Voici les nouveautés du mois.</p>","align":"left"},{"type":"button","text":"Voir la collection","url":"https://example.com/collection","bg_color":"#10B981","align":"center"},{"type":"footer","content":"<p>Newsletter mensuelle</p>","bg_color":"#f9fafb"}]]></field>
+            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Newsletter","subtitle":"Les actualités du mois","bg_color":"#10B981"},{"type":"text","content":"<h2>Bonjour,</h2><p>Voici les nouveautés du mois.</p>","align":"left"},{"type":"button","text":"Voir la collection","url":"https://example.com/collection","bg_color":"#10B981","align":"center"},{"type":"footer","content":"<p>Newsletter mensuelle</p>","bg_color":"#f9fafb"}]]]></field>
         </record>
 
         <!-- Template Email Builder : Promotion Flash -->
@@ -35,7 +35,7 @@
             <field name="primary_color">#EF4444</field>
             <field name="secondary_color">#F59E0B</field>
             <field name="is_template" eval="True"/>
-            <field name="blocks_json"><![CDATA[[{"type":"header","title":"VENTE FLASH","subtitle":"-50% pendant 24h","bg_color":"#EF4444"},{"type":"text","content":"<p>Profitez de <strong>-50%</strong> sur une sélection de produits.</p>","align":"center"},{"type":"button","text":"Profiter de l'offre","url":"https://example.com/sale","bg_color":"#EF4444","align":"center"},{"type":"footer","content":"<p>Offres exclusives</p>","bg_color":"#fef2f2"}]]></field>
+            <field name="blocks_json"><![CDATA[[{"type":"header","title":"VENTE FLASH","subtitle":"-50% pendant 24h","bg_color":"#EF4444"},{"type":"text","content":"<p>Profitez de <strong>-50%</strong> sur une sélection de produits.</p>","align":"center"},{"type":"button","text":"Profiter de l'offre","url":"https://example.com/sale","bg_color":"#EF4444","align":"center"},{"type":"footer","content":"<p>Offres exclusives</p>","bg_color":"#fef2f2"}]]]></field>
         </record>
 
         <!-- Template Email Builder : Relance Panier -->
@@ -47,7 +47,7 @@
             <field name="primary_color">#8B5CF6</field>
             <field name="secondary_color">#EC4899</field>
             <field name="is_template" eval="True"/>
-            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Votre panier vous attend","subtitle":"Finalisez votre commande","bg_color":"#8B5CF6"},{"type":"text","content":"<p>Vous avez des articles dans votre panier.</p>","align":"left"},{"type":"button","text":"Finaliser ma commande","url":"https://example.com/cart","bg_color":"#8B5CF6","align":"center"},{"type":"footer","content":"<p>Votre panier sera conservé 7 jours</p>","bg_color":"#f9fafb"}]]></field>
+            <field name="blocks_json"><![CDATA[[{"type":"header","title":"Votre panier vous attend","subtitle":"Finalisez votre commande","bg_color":"#8B5CF6"},{"type":"text","content":"<p>Vous avez des articles dans votre panier.</p>","align":"left"},{"type":"button","text":"Finaliser ma commande","url":"https://example.com/cart","bg_color":"#8B5CF6","align":"center"},{"type":"footer","content":"<p>Votre panier sera conservé 7 jours</p>","bg_color":"#f9fafb"}]]]></field>
         </record>
 
     </data>
