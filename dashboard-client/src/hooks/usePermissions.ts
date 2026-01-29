@@ -38,6 +38,17 @@ export function usePermissions() {
   }
 
   /**
+   * Vérifie si l'utilisateur est super-admin (accès complet à tout).
+   *
+   * @returns true si l'utilisateur a le groupe Access Rights (super-admin)
+   */
+  const isSuperAdmin = (): boolean => {
+    if (!user || !user.groups) return false
+    // Le groupe "Access Rights" donne un accès complet à TOUT (existant et futur)
+    return user.groups.includes('Access Rights')
+  }
+
+  /**
    * Vérifie si l'utilisateur peut accéder à un module.
    *
    * @param moduleId - Identifiant du module (ex: 'stock', 'crm')
@@ -45,6 +56,9 @@ export function usePermissions() {
    */
   const canAccessModule = (moduleId: ModuleId): boolean => {
     if (!user || !user.groups) return false
+
+    // Super-admin : accès complet à TOUS les modules (existant et futur)
+    if (isSuperAdmin()) return true
 
     const requiredGroups = MODULE_GROUP_MAP[moduleId]
     if (!requiredGroups) return false
@@ -73,6 +87,10 @@ export function usePermissions() {
    */
   const getAccessibleModules = (): ModuleId[] => {
     const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos']
+
+    // Super-admin : accès à TOUS les modules (existant et futur)
+    if (isSuperAdmin()) return allModules
+
     return allModules.filter(module => canAccessModule(module))
   }
 
@@ -80,6 +98,7 @@ export function usePermissions() {
     hasGroup,
     canAccessModule,
     isManager,
+    isSuperAdmin,
     getAccessibleModules,
     userGroups: user?.groups || [],
   }

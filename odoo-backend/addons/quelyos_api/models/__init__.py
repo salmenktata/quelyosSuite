@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from . import ir_http
+from . import auth_refresh_token
 from . import product_image
 from . import product_template
 from . import product_product

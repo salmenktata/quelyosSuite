@@ -1,9 +1,10 @@
 /**
- * Error Boundary React
- * Capture les erreurs React et affiche une UI de fallback
+ * Error Boundary React avec intégration Sentry
+ * Capture les erreurs React, les envoie à Sentry, et affiche une UI de fallback
  */
 
 import { Component, ErrorInfo, ReactNode } from 'react'
+import * as Sentry from '@sentry/react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 interface Props {

@@ -68,9 +68,10 @@
         'contacts',
         # Odoo Standard Marketing
         'mass_mailing',
+        # Quelyos Core Infrastructure
+        'quelyos_api',  # Infrastructure multi-tenant et API REST (OBLIGATOIRE)
         # ISOLATION COMPLÈTE : Aucune dépendance OCA/tierce
         # Fonctionnalités stock avancées fournies par quelyos_stock_advanced
-        # Fonctionnalités marketing avancées fournies par quelyos_api
     ],
     'data': [
         'data/module_category_data.xml',

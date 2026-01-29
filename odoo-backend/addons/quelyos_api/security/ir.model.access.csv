@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_auth_refresh_token_system,auth.refresh.token system,model_auth_refresh_token,base.group_system,1,1,1,1
 access_quelyos_subscription_plan_public,quelyos.subscription.plan public,model_quelyos_subscription_plan,,1,0,0,0
 access_quelyos_subscription_plan_user,quelyos.subscription.plan user,model_quelyos_subscription_plan,group_quelyos_finance_user,1,1,0,0
 access_quelyos_subscription_plan_manager,quelyos.subscription.plan manager,model_quelyos_subscription_plan,group_quelyos_finance_manager,1,1,1,1

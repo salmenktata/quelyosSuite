@@ -8,7 +8,7 @@ Guide de démarrage rapide pour développeurs.
 # 1. Cloner et installer
 git clone https://github.com/salmenktata/quelyosSuite.git
 cd quelyosSuite
-pnpm install  # ou npm install dans chaque dossier
+pnpm install
 
 # 2. Démarrer tous les services
 ./scripts/dev-start.sh all
@@ -77,7 +77,7 @@ lsof -ti:3000 | xargs kill -9  # Forcer si nécessaire
 tail -50 /tmp/quelyos-SERVICE.log
 
 # Réinstaller les dépendances
-cd SERVICE && npm install
+cd SERVICE && pnpm install
 
 # Redémarrer proprement
 ./scripts/dev-stop.sh all

@@ -1,15 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { Layout } from './components/Layout'
+import { AuthenticatedApp } from './components/AuthenticatedApp'
 import { Login } from './pages/Login'
-import { Dashboard } from './pages/Dashboard'
-import { Tenants } from './pages/Tenants'
-import { Subscriptions } from './pages/Subscriptions'
-import { Billing } from './pages/Billing'
-import { Monitoring } from './pages/Monitoring'
+import { useAuth } from './hooks/useAuth'
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem('session_id')
+  const { isAuthenticated, isLoading } = useAuth()
+
+  // Loading state pendant vérification auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Vérification de l'authentification...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
     return (
@@ -21,19 +28,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="tenants" element={<Tenants />} />
-            <Route path="subscriptions" element={<Subscriptions />} />
-            <Route path="billing" element={<Billing />} />
-            <Route path="monitoring" element={<Monitoring />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthenticatedApp />
     </ErrorBoundary>
   )
 }

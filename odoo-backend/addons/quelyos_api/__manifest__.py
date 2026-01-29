@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.1.3',
+    'version': '19.0.1.2.1',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -41,6 +41,7 @@
         'data/ir_cron_abandoned_cart.xml',
         # 'data/ir_cron_theme_payouts.xml',  # TEMPORAIREMENT DÉSACTIVÉ (erreur Python dans code)
         'data/ir_cron_subscriptions.xml',
+        'data/ir_cron_auth_tokens.xml',
         'data/res_country_state_tn.xml',
         'data/email_templates_data.xml',
         'data/email_templates_subscriptions.xml',

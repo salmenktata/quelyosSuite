@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useAuth } from '@/hooks/useAuth'
 import { LayoutDashboard, Users, CreditCard, DollarSign, Activity, Moon, Sun, LogOut } from 'lucide-react'
 
 const navigation = [
@@ -13,10 +14,10 @@ const navigation = [
 export function Layout() {
   const { theme, toggleTheme } = useTheme()
   const location = useLocation()
+  const { logout } = useAuth()
 
   const handleLogout = () => {
-    localStorage.removeItem('session_id')
-    window.location.reload()
+    logout()
   }
 
   return (

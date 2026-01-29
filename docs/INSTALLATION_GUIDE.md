@@ -312,10 +312,10 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 EOF
 
 # Installer dépendances
-npm install
+pnpm install
 
 # Lancer en dev
-npm run dev
+pnpm dev
 ```
 
 **Accès** : http://localhost:3000
@@ -333,10 +333,10 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3001
 EOF
 
 # Installer dépendances
-npm install
+pnpm install
 
 # Lancer en dev
-npm run dev
+pnpm dev
 ```
 
 **Accès** : http://localhost:3001
@@ -353,10 +353,10 @@ VITE_TENANT_CODE=admin
 EOF
 
 # Installer dépendances
-npm install
+pnpm install
 
 # Lancer en dev
-npm run dev
+pnpm dev
 ```
 
 **Accès** : http://localhost:5175

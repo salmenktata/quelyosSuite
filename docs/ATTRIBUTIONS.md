@@ -21,7 +21,9 @@ Odoo Community Edition est le cœur de Quelyos ERP. Nous utilisons uniquement la
 
 ---
 
-## Frontend (Next.js)
+## Frontends (Next.js)
+
+Applications concernées : `vitrine-quelyos/` (site vitrine) et `vitrine-client/` (e-commerce).
 
 ### Framework Principal
 
@@ -83,16 +85,19 @@ Odoo Community Edition est le cœur de Quelyos ERP. Nous utilisons uniquement la
 
 ### Autres dépendances frontend
 
-Pour la liste complète : voir `frontend/package.json`
+Pour la liste complète : voir `vitrine-quelyos/package.json` et `vitrine-client/package.json`
 
 Génération automatique :
 ```bash
-cd frontend && npm list --all > ../ATTRIBUTIONS_FRONTEND.txt
+cd vitrine-quelyos && pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_QUELYOS.txt
+cd vitrine-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_CLIENT.txt
 ```
 
 ---
 
-## Backoffice (React + Vite)
+## Backoffices (React + Vite)
+
+Applications concernées : `dashboard-client/` (admin) et `super-admin-client/`.
 
 ### Framework et Bundler
 
@@ -136,11 +141,12 @@ cd frontend && npm list --all > ../ATTRIBUTIONS_FRONTEND.txt
 
 ### Autres dépendances backoffice
 
-Pour la liste complète : voir `backoffice/package.json`
+Pour la liste complète : voir `dashboard-client/package.json` et `super-admin-client/package.json`
 
 Génération automatique :
 ```bash
-cd backoffice && npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
+cd dashboard-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_DASHBOARD.txt
+cd super-admin-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_SUPER_ADMIN.txt
 ```
 
 ---
@@ -177,7 +183,7 @@ cd backoffice && npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
 - Licence : BSD
 - Usage : Parsing XML
 
-Pour la liste complète : voir `backend/requirements.txt` ou dépendances Odoo officielles.
+Pour la liste complète : voir `odoo-backend/addons/quelyos_api/requirements.txt` (dépendances custom) et les dépendances Odoo officielles.
 
 ---
 
@@ -316,36 +322,44 @@ Si des images ou illustrations tierces sont utilisées, elles seront listées ic
 
 Quelyos ERP utilise une **licence mixte** :
 
-1. **Code propriétaire** (Frontend + Backoffice) : Tous droits réservés Quelyos
-   - Voir `LICENSE`, `frontend/LICENSE`, `backoffice/LICENSE`
+1. **Code propriétaire** (Frontends + Backoffices) : Tous droits réservés Quelyos
+   - Voir `LICENSE`, `vitrine-quelyos/LICENSE`, `vitrine-client/LICENSE`, `dashboard-client/LICENSE`, `super-admin-client/LICENSE`
 
 2. **Code open source** (Module API Odoo) : LGPL v3
-   - Voir `backend/addons/quelyos_api/LICENSE`
+   - Voir `odoo-backend/addons/quelyos_api/LICENSE`
 
 ---
 
 ## Génération Automatique des Dépendances
 
-### Frontend
+### Frontends
 
 ```bash
-cd frontend
-npm list --all > ../ATTRIBUTIONS_FRONTEND.txt
-npx license-checker --json > ../ATTRIBUTIONS_FRONTEND_LICENSES.json
+cd vitrine-quelyos
+pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_QUELYOS.txt
+pnpm dlx license-checker --json > ../ATTRIBUTIONS_VITRINE_QUELYOS_LICENSES.json
+
+cd ../vitrine-client
+pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_CLIENT.txt
+pnpm dlx license-checker --json > ../ATTRIBUTIONS_VITRINE_CLIENT_LICENSES.json
 ```
 
-### Backoffice
+### Backoffices
 
 ```bash
-cd backoffice
-npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
-npx license-checker --json > ../ATTRIBUTIONS_BACKOFFICE_LICENSES.json
+cd dashboard-client
+pnpm list --depth Infinity > ../ATTRIBUTIONS_DASHBOARD.txt
+pnpm dlx license-checker --json > ../ATTRIBUTIONS_DASHBOARD_LICENSES.json
+
+cd ../super-admin-client
+pnpm list --depth Infinity > ../ATTRIBUTIONS_SUPER_ADMIN.txt
+pnpm dlx license-checker --json > ../ATTRIBUTIONS_SUPER_ADMIN_LICENSES.json
 ```
 
 ### Backend (Python)
 
 ```bash
-cd backend
+cd odoo-backend
 pip list --format=freeze > requirements_freeze.txt
 pip-licenses --format=markdown --output-file=../ATTRIBUTIONS_BACKEND_LICENSES.md
 ```

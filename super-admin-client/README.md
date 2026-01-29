@@ -19,20 +19,20 @@ Interface d'administration SaaS pour gérer les tenants, abonnements, facturatio
 
 ```bash
 cd super-admin-client
-npm install
+pnpm install
 ```
 
 ## Démarrage
 
 ```bash
 # Développement (http://localhost:5176)
-npm run dev
+pnpm dev
 
 # Build production
-npm run build
+pnpm build
 
 # Preview build
-npm run preview
+pnpm preview
 ```
 
 ## Authentification

@@ -105,7 +105,7 @@ ps aux | grep -E "next|vite" | grep -v grep
 
 1. **Vérifier le port** : `lsof -i:PORT`
 2. **Consulter les logs** : `tail -50 /tmp/quelyos-SERVICE.log`
-3. **Vérifier les dépendances** : `cd SERVICE && npm install`
+3. **Vérifier les dépendances** : `cd SERVICE && pnpm install`
 4. **Arrêter complètement** : `./scripts/dev-stop.sh all`
 
 ### Port déjà utilisé

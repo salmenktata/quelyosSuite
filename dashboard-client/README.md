@@ -5,8 +5,8 @@ Interface d'administration React pour gérer le site e-commerce.
 ## Démarrage
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ## Stack

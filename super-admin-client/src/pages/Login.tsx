@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { ShieldCheck } from 'lucide-react'
+import { useAnalytics } from '@/hooks/useAnalytics'
 
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { trackEvent } = useAnalytics()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -13,20 +15,30 @@ export function Login() {
     setError('')
 
     try {
-      const response = await fetch('/api/auth/login', {
+      // Appeler endpoint SSO qui définit les cookies HttpOnly
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/sso-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login: email, password }),
+        credentials: 'include', // Inclure les cookies
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'call',
+          params: { login: email, password },
+          id: 1,
+        }),
       })
 
       const data = await response.json()
 
-      if (data.result?.session_id) {
-        localStorage.setItem('session_id', data.result.session_id)
-        localStorage.setItem('user', JSON.stringify(data.result.user))
-        window.location.reload()
+      // Format JSON-RPC
+      if (data.result?.success) {
+        // Login réussi, cookies définis automatiquement
+        trackEvent('login_success', { login_method: 'password' })
+        // Recharger pour laisser useAuth gérer l'état
+        window.location.href = '/dashboard'
       } else {
-        setError('Identifiants invalides ou accès refusé')
+        trackEvent('login_failed', { error: data.result?.error })
+        setError(data.result?.error || 'Identifiants invalides ou accès refusé')
       }
     } catch (_err) {
       setError('Erreur de connexion au serveur')

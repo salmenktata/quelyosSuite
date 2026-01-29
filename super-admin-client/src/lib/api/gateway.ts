@@ -291,15 +291,10 @@ class APIGateway {
       ...req.headers,
     }
 
-    // Ajouter le token d'auth
-    const token = localStorage.getItem(config.authTokenKey)
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
-    }
-
     const options: RequestInit = {
       method: req.method,
       headers,
+      credentials: 'include', // Inclure les cookies HttpOnly dans les requêtes
     }
 
     if (req.body && ['POST', 'PUT', 'PATCH'].includes(req.method)) {

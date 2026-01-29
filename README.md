@@ -85,16 +85,16 @@ git clone https://github.com/salmenktata/quelyosSuite.git
 cd quelyosSuite
 
 # Installation des dépendances
-pnpm install  # ou npm install dans chaque dossier
+pnpm install
 
 # Option 1 : Script automatique (recommandé)
 ./scripts/dev-start.sh all
 
 # Option 2 : Démarrage manuel
 cd odoo-backend && docker-compose up -d
-cd ../dashboard-client && npm run dev &
-cd ../vitrine-quelyos && npm run dev &
-cd ../vitrine-client && npm run dev &
+cd ../dashboard-client && pnpm dev &
+cd ../vitrine-quelyos && pnpm dev &
+cd ../vitrine-client && pnpm dev &
 ```
 
 ### Accès
@@ -319,7 +319,7 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 
 ### Phase 3 : Conformité Légale (1-2 semaines)
 
-**Objectif** : Sécuriser juridiquement le projet Quelyos pour une commercialisation légale et transparente, en respectant les licences open-source (LGPL v3 pour Odoo) tout en protégeant la propriété intellectuelle du frontend/backoffice.
+**Objectif** : Sécuriser juridiquement le projet Quelyos pour une commercialisation légale et transparente, en respectant les licences open-source (LGPL v3 pour Odoo) tout en protégeant la propriété intellectuelle des frontends (vitrine-quelyos, vitrine-client) et backoffices (dashboard-client, super-admin-client).
 
 ---
 
@@ -407,17 +407,17 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 
    Le code source de ce projet est divisé en deux parties :
 
-   1. Frontend (frontend/) et Backoffice (backoffice/) :
+   1. Frontends (`vitrine-quelyos/`, `vitrine-client/`) et Backoffices (`dashboard-client/`, `super-admin-client/`) :
       - Licence propriétaire
       - Tous droits réservés
       - Distribution et modification interdites sans autorisation
 
-   2. Module API (backend/addons/quelyos_api/) :
+   2. Module API (odoo-backend/addons/quelyos_api/) :
       - Licence LGPL v3
-      - Voir backend/addons/quelyos_api/LICENSE
+      - Voir odoo-backend/addons/quelyos_api/LICENSE
    ```
 
-2. **`backend/addons/quelyos_api/LICENSE`** :
+2. **`odoo-backend/addons/quelyos_api/LICENSE`** :
    ```
    GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
@@ -428,7 +428,7 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
    Copyright (c) Odoo S.A. (framework Odoo)
    ```
 
-3. **`frontend/LICENSE`** et **`backoffice/LICENSE`** :
+3. **`vitrine-quelyos/LICENSE`**, **`vitrine-client/LICENSE`**, **`dashboard-client/LICENSE`** et **`super-admin-client/LICENSE`** :
    ```
    Copyright (c) 2026 Quelyos. Tous droits réservés.
 
@@ -443,7 +443,7 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 
 ##### Page `/legal` (Frontend)
 
-**Créer** : `frontend/app/legal/page.tsx`
+**Créer** : `vitrine-quelyos/app/legal/page.tsx`
 
 **Contenu obligatoire** :
 - Éditeur du site (raison sociale, adresse, SIRET, capital, RCS)
@@ -667,7 +667,7 @@ cd backoffice && npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
 **Implémenter** : Composant React avec sauvegarde consentement
 
 ```tsx
-// frontend/components/CookieConsent.tsx
+// vitrine-quelyos/app/components/CookieConsent.tsx
 import { useState, useEffect } from 'react';
 
 export function CookieConsent() {
@@ -920,7 +920,7 @@ def export_data(self):
 - Trial-to-Paid Conversion > 20%
 - LTV/CAC Ratio > 3
 
-📄 **Détails complets** : Architecture, code backend/frontend, documentation légale → [PHASE4_SAAS.md](PHASE4_SAAS.md)
+📄 **Détails complets** : Architecture, code backend/frontends/backoffices, documentation légale → [PHASE4_SAAS.md](PHASE4_SAAS.md)
 
 ### Phase 5 : Go-to-Market (4-6 semaines)
 
@@ -962,7 +962,7 @@ Tous les services tournent dans une session tmux en arrière-plan. Vous pouvez f
 ./scripts/stop.sh
 ```
 
-**Raccourcis tmux utiles (après `./attach.sh`)** :
+**Raccourcis tmux utiles (après `./scripts/attach.sh`)** :
 - `Ctrl+b` puis `0/1/2/3` : Changer de fenêtre
 - `Ctrl+b` puis `d` : Détacher la session (services continuent de tourner)
 - `Ctrl+b` puis `[` : Mode scroll (q pour quitter)
@@ -1089,7 +1089,7 @@ Ajouter au crontab pour backup quotidien à 2h du matin :
 ```bash
 crontab -e
 # Ajouter :
-0 2 * * * cd /path/to/quelyosSuite && ./backup.sh >> /var/log/quelyos-backup.log 2>&1
+0 2 * * * cd /path/to/quelyosSuite && ./scripts/backup.sh >> /var/log/quelyos-backup.log 2>&1
 ```
 
 ---
@@ -1188,7 +1188,7 @@ Accès via Grafana : **Explore** → **Loki**
 Script de vérification complet de l'infrastructure :
 
 ```bash
-./healthcheck.sh
+./scripts/healthcheck.sh
 
 # Vérifie :
 # - État des conteneurs Docker

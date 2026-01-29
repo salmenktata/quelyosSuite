@@ -268,7 +268,7 @@ curl "http://localhost:8069/api/ecommerce/tenant/by-domain?domain=tenant1.local"
 | **Nom** | Boutique Sport | Marque Mode |
 | **Code** | boutiquesport | marquemode |
 | **Domaine** | tenant1.local | tenant2.local |
-| **URL Frontend** | http://tenant1.local:3000 | http://tenant2.local:3000 |
+| **URL Frontend** | http://tenant1.local:3001 | http://tenant2.local:3001 |
 | **URL Backoffice** | http://localhost:5175 (login: admin@tenant1.local) | http://localhost:5175 (login: admin@tenant2.local) |
 | **Couleur** | Bleu #3b82f6 | Rose #ec4899 |
 | **Plan** | Starter | Pro |
@@ -287,7 +287,7 @@ curl "http://localhost:8069/api/ecommerce/tenant/by-domain?domain=tenant1.local"
 
 ## 📚 Ressources
 
-- **Documentation Odoo Tenants** : backend/addons/quelyos_api/models/tenant.py
-- **Middleware Frontend** : frontend/src/middleware.ts
-- **API Tenants** : backend/addons/quelyos_api/controllers/tenant.py
-- **Hook Tenant** : frontend/src/lib/tenant/TenantProvider.tsx
+- **Documentation Odoo Tenants** : odoo-backend/addons/quelyos_api/models/tenant.py
+- **Proxy/Middleware Frontend** : vitrine-client/src/proxy.ts
+- **API Tenants** : odoo-backend/addons/quelyos_api/controllers/tenant.py
+- **Hook Tenant** : vitrine-client/src/lib/tenant/TenantProvider.tsx

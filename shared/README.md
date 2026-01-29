@@ -1,6 +1,6 @@
 # Shared Packages - Quelyos ERP
 
-Ce dossier contient les packages partagés entre le **frontend** (Next.js) et le **backoffice** (React/Vite), implémentant l'**Option 4 : Mutualisation pragmatique sans monorepo**.
+Ce dossier contient les packages partagés entre les **frontends** (vitrine-quelyos, vitrine-client) et les **backoffices** (dashboard-client, super-admin-client), implémentant l'**Option 4 : Mutualisation pragmatique sans monorepo**.
 
 ## 🎯 Objectif
 
@@ -120,7 +120,7 @@ Les chemins `@quelyos/*` sont déjà configurés dans `tsconfig.json` :
 
 ### Versions alignées
 
-Les deux applications utilisent maintenant les mêmes versions :
+Les applications utilisent maintenant les mêmes versions :
 
 | Dépendance | Version |
 |------------|---------|
@@ -136,16 +136,16 @@ Les deux applications utilisent maintenant les mêmes versions :
 ### Avant (code dupliqué)
 
 ```typescript
-// frontend/src/lib/logger.ts
+// vitrine-client/src/lib/logger.ts
 import { logger } from '@/lib/logger';
 
-// backoffice/src/lib/logger.ts
+// dashboard-client/src/lib/logger.ts
 import { logger } from '@/lib/logger';
 
-// frontend/src/types/index.ts
-import type { Product } from '@/types';
+// vitrine-client/src/types/api.ts
+import type { Product } from '@/types/api';
 
-// backoffice/src/types/index.ts
+// dashboard-client/src/types/index.ts
 import type { Product } from '@/types';
 ```
 
@@ -164,7 +164,7 @@ import { odooClient } from '@quelyos/api-client';
 - ✅ **Versions alignées** (React 19, Tailwind 4, React Query 5.90)
 - ✅ **0 refonte** des applications existantes
 - ✅ **0 complexité monorepo** (pas de workspaces, hoisting, ou outils additionnels)
-- ✅ **Cohérence garantie** : types communs = 0 incohérence frontend ↔ backoffice
+- ✅ **Cohérence garantie** : types communs = 0 incohérence frontends ↔ backoffices
 
 ## 📝 Maintenance
 

@@ -4,10 +4,12 @@ Controller d'authentification SSO pour le backoffice
 """
 import logging
 import os
+import json
 from werkzeug.utils import redirect as werkzeug_redirect
 from odoo import http
 from odoo.http import request
 from odoo.addons.web.controllers.home import Home
+from odoo.exceptions import AccessDenied
 from ..config import get_cors_headers
 from ..lib.rate_limiter import check_rate_limit, RateLimitConfig, rate_limit_key, get_rate_limiter
 
@@ -15,6 +17,14 @@ _logger = logging.getLogger(__name__)
 
 # URL de login frontend (configurable via env)
 FRONTEND_LOGIN_URL = os.environ.get('FRONTEND_LOGIN_URL', 'http://localhost:3000/superadmin/login')
+
+# Cookie settings
+COOKIE_NAME_SESSION = 'session_token'
+COOKIE_NAME_REFRESH = 'refresh_token'
+COOKIE_MAX_AGE_SESSION = 30 * 60  # 30 minutes
+COOKIE_MAX_AGE_REFRESH = 7 * 24 * 60 * 60  # 7 jours
+COOKIE_SECURE = os.environ.get('COOKIE_SECURE', 'false').lower() == 'true'  # HTTPS uniquement en prod
+COOKIE_SAMESITE = 'Lax'  # Protection CSRF
 
 
 class AuthController(http.Controller):
@@ -53,21 +63,16 @@ class AuthController(http.Controller):
             response.status_code = 400
             return response
 
-    @http.route('/api/auth/sso-login', type='jsonrpc', auth='none', methods=['POST', 'OPTIONS'], csrf=False)
+    @http.route('/api/auth/sso-login', type='json', auth='none', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
     def sso_login(self, **kwargs):
         """
-        Authentification SSO - valide les credentials et crée une session Odoo.
+        Authentification SSO avec cookies HttpOnly - valide les credentials et crée une session Odoo.
 
         Returns:
-            dict: {success: bool, redirect_url: str} ou {error: str}
+            dict: {success: bool, user: {...}} ou {success: false, error: str}
+
+        Note: Les tokens sont définis dans des cookies HttpOnly (non accessibles par JavaScript)
         """
-        # Handle CORS preflight
-        origin = request.httprequest.headers.get('Origin', '')
-        cors_headers = get_cors_headers(origin)
-
-        if request.httprequest.method == 'OPTIONS':
-            return request.make_response('', headers=cors_headers)
-
         # Rate limiting - protection brute force
         rate_error = check_rate_limit(request, RateLimitConfig.LOGIN, 'login')
         if rate_error:
@@ -93,20 +98,122 @@ class AuthController(http.Controller):
                 limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
                 return {'success': False, 'error': 'Identifiants invalides'}
 
+            # Générer refresh token
+            ip_address = request.httprequest.remote_addr
+            user_agent = request.httprequest.headers.get('User-Agent', '')
+
+            refresh_token_plain, _token_record = request.env['auth.refresh.token'].sudo().generate_token(
+                user_id=uid,
+                ip_address=ip_address,
+                user_agent=user_agent
+            )
+
             # Get session info
             session_id = request.session.sid
 
             _logger.info(f"SSO login successful for user {login} (uid={uid})")
 
-            return {
+            # Préparer la réponse
+            user = request.env['res.users'].sudo().browse(uid)
+            response_data = {
                 'success': True,
-                'uid': uid,
-                'session_id': session_id,
-                'redirect_url': '/web'
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email or '',
+                    'login': user.login,
+                }
             }
+
+            # Créer la réponse HTTP pour définir les cookies
+            response = request.make_json_response(response_data)
+
+            # Définir cookie session (30 min)
+            response.set_cookie(
+                COOKIE_NAME_SESSION,
+                session_id,
+                max_age=COOKIE_MAX_AGE_SESSION,
+                httponly=True,
+                secure=COOKIE_SECURE,
+                samesite=COOKIE_SAMESITE,
+                path='/'
+            )
+
+            # Définir cookie refresh token (7 jours)
+            response.set_cookie(
+                COOKIE_NAME_REFRESH,
+                refresh_token_plain,
+                max_age=COOKIE_MAX_AGE_REFRESH,
+                httponly=True,
+                secure=COOKIE_SECURE,
+                samesite=COOKIE_SAMESITE,
+                path='/'
+            )
+
+            return response
 
         except Exception as e:
             _logger.error(f"SSO login error: {e}")
+            return {'success': False, 'error': 'Erreur de connexion'}
+
+    @http.route('/api/auth/login', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
+    def login(self, **kwargs):
+        """
+        Authentification standard avec session_id retourné en JSON (pour compatibilité clients existants).
+
+        Params:
+            email ou login: string
+            password: string
+
+        Returns:
+            dict: {success: bool, session_id: str, user: {...}} ou {success: false, error: str}
+        """
+        # Rate limiting - protection brute force
+        rate_error = check_rate_limit(request, RateLimitConfig.LOGIN, 'login')
+        if rate_error:
+            _logger.warning(f"Rate limit exceeded for login attempt from {request.httprequest.remote_addr}")
+            return rate_error
+
+        try:
+            params = request.params if hasattr(request, 'params') and request.params else {}
+            login = params.get('login') or params.get('email', '').strip()
+            password = params.get('password', '')
+            db = params.get('db') or request.db
+
+            if not login or not password:
+                return {'success': False, 'error': 'Login et mot de passe requis'}
+
+            # Authenticate user
+            uid = request.session.authenticate(request.env, {'db': db, 'login': login, 'password': password})
+
+            if not uid:
+                # Track failed login attempts
+                fail_key = rate_limit_key(request, 'login_failed')
+                limiter = get_rate_limiter()
+                limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
+                return {'success': False, 'error': 'Identifiants invalides'}
+
+            # Get session ID
+            session_id = request.session.sid
+
+            _logger.info(f"Login successful for user {login} (uid={uid})")
+
+            # Get user info
+            user = request.env['res.users'].sudo().browse(uid)
+
+            return {
+                'success': True,
+                'session_id': session_id,
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email or '',
+                    'login': user.login,
+                }
+            }
+
+        except Exception as e:
+            _logger.error(f"Login error: {e}")
             return {'success': False, 'error': 'Erreur de connexion'}
 
     @http.route('/api/auth/user-info', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
@@ -133,8 +240,14 @@ class AuthController(http.Controller):
 
             user = request.env.user
 
-            # Récupérer uniquement les groupes Quelyos
-            quelyos_groups = user.groups_id.filtered(lambda g: 'Quelyos' in str(g.name))
+            # Récupérer les groupes Quelyos + groupes admin critiques
+            # Inclure : Quelyos*, Access Rights, Technical Features, Administrator
+            quelyos_groups = user.groups_id.filtered(lambda g:
+                'Quelyos' in str(g.name) or
+                'Access Rights' in str(g.name) or
+                'Technical Features' in str(g.name) or
+                'Administrator' in str(g.name)
+            )
 
             # Extraire les noms de groupes (gérer format JSONB {"en_US": "nom"})
             group_names = []
@@ -159,6 +272,122 @@ class AuthController(http.Controller):
         except Exception as e:
             _logger.error(f"Get user info error: {e}")
             return {'success': False, 'error': 'Erreur lors de la récupération des informations utilisateur'}
+
+    @http.route('/api/auth/refresh', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
+    def refresh_token(self, **kwargs):
+        """
+        Renouvelle la session en utilisant le refresh token (depuis cookie HttpOnly)
+
+        Returns:
+            dict: {success: bool, user: {...}} ou {success: false, error: str}
+        """
+        try:
+            # Récupérer le refresh token depuis le cookie
+            refresh_token_plain = request.httprequest.cookies.get(COOKIE_NAME_REFRESH)
+
+            if not refresh_token_plain:
+                return {'success': False, 'error': 'Refresh token manquant'}
+
+            # Valider le refresh token
+            try:
+                user = request.env['auth.refresh.token'].sudo().validate_token(refresh_token_plain)
+            except AccessDenied as e:
+                _logger.warning(f"Refresh token validation failed: {e}")
+                return {'success': False, 'error': 'Refresh token invalide ou expiré'}
+
+            # Créer une nouvelle session Odoo
+            request.session.authenticate(request.env, {
+                'db': request.db,
+                'uid': user.id,
+                'login': user.login
+            })
+
+            session_id = request.session.sid
+
+            _logger.info(f"Token refreshed for user {user.login} (uid={user.id})")
+
+            # Préparer la réponse
+            response_data = {
+                'success': True,
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email or '',
+                    'login': user.login,
+                }
+            }
+
+            # Créer la réponse HTTP pour mettre à jour le cookie session
+            response = request.make_json_response(response_data)
+
+            # Renouveler le cookie session (30 min)
+            response.set_cookie(
+                COOKIE_NAME_SESSION,
+                session_id,
+                max_age=COOKIE_MAX_AGE_SESSION,
+                httponly=True,
+                secure=COOKIE_SECURE,
+                samesite=COOKIE_SAMESITE,
+                path='/'
+            )
+
+            return response
+
+        except Exception as e:
+            _logger.error(f"Token refresh error: {e}")
+            return {'success': False, 'error': 'Erreur lors du rafraîchissement du token'}
+
+    @http.route('/api/auth/logout', type='json', auth='public', methods=['POST'], csrf=False, cors='*')
+    def logout_session(self, **kwargs):
+        """
+        Déconnexion - révoque le refresh token et clear les cookies
+
+        Returns:
+            dict: {success: bool}
+        """
+        try:
+            # Récupérer le refresh token pour le révoquer
+            refresh_token_plain = request.httprequest.cookies.get(COOKIE_NAME_REFRESH)
+
+            if refresh_token_plain:
+                # Révoquer le refresh token en DB
+                request.env['auth.refresh.token'].sudo().revoke_token(refresh_token_plain)
+
+            # Logout de la session Odoo
+            uid = request.session.uid
+            request.session.logout(keep_db=True)
+
+            _logger.info(f"User logged out (uid={uid})")
+
+            # Préparer la réponse
+            response_data = {'success': True}
+            response = request.make_json_response(response_data)
+
+            # Clear les cookies
+            response.set_cookie(
+                COOKIE_NAME_SESSION,
+                '',
+                max_age=0,
+                httponly=True,
+                secure=COOKIE_SECURE,
+                samesite=COOKIE_SAMESITE,
+                path='/'
+            )
+            response.set_cookie(
+                COOKIE_NAME_REFRESH,
+                '',
+                max_age=0,
+                httponly=True,
+                secure=COOKIE_SECURE,
+                samesite=COOKIE_SAMESITE,
+                path='/'
+            )
+
+            return response
+
+        except Exception as e:
+            _logger.error(f"Logout error: {e}")
+            return {'success': False, 'error': 'Erreur lors de la déconnexion'}
 
     @http.route('/api/auth/sso-redirect', type='http', auth='none', methods=['GET', 'POST'], csrf=False)
     def sso_redirect(self, **kwargs):

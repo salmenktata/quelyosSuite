@@ -75,16 +75,16 @@
 cd odoo-backend && docker-compose up -d
 
 # Backoffice
-cd dashboard-client && npm run dev
+cd dashboard-client && pnpm dev
 
 # Site Vitrine
-cd vitrine-quelyos && npm run dev
+cd vitrine-quelyos && pnpm dev
 
 # E-commerce
-cd vitrine-client && npm run dev
+cd vitrine-client && pnpm dev
 
 # Super Admin
-cd super-admin-client && npm run dev
+cd super-admin-client && pnpm dev
 ```
 
 ## Dépendances entre Services
@@ -248,7 +248,7 @@ lsof -ti:3000 | xargs kill -9
 
 ### Service ne démarre pas
 
-1. Vérifier que les dépendances sont installées : `npm install`
+1. Vérifier que les dépendances sont installées : `pnpm install`
 2. Vérifier que Docker est démarré (pour le backend)
 3. Consulter les logs d'erreur
 4. Vérifier la configuration des ports dans `.env.ports`
