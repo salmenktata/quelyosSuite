@@ -8,18 +8,10 @@ import {
   Menu,
   X,
   ChevronDown,
-  BarChart3,
-  FileText,
   Megaphone,
   LogIn,
-  Briefcase,
-  Zap,
-  DollarSign,
   MessageCircle,
   Book,
-  TrendingUp,
-  Building2,
-  GraduationCap,
   Wallet,
   Store,
   UserCircle,
@@ -27,8 +19,9 @@ import {
   UsersRound,
   Monitor,
   Layers,
-  Users,
   Sparkles,
+  Headphones,
+  ArrowRight,
 } from "lucide-react";
 import config from "../lib/config";
 import Container from "./Container";
@@ -44,166 +37,18 @@ const modulesNav = [
   { id: "marketing", name: "Marketing", tagline: "Campagnes Email & SMS", icon: Megaphone, href: "/marketing", color: "text-pink-400" },
 ];
 
+// Ressources pour le dropdown
+const resourcesNav = [
+  { id: "docs", name: "Documentation", tagline: "Guides & tutoriels", icon: Book, href: "/finance/docs", color: "text-blue-400" },
+  { id: "faq", name: "FAQ", tagline: "Questions fréquentes", icon: MessageCircle, href: "/finance/faq", color: "text-amber-400" },
+  { id: "support", name: "Support", tagline: "Aide & assistance", icon: Headphones, href: "/finance/support", color: "text-green-400" },
+];
+
 export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modulesDropdown, setModulesDropdown] = useState(false);
-  const [financeDropdown, setFinanceDropdown] = useState(false);
-  const [ecommerceDropdown, setEcommerceDropdown] = useState(false);
-  const [marketingDropdown, setMarketingDropdown] = useState(false);
-
-  // Menu Boutique
-  const ecommercePages = [
-    {
-      category: "Produit",
-      items: [
-        { href: "/ecommerce", label: "Présentation", icon: Store, desc: "Vue d'ensemble" },
-        { href: "/ecommerce/pricing", label: "Tarifs", icon: DollarSign, desc: "Plans & pricing" },
-      ],
-    },
-    {
-      category: "Démarrer",
-      items: [
-        { href: "/ecommerce/signup", label: "S'inscrire", icon: UserCircle, desc: "Créer ma boutique" },
-      ],
-    },
-  ];
-
-  // Menu Marketing
-  const marketingPages = [
-    {
-      category: "Produit",
-      items: [
-        { href: "/marketing", label: "Présentation", icon: Megaphone, desc: "Vue d'ensemble" },
-        { href: "/marketing/features", label: "Fonctionnalités", icon: Zap, desc: "Toutes les features" },
-      ],
-    },
-    {
-      category: "Démarrer",
-      items: [
-        { href: "/marketing/register", label: "Essai gratuit", icon: Sparkles, desc: "14 jours offerts" },
-      ],
-    },
-    {
-      category: "Développement",
-      items: [
-        { href: "/marketing/roadmap", label: "Roadmap", icon: TrendingUp, desc: "Vision produit" },
-        { href: "/marketing/backlog", label: "Backlog", icon: FileText, desc: "Features à venir" },
-      ],
-    },
-  ];
-
-  // Menu Finance - organisé par catégories
-  const financePages = [
-    // PRODUIT
-    {
-      category: "Produit",
-      items: [
-        {
-          href: "/finance",
-          label: "Présentation",
-          icon: BarChart3,
-          desc: "Vue d'ensemble",
-        },
-        {
-          href: "/finance/features",
-          label: "Fonctionnalités",
-          icon: Zap,
-          desc: "Toutes les features",
-        },
-        {
-          href: "/finance/templates",
-          label: "Templates Métiers",
-          icon: Briefcase,
-          desc: "Agences, Cabinets, Startups",
-        },
-      ],
-    },
-    // SOLUTIONS
-    {
-      category: "Solutions",
-      items: [
-        {
-          href: "/finance/tpe",
-          label: "Guide TPE",
-          icon: GraduationCap,
-          desc: "Pour les TPE",
-        },
-        {
-          href: "/finance/compare",
-          label: "Comparaison",
-          icon: TrendingUp,
-          desc: "vs Alternatives",
-        },
-      ],
-    },
-    // TARIFS & CLIENTS
-    {
-      category: "Tarifs & Clients",
-      items: [
-        {
-          href: "/finance/pricing",
-          label: "Tarifs",
-          icon: DollarSign,
-          desc: "Plans & pricing",
-        },
-        {
-          href: "/finance/customers",
-          label: "Témoignages",
-          icon: Users,
-          desc: "Retours clients",
-        },
-      ],
-    },
-    // DÉVELOPPEMENT
-    {
-      category: "Développement",
-      items: [
-        {
-          href: "/finance/backlog",
-          label: "Backlog Produit",
-          icon: FileText,
-          desc: "Features à venir",
-        },
-      ],
-    },
-    // RESSOURCES
-    {
-      category: "Ressources",
-      items: [
-        {
-          href: "/finance/docs",
-          label: "Documentation",
-          icon: Book,
-          desc: "Guides & tutoriels",
-        },
-        {
-          href: "/finance/faq",
-          label: "FAQ",
-          icon: MessageCircle,
-          desc: "Questions fréquentes",
-        },
-      ],
-    },
-    // ENTREPRISE
-    {
-      category: "Entreprise",
-      items: [
-        {
-          href: "/finance/about",
-          label: "À propos",
-          icon: Building2,
-          desc: "Notre mission",
-        },
-        {
-          href: "/finance/roadmap",
-          label: "Roadmap 2026",
-          icon: TrendingUp,
-          desc: "Vision & expansion",
-        },
-      ],
-    },
-  ];
+  const [resourcesDropdown, setResourcesDropdown] = useState(false);
 
 
   return (
@@ -266,204 +111,15 @@ export default function Header() {
                         </Link>
                       ))}
                     </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Finance Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setFinanceDropdown(true)}
-              onMouseLeave={() => setFinanceDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  pathname.startsWith("/finance")
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                Finance
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${financeDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {financeDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[600px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
-                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
+                    <div className="mt-3 border-t border-white/10 pt-3">
                       <Link
-                        href="/finance"
-                        className="flex items-center gap-2 text-sm font-semibold text-emerald-400 hover:text-emerald-300"
+                        href="/modules"
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
                       >
-                        <Image
-                          src="/logos/icon-finance.svg"
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                        Quelyos Finance
+                        <ArrowRight className="h-4 w-4" />
+                        Voir tous les modules
                       </Link>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {financePages.map((section) => (
-                        <div key={section.category}>
-                          <div className="mb-2 px-3">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                              {section.category}
-                            </p>
-                          </div>
-                          <div className="space-y-1">
-                            {section.items.map((page) => {
-                              const isExternal = "external" in page && page.external;
-                              const LinkComponent = isExternal ? "a" : Link;
-                              return (
-                                <LinkComponent
-                                  key={page.href}
-                                  href={page.href}
-                                  {...(isExternal
-                                    ? { target: "_blank", rel: "noopener noreferrer" }
-                                    : {})}
-                                  className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                                >
-                                  <page.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
-                                  <div>
-                                    <p className="text-sm font-medium text-white">
-                                      {page.label}
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                      {page.desc}
-                                    </p>
-                                  </div>
-                                </LinkComponent>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Boutique Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setEcommerceDropdown(true)}
-              onMouseLeave={() => setEcommerceDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  pathname.startsWith("/ecommerce")
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                Boutique
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${ecommerceDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {ecommerceDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[280px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
-                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
-                      <Link
-                        href="/ecommerce"
-                        className="flex items-center gap-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300"
-                      >
-                        <Store className="h-4 w-4" />
-                        Quelyos Boutique
-                      </Link>
-                    </div>
-                    {ecommercePages.map((section) => (
-                      <div key={section.category} className="mb-3">
-                        <div className="mb-2 px-3">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            {section.category}
-                          </p>
-                        </div>
-                        <div className="space-y-1">
-                          {section.items.map((page) => (
-                            <Link
-                              key={page.href}
-                              href={page.href}
-                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                            >
-                              <page.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-400" />
-                              <div>
-                                <p className="text-sm font-medium text-white">{page.label}</p>
-                                <p className="text-xs text-slate-400">{page.desc}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Marketing Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setMarketingDropdown(true)}
-              onMouseLeave={() => setMarketingDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  pathname.startsWith("/marketing")
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                Marketing
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${marketingDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {marketingDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[280px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
-                    <div className="mb-3 border-b border-white/10 px-3 pb-2">
-                      <Link
-                        href="/marketing"
-                        className="flex items-center gap-2 text-sm font-semibold text-fuchsia-400 hover:text-fuchsia-300"
-                      >
-                        <Megaphone className="h-4 w-4" />
-                        Quelyos Marketing
-                      </Link>
-                    </div>
-                    {marketingPages.map((section) => (
-                      <div key={section.category} className="mb-3">
-                        <div className="mb-2 px-3">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            {section.category}
-                          </p>
-                        </div>
-                        <div className="space-y-1">
-                          {section.items.map((page) => (
-                            <Link
-                              key={page.href}
-                              href={page.href}
-                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                            >
-                              <page.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-fuchsia-400" />
-                              <div>
-                                <p className="text-sm font-medium text-white">{page.label}</p>
-                                <p className="text-xs text-slate-400">{page.desc}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
               )}
@@ -479,6 +135,45 @@ export default function Header() {
             >
               Tarifs
             </Link>
+
+            {/* Ressources Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setResourcesDropdown(true)}
+              onMouseLeave={() => setResourcesDropdown(false)}
+            >
+              <button
+                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all text-slate-300 hover:bg-white/5 hover:text-white`}
+              >
+                Ressources
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${resourcesDropdown ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {resourcesDropdown && (
+                <div className="absolute left-0 top-full pt-2">
+                  <div className="w-[280px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
+                    <div className="space-y-1">
+                      {resourcesNav.map((res) => (
+                        <Link
+                          key={res.id}
+                          href={res.href}
+                          className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                        >
+                          <res.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${res.color}`} />
+                          <div>
+                            <p className="text-sm font-medium text-white">{res.name}</p>
+                            <p className="text-xs text-slate-400">{res.tagline}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               href="/contact"
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
@@ -551,6 +246,14 @@ export default function Header() {
                     </Link>
                   ))}
                 </div>
+                <Link
+                  href="/modules"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-3 flex items-center gap-2 text-sm font-medium text-indigo-400"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  Voir tous les modules
+                </Link>
               </div>
 
               <Link
@@ -560,6 +263,28 @@ export default function Header() {
               >
                 Tarifs
               </Link>
+
+              {/* Ressources Section Mobile */}
+              <div className="rounded-lg bg-white/5 p-3">
+                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-blue-400">
+                  <Book className="h-4 w-4" />
+                  Ressources
+                </p>
+                <div className="space-y-2">
+                  {resourcesNav.map((res) => (
+                    <Link
+                      key={res.id}
+                      href={res.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+                    >
+                      <res.icon className={`h-4 w-4 ${res.color}`} />
+                      {res.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
