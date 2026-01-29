@@ -697,6 +697,7 @@
             <field name="is_published">True</field>
             <field name="x_is_bestseller">True</field>
             <field name="x_is_featured">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&amp;q=80</field>
             <field name="description_sale">T-shirt classique en coton 100% bio. Coupe droite confortable, col rond renforce. Parfait pour un style decontracte au quotidien.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Coton biologique&lt;/li&gt;
@@ -734,6 +735,7 @@
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
             <field name="x_is_featured">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1625910513413-5fc45c14e78c?w=800&amp;q=80</field>
             <field name="description_sale">Polo elegant en pique de coton premium. Col classique avec 3 boutons. Logo brode discret. Ideal pour le bureau ou les sorties decontractees.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 95% Coton, 5% Elasthanne&lt;/li&gt;
@@ -769,6 +771,7 @@
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
             <field name="x_is_new">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&amp;q=80</field>
             <field name="description_sale">Chemise Oxford intemporelle en coton. Coupe regular avec col button-down. Tissu leger et respirant, parfaite pour toutes les saisons.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Coton Oxford&lt;/li&gt;
@@ -806,6 +809,7 @@
             <field name="x_is_bestseller">True</field>
             <field name="x_is_trending">True</field>
             <field name="x_trending_score">95</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&amp;q=80</field>
             <field name="description_sale">Jean slim en denim stretch pour un confort optimal. Coupe moderne ajustee avec elasticite. 5 poches classiques, finitions soignees.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 98% Coton, 2% Elasthanne&lt;/li&gt;
@@ -840,6 +844,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=800&amp;q=80</field>
             <field name="description_sale">Veste en jean classique indémodable. Coupe trucker avec boutons metalliques. Poches poitrine et laterales. Un essentiel du vestiaire masculin.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Coton Denim&lt;/li&gt;
@@ -876,6 +881,7 @@
             <field name="is_published">True</field>
             <field name="x_is_trending">True</field>
             <field name="x_trending_score">88</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=800&amp;q=80</field>
             <field name="description_sale">Sneakers urbaines au design contemporain. Semelle EVA ultra-legere et confortable. Tige en cuir et textile respirant. Style polyvalent ville.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Tige: Cuir + Mesh respirant&lt;/li&gt;
@@ -910,6 +916,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&amp;q=80</field>
             <field name="description_sale">Ceinture en cuir veritable de qualite premium. Boucle metal brossee elegante. Finitions soignees pour un look raffine.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: Cuir de vachette 100%&lt;/li&gt;
@@ -939,6 +946,7 @@
             <field name="is_published">True</field>
             <field name="x_is_new">True</field>
             <field name="x_is_featured">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=800&amp;q=80</field>
             <field name="description_sale">Blouse fluide et elegante en viscose. Coupe ample et feminine avec manches 3/4. Col V flatteuse. Parfaite du bureau aux sorties.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Viscose&lt;/li&gt;
@@ -976,6 +984,7 @@
             <field name="x_is_featured">True</field>
             <field name="x_is_trending">True</field>
             <field name="x_trending_score">92</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&amp;q=80</field>
             <field name="description_sale">Robe d'ete legere et feminime. Imprime floral exclusif, coupe evasee flatteuse. Bretelles ajustables, longueur midi. Incontournable de la saison.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Viscose&lt;/li&gt;
@@ -1006,6 +1015,7 @@
             <field name="default_code">JUP-PLI-001</field>
             <field name="categ_id" ref="categ_femme_jupes"/>
             <field name="list_price">99.00</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1583496661160-fb5886a0uj06?w=800&amp;q=80</field>
             <field name="type">consu</field>
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
@@ -1044,6 +1054,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&amp;q=80</field>
             <field name="description_sale">Pantalon palazzo taille haute avec jambes larges et fluides. Coupe flatteuse qui allonge la silhouette. Confort absolu toute la journee.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 95% Polyester, 5% Elasthanne&lt;/li&gt;
@@ -1078,6 +1089,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&amp;q=80</field>
             <field name="description_sale">Sandales a talon elegantes en cuir. Talon bloc stable de 7cm. Brides fines et rafinees. Parfaites pour les occasions speciales.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Tige: Cuir veritable&lt;/li&gt;
@@ -1113,6 +1125,7 @@
             <field name="is_published">True</field>
             <field name="x_is_bestseller">True</field>
             <field name="x_is_featured">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&amp;q=80</field>
             <field name="description_sale">Sac a main en cuir veritable de qualite superieure. Design intemporel avec compartiments pratiques. Bandouliere amovible incluse.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Materiau: Cuir de vachette pleine fleur&lt;/li&gt;
@@ -1141,6 +1154,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&amp;q=80</field>
             <field name="description_sale">Echarpe luxueuse en soie veritable. Imprime exclusif aux couleurs vibrantes. Se porte de multiples facons : cou, cheveux, sac.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Soie naturelle&lt;/li&gt;
@@ -1170,6 +1184,7 @@
             <field name="is_published">True</field>
             <field name="x_is_trending">True</field>
             <field name="x_trending_score">85</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&amp;q=80</field>
             <field name="description_sale">Sweat a capuche technique pour le sport. Tissu respirant qui evacue l'humidite. Coupe ajustee pour liberte de mouvement.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 88% Polyester, 12% Elasthanne&lt;/li&gt;
@@ -1204,6 +1219,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&amp;q=80</field>
             <field name="description_sale">Legging taille haute compression legere. Tissu technique anti-transpiration. Maintien optimal pour tous types d'entrainement.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 80% Nylon, 20% Elasthanne&lt;/li&gt;
@@ -1242,6 +1258,7 @@
             <field name="x_is_featured">True</field>
             <field name="x_is_trending">True</field>
             <field name="x_trending_score">98</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&amp;q=80</field>
             <field name="description_sale">Chaussures running haute performance. Amorti reactif et retour d'energie optimal. Tige legere et respirante. Pour coureurs exigeants.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Tige: Mesh ingeniere ultra-respirant&lt;/li&gt;
@@ -1276,6 +1293,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=800&amp;q=80</field>
             <field name="description_sale">T-shirt fun pour garcon avec imprime colore. Coton bio doux et confortable. Coupe droite facile a enfiler.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Coton bio certifie GOTS&lt;/li&gt;
@@ -1310,6 +1328,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=800&amp;q=80</field>
             <field name="description_sale">Adorable robe fleurie pour petite fille. Coton leger et confortable. Jupe ample qui virevolte. Parfaite pour les beaux jours.</field>
             <field name="x_technical_description">&lt;ul&gt;
                 &lt;li&gt;Composition: 100% Coton&lt;/li&gt;
@@ -1346,6 +1365,7 @@
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
             <field name="x_is_featured">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1544923246-77307dd628b7?w=800&amp;q=80</field>
             <field name="x_offer_end_date" eval="(DateTime.today() + timedelta(days=30)).strftime('%Y-%m-%d 23:59:59')"/>
             <field name="description_sale">Manteau elegant en laine melangee. Coupe droite classique avec col revers. Doublure satin pour confort optimal. Piece maitresse de l'hiver.</field>
             <field name="x_technical_description">&lt;ul&gt;
@@ -1381,6 +1401,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&amp;q=80</field>
             <field name="description_sale">Casquette baseball classique en coton. Visiere pre-courbee. Fermeture ajustable a l'arriere. Style intemporel et decontracte.</field>
         </record>
 
@@ -1402,6 +1423,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&amp;q=80</field>
             <field name="description_sale">Pack de 3 paires de chaussettes sport. Coton technique anti-transpiration. Renfort talon et pointe. Confort toute la journee.</field>
         </record>
 
@@ -1423,6 +1445,7 @@
             <field name="sale_ok">True</field>
             <field name="purchase_ok">True</field>
             <field name="is_published">True</field>
+            <field name="x_image_external_url">https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&amp;q=80</field>
             <field name="description_sale">Spray protecteur et nettoyant pour chaussures. Formule all-in-one qui nettoie, protege et ravive les couleurs. Compatible cuir et textile.</field>
         </record>
 

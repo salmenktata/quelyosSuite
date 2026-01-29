@@ -55,7 +55,8 @@ export const DynamicMenu: React.FC<DynamicMenuProps> = ({
   const filterByVisibility = (items: MenuItem[]): MenuItem[] => {
     return items
       .filter((item) => {
-        if (item.visibility === 'all') return true;
+        // Par défaut, visible pour tous si visibility non défini
+        if (!item.visibility || item.visibility === 'all') return true;
         if (item.visibility === 'authenticated' && isAuthenticated) return true;
         if (item.visibility === 'guest' && !isAuthenticated) return true;
         return false;
@@ -163,17 +164,23 @@ const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
   `.trim();
 
   const linkProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {};
-  if (item.open_in_new_tab) {
+  // Support both open_in_new_tab and open_new_tab (API)
+  if (item.open_in_new_tab || item.open_new_tab) {
     linkProps.target = '_blank';
     linkProps.rel = 'noopener noreferrer';
   }
 
+  // Utiliser label (API) ou name (fallback)
+  const displayName = item.label || item.name || '';
+  // Icon peut être false depuis l'API (Odoo retourne false pour les champs vides)
+  const hasIcon = showIcons && typeof item.icon === 'string' && item.icon.length > 0;
+
   const content = (
     <>
-      {showIcons && item.icon && (
-        <span className="mr-2" dangerouslySetInnerHTML={{ __html: sanitizeSvg(item.icon) }} />
+      {hasIcon && (
+        <span className="mr-2" dangerouslySetInnerHTML={{ __html: sanitizeSvg(item.icon as string) }} />
       )}
-      {item.name}
+      {displayName}
       {hasChildren && (
         <svg
           className={`w-4 h-4 ml-1 transition-transform ${isOpen ? 'rotate-180' : ''}`}

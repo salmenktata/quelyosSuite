@@ -53,10 +53,10 @@ class Testimonial(models.Model):
         self.ensure_one()
         return {
             'id': self.id,
-            'customerName': self.customer_name,
-            'customerTitle': self.customer_title,
-            'customerCompany': self.customer_company,
-            'avatarUrl': self.get_avatar_url(),
+            'authorName': self.customer_name,
+            'authorTitle': self.customer_title,
+            'authorCompany': self.customer_company,
+            'authorPhoto': self.get_avatar_url(),
             'content': self.content,
             'rating': self.rating,
             'isPublished': self.is_published,

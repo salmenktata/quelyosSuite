@@ -247,7 +247,7 @@ class QuelyosAPI(BaseController):
                 }
                 for tag in product.product_tag_ids
             ] if product.product_tag_ids else [],
-            'image': f'/web/image/product.template/{product.id}/image_1920' if product.image_1920 else None,
+            'image': f'/web/image/product.template/{product.id}/image_1920' if product.image_1920 else (getattr(product, 'x_image_external_url', None) or None),
             'images': images,
             'slug': product_slug,
             'qty_available': qty,
@@ -1492,7 +1492,7 @@ class QuelyosAPI(BaseController):
                         'name': new_product.name,
                         'price': new_product.list_price,
                         'default_code': new_product.default_code or '',
-                        'image': f'/web/image/product.template/{new_product.id}/image_1920' if new_product.image_1920 else None,
+                        'image': f'/web/image/product.template/{new_product.id}/image_1920' if new_product.image_1920 else (getattr(new_product, 'x_image_external_url', None) or None),
                         'slug': new_product.name.lower().replace(' ', '-'),
                         'category': {
                             'id': new_product.categ_id.id,
@@ -2367,11 +2367,9 @@ class QuelyosAPI(BaseController):
 
             return {
                 'success': True,
-                'data': {
-                    'attribute_lines': attribute_lines,
-                    'variants': variants,
-                    'variant_count': len(variants)
-                }
+                'attributes': attribute_lines,
+                'variants': variants,
+                'variant_count': len(variants)
             }
 
         except Exception as e:

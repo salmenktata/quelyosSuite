@@ -99,10 +99,10 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
       {/* Auteur */}
       <div className="flex items-center gap-3">
-        {testimonial.authorPhoto ? (
+        {testimonial.avatarUrl ? (
           <Image
-            src={getProxiedImageUrl(testimonial.authorPhoto)}
-            alt={testimonial.authorName}
+            src={getProxiedImageUrl(testimonial.avatarUrl)}
+            alt={testimonial.customerName || 'Auteur'}
             width={48}
             height={48}
             className="w-12 h-12 rounded-full object-cover"
@@ -110,15 +110,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         ) : (
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-primary font-semibold text-lg">
-              {testimonial.authorName.charAt(0)}
+              {testimonial.customerName?.charAt(0) || '?'}
             </span>
           </div>
         )}
         <div>
-          <p className="font-semibold text-gray-900 dark:text-white">{testimonial.authorName}</p>
-          {(testimonial.authorTitle || testimonial.authorCompany) && (
+          <p className="font-semibold text-gray-900 dark:text-white">{testimonial.customerName || 'Anonyme'}</p>
+          {(testimonial.customerTitle || testimonial.customerCompany) && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {[testimonial.authorTitle, testimonial.authorCompany].filter(Boolean).join(' - ')}
+              {[testimonial.customerTitle, testimonial.customerCompany].filter(Boolean).join(' - ')}
             </p>
           )}
         </div>

@@ -1,120 +1,454 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Menu Header Principal -->
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- MENU HEADER PRINCIPAL - Navigation Boutique Mode -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
         <record id="menu_header_main" model="quelyos.menu">
             <field name="name">Menu Header Principal</field>
             <field name="code">header</field>
-            <field name="label">Menu</field>
+            <field name="label">Navigation</field>
             <field name="url">/</field>
             <field name="sequence">1</field>
             <field name="active" eval="True"/>
         </record>
 
-        <!-- Items Header -->
-        <record id="menu_header_item_accueil" model="quelyos.menu">
+        <!-- Accueil -->
+        <record id="menu_header_accueil" model="quelyos.menu">
             <field name="name">Accueil</field>
             <field name="code">header_accueil</field>
             <field name="label">Accueil</field>
             <field name="url">/</field>
+            <field name="icon">Home</field>
             <field name="parent_id" ref="menu_header_main"/>
             <field name="sequence">10</field>
         </record>
 
-        <record id="menu_header_item_products" model="quelyos.menu">
-            <field name="name">Produits</field>
-            <field name="code">header_products</field>
-            <field name="label">Produits</field>
-            <field name="url">/products</field>
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- HOMME - Menu avec sous-catégories -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_header_homme" model="quelyos.menu">
+            <field name="name">Homme</field>
+            <field name="code">header_homme</field>
+            <field name="label">Homme</field>
+            <field name="url">/products?category=homme</field>
             <field name="parent_id" ref="menu_header_main"/>
             <field name="sequence">20</field>
         </record>
 
-        <record id="menu_header_item_about" model="quelyos.menu">
-            <field name="name">À propos</field>
-            <field name="code">header_about</field>
-            <field name="label">À propos</field>
-            <field name="url">/about</field>
+        <record id="menu_header_homme_tshirts" model="quelyos.menu">
+            <field name="name">T-shirts &amp; Polos Homme</field>
+            <field name="code">header_homme_tshirts</field>
+            <field name="label">T-shirts &amp; Polos</field>
+            <field name="url">/products?category=homme-tshirts</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_header_homme_chemises" model="quelyos.menu">
+            <field name="name">Chemises Homme</field>
+            <field name="code">header_homme_chemises</field>
+            <field name="label">Chemises</field>
+            <field name="url">/products?category=homme-chemises</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_header_homme_pantalons" model="quelyos.menu">
+            <field name="name">Pantalons &amp; Jeans Homme</field>
+            <field name="code">header_homme_pantalons</field>
+            <field name="label">Pantalons &amp; Jeans</field>
+            <field name="url">/products?category=homme-pantalons</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_header_homme_vestes" model="quelyos.menu">
+            <field name="name">Vestes &amp; Manteaux Homme</field>
+            <field name="code">header_homme_vestes</field>
+            <field name="label">Vestes &amp; Manteaux</field>
+            <field name="url">/products?category=homme-vestes</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_header_homme_chaussures" model="quelyos.menu">
+            <field name="name">Chaussures Homme</field>
+            <field name="code">header_homme_chaussures</field>
+            <field name="label">Chaussures</field>
+            <field name="url">/products?category=homme-chaussures</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="menu_header_homme_accessoires" model="quelyos.menu">
+            <field name="name">Accessoires Homme</field>
+            <field name="code">header_homme_accessoires</field>
+            <field name="label">Accessoires</field>
+            <field name="url">/products?category=homme-accessoires</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="menu_header_homme_all" model="quelyos.menu">
+            <field name="name">Voir tout Homme</field>
+            <field name="code">header_homme_all</field>
+            <field name="label">Voir toute la collection</field>
+            <field name="url">/products?category=homme</field>
+            <field name="css_class">font-semibold text-primary</field>
+            <field name="parent_id" ref="menu_header_homme"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- FEMME - Menu avec sous-catégories -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_header_femme" model="quelyos.menu">
+            <field name="name">Femme</field>
+            <field name="code">header_femme</field>
+            <field name="label">Femme</field>
+            <field name="url">/products?category=femme</field>
             <field name="parent_id" ref="menu_header_main"/>
             <field name="sequence">30</field>
         </record>
 
-        <record id="menu_header_item_contact" model="quelyos.menu">
-            <field name="name">Contact</field>
-            <field name="code">header_contact</field>
-            <field name="label">Contact</field>
-            <field name="url">/contact</field>
+        <record id="menu_header_femme_tops" model="quelyos.menu">
+            <field name="name">Tops &amp; Blouses Femme</field>
+            <field name="code">header_femme_tops</field>
+            <field name="label">Tops &amp; Blouses</field>
+            <field name="url">/products?category=femme-tops</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_header_femme_robes" model="quelyos.menu">
+            <field name="name">Robes Femme</field>
+            <field name="code">header_femme_robes</field>
+            <field name="label">Robes</field>
+            <field name="url">/products?category=femme-robes</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_header_femme_jupes" model="quelyos.menu">
+            <field name="name">Jupes &amp; Shorts Femme</field>
+            <field name="code">header_femme_jupes</field>
+            <field name="label">Jupes &amp; Shorts</field>
+            <field name="url">/products?category=femme-jupes</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_header_femme_pantalons" model="quelyos.menu">
+            <field name="name">Pantalons Femme</field>
+            <field name="code">header_femme_pantalons</field>
+            <field name="label">Pantalons</field>
+            <field name="url">/products?category=femme-pantalons</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_header_femme_chaussures" model="quelyos.menu">
+            <field name="name">Chaussures Femme</field>
+            <field name="code">header_femme_chaussures</field>
+            <field name="label">Chaussures</field>
+            <field name="url">/products?category=femme-chaussures</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="menu_header_femme_accessoires" model="quelyos.menu">
+            <field name="name">Accessoires Femme</field>
+            <field name="code">header_femme_accessoires</field>
+            <field name="label">Sacs &amp; Accessoires</field>
+            <field name="url">/products?category=femme-accessoires</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="menu_header_femme_all" model="quelyos.menu">
+            <field name="name">Voir tout Femme</field>
+            <field name="code">header_femme_all</field>
+            <field name="label">Voir toute la collection</field>
+            <field name="url">/products?category=femme</field>
+            <field name="css_class">font-semibold text-primary</field>
+            <field name="parent_id" ref="menu_header_femme"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- ENFANT - Menu avec sous-catégories -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_header_enfant" model="quelyos.menu">
+            <field name="name">Enfant</field>
+            <field name="code">header_enfant</field>
+            <field name="label">Enfant</field>
+            <field name="url">/products?category=enfant</field>
             <field name="parent_id" ref="menu_header_main"/>
             <field name="sequence">40</field>
         </record>
 
-        <!-- Menu Footer Quick Links -->
-        <record id="menu_footer_quick" model="quelyos.menu">
-            <field name="name">Footer - Liens Rapides</field>
-            <field name="code">footer_quick</field>
-            <field name="label">Liens Rapides</field>
-            <field name="url">#</field>
-            <field name="sequence">2</field>
+        <record id="menu_header_enfant_garcon" model="quelyos.menu">
+            <field name="name">Garcon</field>
+            <field name="code">header_enfant_garcon</field>
+            <field name="label">Garcon</field>
+            <field name="url">/products?category=enfant-garcon</field>
+            <field name="parent_id" ref="menu_header_enfant"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_header_enfant_fille" model="quelyos.menu">
+            <field name="name">Fille</field>
+            <field name="code">header_enfant_fille</field>
+            <field name="label">Fille</field>
+            <field name="url">/products?category=enfant-fille</field>
+            <field name="parent_id" ref="menu_header_enfant"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_header_enfant_all" model="quelyos.menu">
+            <field name="name">Voir tout Enfant</field>
+            <field name="code">header_enfant_all</field>
+            <field name="label">Voir toute la collection</field>
+            <field name="url">/products?category=enfant</field>
+            <field name="css_class">font-semibold text-primary</field>
+            <field name="parent_id" ref="menu_header_enfant"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- SPORT - Menu avec sous-catégories -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_header_sport" model="quelyos.menu">
+            <field name="name">Sport</field>
+            <field name="code">header_sport</field>
+            <field name="label">Sport &amp; Fitness</field>
+            <field name="url">/products?category=sport</field>
+            <field name="parent_id" ref="menu_header_main"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="menu_header_sport_vetements" model="quelyos.menu">
+            <field name="name">Vetements Sport</field>
+            <field name="code">header_sport_vetements</field>
+            <field name="label">Vetements Sport</field>
+            <field name="url">/products?category=sport-vetements</field>
+            <field name="parent_id" ref="menu_header_sport"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_header_sport_chaussures" model="quelyos.menu">
+            <field name="name">Chaussures Sport</field>
+            <field name="code">header_sport_chaussures</field>
+            <field name="label">Chaussures Sport</field>
+            <field name="url">/products?category=sport-chaussures</field>
+            <field name="parent_id" ref="menu_header_sport"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_header_sport_all" model="quelyos.menu">
+            <field name="name">Voir tout Sport</field>
+            <field name="code">header_sport_all</field>
+            <field name="label">Voir toute la collection</field>
+            <field name="url">/products?category=sport</field>
+            <field name="css_class">font-semibold text-primary</field>
+            <field name="parent_id" ref="menu_header_sport"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- COLLECTIONS SPECIALES - Nouveautés, Promos, Packs -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_header_nouveautes" model="quelyos.menu">
+            <field name="name">Nouveautes</field>
+            <field name="code">header_nouveautes</field>
+            <field name="label">Nouveautes</field>
+            <field name="url">/collections/new-arrivals</field>
+            <field name="icon">Sparkles</field>
+            <field name="css_class">text-green-600</field>
+            <field name="parent_id" ref="menu_header_main"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="menu_header_promos" model="quelyos.menu">
+            <field name="name">Promotions</field>
+            <field name="code">header_promos</field>
+            <field name="label">Promos</field>
+            <field name="url">/collections/promotions</field>
+            <field name="icon">Percent</field>
+            <field name="css_class">text-red-600 font-bold</field>
+            <field name="parent_id" ref="menu_header_main"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="menu_header_packs" model="quelyos.menu">
+            <field name="name">Packs</field>
+            <field name="code">header_packs</field>
+            <field name="label">Packs &amp; Offres</field>
+            <field name="url">/bundles</field>
+            <field name="icon">Gift</field>
+            <field name="parent_id" ref="menu_header_main"/>
+            <field name="sequence">80</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- FOOTER - BOUTIQUE (Catégories principales) -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_footer_boutique" model="quelyos.menu">
+            <field name="name">Footer - Boutique</field>
+            <field name="code">footer_boutique</field>
+            <field name="label">Boutique</field>
+            <field name="url">/products</field>
+            <field name="sequence">10</field>
             <field name="active" eval="True"/>
         </record>
 
-        <record id="menu_footer_quick_search" model="quelyos.menu">
-            <field name="name">Recherche</field>
-            <field name="code">footer_quick_search</field>
-            <field name="label">Recherche</field>
-            <field name="url">/products</field>
-            <field name="parent_id" ref="menu_footer_quick"/>
+        <record id="menu_footer_boutique_homme" model="quelyos.menu">
+            <field name="name">Footer Homme</field>
+            <field name="code">footer_boutique_homme</field>
+            <field name="label">Homme</field>
+            <field name="url">/products?category=homme</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
             <field name="sequence">10</field>
         </record>
 
-        <record id="menu_footer_quick_cart" model="quelyos.menu">
-            <field name="name">Panier</field>
-            <field name="code">footer_quick_cart</field>
-            <field name="label">Panier</field>
-            <field name="url">/cart</field>
-            <field name="parent_id" ref="menu_footer_quick"/>
+        <record id="menu_footer_boutique_femme" model="quelyos.menu">
+            <field name="name">Footer Femme</field>
+            <field name="code">footer_boutique_femme</field>
+            <field name="label">Femme</field>
+            <field name="url">/products?category=femme</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
             <field name="sequence">20</field>
         </record>
 
-        <record id="menu_footer_quick_wishlist" model="quelyos.menu">
-            <field name="name">Liste de souhaits</field>
-            <field name="code">footer_quick_wishlist</field>
-            <field name="label">Liste de souhaits</field>
-            <field name="url">/wishlist</field>
-            <field name="parent_id" ref="menu_footer_quick"/>
+        <record id="menu_footer_boutique_enfant" model="quelyos.menu">
+            <field name="name">Footer Enfant</field>
+            <field name="code">footer_boutique_enfant</field>
+            <field name="label">Enfant</field>
+            <field name="url">/products?category=enfant</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
             <field name="sequence">30</field>
         </record>
 
-        <record id="menu_footer_quick_compare" model="quelyos.menu">
-            <field name="name">Comparateur</field>
-            <field name="code">footer_quick_compare</field>
-            <field name="label">Comparateur</field>
-            <field name="url">/compare</field>
-            <field name="parent_id" ref="menu_footer_quick"/>
+        <record id="menu_footer_boutique_sport" model="quelyos.menu">
+            <field name="name">Footer Sport</field>
+            <field name="code">footer_boutique_sport</field>
+            <field name="label">Sport &amp; Fitness</field>
+            <field name="url">/products?category=sport</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
             <field name="sequence">40</field>
         </record>
 
-        <!-- Menu Footer Service Client -->
+        <record id="menu_footer_boutique_promos" model="quelyos.menu">
+            <field name="name">Footer Promos</field>
+            <field name="code">footer_boutique_promos</field>
+            <field name="label">Promotions</field>
+            <field name="url">/collections/promotions</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="menu_footer_boutique_nouveautes" model="quelyos.menu">
+            <field name="name">Footer Nouveautes</field>
+            <field name="code">footer_boutique_nouveautes</field>
+            <field name="label">Nouveautes</field>
+            <field name="url">/collections/new-arrivals</field>
+            <field name="parent_id" ref="menu_footer_boutique"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- FOOTER - MON COMPTE (Espace client) -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_footer_compte" model="quelyos.menu">
+            <field name="name">Footer - Mon Compte</field>
+            <field name="code">footer_compte</field>
+            <field name="label">Mon Compte</field>
+            <field name="url">/account</field>
+            <field name="sequence">20</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="menu_footer_compte_connexion" model="quelyos.menu">
+            <field name="name">Footer Connexion</field>
+            <field name="code">footer_compte_connexion</field>
+            <field name="label">Connexion</field>
+            <field name="url">/login</field>
+            <field name="parent_id" ref="menu_footer_compte"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_footer_compte_inscription" model="quelyos.menu">
+            <field name="name">Footer Inscription</field>
+            <field name="code">footer_compte_inscription</field>
+            <field name="label">Creer un compte</field>
+            <field name="url">/register</field>
+            <field name="parent_id" ref="menu_footer_compte"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_footer_compte_commandes" model="quelyos.menu">
+            <field name="name">Footer Mes Commandes</field>
+            <field name="code">footer_compte_commandes</field>
+            <field name="label">Mes commandes</field>
+            <field name="url">/account/orders</field>
+            <field name="requires_auth" eval="True"/>
+            <field name="parent_id" ref="menu_footer_compte"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_footer_compte_wishlist" model="quelyos.menu">
+            <field name="name">Footer Wishlist</field>
+            <field name="code">footer_compte_wishlist</field>
+            <field name="label">Ma liste de souhaits</field>
+            <field name="url">/wishlist</field>
+            <field name="parent_id" ref="menu_footer_compte"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_footer_compte_fidelite" model="quelyos.menu">
+            <field name="name">Footer Fidelite</field>
+            <field name="code">footer_compte_fidelite</field>
+            <field name="label">Programme fidelite</field>
+            <field name="url">/account/loyalty</field>
+            <field name="requires_auth" eval="True"/>
+            <field name="parent_id" ref="menu_footer_compte"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- FOOTER - SERVICE CLIENT (Aide et support) -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
         <record id="menu_footer_service" model="quelyos.menu">
             <field name="name">Footer - Service Client</field>
             <field name="code">footer_service</field>
             <field name="label">Service Client</field>
-            <field name="url">#</field>
-            <field name="sequence">3</field>
+            <field name="url">/help</field>
+            <field name="sequence">30</field>
             <field name="active" eval="True"/>
         </record>
 
-        <record id="menu_footer_service_shipping" model="quelyos.menu">
-            <field name="name">Livraison</field>
-            <field name="code">footer_service_shipping</field>
-            <field name="label">Livraison &amp; Retours</field>
-            <field name="url">/shipping</field>
+        <record id="menu_footer_service_contact" model="quelyos.menu">
+            <field name="name">Footer Contact</field>
+            <field name="code">footer_service_contact</field>
+            <field name="label">Contactez-nous</field>
+            <field name="url">/contact</field>
             <field name="parent_id" ref="menu_footer_service"/>
             <field name="sequence">10</field>
         </record>
 
         <record id="menu_footer_service_faq" model="quelyos.menu">
-            <field name="name">FAQ</field>
+            <field name="name">Footer FAQ</field>
             <field name="code">footer_service_faq</field>
             <field name="label">FAQ</field>
             <field name="url">/faq</field>
@@ -122,22 +456,153 @@
             <field name="sequence">20</field>
         </record>
 
-        <record id="menu_footer_service_contact" model="quelyos.menu">
-            <field name="name">Contact</field>
-            <field name="code">footer_service_contact</field>
-            <field name="label">Contactez-nous</field>
-            <field name="url">/contact</field>
+        <record id="menu_footer_service_livraison" model="quelyos.menu">
+            <field name="name">Footer Livraison</field>
+            <field name="code">footer_service_livraison</field>
+            <field name="label">Livraison &amp; Retours</field>
+            <field name="url">/shipping</field>
             <field name="parent_id" ref="menu_footer_service"/>
             <field name="sequence">30</field>
         </record>
 
-        <record id="menu_footer_service_cgv" model="quelyos.menu">
-            <field name="name">CGV</field>
-            <field name="code">footer_service_cgv</field>
-            <field name="label">Conditions Générales</field>
-            <field name="url">/cgv</field>
+        <record id="menu_footer_service_guide" model="quelyos.menu">
+            <field name="name">Footer Guide des Tailles</field>
+            <field name="code">footer_service_guide</field>
+            <field name="label">Guide des tailles</field>
+            <field name="url">/size-guide</field>
             <field name="parent_id" ref="menu_footer_service"/>
             <field name="sequence">40</field>
         </record>
+
+        <record id="menu_footer_service_suivi" model="quelyos.menu">
+            <field name="name">Footer Suivi Commande</field>
+            <field name="code">footer_service_suivi</field>
+            <field name="label">Suivre ma commande</field>
+            <field name="url">/track-order</field>
+            <field name="parent_id" ref="menu_footer_service"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- FOOTER - INFORMATIONS (A propos et legal) -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_footer_infos" model="quelyos.menu">
+            <field name="name">Footer - Informations</field>
+            <field name="code">footer_infos</field>
+            <field name="label">Informations</field>
+            <field name="url">/about</field>
+            <field name="sequence">40</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="menu_footer_infos_about" model="quelyos.menu">
+            <field name="name">Footer A propos</field>
+            <field name="code">footer_infos_about</field>
+            <field name="label">A propos de nous</field>
+            <field name="url">/about</field>
+            <field name="parent_id" ref="menu_footer_infos"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_footer_infos_magasins" model="quelyos.menu">
+            <field name="name">Footer Nos Magasins</field>
+            <field name="code">footer_infos_magasins</field>
+            <field name="label">Nos magasins</field>
+            <field name="url">/stores</field>
+            <field name="parent_id" ref="menu_footer_infos"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_footer_infos_cgv" model="quelyos.menu">
+            <field name="name">Footer CGV</field>
+            <field name="code">footer_infos_cgv</field>
+            <field name="label">Conditions generales</field>
+            <field name="url">/legal/cgv</field>
+            <field name="parent_id" ref="menu_footer_infos"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_footer_infos_confidentialite" model="quelyos.menu">
+            <field name="name">Footer Confidentialite</field>
+            <field name="code">footer_infos_confidentialite</field>
+            <field name="label">Politique de confidentialite</field>
+            <field name="url">/legal/privacy</field>
+            <field name="parent_id" ref="menu_footer_infos"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_footer_infos_mentions" model="quelyos.menu">
+            <field name="name">Footer Mentions Legales</field>
+            <field name="code">footer_infos_mentions</field>
+            <field name="label">Mentions legales</field>
+            <field name="url">/legal</field>
+            <field name="parent_id" ref="menu_footer_infos"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- MENU MOBILE - Version simplifiée pour mobile -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="menu_mobile_main" model="quelyos.menu">
+            <field name="name">Menu Mobile</field>
+            <field name="code">mobile</field>
+            <field name="label">Menu</field>
+            <field name="url">/</field>
+            <field name="sequence">100</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="menu_mobile_accueil" model="quelyos.menu">
+            <field name="name">Mobile Accueil</field>
+            <field name="code">mobile_accueil</field>
+            <field name="label">Accueil</field>
+            <field name="url">/</field>
+            <field name="icon">Home</field>
+            <field name="parent_id" ref="menu_mobile_main"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_mobile_categories" model="quelyos.menu">
+            <field name="name">Mobile Categories</field>
+            <field name="code">mobile_categories</field>
+            <field name="label">Categories</field>
+            <field name="url">/categories</field>
+            <field name="icon">Grid</field>
+            <field name="parent_id" ref="menu_mobile_main"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="menu_mobile_promos" model="quelyos.menu">
+            <field name="name">Mobile Promos</field>
+            <field name="code">mobile_promos</field>
+            <field name="label">Promos</field>
+            <field name="url">/collections/promotions</field>
+            <field name="icon">Percent</field>
+            <field name="parent_id" ref="menu_mobile_main"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="menu_mobile_compte" model="quelyos.menu">
+            <field name="name">Mobile Compte</field>
+            <field name="code">mobile_compte</field>
+            <field name="label">Mon Compte</field>
+            <field name="url">/account</field>
+            <field name="icon">User</field>
+            <field name="parent_id" ref="menu_mobile_main"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="menu_mobile_panier" model="quelyos.menu">
+            <field name="name">Mobile Panier</field>
+            <field name="code">mobile_panier</field>
+            <field name="label">Panier</field>
+            <field name="url">/cart</field>
+            <field name="icon">ShoppingBag</field>
+            <field name="parent_id" ref="menu_mobile_main"/>
+            <field name="sequence">50</field>
+        </record>
+
     </data>
 </odoo>

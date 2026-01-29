@@ -86,3 +86,10 @@ class ProductTemplate(models.Model):
         default=0,
         help="Nombre de mentions sur les réseaux sociaux"
     )
+
+    # Image externe (Unsplash, Pexels, etc.)
+    x_image_external_url = fields.Char(
+        string='URL Image Externe',
+        size=500,
+        help="URL d'une image externe (Unsplash, Pexels). Utilisée si pas d'image binaire."
+    )

@@ -5,14 +5,17 @@
  */
 export interface MenuItem {
   id: number;
-  name: string;
+  name?: string;
+  label?: string;
   url: string;
-  link_type: 'url' | 'internal' | 'page' | 'category' | 'product';
-  icon?: string;
-  css_class?: string;
-  open_in_new_tab: boolean;
+  link_type?: 'url' | 'internal' | 'page' | 'category' | 'product';
+  icon?: string | boolean;
+  css_class?: string | boolean;
+  open_in_new_tab?: boolean;
+  open_new_tab?: boolean;
+  description?: string | boolean;
   highlight?: boolean;
-  visibility: 'all' | 'authenticated' | 'guest';
+  visibility?: 'all' | 'authenticated' | 'guest';
   children: MenuItem[];
 }
 

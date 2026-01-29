@@ -876,13 +876,15 @@ export interface BlogCategory {
 
 export interface Testimonial {
   id: number;
-  authorName: string;
-  authorTitle?: string;
-  authorCompany?: string;
-  authorPhoto?: string;
+  customerName: string;
+  customerTitle?: string | false;
+  customerCompany?: string | false;
+  avatarUrl?: string | null;
   content: string;
   rating: number;
   isFeatured: boolean;
+  isPublished?: boolean;
+  displayOn?: string;
 }
 
 export interface Collection {
