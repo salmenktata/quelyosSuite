@@ -9,15 +9,19 @@ function App() {
   const { isAuthenticated, isLoading } = useAuth()
   const location = useLocation()
 
-  // Rediriger vers /login si non authentifié et pas déjà sur /login
+  // TEMPORAIRE DEV: Désactiver redirection auto
   useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('[App] DEV MODE - Auth checks disabled')
+      return
+    }
     if (!isLoading && !isAuthenticated && location.pathname !== '/login') {
       window.location.href = '/login'
     }
   }, [isLoading, isAuthenticated, location.pathname])
 
   // Loading state pendant vérification auth
-  if (isLoading) {
+  if (isLoading && !import.meta.env.DEV) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
@@ -28,6 +32,9 @@ function App() {
     )
   }
 
+  // DEV: Laisser passer si dev mode
+  const canAccess = import.meta.env.DEV || isAuthenticated
+
   return (
     <ErrorBoundary>
       <Routes>
@@ -35,7 +42,7 @@ function App() {
         <Route
           path="/*"
           element={
-            isAuthenticated ? (
+            canAccess ? (
               <AuthenticatedApp />
             ) : (
               <Navigate to="/login" replace />

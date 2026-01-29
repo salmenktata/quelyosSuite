@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>GUIDE_QUELYOS_SUITE_FUSION_V3 (HTML)</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --ink: #111827;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --card: #f8fafc;
+        --blue-100: #e0f2fe;
+        --blue-200: #dbeafe;
+        --orange-100: #ffedd5;
+        --gray-100: #f3f4f6;
+        --red-100: #fee2e2;
+        --amber-100: #fef3c7;
+        --shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans",
+          sans-serif;
+        color: var(--ink);
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 35%, #ffffff 100%);
+        line-height: 1.55;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 40px 18px 80px;
+      }
+
+      header {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 26px 22px;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .meta {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 14px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #fff;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      nav.toc {
+        margin-top: 16px;
+        padding: 14px 14px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      nav.toc .toc-title {
+        margin: 0 0 10px;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      nav.toc ol {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 16px;
+        font-size: 13px;
+      }
+
+      section {
+        margin-top: 18px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+      h3 {
+        margin: 18px 0 8px;
+        font-size: 14px;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+
+      ul {
+        margin: 8px 0 12px;
+        padding-left: 18px;
+      }
+      li {
+        margin: 6px 0;
+      }
+
+      .callout {
+        border: 1px solid var(--line);
+        border-left-width: 6px;
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin: 12px 0;
+      }
+      .callout.note {
+        background: var(--amber-100);
+        border-left-color: #f59e0b;
+      }
+      .callout.warn {
+        background: var(--red-100);
+        border-left-color: #ef4444;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      pre {
+        margin: 10px 0 0;
+        padding: 12px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #0b1220;
+        color: #e5e7eb;
+        overflow: auto;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      .diagram {
+        margin: 10px 0 0;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        background: #fff;
+      }
+      .diagram .cap {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .diagram svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .k {
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .page-break {
+        display: block;
+        height: 0;
+        page-break-after: always;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+        header,
+        section {
+          box-shadow: none;
+        }
+        nav.toc ol {
+          grid-template-columns: 1fr;
+        }
+        a {
+          text-decoration: none !important;
+        }
+        .wrap {
+          max-width: none;
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="wrap">
+      <header>
+        <h1>GUIDE_QUELYOS_SUITE_FUSION_V3 (HTML)</h1>
+        <p class="subtitle">
+          Version detaillee et orientee schemas (production, multi-tenant, deploiement, operations).
+        </p>
+        <div class="meta">
+          <div><span class="k">Date:</span> 29 janvier 2026</div>
+          <div><span class="k">Base:</span> documentation du depot (pas de web, pas d'inference hors docs)</div>
+          <div><span class="k">Format:</span> HTML imprimable (Ctrl/Cmd+P -> Save as PDF)</div>
+          <div><span class="k">Ports fixes:</span> 3000 / 3001 / 5175 / 5176 / 8069</div>
+        </div>
+        <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px">
+          <span class="pill">Architecture</span>
+          <span class="pill">Multi-tenant</span>
+          <span class="pill">Deploiement</span>
+          <span class="pill">Backoffice</span>
+          <span class="pill">Super-admin</span>
+          <span class="pill">Monitoring</span>
+          <span class="pill">Commandes slash</span>
+        </div>
+
+        <div class="callout note" style="margin-top: 14px">
+          <strong>NOTE</strong>
+          Cette version HTML est faite pour etre la source modifiable. Elle est plus simple a enrichir (schemas SVG, sections,
+          tableaux) puis a exporter en PDF.
+        </div>
+
+        <nav class="toc">
+          <p class="toc-title">Sommaire</p>
+          <ol>
+            <li><a href="#a-architecture">A. Architecture production (schemas)</a></li>
+            <li><a href="#b-services">B. Services, ports, scripts et logs</a></li>
+            <li><a href="#c-multi-tenant">C. Multi-tenant: resolution, isolation, quotas</a></li>
+            <li><a href="#d-auth">D. Authentification: cookies vs sessions</a></li>
+            <li><a href="#e-fronts">E. Backoffice & super-admin</a></li>
+            <li><a href="#f-deploiement">F. Deploiement: Docker, Nginx, K8s/K3s</a></li>
+            <li><a href="#g-monitoring">G. Monitoring, qualite, troubleshooting</a></li>
+            <li><a href="#h-slash">H. Commandes slash</a></li>
+            <li><a href="#sources">Sources principales</a></li>
+          </ol>
+        </nav>
+      </header>
+
+      <section id="a-architecture">
+        <h2>A. Architecture production (schemas)</h2>
+        <p>
+          Quelyos Suite repose sur <b>Odoo 19 Community</b> comme backend unique. Les interfaces utilisateurs sont
+          separees en 4 applications: site vitrine, boutique e-commerce, backoffice client et super-admin SaaS.
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema A1</b> — Architecture globale (services + ports)</p>
+          <svg viewBox="0 0 940 470" role="img" aria-label="Architecture globale Quelyos Suite">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+                .m {
+                  font: 600 12px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+              </style>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <!-- Front row -->
+            <rect x="10" y="10" width="220" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="120" y="38" text-anchor="middle" class="t">Site vitrine</text>
+            <text x="120" y="58" text-anchor="middle" class="s">vitrine-quelyos :3000</text>
+
+            <rect x="250" y="10" width="220" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="360" y="38" text-anchor="middle" class="t">Boutique</text>
+            <text x="360" y="58" text-anchor="middle" class="s">vitrine-client :3001</text>
+
+            <rect x="490" y="10" width="220" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="600" y="38" text-anchor="middle" class="t">Backoffice</text>
+            <text x="600" y="58" text-anchor="middle" class="s">dashboard-client :5175</text>
+
+            <rect x="730" y="10" width="200" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="830" y="38" text-anchor="middle" class="t">Super-admin</text>
+            <text x="830" y="58" text-anchor="middle" class="s">super-admin-client :5176</text>
+
+            <!-- Backend -->
+            <rect x="10" y="170" width="920" height="88" rx="16" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="205" text-anchor="middle" class="t">Backend Odoo</text>
+            <text x="470" y="226" text-anchor="middle" class="s">odoo-backend (Odoo 19 Community) :8069</text>
+            <text x="470" y="246" text-anchor="middle" class="s">API REST/JSON-RPC</text>
+
+            <!-- Arrows front -> backend -->
+            <line x1="120" y1="84" x2="470" y2="170" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="360" y1="84" x2="470" y2="170" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="600" y1="84" x2="470" y2="170" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="830" y1="84" x2="470" y2="170" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+
+            <!-- Stores -->
+            <rect x="10" y="330" width="450" height="90" rx="16" fill="#f3f4f6" stroke="#111827" />
+            <text x="235" y="368" text-anchor="middle" class="t">PostgreSQL</text>
+            <text x="235" y="390" text-anchor="middle" class="s">:5432</text>
+
+            <rect x="480" y="330" width="450" height="90" rx="16" fill="#f3f4f6" stroke="#111827" />
+            <text x="705" y="368" text-anchor="middle" class="t">Redis</text>
+            <text x="705" y="390" text-anchor="middle" class="s">:6379</text>
+
+            <line x1="390" y1="258" x2="235" y2="330" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="550" y1="258" x2="705" y2="330" stroke="#111827" stroke-width="2" marker-end="url(#arrow)" />
+
+            <!-- Legend -->
+            <rect x="10" y="440" width="18" height="18" rx="4" fill="#e0f2fe" stroke="#111827" />
+            <text x="36" y="454" class="m">Interfaces</text>
+            <rect x="170" y="440" width="18" height="18" rx="4" fill="#ffedd5" stroke="#111827" />
+            <text x="196" y="454" class="m">Backend</text>
+            <rect x="290" y="440" width="18" height="18" rx="4" fill="#f3f4f6" stroke="#111827" />
+            <text x="316" y="454" class="m">Data stores</text>
+          </svg>
+        </div>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema A2</b> — Routage production (DNS + reverse proxy)</p>
+          <svg viewBox="0 0 940 410" role="img" aria-label="Routage DNS et reverse proxy">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="300" height="58" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="160" y="35" text-anchor="middle" class="t">client.com</text>
+            <text x="160" y="54" text-anchor="middle" class="s">(e-commerce)</text>
+
+            <rect x="320" y="10" width="300" height="58" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="35" text-anchor="middle" class="t">admin.client.com</text>
+            <text x="470" y="54" text-anchor="middle" class="s">(backoffice)</text>
+
+            <rect x="630" y="10" width="300" height="58" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="780" y="35" text-anchor="middle" class="t">api.client.com</text>
+            <text x="780" y="54" text-anchor="middle" class="s">(backend)</text>
+
+            <rect x="10" y="120" width="920" height="78" rx="16" fill="#dbeafe" stroke="#111827" />
+            <text x="470" y="150" text-anchor="middle" class="t">Reverse proxy (Nginx/Caddy) :443</text>
+            <text x="470" y="170" text-anchor="middle" class="s">TLS Lets Encrypt + routage hostname + chemins (/api, /web/image)</text>
+
+            <line x1="160" y1="68" x2="470" y2="120" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+            <line x1="470" y1="68" x2="470" y2="120" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+            <line x1="780" y1="68" x2="470" y2="120" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+
+            <rect x="10" y="270" width="300" height="66" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="160" y="300" text-anchor="middle" class="t">vitrine-client</text>
+            <text x="160" y="320" text-anchor="middle" class="s">:3001</text>
+
+            <rect x="320" y="270" width="300" height="66" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="300" text-anchor="middle" class="t">dashboard-client</text>
+            <text x="470" y="320" text-anchor="middle" class="s">:5175</text>
+
+            <rect x="630" y="270" width="300" height="66" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="780" y="300" text-anchor="middle" class="t">odoo-backend</text>
+            <text x="780" y="320" text-anchor="middle" class="s">:8069</text>
+
+            <line x1="470" y1="198" x2="160" y2="270" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+            <line x1="470" y1="198" x2="470" y2="270" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+            <line x1="470" y1="198" x2="780" y2="270" stroke="#111827" stroke-width="2" marker-end="url(#arrow2)" />
+          </svg>
+        </div>
+
+        <div class="callout note">
+          <strong>NOTE</strong>
+          La documentation de production mentionne aussi une generation automatique des configs Nginx par tenant
+          (script Python) et l activation TLS (certbot/cert-manager selon le mode de deploiement).
+        </div>
+      </section>
+
+      <section id="b-services">
+        <h2>B. Services, ports, scripts et logs</h2>
+        <p>En developpement, les scripts centralisent le demarrage/stop, la gestion des ports et les logs.</p>
+
+        <div class="grid-2">
+          <div>
+            <h3>Ports fixes (rappel)</h3>
+            <ul>
+              <li>3000 — vitrine-quelyos</li>
+              <li>3001 — vitrine-client</li>
+              <li>5175 — dashboard-client</li>
+              <li>5176 — super-admin-client</li>
+              <li>8069 — odoo-backend</li>
+              <li>5432 — PostgreSQL</li>
+              <li>6379 — Redis</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Scripts (dev)</h3>
+            <pre><code>./scripts/dev-start.sh all
+./scripts/dev-start.sh backend|backoffice|vitrine|ecommerce|superadmin
+
+./scripts/dev-stop.sh all
+./scripts/dev-stop.sh backend|backoffice|vitrine|ecommerce|superadmin</code></pre>
+          </div>
+        </div>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema B1</b> — Workflow dev-start.sh all</p>
+          <svg viewBox="0 0 940 430" role="img" aria-label="Workflow dev-start.sh all">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="54" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="470" y="42" text-anchor="middle" class="t">1) Verifier ports (eviter conflits)</text>
+            <line x1="470" y1="64" x2="470" y2="88" stroke="#111827" stroke-width="2" marker-end="url(#arrow3)" />
+
+            <rect x="10" y="94" width="920" height="54" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="126" text-anchor="middle" class="t">2) Demarrer backend Odoo (Docker Compose)</text>
+            <line x1="470" y1="148" x2="470" y2="172" stroke="#111827" stroke-width="2" marker-end="url(#arrow3)" />
+
+            <rect x="10" y="178" width="920" height="54" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="210" text-anchor="middle" class="t">3) Attendre backend pret</text>
+            <line x1="470" y1="232" x2="470" y2="256" stroke="#111827" stroke-width="2" marker-end="url(#arrow3)" />
+
+            <rect x="10" y="262" width="920" height="54" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="294" text-anchor="middle" class="t">4) Demarrer frontends en parallele (pnpm dev)</text>
+            <line x1="470" y1="316" x2="470" y2="340" stroke="#111827" stroke-width="2" marker-end="url(#arrow3)" />
+
+            <rect x="10" y="346" width="920" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="378" text-anchor="middle" class="t">5) Centraliser logs + PID</text>
+            <text x="470" y="400" text-anchor="middle" class="s">/tmp/quelyos-*.log + /tmp/quelyos-*.pid</text>
+          </svg>
+        </div>
+
+        <h3>Logs (exemples)</h3>
+        <pre><code>tail -f /tmp/quelyos-backoffice.log
+tail -f /tmp/quelyos-vitrine.log
+tail -f /tmp/quelyos-ecommerce.log
+
+cd odoo-backend && docker-compose logs -f</code></pre>
+      </section>
+
+      <section id="c-multi-tenant">
+        <h2>C. Multi-tenant: resolution, isolation, quotas</h2>
+        <p>
+          La documentation recommande une strategie <b>Single-Database</b> au debut, avec evolution vers hybride selon la
+          croissance. L isolation s appuie sur <b>company_id</b> (natif Odoo), <b>tenant_id</b> (custom) et des
+          <b>ir.rule</b> (niveau base).
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema C1</b> — Resolution tenant + controle d acces</p>
+          <svg viewBox="0 0 940 520" role="img" aria-label="Resolution tenant et securite">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow4" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="64" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="38" text-anchor="middle" class="t">HTTP Request</text>
+            <text x="470" y="58" text-anchor="middle" class="s">Header: X-Tenant-Domain = client.com</text>
+            <line x1="470" y1="74" x2="470" y2="96" stroke="#111827" stroke-width="2" marker-end="url(#arrow4)" />
+
+            <rect x="10" y="102" width="920" height="64" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="130" text-anchor="middle" class="t">1) Resoudre le tenant</text>
+            <text x="470" y="150" text-anchor="middle" class="s">Odoo: quelyos.tenant.search(domain)</text>
+            <line x1="470" y1="166" x2="470" y2="188" stroke="#111827" stroke-width="2" marker-end="url(#arrow4)" />
+
+            <rect x="10" y="194" width="920" height="74" rx="14" fill="#fee2e2" stroke="#111827" />
+            <text x="470" y="226" text-anchor="middle" class="t">2) Validation critique</text>
+            <text x="470" y="246" text-anchor="middle" class="s">user.company_id == tenant.company_id (sinon AccessError)</text>
+            <line x1="470" y1="268" x2="470" y2="290" stroke="#111827" stroke-width="2" marker-end="url(#arrow4)" />
+
+            <rect x="10" y="296" width="920" height="64" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="324" text-anchor="middle" class="t">3) Contexte company</text>
+            <text x="470" y="344" text-anchor="middle" class="s">with_company(company) / company_id</text>
+            <line x1="470" y1="360" x2="470" y2="382" stroke="#111827" stroke-width="2" marker-end="url(#arrow4)" />
+
+            <rect x="10" y="388" width="920" height="64" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="470" y="416" text-anchor="middle" class="t">4) Isolation base (ir.rule)</text>
+            <text x="470" y="436" text-anchor="middle" class="s">domain_force applique automatiquement les filtres</text>
+            <line x1="470" y1="452" x2="470" y2="474" stroke="#111827" stroke-width="2" marker-end="url(#arrow4)" />
+
+            <rect x="10" y="480" width="920" height="34" rx="12" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="503" text-anchor="middle" class="t">Reponse API (donnees du tenant uniquement)</text>
+          </svg>
+        </div>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema C2</b> — Quotas (pattern avant creation)</p>
+          <svg viewBox="0 0 940 250" role="img" aria-label="Quotas par plan">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow5" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="18" width="430" height="70" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="225" y="46" text-anchor="middle" class="t">Endpoint API</text>
+            <text x="225" y="66" text-anchor="middle" class="s">ex: create product / user / order</text>
+
+            <rect x="500" y="18" width="430" height="70" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="715" y="46" text-anchor="middle" class="t">_check_tenant_quotas(type)</text>
+            <text x="715" y="66" text-anchor="middle" class="s">products / users / orders / subscription</text>
+
+            <line x1="440" y1="53" x2="500" y2="53" stroke="#111827" stroke-width="2" marker-end="url(#arrow5)" />
+
+            <rect x="10" y="140" width="430" height="78" rx="14" fill="#fee2e2" stroke="#111827" />
+            <text x="225" y="172" text-anchor="middle" class="t">Si quota depasse</text>
+            <text x="225" y="194" text-anchor="middle" class="s">erreur QUOTA_* + suggestion upgrade</text>
+
+            <rect x="500" y="140" width="430" height="78" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="715" y="172" text-anchor="middle" class="t">Si OK</text>
+            <text x="715" y="194" text-anchor="middle" class="s">continuer creation + ecriture DB</text>
+
+            <line x1="715" y1="88" x2="225" y2="140" stroke="#111827" stroke-width="2" marker-end="url(#arrow5)" />
+            <line x1="715" y1="88" x2="715" y2="140" stroke="#111827" stroke-width="2" marker-end="url(#arrow5)" />
+          </svg>
+        </div>
+
+        <h3>Plans (doc)</h3>
+        <pre><code>Starter: users 5, products 1000, orders/an 5000
+Growth : users 20, products 10k, orders/an 20k
+Business: users 50, products 50k, orders/an 100k
+Enterprise: illimite (dedicated)</code></pre>
+      </section>
+
+      <section id="d-auth">
+        <h2>D. Authentification: cookies vs sessions</h2>
+        <p>
+          La documentation mentionne plusieurs mecanismes selon les surfaces: cookies httpOnly (API v1), session header
+          X-Session-Id (backoffice) et Authorization Bearer (super-admin).
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema D1</b> — Comparatif des modes d'auth (3 lanes)</p>
+          <svg viewBox="0 0 940 350" role="img" aria-label="Comparatif modes authentification">
+            <defs>
+              <style>
+                .t {
+                  font: 600 13px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 11px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow6" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#6b7280" />
+              </marker>
+            </defs>
+
+            <!-- Lanes -->
+            <rect x="10" y="10" width="300" height="330" rx="16" fill="none" stroke="#9ca3af" stroke-dasharray="5 4" />
+            <rect x="320" y="10" width="300" height="330" rx="16" fill="none" stroke="#9ca3af" stroke-dasharray="5 4" />
+            <rect x="630" y="10" width="300" height="330" rx="16" fill="none" stroke="#9ca3af" stroke-dasharray="5 4" />
+
+            <rect x="10" y="10" width="300" height="34" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="160" y="32" text-anchor="middle" class="t">API v1 (cookies)</text>
+
+            <rect x="320" y="10" width="300" height="34" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="32" text-anchor="middle" class="t">Backoffice (X-Session-Id)</text>
+
+            <rect x="630" y="10" width="300" height="34" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="780" y="32" text-anchor="middle" class="t">Super-admin (Bearer)</text>
+
+            <!-- Steps: lane 1 -->
+            <rect x="24" y="64" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="90" text-anchor="middle" class="s">1) POST /api/v1/auth/login</text>
+            <line x1="160" y1="108" x2="160" y2="118" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="24" y="124" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="150" text-anchor="middle" class="s">2) Set cookies httpOnly</text>
+            <line x1="160" y1="168" x2="160" y2="178" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="24" y="184" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="210" text-anchor="middle" class="s">3) credentials: 'include'</text>
+            <line x1="160" y1="228" x2="160" y2="238" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="24" y="244" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="270" text-anchor="middle" class="s">4) Backend valide cookie</text>
+
+            <!-- Steps: lane 2 -->
+            <rect x="334" y="64" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="90" text-anchor="middle" class="s">1) Login -> session_id</text>
+            <line x1="470" y1="108" x2="470" y2="118" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="334" y="124" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="150" text-anchor="middle" class="s">2) localStorage.session_id</text>
+            <line x1="470" y1="168" x2="470" y2="178" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="334" y="184" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="210" text-anchor="middle" class="s">3) Header X-Session-Id</text>
+            <line x1="470" y1="228" x2="470" y2="238" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="334" y="244" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="270" text-anchor="middle" class="s">4) Backend valide session</text>
+
+            <!-- Steps: lane 3 -->
+            <rect x="644" y="64" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="90" text-anchor="middle" class="s">1) Login -> session_id</text>
+            <line x1="780" y1="108" x2="780" y2="118" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="644" y="124" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="150" text-anchor="middle" class="s">2) localStorage.session_id</text>
+            <line x1="780" y1="168" x2="780" y2="178" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="644" y="184" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="210" text-anchor="middle" class="s">3) Authorization: Bearer</text>
+            <line x1="780" y1="228" x2="780" y2="238" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow6)" />
+            <rect x="644" y="244" width="272" height="44" rx="10" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="270" text-anchor="middle" class="s">4) Verifie droits super-admin</text>
+          </svg>
+        </div>
+
+        <div class="callout warn">
+          <strong>A clarifier (documentation)</strong>
+          Plusieurs mecanismes d'auth coexistent dans les docs. Pour la production, il est utile de designer un mode de
+          reference par surface (et de le documenter comme source unique).
+        </div>
+      </section>
+
+      <section id="e-fronts">
+        <h2>E. Backoffice & super-admin (schemas)</h2>
+        <p>
+          <b>Backoffice</b> = operations e-commerce (catalogue, commandes, stock, finance, CRM, marketing...). <b>Super-admin</b> =
+          pilotage SaaS (tenants, abonnements, billing, monitoring).
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema E1</b> — Backoffice: carte modules (vue simple)</p>
+          <svg viewBox="0 0 940 460" role="img" aria-label="Modules backoffice">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow7" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="70" rx="16" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="40" text-anchor="middle" class="t">dashboard-client :5175</text>
+            <text x="470" y="60" text-anchor="middle" class="s">Interface admin pour piloter Odoo via API</text>
+
+            <line x1="470" y1="80" x2="470" y2="110" stroke="#111827" stroke-width="2" marker-end="url(#arrow7)" />
+
+            <!-- Grid 3x3 -->
+            <!-- Row 1 -->
+            <rect x="10" y="120" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="150" text-anchor="middle" class="t">Catalogue</text>
+            <text x="160" y="170" text-anchor="middle" class="s">produits, categories, medias</text>
+
+            <rect x="320" y="120" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="150" text-anchor="middle" class="t">Commandes</text>
+            <text x="470" y="170" text-anchor="middle" class="s">sale.order, livraisons</text>
+
+            <rect x="630" y="120" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="150" text-anchor="middle" class="t">Stock</text>
+            <text x="780" y="170" text-anchor="middle" class="s">inventaires, entrepots, reappro</text>
+
+            <!-- Row 2 -->
+            <rect x="10" y="205" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="235" text-anchor="middle" class="t">Finance</text>
+            <text x="160" y="255" text-anchor="middle" class="s">comptes, budgets, reporting</text>
+
+            <rect x="320" y="205" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="235" text-anchor="middle" class="t">CRM</text>
+            <text x="470" y="255" text-anchor="middle" class="s">clients, pipeline</text>
+
+            <rect x="630" y="205" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="235" text-anchor="middle" class="t">Marketing</text>
+            <text x="780" y="255" text-anchor="middle" class="s">campagnes, listes</text>
+
+            <!-- Row 3 -->
+            <rect x="10" y="290" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="160" y="320" text-anchor="middle" class="t">Contenu</text>
+            <text x="160" y="340" text-anchor="middle" class="s">pages, menus, hero slides</text>
+
+            <rect x="320" y="290" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="470" y="320" text-anchor="middle" class="t">Paiements & SMS</text>
+            <text x="470" y="340" text-anchor="middle" class="s">providers, notifications</text>
+
+            <rect x="630" y="290" width="300" height="70" rx="14" fill="#fff" stroke="#9ca3af" />
+            <text x="780" y="320" text-anchor="middle" class="t">Analytics</text>
+            <text x="780" y="340" text-anchor="middle" class="s">KPIs, rapports</text>
+          </svg>
+        </div>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema E2</b> — Super-admin: pages -> endpoints</p>
+          <svg viewBox="0 0 940 320" role="img" aria-label="Super-admin pages endpoints">
+            <defs>
+              <style>
+                .t {
+                  font: 600 13px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow8" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#6b7280" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="450" height="52" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="235" y="40" text-anchor="middle" class="t">super-admin-client :5176</text>
+
+            <rect x="480" y="10" width="450" height="52" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="705" y="40" text-anchor="middle" class="t">/api/super-admin/* (Odoo)</text>
+
+            <!-- rows -->
+            <g>
+              <rect x="10" y="86" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="235" y="111" text-anchor="middle" class="s">/dashboard</text>
+              <rect x="480" y="86" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="705" y="111" text-anchor="middle" class="s">GET /dashboard/metrics</text>
+              <line x1="460" y1="106" x2="480" y2="106" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow8)" />
+
+              <rect x="10" y="136" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="235" y="161" text-anchor="middle" class="s">/tenants</text>
+              <rect x="480" y="136" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="705" y="161" text-anchor="middle" class="s">GET /tenants</text>
+              <line x1="460" y1="156" x2="480" y2="156" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow8)" />
+
+              <rect x="10" y="186" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="235" y="211" text-anchor="middle" class="s">/subscriptions</text>
+              <rect x="480" y="186" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="705" y="211" text-anchor="middle" class="s">GET /subscriptions (+ breakdown/churn)</text>
+              <line x1="460" y1="206" x2="480" y2="206" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow8)" />
+
+              <rect x="10" y="236" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="235" y="261" text-anchor="middle" class="s">/billing</text>
+              <rect x="480" y="236" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="705" y="261" text-anchor="middle" class="s">GET /invoices (+ summary) /transactions</text>
+              <line x1="460" y1="256" x2="480" y2="256" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow8)" />
+
+              <rect x="10" y="286" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="235" y="311" text-anchor="middle" class="s">/monitoring</text>
+              <rect x="480" y="286" width="450" height="40" rx="10" fill="#fff" stroke="#9ca3af" />
+              <text x="705" y="311" text-anchor="middle" class="s">GET /system/health /provisioning-jobs</text>
+              <line x1="460" y1="306" x2="480" y2="306" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow8)" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <section id="f-deploiement">
+        <h2>F. Deploiement: Docker, Nginx, K8s/K3s</h2>
+        <p>
+          La documentation couvre: Docker Compose production + generation de configs Nginx par tenant, et un parcours
+          Kubernetes/K3s (Contabo) avec ingress + TLS.
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema F1</b> — Generation des configs Nginx par tenant</p>
+          <svg viewBox="0 0 940 310" role="img" aria-label="Generation configs Nginx">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow9" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="58" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="38" text-anchor="middle" class="t">Odoo: tenants actifs (domaines)</text>
+            <line x1="470" y1="68" x2="470" y2="90" stroke="#111827" stroke-width="2" marker-end="url(#arrow9)" />
+
+            <rect x="10" y="96" width="920" height="78" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="470" y="130" text-anchor="middle" class="t">Script: nginx/generate-tenant-configs.py</text>
+            <text x="470" y="150" text-anchor="middle" class="s">fetch tenants -> render template -> ecrit conf</text>
+            <line x1="470" y1="174" x2="470" y2="196" stroke="#111827" stroke-width="2" marker-end="url(#arrow9)" />
+
+            <rect x="10" y="202" width="920" height="58" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="232" text-anchor="middle" class="t">nginx/conf.d/tenants/{code}.conf (1 fichier par tenant)</text>
+            <line x1="470" y1="260" x2="470" y2="282" stroke="#111827" stroke-width="2" marker-end="url(#arrow9)" />
+
+            <rect x="10" y="288" width="920" height="22" rx="10" fill="#dbeafe" stroke="#111827" />
+            <text x="470" y="304" text-anchor="middle" class="s">nginx -t puis nginx -s reload</text>
+          </svg>
+        </div>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema F2</b> — Kubernetes / K3s (vue d'ensemble)</p>
+          <svg viewBox="0 0 940 520" role="img" aria-label="Kubernetes overview">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow10" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#6b7280" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="500" rx="18" fill="none" stroke="#111827" />
+            <text x="30" y="38" class="t">Cluster Kubernetes (ex: K3s)</text>
+
+            <rect x="30" y="60" width="880" height="66" rx="16" fill="#dbeafe" stroke="#111827" />
+            <text x="470" y="92" text-anchor="middle" class="t">Ingress Nginx + TLS</text>
+            <text x="470" y="112" text-anchor="middle" class="s">cert-manager / Lets Encrypt</text>
+
+            <line x1="470" y1="126" x2="470" y2="150" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow10)" />
+
+            <!-- Services grid (3 cols x 2 rows) -->
+            <rect x="30" y="156" width="280" height="54" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="170" y="188" text-anchor="middle" class="t">vitrine-quelyos</text>
+
+            <rect x="330" y="156" width="280" height="54" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="188" text-anchor="middle" class="t">vitrine-client</text>
+
+            <rect x="630" y="156" width="280" height="54" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="770" y="188" text-anchor="middle" class="t">dashboard-client</text>
+
+            <rect x="30" y="222" width="280" height="54" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="170" y="254" text-anchor="middle" class="t">super-admin-client</text>
+
+            <rect x="330" y="222" width="280" height="54" rx="14" fill="#ffedd5" stroke="#111827" />
+            <text x="470" y="254" text-anchor="middle" class="t">odoo-backend</text>
+
+            <rect x="630" y="222" width="280" height="54" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="770" y="254" text-anchor="middle" class="t">jobs / cron</text>
+
+            <!-- Data stores -->
+            <rect x="30" y="320" width="430" height="66" rx="16" fill="#f3f4f6" stroke="#111827" />
+            <text x="245" y="352" text-anchor="middle" class="t">PostgreSQL</text>
+            <text x="245" y="372" text-anchor="middle" class="s">StatefulSet + PVC</text>
+
+            <rect x="480" y="320" width="430" height="66" rx="16" fill="#f3f4f6" stroke="#111827" />
+            <text x="695" y="352" text-anchor="middle" class="t">Redis</text>
+            <text x="695" y="372" text-anchor="middle" class="s">Deployment / Stateful</text>
+
+            <!-- Arrow from odoo to stores -->
+            <line x1="470" y1="276" x2="245" y2="320" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow10)" />
+            <line x1="470" y1="276" x2="695" y2="320" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow10)" />
+
+            <!-- Secrets -->
+            <rect x="30" y="414" width="880" height="74" rx="16" fill="#fff7ed" stroke="#111827" />
+            <text x="470" y="448" text-anchor="middle" class="t">Secrets</text>
+            <text x="470" y="468" text-anchor="middle" class="s">DB passwords, JWT/session secrets, Sentry DSN, etc.</text>
+          </svg>
+        </div>
+      </section>
+
+      <section id="g-monitoring">
+        <h2>G. Monitoring, qualite, troubleshooting</h2>
+        <p>La documentation inclut monitoring dev, endpoints health, logger centralise et rapports (perf, UI/UX, stock...).</p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema G1</b> — Monitoring dev (dev-monitor + /api/health)</p>
+          <svg viewBox="0 0 940 280" role="img" aria-label="Monitoring dev">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow11" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="920" height="64" rx="14" fill="#f3f4f6" stroke="#111827" />
+            <text x="470" y="38" text-anchor="middle" class="t">Terminal</text>
+            <text x="470" y="58" text-anchor="middle" class="s">node scripts/dev-monitor.js</text>
+            <line x1="470" y1="74" x2="470" y2="96" stroke="#111827" stroke-width="2" marker-end="url(#arrow11)" />
+
+            <rect x="10" y="102" width="920" height="64" rx="14" fill="#e0f2fe" stroke="#111827" />
+            <text x="470" y="130" text-anchor="middle" class="t">Health checks</text>
+            <text x="470" y="150" text-anchor="middle" class="s">GET /api/health (vitrine 3000, ecommerce 3001, backoffice 5175)</text>
+            <line x1="470" y1="166" x2="470" y2="188" stroke="#111827" stroke-width="2" marker-end="url(#arrow11)" />
+
+            <rect x="10" y="194" width="920" height="74" rx="14" fill="#dbeafe" stroke="#111827" />
+            <text x="470" y="226" text-anchor="middle" class="t">Resultats</text>
+            <text x="470" y="246" text-anchor="middle" class="s">status: healthy | degraded | down</text>
+            <text x="470" y="264" text-anchor="middle" class="s">buffers erreurs / warnings / metrics</text>
+          </svg>
+        </div>
+
+        <h3>Troubleshooting (exemples doc)</h3>
+        <ul>
+          <li>Port occupe: utiliser <code>dev-stop.sh</code>, puis verifier avec <code>lsof -i:PORT</code>.</li>
+          <li>Backoffice ne charge pas: verifier Odoo (8069) + variables <code>VITE_*</code> + proxy Vite.</li>
+          <li>Tenant admin absent: upgrader <code>quelyos_api</code> / verifier <code>post_init_hook</code>.</li>
+          <li>OCA mismatch: verifier branches OCA / patchs Odoo 19 (selon docs OCA_STATUS / OCA_PATCHES_19).</li>
+        </ul>
+      </section>
+
+      <section id="h-slash">
+        <h2>H. Commandes slash</h2>
+        <p>
+          Les commandes slash sont des fichiers Markdown dans <code>.claude/commands/</code>. Le nom du fichier devient le nom
+          de la commande.
+        </p>
+
+        <div class="diagram">
+          <p class="cap"><b>Schema H1</b> — Fichier -> commande</p>
+          <svg viewBox="0 0 940 140" role="img" aria-label="Fichier commande slash">
+            <defs>
+              <style>
+                .t {
+                  font: 600 14px ui-sans-serif, system-ui;
+                  fill: #111827;
+                }
+                .s {
+                  font: 500 12px ui-sans-serif, system-ui;
+                  fill: #374151;
+                }
+              </style>
+              <marker id="arrow12" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#111827" />
+              </marker>
+            </defs>
+
+            <rect x="10" y="28" width="420" height="80" rx="16" fill="#f3f4f6" stroke="#111827" />
+            <text x="220" y="64" text-anchor="middle" class="t">.claude/commands/mon-rapport.md</text>
+            <text x="220" y="86" text-anchor="middle" class="s">fichier Markdown</text>
+
+            <rect x="510" y="28" width="420" height="80" rx="16" fill="#e0f2fe" stroke="#111827" />
+            <text x="720" y="72" text-anchor="middle" class="t">/mon-rapport</text>
+
+            <line x1="430" y1="68" x2="510" y2="68" stroke="#111827" stroke-width="2" marker-end="url(#arrow12)" />
+          </svg>
+        </div>
+
+        <h3>Bonnes pratiques (doc)</h3>
+        <ul>
+          <li>Utiliser <code>pnpm</code> (standard du repo).</li>
+          <li>Respecter les ports fixes.</li>
+          <li>Eviter les actions destructives sans confirmation.</li>
+          <li>Documenter: objectif, usage, workflow, commandes shell, erreurs attendues.</li>
+        </ul>
+      </section>
+
+      <section id="sources">
+        <h2>Sources principales</h2>
+        <p>Liste courte des documents references (non exhaustive):</p>
+        <ul>
+          <li><code>README.md</code>, <code>ARCHITECTURE.md</code>, <code>QUICKSTART.md</code>, <code>.ports.md</code></li>
+          <li>
+            <code>scripts/README.md</code>, <code>docs/INSTALLATION_GUIDE.md</code>, <code>docs/DEPLOY.md</code>,
+            <code>docs/K8S_SETUP.md</code>, <code>docs/CONTABO_SETUP.md</code>, <code>DEPLOYMENT_CHECKLIST.md</code>
+          </li>
+          <li>
+            <code>docs/STRATEGIE_MULTI_TENANT.md</code>, <code>docs/EXEMPLES_SECURITE_MULTI_TENANT.md</code>,
+            <code>docs/UPGRADE_MULTI_TENANT_SECURITY.md</code>, <code>docs/RAPPORT_IMPLEMENTATION_MULTI_TENANT_2026-01-29.md</code>
+          </li>
+          <li>
+            <code>docs/GUIDE_DASHBOARD_CLIENT.md</code>, <code>docs/GUIDE_SUPER_ADMIN_CLIENT.md</code>,
+            <code>docs/GUIDE_COMMANDES_SLASH.md</code>
+          </li>
+          <li><code>docs/DEV_MONITORING.md</code>, <code>docs/TROUBLESHOOTING.md</code></li>
+        </ul>
+        <div class="callout note">
+          <strong>Export PDF</strong>
+          Ouvre ce fichier dans ton navigateur, puis <b>Imprimer</b> -> <b>Enregistrer en PDF</b>.
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+

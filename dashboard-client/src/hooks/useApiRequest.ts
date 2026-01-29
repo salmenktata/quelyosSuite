@@ -12,7 +12,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { apiGateway, type GatewayRequest } from '@/lib/api/gateway'
+import { gateway, type GatewayRequest } from '@/lib/api/gateway'
 import { logger } from '@quelyos/logger'
 
 export interface UseApiRequestOptions<T> {
@@ -164,7 +164,7 @@ export function useApiRequest<T = unknown>(
       }
 
       // Exécuter via API Gateway
-      const response = await apiGateway.request<T>(request)
+      const response = await gateway.request<T>(request)
 
       // Vérifier si annulée
       if (abortControllerRef.current?.signal.aborted) {

@@ -161,6 +161,44 @@ class Subscription(models.Model):
         store=True
     )
 
+    # Champs calculés pour le Super Admin
+    mrr = fields.Float(
+        string='MRR (€)',
+        compute='_compute_mrr',
+        store=True,
+        help='Monthly Recurring Revenue pour cet abonnement'
+    )
+
+    price = fields.Float(
+        string='Prix actuel',
+        compute='_compute_mrr',
+        store=True,
+        help='Prix selon le cycle de facturation'
+    )
+
+    # Relation inverse vers tenant
+    tenant_ids = fields.One2many(
+        'quelyos.tenant',
+        'subscription_id',
+        string='Tenants'
+    )
+
+    @api.depends('plan_id', 'plan_id.price_monthly', 'plan_id.price_yearly', 'billing_cycle', 'state')
+    def _compute_mrr(self):
+        """Calcule le MRR (Monthly Recurring Revenue) pour cet abonnement."""
+        for record in self:
+            if record.state not in ('active', 'trial') or not record.plan_id:
+                record.mrr = 0.0
+                record.price = 0.0
+                continue
+
+            if record.billing_cycle == 'yearly':
+                record.price = record.plan_id.price_yearly or 0.0
+                record.mrr = record.price / 12 if record.price else 0.0
+            else:
+                record.price = record.plan_id.price_monthly or 0.0
+                record.mrr = record.price
+
     @api.depends('partner_id', 'company_id')
     def _compute_current_usage(self):
         """Calcule l'utilisation actuelle des ressources."""

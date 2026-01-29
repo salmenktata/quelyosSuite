@@ -4,17 +4,23 @@ import { CheckCircle, AlertTriangle, XCircle, ArrowRight } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass";
 import type { ImportSummaryProps } from "@/types/import";
 
+interface ImportErrorDetail {
+  severity: 'error' | 'warning';
+  line: number;
+  message: string;
+}
+
 export function ImportSummary({
   results,
   onViewTransactions,
   onImportAnother,
 }: ImportSummaryProps) {
-  const hasErrors = results.errors.filter(e => e.severity === 'error').length > 0;
-  const hasWarnings = results.errors.filter(e => e.severity === 'warning').length > 0;
+  const hasErrors = (results.errors as ImportErrorDetail[]).filter((e: ImportErrorDetail) => e.severity === 'error').length > 0;
+  const hasWarnings = (results.errors as ImportErrorDetail[]).filter((e: ImportErrorDetail) => e.severity === 'warning').length > 0;
   const isFullSuccess = !hasErrors && !hasWarnings && results.failed === 0;
 
-  const errorCount = results.errors.filter(e => e.severity === 'error').length;
-  const warningCount = results.errors.filter(e => e.severity === 'warning').length;
+  const errorCount = (results.errors as ImportErrorDetail[]).filter((e: ImportErrorDetail) => e.severity === 'error').length;
+  const warningCount = (results.errors as ImportErrorDetail[]).filter((e: ImportErrorDetail) => e.severity === 'warning').length;
 
   return (
     <div className="space-y-6">
@@ -89,10 +95,10 @@ export function ImportSummary({
             Erreurs détectées ({errorCount})
           </h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
-            {results.errors
-              .filter(e => e.severity === 'error')
+            {(results.errors as ImportErrorDetail[])
+              .filter((e: ImportErrorDetail) => e.severity === 'error')
               .slice(0, 5)
-              .map((error, idx) => (
+              .map((error: ImportErrorDetail, idx: number) => (
                 <div key={idx} className="text-sm text-rose-800 dark:text-rose-200 flex gap-2">
                   <span className="font-mono text-xs text-rose-700 dark:text-rose-300 shrink-0">
                     Ligne {error.line}:
@@ -117,10 +123,10 @@ export function ImportSummary({
             Avertissements ({warningCount})
           </h3>
           <div className="space-y-2 max-h-32 overflow-y-auto">
-            {results.errors
-              .filter(e => e.severity === 'warning')
+            {(results.errors as ImportErrorDetail[])
+              .filter((e: ImportErrorDetail) => e.severity === 'warning')
               .slice(0, 3)
-              .map((warning, idx) => (
+              .map((warning: ImportErrorDetail, idx: number) => (
                 <div key={idx} className="text-sm text-amber-800 dark:text-amber-200 flex gap-2">
                   <span className="font-mono text-xs text-amber-700 dark:text-amber-300 shrink-0">
                     Ligne {warning.line}:

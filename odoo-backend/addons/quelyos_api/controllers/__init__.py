@@ -36,3 +36,5 @@ from . import payment_stripe
 from . import payment_stripe_connect
 # Theme Analytics
 from . import theme_analytics
+# Super Admin
+from . import super_admin

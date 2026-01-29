@@ -46,117 +46,114 @@
         <!-- ========================================== -->
         <!-- Isolation par tenant_id (Custom Quelyos)  -->
         <!-- ========================================== -->
+        <!-- DÉSACTIVÉ TEMPORAIREMENT : Les modèles custom Quelyos seront ajoutés dans une prochaine version -->
 
-        <!-- Product Reviews : Isolation par tenant -->
+        <!-- TODO: Réactiver après création des modèles quelyos_product_review, quelyos_wishlist, quelyos_loyalty_program -->
+        <!--
         <record id="product_review_tenant_rule" model="ir.rule">
             <field name="name">Product Review: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_product_review"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Wishlist : Isolation par tenant -->
         <record id="wishlist_tenant_rule" model="ir.rule">
             <field name="name">Wishlist: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_wishlist"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Loyalty Program : Isolation par tenant -->
         <record id="loyalty_program_tenant_rule" model="ir.rule">
             <field name="name">Loyalty Program: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_loyalty_program"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
         <record id="loyalty_customer_tenant_rule" model="ir.rule">
             <field name="name">Loyalty Customer: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_loyalty_customer"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
+        -->
 
-        <!-- Coupons : Isolation par tenant -->
+        <!-- TODO: Réactiver après création des modèles custom Quelyos -->
+        <!--
         <record id="coupon_tenant_rule" model="ir.rule">
             <field name="name">Coupon: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_coupon"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Abandoned Cart : Isolation par tenant -->
         <record id="abandoned_cart_tenant_rule" model="ir.rule">
             <field name="name">Abandoned Cart: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_abandoned_cart"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Email Campaign : Isolation par tenant -->
         <record id="email_campaign_tenant_rule" model="ir.rule">
             <field name="name">Email Campaign: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_email_campaign"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- SMS Campaign : Isolation par tenant -->
         <record id="sms_campaign_tenant_rule" model="ir.rule">
             <field name="name">SMS Campaign: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_sms_campaign"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Menu Navigation : Isolation par tenant -->
         <record id="menu_navigation_tenant_rule" model="ir.rule">
             <field name="name">Menu Navigation: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_menu_navigation"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Pages CMS : Isolation par tenant -->
         <record id="page_cms_tenant_rule" model="ir.rule">
             <field name="name">Page CMS: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_page"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
+        -->
 
-        <!-- Theme : Isolation par tenant -->
+        <!-- TODO: Réactiver après création de tous les modèles custom Quelyos -->
+        <!--
         <record id="theme_tenant_rule" model="ir.rule">
             <field name="name">Theme: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_theme"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Hero Slides : Isolation par tenant -->
         <record id="hero_slide_tenant_rule" model="ir.rule">
             <field name="name">Hero Slide: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_hero_slide"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Promo Banners : Isolation par tenant -->
         <record id="promo_banner_tenant_rule" model="ir.rule">
             <field name="name">Promo Banner: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_promo_banner"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
-        <!-- Stock Alerts : Isolation par tenant -->
         <record id="stock_alert_tenant_rule" model="ir.rule">
             <field name="name">Stock Alert: multi-tenant</field>
             <field name="model_id" ref="model_quelyos_stock_alert"/>
-            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.company_id.tenant_id.id)]</field>
+            <field name="domain_force">['|', ('tenant_id', '=', False), ('tenant_id', '=', user.tenant_id.id)]</field>
             <field name="global" eval="True"/>
         </record>
+        -->
 
         <!-- ========================================== -->
         <!-- Isolation Tenant Model (lui-même)         -->

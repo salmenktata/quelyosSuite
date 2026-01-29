@@ -75,7 +75,7 @@ def get_cors_headers(origin):
     return {
         'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Session-Id',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Session-Id, X-Request-Id',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Max-Age': '3600',  # Cache preflight pendant 1h
     }

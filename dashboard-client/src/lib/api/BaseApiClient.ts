@@ -238,7 +238,13 @@ export class BaseApiClient {
       return executeWithCircuitBreaker()
     }
 
-    return withRetry(executeWithCircuitBreaker, this.config.retryConfig)
+    const retryResult = await withRetry(executeWithCircuitBreaker, this.config.retryConfig)
+
+    if (retryResult.success && retryResult.data) {
+      return retryResult.data
+    }
+
+    throw retryResult.error || new Error('Request failed after retries')
   }
 
   /**
@@ -250,11 +256,14 @@ export class BaseApiClient {
 
     logger.debug('[BaseApiClient] GET:', url)
 
+    // Extraire uniquement les propriétés RequestInit compatibles
+    const { body: _body, params: _params, skipRetry: _skipRetry, skipCircuitBreaker: _skipCircuitBreaker, timeout: _timeout, ...requestInit } = options
+
     return this.executeRequest<T>(url, {
       method: 'GET',
       headers,
       credentials: this.config.credentials,
-      ...options,
+      ...requestInit,
     }, options)
   }
 
@@ -267,12 +276,15 @@ export class BaseApiClient {
 
     logger.debug('[BaseApiClient] POST:', url, body)
 
+    // Extraire uniquement les propriétés RequestInit compatibles
+    const { body: _optionsBody, params: _params, skipRetry: _skipRetry, skipCircuitBreaker: _skipCircuitBreaker, timeout: _timeout, ...requestInit } = options
+
     return this.executeRequest<T>(url, {
       method: 'POST',
       headers,
       credentials: this.config.credentials,
       body: body ? JSON.stringify(body) : undefined,
-      ...options,
+      ...requestInit,
     }, options)
   }
 
@@ -285,12 +297,15 @@ export class BaseApiClient {
 
     logger.debug('[BaseApiClient] PUT:', url, body)
 
+    // Extraire uniquement les propriétés RequestInit compatibles
+    const { body: _optionsBody, params: _params, skipRetry: _skipRetry, skipCircuitBreaker: _skipCircuitBreaker, timeout: _timeout, ...requestInit } = options
+
     return this.executeRequest<T>(url, {
       method: 'PUT',
       headers,
       credentials: this.config.credentials,
       body: body ? JSON.stringify(body) : undefined,
-      ...options,
+      ...requestInit,
     }, options)
   }
 
@@ -303,12 +318,15 @@ export class BaseApiClient {
 
     logger.debug('[BaseApiClient] PATCH:', url, body)
 
+    // Extraire uniquement les propriétés RequestInit compatibles
+    const { body: _optionsBody, params: _params, skipRetry: _skipRetry, skipCircuitBreaker: _skipCircuitBreaker, timeout: _timeout, ...requestInit } = options
+
     return this.executeRequest<T>(url, {
       method: 'PATCH',
       headers,
       credentials: this.config.credentials,
       body: body ? JSON.stringify(body) : undefined,
-      ...options,
+      ...requestInit,
     }, options)
   }
 
@@ -321,11 +339,14 @@ export class BaseApiClient {
 
     logger.debug('[BaseApiClient] DELETE:', url)
 
+    // Extraire uniquement les propriétés RequestInit compatibles
+    const { body: _optionsBody, params: _params, skipRetry: _skipRetry, skipCircuitBreaker: _skipCircuitBreaker, timeout: _timeout, ...requestInit } = options
+
     return this.executeRequest<T>(url, {
       method: 'DELETE',
       headers,
       credentials: this.config.credentials,
-      ...options,
+      ...requestInit,
     }, options)
   }
 

@@ -169,13 +169,16 @@ class AuthController(http.Controller):
             }
 
             # Wrapper en JSON-RPC si la requête est JSON-RPC
+            _logger.info(f"Body type: {type(body)}, has jsonrpc: {'jsonrpc' in body if isinstance(body, dict) else 'N/A'}")
             if isinstance(body, dict) and 'jsonrpc' in body:
+                _logger.info("Wrapping response in JSON-RPC format")
                 response_data = {
                     'jsonrpc': '2.0',
                     'id': body.get('id', 1),
                     'result': user_data
                 }
             else:
+                _logger.info("Using simple JSON response")
                 response_data = user_data
 
             # Créer la réponse HTTP pour définir les cookies (avec headers CORS)
@@ -205,17 +208,35 @@ class AuthController(http.Controller):
 
             return response
 
-        except Exception as e:
-            _logger.error(f"SSO login error: {e}")
-            error_data = {'success': False, 'error': 'Erreur de connexion'}
-            # Try to get body for JSON-RPC formatting
+        except AccessDenied:
+            _logger.warning(f"SSO login failed: invalid credentials for {login}")
+            # Track failed login attempts
+            fail_key = rate_limit_key(request, 'login_failed')
+            limiter = get_rate_limiter()
+            limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
+            error_data = {'success': False, 'error': 'Identifiants invalides'}
             try:
                 body = request.get_json_data()
                 if isinstance(body, dict) and 'jsonrpc' in body:
                     response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
                 else:
                     response_data = error_data
-            except:
+            except Exception:
+                response_data = error_data
+            response = request.make_json_response(response_data, headers=cors_headers)
+            response.status_code = 401
+            return response
+
+        except Exception as e:
+            _logger.error(f"SSO login error: {e}")
+            error_data = {'success': False, 'error': 'Erreur serveur'}
+            try:
+                body = request.get_json_data()
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
+                else:
+                    response_data = error_data
+            except Exception:
                 response_data = error_data
             response = request.make_json_response(response_data, headers=cors_headers)
             response.status_code = 500
@@ -289,6 +310,28 @@ class AuthController(http.Controller):
             _logger.error(f"Login error: {e}")
             return {'success': False, 'error': 'Erreur de connexion'}
 
+    @http.route('/api/auth/test-session', type='http', auth='none', methods=['POST', 'OPTIONS'], csrf=False)
+    def test_session(self, **kwargs):
+        """Test simple de session"""
+        print("=== TEST SESSION CALLED ===")
+        _logger.error("=== TEST SESSION LOG ===")
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        data = {
+            'uid': request.session.uid,
+            'cookies': list(request.httprequest.cookies.keys()),
+            'db': request.db,
+        }
+        print(f"TEST DATA: {data}")
+        _logger.error(f"TEST DATA: {data}")
+        return request.make_json_response(data, headers=cors_headers)
+
     @http.route('/api/auth/user-info', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def get_user_info(self, **kwargs):
         """
@@ -317,6 +360,8 @@ class AuthController(http.Controller):
             return response
 
         try:
+            _logger.error(f"[user-info] DEBUG START - Session UID: {request.session.uid}, DB: {request.db}")
+
             # Parser le body JSON (peut être JSON-RPC ou JSON simple)
             try:
                 body = request.get_json_data()
@@ -325,26 +370,30 @@ class AuthController(http.Controller):
                     params = body.get('params', {})
                 else:
                     params = body or {}
-            except:
+            except Exception as e:
+                _logger.warning(f"[user-info] Failed to parse body: {e}")
                 params = {}
 
             # Vérifier si l'utilisateur est connecté
             if not request.session.uid:
+                _logger.error(f"[user-info] NO SESSION UID - Cookies: {list(request.httprequest.cookies.keys())}")
                 response_data = {'success': False, 'error': 'Non authentifié'}
                 response = request.make_json_response(response_data, headers=cors_headers)
                 response.status_code = 401
                 return response
 
+            _logger.info(f"[user-info] User authenticated: UID={request.session.uid}")
             user = request.env.user
 
             # Récupérer les groupes Quelyos + groupes admin critiques
             # Inclure : Quelyos*, Access Rights, Technical Features, Administrator
-            quelyos_groups = user.groups_id.filtered(lambda g:
+            quelyos_groups = user.group_ids.filtered(lambda g:
                 'Quelyos' in str(g.name) or
                 'Access Rights' in str(g.name) or
                 'Technical Features' in str(g.name) or
                 'Administrator' in str(g.name)
             )
+            _logger.info(f"[user-info] Found {len(quelyos_groups)} groups")
 
             # Extraire les noms de groupes (gérer format JSONB {"en_US": "nom"})
             group_names = []
@@ -369,7 +418,7 @@ class AuthController(http.Controller):
             return request.make_json_response(response_data, headers=cors_headers)
 
         except Exception as e:
-            _logger.error(f"Get user info error: {e}")
+            _logger.error(f"[user-info] Exception: {e}", exc_info=True)
             response_data = {'success': False, 'error': 'Erreur lors de la récupération des informations utilisateur'}
             return request.make_json_response(response_data, headers=cors_headers)
 

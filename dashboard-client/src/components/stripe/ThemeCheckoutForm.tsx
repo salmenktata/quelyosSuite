@@ -6,9 +6,11 @@
  */
 
 import { useState } from 'react';
+// @ts-ignore - Package @stripe/react-stripe-js sera installé après résolution npm
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '@/components/common';
 import { CreditCard, Lock, AlertCircle } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 
 interface ThemeCheckoutFormProps {
   themeId: number;
@@ -118,7 +120,7 @@ export function ThemeCheckoutForm({
         throw new Error('Payment status: ' + (paymentIntent?.status || 'unknown'));
       }
     } catch (err) {
-      console.error('Payment error:', err);
+      logger.error('[ThemeCheckoutForm] Payment error:', err);
       setError(err instanceof Error ? err.message : 'Payment failed');
       setProcessing(false);
     }

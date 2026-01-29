@@ -10,11 +10,13 @@
  */
 
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
 import { DollarSign, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
+import { logger } from '@quelyos/logger';
+import { useAuth } from '@/lib/finance/compat/auth';
 
 interface StripeConnectStatus {
   onboarding_completed: boolean;
@@ -47,7 +49,7 @@ interface Designer {
 }
 
 export default function PayoutsPage() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const [designer, setDesigner] = useState<Designer | null>(null);
   const [revenues, setRevenues] = useState<Revenue[]>([]);
   const [connectStatus, setConnectStatus] = useState<StripeConnectStatus | null>(null);
@@ -109,7 +111,7 @@ export default function PayoutsPage() {
         await fetchConnectStatus(designerData.result.designer.id);
       }
     } catch (err) {
-      console.error('Error fetching designer data:', err);
+      logger.error('[ThemePayouts] Error fetching designer data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setLoading(false);
@@ -140,7 +142,7 @@ export default function PayoutsPage() {
         });
       }
     } catch (err) {
-      console.error('Error fetching Stripe Connect status:', err);
+      logger.error('[ThemePayouts] Error fetching Stripe Connect status:', err);
     }
   };
 
@@ -171,7 +173,7 @@ export default function PayoutsPage() {
       // Rediriger vers Stripe
       window.location.href = data.result.account_link_url;
     } catch (err) {
-      console.error('Error starting onboarding:', err);
+      logger.error('[ThemePayouts] Error starting onboarding:', err);
       setError(err instanceof Error ? err.message : 'Onboarding failed');
     }
   };
@@ -290,15 +292,17 @@ export default function PayoutsPage() {
             { label: 'Payouts', href: '/store/themes/payouts' },
           ]}
         />
-        <PageNotice notices={storeNotices.themes.payouts} />
+        <PageNotice config={storeNotices['themes.payouts']} />
         <div className="text-center py-12">
           <DollarSign className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">
             Vous devez avoir un profil designer pour accéder aux payouts.
           </p>
-          <Button href="/store/themes/submit" className="mt-4">
-            Devenir Designer
-          </Button>
+          <Link to="/store/themes/submit">
+            <Button className="mt-4">
+              Devenir Designer
+            </Button>
+          </Link>
         </div>
       </Layout>
     );
@@ -340,7 +344,7 @@ export default function PayoutsPage() {
         )}
       </div>
 
-      <PageNotice notices={storeNotices.themes.payouts} />
+      <PageNotice config={storeNotices['themes.payouts']} />
 
       {/* Balance Card */}
       <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6 mb-6 text-white">

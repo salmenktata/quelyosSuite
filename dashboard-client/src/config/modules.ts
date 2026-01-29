@@ -86,6 +86,7 @@ export interface SubMenuItem {
   path?: string
   badge?: string
   separator?: boolean
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 export interface MenuItem {

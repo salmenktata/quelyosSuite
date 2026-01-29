@@ -203,6 +203,31 @@ class ApiGateway {
       } as T
     }
   }
+
+  /**
+   * Authentification utilisateur
+   */
+  async login(login: string, password: string): Promise<{
+    success: boolean
+    error?: string
+    user?: { id: number; name: string; email: string; login: string }
+  }> {
+    logger.debug('[API] login() called with:', login)
+
+    const response = await this.post<any>('/api/auth/sso-login', {
+      jsonrpc: '2.0',
+      method: 'call',
+      params: { login, password },
+      id: 1,
+    })
+
+    // Gérer format JSON-RPC ou JSON simple
+    const result = response.result || response
+
+    logger.debug('[API] login() result:', result)
+
+    return result
+  }
 }
 
 // Instance singleton du client API

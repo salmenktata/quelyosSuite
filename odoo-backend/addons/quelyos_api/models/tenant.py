@@ -123,6 +123,48 @@ class QuelyosTenant(models.Model):
         help="Email pour créer le premier utilisateur administrateur"
     )
 
+    # Compteurs d'utilisation (computed)
+    products_count = fields.Integer(
+        string='Nb produits',
+        compute='_compute_usage_counts',
+        store=False,
+        help='Nombre de produits actifs dans ce tenant'
+    )
+    orders_count = fields.Integer(
+        string='Nb commandes',
+        compute='_compute_usage_counts',
+        store=False,
+        help='Nombre de commandes de vente confirmées cette année'
+    )
+
+    # Statut du tenant (SaaS Lifecycle)
+    status = fields.Selection([
+        ('provisioning', 'Provisioning'),
+        ('active', 'Actif'),
+        ('suspended', 'Suspendu'),
+        ('archived', 'Archivé'),
+    ], string='Statut', default='provisioning', required=True, tracking=True)
+
+    # Provisioning Job
+    provisioning_job_id = fields.Many2one(
+        'quelyos.provisioning.job',
+        string='Job de provisioning',
+        ondelete='set null',
+        help='Dernier job de provisioning pour ce tenant'
+    )
+
+    # Stripe
+    stripe_customer_id = fields.Char(
+        string='Stripe Customer ID',
+        help='ID du client dans Stripe (ex: cus_xxx)'
+    )
+
+    # Deployment tier
+    deployment_tier = fields.Selection([
+        ('shared', 'Mutualisé'),
+        ('dedicated', 'Dédié'),
+    ], string='Type de déploiement', default='shared')
+
     # ═══════════════════════════════════════════════════════════════════════════
     # BRANDING
     # ═══════════════════════════════════════════════════════════════════════════
@@ -635,6 +677,28 @@ class QuelyosTenant(models.Model):
             else:
                 tenant.user_ids = False
                 tenant.users_count = 0
+
+    @api.depends('company_id')
+    def _compute_usage_counts(self):
+        """Calcule les compteurs d'utilisation (produits, commandes)"""
+        for tenant in self:
+            if tenant.company_id:
+                # Compter les produits actifs de ce tenant
+                tenant.products_count = self.env['product.template'].sudo().search_count([
+                    ('company_id', '=', tenant.company_id.id),
+                    ('active', '=', True)
+                ])
+
+                # Compter les commandes de l'année en cours
+                year_start = fields.Date.today().replace(month=1, day=1)
+                tenant.orders_count = self.env['sale.order'].sudo().search_count([
+                    ('company_id', '=', tenant.company_id.id),
+                    ('date_order', '>=', year_start),
+                    ('state', 'in', ['sale', 'done'])
+                ])
+            else:
+                tenant.products_count = 0
+                tenant.orders_count = 0
 
     # ═══════════════════════════════════════════════════════════════════════════
     # WORKFLOW CRÉATION

@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronRight, Star } from 'lucide-react'
 import { createPortal } from 'react-dom'
+import { cn } from '@/lib/utils'
 
 export interface SubMenuItem {
   name: string
@@ -24,6 +25,9 @@ interface SidebarMenuItemProps {
   openMenus: Set<string>
   onToggleMenu: (name: string) => void
   isCollapsed?: boolean
+  isCompact?: boolean
+  isFavorite?: boolean
+  onToggleFavorite?: () => void
 }
 
 interface TooltipPosition {
@@ -37,7 +41,10 @@ export function SidebarMenuItem({
   moduleColor,
   openMenus,
   onToggleMenu,
-  isCollapsed = false
+  isCollapsed = false,
+  isCompact = false,
+  isFavorite = false,
+  onToggleFavorite
 }: SidebarMenuItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [tooltipPos, setTooltipPos] = useState<TooltipPosition>({ top: 0, left: 0 })
@@ -46,7 +53,12 @@ export function SidebarMenuItem({
   const hasSubItems = item.subItems && item.subItems.length > 0
   const isOpen = openMenus.has(item.name)
   const ItemIcon = item.icon
-  const isCurrentlyActive = item.path ? isActive(item.path) : item.subItems?.some(sub => sub.path && isActive(sub.path))
+
+  // Pour les items SANS sous-items : correspondance exacte seulement
+  // Pour les items AVEC sous-items : correspondance exacte OU sous-item actif
+  const isCurrentlyActive = item.path
+    ? (hasSubItems ? isActive(item.path) : window.location.pathname === item.path)
+    : item.subItems?.some(sub => sub.path && isActive(sub.path))
 
   const handleMouseEnter = () => {
     if (itemRef.current) {
@@ -157,14 +169,34 @@ export function SidebarMenuItem({
     return (
       <Link
         to={item.path}
-        className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+        className={cn(
+          'group flex items-center rounded-lg font-medium transition-all relative',
+          isCompact ? 'gap-2 px-2 py-1 text-xs' : 'gap-3 px-3 py-2 text-sm',
           isCurrentlyActive
             ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
             : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
+        )}
       >
-        <ItemIcon className="h-5 w-5" />
+        <ItemIcon className={cn(isCompact ? 'h-4 w-4' : 'h-5 w-5')} />
         <span className="flex-1">{item.name}</span>
+        {onToggleFavorite && (
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onToggleFavorite()
+            }}
+            className="opacity-0 group-hover:opacity-100 absolute right-2 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-opacity"
+            title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          >
+            <Star
+              className={cn(
+                'w-3 h-3',
+                isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+              )}
+            />
+          </button>
+        )}
       </Link>
     )
   }
@@ -174,25 +206,34 @@ export function SidebarMenuItem({
     <div>
       <button
         onClick={() => onToggleMenu(item.name)}
-        className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+        className={cn(
+          'group flex w-full items-center rounded-lg font-medium transition-all',
+          isCompact ? 'gap-2 px-2 py-1 text-xs' : 'gap-3 px-3 py-2 text-sm',
           isCurrentlyActive
             ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
             : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-        }`}
+        )}
       >
-        <ItemIcon className="h-5 w-5" />
+        <ItemIcon className={cn(isCompact ? 'h-4 w-4' : 'h-5 w-5')} />
         <span className="flex-1 text-left">{item.name}</span>
-        {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        {isOpen ? (
+          <ChevronDown className={cn(isCompact ? 'h-3 w-3' : 'h-4 w-4')} />
+        ) : (
+          <ChevronRight className={cn(isCompact ? 'h-3 w-3' : 'h-4 w-4')} />
+        )}
       </button>
 
       {isOpen && item.subItems && (
-        <div className="ml-4 mt-1 border-l-2 border-gray-200 dark:border-gray-600 pl-3">
+        <div className={cn('border-l-2 border-gray-200 dark:border-gray-600', isCompact ? 'ml-3 mt-0.5 pl-2' : 'ml-4 mt-1 pl-3')}>
           {item.subItems.map((subItem, idx) => {
             if (subItem.separator) {
               return (
                 <div
                   key={`separator-${idx}`}
-                  className="px-3 pt-3 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 mt-2"
+                  className={cn(
+                    'text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700',
+                    isCompact ? 'px-2 pt-2 pb-0.5 mt-1' : 'px-3 pt-3 pb-1 mt-2'
+                  )}
                 >
                   {subItem.name}
                 </div>
@@ -207,11 +248,13 @@ export function SidebarMenuItem({
               <Link
                 key={subItem.path}
                 to={subItem.path}
-                className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs transition-all ${
+                className={cn(
+                  'flex items-center gap-2 rounded-md text-xs transition-all',
+                  isCompact ? 'px-2 py-1' : 'px-3 py-2',
                   isSubActive
                     ? `bg-gray-100 dark:bg-gray-700 ${moduleColor} font-medium`
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                )}
               >
                 <span>{subItem.name}</span>
                 {subItem.badge && (

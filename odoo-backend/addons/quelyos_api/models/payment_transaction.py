@@ -7,6 +7,15 @@ from odoo.exceptions import ValidationError
 class PaymentTransaction(models.Model):
     _inherit = 'payment.transaction'
 
+    # Multi-tenant support
+    tenant_id = fields.Many2one(
+        'quelyos.tenant',
+        string='Tenant',
+        index=True,
+        ondelete='cascade',
+        help='Tenant propriétaire de cette transaction'
+    )
+
     # Additional fields for Tunisian payment providers
     provider_payment_id = fields.Char(
         string='Provider Payment ID',

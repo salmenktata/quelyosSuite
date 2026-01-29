@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
+import { logger } from '@quelyos/logger';
 import {
   TrendingUp,
   DollarSign,
@@ -144,7 +145,7 @@ export default function AnalyticsPage() {
       if (categoriesData.result?.success) setCategories(categoriesData.result.categories);
       if (timelineData.result?.success) setTimeline(timelineData.result.timeline);
     } catch (err) {
-      console.error('Error fetching analytics:', err);
+      logger.error('[ThemeAnalytics] Error fetching analytics:', err);
       setError(err instanceof Error ? err.message : 'Failed to load analytics');
     } finally {
       setLoading(false);
@@ -174,22 +175,11 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <Layout>
-        <Breadcrumbs
-          items={[
-            { label: 'Boutique', href: '/store' },
-            { label: 'Thèmes', href: '/store/themes' },
-            { label: 'Analytics', href: '/store/themes/analytics' },
-          ]}
-        />
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Analytics Marketplace
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Statistiques et performances de la marketplace thèmes
-          </p>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+          <SkeletonTable rows={8} columns={4} />
         </div>
-        <SkeletonTable rows={8} />
       </Layout>
     );
   }
@@ -197,27 +187,34 @@ export default function AnalyticsPage() {
   if (error) {
     return (
       <Layout>
-        <Breadcrumbs
-          items={[
-            { label: 'Boutique', href: '/store' },
-            { label: 'Thèmes', href: '/store/themes' },
-            { label: 'Analytics', href: '/store/themes/analytics' },
-          ]}
-        />
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Analytics Marketplace
-          </h1>
-        </div>
-        <div
-          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
-          role="alert"
-        >
-          <div className="flex items-start">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 mr-3 flex-shrink-0" />
-            <div>
-              <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">Erreur</h3>
-              <p className="text-sm text-red-600 dark:text-red-300 mt-1">{error}</p>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Boutique', href: '/store' },
+              { label: 'Thèmes', href: '/store/themes' },
+              { label: 'Analytics', href: '/store/themes/analytics' },
+            ]}
+          />
+
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Analytics Marketplace
+            </h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Statistiques et performances de la marketplace thèmes
+            </p>
+          </div>
+
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">Erreur</h3>
+                <p className="text-sm text-red-600 dark:text-red-300 mt-1">{error}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -227,28 +224,54 @@ export default function AnalyticsPage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Boutique', href: '/store' },
-          { label: 'Thèmes', href: '/store/themes' },
-          { label: 'Analytics', href: '/store/themes/analytics' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        {/* 1. Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Boutique', href: '/store' },
+            { label: 'Thèmes', href: '/store/themes' },
+            { label: 'Analytics', href: '/store/themes/analytics' },
+          ]}
+        />
 
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Analytics Marketplace
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Statistiques et performances de la marketplace thèmes
-          </p>
+        {/* 2. Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Analytics Marketplace
+            </h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Statistiques et performances de la marketplace thèmes
+            </p>
+          </div>
         </div>
-      </div>
+
+        {/* 3. PageNotice */}
+        <PageNotice
+          config={{
+            pageId: 'themes-analytics',
+            title: 'Analytics Marketplace',
+            purpose: 'Visualisez les performances globales de la marketplace de thèmes',
+            icon: TrendingUp,
+            moduleColor: 'indigo',
+            sections: [
+              {
+                title: 'Métriques Disponibles',
+                items: [
+                  'Revenus totaux et commission plateforme (30%)',
+                  'Top 5 thèmes les plus vendus avec notes',
+                  'Top 5 designers par chiffre d\'affaires',
+                  'Statistiques par catégorie (Mode, Tech, etc.)',
+                  'Évolution des ventes sur 6 mois',
+                ],
+              },
+            ],
+          }}
+        />
 
       {/* Métriques principales */}
       {overview && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
@@ -314,7 +337,7 @@ export default function AnalyticsPage() {
       )}
 
       {/* Top thèmes et designers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top thèmes */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -420,7 +443,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Statistiques par catégorie */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Statistiques par Catégorie
@@ -505,6 +528,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
       )}
+      </div>
     </Layout>
   );
 }

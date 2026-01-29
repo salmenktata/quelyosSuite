@@ -127,14 +127,15 @@ export function ModuleSettingsLayout({
   children,
 }: ModuleSettingsLayoutProps) {
   const { pathname } = useLocation();
-  const theme = MODULE_SETTINGS_THEME[moduleId];
+  // Fallback vers 'home' si le moduleId n'a pas de thème défini
+  const theme = MODULE_SETTINGS_THEME[moduleId as keyof typeof MODULE_SETTINGS_THEME] || MODULE_SETTINGS_THEME.home;
   const basePath = navItems[0]?.href || "";
 
   return (
     <div className="relative space-y-6 text-gray-900 dark:text-white">
       {/* Background effects - visible uniquement en dark mode pour éviter le bruit visuel en light */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden dark:block hidden">
-        {theme.gradients.map((gradient, index) => (
+        {theme.gradients.map((gradient: { color: string; position: string; size: string }, index: number) => (
           <div
             key={index}
             className={cn(

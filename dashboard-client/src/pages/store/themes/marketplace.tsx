@@ -11,8 +11,9 @@
 
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Button } from '@/components/common';
-import { Search, Filter, Star, Download, DollarSign, User } from 'lucide-react';
+import { Breadcrumbs, Button, PageNotice } from '@/components/common';
+import { Search, Filter, Star, Download, DollarSign, User, Palette } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 import type { ThemeCategory } from '@/types/theme';
 
 interface MarketplaceTheme {
@@ -85,7 +86,7 @@ export default function MarketplacePage() {
         setThemes(data.result.themes);
       }
     } catch (error) {
-      console.error('Error loading marketplace themes:', error);
+      logger.error('[ThemeMarketplace] Error loading marketplace themes:', error);
     } finally {
       setLoading(false);
     }
@@ -98,16 +99,18 @@ export default function MarketplacePage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Boutique', href: '/store' },
-          { label: 'Thèmes', href: '/store/themes' },
-          { label: 'Marketplace', href: '/store/themes/marketplace' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        {/* 1. Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Boutique', href: '/store' },
+            { label: 'Thèmes', href: '/store/themes' },
+            { label: 'Marketplace', href: '/store/themes/marketplace' },
+          ]}
+        />
 
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-6">
+        {/* 2. Header */}
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Marketplace de Thèmes
@@ -120,6 +123,29 @@ export default function MarketplacePage() {
             Soumettre un Thème
           </Button>
         </div>
+
+        {/* 3. PageNotice */}
+        <PageNotice
+          config={{
+            pageId: 'themes-marketplace',
+            title: 'Marketplace Thèmes',
+            purpose: 'Explorez et achetez des thèmes créés par notre communauté de designers',
+            icon: Palette,
+            moduleColor: 'indigo',
+            sections: [
+              {
+                title: 'Fonctionnalités',
+                items: [
+                  'Thèmes gratuits et premium disponibles',
+                  'Filtrage par catégorie, prix et popularité',
+                  'Notes et avis utilisateurs',
+                  'Preview avant achat',
+                  'Installation en un clic',
+                ],
+              },
+            ],
+          }}
+        />
 
         {/* Filtres et recherche */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
@@ -192,9 +218,8 @@ export default function MarketplacePage() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Grille thèmes */}
+        {/* Grille thèmes */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -295,6 +320,7 @@ export default function MarketplacePage() {
           ))}
         </div>
       )}
+      </div>
     </Layout>
   );
 }

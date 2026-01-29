@@ -11,7 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Button } from '@/components/common';
+import { Breadcrumbs, Button, PageNotice } from '@/components/common';
 import {
   FileText,
   Clock,
@@ -23,6 +23,7 @@ import {
   ShoppingBag,
   AlertCircle,
 } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 import type { ThemeCategory } from '@/types/theme';
 
 interface Submission {
@@ -128,7 +129,7 @@ export default function MySubmissionsPage() {
         });
       }
     } catch (error) {
-      console.error('Error loading submissions:', error);
+      logger.error('[MySubmissions] Error loading submissions:', error);
     } finally {
       setLoading(false);
     }
@@ -150,15 +151,17 @@ export default function MySubmissionsPage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Boutique', href: '/store' },
-          { label: 'Thèmes', href: '/store/themes' },
-          { label: 'Mes Soumissions', href: '/store/themes/my-submissions' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        {/* 1. Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Boutique', href: '/store' },
+            { label: 'Thèmes', href: '/store/themes' },
+            { label: 'Mes Soumissions', href: '/store/themes/my-submissions' },
+          ]}
+        />
 
-      <div className="mb-6">
+        {/* 2. Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -172,10 +175,32 @@ export default function MySubmissionsPage() {
             Soumettre un Nouveau Thème
           </Button>
         </div>
-      </div>
 
-      {/* Stats Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* 3. PageNotice */}
+        <PageNotice
+          config={{
+            pageId: 'themes-my-submissions',
+            title: 'Mes Soumissions',
+            purpose: 'Suivez le statut de vos thèmes soumis et gérez vos revenus',
+            icon: FileText,
+            moduleColor: 'indigo',
+            sections: [
+              {
+                title: 'Statuts',
+                items: [
+                  'Draft : Brouillon non soumis',
+                  'Submitted / In Review : En cours de validation',
+                  'Approved : Thème publié sur la marketplace',
+                  'Rejected : Consultez la raison du rejet',
+                  'Statistiques : Ventes et revenus par thème',
+                ],
+              },
+            ],
+          }}
+        />
+
+        {/* Stats Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">Total Soumissions</span>
@@ -352,6 +377,7 @@ export default function MySubmissionsPage() {
           ))}
         </div>
       )}
+      </div>
     </Layout>
   );
 }

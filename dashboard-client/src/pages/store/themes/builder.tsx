@@ -32,7 +32,6 @@ import { SectionsPalette } from '@/components/theme-builder/SectionsPalette';
 import { CanvasArea } from '@/components/theme-builder/CanvasArea';
 import { ColorPicker } from '@/components/theme-builder/ColorPicker';
 import { FontSelector } from '@/components/theme-builder/FontSelector';
-import { storeNotices } from '@/lib/notices/store-notices';
 import { getValidationErrors } from '@/lib/theme-validation';
 import { toast } from 'sonner';
 import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Type, Eye } from 'lucide-react';
@@ -467,11 +466,9 @@ function BuilderContent({ activeView }: { activeView: 'build' | 'style' }) {
  * Page principale avec Layout
  */
 export default function ThemeBuilderPage() {
-  const [showNotice, setShowNotice] = useState(true);
-
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Boutique', href: '/store' },
@@ -480,12 +477,27 @@ export default function ThemeBuilderPage() {
           ]}
         />
 
-        {showNotice && (
-          <PageNotice
-            config={storeNotices['themes.builder']}
-            className="mb-6"
-          />
-        )}
+        <PageNotice
+          config={{
+            pageId: 'themes-builder',
+            title: 'Theme Builder',
+            purpose: 'Créez vos thèmes visuellement avec notre éditeur drag & drop sans coder',
+            icon: Layers,
+            moduleColor: 'indigo',
+            sections: [
+              {
+                title: 'Fonctionnalités',
+                items: [
+                  'Interface drag & drop pour organiser les sections',
+                  'Éditeur de couleurs et typographie visuel',
+                  'Preview temps réel de votre thème',
+                  'Export/Import JSON pour sauvegarde locale',
+                  'Sauvegarde vers vos soumissions (draft)',
+                ],
+              },
+            ],
+          }}
+        />
 
         <BuilderProvider>
           <div className="h-[calc(100vh-280px)] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 overflow-hidden">

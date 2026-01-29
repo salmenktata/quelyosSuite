@@ -6,8 +6,8 @@ import { Plus, Trash2, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark,
 import type { PaymentMethod, FlowType } from "@/types/paymentFlow";
 import { logger } from '@quelyos/logger';
 
-// Types de flux avec labels et icônes
-const FLOW_TYPE_CONFIG: Record<PaymentMethod, { label: string; icon: React.ReactNode; description: string }> = {
+// Types de flux avec labels et icônes (FlowType inclut PaymentMethod + TransactionCategory)
+const FLOW_TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode; description: string }> = {
   CASH: {
     label: "Espèces",
     icon: <Banknote className="h-5 w-5" />,

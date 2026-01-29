@@ -25,21 +25,26 @@ import { useActiveRoute } from '../hooks/useActiveRoute'
 import { useDetectModule } from '../hooks/useDetectModule'
 import { useMenuState } from '../hooks/useMenuState'
 import { useAutoOpenMenus } from '../hooks/useAutoOpenMenus'
+import { useSectionState } from '../hooks/useSectionState'
+import { useNavigationHistory } from '../hooks/useNavigationHistory'
 
 // Components
 import { Button } from './common/Button'
 import { SidebarMenuItem } from './navigation/SidebarMenuItem'
 import { AppLauncher } from './navigation/AppLauncher'
 import { TopNavbar } from './navigation/TopNavbar'
+import { QuickAccess } from './navigation/QuickAccess'
+import { CommandPalette } from './navigation/CommandPalette'
 
 // Config & Types
 import { MODULES, type Module, type ModuleId } from '@/config/modules'
 
 // Icons
-import { X, LogOut, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { X, LogOut, ChevronsLeft, ChevronsRight, ChevronDown, ChevronRight, Minimize2, Maximize2 } from 'lucide-react'
 
 // Constants
 const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed'
+const SIDEBAR_COMPACT_MODE_KEY = 'sidebar_compact_mode'
 
 // ============================================================================
 // CONTEXT
@@ -73,12 +78,21 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
   })
+  const [isCompactMode, setIsCompactMode] = useState(() => {
+    return localStorage.getItem(SIDEBAR_COMPACT_MODE_KEY) === 'true'
+  })
   const { canAccessModule } = usePermissions()
 
   const toggleSidebarCollapse = () => {
     const newValue = !isSidebarCollapsed
     setIsSidebarCollapsed(newValue)
     localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newValue))
+  }
+
+  const toggleCompactMode = () => {
+    const newValue = !isCompactMode
+    setIsCompactMode(newValue)
+    localStorage.setItem(SIDEBAR_COMPACT_MODE_KEY, String(newValue))
   }
   const { isActive } = useActiveRoute()
   const { openMenus, toggleMenu, openMenu } = useMenuState()
@@ -91,6 +105,15 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   // Detect current module from URL using custom hook
   const detectedModule = useDetectModule(accessibleModules, location.pathname)
   const [currentModule, setCurrentModule] = useState<Module>(detectedModule)
+
+  // State for collapsable sections
+  const { openSections, toggleSection, isOpenSection } = useSectionState(
+    currentModule.id,
+    currentModule.sections
+  )
+
+  // Navigation history & favorites
+  const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
 
   useEffect(() => {
     setCurrentModule(detectedModule)
@@ -122,6 +145,9 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   return (
     <ModuleContext.Provider value={{ currentModule, setModule: handleModuleChange, setTitle: () => {} }}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+        {/* Command Palette (global) */}
+        <CommandPalette />
+
         {/* Top Navbar */}
         <TopNavbar
           currentModule={currentModule}
@@ -180,37 +206,63 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Navigation */}
-            <nav className={`flex-1 py-4 space-y-4 overflow-y-auto ${isSidebarCollapsed ? 'px-2' : 'px-3'}`}>
+            <nav className={`flex-1 overflow-y-auto ${isCompactMode ? 'py-2 space-y-2 px-2' : 'py-4 space-y-4 px-3'}`}>
+              {/* Quick Access (favoris/récents) */}
+              <QuickAccess
+                favorites={favorites}
+                recentPages={recentPages}
+                moduleColor={currentModule.color}
+                isActive={isActive}
+              />
+
               {currentModule.sections.map((section) => (
                 <div key={section.title}>
+                  {/* Header cliquable (masqué en mode collapsed) */}
                   {!isSidebarCollapsed && (
-                    <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                      {section.title}
-                    </p>
+                    <button
+                      onClick={() => toggleSection(section.title)}
+                      className={`w-full flex items-center justify-between px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded group sticky top-0 z-10 bg-white dark:bg-gray-800 ${isCompactMode ? 'mb-1' : 'mb-2'}`}
+                      aria-expanded={isOpenSection(section.title)}
+                      aria-controls={`section-${section.title}`}
+                    >
+                      <span>{section.title}</span>
+                      {isOpenSection(section.title) ? (
+                        <ChevronDown className="w-3 h-3 opacity-60 group-hover:opacity-100" />
+                      ) : (
+                        <ChevronRight className="w-3 h-3 opacity-60 group-hover:opacity-100" />
+                      )}
+                    </button>
                   )}
-                  <div className="space-y-0.5">
-                    {section.items.map((item) => (
-                      <SidebarMenuItem
-                        key={item.name}
-                        item={item}
-                        isActive={isActive}
-                        moduleColor={currentModule.color}
-                        openMenus={openMenus}
-                        onToggleMenu={toggleMenu}
-                        isCollapsed={isSidebarCollapsed}
-                      />
-                    ))}
-                  </div>
+
+                  {/* Items (affichés si section ouverte OU mode collapsed) */}
+                  {(isSidebarCollapsed || isOpenSection(section.title)) && (
+                    <div id={`section-${section.title}`} className="space-y-0.5">
+                      {section.items.map((item) => (
+                        <SidebarMenuItem
+                          key={item.name}
+                          item={item}
+                          isActive={isActive}
+                          moduleColor={currentModule.color}
+                          openMenus={openMenus}
+                          onToggleMenu={toggleMenu}
+                          isCollapsed={isSidebarCollapsed}
+                          isCompact={isCompactMode}
+                          isFavorite={item.path ? isFavorite(item.path) : false}
+                          onToggleFavorite={item.path ? () => toggleFavorite(item.path!) : undefined}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </nav>
 
             {/* Footer */}
-            <div className={`border-t border-gray-200 dark:border-gray-700 ${isSidebarCollapsed ? 'px-2 py-3' : 'px-3 py-3'}`}>
+            <div className={`border-t border-gray-200 dark:border-gray-700 ${isSidebarCollapsed ? 'px-2 py-3' : 'px-3 py-3'} space-y-2`}>
               {/* Toggle collapse button - desktop only */}
               <button
                 onClick={toggleSidebarCollapse}
-                className="hidden lg:flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mb-2"
+                className="hidden lg:flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title={isSidebarCollapsed ? 'Agrandir le menu' : 'Réduire le menu'}
               >
                 {isSidebarCollapsed ? (
@@ -222,6 +274,20 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                   </>
                 )}
               </button>
+
+              {/* Toggle Compact mode - visible uniquement en mode normal */}
+              {!isSidebarCollapsed && (
+                <button
+                  onClick={toggleCompactMode}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  title={isCompactMode ? 'Mode normal' : 'Mode compact'}
+                >
+                  {isCompactMode ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+                  <span>{isCompactMode ? 'Mode normal' : 'Mode compact'}</span>
+                </button>
+              )}
+
+              {/* Logout button */}
               <Button
                 variant="ghost"
                 size="sm"

@@ -11,8 +11,8 @@
 
 import { useState } from 'react';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Button } from '@/components/common';
-import { Upload, Image, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { Breadcrumbs, Button, PageNotice } from '@/components/common';
+import { Upload, Image, DollarSign, CheckCircle, AlertCircle, FileUp } from 'lucide-react';
 import type { ThemeCategory } from '@/types/theme';
 
 const CATEGORIES: { value: ThemeCategory; label: string }[] = [
@@ -128,31 +128,42 @@ export default function SubmitThemePage() {
   if (success) {
     return (
       <Layout>
-        <Breadcrumbs
-          items={[
-            { label: 'Boutique', href: '/store' },
-            { label: 'Thèmes', href: '/store/themes' },
-            { label: 'Soumettre', href: '/store/themes/submit' },
-          ]}
-        />
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Boutique', href: '/store' },
+              { label: 'Thèmes', href: '/store/themes' },
+              { label: 'Soumettre', href: '/store/themes/submit' },
+            ]}
+          />
 
-        <div className="max-w-2xl mx-auto text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full mb-6">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Soumission Réussie</h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Votre thème est en cours de review
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Thème Soumis avec Succès !
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            Votre thème est en cours de review par notre équipe. Vous recevrez une notification une fois validé.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button variant="outline" onClick={() => setSuccess(false)}>
-              Soumettre un Autre Thème
-            </Button>
-            <Button variant="primary" onClick={() => (window.location.href = '/store/themes/my-submissions')}>
-              Voir Mes Soumissions
-            </Button>
+
+          <div className="max-w-2xl mx-auto text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full mb-6">
+              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Thème Soumis avec Succès !
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+              Votre thème est en cours de review par notre équipe. Vous recevrez une notification une fois validé.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Button variant="outline" onClick={() => setSuccess(false)}>
+                Soumettre un Autre Thème
+              </Button>
+              <Button variant="primary" onClick={() => (window.location.href = '/store/themes/my-submissions')}>
+                Voir Mes Soumissions
+              </Button>
+            </div>
           </div>
         </div>
       </Layout>
@@ -161,30 +172,54 @@ export default function SubmitThemePage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Boutique', href: '/store' },
-          { label: 'Thèmes', href: '/store/themes' },
-          { label: 'Soumettre', href: '/store/themes/submit' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Boutique', href: '/store' },
+            { label: 'Thèmes', href: '/store/themes' },
+            { label: 'Soumettre', href: '/store/themes/submit' },
+          ]}
+        />
 
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Soumettre un Thème
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Partagez votre thème avec la communauté et générez des revenus
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Soumettre un Thème</h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Partagez votre thème avec la communauté et générez des revenus
+            </p>
+          </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          </div>
-        )}
+        <PageNotice
+          config={{
+            pageId: 'themes-submit',
+            title: 'Soumission de Thème',
+            purpose:
+              'Soumettez votre thème personnalisé au marketplace pour le partager avec la communauté',
+            icon: FileUp,
+            moduleColor: 'indigo',
+            sections: [
+              {
+                title: 'Informations',
+                items: [
+                  'Configuration JSON requise (format validé)',
+                  'Miniature recommandée pour attirer les utilisateurs',
+                  'Thèmes gratuits ou premium (revenue share 70/30)',
+                  'Review par l\'équipe avant publication',
+                  'Suivi des soumissions dans "Mes Soumissions"',
+                ],
+              },
+            ],
+          }}
+        />
+
+        <div className="max-w-3xl mx-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3" role="alert">
+              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Informations de base */}
@@ -358,6 +393,7 @@ export default function SubmitThemePage() {
             </Button>
           </div>
         </form>
+        </div>
       </div>
     </Layout>
   );

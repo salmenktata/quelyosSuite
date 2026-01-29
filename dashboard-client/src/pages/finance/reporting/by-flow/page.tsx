@@ -17,8 +17,8 @@ import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { PageNotice } from "@/components/common";
 import { financeNotices } from "@/lib/notices";
 
-// Icônes par type de flux
-const FLOW_ICONS: Record<PaymentMethod, React.ReactNode> = {
+// Icônes par type de flux (FlowType inclut PaymentMethod + TransactionCategory)
+const FLOW_ICONS: Record<string, React.ReactNode> = {
   CASH: <Banknote className="h-5 w-5" />,
   CARD: <CreditCard className="h-5 w-5" />,
   CHECK: <FileText className="h-5 w-5" />,

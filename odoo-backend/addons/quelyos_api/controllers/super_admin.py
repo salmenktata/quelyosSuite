@@ -10,6 +10,9 @@ from odoo.http import request
 from odoo.exceptions import AccessDenied
 from datetime import datetime, timedelta
 import logging
+import json
+
+from ..config import get_cors_headers
 
 _logger = logging.getLogger(__name__)
 
@@ -84,60 +87,102 @@ class SuperAdminController(http.Controller):
     # DASHBOARD METRICS
     # =========================================================================
 
-    @http.route('/api/super-admin/dashboard/metrics', type='json', auth='user', methods=['GET'], csrf=False)
+    @http.route('/api/super-admin/dashboard/metrics', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def dashboard_metrics(self):
         """Retourne les KPIs globaux pour le dashboard"""
-        self._check_super_admin()
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
 
-        Subscription = request.env['quelyos.subscription']
-        Tenant = request.env['quelyos.tenant']
+        # Handle preflight OPTIONS
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
 
-        # MRR & ARR
-        mrr_data = Subscription.get_mrr_breakdown()
-        mrr = mrr_data.get('total', 0)
-        arr = mrr * 12
+        # Vérifier authentification
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
 
-        # Active subscriptions
-        active_subs = Subscription.search_count([('state', '=', 'active')])
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
 
-        # Churn rate (dernier mois)
-        churn_analysis = Subscription.get_churn_analysis(months=1)
-        churn_rate = churn_analysis[0]['churn_rate'] if churn_analysis else 0
+        try:
+            Subscription = request.env['quelyos.subscription'].sudo()
+            Tenant = request.env['quelyos.tenant'].sudo()
 
-        # MRR history (12 mois)
-        mrr_history = self._get_mrr_history(12)
+            # Récupérer les métriques réelles
+            mrr_data = Subscription.get_mrr_breakdown()
+            total_mrr = mrr_data.get('total', 0)
 
-        # Revenue by plan
-        revenue_by_plan = [
-            {'plan': 'starter', 'revenue': mrr_data.get('starter', 0)},
-            {'plan': 'pro', 'revenue': mrr_data.get('pro', 0)},
-            {'plan': 'enterprise', 'revenue': mrr_data.get('enterprise', 0)},
-        ]
+            active_subs = Subscription.search_count([('state', 'in', ['active', 'trial'])])
 
-        # Top customers par MRR
-        top_customers = Tenant.search([], order='subscription_id.mrr desc', limit=10)
+            # Churn analysis
+            churn_analysis = Subscription.get_churn_analysis(months=1)
+            churn_rate = churn_analysis[0].get('churn_rate', 0) if churn_analysis else 0
 
-        # At-risk customers (past_due ou quota > 90%)
-        at_risk = Tenant.search([
-            '|',
-            ('subscription_state', '=', 'past_due'),
-            ('users_usage_percentage', '>', 90)
-        ], limit=10)
+            # Revenue by plan
+            revenue_by_plan = [
+                {'plan': 'starter', 'revenue': mrr_data.get('starter', 0)},
+                {'plan': 'pro', 'revenue': mrr_data.get('pro', 0)},
+                {'plan': 'enterprise', 'revenue': mrr_data.get('enterprise', 0)},
+            ]
 
-        # Recent subscriptions
-        recent_subs = Subscription.search([], order='create_date desc', limit=5)
+            # Top customers (tenants avec le plus haut MRR)
+            top_tenants = Tenant.search([
+                ('subscription_id', '!=', False),
+                ('status', '=', 'active')
+            ], order='subscription_id desc', limit=5)
+            top_customers = [{
+                'id': t.id,
+                'name': t.name,
+                'mrr': t.subscription_id.mrr if t.subscription_id else 0,
+                'plan': t.subscription_id.plan_id.code if t.subscription_id and t.subscription_id.plan_id else None,
+            } for t in top_tenants]
 
-        return {
-            'mrr': mrr,
-            'arr': arr,
-            'active_subscriptions': active_subs,
-            'churn_rate': churn_rate,
-            'mrr_history': mrr_history,
-            'revenue_by_plan': revenue_by_plan,
-            'top_customers': [self._serialize_tenant(t) for t in top_customers],
-            'at_risk_customers': [self._serialize_tenant(t) for t in at_risk],
-            'recent_subscriptions': [self._serialize_subscription(s) for s in recent_subs],
-        }
+            # Recent subscriptions
+            recent_subs = Subscription.search([
+                ('state', 'in', ['active', 'trial'])
+            ], order='create_date desc', limit=10)
+            recent_subscriptions = [{
+                'id': s.id,
+                'name': s.name,
+                'plan': s.plan_id.code if s.plan_id else None,
+                'state': s.state,
+                'mrr': s.mrr,
+                'created_at': s.create_date.isoformat() if s.create_date else None,
+            } for s in recent_subs]
+
+            data = {
+                'success': True,
+                'mrr': total_mrr,
+                'arr': total_mrr * 12,
+                'active_subscriptions': active_subs,
+                'churn_rate': churn_rate,
+                'mrr_history': self._get_mrr_history(6),
+                'revenue_by_plan': revenue_by_plan,
+                'top_customers': top_customers,
+                'at_risk_customers': [],
+                'recent_subscriptions': recent_subscriptions,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Dashboard metrics error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
 
     def _get_mrr_history(self, months):
         """Calcule l'historique MRR sur N mois"""
@@ -163,35 +208,75 @@ class SuperAdminController(http.Controller):
     # TENANTS
     # =========================================================================
 
-    @http.route('/api/super-admin/tenants', type='json', auth='user', methods=['GET'], csrf=False)
+    @http.route('/api/super-admin/tenants', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def list_tenants(self, search=None, plan=None, state=None, page=1, limit=50):
         """Liste tous les tenants avec filtres"""
-        self._check_super_admin()
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
 
-        domain = []
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
 
-        if search:
-            domain.append('|')
-            domain.append(('name', 'ilike', search))
-            domain.append(('domain', 'ilike', search))
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
 
-        if plan:
-            domain.append(('subscription_id.plan_id.code', '=', plan))
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
 
-        if state:
-            domain.append(('subscription_state', '=', state))
+        try:
+            Tenant = request.env['quelyos.tenant'].sudo()
+            page = int(page) if page else 1
+            limit = int(limit) if limit else 50
 
-        Tenant = request.env['quelyos.tenant']
-        total = Tenant.search_count(domain)
-        offset = (page - 1) * limit
-        tenants = Tenant.search(domain, limit=limit, offset=offset, order='create_date desc')
+            # Construire le domaine de recherche
+            domain = [('active', '=', True)]
+            if search:
+                domain.append('|')
+                domain.append(('name', 'ilike', search))
+                domain.append(('domain', 'ilike', search))
+            if plan:
+                domain.append(('subscription_id.plan_id.code', '=', plan))
+            if state:
+                domain.append(('status', '=', state))
 
-        return {
-            'data': [self._serialize_tenant(t) for t in tenants],
-            'total': total,
-            'page': page,
-            'limit': limit,
-        }
+            # Compter le total
+            total = Tenant.search_count(domain)
+
+            # Paginer
+            offset = (page - 1) * limit
+            tenants = Tenant.search(domain, offset=offset, limit=limit, order='create_date desc')
+
+            # Sérialiser
+            tenants_data = [self._serialize_tenant(t) for t in tenants]
+
+            data = {
+                'success': True,
+                'data': tenants_data,
+                'total': total,
+                'page': page,
+                'limit': limit,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List tenants error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
 
     # =========================================================================
     # SUBSCRIPTIONS
@@ -335,20 +420,18 @@ class SuperAdminController(http.Controller):
         """Liste tous les provisioning jobs"""
         self._check_super_admin()
 
-        jobs = request.env['provisioning.job'].search([], order='create_date desc', limit=50)
+        jobs = request.env['quelyos.provisioning.job'].sudo().search([], order='create_date desc', limit=50)
 
         return [{
             'id': job.id,
-            'tenant_id': job.tenant_id.id,
-            'tenant_name': job.tenant_id.name,
-            'job_type': job.job_type,
+            'tenant_id': job.tenant_id.id if job.tenant_id else None,
+            'tenant_name': job.tenant_id.name if job.tenant_id else None,
             'state': job.state,
             'progress': job.progress,
+            'current_step': job.current_step,
             'started_at': job.started_at.isoformat() if job.started_at else None,
             'completed_at': job.completed_at.isoformat() if job.completed_at else None,
-            'duration_seconds': job.duration_seconds,
             'error_message': job.error_message,
-            'steps_completed': job.steps_completed.split(',') if job.steps_completed else [],
         } for job in jobs]
 
     @http.route('/api/super-admin/system/health', type='json', auth='user', methods=['GET'], csrf=False)
@@ -418,29 +501,32 @@ class SuperAdminController(http.Controller):
 
     def _serialize_tenant(self, tenant):
         """Sérialise un tenant pour l'API"""
+        sub = tenant.subscription_id
         return {
             'id': tenant.id,
             'name': tenant.name,
+            'code': tenant.code,
             'domain': tenant.domain,
-            'logo': tenant.logo_url if hasattr(tenant, 'logo_url') else None,
+            'status': tenant.status,
+            'logo': tenant.logo_url or None,
             'slogan': tenant.slogan,
-            'subscription_id': tenant.subscription_id.id,
+            'subscription_id': sub.id if sub else None,
             'subscription_state': tenant.subscription_state,
-            'plan_code': tenant.subscription_id.plan_id.code,
-            'plan_name': tenant.subscription_id.plan_id.name,
+            'plan_code': sub.plan_id.code if sub and sub.plan_id else None,
+            'plan_name': sub.plan_id.name if sub and sub.plan_id else None,
             'users_count': tenant.users_count,
             'products_count': tenant.products_count,
             'orders_count': tenant.orders_count,
-            'max_users': tenant.subscription_id.max_users,
-            'max_products': tenant.subscription_id.max_products,
-            'max_orders_per_year': tenant.subscription_id.max_orders_per_year,
-            'mrr': tenant.subscription_id.mrr,
+            'max_users': sub.max_users if sub else 0,
+            'max_products': sub.max_products if sub else 0,
+            'max_orders_per_year': sub.max_orders_per_year if sub else 0,
+            'mrr': sub.mrr if sub else 0,
             'features': {
-                'wishlist_enabled': tenant.wishlist_enabled,
-                'reviews_enabled': tenant.reviews_enabled,
-                'newsletter_enabled': tenant.newsletter_enabled,
-                'product_comparison_enabled': tenant.product_comparison_enabled,
-                'guest_checkout_enabled': tenant.guest_checkout_enabled,
+                'wishlist_enabled': tenant.feature_wishlist,
+                'reviews_enabled': tenant.feature_reviews,
+                'newsletter_enabled': tenant.feature_newsletter,
+                'product_comparison_enabled': tenant.feature_comparison,
+                'guest_checkout_enabled': tenant.feature_guest_checkout,
             },
             'provisioning_job_id': tenant.provisioning_job_id.id if tenant.provisioning_job_id else None,
             'provisioning_status': tenant.provisioning_job_id.state if tenant.provisioning_job_id else None,
@@ -449,14 +535,17 @@ class SuperAdminController(http.Controller):
 
     def _serialize_subscription(self, subscription):
         """Sérialise une subscription pour l'API"""
+        # Récupérer le premier tenant lié (relation One2many)
+        tenant = subscription.tenant_ids[0] if subscription.tenant_ids else None
         return {
             'id': subscription.id,
-            'tenant_id': subscription.tenant_id.id,
-            'tenant_name': subscription.tenant_id.name,
-            'tenant_domain': subscription.tenant_id.domain,
-            'plan_id': subscription.plan_id.id,
-            'plan_code': subscription.plan_id.code,
-            'plan_name': subscription.plan_id.name,
+            'name': subscription.name,
+            'tenant_id': tenant.id if tenant else None,
+            'tenant_name': tenant.name if tenant else None,
+            'tenant_domain': tenant.domain if tenant else None,
+            'plan_id': subscription.plan_id.id if subscription.plan_id else None,
+            'plan_code': subscription.plan_id.code if subscription.plan_id else None,
+            'plan_name': subscription.plan_id.name if subscription.plan_id else None,
             'state': subscription.state,
             'billing_cycle': subscription.billing_cycle,
             'mrr': subscription.mrr,
@@ -467,10 +556,10 @@ class SuperAdminController(http.Controller):
             'end_date': subscription.end_date.isoformat() if subscription.end_date else None,
             'stripe_subscription_id': subscription.stripe_subscription_id,
             'stripe_customer_id': subscription.stripe_customer_id,
-            'users_usage': subscription.tenant_id.users_count,
+            'users_usage': tenant.users_count if tenant else 0,
             'max_users': subscription.max_users,
-            'products_usage': subscription.tenant_id.products_count,
+            'products_usage': tenant.products_count if tenant else 0,
             'max_products': subscription.max_products,
-            'orders_usage': subscription.tenant_id.orders_count,
+            'orders_usage': tenant.orders_count if tenant else 0,
             'max_orders_per_year': subscription.max_orders_per_year,
         }
