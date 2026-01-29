@@ -94,12 +94,12 @@ class QuelyosThemeDesigner(models.Model):
             else:
                 designer.average_rating = 0.0
 
-    @api.depends('revenue_ids', 'revenue_ids.designer_share', 'revenue_ids.status')
+    @api.depends('revenue_ids', 'revenue_ids.amount', 'revenue_ids.payout_status')
     def _compute_pending_balance(self):
         """Calculer solde en attente (revenus non payés)"""
         for designer in self:
-            pending_revenues = designer.revenue_ids.filtered(lambda r: r.status == 'pending')
-            designer.pending_balance = sum(pending_revenues.mapped('designer_share'))
+            pending_revenues = designer.revenue_ids.filtered(lambda r: r.payout_status == 'pending')
+            designer.pending_balance = sum(pending_revenues.mapped('amount'))
 
 
 class QuelyosThemeSubmission(models.Model):

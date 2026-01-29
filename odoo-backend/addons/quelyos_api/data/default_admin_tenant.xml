@@ -48,11 +48,6 @@
             <field name="feature_reviews" eval="True"/>
             <field name="feature_newsletter" eval="True"/>
             <field name="feature_guest_checkout" eval="True"/>
-            <field name="feature_live_chat" eval="True"/>
-            <field name="feature_blog" eval="True"/>
-            <field name="feature_loyalty" eval="True"/>
-            <field name="feature_gift_cards" eval="True"/>
-            <field name="feature_subscriptions" eval="True"/>
 
             <field name="active" eval="True"/>
         </record>

@@ -7,27 +7,24 @@
             <field name="model_id" ref="model_quelyos_theme_designer"/>
             <field name="state">code</field>
             <field name="code">
-                # Déclencher payouts automatiques pour designers éligibles
-                # Critères : pending_balance >= 50 EUR + stripe_payouts_enabled
-                import requests
-                import logging
-                _logger = logging.getLogger(__name__)
+# Déclencher payouts automatiques pour designers éligibles
+# Critères : pending_balance >= 50 EUR + stripe_payouts_enabled
+import requests
+import logging
+_logger = logging.getLogger(__name__)
 
-                try:
-                    base_url = env['ir.config_parameter'].sudo().get_param('web.base.url')
-                    url = f"{base_url}/api/themes/designers/payout/auto"
-                    response = requests.post(url, timeout=120)
-                    _logger.info(f"Auto payout cron executed: {response.status_code} - {response.text}")
-                except Exception as e:
-                    _logger.error(f"Auto payout cron error: {str(e)}")
+try:
+    base_url = env['ir.config_parameter'].sudo().get_param('web.base.url')
+    url = f"{base_url}/api/themes/designers/payout/auto"
+    response = requests.post(url, timeout=120)
+    _logger.info(f"Auto payout cron executed: {response.status_code} - {response.text}")
+except Exception as e:
+    _logger.error(f"Auto payout cron error: {str(e)}")
             </field>
             <field name="interval_number">1</field>
             <field name="interval_type">months</field>
-            <field name="numbercall">-1</field>
-            <field name="doall" eval="False"/>
-            <field name="active" eval="True"/>
+            <field name="active" eval="False"/>
             <field name="priority">10</field>
-            <field name="nextcall" eval="(DateTime.now() + timedelta(days=30)).replace(day=1, hour=2, minute=0, second=0)"/>
         </record>
     </data>
 </odoo>

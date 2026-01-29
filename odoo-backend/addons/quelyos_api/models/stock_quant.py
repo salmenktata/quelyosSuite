@@ -137,6 +137,42 @@ class StockQuant(models.Model):
         _logger.info(f'Email d\'alerte stock envoyé à {len(admins)} administrateur(s)')
 
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # INTÉGRATION OCA: stock_quant_cost_info
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Calcul du coût d'ajustement d'inventaire basé sur l'écart et le prix standard
+
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Devise',
+        related='company_id.currency_id',
+        readonly=True,
+    )
+
+    adjustment_cost = fields.Monetary(
+        string='Coût Ajustement',
+        compute='_compute_adjustment_cost',
+        store=True,
+        currency_field='currency_id',
+        help='Coût de l\'ajustement d\'inventaire = Écart quantité × Prix standard produit'
+    )
+
+    @api.depends('inventory_diff_quantity', 'product_id.standard_price')
+    def _compute_adjustment_cost(self):
+        """
+        Calcul du coût d'ajustement d'inventaire.
+
+        Formule : adjustment_cost = inventory_diff_quantity × product.standard_price
+
+        Utile pour évaluer l'impact financier des écarts d'inventaire.
+        """
+        for quant in self:
+            if quant.inventory_diff_quantity:
+                quant.adjustment_cost = quant.inventory_diff_quantity * quant.product_id.standard_price
+            else:
+                quant.adjustment_cost = 0.0
+
+
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
