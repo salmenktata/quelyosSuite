@@ -20,7 +20,7 @@ class MarketingCampaignController(BaseController):
     # CAMPAIGNS
     # =========================================================================
 
-    @http.route('/api/marketing/campaigns', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_campaigns(self, **kwargs):
         """Liste des campagnes avec filtres optionnels"""
         auth_error = self._auth_check()
@@ -52,7 +52,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/create', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/create', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def create_campaign(self, **kwargs):
         """Crée une nouvelle campagne"""
         try:
@@ -88,7 +88,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_campaign(self, campaign_id, **kwargs):
         """Détail d'une campagne"""
         try:
@@ -103,7 +103,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/update', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/update', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def update_campaign(self, campaign_id, **kwargs):
         """Met à jour une campagne"""
         try:
@@ -131,7 +131,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/send', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/send', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def send_campaign(self, campaign_id, **kwargs):
         """Envoie une campagne"""
         try:
@@ -151,7 +151,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/schedule', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/schedule', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def schedule_campaign(self, campaign_id, **kwargs):
         """Planifie une campagne"""
         try:
@@ -173,7 +173,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/duplicate', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/duplicate', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def duplicate_campaign(self, campaign_id, **kwargs):
         """Duplique une campagne"""
         try:
@@ -190,7 +190,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/campaigns/<int:campaign_id>/delete', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/delete', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def delete_campaign(self, campaign_id, **kwargs):
         """Supprime une campagne"""
         try:
@@ -208,7 +208,7 @@ class MarketingCampaignController(BaseController):
     # CONTACT LISTS
     # =========================================================================
 
-    @http.route('/api/marketing/contact-lists', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contact-lists', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_contact_lists(self, **kwargs):
         """Liste des listes de contacts"""
         try:
@@ -227,7 +227,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/contact-lists/create', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contact-lists/create', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def create_contact_list(self, **kwargs):
         """Crée une nouvelle liste de contacts"""
         try:
@@ -255,7 +255,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_contact_list(self, list_id, **kwargs):
         """Détail d'une liste avec ses contacts"""
         try:
@@ -281,7 +281,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>/update', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>/update', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def update_contact_list(self, list_id, **kwargs):
         """Met à jour une liste de contacts"""
         try:
@@ -309,7 +309,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/contact-lists/<int:list_id>/delete', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contact-lists/<int:list_id>/delete', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def delete_contact_list(self, list_id, **kwargs):
         """Supprime une liste de contacts"""
         try:
@@ -327,7 +327,7 @@ class MarketingCampaignController(BaseController):
     # EMAIL TEMPLATES
     # =========================================================================
 
-    @http.route('/api/marketing/email-templates', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/email-templates', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_email_templates(self, **kwargs):
         """Liste des templates email"""
         auth_error = self._auth_check()
@@ -353,7 +353,7 @@ class MarketingCampaignController(BaseController):
     # DASHBOARD
     # =========================================================================
 
-    @http.route('/api/marketing/dashboard', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/dashboard', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_dashboard(self, **kwargs):
         """Statistiques dashboard marketing"""
         auth_error = self._auth_check()
@@ -448,7 +448,7 @@ class MarketingCampaignController(BaseController):
     # IMPORT CSV CONTACTS
     # =========================================================================
 
-    @http.route('/api/marketing/contacts/import/preview', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contacts/import/preview', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def preview_csv_import(self, **kwargs):
         """Parse CSV et retourne un aperçu des données"""
         try:
@@ -508,7 +508,7 @@ class MarketingCampaignController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/marketing/contacts/import', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/marketing/contacts/import', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def import_csv_contacts(self, **kwargs):
         """Importe les contacts depuis un CSV dans une liste"""
         try:

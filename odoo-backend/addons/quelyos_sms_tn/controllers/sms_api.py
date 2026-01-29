@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class SMSAPIController(http.Controller):
     """Controller for SMS administration endpoints"""
 
-    @http.route('/api/admin/sms/config', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/config', type='jsonrpc', auth='user', methods=['POST'])
     def get_sms_config(self):
         """Get SMS configuration for current company"""
         try:
@@ -28,7 +28,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error fetching SMS config: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/config/update', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/config/update', type='jsonrpc', auth='user', methods=['POST'])
     def update_sms_config(self, **kwargs):
         """Update SMS configuration"""
         try:
@@ -73,7 +73,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error updating SMS config: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/send-test', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/send-test', type='jsonrpc', auth='user', methods=['POST'])
     def send_test_sms(self, mobile, message):
         """Send a test SMS"""
         try:
@@ -107,7 +107,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error sending test SMS: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/history', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/history', type='jsonrpc', auth='user', methods=['POST'])
     def get_sms_history(self, limit=10, offset=0):
         """Get SMS history for current company"""
         try:
@@ -132,7 +132,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error fetching SMS history: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/quota', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/quota', type='jsonrpc', auth='user', methods=['POST'])
     def get_sms_quota(self):
         """Get SMS quota information for current company"""
         try:
@@ -154,7 +154,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error fetching SMS quota: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/preferences', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/preferences', type='jsonrpc', auth='user', methods=['POST'])
     def get_sms_preferences(self):
         """Get SMS notification preferences"""
         try:
@@ -182,7 +182,7 @@ class SMSAPIController(http.Controller):
             _logger.error(f'Error fetching SMS preferences: {str(e)}', exc_info=True)
             return self._error_response(str(e))
 
-    @http.route('/api/admin/sms/preferences/update', type='json', auth='user', methods=['POST'])
+    @http.route('/api/admin/sms/preferences/update', type='jsonrpc', auth='user', methods=['POST'])
     def update_sms_preferences(self, **kwargs):
         """Update SMS notification preferences"""
         try:

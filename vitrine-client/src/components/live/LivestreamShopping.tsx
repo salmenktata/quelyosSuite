@@ -13,8 +13,10 @@ export function LivestreamShopping() {
   const [isLoading, setIsLoading] = useState(true);
   const [subscribedEvents, setSubscribedEvents] = useState<Set<number>>(new Set());
   const [email, setEmail] = useState('');
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     fetchLiveEvents();
   }, []);
 
@@ -65,8 +67,8 @@ export function LivestreamShopping() {
     }
   };
 
-  // Loading state
-  if (isLoading) {
+  // Attendre le montage côté client pour éviter hydration mismatch
+  if (!hasMounted || isLoading) {
     return (
       <section className="py-12 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white">
         <div className="container mx-auto px-4">
