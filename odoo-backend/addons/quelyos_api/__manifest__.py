@@ -60,6 +60,7 @@
         'views/trust_badge_views.xml',
         'views/theme_views.xml',
     ],
+    'pre_init_hook': 'pre_init_hook',
     'installable': True,
     'application': True,
     'auto_install': False,

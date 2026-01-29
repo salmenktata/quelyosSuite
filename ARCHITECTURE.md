@@ -95,6 +95,83 @@ Backend (8069) ─┐
 - Les frontends peuvent démarrer en parallèle une fois le backend prêt
 - Temps de démarrage : Backend (~30s), Frontends (~5-10s chacun)
 
+## Architecture Backend Odoo
+
+### 🔒 Isolation Complète (v3.0.0)
+
+**Quelyos Suite = Core Odoo 19 Community UNIQUEMENT + Modules Quelyos Natifs**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  Quelyos Suite v3.0.0                    │
+│                  (100% Autonome)                         │
+├─────────────────────────────────────────────────────────┤
+│  Modules Quelyos (6 modules natifs)                     │
+│  ├── quelyos_core          (orchestrateur)              │
+│  ├── quelyos_api           (API REST + multi-tenant)    │
+│  ├── quelyos_stock_advanced (remplace 3 modules OCA)    │
+│  ├── quelyos_finance       (trésorerie, budgets)        │
+│  ├── quelyos_sms_tn        (SMS Tunisie)                │
+│  └── quelyos_debrand       (suppression marque Odoo)    │
+├─────────────────────────────────────────────────────────┤
+│  Core Odoo 19 Community (14 modules standard)          │
+│  ├── Infrastructure : base, web, mail                   │
+│  ├── Site web : website, website_sale                   │
+│  ├── Commerce : sale_management, crm, delivery,         │
+│  │               payment, loyalty                        │
+│  ├── Catalogue : product, stock                         │
+│  ├── Finance : account                                   │
+│  ├── Marketing : mass_mailing                           │
+│  └── Contacts : contacts                                │
+└─────────────────────────────────────────────────────────┘
+         ⚠️ AUCUNE dépendance OCA/tierce
+```
+
+### Modules Supprimés (v3.0.0)
+
+**4 modules OCA Stock historiquement utilisés (désormais remplacés)** :
+- ❌ `stock_change_qty_reason` → ✅ `quelyos_stock_advanced`
+- ❌ `stock_demand_estimate` → ✅ Non utilisé
+- ❌ `stock_inventory` → ✅ `quelyos_stock_advanced`
+- ❌ `stock_location_lockdown` → ✅ `quelyos_stock_advanced`
+
+**3 modules OCA Marketing (jamais utilisés)** :
+- ❌ `mass_mailing_partner` (désactivé dès le début)
+- ❌ `mass_mailing_list_dynamic` (désactivé dès le début)
+- ❌ `mass_mailing_resend` (désactivé dès le début)
+
+### Garanties d'Isolation
+
+✅ **Whitelisting automatique** (`quelyos_core/__init__.py`)
+- Vérification post-installation : aucun module non-core installé
+- Logs d'avertissement si modules OCA/tiers détectés
+
+✅ **Validation version Odoo** (`quelyos_api/__init__.py`)
+- Blocage installation si Odoo != 19.x
+- Garantit compatibilité stricte
+
+✅ **Gouvernance stricte**
+- Documentation : `.claude/DEPENDENCIES_POLICY.md`
+- Processus ajout dépendance : 4 étapes validation
+- Stratégie : internalisation (fork dans `quelyos_*`) si nécessaire
+
+### Avantages
+
+🎯 **Pérennité**
+- Aucune régression lors de mises à jour OCA
+- Contrôle total sur le code
+- Debug et hotfix facilités
+
+🎯 **Maintenance Simplifiée**
+- Devs Odoo vanilla suffisent (pas d'expertise OCA requise)
+- Documentation centralisée (pas de docs OCA externes)
+- Onboarding développeurs accéléré
+
+🎯 **Upgrade Path Clair**
+- Migration Odoo 19→20→21 sans blocage externe
+- Pas de dépendances à gérer lors de migrations majeures
+- Fork Odoo possible si nécessaire (pas de lock-in)
+
 ## Structure des Répertoires
 
 ```

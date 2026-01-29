@@ -49,6 +49,25 @@ nginx/             → Config production
 | Backoffice | React 19.2, Vite, Tailwind CSS, React Query |
 | Backend | Odoo 19 Community, Python 3.12, PostgreSQL 15 |
 
+## 🔒 Isolation Complète (v3.0.0)
+
+**Quelyos Suite ne dépend QUE du core Odoo 19 Community.**
+
+✅ **Aucune dépendance OCA/tierce**
+- 14 modules Odoo standard uniquement
+- 6 modules Quelyos natifs (100% contrôlés)
+- Fonctionnalités stock avancées : `quelyos_stock_advanced` (remplace 3 modules OCA)
+
+✅ **Avantages**
+- **Pérennité** : Aucune régression lors de mises à jour tierces
+- **Maintenance simplifiée** : Contrôle total, debug facilité
+- **Upgrade Odoo 19→20→21** : Migration sans blocage externe
+
+✅ **Gouvernance stricte**
+- Whitelisting automatique (post_init_hook)
+- Validation version Odoo 19 (pre_init_hook)
+- Documentation : `.claude/DEPENDENCIES_POLICY.md`
+
 ---
 
 ## 🚀 Démarrage Rapide

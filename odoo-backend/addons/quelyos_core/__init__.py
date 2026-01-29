@@ -4,6 +4,19 @@ from odoo import api, SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
 
+# Whitelist stricte : UNIQUEMENT modules core Odoo 19
+ODOO_CORE_WHITELIST = [
+    'base', 'web', 'mail', 'website', 'website_sale',
+    'sale_management', 'product', 'stock', 'account',
+    'crm', 'delivery', 'payment', 'loyalty', 'mass_mailing',
+    'contacts',
+]
+
+QUELYOS_MODULES = [
+    'quelyos_core', 'quelyos_api', 'quelyos_stock_advanced',
+    'quelyos_finance', 'quelyos_sms_tn', 'quelyos_debrand',
+]
+
 
 def post_init_hook(cr, registry):
     """
@@ -92,4 +105,31 @@ def post_init_hook(cr, registry):
     _logger.info("QUELYOS SUITE ORCHESTRATOR - Installation terminée avec succès")
     _logger.info("="*80)
     _logger.info("IMPORTANT: Redémarrer le serveur Odoo pour activer tous les modules")
+    _logger.info("="*80)
+
+    # 4. Vérifier isolation : aucun module non-whitelisté installé
+    _logger.info("-"*80)
+    _logger.info("Vérification isolation : aucun module OCA/tierce détecté...")
+
+    forbidden = ModuleObj.search([
+        ('state', '=', 'installed'),
+        ('name', 'not in', ODOO_CORE_WHITELIST + QUELYOS_MODULES),
+        ('name', 'not like', 'base_%'),  # Modules techniques Odoo
+        ('name', 'not like', 'web_%'),   # Modules web techniques
+        ('name', 'not like', 'theme_%'),  # Modules thèmes Odoo
+        ('name', 'not like', 'hw_%'),    # Modules hardware IoT Odoo
+        ('name', 'not like', 'l10n_%'),  # Modules localisation Odoo
+    ])
+
+    if forbidden:
+        forbidden_names = forbidden.mapped('name')
+        _logger.warning(
+            f"⚠️  MODULES NON-CORE DÉTECTÉS : {forbidden_names}\n"
+            f"Quelyos Suite recommande de désinstaller ces modules pour "
+            f"garantir l'isolation et éviter les régressions lors de mises à jour.\n"
+            f"Modules détectés : {', '.join(forbidden_names)}"
+        )
+    else:
+        _logger.info("✓ Isolation vérifiée : aucun module OCA/tierce installé")
+
     _logger.info("="*80)

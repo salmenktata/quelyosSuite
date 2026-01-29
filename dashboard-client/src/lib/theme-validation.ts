@@ -7,6 +7,7 @@ import themeSchema from '@/schemas/theme.schema.json';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
+  validateSchema: false, // Désactiver validation du meta-schema (draft-2020-12 non supporté)
 });
 
 // Compiler le schéma

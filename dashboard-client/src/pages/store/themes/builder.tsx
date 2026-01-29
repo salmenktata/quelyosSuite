@@ -30,15 +30,12 @@ import { Breadcrumbs, Button, PageNotice } from '@/components/common';
 import { BuilderProvider, useBuilder, type SectionConfig } from '@/components/theme-builder/BuilderContext';
 import { SectionsPalette } from '@/components/theme-builder/SectionsPalette';
 import { CanvasArea } from '@/components/theme-builder/CanvasArea';
-import { SectionConfigPanel } from '@/components/theme-builder/SectionConfigPanel';
 import { ColorPicker } from '@/components/theme-builder/ColorPicker';
 import { FontSelector } from '@/components/theme-builder/FontSelector';
-import { DeviceToggle } from '@/components/theme-builder/DeviceToggle';
-import { PreviewPane } from '@/components/theme-builder/PreviewPane';
 import { storeNotices } from '@/lib/notices/store-notices';
 import { getValidationErrors } from '@/lib/theme-validation';
 import { toast } from 'sonner';
-import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Type } from 'lucide-react';
+import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Type, Eye } from 'lucide-react';
 
 /**
  * Toolbar d'actions (Export/Import/Save/Reset)
@@ -46,6 +43,7 @@ import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Type
 function ActionsToolbar() {
   const { exportJSON, importJSON, resetBuilder } = useBuilder();
   const navigate = useNavigate();
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleExport = () => {
     const json = exportJSON();
@@ -80,6 +78,7 @@ function ActionsToolbar() {
   };
 
   const handleSave = async () => {
+    setSaveError(null);
     try {
       const json = exportJSON();
       const themeConfig = JSON.parse(json);
@@ -122,10 +121,14 @@ function ActionsToolbar() {
         toast.success('Thème sauvegardé comme soumission draft');
         navigate('/store/themes/my-submissions');
       } else {
-        toast.error(data.error?.data?.message || 'Erreur lors de la sauvegarde');
+        const errorMsg = data.error?.data?.message || 'Erreur lors de la sauvegarde';
+        setSaveError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (_error) {
-      toast.error('Erreur lors de la sauvegarde du thème');
+      const errorMsg = 'Erreur lors de la sauvegarde du thème';
+      setSaveError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -136,88 +139,86 @@ function ActionsToolbar() {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={handleExport}>
-        <Download className="w-4 h-4" />
-        Export JSON
-      </Button>
-      <Button variant="outline" size="sm" onClick={handleImport}>
-        <Upload className="w-4 h-4" />
-        Import JSON
-      </Button>
-      <Button variant="outline" size="sm" onClick={handleReset}>
-        <RotateCcw className="w-4 h-4" />
-        Reset
-      </Button>
-      <Button variant="primary" size="sm" onClick={handleSave}>
-        <Save className="w-4 h-4" />
-        Save to Odoo
-      </Button>
+    <>
+      {saveError && (
+        <div
+          role="alert"
+          className="absolute top-20 right-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg max-w-md shadow-lg z-50"
+        >
+          <p className="text-sm text-red-900 dark:text-red-100 mb-2">{saveError}</p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleSave}>
+              Réessayer
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setSaveError(null)}>
+              Fermer
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="sm" onClick={handleExport}>
+          <Download className="w-4 h-4" />
+          Export JSON
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleImport}>
+          <Upload className="w-4 h-4" />
+          Import JSON
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleReset}>
+          <RotateCcw className="w-4 h-4" />
+          Reset
+        </Button>
+        <Button variant="primary" size="sm" onClick={handleSave}>
+          <Save className="w-4 h-4" />
+          Save to Odoo
+        </Button>
+      </div>
+    </>
+  );
+}
+
+/**
+ * Vue Build : Palette + Canvas
+ */
+function BuildView() {
+  return (
+    <div className="flex h-full">
+      {/* Palette gauche (plus large) */}
+      <div className="w-80 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto">
+        <SectionsPalette />
+      </div>
+
+      {/* Canvas central (large) */}
+      <div className="flex-1 bg-gray-50 dark:bg-gray-800 overflow-hidden">
+        <CanvasArea />
+      </div>
     </div>
   );
 }
 
 /**
- * Sidebar gauche avec onglets (Sections, Couleurs, Typographie)
+ * Vue Style : Couleurs + Typographie
  */
-function LeftSidebar() {
-  const [activeTab, setActiveTab] = useState<'sections' | 'colors' | 'typography'>('sections');
+function StyleView() {
   const { state, updateColors, updateTypography } = useBuilder();
 
   return (
-    <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col overflow-hidden">
-      {/* Onglets */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => setActiveTab('sections')}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'sections'
-              ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          Sections
-        </button>
-        <button
-          onClick={() => setActiveTab('colors')}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'colors'
-              ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-          }`}
-        >
-          <PaletteIcon className="w-4 h-4" />
-          Couleurs
-        </button>
-        <button
-          onClick={() => setActiveTab('typography')}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'typography'
-              ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-          }`}
-        >
-          <Type className="w-4 h-4" />
-          Typo
-        </button>
-      </div>
+    <div className="flex h-full">
+      {/* Couleurs gauche */}
+      <div className="w-1/2 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto p-8">
+        <div className="max-w-md">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Palette de Couleurs
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Définissez les 4 couleurs principales de votre thème
+            </p>
+          </div>
 
-      {/* Contenu onglets */}
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === 'sections' && <SectionsPalette />}
-
-        {activeTab === 'colors' && (
-          <div className="p-4 space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Palette de Couleurs
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                Définissez les 4 couleurs principales de votre thème
-              </p>
-            </div>
-
+          <div className="space-y-6">
             <ColorPicker
               label="Couleur Principale"
               value={state.colors.primary}
@@ -239,19 +240,22 @@ function LeftSidebar() {
               onChange={(color) => updateColors({ background: color })}
             />
           </div>
-        )}
+        </div>
+      </div>
 
-        {activeTab === 'typography' && (
-          <div className="p-4 space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Typographie
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                Choisissez les polices pour titres et corps de texte
-              </p>
-            </div>
+      {/* Typographie droite */}
+      <div className="w-1/2 bg-white dark:bg-gray-900 overflow-y-auto p-8">
+        <div className="max-w-md">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Typographie
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Choisissez les polices pour titres et corps de texte
+            </p>
+          </div>
 
+          <div className="space-y-8">
             <FontSelector
               label="Police des Titres"
               value={state.typography.headings}
@@ -261,7 +265,7 @@ function LeftSidebar() {
               preview="Titre Principal"
             />
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
               <FontSelector
                 label="Police du Corps"
                 value={state.typography.body}
@@ -272,17 +276,110 @@ function LeftSidebar() {
               />
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * Contenu principal du builder (avec provider et DnD)
+ * Header du builder avec onglets et actions
  */
-function BuilderContent() {
-  const { state, addSection, reorderSections, setPreviewDevice } = useBuilder();
+function BuilderHeader({ activeView, onViewChange }: { activeView: 'build' | 'style'; onViewChange: (view: 'build' | 'style') => void }) {
+  const { state } = useBuilder();
+
+  const handlePreview = () => {
+    // Sauvegarder le state complet dans localStorage (même clé que PreviewPane)
+    localStorage.setItem('theme-builder-preview', JSON.stringify(state));
+
+    // Ouvrir la preview dans une nouvelle fenêtre
+    const previewWindow = window.open(
+      '/store/themes/builder/preview',
+      'theme-preview',
+      'width=1280,height=800,menubar=no,toolbar=no,location=no'
+    );
+
+    // Focus sur la fenêtre
+    if (previewWindow) {
+      previewWindow.focus();
+    }
+  };
+
+  return (
+    <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      {/* Ligne 1 : Titre + Actions */}
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Theme Builder
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {state.sections.length} section{state.sections.length > 1 ? 's' : ''} · Créez votre thème visuellement
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={handlePreview}>
+            <Eye className="w-4 h-4" />
+            Preview
+          </Button>
+          <ActionsToolbar />
+        </div>
+      </div>
+
+      {/* Ligne 2 : Onglets */}
+      <div className="flex px-6 gap-1">
+        <button
+          onClick={() => onViewChange('build')}
+          className={`flex items-center gap-2 px-6 py-3 font-medium transition-all ${
+            activeView === 'build'
+              ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent'
+          }`}
+        >
+          <Layers className="w-5 h-5" />
+          Build
+        </button>
+        <button
+          onClick={() => onViewChange('style')}
+          className={`flex items-center gap-2 px-6 py-3 font-medium transition-all ${
+            activeView === 'style'
+              ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent'
+          }`}
+        >
+          <PaletteIcon className="w-5 h-5" />
+          Style
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Wrapper avec header et contenu (nécessite BuilderProvider)
+ */
+function BuilderWithHeader() {
+  const [activeView, setActiveView] = useState<'build' | 'style'>('build');
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header avec onglets */}
+      <BuilderHeader activeView={activeView} onViewChange={setActiveView} />
+
+      {/* Contenu selon vue active */}
+      <div className="flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-700">
+        <BuilderContent activeView={activeView} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Contenu principal du builder (avec DnD)
+ */
+function BuilderContent({ activeView }: { activeView: 'build' | 'style' }) {
+  const { state, addSection, reorderSections } = useBuilder();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   // Sensors pour le drag & drop
@@ -344,42 +441,9 @@ function BuilderContent() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Theme Builder
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Créez votre thème visuellement avec drag & drop
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <DeviceToggle
-              value={state.previewDevice}
-              onChange={setPreviewDevice}
-            />
-            <ActionsToolbar />
-          </div>
-        </div>
-
-        {/* Layout 3 colonnes */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar gauche : Palette + Couleurs + Typo */}
-          <LeftSidebar />
-
-          {/* Zone centrale : Canvas */}
-          <div className="w-96 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden">
-            <CanvasArea />
-          </div>
-
-          {/* Zone droite : Preview iframe */}
-          <div className="flex-1 overflow-hidden">
-            <PreviewPane device={state.previewDevice} />
-          </div>
-        </div>
+      <div className="h-full">
+        {/* Contenu selon vue active */}
+        {activeView === 'build' ? <BuildView /> : <StyleView />}
       </div>
 
       {/* DragOverlay pour visual feedback */}
@@ -407,7 +471,7 @@ export default function ThemeBuilderPage() {
 
   return (
     <Layout>
-      <div className="flex flex-col h-full">
+      <div className="space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Boutique', href: '/store' },
@@ -423,11 +487,11 @@ export default function ThemeBuilderPage() {
           />
         )}
 
-        <div className="flex-1 overflow-hidden">
-          <BuilderProvider>
-            <BuilderContent />
-          </BuilderProvider>
-        </div>
+        <BuilderProvider>
+          <div className="h-[calc(100vh-280px)] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 overflow-hidden">
+            <BuilderWithHeader />
+          </div>
+        </BuilderProvider>
       </div>
     </Layout>
   );

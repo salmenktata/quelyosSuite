@@ -1,5 +1,5 @@
 /**
- * Page Preview Thème (chargée dans iframe isolé)
+ * Page Preview Thème (chargée dans iframe isolé OU nouvelle fenêtre)
  *
  * Fonctionnalités :
  * 1. Lit la config thème depuis localStorage ('theme-builder-preview')
@@ -8,10 +8,16 @@
  * 4. Rend les sections dans l'ordre du canvas
  * 5. Auto-refresh quand le thème change (storage event)
  * 6. Preview isolée (pas de header/sidebar dashboard)
+ * 7. Device toggle (Desktop/Tablet/Mobile) en mode standalone
  */
 
 import { useEffect, useState } from 'react';
+import { DeviceToggle } from '@/components/theme-builder/DeviceToggle';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/common';
 import type { BuilderState } from '@/components/theme-builder/BuilderContext';
+
+type Device = 'desktop' | 'tablet' | 'mobile';
 
 // Composants de preview simplifiés pour chaque section
 function HeroSliderPreview() {
@@ -131,6 +137,13 @@ function GenericSectionPreview({ type }: { type: string }) {
 
 export default function ThemeBuilderPreview() {
   const [themeState, setThemeState] = useState<BuilderState | null>(null);
+  const [device, setDevice] = useState<Device>('desktop');
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  // Détecter si la page est ouverte en standalone (nouvelle fenêtre) ou en iframe
+  useEffect(() => {
+    setIsStandalone(window.self === window.top);
+  }, []);
 
   // Charger le thème depuis localStorage
   useEffect(() => {
@@ -203,37 +216,92 @@ export default function ThemeBuilderPreview() {
     }
   };
 
+  // Dimensions selon device
+  const deviceDimensions = {
+    desktop: '100%',
+    tablet: '768px',
+    mobile: '375px',
+  };
+
+  const handleRefresh = () => {
+    const stored = localStorage.getItem('theme-builder-preview');
+    if (stored) {
+      try {
+        const state = JSON.parse(stored) as BuilderState;
+        setThemeState(state);
+      } catch (error) {
+        console.error('Erreur parsing theme state:', error);
+      }
+    }
+  };
+
   if (!themeState) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Chargement du thème...</p>
+          <div className="w-12 h-12 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Chargement du thème...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: themeState.colors.background }}
-    >
-      {themeState.sections.length === 0 ? (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center max-w-md px-4">
-            <div className="text-6xl mb-4">🎨</div>
-            <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: 'var(--font-headings)' }}>
-              Aucune section
-            </h2>
-            <p className="opacity-60" style={{ fontFamily: 'var(--font-body)' }}>
-              Glissez-déposez des sections depuis la palette pour voir la preview
-            </p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header avec contrôles (seulement en mode standalone) */}
+      {isStandalone && (
+        <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between p-4">
+            <div>
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+                Theme Preview
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {themeState.sections.length} section{themeState.sections.length > 1 ? 's' : ''}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <DeviceToggle value={device} onChange={setDevice} />
+              <Button variant="outline" size="sm" onClick={handleRefresh}>
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </Button>
+            </div>
           </div>
         </div>
-      ) : (
-        <div>{themeState.sections.map(renderSection)}</div>
       )}
+
+      {/* Contenu preview */}
+      <div className={`${isStandalone ? 'py-8' : ''} flex justify-center`}>
+        <div
+          className="transition-all duration-300 ease-in-out"
+          style={{
+            width: isStandalone ? deviceDimensions[device] : '100%',
+          }}
+        >
+          <div
+            className="min-h-screen"
+            style={{ backgroundColor: themeState.colors.background }}
+          >
+            {themeState.sections.length === 0 ? (
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center max-w-md px-4">
+                  <div className="text-6xl mb-4">🎨</div>
+                  <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: 'var(--font-headings)' }}>
+                    Aucune section
+                  </h2>
+                  <p className="opacity-60" style={{ fontFamily: 'var(--font-body)' }}>
+                    Glissez-déposez des sections depuis la palette pour voir la preview
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div>{themeState.sections.map(renderSection)}</div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

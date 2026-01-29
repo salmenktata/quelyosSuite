@@ -123,9 +123,9 @@ export default function ThemesImportPage() {
     <Layout>
       <Breadcrumbs
         items={[
-          { name: 'Boutique', path: '/store' },
-          { name: 'Thèmes', path: '/store/themes' },
-          { name: 'Import JSON', path: '/store/themes/import' },
+          { label: 'Boutique', href: '/store' },
+          { label: 'Thèmes', href: '/store/themes' },
+          { label: 'Import JSON', href: '/store/themes/import' },
         ]}
       />
 
@@ -139,7 +139,7 @@ export default function ThemesImportPage() {
           moduleColor: 'indigo',
           sections: [
             {
-              type: 'info',
+              title: 'Informations',
               items: [
                 "Les thèmes JSON sont stockés dans vitrine-client/src/theme-engine/themes/",
                 "L'import crée les thèmes dans Odoo (quelyos.theme)",
