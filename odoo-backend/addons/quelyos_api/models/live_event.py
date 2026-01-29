@@ -15,7 +15,6 @@ class LiveEvent(models.Model):
     _name = 'quelyos.live.event'
     _description = 'Live Shopping Event'
     _order = 'scheduled_at desc'
-    _inherit = ['quelyos.tenant.mixin']
 
     name = fields.Char('Titre', required=True)
     description = fields.Text('Description')
