@@ -5,12 +5,22 @@ Classe de base pour les contrôleurs avec méthodes de sécurité communes
 import logging
 from odoo import http
 from odoo.http import request
+from odoo.exceptions import AccessError
 from ..config import is_origin_allowed, get_cors_headers
 from ..lib.rate_limiter import (
     check_rate_limit,
     RateLimitConfig,
     rate_limit_key,
     get_rate_limiter
+)
+from ..lib.tenant_security import (
+    get_tenant_from_header,
+    get_company_from_tenant,
+    check_quota_products,
+    check_quota_users,
+    check_quota_orders,
+    check_subscription_active,
+    get_quota_status
 )
 
 _logger = logging.getLogger(__name__)
@@ -419,3 +429,120 @@ class BaseController(http.Controller):
     def _create_session(self, uid):
         """Crée une session pour l'utilisateur et retourne le session_id"""
         return request.session.sid
+
+    def _get_tenant(self):
+        """
+        Récupère et valide le tenant depuis le header X-Tenant-Domain.
+        Vérifie automatiquement que l'utilisateur appartient au tenant.
+
+        Returns:
+            quelyos.tenant: Record du tenant validé
+            None: Si header manquant ou validation échouée
+
+        Usage:
+            tenant = self._get_tenant()
+            if not tenant:
+                return {'error': 'Tenant invalide'}
+        """
+        try:
+            return get_tenant_from_header()
+        except AccessError as e:
+            _logger.error(f"Tenant access violation: {e}")
+            return None
+
+    def _get_company(self):
+        """
+        Récupère la company associée au tenant depuis le header X-Tenant-Domain.
+
+        Returns:
+            res.company: Record de la company validée
+            None: Si tenant non trouvé ou validation échouée
+
+        Usage:
+            company = self._get_company()
+            if not company:
+                return {'error': 'Tenant invalide'}
+            products = Product.with_company(company).search([...])
+        """
+        return get_company_from_tenant()
+
+    def _check_tenant_quotas(self, check_type='all'):
+        """
+        Vérifie les quotas du tenant.
+
+        Args:
+            check_type: Type de quota à vérifier
+                       'all' - Tous les quotas (défaut)
+                       'products' - Quota produits uniquement
+                       'users' - Quota utilisateurs uniquement
+                       'orders' - Quota commandes uniquement
+                       'subscription' - Vérifier abonnement actif uniquement
+
+        Returns:
+            dict: Erreur si quota dépassé, None si OK
+
+        Usage:
+            # Avant de créer un produit
+            error = self._check_tenant_quotas('products')
+            if error:
+                return error
+
+            # Avant de créer un utilisateur
+            error = self._check_tenant_quotas('users')
+            if error:
+                return error
+
+            # Vérifier tous les quotas
+            error = self._check_tenant_quotas()
+            if error:
+                return error
+        """
+        tenant = self._get_tenant()
+        if not tenant:
+            return {
+                'success': False,
+                'error': 'Tenant invalide ou manquant',
+                'error_code': 'TENANT_INVALID'
+            }
+
+        # Vérifier l'abonnement d'abord
+        if check_type in ('all', 'subscription'):
+            error = check_subscription_active(tenant)
+            if error:
+                return error
+
+        # Vérifier les quotas spécifiques
+        if check_type == 'products':
+            return check_quota_products(tenant)
+        elif check_type == 'users':
+            return check_quota_users(tenant)
+        elif check_type == 'orders':
+            return check_quota_orders(tenant)
+        elif check_type == 'all':
+            # Vérifier tous les quotas (ne retourne que le premier dépassé)
+            for check_func in [check_quota_products, check_quota_users, check_quota_orders]:
+                error = check_func(tenant)
+                if error:
+                    return error
+
+        return None
+
+    def _get_quota_status(self):
+        """
+        Retourne le statut de tous les quotas pour le tenant courant.
+
+        Returns:
+            dict: Statut détaillé des quotas ou None si tenant invalide
+
+        Usage:
+            quotas = self._get_quota_status()
+            return {
+                'success': True,
+                'quotas': quotas
+            }
+        """
+        tenant = self._get_tenant()
+        if not tenant:
+            return None
+
+        return get_quota_status(tenant)

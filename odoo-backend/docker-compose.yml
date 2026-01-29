@@ -61,7 +61,7 @@ services:
       - ./addons:/mnt/extra-addons
     ports:
       - "8069:8069"
-    command: --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d quelyos --db-filter=^quelyos$ --limit-time-real=3600 --limit-time-cpu=3600
+    command: ["--addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons", "-d", "quelyos", "--db-filter=^quelyos$", "--limit-time-real=3600", "--limit-time-cpu=3600"]
     networks:
       - quelyos-network
 

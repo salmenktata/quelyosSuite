@@ -107,23 +107,39 @@ class AuthController(http.Controller):
             db = params.get('db') or request.db
 
             if not login or not password:
-                response_data = {'success': False, 'error': 'Login et mot de passe requis'}
+                error_data = {'success': False, 'error': 'Login et mot de passe requis'}
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
+                else:
+                    response_data = error_data
                 response = request.make_json_response(response_data, headers=cors_headers)
                 response.status_code = 400
                 return response
 
             # Authenticate user (Odoo 19: authenticate prend env et credentials dict)
-            uid = request.session.authenticate(request.env, {'db': db, 'login': login, 'password': password})
+            auth_result = request.session.authenticate(request.env, {
+                'db': db,
+                'login': login,
+                'password': password,
+                'type': 'password',
+            })
 
-            if not uid:
+            if not auth_result:
                 # Track failed login attempts with stricter limit
                 fail_key = rate_limit_key(request, 'login_failed')
                 limiter = get_rate_limiter()
                 limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
-                response_data = {'success': False, 'error': 'Identifiants invalides'}
+                error_data = {'success': False, 'error': 'Identifiants invalides'}
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
+                else:
+                    response_data = error_data
                 response = request.make_json_response(response_data, headers=cors_headers)
                 response.status_code = 401
                 return response
+
+            # Extract uid from auth result (Odoo 19 returns dict with uid, auth_method, mfa)
+            uid = auth_result.get('uid') if isinstance(auth_result, dict) else auth_result
 
             # Générer refresh token
             ip_address = request.httprequest.remote_addr
@@ -142,7 +158,7 @@ class AuthController(http.Controller):
 
             # Préparer la réponse
             user = request.env['res.users'].sudo().browse(uid)
-            response_data = {
+            user_data = {
                 'success': True,
                 'user': {
                     'id': user.id,
@@ -151,6 +167,16 @@ class AuthController(http.Controller):
                     'login': user.login,
                 }
             }
+
+            # Wrapper en JSON-RPC si la requête est JSON-RPC
+            if isinstance(body, dict) and 'jsonrpc' in body:
+                response_data = {
+                    'jsonrpc': '2.0',
+                    'id': body.get('id', 1),
+                    'result': user_data
+                }
+            else:
+                response_data = user_data
 
             # Créer la réponse HTTP pour définir les cookies (avec headers CORS)
             response = request.make_json_response(response_data, headers=cors_headers)
@@ -181,7 +207,16 @@ class AuthController(http.Controller):
 
         except Exception as e:
             _logger.error(f"SSO login error: {e}")
-            response_data = {'success': False, 'error': 'Erreur de connexion'}
+            error_data = {'success': False, 'error': 'Erreur de connexion'}
+            # Try to get body for JSON-RPC formatting
+            try:
+                body = request.get_json_data()
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
+                else:
+                    response_data = error_data
+            except:
+                response_data = error_data
             response = request.make_json_response(response_data, headers=cors_headers)
             response.status_code = 500
             return response

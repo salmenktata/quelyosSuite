@@ -28,6 +28,7 @@
     ],
     'data': [
         'security/security.xml',
+        'security/ir.rule.xml',
         'security/ir.model.access.csv',
         'data/subscription_sequence.xml',
         'data/cycle_count_sequence.xml',

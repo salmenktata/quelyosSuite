@@ -6,9 +6,9 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const login = formData.get('login') as string;
   const password = formData.get('password') as string;
-  const db = (formData.get('db') as string) || 'quelyos';
+  const db = (formData.get('db') as string) || process.env.BACKEND_DB || 'quelyos';
 
-  const backendUrl = `${BACKEND_URL}/api/auth/sso-redirect`;
+  const backendUrl = `${BACKEND_URL}/api/auth/sso-redirect?db=${db}`;
 
   // Escape values for HTML safety
   const escapeHtml = (str: string) =>

@@ -30,7 +30,51 @@ Ce guide présente toutes les commandes slash disponibles dans le projet Quelyos
 
 ---
 
-## 1. DevOps - Git & Déploiement
+## 1. Créer une commande slash (personnalisée)
+
+Les commandes slash sont de **simples fichiers Markdown** dans `.claude/commands/`.
+Le **nom du fichier** devient le **nom de la commande** :
+
+```
+.claude/commands/mon-rapport.md  →  /mon-rapport
+```
+
+### Étapes rapides
+1. **Créer un fichier** dans `.claude/commands/` (kebab-case recommandé).
+2. **Décrire l’objectif** et les cas d’usage.
+3. **Définir un workflow clair** en étapes.
+4. **Lister les commandes shell** utilisées (si besoin).
+5. **Ajouter les messages attendus / erreurs** pour guider l’utilisateur.
+
+### Modèle minimal (copier/coller)
+````md
+# Commande /nom-commande - Titre court
+
+## Description
+Une phrase simple expliquant l’objectif.
+
+## Usage
+    /nom-commande
+    /nom-commande --option
+
+## Workflow
+1. Étape 1…
+2. Étape 2…
+
+## Commandes utilisées
+    pnpm dev
+````
+
+### Bonnes pratiques
+- Utiliser **pnpm** (standard du repo).
+- Respecter les **ports fixes** : 3000/3001/5175/5176/8069.
+- Référencer les **bons dossiers** (`vitrine-*`, `dashboard-client`, `super-admin-client`, `odoo-backend`).
+- Éviter les commandes destructives sans confirmation.
+- Mettre à jour ce guide si une nouvelle commande est ajoutée.
+
+---
+
+## 2. DevOps - Git & Déploiement
 
 Commandes pour gérer le code source et les déploiements.
 
@@ -70,12 +114,13 @@ Comme `/commit` mais avec push automatique vers la branche `main`.
 
 ---
 
-## 2. Odoo - Serveurs & Modules
+## 3. Odoo - Serveurs & Modules
 
 Commandes spécifiques à la gestion du backend Odoo.
 
 | Commande | Description | Port |
 |----------|-------------|------|
+| `/fresh-install` | Réinstallation Odoo 19 (base vierge) | 8069 |
 | `/upgrade-odoo` | Upgrader module après modifications | 8069 |
 | `/restart-odoo` | Redémarrer serveur Odoo | 8069 |
 | `/restart-backoffice` | Redémarrer dashboard React | 5175 |
@@ -116,12 +161,13 @@ Redémarre un service spécifique sans toucher aux autres.
 
 ---
 
-## 3. Qualité - Audits & Vérifications
+## 4. Qualité - Audits & Vérifications
 
 Commandes pour assurer la qualité du code et de l'interface.
 
 | Commande | Description | Score |
 |----------|-------------|-------|
+| `/autofix` | Correction automatique ESLint/Prettier | - |
 | `/uiux` | Audit UI/UX complet d'une page | /140 |
 | `/coherence` | Audit cohérence tri-couche | /100 |
 | `/parity` | Parité Odoo ↔ Quelyos | - |
@@ -177,12 +223,14 @@ Compare les fonctionnalités Odoo natives avec l'implémentation Quelyos pour id
 
 ---
 
-## 4. Architecture - Réflexion & Conception
+## 5. Architecture - Réflexion & Conception
 
 Commandes pour guider les décisions architecturales.
 
 | Commande | Description |
 |----------|-------------|
+| `/architect` | Analyse & optimisation architecture |
+| `/ecommerce` | Audit e-commerce & roadmap |
 | `/leverage` | Capitaliser sur existant Odoo |
 | `/no-odoo` | Vérifier anonymisation |
 
@@ -224,7 +272,7 @@ Vérifie qu'aucune référence "Odoo" n'est exposée dans les frontends.
 
 ---
 
-## 5. Sécurité & Performance
+## 6. Sécurité & Performance
 
 Commandes pour auditer sécurité et performance.
 
@@ -253,7 +301,7 @@ Audit multi-niveaux basé sur OWASP :
 
 ---
 
-## 6. Workflow Recommandé
+## 7. Workflow Recommandé
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -289,16 +337,16 @@ Audit multi-niveaux basé sur OWASP :
 
 ---
 
-## 7. Référence Rapide
+## 8. Référence Rapide
 
 ### Par Fréquence d'Usage
 
 | Fréquence | Commandes |
 |-----------|-----------|
 | Quotidien | `/commit`, `/ship`, `/restart-*`, `/upgrade-odoo` |
-| Régulier | `/uiux`, `/leverage`, `/no-odoo`, `/test` |
-| Ponctuel | `/coherence`, `/parity`, `/clean`, `/polish` |
-| Rare | `/deploy`, `/security`, `/perf`, `/db-sync` |
+| Régulier | `/uiux`, `/leverage`, `/no-odoo`, `/test`, `/autofix` |
+| Ponctuel | `/coherence`, `/parity`, `/clean`, `/polish`, `/architect`, `/ecommerce` |
+| Rare | `/deploy`, `/security`, `/perf`, `/db-sync`, `/fresh-install` |
 
 ### Par Catégorie
 
@@ -306,14 +354,15 @@ Audit multi-niveaux basé sur OWASP :
 |-----------|-----------|
 | **Git** | `/commit`, `/ship` |
 | **Serveurs** | `/restart-odoo`, `/restart-backoffice`, `/restart-vitrine`, `/restart-ecommerce`, `/restart-all` |
-| **Odoo** | `/upgrade-odoo`, `/leverage`, `/no-odoo`, `/parity` |
-| **Qualité** | `/uiux`, `/coherence`, `/polish`, `/clean`, `/docs` |
+| **Odoo** | `/fresh-install`, `/upgrade-odoo`, `/leverage`, `/no-odoo`, `/parity` |
+| **Qualité** | `/autofix`, `/uiux`, `/coherence`, `/polish`, `/clean`, `/docs`, `/analyze-page` |
+| **Architecture** | `/architect`, `/ecommerce` |
 | **Sécurité** | `/security`, `/test` |
 | **DevOps** | `/deploy`, `/perf`, `/db-sync` |
 
 ---
 
-## 8. Bonnes Pratiques
+## 9. Bonnes Pratiques
 
 ### Avant de coder
 - Toujours lancer `/leverage` pour vérifier l'existant Odoo
@@ -341,7 +390,7 @@ perf: performance
 
 ---
 
-## 9. Aide & Support
+## 10. Aide & Support
 
 **Documentation complète** : `.claude/commands/*.md`
 
