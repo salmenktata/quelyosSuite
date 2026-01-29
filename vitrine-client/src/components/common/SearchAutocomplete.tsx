@@ -94,8 +94,8 @@ export function SearchAutocomplete({
     const fetchPopular = async () => {
       try {
         const response = await backendClient.getPopularSearches(5);
-        // Backend returns popular_searches at root level or in data
-        const popularSearches = response.popular_searches || response.data?.popular_searches;
+        // Backend returns popular_searches in data
+        const popularSearches = response.data?.popular_searches;
         if (response.success && popularSearches && Array.isArray(popularSearches)) {
           // Map backend response to frontend type
           const searches: PopularSearch[] = popularSearches.map((s: unknown) => {
@@ -134,8 +134,8 @@ export function SearchAutocomplete({
       const response = await backendClient.searchAutocomplete(searchQuery, 8, true);
 
       if (response.success) {
-        const products = response.products || response.data?.products || [];
-        const categories = response.categories || response.data?.categories || [];
+        const products = response.data?.products || [];
+        const categories = response.data?.categories || [];
 
         // If few results, try semantic search for more suggestions
         if (products.length < 3 && searchQuery.length >= 3) {

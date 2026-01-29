@@ -40,7 +40,8 @@ export const DynamicMenu: React.FC<DynamicMenuProps> = ({
         const menuData = await cmsService.getMenu(code);
         setMenu(menuData);
         setError(null);
-      } catch (err) {
+      } catch (_error: unknown) {
+        const err = _error as Error;
         logger.error(`Failed to load menu ${code}:`, err);
         setError(err.message);
       } finally {

@@ -430,6 +430,7 @@ export interface Popup {
 
 export interface PopupsData {
   popups: Popup[];
+  popup?: Popup;
 }
 
 // ========================================
@@ -453,6 +454,7 @@ export interface CouponValidationResponse {
   cart?: Cart;
   discount?: number;
   error?: string;
+  message?: string;
 }
 
 export interface AvailableCouponsResponse {
@@ -548,6 +550,7 @@ export interface SeoMetadata {
   og_description?: string;
   og_image?: string;
   canonical_url?: string;
+  structured_data?: Record<string, unknown>;
 }
 
 export interface Breadcrumb {
