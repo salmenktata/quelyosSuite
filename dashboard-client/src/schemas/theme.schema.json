@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quelyos.tn/schemas/theme.json",
+  "title": "Quelyos Theme Configuration",
+  "description": "JSON Schema pour valider les configurations de thèmes Quelyos",
+  "type": "object",
+  "required": ["colors", "typography", "layouts"],
+  "properties": {
+    "colors": {
+      "type": "object",
+      "description": "Palette de couleurs du thème",
+      "required": ["primary", "secondary", "accent", "background"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Couleur principale (hex)"
+        },
+        "secondary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Couleur secondaire (hex)"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Couleur d'accent (hex)"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Couleur de fond (hex)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "typography": {
+      "type": "object",
+      "description": "Configuration typographie",
+      "required": ["headings", "headingsWeight", "body", "bodyWeight"],
+      "properties": {
+        "headings": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Police pour les titres (Google Font)"
+        },
+        "headingsWeight": {
+          "type": "integer",
+          "enum": [300, 400, 500, 600, 700, 800],
+          "description": "Épaisseur titres"
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Police pour le corps de texte (Google Font)"
+        },
+        "bodyWeight": {
+          "type": "integer",
+          "enum": [300, 400, 500, 600, 700, 800],
+          "description": "Épaisseur corps de texte"
+        }
+      },
+      "additionalProperties": false
+    },
+    "layouts": {
+      "type": "object",
+      "description": "Configuration des layouts",
+      "required": ["homepage"],
+      "properties": {
+        "homepage": {
+          "type": "object",
+          "required": ["sections"],
+          "properties": {
+            "sections": {
+              "type": "array",
+              "description": "Liste des sections de la homepage",
+              "items": {
+                "type": "object",
+                "required": ["type", "variant"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "hero-slider",
+                      "featured-products",
+                      "newsletter",
+                      "testimonials",
+                      "trust-badges",
+                      "faq",
+                      "video-hero",
+                      "category-grid",
+                      "blog-preview",
+                      "contact-form"
+                    ],
+                    "description": "Type de section"
+                  },
+                  "variant": {
+                    "type": "string",
+                    "description": "Variante de la section"
+                  },
+                  "config": {
+                    "type": "object",
+                    "description": "Configuration spécifique de la section",
+                    "additionalProperties": true
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
