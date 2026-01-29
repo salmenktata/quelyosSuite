@@ -181,8 +181,8 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 | **Barcode Mobile App (Stock)** | Enterprise ⭐ | ★★★★★ | 2-3 sem | Backoffice | $360/user/an |
 | **Subscription Management** | Enterprise ⭐ | ★★★★★ | 2-3 sem | E-commerce | $400/user/an |
 | **Marketing Automation Workflows** | Enterprise ⭐ | ★★★★★ | 2-3 sem | Backoffice | $300/user/an |
-| **Email Builder Drag-and-Drop** | Enterprise ⭐ | ★★★★★ | 2 sem | Backoffice | $200/user/an |
-| **SMS Marketing Intégré** | Enterprise ⭐ | ★★★★☆ | 1 sem | Backoffice | $200/user/an |
+| ✅ **Email Builder Drag-and-Drop** | Enterprise ⭐ | ★★★★★ | IMPLÉMENTÉ | Backoffice | $200/user/an |
+| ✅ **SMS Marketing Intégré** | Enterprise ⭐ | ★★★★☆ | IMPLÉMENTÉ | Backoffice | $200/user/an |
 | **Batch & Wave Picking (Stock)** | Enterprise ⭐ | ★★★★☆ | 1-2 sem | Backoffice | $240/user/an |
 | **Bank Sync + OCR** | Enterprise ⭐ | ★★★★★ | 3-4 sem | Backoffice | $400/user/an |
 | **Social Media Scheduling** | Enterprise ⭐ | ★★★★☆ | 2-3 sem | Backoffice | $300/user/an |
@@ -191,6 +191,12 @@ Valeur ajoutée : Fonctionnalités premium Enterprise incluses dans l'offre
 
 **Différenciation** : Inclure des fonctionnalités Enterprise (~$30-50/user/mois dans Odoo) dans l'offre Quelyos Suite
 **Économie totale estimée** : ~$3300/user/an (vs Odoo Enterprise All-In-One) - inclut Stock + Marketing
+
+**✅ Implémentations Récentes (Phases 2-3, Jan 2026)** :
+- **SMS Marketing Premium** (v123) : Templates réutilisables, variables dynamiques, stats détaillées (8 templates inclus)
+- **Email Builder Premium** (v125) : Éditeur drag & drop, 8 types de blocs, 4 templates prédéfinis, rendu HTML responsive
+- **Intégration OCA** : Code stock_quant_cost_info + mass_mailing_resend intégré (autonomie totale vs addons externes)
+- **Valeur ajoutée** : ~$400/user/an de fonctionnalités Enterprise incluses GRATUITEMENT
 
 #### 🚀 Modules Community à Ajouter
 
