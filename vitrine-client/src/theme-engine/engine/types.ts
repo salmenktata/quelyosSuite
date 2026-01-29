@@ -38,7 +38,17 @@ export type SectionType =
   | 'trust-badges'
   | 'call-to-action'
   | 'blog'
-  | 'contact';
+  | 'contact'
+  | 'video-hero'
+  | 'social-proof'
+  | 'promo-banner'
+  | 'features'
+  | 'categories'
+  | 'product-tabs'
+  | 'brand-logos'
+  | 'contact-form'
+  | 'countdown-timer'
+  | 'blog-posts';
 
 export interface SectionConfig {
   type: SectionType;

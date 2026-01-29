@@ -1,0 +1,164 @@
+{
+  "id": "tech-minimal",
+  "name": "Tech Minimal",
+  "category": "tech",
+  "description": "Thème épuré et moderne pour boutiques high-tech et électronique",
+  "version": "1.0.0",
+  "colors": {
+    "primary": "#0066ff",
+    "secondary": "#f0f0f0",
+    "accent": "#00d4ff",
+    "background": "#ffffff",
+    "text": "#1a1a1a",
+    "muted": "#6b7280"
+  },
+  "typography": {
+    "headings": "Inter",
+    "body": "Inter",
+    "mono": "JetBrains Mono"
+  },
+  "layouts": {
+    "homepage": {
+      "sections": [
+        {
+          "type": "video-hero",
+          "variant": "fullscreen",
+          "config": {
+            "title": "Innovation Technologique",
+            "subtitle": "Les dernières innovations à portée de main",
+            "videoUrl": "/videos/tech-hero.mp4",
+            "posterUrl": "/images/tech-hero-poster.jpg",
+            "ctaText": "Découvrir",
+            "ctaUrl": "/products"
+          }
+        },
+        {
+          "type": "features",
+          "variant": "icons-row",
+          "config": {
+            "features": [
+              {
+                "icon": "truck",
+                "title": "Livraison Express",
+                "description": "24-48h partout en Tunisie"
+              },
+              {
+                "icon": "shield-check",
+                "title": "Garantie 2 Ans",
+                "description": "Sur tous nos produits"
+              },
+              {
+                "icon": "credit-card",
+                "title": "Paiement Sécurisé",
+                "description": "SSL + 3D Secure"
+              },
+              {
+                "icon": "headphones",
+                "title": "Support 7j/7",
+                "description": "Assistance technique gratuite"
+              }
+            ]
+          }
+        },
+        {
+          "type": "product-tabs",
+          "variant": "tabbed",
+          "config": {
+            "title": "Nos Produits",
+            "tabs": [
+              { "id": "new", "label": "Nouveautés", "filter": "newest" },
+              { "id": "best", "label": "Bestsellers", "filter": "bestsellers" },
+              { "id": "promo", "label": "Promos", "filter": "on_sale" }
+            ],
+            "limit": 8
+          }
+        },
+        {
+          "type": "categories",
+          "variant": "grid-4cols",
+          "config": {
+            "title": "Nos Catégories",
+            "limit": 8
+          }
+        },
+        {
+          "type": "social-proof",
+          "variant": "stats",
+          "config": {
+            "stats": [
+              { "icon": "users", "value": "15,000+", "label": "Clients Satisfaits" },
+              { "icon": "shopping-bag", "value": "75,000+", "label": "Commandes Livrées" },
+              { "icon": "star", "value": "4.8/5", "label": "Note Moyenne" },
+              { "icon": "award", "value": "99%", "label": "Taux de Satisfaction" }
+            ]
+          }
+        },
+        {
+          "type": "brand-logos",
+          "variant": "grid",
+          "config": {
+            "title": "Nos Marques Partenaires",
+            "brands": [
+              { "name": "Apple", "logo": "/logos/apple.svg" },
+              { "name": "Samsung", "logo": "/logos/samsung.svg" },
+              { "name": "Sony", "logo": "/logos/sony.svg" },
+              { "name": "LG", "logo": "/logos/lg.svg" },
+              { "name": "HP", "logo": "/logos/hp.svg" },
+              { "name": "Dell", "logo": "/logos/dell.svg" }
+            ]
+          }
+        },
+        {
+          "type": "newsletter",
+          "variant": "minimal",
+          "config": {
+            "title": "Restez Informé",
+            "subtitle": "Recevez nos offres exclusives et nouveautés"
+          }
+        }
+      ]
+    },
+    "productPage": {
+      "layout": "fullwidth",
+      "gallery": {
+        "type": "lightbox",
+        "thumbnailPosition": "bottom"
+      },
+      "sections": [
+        {
+          "type": "product-info",
+          "variant": "minimal"
+        },
+        {
+          "type": "product-tabs",
+          "config": {
+            "tabs": ["description", "specs", "reviews", "warranty"]
+          }
+        },
+        {
+          "type": "related-products",
+          "config": {
+            "limit": 6,
+            "title": "Produits Similaires"
+          }
+        }
+      ]
+    },
+    "categoryPage": {
+      "layout": "sidebar-left",
+      "grid": "4cols",
+      "filters": ["price", "brand", "specs", "rating", "in_stock"]
+    }
+  },
+  "components": {
+    "productCard": "style-minimal",
+    "header": "solid-sticky",
+    "footer": "minimal",
+    "buttons": "squared"
+  },
+  "spacing": {
+    "sectionPadding": "medium",
+    "containerWidth": "1320px",
+    "gutter": "1rem"
+  }
+}

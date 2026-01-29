@@ -1,0 +1,183 @@
+{
+  "id": "food-organic",
+  "name": "Food Organic",
+  "category": "food",
+  "description": "Thème chaleureux et naturel pour épiceries bio et produits alimentaires",
+  "version": "1.0.0",
+  "colors": {
+    "primary": "#4a7c59",
+    "secondary": "#f4e4c1",
+    "accent": "#d97706",
+    "background": "#fefdf8",
+    "text": "#1f2937",
+    "muted": "#9ca3af"
+  },
+  "typography": {
+    "headings": "Merriweather",
+    "body": "Open Sans",
+    "mono": "Courier"
+  },
+  "layouts": {
+    "homepage": {
+      "sections": [
+        {
+          "type": "promo-banner",
+          "variant": "split",
+          "config": {
+            "title": "Nouvelle Collection Bio 2026",
+            "subtitle": "100% naturel, 0% pesticides",
+            "ctaText": "Découvrir la sélection",
+            "ctaUrl": "/collections/bio",
+            "imageUrl": "/images/organic-banner.jpg"
+          }
+        },
+        {
+          "type": "countdown-timer",
+          "variant": "centered",
+          "config": {
+            "title": "Vente Flash : Fruits & Légumes de Saison",
+            "subtitle": "Réduction de 25% jusqu'à ce soir minuit !",
+            "endDate": "2026-02-15T23:59:59Z",
+            "ctaText": "Profiter de l'offre",
+            "ctaUrl": "/collections/fruits-legumes"
+          }
+        },
+        {
+          "type": "categories",
+          "variant": "featured",
+          "config": {
+            "title": "Nos Produits Bio",
+            "categories": [
+              {
+                "name": "Fruits & Légumes",
+                "slug": "fruits-legumes",
+                "image": "/images/cat-fruits-legumes.jpg"
+              },
+              {
+                "name": "Épicerie Salée",
+                "slug": "epicerie-salee",
+                "image": "/images/cat-epicerie.jpg"
+              },
+              {
+                "name": "Produits Laitiers",
+                "slug": "produits-laitiers",
+                "image": "/images/cat-laitiers.jpg"
+              },
+              {
+                "name": "Boissons Bio",
+                "slug": "boissons",
+                "image": "/images/cat-boissons.jpg"
+              }
+            ]
+          }
+        },
+        {
+          "type": "featured-products",
+          "variant": "grid-4cols",
+          "config": {
+            "title": "Nos Meilleures Ventes",
+            "limit": 8,
+            "sortBy": "bestsellers"
+          }
+        },
+        {
+          "type": "features",
+          "variant": "grid-3cols",
+          "config": {
+            "title": "Pourquoi choisir Food Organic ?",
+            "features": [
+              {
+                "icon": "leaf",
+                "title": "100% Bio Certifié",
+                "description": "Tous nos produits sont certifiés agriculture biologique par Ecocert Tunisie"
+              },
+              {
+                "icon": "truck",
+                "title": "Livraison Fraîcheur",
+                "description": "Vos produits frais livrés le jour même à Tunis et banlieue"
+              },
+              {
+                "icon": "heart",
+                "title": "Producteurs Locaux",
+                "description": "Nous travaillons directement avec 50+ producteurs tunisiens engagés"
+              }
+            ]
+          }
+        },
+        {
+          "type": "promo-banner",
+          "variant": "centered",
+          "config": {
+            "title": "Premier Achat ?",
+            "subtitle": "Profitez de -15% avec le code BIENVENUE",
+            "ctaText": "Commander maintenant",
+            "ctaUrl": "/products",
+            "backgroundColor": "#4a7c59"
+          }
+        },
+        {
+          "type": "blog-posts",
+          "variant": "grid-3cols",
+          "config": {
+            "title": "Le Mag Bio",
+            "subtitle": "Conseils, recettes et actualités du bio",
+            "limit": 3
+          }
+        },
+        {
+          "type": "contact-form",
+          "variant": "centered",
+          "config": {
+            "title": "Une Question ?",
+            "subtitle": "Notre équipe vous répond sous 24h",
+            "showPhone": true,
+            "showEmail": true
+          }
+        }
+      ]
+    },
+    "productPage": {
+      "layout": "sidebar-right",
+      "gallery": {
+        "type": "zoom-vertical",
+        "thumbnailPosition": "left"
+      },
+      "sections": [
+        {
+          "type": "product-info",
+          "variant": "detailed"
+        },
+        {
+          "type": "product-tabs",
+          "config": {
+            "tabs": ["description", "nutrition", "origine", "conservation", "reviews"]
+          }
+        },
+        {
+          "type": "related-products",
+          "config": {
+            "limit": 4,
+            "title": "Produits Complémentaires"
+          }
+        }
+      ]
+    },
+    "categoryPage": {
+      "layout": "sidebar-left",
+      "grid": "3cols",
+      "filters": ["price", "brand", "certification", "origin", "diet"]
+    }
+  },
+  "components": {
+    "productCard": "style-detailed",
+    "header": "classic",
+    "footer": "columns-4",
+    "buttons": "rounded-shadow"
+  },
+  "spacing": {
+    "sectionPadding": "large",
+    "containerWidth": "1280px",
+    "gutter": "1.5rem"
+  },
+  "customCSS": ".food-organic-theme { font-weight: 400; } .food-organic-theme h1, .food-organic-theme h2 { font-weight: 700; color: #4a7c59; }"
+}

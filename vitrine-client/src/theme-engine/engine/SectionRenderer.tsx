@@ -2,6 +2,7 @@
 
 import { lazy, Suspense } from 'react';
 import type { SectionConfig } from './types';
+import { useTheme } from './ThemeContext';
 
 // Lazy load des sections (optimisation performance)
 const HeroSlider = lazy(() => import('../components/sections/HeroSlider'));
@@ -15,6 +16,18 @@ const CallToAction = lazy(() => import('../components/sections/CallToAction'));
 const Blog = lazy(() => import('../components/sections/Blog'));
 const Contact = lazy(() => import('../components/sections/Contact'));
 
+// Nouvelles sections (Janvier 2026)
+const VideoHero = lazy(() => import('../components/sections/VideoHero'));
+const SocialProof = lazy(() => import('../components/sections/SocialProof'));
+const PromoBanner = lazy(() => import('../components/sections/PromoBanner'));
+const Features = lazy(() => import('../components/sections/Features'));
+const Categories = lazy(() => import('../components/sections/Categories'));
+const ProductTabs = lazy(() => import('../components/sections/ProductTabs'));
+const BrandLogos = lazy(() => import('../components/sections/BrandLogos'));
+const ContactForm = lazy(() => import('../components/sections/ContactForm'));
+const CountdownTimer = lazy(() => import('../components/sections/CountdownTimer'));
+const BlogPosts = lazy(() => import('../components/sections/BlogPosts'));
+
 interface SectionRendererProps {
   sections: SectionConfig[];
 }
@@ -26,6 +39,8 @@ function SectionFallback() {
 }
 
 export function SectionRenderer({ sections }: SectionRendererProps) {
+  const theme = useTheme();
+
   return (
     <>
       {sections.map((section, index) => {
@@ -63,6 +78,36 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
           case 'contact':
             SectionComponent = Contact;
             break;
+          case 'video-hero':
+            SectionComponent = VideoHero;
+            break;
+          case 'social-proof':
+            SectionComponent = SocialProof;
+            break;
+          case 'promo-banner':
+            SectionComponent = PromoBanner;
+            break;
+          case 'features':
+            SectionComponent = Features;
+            break;
+          case 'categories':
+            SectionComponent = Categories;
+            break;
+          case 'product-tabs':
+            SectionComponent = ProductTabs;
+            break;
+          case 'brand-logos':
+            SectionComponent = BrandLogos;
+            break;
+          case 'contact-form':
+            SectionComponent = ContactForm;
+            break;
+          case 'countdown-timer':
+            SectionComponent = CountdownTimer;
+            break;
+          case 'blog-posts':
+            SectionComponent = BlogPosts;
+            break;
           default:
             console.warn(`Section type "${section.type}" not found`);
             return null;
@@ -74,6 +119,7 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
               variant={section.variant}
               config={section.config}
               className={section.className}
+              theme={theme}
             />
           </Suspense>
         );
