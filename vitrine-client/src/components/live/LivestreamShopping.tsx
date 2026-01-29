@@ -26,7 +26,7 @@ export function LivestreamShopping() {
       if (response.success && response.liveEvents) {
         setEvents(response.liveEvents);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching live events:', error);
     } finally {
       setIsLoading(false);

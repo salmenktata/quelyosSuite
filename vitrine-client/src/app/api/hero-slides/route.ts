@@ -3,7 +3,7 @@ import { logger } from '@/lib/logger'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const response = await fetch(`${BACKEND_URL}/api/ecommerce/hero-slides`, {
       method: 'POST',

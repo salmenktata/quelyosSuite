@@ -7,7 +7,7 @@ import { logger } from '@/lib/logger';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Appeler l'API backend
     const response = await fetch(`${BACKEND_URL}/api/ecommerce/categories`, {

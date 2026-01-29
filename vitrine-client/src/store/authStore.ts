@@ -63,7 +63,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-        } catch (error: any) {
+        } catch (_error: unknown) {
           // Même en cas d'erreur, on déconnecte localement
           set({
             user: null,
@@ -115,7 +115,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
             });
           }
-        } catch (error: any) {
+        } catch (_error: unknown) {
           set({
             user: null,
             isAuthenticated: false,

@@ -41,7 +41,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
   const loadRecommendations = async () => {
     setIsLoading(true);
     try {
-      let filters: any = {};
+      const filters: any = {};
 
       switch (type) {
         case 'similar':
