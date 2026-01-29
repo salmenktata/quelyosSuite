@@ -103,8 +103,8 @@ export function ThemeProvider({ children, tenantId = 1 }: ThemeProviderProps) {
           setTheme(DEFAULT_THEME);
           applyThemeStyles(DEFAULT_THEME);
         }
-      } catch (_err) {
-        console.error('Erreur chargement thème:', _err);
+      } catch (err) {
+        console.error('Erreur chargement thème:', err);
         setError('Erreur de chargement du thème');
         setTheme(DEFAULT_THEME);
         applyThemeStyles(DEFAULT_THEME);

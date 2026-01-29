@@ -84,7 +84,7 @@ export default function ProductDetailPage() {
       } else {
         router.push('/products');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur chargement produit:', error);
       router.push('/products');
     } finally {
@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
       if (response.success && response.products) {
         setRelatedProducts(response.products);
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       // Ignorer silencieusement si endpoint pas encore implémenté (404)
       if (error?.response?.status !== 404) {
         logger.error('Erreur chargement produits similaires:', error);

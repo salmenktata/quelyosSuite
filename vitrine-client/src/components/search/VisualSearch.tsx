@@ -103,7 +103,7 @@ export function VisualSearch({ onClose }: VisualSearchProps) {
           similarity: Math.max(95 - i * 8, 60), // Score simulé
         })));
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error('Visual search error:', err);
       setError('Erreur lors de la recherche visuelle');
     } finally {

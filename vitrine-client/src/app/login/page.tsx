@@ -42,7 +42,7 @@ function LoginContent() {
       } else {
         setError('Email ou mot de passe incorrect');
       }
-    } catch (_err) {
+    } catch (err) {
       setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsLoading(false);

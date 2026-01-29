@@ -47,7 +47,7 @@ export default function OrderDetailPage() {
         } else {
           setOrder(null);
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('Erreur lors du chargement de la commande:', error);
         setOrder(null);
       } finally {

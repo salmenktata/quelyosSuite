@@ -145,7 +145,7 @@ export class BackendClient {
 
       // The proxy returns the result directly
       return response.data;
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const error = _error as { response?: { status?: number; data?: { error?: string; message?: string } }; message?: string };
       // Gestion gracieuse des 404 pour les endpoints non implémentés
       if (error.response?.status === 404 && !throwOn404) {
@@ -211,7 +211,7 @@ export class BackendClient {
       }
 
       return result;
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const error = _error as Error;
       return { success: false, error: error.message };
     }
@@ -222,7 +222,7 @@ export class BackendClient {
       await this.jsonrpc('/auth/logout');
       this.clearSession();
       return { success: true };
-    } catch (_error) {
+    } catch (error) {
       this.clearSession();
       return { success: false };
     }
@@ -240,7 +240,7 @@ export class BackendClient {
   async getSession(): Promise<SessionResponse> {
     try {
       return await this.jsonrpc<SessionResponse>('/auth/session');
-    } catch (_error) {
+    } catch (error) {
       return { authenticated: false };
     }
   }

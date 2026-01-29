@@ -3,7 +3,7 @@ import { logger } from '@/lib/logger'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { email, name } = body
@@ -49,7 +49,7 @@ export async function POST(_request: NextRequest) {
       success: true,
       message: result.message || 'Inscription réussie'
     })
-  } catch (_error) {
+  } catch (error) {
     logger.error('Newsletter subscribe API error:', error)
     return NextResponse.json(
       { success: false, error: 'Une erreur est survenue' },

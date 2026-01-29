@@ -29,7 +29,7 @@ const DEFAULT_CONFIG = {
   customer_service_days: 'lundi au vendredi',
 };
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // Essayer d'abord la méthode GET (endpoint main.py)
     let response = await fetch(`${BACKEND_URL}/api/ecommerce/site-config`, {
@@ -113,7 +113,7 @@ export async function GET(_request: NextRequest) {
     }, {
       headers: { 'Cache-Control': 'public, max-age=300' },
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('Site config error:', error);
     return NextResponse.json({
       success: true,

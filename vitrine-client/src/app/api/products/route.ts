@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -70,7 +70,7 @@ export async function GET(_request: NextRequest) {
     // Retourner directement le result
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Products API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch products' },
@@ -79,6 +79,6 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   return GET(request);
 }

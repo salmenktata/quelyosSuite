@@ -103,7 +103,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
       if (response.success) {
         setData(response as ReviewsData);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error fetching reviews:', error);
     } finally {
       setIsLoading(false);
@@ -136,7 +136,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
       } else {
         toast.error(response.error || 'Erreur lors de la soumission');
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erreur lors de la soumission');
     } finally {
       setSubmitting(false);
@@ -159,7 +159,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
           ),
         });
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error voting:', error);
     }
   };

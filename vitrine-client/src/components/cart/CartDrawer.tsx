@@ -41,7 +41,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
     if (window.confirm('Êtes-vous sûr de vouloir vider votre panier ?')) {
       try {
         await clearCart();
-      } catch (_error) {
+      } catch (error) {
         logger.error('Failed to clear cart:', error);
       }
     }

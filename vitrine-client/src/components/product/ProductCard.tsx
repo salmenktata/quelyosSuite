@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, priorit
     setIsAdding(true);
     try {
       await addToCart(product.id, 1);
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error adding to cart:', error);
     } finally {
       setIsAdding(false);

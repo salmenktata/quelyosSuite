@@ -7,7 +7,7 @@ import { logger } from '@/lib/logger';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // Récupérer les cookies pour la session
     const cookieHeader = request.headers.get('cookie') || '';
@@ -37,7 +37,7 @@ export async function GET(_request: NextRequest) {
     // Retourner directement le result
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch cart', cart: null },
@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const cookieHeader = request.headers.get('cookie') || '';
@@ -75,7 +75,7 @@ export async function POST(_request: NextRequest) {
 
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update cart' },

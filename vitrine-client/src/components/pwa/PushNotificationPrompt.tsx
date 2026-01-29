@@ -49,7 +49,7 @@ export function PushNotificationPrompt() {
         setShowPrompt(false);
         localStorage.setItem('push_prompt_dismissed', Date.now().toString());
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error requesting notification permission:', error);
     }
   };
@@ -86,7 +86,7 @@ export function PushNotificationPrompt() {
       );
 
       return subscription;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error subscribing to push:', error);
     }
   };

@@ -34,7 +34,7 @@ export const useWishlistStore = create<WishlistState>()(
           } else {
             set({ error: response.error || 'Failed to fetch wishlist', isLoading: false });
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
         }
       },
@@ -53,7 +53,7 @@ export const useWishlistStore = create<WishlistState>()(
             set({ error: response.error || 'Failed to add to wishlist', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
@@ -73,7 +73,7 @@ export const useWishlistStore = create<WishlistState>()(
             set({ error: response.error || 'Failed to remove from wishlist', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }

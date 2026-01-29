@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const page_path = body.page_path || '/'
@@ -18,7 +18,7 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 'public, max-age=60' },
     })
-  } catch (_error) {
+  } catch (error) {
     return NextResponse.json(
       { success: true, popups: [] },
       { status: 200 }

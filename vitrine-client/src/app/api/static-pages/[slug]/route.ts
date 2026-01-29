@@ -25,7 +25,7 @@ export async function GET(
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 'public, max-age=3600' },
     })
-  } catch (_error) {
+  } catch (error) {
     return NextResponse.json(
       { success: false, error: 'Page non trouvée' },
       { status: 404 }

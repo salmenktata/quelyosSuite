@@ -79,7 +79,7 @@ export default function ProductsClientView({
           setProducts(response.products);
           setTotal(response.total);
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('Erreur chargement produits:', error);
       } finally {
         setIsLoading(false);

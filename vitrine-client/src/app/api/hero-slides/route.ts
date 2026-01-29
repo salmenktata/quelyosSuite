@@ -3,7 +3,7 @@ import { logger } from '@/lib/logger'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const response = await fetch(`${BACKEND_URL}/api/ecommerce/hero-slides`, {
       method: 'POST',
@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json(data.result, {
       headers: { 'Cache-Control': 'public, max-age=300' },
     })
-  } catch (_error) {
+  } catch (error) {
     logger.error('Hero slides API error:', error)
     return NextResponse.json(
       { success: true, slides: [] }, // Fallback gracieux

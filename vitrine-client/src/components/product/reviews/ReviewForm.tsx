@@ -57,7 +57,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit, onCancel }
       setTitle('');
       setComment('');
       setErrors({});
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error submitting review:', error);
     } finally {
       setIsSubmitting(false);

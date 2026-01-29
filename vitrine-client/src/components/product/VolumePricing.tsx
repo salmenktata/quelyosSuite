@@ -38,7 +38,7 @@ export function VolumePricing({
       if (response.success && response.data && response.data.tiers.length > 0) {
         setTiers(response.data.tiers);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error fetching volume pricing:', error);
     } finally {
       setIsLoading(false);

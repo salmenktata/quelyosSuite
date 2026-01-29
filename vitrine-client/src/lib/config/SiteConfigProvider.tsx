@@ -32,7 +32,7 @@ export function SiteConfigProvider({ children, initialConfig }: SiteConfigProvid
     try {
       const newConfig = await fetchSiteConfig();
       setConfig(newConfig);
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch config'));
     } finally {
       setIsLoading(false);
