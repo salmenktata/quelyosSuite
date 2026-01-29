@@ -158,17 +158,17 @@ async getCart(): Promise<ApiResponse<Cart>> {
 ```
 
 **Checklist Étape 1** :
-- [ ] Créer `src/types/api.ts` avec types de base
-- [ ] Typer méthode `call()` générique
-- [ ] Typer méthodes produits (5 méthodes)
-- [ ] Typer méthodes auth (4 méthodes)
-- [ ] Typer méthodes cart (6 méthodes)
-- [ ] Typer méthodes checkout (3 méthodes)
-- [ ] Typer méthodes user/profile (4 méthodes)
-- [ ] Tests : Vérifier que tout compile
-- [ ] Commit : `refactor: typage BackendClient (39 any → 0)`
+- [x] Créer `src/types/api.ts` avec types de base
+- [x] Typer méthode `call()` générique
+- [x] Typer méthodes produits (5 méthodes)
+- [x] Typer méthodes auth (4 méthodes)
+- [x] Typer méthodes cart (6 méthodes)
+- [x] Typer méthodes checkout (3 méthodes)
+- [x] Typer méthodes user/profile (4 méthodes)
+- [x] Tests : Vérifier que tout compile
+- [x] Commit : `refactor: typage BackendClient (39 any → 0)`
 
-**Gain attendu** : -39 any (40% du total)
+**Gain réel** : -39 any (40% du total) ✅ TERMINÉ (2026-01-29)
 
 ---
 
@@ -501,7 +501,7 @@ git commit -m "refactor: typage BackendClient - Phase 1 (39 any → 0)"
 
 ## ✅ Checklist Globale
 
-- [ ] Phase 1 : API Client (39 any)
+- [x] Phase 1 : API Client (39 any) ✅ TERMINÉ
 - [ ] Phase 2 : Paiements (14 any)
 - [ ] Phase 3 : Hooks/Utils (18 any)
 - [ ] Phase 4 : UI Components (27 any)
