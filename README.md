@@ -509,8 +509,10 @@ export default function LegalPage() {
 **Lister toutes les dépendances** :
 ```bash
 # Générer automatiquement
-cd frontend && npm list --all > ../ATTRIBUTIONS_FRONTEND.txt
-cd backoffice && npm list --all > ../ATTRIBUTIONS_BACKOFFICE.txt
+cd vitrine-quelyos && pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_QUELYOS.txt
+cd vitrine-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_VITRINE_CLIENT.txt
+cd dashboard-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_DASHBOARD.txt
+cd super-admin-client && pnpm list --depth Infinity > ../ATTRIBUTIONS_SUPER_ADMIN.txt
 ```
 
 ---

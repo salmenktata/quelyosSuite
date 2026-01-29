@@ -74,7 +74,7 @@ VITE_ENV=production
 **Caractéristiques** :
 - Tests dans `./tests/e2e/`
 - Browser : Chromium uniquement (Desktop Chrome)
-- Web server automatique : Lance `npm run dev` sur port 5176
+- Web server automatique : Lance `pnpm dev` sur port 5176
 - Retry : 2x en CI, 0x en local
 - Reporter : HTML avec screenshots on failure
 
@@ -95,7 +95,7 @@ VITE_ENV=production
 
 **Note** : Tests navigation skippés car nécessitent authentification. À activer après création fixture login.
 
-### 3. Scripts NPM
+### 3. Scripts (package.json)
 
 ```json
 {
@@ -110,16 +110,16 @@ VITE_ENV=production
 
 ```bash
 # Lancer tous les tests E2E
-npm run test:e2e
+pnpm test:e2e
 
 # Mode UI interactif
-npm run test:e2e:ui
+pnpm test:e2e:ui
 
 # Debug mode
-npm run test:e2e:debug
+pnpm test:e2e:debug
 
 # Voir rapport HTML
-npm run test:e2e:report
+pnpm test:e2e:report
 ```
 
 ---
@@ -190,7 +190,7 @@ npm run test:e2e:report
 
 ```bash
 cd super-admin-client
-npm run build
+pnpm build
 ```
 
 **Vérifications** :
@@ -202,16 +202,16 @@ npm run build
 
 ```bash
 # Tests unitaires
-npm run test:run
+pnpm test:run
 
 # Coverage
-npm run test:coverage
+pnpm test:coverage
 
 # Tests E2E (nécessite backend running)
-npm run test:e2e
+pnpm test:e2e
 
 # Build
-npm run build
+pnpm build
 ```
 
 ---

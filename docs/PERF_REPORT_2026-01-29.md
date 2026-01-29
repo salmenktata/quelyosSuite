@@ -421,8 +421,8 @@ done
 
 ```bash
 cd vitrine-client
-npm prune
-npm install  # Réinstaller dépendances propres
+pnpm prune
+pnpm install  # Réinstaller dépendances propres
 ```
 
 **✅ P2-4 : Lazy-load composants lourds (E-commerce)**

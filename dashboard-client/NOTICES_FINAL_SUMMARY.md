@@ -96,7 +96,7 @@ dashboard-client/
 
 ```bash
 cd dashboard-client
-npm run dev
+pnpm dev
 
 # Tester les pages suivantes :
 # 🟠 http://localhost:5175/stock

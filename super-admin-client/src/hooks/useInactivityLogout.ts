@@ -29,8 +29,8 @@ export function useInactivityLogout(options: UseInactivityLogoutOptions = {}) {
     onWarning,
   } = options
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const warningRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const warningRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const lastActivityRef = useRef(Date.now())
 
   /**

@@ -46,15 +46,15 @@ module.exports = {
 Si les données demo ont été supprimées, exécutez :
 
 ```bash
-cd apps/api
-npm run seed
+cd api
+pnpm seed
 ```
 
 Ou via Prisma directement :
 
 ```bash
-cd apps/api
-npx prisma db seed
+cd api
+pnpm exec prisma db seed
 ```
 
 ### Lancer les tests en toute sécurité
@@ -62,14 +62,14 @@ npx prisma db seed
 Les tests vérifient maintenant automatiquement l'environnement :
 
 ```bash
-cd apps/api
-npm test  # ✅ Utilise NODE_ENV=test automatiquement via package.json
+cd api
+pnpm test  # ✅ Utilise NODE_ENV=test automatiquement via package.json
 ```
 
 Si vous lancez Jest manuellement :
 
 ```bash
-cd apps/api
+cd api
 NODE_ENV=test jest  # ✅ OK, base de test
 jest                # ❌ ERREUR, bloqué par setup.js
 ```
@@ -113,14 +113,14 @@ prisma.user.findUnique({ where: { email: 'demo@quelyos.test' } })
 
 ## Bonnes pratiques
 
-1. **Toujours** lancer les tests via `npm test` (qui définit `NODE_ENV=test`)
+1. **Toujours** lancer les tests via `pnpm test` (qui définit `NODE_ENV=test`)
 2. **Ne jamais** lancer `jest` directement sans `NODE_ENV=test`
 3. **Toujours** utiliser une base de données séparée pour les tests (`quelyos_test`)
 4. **Re-seeder** après avoir lancé les tests si nécessaire
 
 ## Prochaines améliorations possibles
 
-- [ ] Ajouter un script `npm run db:reset` qui drop + migrate + seed
+- [ ] Ajouter un script `pnpm db:reset` qui drop + migrate + seed
 - [ ] Créer des fixtures de test pour éviter de toucher à la base dev
 - [ ] Utiliser des transactions Prisma dans les tests (rollback automatique)
 - [ ] Ajouter un hook Git pre-push qui vérifie NODE_ENV avant les tests

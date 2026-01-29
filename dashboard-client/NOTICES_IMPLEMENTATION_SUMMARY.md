@@ -100,12 +100,12 @@ dashboard-client/
 ### Compilation
 ```bash
 cd /Users/salmenktata/Projets/GitHub/QuelyosSuite/dashboard-client
-npm run build
+pnpm build
 ```
 **Résultat** : ✅ Build réussi en 16.81s (0 erreur TS)
 
 ### Test Manuel Suggéré
-1. Démarrer le backoffice : `npm run dev`
+1. Démarrer le backoffice : `pnpm dev`
 2. Naviguer vers `/stock` (page Stock & Disponibilité)
 3. Vérifier affichage de la notice avec gradient orange
 4. Cliquer pour plier/déplier → vérifier animation

@@ -200,7 +200,7 @@ SELECT * FROM ir_cron WHERE name = 'Cleanup Expired Refresh Tokens';
 
 # Frontend
 cd super-admin-client
-npm run dev
+pnpm dev
 ```
 
 ### 4. Test End-to-End

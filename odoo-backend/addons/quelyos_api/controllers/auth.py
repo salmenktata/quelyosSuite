@@ -216,13 +216,13 @@ class AuthController(http.Controller):
             _logger.error(f"Login error: {e}")
             return {'success': False, 'error': 'Erreur de connexion'}
 
-    @http.route('/api/auth/user-info', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/user-info', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def get_user_info(self, **kwargs):
         """
         Récupère les informations de l'utilisateur connecté incluant ses groupes de sécurité.
 
         Returns:
-            dict: {
+            JSON: {
                 success: bool,
                 user: {
                     id: int,
@@ -233,10 +233,34 @@ class AuthController(http.Controller):
                 }
             }
         """
+        # Gérer CORS manuellement pour credentials: include
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        # Handle preflight OPTIONS
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
         try:
+            # Parser le body JSON (peut être JSON-RPC ou JSON simple)
+            try:
+                body = request.get_json_data()
+                # Si JSON-RPC, extraire params
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    params = body.get('params', {})
+                else:
+                    params = body or {}
+            except:
+                params = {}
+
             # Vérifier si l'utilisateur est connecté
             if not request.session.uid:
-                return {'success': False, 'error': 'Non authentifié'}
+                response_data = {'success': False, 'error': 'Non authentifié'}
+                response = request.make_json_response(response_data, headers=cors_headers)
+                response.status_code = 401
+                return response
 
             user = request.env.user
 
@@ -259,7 +283,7 @@ class AuthController(http.Controller):
                     name = name.get('en_US') or name.get('fr_FR') or next(iter(name.values()), '')
                 group_names.append(name)
 
-            return {
+            response_data = {
                 'success': True,
                 'user': {
                     'id': user.id,
@@ -269,9 +293,12 @@ class AuthController(http.Controller):
                     'groups': group_names,
                 }
             }
+            return request.make_json_response(response_data, headers=cors_headers)
+
         except Exception as e:
             _logger.error(f"Get user info error: {e}")
-            return {'success': False, 'error': 'Erreur lors de la récupération des informations utilisateur'}
+            response_data = {'success': False, 'error': 'Erreur lors de la récupération des informations utilisateur'}
+            return request.make_json_response(response_data, headers=cors_headers)
 
     @http.route('/api/auth/refresh', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
     def refresh_token(self, **kwargs):

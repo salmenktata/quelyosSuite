@@ -9,16 +9,16 @@ Ce dossier contient des tests e2e rapides (auth, catégories, comptes, transacti
 
 ### Provisionner rapidement la base de test (Docker)
 ```bash
-cd apps/api
+cd api
 # Démarre un Postgres dédié sur le port 5442 et applique les migrations Prisma
 ./scripts/setup-test-db.sh
 ```
 
 ## Lancer les tests
 ```bash
-cd apps/api
-npm install
-TEST_DATABASE_URL="postgresql://user:pass@host:5432/db_test" npm test
+cd api
+pnpm install
+TEST_DATABASE_URL="postgresql://user:pass@host:5432/db_test" pnpm test
 ```
 
 Remarques importantes :

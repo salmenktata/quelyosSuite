@@ -103,6 +103,108 @@ def _disable_website_tours(env):
         _logger.warning(f"Impossible de désactiver les tours website : {str(e)}")
 
 
+def _configure_super_admin(env):
+    """
+    Configuration automatique du super-admin (uid=2).
+
+    Cette fonction garantit que l'utilisateur admin a :
+    1. Mot de passe par défaut sécurisé (6187)
+    2. Tous les groupes Quelyos Manager (8 modules)
+    3. Groupe Role/Administrator pour accès complet Odoo
+    4. Accès multi-tenant à toutes les companies
+
+    Note: Les groupes Access Rights et Technical Features sont déjà ajoutés
+    par _fix_menu_visibility() pour assurer la visibilité des menus.
+
+    Cette configuration permet au super-admin d'accéder à TOUS les modules
+    existants et futurs, dans TOUS les frontends (dashboard, e-commerce, vitrine).
+    """
+    try:
+        UsersObj = env['res.users'].sudo()
+        GroupObj = env['res.groups'].sudo()
+        CompanyObj = env['res.company'].sudo()
+
+        # 0. Définir le mot de passe par défaut
+        _logger.info("Configuration super-admin : définition du mot de passe par défaut...")
+
+        admin_user = UsersObj.browse(2)  # uid=2 = admin
+        if admin_user.exists():
+            # Odoo gère automatiquement le hachage du mot de passe
+            admin_user.write({'password': '6187'})
+            _logger.info("  ✓ Mot de passe par défaut défini à '6187'")
+        else:
+            _logger.warning("  ⚠️  Utilisateur admin (uid=2) non trouvé")
+
+        # 1. Ajouter tous les groupes Quelyos Manager
+        _logger.info("Configuration super-admin : ajout des groupes Quelyos Manager...")
+
+        quelyos_manager_groups = [
+            'Quelyos Home Manager',
+            'Quelyos Finance Manager',
+            'Quelyos Store Manager',
+            'Quelyos Stock Manager',
+            'Quelyos CRM Manager',
+            'Quelyos Marketing Manager',
+            'Quelyos HR Manager',
+            'Quelyos POS Manager',
+        ]
+
+        for group_name in quelyos_manager_groups:
+            group = GroupObj.search([('name', '=', group_name)], limit=1)
+            if group:
+                env.cr.execute("""
+                    INSERT INTO res_groups_users_rel (gid, uid)
+                    VALUES (%s, 2)
+                    ON CONFLICT DO NOTHING
+                """, (group.id,))
+                _logger.info(f"  ✓ Groupe '{group_name}' ajouté")
+            else:
+                _logger.warning(f"  ⚠️  Groupe '{group_name}' non trouvé (module peut-être non installé)")
+
+        # 2. Ajouter les groupes système critiques
+        _logger.info("Configuration super-admin : ajout des groupes système critiques...")
+
+        critical_groups = [
+            'Access Rights',           # Accès Settings
+            'Technical Features',      # Mode développeur
+            'Role/Administrator',      # Accès complet Odoo
+        ]
+
+        for group_name in critical_groups:
+            group = GroupObj.search([('name', '=', group_name)], limit=1)
+            if group:
+                env.cr.execute("""
+                    INSERT INTO res_groups_users_rel (gid, uid)
+                    VALUES (%s, 2)
+                    ON CONFLICT DO NOTHING
+                """, (group.id,))
+                _logger.info(f"  ✓ Groupe '{group_name}' ajouté")
+            else:
+                _logger.warning(f"  ⚠️  Groupe '{group_name}' non trouvé")
+
+        # 3. Accès multi-tenant : ajouter admin à toutes les companies
+        _logger.info("Configuration super-admin : accès multi-tenant...")
+
+        all_companies = CompanyObj.search([])
+        _logger.info(f"  Nombre de companies détectées : {len(all_companies)}")
+
+        for company in all_companies:
+            env.cr.execute("""
+                INSERT INTO res_company_users_rel (cid, user_id)
+                VALUES (%s, 2)
+                ON CONFLICT DO NOTHING
+            """, (company.id,))
+            _logger.info(f"  ✓ Accès ajouté pour company '{company.name}' (ID={company.id})")
+
+        env.cr.commit()
+        _logger.info("✓ Configuration super-admin terminée avec succès")
+        _logger.info("  → Admin a maintenant accès à TOUS les modules (existants et futurs)")
+        _logger.info("  → Admin a maintenant accès à TOUS les tenants")
+
+    except Exception as e:
+        _logger.warning(f"Impossible de configurer le super-admin : {str(e)}")
+
+
 def post_init_hook(env):
     """
     Hook exécuté après l'installation de quelyos_core.
@@ -230,5 +332,10 @@ def post_init_hook(env):
     _logger.info("-"*80)
     _logger.info("Désactivation des tours website d'Odoo...")
     _disable_website_tours(env)
+
+    # 7. Configurer le super-admin (admin, uid=2)
+    _logger.info("-"*80)
+    _logger.info("Configuration automatique du super-admin (admin, uid=2)...")
+    _configure_super_admin(env)
 
     _logger.info("="*80)

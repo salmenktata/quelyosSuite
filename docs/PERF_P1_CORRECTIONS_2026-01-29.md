@@ -156,8 +156,8 @@ done | wc -l
 **P2-3 : Nettoyer dépendances lodash** (15min)
 ```bash
 cd vitrine-client
-npm prune
-npm install
+pnpm prune
+pnpm install
 ```
 
 **P2-4 : Lazy-load composants lourds** (2h)
@@ -177,10 +177,10 @@ npm install
 ```bash
 # 1. Vérifier que le build passe
 cd vitrine-client
-npm run build
+pnpm build
 
 # 2. Lancer en dev et tester pages
-npm run dev
+pnpm dev
 # Tester : /blog, /blog/[slug], /collections, /collections/[slug], homepage
 
 # 3. Vérifier console (doit être vide en prod)

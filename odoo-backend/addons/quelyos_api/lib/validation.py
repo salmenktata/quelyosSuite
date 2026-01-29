@@ -20,12 +20,11 @@ _logger = logging.getLogger(__name__)
 # Essayer d'importer Pydantic v2, sinon v1
 try:
     from pydantic import BaseModel, Field, field_validator, model_validator
-    from pydantic import EmailStr, HttpUrl
+    # EmailStr et HttpUrl nécessitent email-validator, on les remplace par str avec pattern
     PYDANTIC_V2 = True
 except ImportError:
     try:
         from pydantic import BaseModel, Field, validator, root_validator
-        from pydantic import EmailStr, HttpUrl
         PYDANTIC_V2 = False
     except ImportError:
         _logger.warning("Pydantic not installed. Validation will be minimal.")
@@ -111,14 +110,14 @@ if PYDANTIC_V2 is not None:
 
     class LoginSchema(BaseSchema):
         """Schéma de connexion"""
-        email: EmailStr
+        email: str = Field(..., min_length=3, pattern=r'^[^@]+@[^@]+\.[^@]+$')
         password: str = Field(..., min_length=1)
 
     class UserProfileSchema(BaseSchema):
         """Schéma de profil utilisateur"""
         first_name: str = Field(..., min_length=2, alias="firstName")
         last_name: str = Field(..., min_length=2, alias="lastName")
-        email: EmailStr
+        email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
         phone: Optional[str] = None
         avatar: Optional[str] = None
 
@@ -181,7 +180,7 @@ if PYDANTIC_V2 is not None:
         """Schéma client"""
         first_name: str = Field(..., min_length=1, alias="firstName")
         last_name: str = Field(..., min_length=1, alias="lastName")
-        email: EmailStr
+        email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
         phone: Optional[str] = None
         company: Optional[str] = None
         vat_number: Optional[str] = Field(None, alias="vatNumber")

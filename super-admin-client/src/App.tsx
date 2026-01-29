@@ -1,10 +1,20 @@
+import { Routes, Route, Navigate, useLocation } from 'react-router'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { AuthenticatedApp } from './components/AuthenticatedApp'
 import { Login } from './pages/Login'
 import { useAuth } from './hooks/useAuth'
+import { useEffect } from 'react'
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
+
+  // Rediriger vers /login si non authentifié et pas déjà sur /login
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && location.pathname !== '/login') {
+      window.location.href = '/login'
+    }
+  }, [isLoading, isAuthenticated, location.pathname])
 
   // Loading state pendant vérification auth
   if (isLoading) {
@@ -18,17 +28,21 @@ function App() {
     )
   }
 
-  if (!isAuthenticated) {
-    return (
-      <ErrorBoundary>
-        <Login />
-      </ErrorBoundary>
-    )
-  }
-
   return (
     <ErrorBoundary>
-      <AuthenticatedApp />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/*"
+          element={
+            isAuthenticated ? (
+              <AuthenticatedApp />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
     </ErrorBoundary>
   )
 }

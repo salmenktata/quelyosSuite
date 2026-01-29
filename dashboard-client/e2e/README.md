@@ -9,49 +9,49 @@ Ces tests E2E vérifient que le backoffice React affiche **exactement** les mêm
 1. **Stack complète en cours d'exécution** :
    ```bash
    # Terminal 1 : Odoo
-   cd backend && docker-compose up
+   cd odoo-backend && docker-compose up
 
    # Terminal 2 : Backoffice
-   cd backoffice && npm run dev
+   cd dashboard-client && pnpm dev
    ```
 
 2. **Playwright installé** :
    ```bash
-   cd backoffice
-   npm install
-   npx playwright install
+   cd dashboard-client
+   pnpm install
+   pnpm exec playwright install
    ```
 
 ## 🚀 Lancer les tests
 
 ### Tous les tests E2E
 ```bash
-cd backoffice
-npx playwright test
+cd dashboard-client
+pnpm exec playwright test
 ```
 
 ### Tests de parité uniquement
 ```bash
-npx playwright test parity
+pnpm exec playwright test parity
 ```
 
 ### Tests spécifiques
 ```bash
 # Stock uniquement
-npx playwright test parity-stock
+pnpm exec playwright test parity-stock
 
 # Clients uniquement
-npx playwright test parity-customers
+pnpm exec playwright test parity-customers
 ```
 
 ### Mode interactif (debug)
 ```bash
-npx playwright test --ui
+pnpm exec playwright test --ui
 ```
 
 ### Voir le rapport
 ```bash
-npx playwright show-report
+pnpm exec playwright show-report
 ```
 
 ## 📊 Tests implémentés
@@ -148,5 +148,5 @@ Running 6 tests using 1 worker
 Si un test échoue :
 1. Screenshots dans `playwright-report/`
 2. Vidéos dans `test-results/`
-3. Mode debug : `npx playwright test --debug parity-stock`
-4. Inspecter avec : `npx playwright codegen http://localhost:5173`
+3. Mode debug : `pnpm exec playwright test --debug parity-stock`
+4. Inspecter avec : `pnpm exec playwright codegen http://localhost:5173`

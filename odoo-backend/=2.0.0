@@ -1,0 +1,6 @@
+WARNING: Skipping /usr/lib/python3.12/dist-packages/charset_normalizer-3.3.2.dist-info due to invalid metadata entry 'name'
+Requirement already satisfied: email-validator in /usr/local/lib/python3.12/dist-packages (2.3.0)
+Requirement already satisfied: dnspython>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from email-validator) (2.8.0)
+Requirement already satisfied: idna>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from email-validator) (3.11)
+WARNING: Skipping /usr/lib/python3.12/dist-packages/charset_normalizer-3.3.2.dist-info due to invalid metadata entry 'name'
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv

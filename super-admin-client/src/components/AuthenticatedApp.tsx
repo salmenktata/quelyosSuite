@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router'
+import { Routes, Route, Navigate, useLocation } from 'react-router'
 import { Layout } from './Layout'
 import { Dashboard } from '@/pages/Dashboard'
 import { Tenants } from '@/pages/Tenants'
@@ -65,20 +65,18 @@ export function AuthenticatedApp() {
 
   return (
     <>
-      <BrowserRouter>
-        <PageViewTracker />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="tenants" element={<Tenants />} />
-            <Route path="subscriptions" element={<Subscriptions />} />
-            <Route path="billing" element={<Billing />} />
-            <Route path="monitoring" element={<Monitoring />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <PageViewTracker />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="tenants" element={<Tenants />} />
+          <Route path="subscriptions" element={<Subscriptions />} />
+          <Route path="billing" element={<Billing />} />
+          <Route path="monitoring" element={<Monitoring />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Route>
+      </Routes>
 
       {showWarning && (
         <InactivityWarning

@@ -14,9 +14,11 @@ ALLOWED_ORIGINS = [
     'http://localhost:3000',      # Frontend Next.js dev
     'http://localhost:5173',      # Backoffice Vite dev (ancien port)
     'http://localhost:5175',      # Backoffice Vite dev (nouveau port)
+    'http://localhost:5176',      # Super-admin-client Vite dev
     'http://127.0.0.1:3000',      # Frontend Next.js dev (127.0.0.1)
     'http://127.0.0.1:5173',      # Backoffice Vite dev (127.0.0.1)
     'http://127.0.0.1:5175',      # Backoffice Vite dev (127.0.0.1, nouveau port)
+    'http://127.0.0.1:5176',      # Super-admin-client Vite dev (127.0.0.1)
 
     # Production (à configurer selon votre déploiement)
     # 'https://votre-domaine.com',

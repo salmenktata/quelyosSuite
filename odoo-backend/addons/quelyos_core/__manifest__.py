@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos Core Orchestrator',
-    'version': '19.0.3.1.0',
+    'version': '19.0.3.4.0',
     'category': 'Quelyos/Foundation',
     'summary': 'Orchestrateur principal Quelyos Suite - Installation automatique complète',
     'description': """

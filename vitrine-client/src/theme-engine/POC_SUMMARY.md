@@ -170,7 +170,7 @@ return (
 
 ```bash
 cd vitrine-client
-npm run dev
+pnpm dev
 # Ouvrir http://localhost:3001/theme-demo
 ```
 

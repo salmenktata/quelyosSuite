@@ -197,7 +197,7 @@ Créer 2+ slides avec images différentes :
 
 ### "La recherche ne renvoie rien"
 - Vérifier API keys dans `.env`
-- Redémarrer `npm run dev`
+- Redémarrer `pnpm dev`
 - Essayer mot-clé en anglais
 - Tester source "Les deux" au lieu d'une seule
 
