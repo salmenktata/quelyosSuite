@@ -3,19 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { backendClient } from '@/lib/backend/client';
+import { backendClient, TrendingProduct } from '@/lib/backend/client';
 import { getProxiedImageUrl } from '@/lib/image-proxy';
 import { formatPrice } from '@/lib/utils/formatting';
 import { logger } from '@/lib/logger';
-
-interface TrendingProduct {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image_url: string | null;
-  social_mentions?: number;
-}
 
 export function SocialTrendingProducts() {
   const [products, setProducts] = useState<TrendingProduct[]>([]);
@@ -27,20 +18,9 @@ export function SocialTrendingProducts() {
 
   const fetchTrendingProducts = async () => {
     try {
-      // Utiliser les bestsellers comme produits "tendance"
-      const response = await backendClient.getProducts({
-        limit: 6,
-        is_bestseller: true,
-      });
+      const response = await backendClient.getTrendingProducts({ limit: 6 });
       if (response.success && response.products) {
-        setProducts(response.products.map((p) => ({
-          id: p.id,
-          name: p.name,
-          slug: p.slug || p.name.toLowerCase().replace(/\s+/g, '-'),
-          price: p.price || p.list_price || 0,
-          image_url: p.images?.[0]?.url || p.image_url || null,
-          social_mentions: Math.floor(Math.random() * 500) + 100, // Simulation
-        })));
+        setProducts(response.products);
       }
     } catch (error) {
       logger.error('Error fetching trending products:', error);

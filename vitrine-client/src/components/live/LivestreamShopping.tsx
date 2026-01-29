@@ -1,52 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/store/toastStore';
-
-interface LiveEvent {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail: string;
-  scheduledAt: Date;
-  host: string;
-  hostAvatar?: string;
-  productCount: number;
-  isLive: boolean;
-  viewers?: number;
-}
-
-// Donnees de demo
-const DEMO_LIVES: LiveEvent[] = [
-  {
-    id: 1,
-    title: 'Nouveautes Printemps 2026',
-    description: 'Decouvrez en exclusivite notre nouvelle collection avec des offres speciales live !',
-    thumbnail: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
-    scheduledAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Dans 2 jours
-    host: 'Sarah',
-    productCount: 15,
-    isLive: false,
-  },
-  {
-    id: 2,
-    title: 'Flash Sale - Accessoires',
-    description: 'Jusqu\'a -50% sur une selection d\'accessoires pendant le live !',
-    thumbnail: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
-    scheduledAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Dans 5 jours
-    host: 'Mehdi',
-    productCount: 20,
-    isLive: false,
-  },
-];
+import { backendClient, LiveEvent } from '@/lib/backend/client';
+import { getProxiedImageUrl } from '@/lib/image-proxy';
+import { logger } from '@/lib/logger';
 
 export function LivestreamShopping() {
   const toast = useToast();
+  const [events, setEvents] = useState<LiveEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [subscribedEvents, setSubscribedEvents] = useState<Set<number>>(new Set());
   const [email, setEmail] = useState('');
 
-  const formatDate = (date: Date) => {
+  useEffect(() => {
+    fetchLiveEvents();
+  }, []);
+
+  const fetchLiveEvents = async () => {
+    try {
+      const response = await backendClient.getLiveEvents({ limit: 6 });
+      if (response.success && response.liveEvents) {
+        setEvents(response.liveEvents);
+      }
+    } catch (error) {
+      logger.error('Error fetching live events:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
     return new Intl.DateTimeFormat('fr-FR', {
       weekday: 'long',
       day: 'numeric',
@@ -78,6 +65,31 @@ export function LivestreamShopping() {
     }
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="py-12 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="h-10 bg-white/10 rounded-full w-40 mx-auto mb-4 animate-pulse" />
+            <div className="h-8 bg-white/10 rounded w-96 mx-auto mb-4 animate-pulse" />
+            <div className="h-4 bg-white/10 rounded w-72 mx-auto animate-pulse" />
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[1, 2].map((i) => (
+              <div key={i} className="bg-white/10 rounded-2xl h-80 animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // No events - hide section
+  if (events.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-12 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white">
       <div className="container mx-auto px-4">
@@ -96,33 +108,41 @@ export function LivestreamShopping() {
           </h2>
           <p className="text-white/70 max-w-2xl mx-auto">
             Rejoignez nos sessions de shopping en direct pour decouvrir des produits exclusifs,
-            poser vos questions et profiter d'offres speciales reservees aux viewers.
+            poser vos questions et profiter d&apos;offres speciales reservees aux viewers.
           </p>
         </div>
 
         {/* Upcoming Lives */}
         <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {DEMO_LIVES.map((event) => (
+          {events.map((event) => (
             <div
               key={event.id}
               className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 hover:border-white/40 transition-colors group"
             >
               {/* Thumbnail */}
               <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={event.thumbnail}
-                  alt={event.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+                {(event.thumbnail || event.thumbnailUrl) ? (
+                  <Image
+                    src={getProxiedImageUrl(event.thumbnail || event.thumbnailUrl || '')}
+                    alt={event.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+                    <svg className="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
                 {/* Live badge or countdown */}
                 <div className="absolute top-4 left-4">
-                  {event.isLive ? (
+                  {event.isLive || event.state === 'live' ? (
                     <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-2">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -147,15 +167,15 @@ export function LivestreamShopping() {
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {event.host[0]}
+                    {(event.hostName || event.host)?.[0] || 'L'}
                   </div>
                   <div>
-                    <p className="font-medium text-white">{event.host}</p>
+                    <p className="font-medium text-white">{event.hostName || event.host}</p>
                     <p className="text-xs text-white/60">Presentateur</p>
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
+                <h3 className="text-xl font-bold text-white mb-2">{event.title || event.name}</h3>
                 <p className="text-white/70 text-sm mb-4 line-clamp-2">{event.description}</p>
 
                 <div className="flex items-center justify-between">
@@ -216,7 +236,7 @@ export function LivestreamShopping() {
               type="submit"
               className="px-6 py-3 bg-primary text-white rounded-full font-semibold hover:bg-primary-dark transition-colors"
             >
-              S'inscrire
+              S&apos;inscrire
             </button>
           </form>
         </div>

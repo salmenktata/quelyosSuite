@@ -15,6 +15,8 @@ import {
   Quote,
   Award,
   HelpCircle,
+  Video,
+  TrendingUp,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -794,6 +796,60 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
           'Surveiller quotidiennement : Vérifiez les alertes régulièrement',
           'Réapprovisionner : Commandez avant rupture',
           'Ajuster les seuils : Adaptez selon vos produits',
+        ]
+      }
+    ]
+  },
+  liveEvents: {
+    pageId: 'store-live-events',
+    title: 'Live Shopping',
+    purpose: 'Organisez des sessions de vente en direct pour engager vos clients et booster vos ventes.',
+    icon: Video,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Programmation des événements live',
+          'Association de produits au live',
+          'Gestion des états (brouillon, programmé, en direct, terminé)',
+          'Miniature et description personnalisables',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Planifier : Créez vos événements à l\'avance',
+          'Associer produits : Sélectionnez les produits à présenter',
+          'Promouvoir : Annoncez le live à vos clients',
+        ]
+      }
+    ]
+  },
+  trendingProducts: {
+    pageId: 'store-trending-products',
+    title: 'Produits Tendance',
+    purpose: 'Gérez les produits affichés dans la section "Tendances sur les réseaux" de votre page d\'accueil.',
+    icon: TrendingUp,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Activation/désactivation du statut tendance',
+          'Score de tendance pour l\'ordre d\'affichage',
+          'Mentions sociales affichées sur les cartes produits',
+          'Affichage automatique des 6 premiers sur la homepage',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Activer les tendances : Sélectionnez 6-10 produits populaires',
+          'Ajuster les scores : Plus élevé = plus visible',
+          'Mettre à jour les mentions : Refléter l\'engagement réel',
         ]
       }
     ]

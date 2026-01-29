@@ -40,6 +40,8 @@ const Collections = lazy(() => import('./pages/store/Collections'))
 const FlashSales = lazy(() => import('./pages/store/FlashSales'))
 const Bundles = lazy(() => import('./pages/store/Bundles'))
 const Testimonials = lazy(() => import('./pages/store/Testimonials'))
+const LiveEvents = lazy(() => import('./pages/store/LiveEvents'))
+const TrendingProducts = lazy(() => import('./pages/store/TrendingProducts'))
 const Blog = lazy(() => import('./pages/store/Blog'))
 const Loyalty = lazy(() => import('./pages/store/Loyalty'))
 const Tickets = lazy(() => import('./pages/store/Tickets'))
@@ -489,6 +491,22 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Testimonials />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/live-events"
+                element={
+                  <ProtectedRoute>
+                    <LiveEvents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/trending-products"
+                element={
+                  <ProtectedRoute>
+                    <TrendingProducts />
                   </ProtectedRoute>
                 }
               />

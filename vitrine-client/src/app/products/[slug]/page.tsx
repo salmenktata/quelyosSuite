@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { backendClient } from '@/lib/backend/client';
@@ -13,7 +13,8 @@ import { formatPrice } from '@/lib/utils/formatting';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/store/toastStore';
-import { Button } from '@/components/common/Button';
+// Button non utilisé sur cette page - conservé en commentaire pour référence
+// import { Button } from '@/components/common/Button';
 import { ProductDetailSkeleton } from '@/components/common/Skeleton';
 import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { ProductGrid } from '@/components/product/ProductGrid';
@@ -32,6 +33,7 @@ import { StockAlert } from '@/components/product/StockAlert';
 import { VolumePricing } from '@/components/product/VolumePricing';
 import { EcoScore } from '@/components/product/EcoScore';
 import { SocialShare } from '@/components/product/SocialShare';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -48,13 +50,14 @@ export default function ProductDetailPage() {
   const { addToCart, isLoading: isAddingToCart } = useCartStore();
   const { isAuthenticated } = useAuthStore();
   const toast = useToast();
+  const { data: siteConfig } = useSiteConfig();
 
   // Hook custom pour gérer les variantes (fetch, sélection, synchronisation)
   const {
     variantsData,
     selectedVariant,
     selectedVariantId,
-    isLoadingVariants,
+    isLoadingVariants: _isLoadingVariants,
     displayPrice,
     displayStock,
     displayStockQty,
@@ -467,7 +470,7 @@ export default function ProductDetailPage() {
 
             {/* Contact WhatsApp */}
             <a
-              href={`https://wa.me/21600000000?text=Bonjour, je suis intéressé par ${encodeURIComponent(product.name)}`}
+              href={`https://wa.me/${siteConfig?.whatsapp_number || '21600000000'}?text=Bonjour, je suis intéressé par ${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full bg-[#25D366] text-white py-3 rounded-xl font-semibold text-base hover:bg-[#20BA5A] transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mb-8"
@@ -480,28 +483,31 @@ export default function ProductDetailPage() {
 
             {/* Trust indicators + Payment methods */}
             <div className="mb-8 bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-semibold">Plus de 600 avis clients</span>
-                </div>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              {(siteConfig?.total_review_count ?? 0) > 0 && (
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                  ))}
+                    <span className="font-semibold">Plus de {siteConfig?.total_review_count} avis clients</span>
+                  </div>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <svg key={star} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <div>
                 <p className="text-xs text-gray-600 mb-2 font-semibold">Modes de paiement acceptés:</p>
                 <div className="flex flex-wrap gap-2">
-                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">💳 Carte bancaire</div>
-                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">💵 Espèces</div>
-                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">🏦 Virement</div>
-                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">📱 Mobile money</div>
+                  {(siteConfig?.payment_methods || ['Carte bancaire', 'Espèces', 'Virement', 'Mobile money']).map((method, idx) => (
+                    <div key={idx} className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
+                      {method}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -517,7 +523,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Garantie</p>
-                    <p className="text-sm font-bold text-gray-900">2 ans</p>
+                    <p className="text-sm font-bold text-gray-900">{siteConfig?.warranty_years || 2} ans</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -539,7 +545,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Livraison</p>
-                    <p className="text-sm font-bold text-gray-900">2-5 jours</p>
+                    <p className="text-sm font-bold text-gray-900">{siteConfig?.shipping_standard_days || '2-5'} jours</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -550,7 +556,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Retour</p>
-                    <p className="text-sm font-bold text-gray-900">14 jours</p>
+                    <p className="text-sm font-bold text-gray-900">{siteConfig?.return_delay_days || 30} jours</p>
                   </div>
                 </div>
               </div>
@@ -711,15 +717,15 @@ export default function ProductDetailPage() {
                     <ul className="space-y-2 text-gray-700">
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-1">•</span>
-                        <span>Livraison standard: <strong>2-5 jours ouvrables</strong></span>
+                        <span>Livraison standard: <strong>{siteConfig?.shipping_standard_days || '2-5'} jours ouvrables</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-1">•</span>
-                        <span>Livraison express: <strong>1-2 jours ouvrables</strong></span>
+                        <span>Livraison express: <strong>{siteConfig?.shipping_express_days || '1-2'} jours ouvrables</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-1">•</span>
-                        <span>Frais de port: <strong>Gratuit dès 150 DT d'achat</strong></span>
+                        <span>Frais de port: <strong>Gratuit dès {siteConfig?.free_shipping_threshold || 150} {product.currency?.symbol || 'TND'} d&apos;achat</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-1">•</span>
@@ -739,15 +745,15 @@ export default function ProductDetailPage() {
                     <ul className="space-y-2 text-gray-700">
                       <li className="flex items-start gap-2">
                         <span className="text-amber-600 mt-1">•</span>
-                        <span>Retours acceptés sous <strong>30 jours</strong></span>
+                        <span>Retours acceptés sous <strong>{siteConfig?.return_delay_days || 30} jours</strong></span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-amber-600 mt-1">•</span>
-                        <span>Produit dans son emballage d'origine</span>
+                        <span>Produit dans son emballage d&apos;origine</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-amber-600 mt-1">•</span>
-                        <span>Remboursement sous <strong>7-10 jours</strong> après réception</span>
+                        <span>Remboursement sous <strong>{siteConfig?.refund_delay_days || '7-10'} jours</strong> après réception</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-amber-600 mt-1">•</span>
@@ -758,15 +764,15 @@ export default function ProductDetailPage() {
 
                   {/* Contact */}
                   <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                    <h4 className="font-bold text-lg text-gray-900 mb-3">Besoin d'aide?</h4>
+                    <h4 className="font-bold text-lg text-gray-900 mb-3">Besoin d&apos;aide?</h4>
                     <p className="text-gray-700 mb-3">
-                      Notre service client est à votre disposition du lundi au vendredi de 9h à 18h.
+                      Notre service client est à votre disposition du {siteConfig?.customer_service_days || 'lundi au vendredi'} de {siteConfig?.customer_service_hours || '9h à 18h'}.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <a href="tel:+21600000000" className="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-primary-dark transition-colors">
+                      <a href={`tel:${siteConfig?.contact_phone || '+21600000000'}`} className="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-primary-dark transition-colors">
                         📞 Appelez-nous
                       </a>
-                      <a href="mailto:contact@quelyos.com" className="flex-1 bg-gray-200 text-gray-900 px-4 py-2 rounded-lg font-semibold text-center hover:bg-gray-300 transition-colors">
+                      <a href={`mailto:${siteConfig?.contact_email || 'contact@quelyos.com'}`} className="flex-1 bg-gray-200 text-gray-900 px-4 py-2 rounded-lg font-semibold text-center hover:bg-gray-300 transition-colors">
                         ✉️ Email
                       </a>
                     </div>

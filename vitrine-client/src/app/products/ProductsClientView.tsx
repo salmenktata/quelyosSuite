@@ -19,6 +19,7 @@ import { ViewersCount } from '@/components/product/ViewersCount';
 import { CountdownTimer } from '@/components/product/CountdownTimer';
 import { useCompareStore } from '@/store/compareStore';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { useTranslations } from '@/hooks/useTranslations';
 import { logger } from '@/lib/logger';
 import { getProxiedImageUrl } from '@/lib/image-proxy';
 
@@ -42,7 +43,7 @@ export default function ProductsClientView({
   initialFilters,
 }: ProductsClientViewProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [categories, _setCategories] = useState<Category[]>(initialCategories);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -52,6 +53,9 @@ export default function ProductsClientView({
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [quickViewProductId, setQuickViewProductId] = useState<number | null>(null);
+
+  // i18n
+  const { t } = useTranslations();
 
   // Synchroniser les filtres avec l'URL
   useFilterSync({
@@ -135,9 +139,9 @@ export default function ProductsClientView({
       <div className="container mx-auto px-4 max-w-7xl py-6">
         {/* Breadcrumb */}
         <nav className="text-sm mb-6 text-gray-600">
-          <Link href="/" className="hover:text-primary">Accueil</Link>
+          <Link href="/" className="hover:text-primary">{t('common.home')}</Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-900 font-medium">Produits</span>
+          <span className="text-gray-900 font-medium">{t('common.products')}</span>
         </nav>
 
         <div className="flex gap-6">
@@ -146,19 +150,19 @@ export default function ProductsClientView({
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 sticky top-24">
               <div className="p-4 border-b border-gray-100">
                 <div className="flex justify-between items-center">
-                  <h2 className="font-bold text-lg text-gray-900">Filtrer</h2>
+                  <h2 className="font-bold text-lg text-gray-900">{t('products.filter.title')}</h2>
                   <button
                     onClick={clearFilters}
                     className="text-xs text-gray-500 hover:text-primary underline transition-colors"
                   >
-                    Effacer tout
+                    {t('products.filter.clear')}
                   </button>
                 </div>
               </div>
 
               {/* Promotions */}
               <div className="p-4 border-b">
-                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">Sélections</h3>
+                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">{t('products.filter.selections')}</h3>
                 <div className="space-y-2">
                   <label className="flex items-center cursor-pointer group">
                     <input
@@ -167,7 +171,7 @@ export default function ProductsClientView({
                       onChange={(e) => handleFilterChange('is_featured', e.target.checked)}
                       className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-ring"
                     />
-                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">⭐ Produits vedettes</span>
+                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">⭐ {t('products.filter.featured')}</span>
                   </label>
                   <label className="flex items-center cursor-pointer group">
                     <input
@@ -176,7 +180,7 @@ export default function ProductsClientView({
                       onChange={(e) => handleFilterChange('is_new', e.target.checked)}
                       className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-ring"
                     />
-                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">🆕 Nouveautés</span>
+                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">🆕 {t('products.filter.new')}</span>
                   </label>
                   <label className="flex items-center cursor-pointer group">
                     <input
@@ -185,14 +189,14 @@ export default function ProductsClientView({
                       onChange={(e) => handleFilterChange('is_bestseller', e.target.checked)}
                       className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-ring"
                     />
-                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">🔥 Meilleures ventes</span>
+                    <span className="ml-2 text-sm text-gray-700 group-hover:text-primary">🔥 {t('products.filter.bestseller')}</span>
                   </label>
                 </div>
               </div>
 
               {/* Prix */}
               <div className="p-4 border-b">
-                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">Prix (TND)</h3>
+                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">{t('products.filter.price')} ({t('common.currency')})</h3>
                 <div className="space-y-3">
                   <div className="flex gap-2 items-center">
                     <input
@@ -215,14 +219,14 @@ export default function ProductsClientView({
                     onClick={handlePriceFilter}
                     className="w-full bg-primary text-white py-2 rounded text-sm hover:bg-primary-dark transition-colors"
                   >
-                    Appliquer
+                    {t('products.filter.price.apply')}
                   </button>
                 </div>
               </div>
 
               {/* Catégories */}
               <div className="p-4">
-                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">Catégories</h3>
+                <h3 className="font-semibold mb-3 text-sm uppercase text-gray-700">{t('products.filter.categories')}</h3>
                 <ul className="space-y-1.5">
                   <li>
                     <button
@@ -233,7 +237,7 @@ export default function ProductsClientView({
                           : 'hover:bg-gray-100 text-gray-700'
                       }`}
                     >
-                      Toutes les catégories
+                      {t('products.filter.categories.all')}
                     </button>
                   </li>
                   {categories.map((cat) => (
@@ -275,11 +279,11 @@ export default function ProductsClientView({
                   onChange={(e) => handleFilterChange('sort', e.target.value)}
                   className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-primary"
                 >
-                  <option value="name">Nom (A-Z)</option>
-                  <option value="newest">Nouveautés</option>
-                  <option value="price_asc">Prix croissant</option>
-                  <option value="price_desc">Prix décroissant</option>
-                  <option value="popular">Popularité</option>
+                  <option value="name">{t('products.sort.name')}</option>
+                  <option value="newest">{t('products.sort.newest')}</option>
+                  <option value="price_asc">{t('products.sort.price_asc')}</option>
+                  <option value="price_desc">{t('products.sort.price_desc')}</option>
+                  <option value="popular">{t('products.sort.popular')}</option>
                 </select>
 
                 {/* Nombre par page */}
@@ -303,7 +307,7 @@ export default function ProductsClientView({
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
-                    title="Vue grille"
+                    title={t('products.view.grid')}
                   >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
@@ -312,7 +316,7 @@ export default function ProductsClientView({
                   <button
                     onClick={() => setViewMode('list')}
                     className={`p-2 ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
-                    title="Vue liste"
+                    title={t('products.view.list')}
                   >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
@@ -354,12 +358,12 @@ export default function ProductsClientView({
               </>
             ) : (
               <div className="bg-white rounded shadow-sm p-12 text-center">
-                <p className="text-gray-500 text-lg">Aucun produit trouvé</p>
+                <p className="text-gray-500 text-lg">{t('products.empty')}</p>
                 <button
                   onClick={clearFilters}
                   className="mt-4 text-primary hover:underline"
                 >
-                  Réinitialiser les filtres
+                  {t('products.empty.reset')}
                 </button>
               </div>
             )}
@@ -416,6 +420,7 @@ export default function ProductsClientView({
 function CompareProductButton({ product }: { product: Product }) {
   const { addProduct, removeProduct, isInComparison, canAddMore } = useCompareStore();
   const { data: siteConfig } = useSiteConfig();
+  const { t } = useTranslations();
   const inComparison = isInComparison(product.id);
 
   if (!siteConfig?.compare_enabled) return null;
@@ -428,7 +433,7 @@ function CompareProductButton({ product }: { product: Product }) {
       removeProduct(product.id);
     } else {
       if (!canAddMore()) {
-        alert('Vous pouvez comparer maximum 4 produits');
+        alert(t('compare.max_reached'));
         return;
       }
       addProduct(product);
@@ -443,8 +448,8 @@ function CompareProductButton({ product }: { product: Product }) {
           ? 'bg-blue-600 text-white hover:bg-blue-700'
           : 'bg-white text-gray-800 hover:bg-gray-100'
       }`}
-      aria-label={inComparison ? "Retirer de la comparaison" : "Ajouter à la comparaison"}
-      title={inComparison ? "Retirer de la comparaison" : "Ajouter à la comparaison"}
+      aria-label={inComparison ? t('compare.remove') : t('compare.add')}
+      title={inComparison ? t('compare.remove') : t('compare.add')}
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

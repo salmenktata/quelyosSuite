@@ -37,6 +37,7 @@ from . import testimonial
 from . import blog
 from . import loyalty
 from . import ticket
+from . import live_event
 # HR Models
 from . import hr_department
 from . import hr_job

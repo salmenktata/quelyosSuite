@@ -1212,6 +1212,328 @@ class StoreExtendedController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
+    # =========================================================================
+    # TRENDING PRODUCTS (Produits Tendance)
+    # =========================================================================
+
+    @http.route('/api/ecommerce/trending-products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_trending_products_public(self, **kwargs):
+        """
+        Liste des produits tendance (API publique pour frontend)
+        Retourne les produits marqués comme tendance, triés par score
+        """
+        try:
+            domain = [
+                ('sale_ok', '=', True),
+                ('active', '=', True),
+                ('x_is_trending', '=', True),
+            ]
+
+            products = request.env['product.template'].sudo().search(
+                domain,
+                order='x_trending_score desc, x_social_mentions desc',
+                limit=kwargs.get('limit', 6)
+            )
+
+            result = []
+            for p in products:
+                result.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'slug': p.website_slug or p.name.lower().replace(' ', '-'),
+                    'price': p.list_price,
+                    'image_url': f'/web/image/product.template/{p.id}/image_1920' if p.image_1920 else None,
+                    'social_mentions': p.x_social_mentions or 0,
+                    'trending_score': p.x_trending_score or 0,
+                })
+
+            return {
+                'success': True,
+                'products': result,
+                'total': len(result),
+            }
+        except Exception as e:
+            _logger.error(f'Error fetching trending products: {e}')
+            return {'success': True, 'products': [], 'total': 0}
+
+    @http.route('/api/admin/trending-products', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def get_trending_products_admin(self, **kwargs):
+        """Liste des produits pour gestion tendance (admin)"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            company = self._get_company_from_tenant()
+            domain = [
+                ('company_id', '=', company.id),
+                ('sale_ok', '=', True),
+            ]
+
+            # Filtrer uniquement les tendances si demandé
+            if kwargs.get('trending_only'):
+                domain.append(('x_is_trending', '=', True))
+
+            # Recherche par nom
+            if kwargs.get('search'):
+                domain.append(('name', 'ilike', kwargs['search']))
+
+            products = request.env['product.template'].sudo().search(
+                domain,
+                order='x_is_trending desc, x_trending_score desc',
+                limit=kwargs.get('limit', 50),
+                offset=kwargs.get('offset', 0)
+            )
+            total = request.env['product.template'].sudo().search_count(domain)
+
+            result = []
+            for p in products:
+                result.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'image_url': f'/web/image/product.template/{p.id}/image_128' if p.image_128 else None,
+                    'price': p.list_price,
+                    'is_trending': p.x_is_trending,
+                    'trending_score': p.x_trending_score or 0,
+                    'social_mentions': p.x_social_mentions or 0,
+                    'is_bestseller': p.x_is_bestseller,
+                    'is_featured': p.x_is_featured,
+                })
+
+            return {
+                'success': True,
+                'products': result,
+                'total': total,
+            }
+        except Exception as e:
+            _logger.error(f'Error fetching trending products admin: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/trending-products/<int:product_id>/toggle', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def toggle_trending(self, product_id, **kwargs):
+        """Activer/désactiver le statut tendance d'un produit"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {'success': False, 'error': 'Produit non trouvé'}
+
+            product.write({
+                'x_is_trending': not product.x_is_trending
+            })
+
+            return {
+                'success': True,
+                'is_trending': product.x_is_trending,
+            }
+        except Exception as e:
+            _logger.error(f'Error toggling trending: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/trending-products/<int:product_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def update_trending_data(self, product_id, **kwargs):
+        """Mettre à jour les données de tendance d'un produit"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            product = request.env['product.template'].sudo().browse(product_id)
+            if not product.exists():
+                return {'success': False, 'error': 'Produit non trouvé'}
+
+            vals = {}
+            if 'is_trending' in kwargs:
+                vals['x_is_trending'] = kwargs['is_trending']
+            if 'trending_score' in kwargs:
+                vals['x_trending_score'] = int(kwargs['trending_score'])
+            if 'social_mentions' in kwargs:
+                vals['x_social_mentions'] = int(kwargs['social_mentions'])
+
+            if vals:
+                product.write(vals)
+
+            return {
+                'success': True,
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'is_trending': product.x_is_trending,
+                    'trending_score': product.x_trending_score,
+                    'social_mentions': product.x_social_mentions,
+                }
+            }
+        except Exception as e:
+            _logger.error(f'Error updating trending data: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    # =========================================================================
+    # LIVE EVENTS (Live Shopping)
+    # =========================================================================
+
+    @http.route('/api/ecommerce/live-events', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_live_events_public(self, **kwargs):
+        """
+        Liste des événements live à venir ou en cours (API publique pour frontend)
+        Retourne uniquement les événements planifiés ou en direct
+        """
+        try:
+            domain = [
+                ('active', '=', True),
+                ('state', 'in', ['scheduled', 'live']),
+            ]
+
+            events = request.env['quelyos.live.event'].sudo().search(
+                domain, order='scheduled_at asc', limit=kwargs.get('limit', 10)
+            )
+
+            return {
+                'success': True,
+                'liveEvents': [e.to_dict() for e in events],
+                'total': len(events),
+            }
+        except Exception as e:
+            _logger.error(f'Error fetching public live events: {e}')
+            return {'success': True, 'liveEvents': [], 'total': 0}
+
+    @http.route('/api/admin/live-events', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def get_live_events(self, **kwargs):
+        """Liste des événements live (admin)"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            company = self._get_company_from_tenant()
+            domain = [('company_id', '=', company.id)]
+
+            # Filtres optionnels
+            if kwargs.get('state'):
+                domain.append(('state', '=', kwargs['state']))
+            if kwargs.get('active') is not None:
+                domain.append(('active', '=', kwargs['active']))
+
+            events = request.env['quelyos.live.event'].sudo().search(
+                domain,
+                order='scheduled_at desc',
+                limit=kwargs.get('limit', 50),
+                offset=kwargs.get('offset', 0)
+            )
+            total = request.env['quelyos.live.event'].sudo().search_count(domain)
+
+            return {
+                'success': True,
+                'liveEvents': [e.to_dict() for e in events],
+                'total': total,
+            }
+        except Exception as e:
+            _logger.error(f'Error fetching live events: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/live-events/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def save_live_event(self, **kwargs):
+        """Créer ou modifier un événement live"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            company = self._get_company_from_tenant()
+            LiveEvent = request.env['quelyos.live.event'].sudo()
+
+            vals = {
+                'name': kwargs.get('name'),
+                'description': kwargs.get('description'),
+                'host_name': kwargs.get('hostName') or kwargs.get('host_name'),
+                'scheduled_at': kwargs.get('scheduledAt') or kwargs.get('scheduled_at'),
+                'duration_minutes': kwargs.get('durationMinutes', 60),
+                'thumbnail_url': kwargs.get('thumbnailUrl') or kwargs.get('thumbnail_url'),
+                'state': kwargs.get('state', 'draft'),
+                'notify_subscribers': kwargs.get('notifySubscribers', True),
+                'reminder_hours': kwargs.get('reminderHours', 24),
+                'stream_url': kwargs.get('streamUrl'),
+                'chat_enabled': kwargs.get('chatEnabled', True),
+                'active': kwargs.get('active', True),
+                'company_id': company.id,
+            }
+
+            # Gérer les produits associés
+            product_ids = kwargs.get('productIds') or kwargs.get('product_ids')
+            if product_ids:
+                vals['product_ids'] = [(6, 0, product_ids)]
+
+            if kwargs.get('id'):
+                event = LiveEvent.browse(kwargs['id'])
+                if not event.exists():
+                    return {'success': False, 'error': 'Événement non trouvé'}
+                event.write(vals)
+            else:
+                event = LiveEvent.create(vals)
+
+            return {'success': True, 'liveEvent': event.to_dict()}
+        except Exception as e:
+            _logger.error(f'Error saving live event: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/live-events/<int:event_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def delete_live_event(self, event_id):
+        """Supprimer un événement live"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            event = request.env['quelyos.live.event'].sudo().browse(event_id)
+            if event.exists():
+                event.unlink()
+                return {'success': True}
+            return {'success': False, 'error': 'Événement non trouvé'}
+        except Exception as e:
+            _logger.error(f'Error deleting live event: {e}')
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/live-events/<int:event_id>/go-live', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def go_live(self, event_id):
+        """Démarrer un live"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            event = request.env['quelyos.live.event'].sudo().browse(event_id)
+            if event.exists():
+                event.action_go_live()
+                return {'success': True, 'liveEvent': event.to_dict()}
+            return {'success': False, 'error': 'Événement non trouvé'}
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/live-events/<int:event_id>/end', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def end_live(self, event_id):
+        """Terminer un live"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            event = request.env['quelyos.live.event'].sudo().browse(event_id)
+            if event.exists():
+                event.action_end()
+                return {'success': True, 'liveEvent': event.to_dict()}
+            return {'success': False, 'error': 'Événement non trouvé'}
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/admin/live-events/<int:event_id>/schedule', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    def schedule_live(self, event_id):
+        """Planifier un événement (passer de brouillon à planifié)"""
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+        try:
+            event = request.env['quelyos.live.event'].sudo().browse(event_id)
+            if event.exists():
+                event.action_schedule()
+                return {'success': True, 'liveEvent': event.to_dict()}
+            return {'success': False, 'error': 'Événement non trouvé'}
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
     def _get_company_from_tenant(self):
         """Helper pour récupérer la company du tenant"""
         tenant_domain = request.httprequest.headers.get('X-Tenant-Domain')

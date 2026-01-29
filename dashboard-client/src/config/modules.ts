@@ -57,6 +57,7 @@ import {
   Printer,
   ScanBarcode,
   // Store Extended Icons
+  Video,
   ChefHat,
   Star,
   HelpCircle,
@@ -245,6 +246,8 @@ export const MODULES: Module[] = [
           { name: 'Bannières', path: '/store/promo-banners', icon: Image },
           { name: 'Hero Slides', path: '/store/hero-slides', icon: Image },
           { name: 'Popups Marketing', path: '/store/marketing-popups', icon: Zap },
+          { name: 'Live Shopping', path: '/store/live-events', icon: Video },
+          { name: 'Produits Tendance', path: '/store/trending-products', icon: TrendingUp },
         ],
       },
       {

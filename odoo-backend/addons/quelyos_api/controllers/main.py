@@ -325,6 +325,27 @@ class QuelyosAPI(BaseController):
             _logger.warning(f"Error in view count rate limiting: {e}")
             return False
 
+    def _get_total_review_count(self):
+        """
+        Récupère le nombre total d'avis clients validés sur le site.
+        Utilisé pour afficher les statistiques marketing.
+
+        Returns:
+            int: Nombre total d'avis ou 0 si le modèle n'existe pas
+        """
+        try:
+            # Vérifier si le modèle product.review existe
+            if 'product.review' in request.env:
+                count = request.env['product.review'].sudo().search_count([
+                    ('is_published', '=', True)
+                ])
+                return count
+            # Fallback: essayer mail.message avec un type avis
+            return 0
+        except Exception as e:
+            _logger.warning(f"Error getting total review count: {e}")
+            return 0
+
     def _validate_customer_ownership(self, customer_id):
         """
         Vérifie que l'utilisateur a le droit de modifier les données du client.
@@ -3303,7 +3324,12 @@ class QuelyosAPI(BaseController):
                 # Garantie
                 'warranty_years': int(IrConfigParam.get_param('quelyos.warranty.years', '2')),
                 # Modes de paiement acceptés
-                'payment_methods': IrConfigParam.get_param('quelyos.payment.methods', 'card,cash,transfer,mobile').split(','),
+                'payment_methods': IrConfigParam.get_param('quelyos.payment.methods', 'Carte bancaire,Espèces,Virement,Mobile money').split(','),
+                # Service client
+                'customer_service_hours': IrConfigParam.get_param('quelyos.customer_service.hours', '9h à 18h'),
+                'customer_service_days': IrConfigParam.get_param('quelyos.customer_service.days', 'lundi au vendredi'),
+                # Statistiques (optionnel)
+                'total_review_count': self._get_total_review_count(),
             }
 
             return request.make_json_response({

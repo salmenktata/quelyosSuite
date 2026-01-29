@@ -69,3 +69,20 @@ class ProductTemplate(models.Model):
         readonly=True,
         help="Nombre de fois que la page produit a été consultée"
     )
+
+    # Champs tendances sociales
+    x_is_trending = fields.Boolean(
+        string='Produit tendance',
+        default=False,
+        help="Afficher ce produit dans la section 'Tendances sur les réseaux'"
+    )
+    x_trending_score = fields.Integer(
+        string='Score tendance',
+        default=0,
+        help="Score de popularité (utilisé pour le tri des produits tendance)"
+    )
+    x_social_mentions = fields.Integer(
+        string='Mentions sociales',
+        default=0,
+        help="Nombre de mentions sur les réseaux sociaux"
+    )

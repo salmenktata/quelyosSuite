@@ -808,6 +808,42 @@ export class BackendClient {
   }> {
     return this.jsonrpc('/flash-sales', {});
   }
+
+  // =========================================================================
+  // LIVE EVENTS (Live Shopping)
+  // =========================================================================
+
+  async getLiveEvents(params?: { limit?: number }): Promise<{
+    success: boolean;
+    liveEvents: LiveEvent[];
+    total: number;
+    error?: string;
+  }> {
+    return this.jsonrpc('/live-events', params || {});
+  }
+
+  // =========================================================================
+  // TRENDING PRODUCTS (Produits Tendance)
+  // =========================================================================
+
+  async getTrendingProducts(params?: { limit?: number }): Promise<{
+    success: boolean;
+    products: TrendingProduct[];
+    total: number;
+    error?: string;
+  }> {
+    return this.jsonrpc('/trending-products', params || {});
+  }
+}
+
+export interface TrendingProduct {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  image_url: string | null;
+  social_mentions: number;
+  trending_score: number;
 }
 
 // Types pour les nouvelles entités
@@ -866,6 +902,26 @@ export interface FlashSale {
   startDate: string;
   endDate: string;
   products: Product[];
+}
+
+export interface LiveEvent {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  thumbnail: string | null;
+  thumbnailUrl: string | null;
+  scheduledAt: string;
+  durationMinutes: number;
+  hostName: string;
+  host: string;
+  hostAvatar: string | null;
+  productIds: number[];
+  productCount: number;
+  state: 'draft' | 'scheduled' | 'live' | 'ended' | 'cancelled';
+  isLive: boolean;
+  viewersCount: number;
+  viewers: number;
 }
 
 // Instance singleton
