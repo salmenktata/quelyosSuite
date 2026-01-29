@@ -39,19 +39,19 @@ from . import blog
 from . import loyalty
 from . import ticket
 from . import live_event
-# HR Models
-from . import hr_department
-from . import hr_job
-from . import hr_employee
-from . import hr_contract
-from . import hr_attendance
-from . import hr_leave_type
-from . import hr_leave
-from . import hr_leave_allocation
+# HR Models - TEMPORAIREMENT DÉSACTIVÉ (bug Odoo 19 hr_holidays)
+# from . import hr_department
+# from . import hr_job
+# from . import hr_employee
+# from . import hr_contract
+# from . import hr_attendance
+# from . import hr_leave_type
+# from . import hr_leave
+# from . import hr_leave_allocation
 # HR V2 - Évaluations
-from . import hr_skill
-from . import hr_goal
-from . import hr_appraisal
+# from . import hr_skill
+# from . import hr_goal
+# from . import hr_appraisal
 # Wishlist Extension - Disabled (requires website_sale_wishlist module)
 # from . import wishlist
 # POS Models

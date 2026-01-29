@@ -20,10 +20,11 @@
         'delivery',
         'payment',
         # HR modules natifs pour héritage (Community only)
-        'hr',
-        'hr_holidays',
-        'hr_attendance',
-        'hr_skills',
+        # TEMPORAIREMENT DÉSACTIVÉ : bug Odoo 19 hr_holidays (code NULL)
+        # 'hr',
+        # 'hr_holidays',
+        # 'hr_attendance',
+        # 'hr_skills',
     ],
     'data': [
         'security/security.xml',
@@ -39,7 +40,7 @@
         'data/ir_cron_abandoned_cart.xml',
         'data/res_country_state_tn.xml',
         'data/email_templates_data.xml',
-        'data/hr_sequence.xml',
+        # 'data/hr_sequence.xml',  # TEMPORAIREMENT DÉSACTIVÉ
         'data/ticket_sequence.xml',
         'data/pos_demo_data.xml',
         'data/store_demo_data.xml',

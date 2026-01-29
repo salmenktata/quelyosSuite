@@ -120,16 +120,6 @@ access_ticket_manager,quelyos.ticket manager,model_quelyos_ticket,group_quelyos_
 access_ticket_message_public,quelyos.ticket.message public,model_quelyos_ticket_message,base.group_public,1,0,0,0
 access_ticket_message_user,quelyos.ticket.message user,model_quelyos_ticket_message,group_quelyos_store_user,1,1,1,0
 access_ticket_message_manager,quelyos.ticket.message manager,model_quelyos_ticket_message,group_quelyos_store_manager,1,1,1,1
-access_hr_contract_user,quelyos.hr.contract user,model_quelyos_hr_contract,group_quelyos_hr_user,1,1,1,0
-access_hr_contract_manager,quelyos.hr.contract manager,model_quelyos_hr_contract,group_quelyos_hr_manager,1,1,1,1
-access_hr_skill_type_user,quelyos.hr.skill.type user,model_quelyos_hr_skill_type,group_quelyos_hr_user,1,1,1,0
-access_hr_skill_type_manager,quelyos.hr.skill.type manager,model_quelyos_hr_skill_type,group_quelyos_hr_manager,1,1,1,1
-access_hr_skill_user,quelyos.hr.skill user,model_quelyos_hr_skill,group_quelyos_hr_user,1,1,1,0
-access_hr_skill_manager,quelyos.hr.skill manager,model_quelyos_hr_skill,group_quelyos_hr_manager,1,1,1,1
-access_hr_appraisal_user,quelyos.hr.appraisal user,model_quelyos_hr_appraisal,group_quelyos_hr_user,1,1,1,0
-access_hr_appraisal_manager,quelyos.hr.appraisal manager,model_quelyos_hr_appraisal,group_quelyos_hr_manager,1,1,1,1
-access_hr_goal_user,quelyos.hr.goal user,model_quelyos_hr_goal,group_quelyos_hr_user,1,1,1,0
-access_hr_goal_manager,quelyos.hr.goal manager,model_quelyos_hr_goal,group_quelyos_hr_manager,1,1,1,1
 access_provisioning_job_public,quelyos.provisioning.job public,model_quelyos_provisioning_job,,1,0,0,0
 access_provisioning_job_manager,quelyos.provisioning.job manager,model_quelyos_provisioning_job,group_quelyos_finance_manager,1,1,1,1
 access_quelyos_theme_public,quelyos.theme public,model_quelyos_theme,base.group_public,1,0,0,0

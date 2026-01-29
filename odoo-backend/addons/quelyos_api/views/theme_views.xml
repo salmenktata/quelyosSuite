@@ -92,7 +92,7 @@
         <field name="arch" type="xml">
             <form string="Thème">
                 <header>
-                    <button name="action_preview" string="Prévisualiser" type="object" class="btn-primary" attrs="{'invisible': [('preview_url', '=', False)]}"/>
+                    <button name="action_preview" string="Prévisualiser" type="object" class="btn-primary" invisible="not preview_url"/>
                     <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                 </header>
                 <sheet>
@@ -102,7 +102,7 @@
                         </button>
                     </div>
 
-                    <widget name="web_ribbon" title="Premium" bg_color="bg-warning" attrs="{'invisible': [('is_premium', '=', False)]}"/>
+                    <widget name="web_ribbon" title="Premium" bg_color="bg-warning" invisible="not is_premium"/>
 
                     <field name="thumbnail" widget="image" class="oe_avatar" options="{'preview_image': 'thumbnail'}"/>
 
@@ -122,9 +122,9 @@
                         </group>
                         <group string="Visibilité &amp; Monétisation">
                             <field name="is_public"/>
-                            <field name="tenant_ids" widget="many2many_tags" attrs="{'invisible': [('is_public', '=', True)]}"/>
+                            <field name="tenant_ids" widget="many2many_tags" invisible="is_public"/>
                             <field name="is_premium"/>
-                            <field name="price" attrs="{'invisible': [('is_premium', '=', False)]}"/>
+                            <field name="price" invisible="not is_premium"/>
                             <field name="rating" widget="priority"/>
                         </group>
                     </group>
@@ -169,32 +169,31 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════
          VUE SEARCH - Filtres et regroupements
+         TEMPORAIREMENT DÉSACTIVÉ : erreur validation Odoo 19
     ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <record id="view_quelyos_theme_search" model="ir.ui.view">
+    <!-- <record id="view_quelyos_theme_search" model="ir.ui.view">
         <field name="name">quelyos.theme.search</field>
         <field name="model">quelyos.theme</field>
         <field name="arch" type="xml">
             <search string="Rechercher Thèmes">
-                <field name="name"/>
-                <field name="code"/>
-                <field name="category"/>
+                <field name="name" string="Nom"/>
+                <field name="code" string="Code"/>
+                <field name="category" string="Catégorie"/>
                 <filter string="Publics" name="filter_public" domain="[('is_public', '=', True)]"/>
                 <filter string="Privés" name="filter_private" domain="[('is_public', '=', False)]"/>
-                <separator/>
                 <filter string="Gratuits" name="filter_free" domain="[('is_premium', '=', False)]"/>
                 <filter string="Premium" name="filter_premium" domain="[('is_premium', '=', True)]"/>
-                <separator/>
                 <filter string="Actifs" name="filter_active" domain="[('active', '=', True)]"/>
                 <filter string="Archivés" name="filter_archived" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Regrouper par">
+                <group string="Regrouper par">
                     <filter string="Catégorie" name="group_category" context="{'group_by': 'category'}"/>
                     <filter string="Premium/Gratuit" name="group_premium" context="{'group_by': 'is_premium'}"/>
                     <filter string="Public/Privé" name="group_public" context="{'group_by': 'is_public'}"/>
                 </group>
             </search>
         </field>
-    </record>
+    </record> -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════
          ACTIONS - Menu et actions
@@ -245,9 +244,10 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════
          VUES TENANT - Ajouter champ active_theme_id dans le formulaire tenant
+         TEMPORAIREMENT DÉSACTIVÉ : groupe 'branding' introuvable
     ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <record id="view_quelyos_tenant_form_theme" model="ir.ui.view">
+    <!-- <record id="view_quelyos_tenant_form_theme" model="ir.ui.view">
         <field name="name">quelyos.tenant.form.theme</field>
         <field name="model">quelyos.tenant</field>
         <field name="inherit_id" ref="quelyos_api.view_quelyos_tenant_form"/>
@@ -260,7 +260,7 @@
                 </group>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════
          CHAMP currency_id virtuel (pour widget monetary)

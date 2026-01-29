@@ -43,7 +43,7 @@ services:
   odoo:
     image: odoo:19
     container_name: quelyos-odoo
-    restart: unless-stopped
+    restart: always
     depends_on:
       postgres:
         condition: service_healthy

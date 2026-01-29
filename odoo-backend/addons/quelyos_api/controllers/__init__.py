@@ -20,13 +20,13 @@ from . import email_settings
 from . import marketing_campaigns
 # Store Extended Controllers
 from . import store_extended
-# HR Controllers
-from . import hr_employees
-from . import hr_departments
-from . import hr_contracts
-from . import hr_attendance
-from . import hr_leaves
-from . import hr_appraisals
+# HR Controllers - TEMPORAIREMENT DÉSACTIVÉ (bug Odoo 19 hr_holidays)
+# from . import hr_employees
+# from . import hr_departments
+# from . import hr_contracts
+# from . import hr_attendance
+# from . import hr_leaves
+# from . import hr_appraisals
 # POS Controller
 from . import pos
 # Stripe Billing
