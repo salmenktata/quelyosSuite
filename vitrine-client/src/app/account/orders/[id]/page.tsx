@@ -42,8 +42,8 @@ export default function OrderDetailPage() {
     const fetchOrder = async () => {
       try {
         const result = await backendClient.getOrder(parseInt(orderId));
-        if (result.success && result.order) {
-          setOrder(result.order);
+        if (result.success && result.data) {
+          setOrder(result.data.order);
         } else {
           setOrder(null);
         }

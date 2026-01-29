@@ -254,6 +254,7 @@ export type OrderResponse = ApiResponse<OrderData>;
 
 export interface PayPalOrderData {
   order_id: string;
+  paypal_order_id: string;
   status: string;
   links: Array<{
     href: string;
@@ -264,6 +265,7 @@ export interface PayPalOrderData {
 
 export interface PayPalCaptureData {
   order_id: string;
+  transaction_id: string;
   status: string;
   payment_source: unknown;
   purchase_units: unknown[];

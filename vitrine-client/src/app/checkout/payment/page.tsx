@@ -110,7 +110,7 @@ export default function CheckoutPaymentPage() {
         payment_method: methodId,
       });
 
-      if (result.success && result.order) {
+      if (result.success && result.data) {
         // Nettoyer le localStorage
         localStorage.removeItem('checkout_shipping');
 
