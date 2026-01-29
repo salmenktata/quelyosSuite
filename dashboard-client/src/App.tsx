@@ -50,6 +50,16 @@ const StoreStockAlerts = lazy(() => import('./pages/store/StockAlerts'))
 const Attributes = lazy(() => import('./pages/store/Attributes'))
 const ProductImport = lazy(() => import('./pages/store/ProductImport'))
 
+// Lazy loaded pages - Store Themes
+const ThemesMarketplace = lazy(() => import('./pages/store/themes/marketplace'))
+const ThemesMySubmissions = lazy(() => import('./pages/store/themes/my-submissions'))
+const ThemesSubmit = lazy(() => import('./pages/store/themes/submit'))
+const ThemesImport = lazy(() => import('./pages/store/themes/import'))
+const ThemesPayouts = lazy(() => import('./pages/store/themes/payouts'))
+const ThemesAnalytics = lazy(() => import('./pages/store/themes/analytics'))
+const ThemeBuilder = lazy(() => import('./pages/store/themes/builder'))
+const ThemeBuilderPreview = lazy(() => import('./pages/store/themes/builder/preview'))
+
 // Lazy loaded pages - Store Settings
 const StoreSettingsLayoutWrapper = lazy(() => import('./pages/store/settings/SettingsLayoutWrapper'))
 const StoreSettings = lazy(() => import('./pages/store/settings/page'))
@@ -564,6 +574,69 @@ export default function App() {
                   <ProtectedRoute>
                     <ProductImport />
                   </ProtectedRoute>
+                }
+              />
+              {/* Store Themes */}
+              <Route
+                path="/store/themes"
+                element={
+                  <ProtectedRoute>
+                    <ThemesMarketplace />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/my-submissions"
+                element={
+                  <ProtectedRoute>
+                    <ThemesMySubmissions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/submit"
+                element={
+                  <ProtectedRoute>
+                    <ThemesSubmit />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/import"
+                element={
+                  <ProtectedRoute>
+                    <ThemesImport />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/payouts"
+                element={
+                  <ProtectedRoute>
+                    <ThemesPayouts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/analytics"
+                element={
+                  <ProtectedRoute>
+                    <ThemesAnalytics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/builder"
+                element={
+                  <ProtectedRoute>
+                    <ThemeBuilder />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/store/themes/builder/preview"
+                element={
+                  <ThemeBuilderPreview />
                 }
               />
               {/* Redirections Store */}
