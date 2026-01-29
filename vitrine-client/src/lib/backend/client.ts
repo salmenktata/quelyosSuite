@@ -15,6 +15,67 @@ import type {
   WishlistItem,
   APIResponse,
 } from '@quelyos/types';
+import type {
+  ApiResponse,
+  LoginResponse,
+  SessionResponse,
+  ProductResponse,
+  ProductVariantsResponse,
+  UpsellProductsResponse,
+  FrequentlyBoughtTogetherData,
+  VolumePricingData,
+  AutocompleteResult,
+  SemanticSearchData,
+  PopularSearch,
+  ReferralInfo,
+  ReferralValidation,
+  CategoriesResponse,
+  CategoryResponse,
+  CartResponse,
+  DeliveryMethodsData,
+  ShippingCostResponse,
+  CheckoutData,
+  OrderResponse,
+  PayPalOrderData,
+  PayPalCaptureData,
+  WalletPaymentData,
+  StripePaymentIntentData,
+  StripeConfirmationData,
+  PaymentProvidersResponse,
+  PaymentInitData,
+  PaymentInitResponse,
+  ProfileResponse,
+  OrdersResponse,
+  ReorderResponse,
+  AddressesResponse,
+  WishlistResponse,
+  PublicWishlistData,
+  WishlistShareResponse,
+  PopupsData,
+  CouponValidationResponse,
+  AvailableCouponsResponse,
+  AnalyticsDashboardData,
+  CartSaveResponse,
+  CartRecoveryResponse,
+  ProductFacetsData,
+  StockAlertStatus,
+  StockAlertSubscription,
+  SeoMetadata,
+  BreadcrumbsData,
+  OrganizationSeoData,
+  SiteConfig,
+  BrandConfig,
+  ShippingConfig,
+  LoyaltyBalanceData,
+  LoyaltyTier,
+  LoyaltyRedemptionData,
+  LoyaltyCalculationData,
+  FAQsData,
+  StaticPageResponse,
+  ProductReviewsResponse,
+  ReviewSubmitResponse,
+  ReviewHelpfulResponse,
+} from '@/types/api';
 import { logger } from '@/lib/logger';
 
 // Use Next.js API proxy to avoid CORS issues
@@ -71,9 +132,9 @@ export class BackendClient {
    * Appel JSON-RPC générique vers backend via le proxy Next.js
    * Le proxy ajoute automatiquement le wrapper JSON-RPC
    */
-  private async jsonrpc<T = any>(
+  private async jsonrpc<T = unknown>(
     endpoint: string,
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     options: { throwOn404?: boolean } = {}
   ): Promise<T> {
     const { throwOn404 = false } = options;
@@ -85,6 +146,7 @@ export class BackendClient {
       // The proxy returns the result directly
       return response.data;
     } catch (_error: unknown) {
+      const error = _error as { response?: { status?: number; data?: { error?: string; message?: string } }; message?: string };
       // Gestion gracieuse des 404 pour les endpoints non implémentés
       if (error.response?.status === 404 && !throwOn404) {
         logger.warn(`Endpoint non implémenté: ${endpoint}`);
@@ -92,14 +154,13 @@ export class BackendClient {
         return { success: false, error: 'Not implemented' } as T;
       }
 
-      logger.error(`Erreur API [${endpoint}]:`, error);
+      logger.error(`Erreur API [${endpoint}]:`, _error);
 
       // Extract error message from various possible formats
       const errorMessage =
         error.response?.data?.error ||
         error.response?.data?.message ||
-        error instanceof Error ? error.message :
-        'Unknown error';
+        (error instanceof Error ? error.message : 'Unknown error');
 
       throw new Error(errorMessage);
     }
@@ -141,9 +202,9 @@ export class BackendClient {
   // AUTHENTIFICATION
   // ========================================
 
-  async login(email: string, password: string): Promise<{ success: boolean; session_id?: string; user?: User; error?: string }> {
+  async login(email: string, password: string): Promise<LoginResponse> {
     try {
-      const result = await this.jsonrpc('/auth/login', { email, password });
+      const result = await this.jsonrpc<LoginResponse>('/auth/login', { email, password });
 
       if (result.success && result.session_id) {
         this.setSession(result.session_id);
@@ -151,6 +212,7 @@ export class BackendClient {
 
       return result;
     } catch (_error: unknown) {
+      const error = _error as Error;
       return { success: false, error: error.message };
     }
   }
@@ -175,9 +237,9 @@ export class BackendClient {
     return this.jsonrpc('/auth/register', data);
   }
 
-  async getSession(): Promise<{ authenticated: boolean; user?: User }> {
+  async getSession(): Promise<SessionResponse> {
     try {
-      return await this.jsonrpc('/auth/session');
+      return await this.jsonrpc<SessionResponse>('/auth/session');
     } catch (_error) {
       return { authenticated: false };
     }
@@ -191,87 +253,52 @@ export class BackendClient {
     return this.jsonrpc('/products', filters);
   }
 
-  async getProduct(id: number): Promise<{ success: boolean; product?: Product; error?: string }> {
-    return this.jsonrpc(`/products/${id}`);
+  async getProduct(id: number): Promise<ProductResponse> {
+    return this.jsonrpc<ProductResponse>(`/products/${id}`);
   }
 
-  async getProductBySlug(slug: string): Promise<{ success: boolean; product?: Product; error?: string }> {
-    return this.jsonrpc(`/products/slug/${slug}`);
+  async getProductBySlug(slug: string): Promise<ProductResponse> {
+    return this.jsonrpc<ProductResponse>(`/products/slug/${slug}`);
   }
 
-  async getProductVariants(productId: number): Promise<any> {
-    return this.jsonrpc(`/products/${productId}/variants`);
+  async getProductVariants(productId: number): Promise<ProductVariantsResponse> {
+    return this.jsonrpc<ProductVariantsResponse>(`/products/${productId}/variants`);
   }
 
-  async getUpsellProducts(productId: number, limit: number = 3): Promise<{ success: boolean; products?: Product[]; error?: string }> {
-    return this.jsonrpc(`/products/${productId}/upsell`, { limit });
+  async getUpsellProducts(productId: number, limit: number = 3): Promise<UpsellProductsResponse> {
+    return this.jsonrpc<UpsellProductsResponse>(`/products/${productId}/upsell`, { limit });
   }
 
-  async getRecommendations(productId: number, limit: number = 8): Promise<APIResponse & { data?: { products: Product[] } }> {
-    return this.jsonrpc(`/products/${productId}/recommendations`, { limit });
+  async getRecommendations(productId: number, limit: number = 8): Promise<ApiResponse<{ products: Product[] }>> {
+    return this.jsonrpc<ApiResponse<{ products: Product[] }>>(`/products/${productId}/recommendations`, { limit });
   }
 
-  async getFrequentlyBoughtTogether(productId: number, limit: number = 4): Promise<APIResponse & {
-    data?: {
-      products: Array<{ id: number; name: string; slug: string; price: number; image_url: string | null; in_stock: boolean; co_purchase_count: number }>;
-      bundle_total: number;
-      bundle_discount: number;
-      bundle_price: number;
-    }
-  }> {
-    return this.jsonrpc(`/products/${productId}/frequently-bought-together`, { limit });
+  async getFrequentlyBoughtTogether(productId: number, limit: number = 4): Promise<ApiResponse<FrequentlyBoughtTogetherData>> {
+    return this.jsonrpc<ApiResponse<FrequentlyBoughtTogetherData>>(`/products/${productId}/frequently-bought-together`, { limit });
   }
 
-  async getUserPurchasedProducts(): Promise<APIResponse & { data?: { product_ids: number[] } }> {
-    return this.jsonrpc('/user/purchased-products', {});
+  async getUserPurchasedProducts(): Promise<ApiResponse<{ product_ids: number[] }>> {
+    return this.jsonrpc<ApiResponse<{ product_ids: number[] }>>('/user/purchased-products', {});
   }
 
-  async getProductVolumePricing(productId: number, pricelistId?: number): Promise<APIResponse & {
-    data?: {
-      base_price: number;
-      currency: string;
-      tiers: Array<{
-        min_quantity: number;
-        price: number;
-        discount_percent: number;
-        savings_per_unit: number;
-      }>;
-    }
-  }> {
-    return this.jsonrpc(`/products/${productId}/volume-pricing`, { pricelist_id: pricelistId });
+  async getProductVolumePricing(productId: number, pricelistId?: number): Promise<ApiResponse<VolumePricingData>> {
+    return this.jsonrpc<ApiResponse<VolumePricingData>>(`/products/${productId}/volume-pricing`, { pricelist_id: pricelistId });
   }
 
   // ========================================
   // SEARCH
   // ========================================
 
-  async searchAutocomplete(query: string, limit: number = 8, includeCategories: boolean = true): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/search/autocomplete', {
+  async searchAutocomplete(query: string, limit: number = 8, includeCategories: boolean = true): Promise<ApiResponse<AutocompleteResult>> {
+    return this.jsonrpc<ApiResponse<AutocompleteResult>>('/search/autocomplete', {
       query,
       limit,
       include_categories: includeCategories
     });
   }
 
-  async searchSemantic(query: string, options?: { limit?: number; categoryId?: number }): Promise<APIResponse & {
-    data?: {
-      products: Array<{
-        id: number;
-        name: string;
-        slug: string;
-        price: number;
-        compare_at_price: number | null;
-        image_url: string | null;
-        category: string | null;
-        in_stock: boolean;
-        is_bestseller: boolean;
-        relevance_score: number;
-      }>;
-      query_expansion: string[];
-      total_found: number;
-    }
-  }> {
-    return this.jsonrpc('/search/semantic', {
+  async searchSemantic(query: string, options?: { limit?: number; categoryId?: number }): Promise<ApiResponse<SemanticSearchData>> {
+    return this.jsonrpc<ApiResponse<SemanticSearchData>>('/search/semantic', {
       query,
       limit: options?.limit ?? 20,
       category_id: options?.categoryId,
@@ -282,29 +309,16 @@ export class BackendClient {
   // REFERRAL / PARRAINAGE
   // ========================================
 
-  async getReferralInfo(): Promise<APIResponse & {
-    data?: {
-      referral_code: string;
-      referral_link: string;
-      referred_count: number;
-      successful_referrals: number;
-      pending_referrals: number;
-      earned_rewards: number;
-      reward_rate: number;
-      rewards: { referrer: string; referee: string };
-    }
-  }> {
-    return this.jsonrpc('/referral/info', {});
+  async getReferralInfo(): Promise<ApiResponse<ReferralInfo>> {
+    return this.jsonrpc<ApiResponse<ReferralInfo>>('/referral/info', {});
   }
 
-  async validateReferralCode(code: string): Promise<APIResponse & {
-    data?: { referrer_name: string; discount: string; message: string }
-  }> {
-    return this.jsonrpc('/referral/apply', { code });
+  async validateReferralCode(code: string): Promise<ApiResponse<ReferralValidation>> {
+    return this.jsonrpc<ApiResponse<ReferralValidation>>('/referral/apply', { code });
   }
 
-  async getPopularSearches(limit: number = 5): Promise<APIResponse & { data?: { popular_searches: Array<{ query: string; type: string; count: number; category_id?: number }> } }> {
-    const response = await this.jsonrpc<APIResponse & { data?: { popular_searches: Array<{ query: string; type: string; count: number; category_id?: number }> } }>(
+  async getPopularSearches(limit: number = 5): Promise<ApiResponse<{ popular_searches: PopularSearch[] }>> {
+    const response = await this.jsonrpc<ApiResponse<{ popular_searches: PopularSearch[] }>>(
       '/search/popular',
       { limit },
       { throwOn404: false }
@@ -325,8 +339,8 @@ export class BackendClient {
     offset?: number;
     include_featured_products?: boolean;
     featured_limit?: number;
-  } = {}): Promise<{ success: boolean; data?: { categories: any[] }; categories?: any[]; error?: string }> {
-    const result = await this.jsonrpc('/categories', filters);
+  } = {}): Promise<CategoriesResponse> {
+    const result = await this.jsonrpc<CategoriesResponse>('/categories', filters);
     // Support both response formats
     if (result.data?.categories) {
       return { ...result, categories: result.data.categories };
@@ -334,28 +348,28 @@ export class BackendClient {
     return result;
   }
 
-  async getCategory(id: number): Promise<{ success: boolean; category?: any; error?: string }> {
-    return this.jsonrpc(`/categories/${id}`);
+  async getCategory(id: number): Promise<CategoryResponse> {
+    return this.jsonrpc<CategoryResponse>(`/categories/${id}`);
   }
 
   // ========================================
   // PANIER
   // ========================================
 
-  async getCart(): Promise<{ success: boolean; cart?: Cart; error?: string }> {
-    return this.jsonrpc('/cart');
+  async getCart(): Promise<CartResponse> {
+    return this.jsonrpc<CartResponse>('/cart');
   }
 
-  async addToCart(product_id: number, quantity: number = 1): Promise<APIResponse & { cart?: Cart }> {
-    return this.jsonrpc('/cart/add', { product_id, quantity });
+  async addToCart(product_id: number, quantity: number = 1): Promise<CartResponse> {
+    return this.jsonrpc<CartResponse>('/cart/add', { product_id, quantity });
   }
 
-  async updateCartLine(line_id: number, quantity: number): Promise<APIResponse & { cart?: Cart }> {
-    return this.jsonrpc(`/cart/update/${line_id}`, { quantity });
+  async updateCartLine(line_id: number, quantity: number): Promise<CartResponse> {
+    return this.jsonrpc<CartResponse>(`/cart/update/${line_id}`, { quantity });
   }
 
-  async removeCartLine(line_id: number): Promise<APIResponse & { cart?: Cart }> {
-    return this.jsonrpc(`/cart/remove/${line_id}`);
+  async removeCartLine(line_id: number): Promise<CartResponse> {
+    return this.jsonrpc<CartResponse>(`/cart/remove/${line_id}`);
   }
 
   async clearCart(): Promise<APIResponse> {
@@ -370,83 +384,67 @@ export class BackendClient {
     return this.jsonrpc('/checkout/validate');
   }
 
-  async calculateShipping(delivery_method_id: number): Promise<APIResponse & { shipping_cost?: number }> {
-    return this.jsonrpc('/checkout/shipping', { delivery_method_id });
+  async calculateShipping(delivery_method_id: number): Promise<ShippingCostResponse> {
+    return this.jsonrpc<ShippingCostResponse>('/checkout/shipping', { delivery_method_id });
   }
 
-  async getDeliveryMethods(): Promise<APIResponse & { data?: { delivery_methods: any[] } }> {
-    return this.jsonrpc('/delivery/methods');
+  async getDeliveryMethods(): Promise<ApiResponse<DeliveryMethodsData>> {
+    return this.jsonrpc<ApiResponse<DeliveryMethodsData>>('/delivery/methods');
   }
 
-  async completeCheckout(data: any): Promise<APIResponse & { order?: Order }> {
-    return this.jsonrpc('/checkout/complete', data);
+  async completeCheckout(data: CheckoutData): Promise<OrderResponse> {
+    return this.jsonrpc<OrderResponse>('/checkout/complete', data);
   }
 
-  async confirmOrder(data: {
-    shipping_address_id?: number;
-    billing_address_id?: number;
-    delivery_method_id: number;
-    payment_method_id: number;
-    notes?: string;
-  }): Promise<APIResponse & { order?: Order }> {
-    return this.jsonrpc('/checkout/confirm', data);
+  async confirmOrder(data: CheckoutData): Promise<OrderResponse> {
+    return this.jsonrpc<OrderResponse>('/checkout/confirm', data);
   }
 
   // ========================================
   // PAYMENT
   // ========================================
 
-  async createPayPalOrder(orderId: number): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/payment/paypal/create-order', { order_id: orderId });
+  async createPayPalOrder(orderId: number): Promise<ApiResponse<PayPalOrderData>> {
+    return this.jsonrpc<ApiResponse<PayPalOrderData>>('/payment/paypal/create-order', { order_id: orderId });
   }
 
-  async capturePayPalOrder(paypalOrderId: string, orderId: number): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/payment/paypal/capture-order', {
+  async capturePayPalOrder(paypalOrderId: string, orderId: number): Promise<ApiResponse<PayPalCaptureData>> {
+    return this.jsonrpc<ApiResponse<PayPalCaptureData>>('/payment/paypal/capture-order', {
       paypal_order_id: paypalOrderId,
       order_id: orderId
     });
   }
 
-  async createWalletPayment(data: {
-    amount: number;
-    payment_method_id: number;
-    shipping_address: any;
-    order_id?: number;
-  }): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/payment/wallet/create', data);
+  async createWalletPayment(data: WalletPaymentData): Promise<ApiResponse<unknown>> {
+    return this.jsonrpc<ApiResponse<unknown>>('/payment/wallet/create', data);
   }
 
   // ========================================
   // CLIENT
   // ========================================
 
-  async getProfile(): Promise<APIResponse & { profile?: User }> {
-    return this.jsonrpc('/customer/profile');
+  async getProfile(): Promise<ProfileResponse> {
+    return this.jsonrpc<ProfileResponse>('/customer/profile');
   }
 
   async updateProfile(data: Partial<User>): Promise<APIResponse> {
-    return this.jsonrpc('/customer/profile/update', data);
+    return this.jsonrpc<APIResponse>('/customer/profile/update', data);
   }
 
-  async getOrders(filters?: { limit?: number; offset?: number }): Promise<APIResponse & { orders?: Order[] }> {
-    return this.jsonrpc('/customer/orders', filters);
+  async getOrders(filters?: { limit?: number; offset?: number }): Promise<OrdersResponse> {
+    return this.jsonrpc<OrdersResponse>('/customer/orders', filters);
   }
 
-  async getOrder(id: number): Promise<APIResponse & { order?: Order }> {
-    return this.jsonrpc(`/orders/${id}`);
+  async getOrder(id: number): Promise<OrderResponse> {
+    return this.jsonrpc<OrderResponse>(`/orders/${id}`);
   }
 
-  async reorderOrder(orderId: number): Promise<APIResponse & {
-    cart?: Cart;
-    added_products?: Array<{ name: string; quantity: number; adjusted: boolean }>;
-    unavailable_products?: Array<{ name: string; reason: string }>;
-    message?: string;
-  }> {
-    return this.jsonrpc(`/orders/${orderId}/reorder`);
+  async reorderOrder(orderId: number): Promise<ReorderResponse> {
+    return this.jsonrpc<ReorderResponse>(`/orders/${orderId}/reorder`);
   }
 
-  async getAddresses(): Promise<APIResponse & { addresses?: Address[] }> {
-    return this.jsonrpc('/customer/addresses');
+  async getAddresses(): Promise<AddressesResponse> {
+    return this.jsonrpc<AddressesResponse>('/customer/addresses');
   }
 
   async addAddress(address: Address): Promise<APIResponse> {
@@ -465,163 +463,154 @@ export class BackendClient {
   // WISHLIST
   // ========================================
 
-  async getWishlist(): Promise<APIResponse & { wishlist?: WishlistItem[] }> {
-    return this.jsonrpc('/wishlist');
+  async getWishlist(): Promise<WishlistResponse> {
+    return this.jsonrpc<WishlistResponse>('/wishlist');
   }
 
   async addToWishlist(product_id: number): Promise<APIResponse> {
-    return this.jsonrpc('/wishlist/add', { product_id });
+    return this.jsonrpc<APIResponse>('/wishlist/add', { product_id });
   }
 
   async removeFromWishlist(product_id: number): Promise<APIResponse> {
-    return this.jsonrpc(`/wishlist/remove/${product_id}`);
+    return this.jsonrpc<APIResponse>(`/wishlist/remove/${product_id}`);
   }
 
-  async getPublicWishlist(token: string): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc(`/wishlist/public/${token}`);
+  async getPublicWishlist(token: string): Promise<ApiResponse<PublicWishlistData>> {
+    return this.jsonrpc<ApiResponse<PublicWishlistData>>(`/wishlist/public/${token}`);
   }
 
-  async generateWishlistShareLink(): Promise<APIResponse & { share_token?: string; share_url?: string }> {
-    return this.jsonrpc('/wishlist/share');
+  async generateWishlistShareLink(): Promise<WishlistShareResponse> {
+    return this.jsonrpc<WishlistShareResponse>('/wishlist/share');
   }
 
   async disableWishlistSharing(): Promise<APIResponse> {
-    return this.jsonrpc('/wishlist/unshare');
+    return this.jsonrpc<APIResponse>('/wishlist/unshare');
   }
 
   // ========================================
   // MARKETING
   // ========================================
 
-  async getActivePopups(pageUrl: string): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/popups/active', { page_url: pageUrl });
+  async getActivePopups(pageUrl: string): Promise<ApiResponse<PopupsData>> {
+    return this.jsonrpc<ApiResponse<PopupsData>>('/popups/active', { page_url: pageUrl });
   }
 
   async trackPopupClick(popupId: number): Promise<APIResponse> {
-    return this.jsonrpc(`/popups/${popupId}/click`);
+    return this.jsonrpc<APIResponse>(`/popups/${popupId}/click`);
   }
 
   // ========================================
   // COUPONS
   // ========================================
 
-  async validateCoupon(code: string, order_id?: number): Promise<APIResponse & { cart?: Cart; discount?: number }> {
-    return this.jsonrpc('/cart/coupon/apply', { code, order_id });
+  async validateCoupon(code: string, order_id?: number): Promise<CouponValidationResponse> {
+    return this.jsonrpc<CouponValidationResponse>('/cart/coupon/apply', { code, order_id });
   }
 
-  async removeCoupon(order_id?: number): Promise<APIResponse & { cart?: Cart }> {
-    return this.jsonrpc('/cart/coupon/remove', { order_id });
+  async removeCoupon(order_id?: number): Promise<CartResponse> {
+    return this.jsonrpc<CartResponse>('/cart/coupon/remove', { order_id });
   }
 
-  async getAvailableCoupons(): Promise<APIResponse & { coupons?: any[] }> {
-    return this.jsonrpc('/coupons/available');
+  async getAvailableCoupons(): Promise<AvailableCouponsResponse> {
+    return this.jsonrpc<AvailableCouponsResponse>('/coupons/available');
   }
 
   // Analytics
-  async getAnalyticsDashboard(period: string = '30d'): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/analytics/dashboard', { period });
+  async getAnalyticsDashboard(period: string = '30d'): Promise<ApiResponse<AnalyticsDashboardData>> {
+    return this.jsonrpc<ApiResponse<AnalyticsDashboardData>>('/analytics/dashboard', { period });
   }
 
   // Cart save & recovery
-  async saveCart(email: string): Promise<APIResponse & { recovery_url?: string; token?: string; cart?: Cart }> {
-    return this.jsonrpc('/cart/save', { email });
+  async saveCart(email: string): Promise<CartSaveResponse> {
+    return this.jsonrpc<CartSaveResponse>('/cart/save', { email });
   }
 
-  async recoverCart(token: string): Promise<APIResponse & { cart?: Cart }> {
-    return this.jsonrpc('/cart/recover', { token });
+  async recoverCart(token: string): Promise<CartRecoveryResponse> {
+    return this.jsonrpc<CartRecoveryResponse>('/cart/recover', { token });
   }
 
   // Stripe payment
-  async createStripePaymentIntent(orderId: number, returnUrl?: string): Promise<APIResponse & {
-    client_secret?: string;
-    payment_intent_id?: string;
-    amount?: number;
-    currency?: string;
-    order?: any;
-  }> {
-    return this.jsonrpc('/payment/stripe/create-intent', {
+  async createStripePaymentIntent(orderId: number, returnUrl?: string): Promise<ApiResponse<StripePaymentIntentData>> {
+    return this.jsonrpc<ApiResponse<StripePaymentIntentData>>('/payment/stripe/create-intent', {
       order_id: orderId,
       return_url: returnUrl
     });
   }
 
-  async confirmStripePayment(paymentIntentId: string, orderId: number): Promise<APIResponse & {
-    status?: string;
-    order?: Order;
-  }> {
-    return this.jsonrpc('/payment/stripe/confirm', {
+  async confirmStripePayment(paymentIntentId: string, orderId: number): Promise<ApiResponse<StripeConfirmationData>> {
+    return this.jsonrpc<ApiResponse<StripeConfirmationData>>('/payment/stripe/confirm', {
       payment_intent_id: paymentIntentId,
       order_id: orderId
     });
   }
 
   // Product facets (filters)
-  async getProductFacets(categoryId?: number): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/products/facets', { category_id: categoryId });
+  async getProductFacets(categoryId?: number): Promise<ApiResponse<ProductFacetsData>> {
+    return this.jsonrpc<ApiResponse<ProductFacetsData>>('/products/facets', { category_id: categoryId });
   }
 
   // Stock alerts
-  async getStockAlertStatus(productId: number): Promise<APIResponse & { data?: { subscribed: boolean; subscription_id?: number } }> {
-    return this.jsonrpc(`/products/${productId}/stock-alert-status`);
+  async getStockAlertStatus(productId: number): Promise<ApiResponse<StockAlertStatus>> {
+    return this.jsonrpc<ApiResponse<StockAlertStatus>>(`/products/${productId}/stock-alert-status`);
   }
 
-  async subscribeToStockAlert(productId: number, email: string): Promise<APIResponse & { data?: { message: string; subscription_id: number } }> {
-    return this.jsonrpc(`/products/${productId}/notify-restock`, { email });
+  async subscribeToStockAlert(productId: number, email: string): Promise<ApiResponse<StockAlertSubscription>> {
+    return this.jsonrpc<ApiResponse<StockAlertSubscription>>(`/products/${productId}/notify-restock`, { email });
   }
 
   async unsubscribeFromStockAlert(subscriptionId: number): Promise<APIResponse> {
-    return this.jsonrpc(`/stock-alerts/unsubscribe/${subscriptionId}`);
+    return this.jsonrpc<APIResponse>(`/stock-alerts/unsubscribe/${subscriptionId}`);
   }
 
   // SEO metadata
-  async getProductSeoMetadata(productId: number): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc(`/seo/product/${productId}`);
+  async getProductSeoMetadata(productId: number): Promise<ApiResponse<SeoMetadata>> {
+    return this.jsonrpc<ApiResponse<SeoMetadata>>(`/seo/product/${productId}`);
   }
 
-  async getBreadcrumbsData(productId: number): Promise<APIResponse & { data?: { breadcrumbs: any[]; structured_data?: any } }> {
-    return this.jsonrpc(`/seo/breadcrumbs/${productId}`);
+  async getBreadcrumbsData(productId: number): Promise<ApiResponse<BreadcrumbsData>> {
+    return this.jsonrpc<ApiResponse<BreadcrumbsData>>(`/seo/breadcrumbs/${productId}`);
   }
 
-  async getOrganizationSeoData(): Promise<APIResponse & { data?: { structured_data?: any } }> {
-    return this.jsonrpc('/seo/organization');
+  async getOrganizationSeoData(): Promise<ApiResponse<OrganizationSeoData>> {
+    return this.jsonrpc<ApiResponse<OrganizationSeoData>>('/seo/organization');
   }
 
   // Site configuration
-  async getSiteConfig(): Promise<APIResponse & { data?: { config: any } }> {
-    const response = await this.jsonrpc<APIResponse & { data?: { config: any } }>(
+  async getSiteConfig(): Promise<ApiResponse<SiteConfig>> {
+    const response = await this.jsonrpc<ApiResponse<SiteConfig>>(
       '/site-config',
       {},
       { throwOn404: false }
     );
     // Si l'endpoint n'est pas implémenté, retourner un résultat vide
     if (!response.success) {
-      return { success: true, data: { config: {} } };
+      return { success: true, data: {} as SiteConfig };
     }
     return response;
   }
 
-  async getBrandConfig(): Promise<APIResponse & { data?: { brand: any; social: any } }> {
-    const response = await this.jsonrpc<APIResponse & { data?: { brand: any; social: any } }>(
+  async getBrandConfig(): Promise<ApiResponse<BrandConfig>> {
+    const response = await this.jsonrpc<ApiResponse<BrandConfig>>(
       '/site-config/brand',
       {},
       { throwOn404: false }
     );
     // Si l'endpoint n'est pas implémenté, retourner un résultat vide
     if (!response.success) {
-      return { success: true, data: { brand: {}, social: {} } };
+      return { success: true, data: { brand: {}, social: {} } as BrandConfig };
     }
     return response;
   }
 
-  async getShippingConfig(): Promise<APIResponse & { data?: { shipping: any; returns: any } }> {
-    const response = await this.jsonrpc<APIResponse & { data?: { shipping: any; returns: any } }>(
+  async getShippingConfig(): Promise<ApiResponse<ShippingConfig>> {
+    const response = await this.jsonrpc<ApiResponse<ShippingConfig>>(
       '/site-config/shipping',
       {},
       { throwOn404: false }
     );
     // Si l'endpoint n'est pas implémenté, retourner un résultat vide
     if (!response.success) {
-      return { success: true, data: { shipping: {}, returns: {} } };
+      return { success: true, data: { shipping: {}, returns: {} } as ShippingConfig };
     }
     return response;
   }
@@ -636,71 +625,52 @@ export class BackendClient {
     phone?: string;
     subject: string;
     message: string;
-  }): Promise<APIResponse & { message?: string }> {
-    return this.jsonrpc('/contact', data);
+  }): Promise<ApiResponse<{ message: string }>> {
+    return this.jsonrpc<ApiResponse<{ message: string }>>('/contact', data);
   }
 
   // Loyalty program
-  async getLoyaltyBalance(): Promise<APIResponse & { data?: any }> {
-    return this.jsonrpc('/loyalty/balance');
+  async getLoyaltyBalance(): Promise<ApiResponse<LoyaltyBalanceData>> {
+    return this.jsonrpc<ApiResponse<LoyaltyBalanceData>>('/loyalty/balance');
   }
 
-  async getLoyaltyTiers(): Promise<APIResponse & { data?: { tiers: any[] } }> {
-    return this.jsonrpc('/loyalty/tiers');
+  async getLoyaltyTiers(): Promise<ApiResponse<{ tiers: LoyaltyTier[] }>> {
+    return this.jsonrpc<ApiResponse<{ tiers: LoyaltyTier[] }>>('/loyalty/tiers');
   }
 
-  async redeemLoyaltyPoints(points: number, orderId?: number): Promise<APIResponse & { data?: { discount_amount: number; new_balance: number; message: string } }> {
-    return this.jsonrpc('/loyalty/redeem', { points, order_id: orderId });
+  async redeemLoyaltyPoints(points: number, orderId?: number): Promise<ApiResponse<LoyaltyRedemptionData>> {
+    return this.jsonrpc<ApiResponse<LoyaltyRedemptionData>>('/loyalty/redeem', { points, order_id: orderId });
   }
 
-  async calculateLoyaltyPoints(amount: number): Promise<APIResponse & { data?: { points: number; program_active: boolean } }> {
-    return this.jsonrpc('/loyalty/calculate', { amount });
+  async calculateLoyaltyPoints(amount: number): Promise<ApiResponse<LoyaltyCalculationData>> {
+    return this.jsonrpc<ApiResponse<LoyaltyCalculationData>>('/loyalty/calculate', { amount });
   }
 
   // FAQ
-  async getPublicFAQs(categoryCode?: string): Promise<APIResponse & { data?: { categories: any[]; faqs: any[] } }> {
-    return this.jsonrpc('/faq/public', { category_code: categoryCode });
+  async getPublicFAQs(categoryCode?: string): Promise<ApiResponse<FAQsData>> {
+    return this.jsonrpc<ApiResponse<FAQsData>>('/faq/public', { category_code: categoryCode });
   }
 
   // Static pages
-  async getStaticPage(slug: string): Promise<APIResponse & { page?: { id: number; title: string; subtitle?: string; content: string; seo_title?: string; seo_description?: string } }> {
-    return this.jsonrpc(`/pages/${slug}`);
+  async getStaticPage(slug: string): Promise<StaticPageResponse> {
+    return this.jsonrpc<StaticPageResponse>(`/pages/${slug}`);
   }
 
   // Payment providers
-  async getPaymentProviders(): Promise<{ success: boolean; providers: any[]; error?: string }> {
-    return this.jsonrpc('/payment/providers');
+  async getPaymentProviders(): Promise<PaymentProvidersResponse> {
+    return this.jsonrpc<PaymentProvidersResponse>('/payment/providers');
   }
 
-  async initPayment(data: {
-    provider_id: number;
-    amount: number;
-    currency_code: string;
-    order_reference: string;
-    customer_data: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phoneNumber: string;
-    };
-    return_url: string;
-  }): Promise<{ success: boolean; paymentUrl?: string; transactionRef?: string; transactionId?: number; error?: string }> {
-    return this.jsonrpc('/payment/init', data);
+  async initPayment(data: PaymentInitData): Promise<PaymentInitResponse> {
+    return this.jsonrpc<PaymentInitResponse>('/payment/init', data);
   }
 
   // =========================================================================
   // PRODUCT REVIEWS
   // =========================================================================
 
-  async getProductReviews(productId: number, limit: number = 10, offset: number = 0): Promise<{
-    success: boolean;
-    reviews: any[];
-    total: number;
-    avgRating: number;
-    ratingDistribution: Record<number, number>;
-    error?: string;
-  }> {
-    return this.jsonrpc(`/products/${productId}/reviews`, { limit, offset });
+  async getProductReviews(productId: number, limit: number = 10, offset: number = 0): Promise<ProductReviewsResponse> {
+    return this.jsonrpc<ProductReviewsResponse>(`/products/${productId}/reviews`, { limit, offset });
   }
 
   async submitProductReview(productId: number, data: {
@@ -711,17 +681,12 @@ export class BackendClient {
     author_email?: string;
     pros?: string;
     cons?: string;
-  }): Promise<{ success: boolean; message?: string; reviewId?: number; error?: string }> {
-    return this.jsonrpc(`/products/${productId}/reviews/submit`, data);
+  }): Promise<ReviewSubmitResponse> {
+    return this.jsonrpc<ReviewSubmitResponse>(`/products/${productId}/reviews/submit`, data);
   }
 
-  async markReviewHelpful(reviewId: number, helpful: boolean): Promise<{
-    success: boolean;
-    helpfulYes: number;
-    helpfulNo: number;
-    error?: string;
-  }> {
-    return this.jsonrpc(`/reviews/${reviewId}/helpful`, { helpful });
+  async markReviewHelpful(reviewId: number, helpful: boolean): Promise<ReviewHelpfulResponse> {
+    return this.jsonrpc<ReviewHelpfulResponse>(`/reviews/${reviewId}/helpful`, { helpful });
   }
 
   // =========================================================================
