@@ -33,6 +33,8 @@ import { CanvasArea } from '@/components/theme-builder/CanvasArea';
 import { SectionConfigPanel } from '@/components/theme-builder/SectionConfigPanel';
 import { ColorPicker } from '@/components/theme-builder/ColorPicker';
 import { FontSelector } from '@/components/theme-builder/FontSelector';
+import { DeviceToggle } from '@/components/theme-builder/DeviceToggle';
+import { PreviewPane } from '@/components/theme-builder/PreviewPane';
 import { storeNotices } from '@/lib/notices/store-notices';
 import { getValidationErrors } from '@/lib/theme-validation';
 import { toast } from 'sonner';
@@ -280,7 +282,7 @@ function LeftSidebar() {
  * Contenu principal du builder (avec provider et DnD)
  */
 function BuilderContent() {
-  const { state, addSection, reorderSections } = useBuilder();
+  const { state, addSection, reorderSections, setPreviewDevice } = useBuilder();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   // Sensors pour le drag & drop
@@ -353,7 +355,14 @@ function BuilderContent() {
               Créez votre thème visuellement avec drag & drop
             </p>
           </div>
-          <ActionsToolbar />
+
+          <div className="flex items-center gap-4">
+            <DeviceToggle
+              value={state.previewDevice}
+              onChange={setPreviewDevice}
+            />
+            <ActionsToolbar />
+          </div>
         </div>
 
         {/* Layout 3 colonnes */}
@@ -362,13 +371,13 @@ function BuilderContent() {
           <LeftSidebar />
 
           {/* Zone centrale : Canvas */}
-          <div className="flex-1 bg-gray-50 dark:bg-gray-800 overflow-hidden">
+          <div className="w-96 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden">
             <CanvasArea />
           </div>
 
-          {/* Sidebar droite : Config */}
-          <div className="w-80 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
-            <SectionConfigPanel />
+          {/* Zone droite : Preview iframe */}
+          <div className="flex-1 overflow-hidden">
+            <PreviewPane device={state.previewDevice} />
           </div>
         </div>
       </div>

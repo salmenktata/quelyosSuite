@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { toast } from 'sonner';
 
 /**
@@ -76,6 +76,11 @@ const initialState: BuilderState = {
  */
 export function BuilderProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<BuilderState>(initialState);
+
+  // Synchroniser l'état avec localStorage pour la preview
+  useEffect(() => {
+    localStorage.setItem('theme-builder-preview', JSON.stringify(state));
+  }, [state]);
 
   const updateColors = useCallback((colors: Partial<ThemeColors>) => {
     setState((prev) => ({
