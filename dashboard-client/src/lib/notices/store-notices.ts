@@ -882,4 +882,36 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       }
     ]
   },
+  themeBuilder: {
+    pageId: 'theme-builder',
+    title: 'Theme Builder',
+    purpose: 'Créez et personnalisez vos propres thèmes visuellement sans coder.',
+    icon: Palette,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Éditeur visuel de couleurs (palette complète)',
+          'Configuration typographie (polices Google Fonts)',
+          'Gestion des sections homepage (drag & drop)',
+          'Espacement et layout personnalisables',
+          'Preview en temps réel',
+          'Export/Import JSON',
+          'Sauvegarde vers Odoo',
+        ]
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Commencer par les couleurs : Définissez votre palette de marque',
+          'Choisir les polices : 2 polices max pour cohérence visuelle',
+          'Ajouter sections : Construisez la homepage idéale',
+          'Preview : Vérifiez le rendu avant de sauvegarder',
+          'Export : Sauvegardez une copie JSON en local',
+        ]
+      }
+    ]
+  },
 };

@@ -72,6 +72,7 @@ import {
   Sliders,
   Download,
   Palette,
+  Paintbrush,
 } from 'lucide-react'
 
 // ============================================================================
@@ -287,6 +288,7 @@ export const MODULES: Module[] = [
         title: 'Configuration',
         items: [
           { name: 'Thèmes', path: '/store/themes', icon: Palette },
+          { name: 'Theme Builder', path: '/store/themes/builder', icon: Paintbrush },
           { name: 'Paramètres', path: '/store/settings', icon: Settings },
         ],
       },
