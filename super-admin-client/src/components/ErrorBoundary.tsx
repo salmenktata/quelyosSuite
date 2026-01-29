@@ -35,16 +35,13 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
     this.setState({ errorInfo })
 
-    // Logger l'erreur si disponible
-    if (window.location.hostname !== 'localhost') {
-      // En production, envoyer à un service de logging
-      console.error('[PRODUCTION ERROR]', {
-        error: error.toString(),
-        stack: error.stack,
+    // Envoyer l'erreur à Sentry
+    Sentry.withScope((scope) => {
+      scope.setContext('errorBoundary', {
         componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
       })
-    }
+      Sentry.captureException(error)
+    })
   }
 
   handleReload = () => {
