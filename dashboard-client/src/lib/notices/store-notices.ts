@@ -975,4 +975,33 @@ export const storeNotices: Record<string, PageNoticeConfig> = {
       }
     ]
   },
+  'themes.builder': {
+    pageId: 'store-themes-builder',
+    title: 'Theme Builder Visuel',
+    purpose: 'Créez des thèmes visuellement sans coder avec interface drag & drop, export JSON et sauvegarde Odoo.',
+    icon: Palette,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités Phase 1 (actuelle)',
+        icon: Settings,
+        items: [
+          'Palette de 10 sections réutilisables (Hero, Products, Newsletter, etc.)',
+          'Canvas pour organiser sections homepage',
+          'Configuration de variants pour chaque section',
+          'Export/Import JSON pour partage ou backup local',
+          'Sauvegarde vers Odoo comme soumission draft',
+        ]
+      },
+      {
+        title: 'Prochaines phases',
+        items: [
+          'Phase 2 : Éditeur couleurs avec color picker et presets',
+          'Phase 2 : Sélecteur Google Fonts avec preview',
+          'Phase 3 : Drag & drop fonctionnel avec @dnd-kit',
+          'Phase 5 : Preview temps réel dans iframe isolé',
+        ]
+      }
+    ]
+  },
 };
