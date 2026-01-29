@@ -72,9 +72,9 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         set({ error: response.message || 'Failed to fetch loyalty balance', loading: false });
       }
     } catch (_error: unknown) {
-      logger.error('Error fetching loyalty balance:', error);
+      logger.error('Error fetching loyalty balance:', _error);
       set({
-        error: error instanceof Error ? error.message : 'An error occurred while fetching loyalty balance',
+        error: _error instanceof Error ? _error.message : 'An error occurred while fetching loyalty balance',
         loading: false
       });
     }
@@ -88,7 +88,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         set({ tiers: response.data.tiers });
       }
     } catch (_error: unknown) {
-      logger.error('Error fetching loyalty tiers:', error);
+      logger.error('Error fetching loyalty tiers:', _error);
     }
   },
 
