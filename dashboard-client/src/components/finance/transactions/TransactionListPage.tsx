@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useReducer, useMemo, useCallback } from "react";
+import { transactionListReducer, initialTransactionListState } from "./transactionListReducer";
 import { ModularLayout } from "@/components/ModularLayout";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
@@ -140,39 +141,24 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
   const { currency, formatAmount } = useCurrency();
   const config = CONFIGS[type];
 
-  // State
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-
-  // Filters
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Selection
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // State - centralized with useReducer
+  const [state, dispatch] = useReducer(transactionListReducer, initialTransactionListState);
 
   // Fetch data
   const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
     try {
       const [txData, catData] = await Promise.all([
         api("/transactions") as Promise<Transaction[]>,
         api(`/finance/categories?kind=${config.categoryKind}`) as Promise<Category[]>,
       ]);
-      setTransactions(txData);
-      setCategories(catData);
+      dispatch({ type: 'SET_TRANSACTIONS', payload: txData });
+      dispatch({ type: 'SET_CATEGORIES', payload: catData });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de chargement");
+      dispatch({ type: 'SET_ERROR', payload: err instanceof Error ? err.message : "Erreur de chargement" });
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, [config.categoryKind]);
 
@@ -182,19 +168,19 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
 
   // Stats
   const stats = useMemo(() => {
-    const filtered = transactions.filter((tx) => tx.type === config.transactionType);
+    const filtered = state.transactions.filter((tx) => tx.type === config.transactionType);
     const pending = filtered.filter((tx) => tx.status === "PENDING");
     const confirmed = filtered.filter((tx) => tx.status === "CONFIRMED");
     const total = filtered.reduce((sum, tx) => sum + tx.amount, 0);
     return { total: filtered.length, pending: pending.length, confirmed: confirmed.length, amount: total };
-  }, [transactions, config.transactionType]);
+  }, [state.transactions, config.transactionType]);
 
   // Filtered transactions
   const filtered = useMemo(() => {
-    let result = transactions.filter((tx) => tx.type === config.transactionType);
+    let result = state.transactions.filter((tx) => tx.type === config.transactionType);
 
-    if (search) {
-      const q = search.toLowerCase();
+    if (state.search) {
+      const q = state.search.toLowerCase();
       result = result.filter(
         (tx) =>
           tx.description.toLowerCase().includes(q) ||
@@ -204,45 +190,45 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
       );
     }
 
-    if (statusFilter !== "all") {
-      result = result.filter((tx) => tx.status === statusFilter);
+    if (state.statusFilter !== "all") {
+      result = result.filter((tx) => tx.status === state.statusFilter);
     }
 
-    if (categoryFilter !== "all") {
-      result = result.filter((tx) => tx.categoryName === categoryFilter);
+    if (state.categoryFilter !== "all") {
+      result = result.filter((tx) => tx.categoryName === state.categoryFilter);
     }
 
-    if (dateFrom) {
-      result = result.filter((tx) => new Date(tx.date) >= new Date(dateFrom));
+    if (state.dateFrom) {
+      result = result.filter((tx) => new Date(tx.date) >= new Date(state.dateFrom));
     }
 
-    if (dateTo) {
-      result = result.filter((tx) => new Date(tx.date) <= new Date(dateTo));
+    if (state.dateTo) {
+      result = result.filter((tx) => new Date(tx.date) <= new Date(state.dateTo));
     }
 
     return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, config.transactionType, search, statusFilter, categoryFilter, dateFrom, dateTo]);
+  }, [state.transactions, config.transactionType, state.search, state.statusFilter, state.categoryFilter, state.dateFrom, state.dateTo]);
 
   // Actions
   async function deleteTx(id: number) {
     if (!confirm(config.deletionConfirm)) return;
-    setDeletingId(id);
+    dispatch({ type: 'SET_DELETING_ID', payload: id });
     try {
       await api(`/transactions/${id}`, { method: "DELETE" });
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
     } finally {
-      setDeletingId(null);
+      dispatch({ type: 'SET_DELETING_ID', payload: null });
     }
   }
 
   async function archiveSelected() {
-    if (selectedIds.length === 0) return;
-    if (!confirm(`Archiver ${selectedIds.length} ${type === "expense" ? "dépense(s)" : "revenu(s)"} ?`)) return;
+    if (state.selectedIds.length === 0) return;
+    if (!confirm(`Archiver ${state.selectedIds.length} ${type === "expense" ? "dépense(s)" : "revenu(s)"} ?`)) return;
     try {
-      await Promise.all(selectedIds.map((id) => api(`/transactions/${id}`, { method: "DELETE" })));
-      setSelectedIds([]);
+      await Promise.all(state.selectedIds.map((id) => api(`/transactions/${id}`, { method: "DELETE" })));
+      dispatch({ type: 'CLEAR_SELECTION' });
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
@@ -250,15 +236,11 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
   }
 
   function toggleSelect(id: number) {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    dispatch({ type: 'TOGGLE_SELECT', payload: id });
   }
 
   function toggleSelectAll() {
-    if (selectedIds.length === filtered.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filtered.map((tx) => tx.id));
-    }
+    dispatch({ type: 'TOGGLE_SELECT_ALL', payload: filtered.map((tx) => tx.id) });
   }
 
   const Icon = config.icon;
@@ -336,28 +318,28 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
               <input
                 type="text"
                 placeholder={config.searchPlaceholder}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={state.search}
+                onChange={(e) => dispatch({ type: 'SET_SEARCH', payload: e.target.value })}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2.5 pl-11 pr-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
 
             {/* Filter toggle */}
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => dispatch({ type: 'TOGGLE_SHOW_FILTERS' })}
               className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
             >
               <Filter className="h-4 w-4" />
-              {showFilters ? "Masquer" : "Afficher"} les filtres
-              <ChevronDown className={`h-4 w-4 transition ${showFilters ? "rotate-180" : ""}`} />
+              {state.showFilters ? "Masquer" : "Afficher"} les filtres
+              <ChevronDown className={`h-4 w-4 transition ${state.showFilters ? "rotate-180" : ""}`} />
             </button>
 
-            {showFilters && (
+            {state.showFilters && (
               <div className="grid gap-4 md:grid-cols-3">
                 {/* Status */}
                 <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  value={state.statusFilter}
+                  onChange={(e) => dispatch({ type: 'SET_STATUS_FILTER', payload: e.target.value })}
                   className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   <option value="all">Tous les statuts</option>
@@ -368,12 +350,12 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
 
                 {/* Category */}
                 <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  value={state.categoryFilter}
+                  onChange={(e) => dispatch({ type: 'SET_CATEGORY_FILTER', payload: e.target.value })}
                   className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   <option value="all">Toutes les catégories</option>
-                  {categories.map((cat) => (
+                  {state.categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>
                       {cat.name}
                     </option>
@@ -384,14 +366,14 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                 <div className="flex gap-2">
                   <input
                     type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
+                    value={state.dateFrom}
+                    onChange={(e) => dispatch({ type: 'SET_DATE_FROM', payload: e.target.value })}
                     className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                   />
                   <input
                     type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
+                    value={state.dateTo}
+                    onChange={(e) => dispatch({ type: 'SET_DATE_TO', payload: e.target.value })}
                     className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                   />
                 </div>
@@ -402,17 +384,17 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
 
         {/* Table */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden" data-guide={`${config.dataGuide}s-list`}>
-          {loading && <p className="text-center text-gray-500 dark:text-gray-400 py-8">Chargement...</p>}
-          {error && <p className="text-center text-red-600 dark:text-red-400 py-8">{error}</p>}
+          {state.loading && <p className="text-center text-gray-500 dark:text-gray-400 py-8">Chargement...</p>}
+          {state.error && <p className="text-center text-red-600 dark:text-red-400 py-8">{state.error}</p>}
 
-          {!loading && !error && filtered.length === 0 && (
+          {!state.loading && !state.error && filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-4 py-12">
               <Icon className="h-12 w-12 text-gray-300 dark:text-gray-600" />
               <p className="text-gray-500 dark:text-gray-400">{config.emptyMessage}</p>
             </div>
           )}
 
-          {!loading && !error && filtered.length > 0 && (
+          {!state.loading && !state.error && filtered.length > 0 && (
             <>
               {/* Desktop table */}
               <div className="hidden md:block overflow-x-auto">
@@ -422,7 +404,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                       <th className="px-4 py-3 text-left">
                         <input
                           type="checkbox"
-                          checked={selectedIds.length === filtered.length}
+                          checked={state.selectedIds.length === filtered.length}
                           onChange={toggleSelectAll}
                           className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                         />
@@ -452,7 +434,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                           <td className="px-4 py-3">
                             <input
                               type="checkbox"
-                              checked={selectedIds.includes(tx.id)}
+                              checked={state.selectedIds.includes(tx.id)}
                               onChange={() => toggleSelect(tx.id)}
                               className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                             />
@@ -507,7 +489,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                               </Link>
                               <button
                                 onClick={() => deleteTx(tx.id)}
-                                disabled={deletingId === tx.id}
+                                disabled={state.deletingId === tx.id}
                                 className="rounded-lg border border-red-300 dark:border-red-700 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition disabled:opacity-50"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
@@ -537,7 +519,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                       <div className="flex items-start justify-between gap-4">
                         <input
                           type="checkbox"
-                          checked={selectedIds.includes(tx.id)}
+                          checked={state.selectedIds.includes(tx.id)}
                           onChange={() => toggleSelect(tx.id)}
                           className="mt-1 h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                         />
@@ -579,7 +561,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                             </Link>
                             <button
                               onClick={() => deleteTx(tx.id)}
-                              disabled={deletingId === tx.id}
+                              disabled={state.deletingId === tx.id}
                               className="flex-1 rounded-lg border border-red-300 dark:border-red-700 bg-white dark:bg-gray-800 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition disabled:opacity-50"
                             >
                               Supprimer
@@ -597,10 +579,10 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {filtered.length} {type === "expense" ? "dépense(s)" : "revenu(s)"} affichée(s)
                 </p>
-                {selectedIds.length > 0 && (
+                {state.selectedIds.length > 0 && (
                   <button onClick={archiveSelected} className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-700">
                     <Archive className="h-4 w-4" />
-                    Archiver ({selectedIds.length})
+                    Archiver ({state.selectedIds.length})
                   </button>
                 )}
               </div>
