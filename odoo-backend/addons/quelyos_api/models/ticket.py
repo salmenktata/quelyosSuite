@@ -120,6 +120,32 @@ class SupportTicket(models.Model):
         help='Date d\'envoi de l\'email de demande de satisfaction'
     )
 
+    # Relations entre tickets (parent/enfants)
+    parent_ticket_id = fields.Many2one(
+        'quelyos.ticket',
+        string='Ticket parent',
+        index=True,
+        ondelete='cascade',
+        help='Ticket parent si ce ticket est lié à un autre ticket'
+    )
+    child_ticket_ids = fields.One2many(
+        'quelyos.ticket',
+        'parent_ticket_id',
+        string='Tickets liés',
+        help='Tickets enfants liés à ce ticket'
+    )
+    child_ticket_count = fields.Integer(
+        'Nombre de tickets liés',
+        compute='_compute_child_ticket_count',
+        help='Nombre de tickets liés à ce ticket'
+    )
+    has_parent = fields.Boolean(
+        'A un parent',
+        compute='_compute_has_parent',
+        store=True,
+        help='Indique si ce ticket est lié à un ticket parent'
+    )
+
     # Champs Super Admin
     internal_notes = fields.Html(
         'Notes internes',
@@ -183,6 +209,18 @@ class SupportTicket(models.Model):
     def _compute_message_count(self):
         for ticket in self:
             ticket.message_count = len(ticket.message_ids)
+
+    @api.depends('child_ticket_ids')
+    def _compute_child_ticket_count(self):
+        """Calcule le nombre de tickets enfants"""
+        for ticket in self:
+            ticket.child_ticket_count = len(ticket.child_ticket_ids)
+
+    @api.depends('parent_ticket_id')
+    def _compute_has_parent(self):
+        """Détermine si le ticket a un parent"""
+        for ticket in self:
+            ticket.has_parent = bool(ticket.parent_ticket_id)
 
     @api.depends('create_date', 'message_ids', 'resolution_date')
     def _compute_times(self):
