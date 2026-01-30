@@ -1359,7 +1359,22 @@ class SuperAdminController(http.Controller):
 
         try:
             Backup = request.env['quelyos.backup'].sudo()
-            backups = Backup.search([], order='create_date desc', limit=100)
+
+            # Filtrage par tenant (optionnel)
+            tenant_id = request.params.get('tenant_id')
+            domain = []
+
+            if tenant_id:
+                try:
+                    domain.append(('tenant_id', '=', int(tenant_id)))
+                except (ValueError, TypeError):
+                    return request.make_json_response(
+                        {'success': False, 'error': 'tenant_id invalide'},
+                        headers=cors_headers,
+                        status=400
+                    )
+
+            backups = Backup.search(domain, order='create_date desc', limit=100)
 
             # Récupérer paramètres backup auto
             ICP = request.env['ir.config_parameter'].sudo()
@@ -1499,21 +1514,47 @@ class SuperAdminController(http.Controller):
         try:
             data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
             backup_type = data.get('type', 'full')
+            tenant_id = data.get('tenant_id')
 
             Backup = request.env['quelyos.backup'].sudo()
-            backup = Backup.create({
-                'type': backup_type,
-                'status': 'pending',
-                'triggered_by': request.env.user.id,
-            })
+
+            # Vérifier si tenant backup
+            if tenant_id:
+                Tenant = request.env['quelyos.tenant'].sudo()
+                tenant = Tenant.browse(tenant_id)
+                if not tenant.exists():
+                    return request.make_json_response(
+                        {'success': False, 'error': 'Tenant non trouvé'},
+                        headers=cors_headers,
+                        status=404
+                    )
+
+                backup = Backup.create({
+                    'type': 'tenant',
+                    'tenant_id': tenant_id,
+                    'status': 'pending',
+                    'triggered_by': request.env.user.id,
+                })
+
+                _logger.info(
+                    f"[AUDIT] Tenant backup triggered - User: {request.env.user.login} | "
+                    f"Tenant: {tenant.code} | Backup ID: {backup.id}"
+                )
+            else:
+                # Backup global (comportement actuel)
+                backup = Backup.create({
+                    'type': backup_type,
+                    'status': 'pending',
+                    'triggered_by': request.env.user.id,
+                })
+
+                _logger.info(
+                    f"[AUDIT] Backup triggered - User: {request.env.user.login} | "
+                    f"Type: {backup_type} | Backup ID: {backup.id}"
+                )
 
             backup_id = backup.id
             db_name = request.env.cr.dbname
-
-            _logger.info(
-                f"[AUDIT] Backup triggered - User: {request.env.user.login} | "
-                f"Type: {backup_type} | Backup ID: {backup_id}"
-            )
 
             # Lancer le backup en tâche de fond (via threading avec nouveau cursor)
             def _execute_backup_thread():
@@ -1525,7 +1566,13 @@ class SuperAdminController(http.Controller):
                     with registry.cursor() as cr:
                         env = Environment(cr, odoo.SUPERUSER_ID, {})
                         backup_record = env['quelyos.backup'].browse(backup_id)
-                        backup_record.execute_backup()
+
+                        # Exécuter méthode appropriée
+                        if backup_record.type == 'tenant':
+                            backup_record.execute_tenant_backup()
+                        else:
+                            backup_record.execute_backup()
+
                         cr.commit()
                 except Exception as e:
                     _logger.error(f"Background backup thread error: {e}", exc_info=True)
@@ -1612,7 +1659,13 @@ class SuperAdminController(http.Controller):
                     with registry.cursor() as cr:
                         env = Environment(cr, odoo.SUPERUSER_ID, {})
                         backup_record = env['quelyos.backup'].browse(backup_id)
-                        backup_record.execute_restore()
+
+                        # Exécuter méthode appropriée
+                        if backup_record.type == 'tenant':
+                            backup_record.execute_tenant_restore()
+                        else:
+                            backup_record.execute_restore()
+
                         cr.commit()
                 except Exception as e:
                     _logger.error(f"Background restore thread error: {e}", exc_info=True)
@@ -1786,6 +1839,65 @@ class SuperAdminController(http.Controller):
                 status=500
             )
 
+    # =========================================================================
+    # TENANTS (for backup dropdown)
+    # =========================================================================
+
+    @http.route('/api/super-admin/tenants', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_tenants(self):
+        """Liste tous les tenants actifs (pour dropdown backup)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Tenant = request.env['quelyos.tenant'].sudo()
+            tenants = Tenant.search([('active', '=', True)], order='name')
+
+            data = {
+                'success': True,
+                'data': [
+                    {
+                        'id': t.id,
+                        'code': t.code,
+                        'name': t.name,
+                        'domain': t.domain,
+                        'company_id': t.company_id.id,
+                    }
+                    for t in tenants
+                ],
+                'total': len(tenants),
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List tenants error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
     def _serialize_backup(self, backup):
         """Sérialise un backup pour l'API"""
         return {
@@ -1800,6 +1912,8 @@ class SuperAdminController(http.Controller):
             'completed_at': backup.completed_at.isoformat() if backup.completed_at else None,
             'download_url': f'/api/super-admin/backups/{backup.id}/download' if backup.status == 'completed' else None,
             'error_message': backup.error_message,
+            'records_count': backup.records_count if backup.type == 'tenant' else 0,
+            'data_models': backup.data_models,
         }
 
     # =========================================================================

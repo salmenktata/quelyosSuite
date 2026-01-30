@@ -27,8 +27,8 @@ import {
   Trash2,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
-import { BackupsResponseSchema, BackupScheduleSchema, validateApiResponse } from '@/lib/validators'
-import type { Backup, BackupsResponse, BackupSchedule } from '@/lib/validators'
+import { BackupsResponseSchema, BackupScheduleSchema, TenantsResponseSchema, validateApiResponse } from '@/lib/validators'
+import type { Backup, BackupsResponse, BackupSchedule, TenantsResponse } from '@/lib/validators'
 import { ConfirmModal } from '@/components/common/ConfirmModal'
 import { useToast } from '@/hooks/useToast'
 import { ToastContainer } from '@/components/ToastContainer'
@@ -50,18 +50,36 @@ export function Backups() {
   const [restoreTarget, setRestoreTarget] = useState<Backup | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Backup | null>(null)
   const [backupType, setBackupType] = useState<'full' | 'incremental'>('full')
+  const [selectedTenant, setSelectedTenant] = useState<number | null>(null)
   const [showSchedulePanel, setShowSchedulePanel] = useState(false)
   const [schedule, setSchedule] = useState<BackupSchedule>(DEFAULT_SCHEDULE)
   const [restoreStartTime, setRestoreStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isRestoringActive, setIsRestoringActive] = useState(false)
+  const [backupStartTime, setBackupStartTime] = useState<number | null>(null)
+  const [backupElapsedTime, setBackupElapsedTime] = useState(0)
+
+  // Fetch tenants pour dropdown
+  const { data: tenantsData } = useQuery({
+    queryKey: ['super-admin-tenants'],
+    queryFn: async () => {
+      const response = await api.request<TenantsResponse>({
+        method: 'GET',
+        path: '/api/super-admin/tenants',
+      })
+      return validateApiResponse(TenantsResponseSchema, response.data)
+    }
+  })
+
+  const tenants = tenantsData?.data || []
 
   const { data, isLoading } = useQuery({
-    queryKey: ['super-admin-backups'],
+    queryKey: ['super-admin-backups', selectedTenant],
     queryFn: async () => {
+      const params = selectedTenant ? `?tenant_id=${selectedTenant}` : ''
       const response = await api.request<BackupsResponse>({
         method: 'GET',
-        path: '/api/super-admin/backups',
+        path: `/api/super-admin/backups${params}`,
       })
       const validated = validateApiResponse(BackupsResponseSchema, response.data)
       // Sync schedule state with server data if available
@@ -75,6 +93,8 @@ export function Backups() {
 
   const backups = data?.data || []
   const isRestoring = isRestoringActive
+  const runningBackups = backups.filter((b) => b.status === 'running')
+  const isBackupRunning = runningBackups.length > 0
 
   // Timer pour afficher le temps écoulé pendant la restauration
   useEffect(() => {
@@ -93,15 +113,32 @@ export function Backups() {
     }
   }, [isRestoring, restoreStartTime])
 
+  // Timer pour afficher le temps écoulé pendant la création de backup
+  useEffect(() => {
+    if (isBackupRunning && !backupStartTime) {
+      setBackupStartTime(Date.now())
+    } else if (!isBackupRunning && backupStartTime) {
+      setBackupStartTime(null)
+      setBackupElapsedTime(0)
+    }
+
+    if (isBackupRunning && backupStartTime) {
+      const interval = setInterval(() => {
+        setBackupElapsedTime(Math.floor((Date.now() - backupStartTime) / 1000))
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+  }, [isBackupRunning, backupStartTime])
+
   const triggerBackup = useMutation({
-    mutationFn: async (type: 'full' | 'incremental') => {
+    mutationFn: async (params: { type: 'full' | 'incremental', tenant_id?: number }) => {
       return api.request<{ backup_id: number }>({
         method: 'POST',
         path: '/api/super-admin/backups/trigger',
-        body: { type },
+        body: params,
       })
     },
-    onSuccess: async (response) => {
+    onSuccess: async () => {
       toast.success('Backup déclenché avec succès')
       // Refetch immédiat pour afficher la nouvelle ligne avec les vraies données
       await queryClient.refetchQueries({ queryKey: ['super-admin-backups'] })
@@ -225,15 +262,32 @@ export function Backups() {
             Programmer
           </button>
           <select
+            value={selectedTenant || ''}
+            onChange={(e) => setSelectedTenant(e.target.value ? Number(e.target.value) : null)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="">Tous les tenants</option>
+            <option value="global">Global (Full DB)</option>
+            {tenants.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name} ({t.code})
+              </option>
+            ))}
+          </select>
+          <select
             value={backupType}
             onChange={(e) => setBackupType(e.target.value as 'full' | 'incremental')}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            disabled={!!selectedTenant}
           >
             <option value="full">Backup Complet</option>
             <option value="incremental">Backup Incrémental</option>
           </select>
           <button
-            onClick={() => triggerBackup.mutate(backupType)}
+            onClick={() => triggerBackup.mutate({
+              type: backupType,
+              tenant_id: selectedTenant || undefined,
+            })}
             disabled={triggerBackup.isPending}
             className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -245,7 +299,7 @@ export function Backups() {
             ) : (
               <>
                 <Play className="w-4 h-4" />
-                Lancer Backup
+                {selectedTenant ? 'Backup Tenant' : 'Backup Global'}
               </>
             )}
           </button>
@@ -425,6 +479,55 @@ export function Backups() {
         </div>
       )}
 
+      {/* Backup in Progress Alert */}
+      {isBackupRunning && (
+        <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg p-6">
+          <div className="flex items-start gap-4">
+            <Loader2 className="w-8 h-8 text-teal-600 dark:text-teal-400 animate-spin flex-shrink-0" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-bold text-teal-900 dark:text-teal-100 text-xl">
+                  💾 Création de backup en cours
+                </p>
+                <span className="text-teal-700 dark:text-teal-300 font-mono text-lg">
+                  {Math.floor(backupElapsedTime / 60)}:{(backupElapsedTime % 60).toString().padStart(2, '0')}
+                </span>
+              </div>
+
+              {/* Barre de progression animée */}
+              <div className="relative h-3 bg-teal-200 dark:bg-teal-900/40 rounded-full overflow-hidden mb-3">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-teal-600 dark:from-teal-400 dark:to-teal-500 animate-pulse">
+                  <div className="h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm text-teal-800 dark:text-teal-200">
+                  {runningBackups.length === 1 ? '1 backup' : `${runningBackups.length} backups`} en cours de création
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {runningBackups.map((backup) => (
+                    <span
+                      key={backup.id}
+                      className="text-xs bg-teal-100 dark:bg-teal-800/50 text-teal-800 dark:text-teal-200 px-2 py-1 rounded font-mono"
+                    >
+                      {backup.filename}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-sm text-teal-700 dark:text-teal-300 mt-3">
+                📊 Durée estimée : 5-15 secondes • 🔄 Actualisation automatique toutes les 3s
+              </p>
+              <p className="text-xs text-teal-600 dark:text-teal-400 mt-2 font-mono">
+                Étapes : Connexion DB → Export données → Compression → Sauvegarde fichier
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Restore in Progress Alert */}
       {isRestoring && (
         <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-6">
@@ -502,6 +605,9 @@ export function Backups() {
                     Tenant
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    Records
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Taille
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
@@ -532,8 +638,23 @@ export function Backups() {
                         {getTypeLabel(backup.type)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {backup.tenant_name || 'Global'}
+                    <td className="px-6 py-4">
+                      {backup.tenant_name ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                          {backup.tenant_name}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                          Global
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-right text-gray-600 dark:text-gray-400">
+                      {backup.type === 'tenant' ? (
+                        <span className="font-mono">{backup.records_count?.toLocaleString() || 0}</span>
+                      ) : (
+                        <span className="text-gray-400 dark:text-gray-500">—</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm text-right text-gray-600 dark:text-gray-400">
                       {backup.size_mb.toFixed(1)} MB

@@ -321,6 +321,8 @@ export const BackupSchema = z.object({
   completed_at: z.string().nullable(),
   download_url: z.union([z.string(), z.literal(false)]).nullable(),
   error_message: z.union([z.string(), z.literal(false)]).nullable(),
+  records_count: z.number().nonnegative().optional(),
+  data_models: z.string().optional(),
 })
 
 export const BackupScheduleSchema = z.object({
