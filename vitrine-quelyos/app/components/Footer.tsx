@@ -215,6 +215,13 @@ export default function Footer() {
             >
               CGV
             </Link>
+            <Link
+              href="/superadmin"
+              className="text-sm text-slate-600 hover:text-violet-400 transition-colors"
+              title="Administration"
+            >
+              •
+            </Link>
           </div>
         </div>
       </Container>
