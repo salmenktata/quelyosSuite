@@ -466,3 +466,36 @@ class TicketController(BaseController):
                 'success': False,
                 'error': str(e)
             }, headers=cors_headers, status=500)
+
+    @http.route('/api/tickets/templates', type='http', auth='public',
+                methods=['GET', 'OPTIONS'], csrf=False)
+    def list_templates(self):
+        """Liste des templates de réponse (pour clients)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        error = self._authenticate_from_header()
+        if error:
+            return request.make_json_response(error, headers=cors_headers, status=401)
+
+        try:
+            templates = request.env['quelyos.support.template'].search(
+                [('active', '=', True)],
+                order='sequence, name'
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'templates': [t.to_dict() for t in templates]
+            }, headers=cors_headers)
+        except Exception as e:
+            _logger.exception("Error listing templates")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=500)

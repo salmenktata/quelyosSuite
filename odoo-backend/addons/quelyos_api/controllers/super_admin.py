@@ -4114,3 +4114,206 @@ class SuperAdminController(http.Controller):
                 {'success': False, 'error': str(e)},
                 headers=cors_headers, status=500
             )
+
+    # ========================================
+    # Templates Support
+    # ========================================
+
+    @http.route('/api/super-admin/templates', type='http', auth='public',
+                methods=['GET', 'OPTIONS'], csrf=False)
+    def list_templates(self):
+        """Liste des templates de réponse"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            templates = request.env['quelyos.support.template'].sudo().search(
+                [('active', '=', True)],
+                order='sequence, name'
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'templates': [t.to_dict() for t in templates]
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.exception("Error listing templates")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/templates', type='http', auth='public',
+                methods=['POST'], csrf=False)
+    def create_template(self):
+        """Créer un template"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            data = request.get_json_data()
+
+            if not data.get('name') or not data.get('content'):
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Nom et contenu requis'
+                }, headers=cors_headers, status=400)
+
+            template = request.env['quelyos.support.template'].sudo().create({
+                'name': data['name'],
+                'content': data['content'],
+                'category': data.get('category', 'other'),
+                'sequence': data.get('sequence', 10),
+            })
+
+            return request.make_json_response({
+                'success': True,
+                'template': template.to_dict()
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.exception("Error creating template")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/templates/<int:template_id>', type='http', auth='public',
+                methods=['PUT'], csrf=False)
+    def update_template(self, template_id):
+        """Modifier un template"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            template = request.env['quelyos.support.template'].sudo().browse(template_id)
+
+            if not template.exists():
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Template non trouvé'
+                }, headers=cors_headers, status=404)
+
+            data = request.get_json_data()
+            update_vals = {}
+
+            if 'name' in data:
+                update_vals['name'] = data['name']
+            if 'content' in data:
+                update_vals['content'] = data['content']
+            if 'category' in data:
+                update_vals['category'] = data['category']
+            if 'sequence' in data:
+                update_vals['sequence'] = data['sequence']
+            if 'active' in data:
+                update_vals['active'] = data['active']
+
+            template.write(update_vals)
+
+            return request.make_json_response({
+                'success': True,
+                'template': template.to_dict()
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.exception("Error updating template")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/templates/<int:template_id>', type='http', auth='public',
+                methods=['DELETE', 'OPTIONS'], csrf=False)
+    def delete_template(self, template_id):
+        """Supprimer un template"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            template = request.env['quelyos.support.template'].sudo().browse(template_id)
+
+            if not template.exists():
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Template non trouvé'
+                }, headers=cors_headers, status=404)
+
+            template.unlink()
+
+            return request.make_json_response({
+                'success': True
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.exception("Error deleting template")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )

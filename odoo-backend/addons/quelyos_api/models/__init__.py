@@ -42,6 +42,7 @@ from . import testimonial
 from . import blog
 from . import loyalty
 from . import ticket
+from . import support_template
 from . import live_event
 # HR Models - TEMPORAIREMENT DÉSACTIVÉ (bug Odoo 19 hr_holidays)
 # from . import hr_department
