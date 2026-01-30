@@ -1048,3 +1048,305 @@ class MarketingCampaignController(BaseController):
             }
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
+
+    # =========================================================================
+    # ANALYTICS GRAPHIQUES (Chart.js compatible)
+    # =========================================================================
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/analytics/timeline', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_campaign_timeline_analytics(self, campaign_id, **kwargs):
+        """
+        Données timeline pour graphique Chart.js (évolution dans le temps).
+
+        Retourne :
+        - Labels (dates des 7 derniers jours)
+        - Datasets : opened, clicked, bounced par jour
+        """
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            from datetime import datetime, timedelta
+
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            # Générer labels (7 derniers jours)
+            labels = []
+            today = datetime.now()
+            for i in range(6, -1, -1):
+                day = (today - timedelta(days=i)).strftime('%Y-%m-%d')
+                labels.append(day)
+
+            # Récupérer clics groupés par jour
+            LinkTrackerClick = request.env['quelyos.link.tracker.click'].sudo()
+
+            # Clics pour cette campagne
+            clicks_by_day = {label: 0 for label in labels}
+            links = request.env['quelyos.link.tracker'].sudo().search([
+                ('campaign_id', '=', campaign_id)
+            ])
+
+            for link in links:
+                for click in link.click_ids:
+                    if click.click_date:
+                        day = click.click_date.strftime('%Y-%m-%d')
+                        if day in clicks_by_day:
+                            clicks_by_day[day] += 1
+
+            # Pour opened/bounced, on utilise des données simulées basées sur les stats globales
+            # (car pas de tracking événementiel par jour dans le modèle actuel)
+            # MVP : distribution uniforme sur les 7 jours
+            opened_data = []
+            clicked_data = []
+            bounced_data = []
+
+            days_count = 7
+            for label in labels:
+                # Clics réels par jour
+                clicked_data.append(clicks_by_day[label])
+
+                # Opened/bounced : simulation basée sur ratios globaux
+                # (amélioration future : tracker opened/bounced par jour)
+                opened_per_day = round(campaign.stats_opened / days_count) if campaign.stats_opened else 0
+                bounced_per_day = round(campaign.stats_bounced / days_count) if campaign.stats_bounced else 0
+
+                opened_data.append(opened_per_day)
+                bounced_data.append(bounced_per_day)
+
+            return {
+                'success': True,
+                'chart_data': {
+                    'labels': labels,
+                    'datasets': [
+                        {
+                            'label': 'Ouverts',
+                            'data': opened_data,
+                            'borderColor': 'rgb(59, 130, 246)',
+                            'backgroundColor': 'rgba(59, 130, 246, 0.1)',
+                            'tension': 0.4,
+                        },
+                        {
+                            'label': 'Cliqués',
+                            'data': clicked_data,
+                            'borderColor': 'rgb(34, 197, 94)',
+                            'backgroundColor': 'rgba(34, 197, 94, 0.1)',
+                            'tension': 0.4,
+                        },
+                        {
+                            'label': 'Bounces',
+                            'data': bounced_data,
+                            'borderColor': 'rgb(239, 68, 68)',
+                            'backgroundColor': 'rgba(239, 68, 68, 0.1)',
+                            'tension': 0.4,
+                        },
+                    ]
+                }
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/analytics/funnel', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_campaign_funnel_analytics(self, campaign_id, **kwargs):
+        """
+        Données funnel pour graphique entonnoir Chart.js.
+
+        Retourne :
+        - Envoyés → Livrés → Ouverts → Cliqués (avec pourcentages)
+        """
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            # Données funnel
+            sent = campaign.stats_sent
+            delivered = campaign.stats_delivered
+            opened = campaign.stats_opened
+            clicked = campaign.stats_clicked
+
+            # Pourcentages
+            delivered_pct = round((delivered / sent * 100), 1) if sent > 0 else 0
+            opened_pct = round((opened / delivered * 100), 1) if delivered > 0 else 0
+            clicked_pct = round((clicked / opened * 100), 1) if opened > 0 else 0
+
+            return {
+                'success': True,
+                'chart_data': {
+                    'labels': ['Envoyés', 'Livrés', 'Ouverts', 'Cliqués'],
+                    'datasets': [{
+                        'label': 'Funnel de conversion',
+                        'data': [sent, delivered, opened, clicked],
+                        'backgroundColor': [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(168, 85, 247, 0.8)',
+                        ],
+                    }],
+                    'percentages': {
+                        'delivered': delivered_pct,
+                        'opened': opened_pct,
+                        'clicked': clicked_pct,
+                    }
+                }
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/analytics/devices', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_campaign_device_analytics(self, campaign_id, **kwargs):
+        """
+        Répartition par device (mobile, desktop, tablet) pour graphique pie.
+
+        Basé sur user_agent des clics.
+        """
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            # Analyser user agents des clics
+            links = request.env['quelyos.link.tracker'].sudo().search([
+                ('campaign_id', '=', campaign_id)
+            ])
+
+            device_counts = {'mobile': 0, 'desktop': 0, 'tablet': 0, 'unknown': 0}
+
+            for link in links:
+                for click in link.click_ids:
+                    ua = (click.user_agent or '').lower()
+
+                    if 'mobile' in ua or 'android' in ua or 'iphone' in ua:
+                        device_counts['mobile'] += 1
+                    elif 'tablet' in ua or 'ipad' in ua:
+                        device_counts['tablet'] += 1
+                    elif ua:
+                        device_counts['desktop'] += 1
+                    else:
+                        device_counts['unknown'] += 1
+
+            return {
+                'success': True,
+                'chart_data': {
+                    'labels': ['Mobile', 'Desktop', 'Tablet', 'Inconnu'],
+                    'datasets': [{
+                        'label': 'Répartition par device',
+                        'data': [
+                            device_counts['mobile'],
+                            device_counts['desktop'],
+                            device_counts['tablet'],
+                            device_counts['unknown'],
+                        ],
+                        'backgroundColor': [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(156, 163, 175, 0.8)',
+                        ],
+                    }]
+                }
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/analytics/heatmap', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_campaign_click_heatmap(self, campaign_id, **kwargs):
+        """
+        Heatmap des clics sur liens dans l'email.
+
+        Retourne :
+        - Liste des liens avec nombre de clics
+        - Position estimée dans l'email (top, middle, bottom)
+        - Top 10 liens les plus cliqués
+        """
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            # Récupérer tous les liens de la campagne
+            links = request.env['quelyos.link.tracker'].sudo().search([
+                ('campaign_id', '=', campaign_id)
+            ], order='click_count desc')
+
+            heatmap_data = []
+            for link in links:
+                # Estimer position dans l'email (basé sur ordre d'apparition dans body)
+                # MVP : utiliser ordre de création comme proxy
+                position = 'unknown'
+                if campaign.body:
+                    body_lower = campaign.body.lower()
+                    url_lower = link.url.lower()
+
+                    # Trouver position approximative
+                    idx = body_lower.find(url_lower)
+                    if idx != -1:
+                        body_length = len(body_lower)
+                        relative_pos = idx / body_length if body_length > 0 else 0.5
+
+                        if relative_pos < 0.33:
+                            position = 'top'
+                        elif relative_pos < 0.66:
+                            position = 'middle'
+                        else:
+                            position = 'bottom'
+
+                heatmap_data.append({
+                    'link_id': link.id,
+                    'url': link.url,
+                    'name': link.name,
+                    'click_count': link.click_count,
+                    'unique_click_count': link.unique_click_count,
+                    'position': position,
+                })
+
+            # Top 10 liens
+            top_links = heatmap_data[:10]
+
+            # Compter par position
+            position_stats = {'top': 0, 'middle': 0, 'bottom': 0, 'unknown': 0}
+            for item in heatmap_data:
+                position_stats[item['position']] += item['click_count']
+
+            return {
+                'success': True,
+                'heatmap': {
+                    'all_links': heatmap_data,
+                    'top_10': top_links,
+                    'position_stats': position_stats,
+                    'total_links': len(heatmap_data),
+                }
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
