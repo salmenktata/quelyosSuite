@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { GlassCard, GlassButton, GlassBadge } from "@/components/ui/glass";
 import { Calculator, RotateCcw, ChevronDown, ChevronUp, Info, TrendingUp, TrendingDown, UserPlus, UserMinus, Clock, DollarSign } from "lucide-react";
 import { useCurrency } from "@/lib/finance/CurrencyContext";

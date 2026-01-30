@@ -29,9 +29,8 @@ import {
   Timer,
 } from 'lucide-react'
 import { Layout } from '../../components/Layout'
-import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '../../components/common'
+import { Breadcrumbs, Button, PageNotice } from '../../components/common'
 import { posNotices } from '../../lib/notices/pos-notices'
-import { AlertCircle, RefreshCw } from 'lucide-react'
 
 // Types
 interface ClickCollectOrder {

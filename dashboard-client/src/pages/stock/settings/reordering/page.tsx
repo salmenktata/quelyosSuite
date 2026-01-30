@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
-import { RefreshCw, Save, Loader2, AlertTriangle , Info } from "lucide-react";
+import { RefreshCw, Save, Loader2,  Info } from "lucide-react";
 
 export default function ReorderingSettingsPage() {
   const toast = useToast();

@@ -22,7 +22,6 @@ import {
   AlertCircle,
   CheckCircle,
   Search,
-  Filter,
 } from 'lucide-react'
 import type { Ticket } from '@/types/support'
 

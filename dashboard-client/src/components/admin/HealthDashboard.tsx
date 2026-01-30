@@ -17,7 +17,6 @@ import {
   Database,
   Server,
   Wifi,
-  WifiOff,
   AlertTriangle,
   CheckCircle,
   XCircle,

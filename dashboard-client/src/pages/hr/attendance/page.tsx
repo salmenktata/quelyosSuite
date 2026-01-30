@@ -7,7 +7,6 @@
  * - Actions de pointage manuel pour les employés
  * - Rafraîchissement des données
  */
-import { useState } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'

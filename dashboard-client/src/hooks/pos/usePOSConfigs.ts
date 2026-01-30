@@ -2,7 +2,7 @@
  * Hook pour la gestion des configurations/terminaux POS
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '../../lib/api'
 import type { POSConfig } from '../../types/pos'
 

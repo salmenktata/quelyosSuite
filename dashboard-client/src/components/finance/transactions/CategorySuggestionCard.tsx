@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/finance/api";
-import { Sparkles, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Sparkles, CheckCircle2, XCircle } from "lucide-react";
 import { logger } from '@quelyos/logger';
 
 interface CategorySuggestion {

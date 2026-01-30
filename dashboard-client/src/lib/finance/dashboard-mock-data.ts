@@ -4,7 +4,6 @@ import {
   AlertCircle,
   Sparkles,
   ArrowDownRight,
-  ArrowUpRight,
   CreditCard,
   Briefcase,
 } from "lucide-react";

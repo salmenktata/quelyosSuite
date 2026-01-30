@@ -10,7 +10,7 @@
  */
 
 import { useState } from 'react'
-import { Plus, Trash2, X, Save } from 'lucide-react'
+import { Plus, X, Save } from 'lucide-react'
 import { Layout } from '../../components/Layout'
 import { usePromoBanners, useCreatePromoBanner, useUpdatePromoBanner, useDeletePromoBanner, PromoBanner } from '../../hooks/usePromoBanners'
 import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'

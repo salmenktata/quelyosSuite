@@ -22,13 +22,9 @@ import {
   PlayCircle,
   StopCircle,
   AlertTriangle,
-  DollarSign,
   Receipt,
   Tag,
-  CreditCard,
-  Shield,
-  Bell,
-  Plug
+  CreditCard
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/finance/ConfirmDialog";
 import { financeNotices } from "@/lib/notices/finance-notices";

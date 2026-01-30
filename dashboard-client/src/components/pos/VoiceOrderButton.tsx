@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react'
-import { Mic, MicOff, Volume2, X, AlertCircle, Check, Loader2 } from 'lucide-react'
+import { Mic, MicOff, Volume2, X, AlertCircle, Check } from 'lucide-react'
 import { useVoiceOrdering, VoiceCommand } from '../../hooks/pos/useVoiceOrdering'
 
 interface VoiceOrderButtonProps {

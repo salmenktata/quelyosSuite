@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Breadcrumbs, PageNotice, SkeletonTable } from "@/components/common";
+import { Breadcrumbs, PageNotice } from "@/components/common";
 import {
   Settings,
   ArrowRight,

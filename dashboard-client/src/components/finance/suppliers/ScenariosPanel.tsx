@@ -25,7 +25,6 @@ import {
   FileText,
   PlusCircle,
   CheckCircle2,
-  XCircle,
   Trash2,
   Loader2,
   Calendar,

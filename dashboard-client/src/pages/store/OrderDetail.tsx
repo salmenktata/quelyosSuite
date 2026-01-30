@@ -11,7 +11,7 @@ import {
   useCreateInvoice,
   useUnlockOrder,
 } from '../../hooks/useOrders'
-import { Breadcrumbs, Skeleton, Modal, PageNotice, SkeletonTable } from '../../components/common'
+import { Breadcrumbs, Modal, PageNotice, SkeletonTable } from '../../components/common'
 import { useToast } from '../../contexts/ToastContext'
 import { storeNotices } from '../../lib/notices/store-notices'
 import { api } from '../../lib/api'

@@ -13,7 +13,6 @@ import {
   Building2,
   Wallet,
   Edit2,
-  Trash2,
   ArrowLeftRight,
   PieChart,
   Loader2,

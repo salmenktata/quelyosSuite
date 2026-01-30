@@ -3,7 +3,7 @@
  * Supporte les scanners USB (émulation clavier) et la caméra (WebAPI)
  */
 
-import { useEffect, useCallback, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { ScanBarcode, Camera, X, Loader2 } from 'lucide-react'
 
 interface BarcodeScannerProps {

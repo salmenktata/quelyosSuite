@@ -16,10 +16,8 @@ import { hrNotices } from '@/lib/notices'
 import {
   Users,
   Building2,
-  Clock,
   CalendarOff,
   FileText,
-  TrendingUp,
   AlertCircle,
   UserCheck,
   UserX,

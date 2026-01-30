@@ -27,7 +27,6 @@ import {
   Pencil,
   Archive,
   ArrowUpDown,
-  CreditCard,
   Wallet,
 } from 'lucide-react'
 import type { CreateAccountRequest, UpdateAccountRequest, ReassignAccountRequest } from '@/types/api'

@@ -8,7 +8,6 @@ import {
   FileText, 
   Loader2, 
   Calendar,
-  Filter,
   Check
 } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass";

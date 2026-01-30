@@ -13,6 +13,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
 import { TicketStatusBadge, TicketPriorityBadge } from '@/components/support/TicketBadges'
+import { SLABadge } from '@/components/support/SLABadge'
 import { useTicketDetail, useReplyTicket, useCloseTicket, useTicketAttachments, useUploadAttachment, useDeleteAttachment, useTemplates } from '@/hooks/useTickets'
 import { useChannel } from '@/lib/websocket/hooks'
 import { useQueryClient } from '@tanstack/react-query'
@@ -171,6 +172,26 @@ export default function TicketDetail() {
                 <TicketPriorityBadge priority={ticket.priority} />
               </div>
               <h2 className="text-lg text-gray-700 dark:text-gray-300">{ticket.subject}</h2>
+
+              {/* Badges SLA */}
+              {(ticket.slaFirstResponseStatus || ticket.slaResolutionStatus) && (
+                <div className="flex items-center gap-3 mt-3">
+                  {ticket.slaFirstResponseStatus && ticket.state === 'new' && (
+                    <SLABadge
+                      status={ticket.slaFirstResponseStatus}
+                      deadline={ticket.slaFirstResponseDeadline}
+                      label="Première réponse"
+                    />
+                  )}
+                  {ticket.slaResolutionStatus && ticket.state !== 'closed' && ticket.state !== 'resolved' && (
+                    <SLABadge
+                      status={ticket.slaResolutionStatus}
+                      deadline={ticket.slaResolutionDeadline}
+                      label="Résolution"
+                    />
+                  )}
+                </div>
+              )}
             </div>
 
             {ticket.state !== 'closed' && (

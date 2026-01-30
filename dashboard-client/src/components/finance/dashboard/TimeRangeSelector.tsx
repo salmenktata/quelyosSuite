@@ -1,7 +1,7 @@
 
 
 import { memo, useState, useEffect } from "react";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 export type TimeRange = 7 | 30 | 90 | 365;
 

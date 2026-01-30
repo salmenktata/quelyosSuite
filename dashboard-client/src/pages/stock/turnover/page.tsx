@@ -24,7 +24,6 @@ import {
 } from "lucide-react"
 import { useStockTurnover } from "@/hooks/finance/useStockTurnover"
 import type { TurnoverStatus } from "@/types/stock"
-import { logger } from '@quelyos/logger'
 
 const STATUS_CONFIG: Record<TurnoverStatus, { label: string; variant: 'success' | 'info' | 'warning' | 'error' }> = {
   excellent: { label: 'Excellent', variant: 'success' },

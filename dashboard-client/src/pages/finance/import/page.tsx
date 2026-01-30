@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { Upload, FileSpreadsheet, CheckSquare, CheckCircle, RotateCcw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Layout } from "@/components/Layout";
-import { Breadcrumbs, Button, SkeletonTable, PageNotice } from "@/components/common";
+import { Breadcrumbs, Button, PageNotice } from "@/components/common";
 import { ImportWizardSteps } from "@/components/finance/import/ImportWizardSteps";
 import { ImportSummary } from "@/components/finance/import/ImportSummary";
 import { UploadStep } from "@/components/finance/import/UploadStep";

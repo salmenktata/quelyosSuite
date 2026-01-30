@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Layout } from '../../components/Layout'
 import { useProduct } from '../../hooks/useProducts'
 import { useProductImages } from '../../hooks/useProductImages'
-import { Button, Breadcrumbs, Skeleton, Badge, PageNotice, SkeletonTable } from '../../components/common'
+import { Button, Breadcrumbs, Badge, PageNotice, SkeletonTable } from '../../components/common'
 import type { ProductImage } from '@/types'
 import { storeNotices } from '../../lib/notices/store-notices'
 import {

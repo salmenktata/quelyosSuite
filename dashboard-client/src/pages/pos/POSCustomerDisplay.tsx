@@ -9,7 +9,6 @@ import {
   Star,
   Gift,
   QrCode,
-  Clock,
   Sparkles,
   Heart,
   CreditCard,

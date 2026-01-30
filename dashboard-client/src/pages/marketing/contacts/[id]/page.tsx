@@ -10,7 +10,6 @@ import {
   Phone,
   ArrowLeft,
   Trash2,
-  Edit,
   Send,
   Calendar,
   Filter,

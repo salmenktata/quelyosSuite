@@ -16,7 +16,6 @@ import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/com
 import { storeNotices } from '@/lib/notices';
 import { DollarSign, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
-import { useAuth } from '@/lib/finance/compat/auth';
 
 interface StripeConnectStatus {
   onboarding_completed: boolean;

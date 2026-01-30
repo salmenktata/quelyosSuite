@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -11,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GitCompare, TrendingUp, AlertTriangle, CheckCircle2, Loader2, X } from "lucide-react";
+import { GitCompare, Loader2, X } from "lucide-react";
 import { logger } from '@quelyos/logger';
 
 interface Scenario {

@@ -1,12 +1,12 @@
 
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { useApiData } from "@/hooks/finance/useApiData";
 import { ModularLayout } from "@/components/ModularLayout";
-import { GlassCard, GlassPanel, GlassBadge, GlassListItem, GlassStatCard } from "@/components/ui/glass";
+import { GlassCard, GlassBadge, GlassListItem } from "@/components/ui/glass";
 import { Briefcase, Plus, Trash2, Edit } from "lucide-react";
 import type { CreatePortfolioRequest, UpdatePortfolioRequest } from "@/types/api";
 

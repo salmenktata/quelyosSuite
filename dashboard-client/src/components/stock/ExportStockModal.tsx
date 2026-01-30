@@ -4,10 +4,10 @@
  * Permet d'exporter le stock avec filtres dates pour compliance audit
  */
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
-import { X, Download, CheckCircle } from 'lucide-react'
+import { X, Download } from 'lucide-react'
 import { useExportStock } from '../../hooks/useStock'
 import { useToast } from '../../hooks/useToast'
 import { exportToCSV } from '../../lib/csv-utils'

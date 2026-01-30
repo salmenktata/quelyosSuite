@@ -31,7 +31,6 @@ import {
   Filter,
   ArrowUpDown,
   Plus,
-  Pencil,
   Trash2,
 } from 'lucide-react';
 

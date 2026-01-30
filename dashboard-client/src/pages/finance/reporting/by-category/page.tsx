@@ -22,7 +22,7 @@ import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { PageNotice } from "@/components/common";
 import { financeNotices } from "@/lib/notices";
-import { reportingClient, type TopCategoriesResponse, type CategoryTotal } from "@/lib/finance/reporting";
+import { reportingClient, type TopCategoriesResponse } from "@/lib/finance/reporting";
 import { api } from "@/lib/finance/api";
 import { useApiData } from "@/hooks/finance/useApiData";
 import { logger } from '@quelyos/logger';

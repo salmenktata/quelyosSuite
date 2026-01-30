@@ -12,10 +12,8 @@ import {
   Clock,
   Users,
   Eye,
-  MousePointer,
   ArrowLeft,
   Trash2,
-  Copy,
   BarChart3,
 } from 'lucide-react';
 

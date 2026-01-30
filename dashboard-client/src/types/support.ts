@@ -10,6 +10,12 @@ export interface Ticket {
   messageCount: number
   createdAt: string
   updatedAt: string
+  responseTime?: number
+  resolutionTime?: number
+  slaFirstResponseDeadline?: string | null
+  slaResolutionDeadline?: string | null
+  slaFirstResponseStatus?: 'ok' | 'warning' | 'breached' | null
+  slaResolutionStatus?: 'ok' | 'warning' | 'breached' | null
 }
 
 export type TicketCategory =

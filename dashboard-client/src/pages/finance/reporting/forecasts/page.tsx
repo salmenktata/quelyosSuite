@@ -4,7 +4,7 @@ import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ModularLayout } from "@/components/ModularLayout";
-import { TrendingUp, ChevronLeft, Zap, Info } from "lucide-react";
+import { ChevronLeft, Zap, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
 import { GlassPanel } from "@/components/ui/glass";

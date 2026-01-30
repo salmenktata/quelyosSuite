@@ -13,7 +13,6 @@ import { X, Calculator, CheckCircle } from 'lucide-react';
 import {
   useCreatePricelistItem,
   useUpdatePricelistItem,
-  type CreatePricelistItemParams,
   type PricelistItem,
 } from '../../hooks/usePricelists';
 import { useCategories } from '../../hooks/useCategories';

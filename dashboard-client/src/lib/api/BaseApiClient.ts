@@ -11,7 +11,7 @@
  */
 
 import { logger } from '@quelyos/logger'
-import { backendCircuitBreaker, CircuitBreakerError } from './circuitBreaker'
+import { backendCircuitBreaker } from './circuitBreaker'
 import { withRetry, RETRY_CONFIGS, type RetryConfig } from './retry'
 import { getRequestIdHeaders } from './requestId'
 

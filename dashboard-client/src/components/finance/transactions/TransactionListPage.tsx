@@ -9,7 +9,6 @@ import { PageHeader } from "@/components/finance/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
   Search,
-  X,
   Trash2,
   Pencil,
   TrendingUp,

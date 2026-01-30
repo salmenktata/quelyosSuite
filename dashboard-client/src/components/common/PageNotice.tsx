@@ -11,7 +11,6 @@ import {
   trackNoticeExpansion,
   trackNoticeCollapse,
   trackNoticeFeedback,
-  hasFeedback,
   getNoticeFeedback,
 } from "@/lib/notices/analytics";
 

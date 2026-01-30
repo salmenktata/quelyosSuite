@@ -9,7 +9,6 @@ import {
   Search,
   ShoppingCart,
   Grid3X3,
-  User,
   CreditCard,
   Plus,
   Minus,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X, Upload, Trash2 } from "lucide-react";
+import { Plus, X, Upload } from "lucide-react";
 import { useState } from "react";
 import type { EventAnnotation } from "@/lib/finance/reporting";
 

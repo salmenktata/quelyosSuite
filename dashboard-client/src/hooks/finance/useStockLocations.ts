@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { backendRpc } from '@/lib/backend-rpc'
 import { buildLocationTree } from '@/lib/stock/tree-utils'
-import type { StockLocation, LocationTreeNode, CreateLocationParams, UpdateLocationParams } from '@/types/stock'
+import type { StockLocation, CreateLocationParams, UpdateLocationParams } from '@/types/stock'
 import { logger } from '@quelyos/logger'
 import { useMemo } from 'react'
 

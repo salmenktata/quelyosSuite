@@ -3,7 +3,7 @@
  */
 
 import { useState } from 'react'
-import { X, Banknote, Loader2, AlertTriangle, CheckCircle, Printer, Download } from 'lucide-react'
+import { X, Banknote, Loader2, AlertTriangle, CheckCircle, Printer } from 'lucide-react'
 import { useCloseSession } from '../../hooks/pos/usePOSSession'
 import type { POSSession, POSZReport } from '../../types/pos'
 

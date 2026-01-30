@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   TrendingUp,
   TrendingDown,
-  DollarSign,
   AlertCircle,
   Loader2,
   Users,

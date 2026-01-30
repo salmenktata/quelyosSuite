@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { GlassCard, GlassPanel, GlassButton, GlassBadge, GlassListItem } from "@/components/ui/glass";
+import { GlassCard, GlassPanel, GlassBadge, GlassListItem } from "@/components/ui/glass";
 import type { CreateBudgetRequest } from "@/types/api";
 
 type Budget = {

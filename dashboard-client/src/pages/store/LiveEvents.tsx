@@ -16,7 +16,6 @@ import {
   X,
   Video,
   Calendar,
-  Users,
   Play,
   Square,
   Clock,

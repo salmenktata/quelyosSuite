@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Switch } from "@/components/ui/Switch";
 import { Plus, Trash2, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, AlertCircle, MoreHorizontal, Check, X } from "lucide-react";
-import type { PaymentMethod, FlowType } from "@/types/paymentFlow";
+import type { FlowType } from "@/types/paymentFlow";
 import { logger } from '@quelyos/logger';
 
 // Types de flux avec labels et icônes (FlowType inclut PaymentMethod + TransactionCategory)

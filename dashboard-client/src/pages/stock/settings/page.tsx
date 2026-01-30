@@ -7,7 +7,6 @@ import {
   RefreshCw,
   Ruler,
   Bell,
-  Boxes,
   Info,
 } from "lucide-react";
 

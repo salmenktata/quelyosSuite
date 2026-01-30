@@ -9,7 +9,6 @@ import {
   Mail,
   MessageSquare,
   Users,
-  BarChart3,
   Send,
   Eye,
   MousePointer,

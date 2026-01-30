@@ -9,7 +9,7 @@
  * - Barre de progression des ventes
  */
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Zap, Clock, TrendingUp, AlertCircle } from 'lucide-react';
+import { Edit, Trash2, Zap, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';

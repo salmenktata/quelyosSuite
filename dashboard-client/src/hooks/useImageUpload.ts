@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { backendRpc } from '@/lib/backend-rpc'
 
 interface UploadImageOptions {
   endpoint: string

@@ -1,7 +1,7 @@
 
 
 import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ModularLayout } from "@/components/ModularLayout";
 import {
@@ -20,7 +20,7 @@ import { GlassPanel, GlassCard } from "@/components/ui/glass";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { PageNotice } from "@/components/common";
-import { reportingClient, type ByPortfolioResponse, type PortfolioDetail } from "@/lib/finance/reporting";
+import { reportingClient, type ByPortfolioResponse } from "@/lib/finance/reporting";
 import { useApiData } from "@/hooks/finance/useApiData";
 import { financeNotices } from "@/lib/notices";
 

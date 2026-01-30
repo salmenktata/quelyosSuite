@@ -18,7 +18,6 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  DollarSign,
   TrendingUp,
   ShoppingBag,
   AlertCircle,

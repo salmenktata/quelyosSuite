@@ -2,7 +2,6 @@
  * Grille de produits POS avec touch targets optimisés
  */
 
-import { useState } from 'react'
 import { Package, Loader2 } from 'lucide-react'
 import type { POSProduct, POSCategory } from '../../types/pos'
 

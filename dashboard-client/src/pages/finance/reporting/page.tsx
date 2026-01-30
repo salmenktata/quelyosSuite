@@ -2,13 +2,11 @@
 
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
 import { motion } from "framer-motion";
 import { ModularLayout } from "@/components/ModularLayout";
 import {
   BarChart3,
   TrendingUp,
-  DollarSign,
   PieChart,
   Wallet,
   Target,

@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useCallback, useRef, useState } from 'react'
-import { wsClient, useWebSocketStore, WSMessage, MessageHandler } from './WebSocketClient'
+import { wsClient, useWebSocketStore, MessageHandler } from './WebSocketClient'
 
 /**
  * Hook pour la connexion WebSocket

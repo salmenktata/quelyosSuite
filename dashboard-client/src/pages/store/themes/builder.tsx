@@ -24,17 +24,16 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, PageNotice } from '@/components/common';
-import { BuilderProvider, useBuilder, type SectionConfig } from '@/components/theme-builder/BuilderContext';
+import { BuilderProvider, useBuilder } from '@/components/theme-builder/BuilderContext';
 import { SectionsPalette } from '@/components/theme-builder/SectionsPalette';
 import { CanvasArea } from '@/components/theme-builder/CanvasArea';
 import { ColorPicker } from '@/components/theme-builder/ColorPicker';
 import { FontSelector } from '@/components/theme-builder/FontSelector';
 import { getValidationErrors } from '@/lib/theme-validation';
 import { toast } from 'sonner';
-import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Type, Eye } from 'lucide-react';
+import { Download, Upload, Save, RotateCcw, Layers, Palette as PaletteIcon, Eye } from 'lucide-react';
 
 /**
  * Toolbar d'actions (Export/Import/Save/Reset)

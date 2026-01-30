@@ -1,6 +1,6 @@
 
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { ModularLayout } from "@/components/ModularLayout";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
@@ -11,8 +11,7 @@ import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip,
 import { TrendingUp, TrendingDown, Filter, Loader2, AlertCircle, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, MoreHorizontal, ChevronLeft, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { Button } from "@/lib/finance/compat/ui";
-import type { PaymentMethod, FlowType } from "@/types/paymentFlow";
+import type { FlowType } from "@/types/paymentFlow";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { PageNotice } from "@/components/common";
 import { financeNotices } from "@/lib/notices";

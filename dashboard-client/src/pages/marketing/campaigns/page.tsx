@@ -12,8 +12,6 @@ import {
   Copy,
   Trash2,
   Eye,
-  Send,
-  Filter,
   Search,
 } from 'lucide-react';
 

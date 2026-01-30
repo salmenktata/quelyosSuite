@@ -14,7 +14,6 @@
  */
 
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
 import { financeNotices } from '@/lib/notices'
@@ -32,7 +31,6 @@ import { BudgetFormModal } from '@/components/finance/budgets/BudgetFormModal'
 import {
   Plus,
   Sparkles,
-  DollarSign,
 } from 'lucide-react'
 import type { CreateBudgetRequest, UpdateBudgetRequest } from '@/types/api'
 

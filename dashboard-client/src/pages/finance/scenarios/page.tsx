@@ -29,7 +29,6 @@ import {
   ReferenceLine,
 } from "recharts"
 import {
-  TrendingUp,
   Save,
   Trash2,
   Plus,

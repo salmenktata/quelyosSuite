@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Monitor, Search, Settings, X, Wifi, WifiOff, LogOut, Pause, AlertCircle } from 'lucide-react'
+import { Monitor, Search, Settings, X, Wifi, WifiOff, LogOut, AlertCircle } from 'lucide-react'
 import { ProductGrid, CartPanel, PaymentModal } from '../../components/pos'
 import { usePOSProducts, usePOSCategories } from '../../hooks/pos/usePOSProducts'
 import { usePOSActiveSession, useCloseSession } from '../../hooks/pos/usePOSSession'

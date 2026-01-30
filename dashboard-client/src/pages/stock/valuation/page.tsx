@@ -25,7 +25,6 @@ import {
 } from "lucide-react"
 import { useStockValuation } from "@/hooks/finance/useStockValuation"
 import { useCurrency } from "@/lib/finance/CurrencyContext"
-import { logger } from '@quelyos/logger'
 
 interface TimeRange {
   label: string

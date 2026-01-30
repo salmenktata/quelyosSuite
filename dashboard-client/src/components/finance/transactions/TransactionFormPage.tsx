@@ -8,7 +8,7 @@ import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { PaymentFlowSelector } from "@/components/PaymentFlowSelector";
 import { CategorySuggestionCard } from "./CategorySuggestionCard";
 import { DuplicateConfirmModal } from "./DuplicateConfirmModal";
-import type { CreateTransactionRequest, UpdateTransactionRequest } from "@/types/api";
+import type { CreateTransactionRequest } from "@/types/api";
 import { logger } from '@quelyos/logger';
 
 type Transaction = {

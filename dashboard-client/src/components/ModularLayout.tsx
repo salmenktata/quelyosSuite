@@ -16,7 +16,7 @@
  * - Persistance du module actif lors de la navigation
  */
 // React & Router
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 
 // Hooks

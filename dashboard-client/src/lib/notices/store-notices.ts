@@ -17,7 +17,6 @@ import {
   HelpCircle,
   Video,
   TrendingUp,
-  type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
 

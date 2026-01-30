@@ -3,14 +3,12 @@ import { Breadcrumbs, Badge } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import {
-  MessageSquare,
   Eye,
   EyeOff,
   Loader2,
   Check,
   Key,
   Send,
-  Settings,
   Clock,
 } from "lucide-react";
 import {

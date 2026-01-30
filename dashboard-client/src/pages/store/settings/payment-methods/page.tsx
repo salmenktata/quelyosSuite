@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
-import { CreditCard, Check, X, Settings, TestTube2, Loader2, Eye, EyeOff } from "lucide-react";
+import { Check, X, Settings, TestTube2, Loader2, Eye, EyeOff } from "lucide-react";
 import {
   usePaymentProviders,
   useUpdatePaymentProvider,

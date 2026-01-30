@@ -32,7 +32,6 @@ import {
   Globe,
   Search,
   X,
-  Info,
   Plus,
   Pencil,
   Trash2,

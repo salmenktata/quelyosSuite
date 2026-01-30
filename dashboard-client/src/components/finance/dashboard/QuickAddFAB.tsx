@@ -1,7 +1,7 @@
 
 
 import { memo, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface QuickAddFABProps {
   onOpenDialog: () => void;

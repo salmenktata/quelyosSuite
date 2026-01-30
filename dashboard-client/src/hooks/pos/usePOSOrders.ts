@@ -5,7 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../lib/api'
 import { usePOSCartStore, usePOSSessionStore } from '../../stores/pos'
-import type { POSOrder, POSOrderSummary, POSPayment } from '../../types/pos'
+import type { POSOrder, POSOrderSummary } from '../../types/pos'
 
 // ============================================================================
 // QUERY KEYS

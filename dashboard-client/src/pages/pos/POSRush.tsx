@@ -16,7 +16,6 @@ import {
   Plus,
   Minus,
   Banknote,
-  Trash2,
   RotateCcw,
   TrendingUp,
   Clock,

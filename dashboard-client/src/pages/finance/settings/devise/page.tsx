@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Check, Loader2, Moon, Sun, Monitor, Globe, Building2 } from "lucide-react";
+import { Check, Loader2, Moon, Sun, Globe, Building2 } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import { Breadcrumbs, PageNotice, Button } from '@/components/common';
 import { financeNotices } from '@/lib/notices/finance-notices';

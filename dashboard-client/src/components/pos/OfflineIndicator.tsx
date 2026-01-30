@@ -4,9 +4,9 @@
  */
 
 import { useState } from 'react'
-import { Wifi, WifiOff, Cloud, CloudOff, RefreshCw, AlertTriangle, Check, X, Loader2 } from 'lucide-react'
+import { Wifi, WifiOff, Cloud, CloudOff, RefreshCw, AlertTriangle, X, Loader2 } from 'lucide-react'
 import { usePOSSync } from '../../hooks/pos/usePOSSync'
-import { usePOSOfflineStore, selectPendingOrders, selectFailedOrders } from '../../stores/pos'
+import { usePOSOfflineStore, selectFailedOrders } from '../../stores/pos'
 
 interface OfflineIndicatorProps {
   compact?: boolean
