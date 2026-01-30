@@ -233,6 +233,7 @@ const Pricelists = lazy(() => import('./pages/Pricelists'))
 const PricelistDetail = lazy(() => import('./pages/PricelistDetail'))
 const ApiGuide = lazy(() => import('./pages/ApiGuide'))
 const NoticeAnalytics = lazy(() => import('./pages/NoticeAnalytics'))
+const SitemapMonitoring = lazy(() => import('./pages/admin/SitemapMonitoring'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -1692,6 +1693,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <NoticeAnalytics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/sitemap"
+                element={
+                  <ProtectedRoute>
+                    <SitemapMonitoring />
                   </ProtectedRoute>
                 }
               />
