@@ -163,14 +163,40 @@ class AuditLogger:
         return request.httprequest.remote_addr or 'unknown'
 
     def _store_in_db(self, log_entry: Dict):
-        """Stocke le log dans la base Odoo"""
+        """Stocke le log dans la base Odoo via le modèle quelyos.audit.log"""
         try:
-            from odoo import api, SUPERUSER_ID
-            from odoo.modules.registry import Registry
+            from odoo.http import request
 
-            # Cette partie nécessite un contexte Odoo actif
-            # En production, on créerait un modèle audit.log
-            pass
+            if not hasattr(request, 'env') or not request.env:
+                _logger.debug("No Odoo env available for audit log DB storage")
+                return
+
+            # Utiliser le modèle quelyos.audit.log
+            AuditLog = request.env['quelyos.audit.log'].sudo()
+
+            # Déterminer le tenant_id depuis l'utilisateur si disponible
+            tenant_id = None
+            if request.env.user and hasattr(request.env.user, 'tenant_id'):
+                tenant_id = request.env.user.tenant_id.id if request.env.user.tenant_id else None
+
+            # Extraire user_agent
+            user_agent = None
+            if hasattr(request, 'httprequest'):
+                user_agent = request.httprequest.headers.get('User-Agent', '')[:500]
+
+            AuditLog.log_action(
+                action=log_entry.get('action'),
+                user_id=log_entry.get('user_id'),
+                user_login=log_entry.get('user_login'),
+                resource_type=log_entry.get('resource_type'),
+                resource_id=log_entry.get('resource_id'),
+                ip_address=log_entry.get('ip_address'),
+                user_agent=user_agent,
+                tenant_id=tenant_id,
+                success=log_entry.get('success', True),
+                details=log_entry.get('details'),
+            )
+
         except Exception as e:
             _logger.debug(f"Could not store audit log in DB: {e}")
 

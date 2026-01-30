@@ -12,6 +12,7 @@ from odoo.addons.web.controllers.home import Home
 from odoo.exceptions import AccessDenied
 from ..config import get_cors_headers
 from ..lib.rate_limiter import check_rate_limit, RateLimitConfig, rate_limit_key, get_rate_limiter
+from ..lib.audit_log import log_login
 from ..lib.jwt_auth import (
     generate_access_token,
     validate_access_token,
@@ -141,6 +142,16 @@ class AuthController(http.Controller):
                 fail_key = rate_limit_key(request, 'login_failed')
                 limiter = get_rate_limiter()
                 limiter.is_allowed(fail_key, *RateLimitConfig.LOGIN_FAILED)
+
+                # Audit log - échec de connexion
+                log_login(
+                    user_id=0,
+                    user_login=login,
+                    success=False,
+                    ip=request.httprequest.remote_addr,
+                    reason='invalid_credentials'
+                )
+
                 error_data = {'success': False, 'error': 'Identifiants invalides'}
                 if isinstance(body, dict) and 'jsonrpc' in body:
                     response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': error_data}
@@ -183,6 +194,14 @@ class AuthController(http.Controller):
             )
 
             _logger.info(f"SSO login successful for user {login} (uid={uid}, tenant={tenant_id})")
+
+            # Audit log - succès de connexion
+            log_login(
+                user_id=uid,
+                user_login=user.login,
+                success=True,
+                ip=ip_address,
+            )
 
             # Préparer la réponse avec tokens pour clients Bearer
             user_data = {
