@@ -15,6 +15,7 @@ from ..lib.rate_limiter import check_rate_limit, RateLimitConfig, rate_limit_key
 from ..lib.audit_log import log_login
 from ..lib.jwt_auth import (
     generate_access_token,
+    generate_pending_2fa_token,
     validate_access_token,
     validate_jwt_request,
     extract_bearer_token,
@@ -22,6 +23,7 @@ from ..lib.jwt_auth import (
     TokenExpiredError,
     InvalidTokenError,
     ACCESS_TOKEN_EXPIRY_MINUTES,
+    PENDING_2FA_TOKEN_EXPIRY_MINUTES,
 )
 
 _logger = logging.getLogger(__name__)
@@ -185,7 +187,39 @@ class AuthController(http.Controller):
                 tenant_id = user.tenant_id.id
                 tenant_domain = user.tenant_id.domain
 
-            # Générer JWT access token (15 min)
+            # Vérifier si 2FA est activé pour cet utilisateur
+            UserTOTP = request.env['quelyos.user.totp']
+            totp_enabled = UserTOTP.is_totp_enabled(uid)
+
+            if totp_enabled:
+                # 2FA requis - retourner un pending token
+                pending_token = generate_pending_2fa_token(
+                    user_id=uid,
+                    user_login=user.login,
+                    tenant_id=tenant_id,
+                    tenant_domain=tenant_domain,
+                )
+
+                _logger.info(f"2FA required for user {login} (uid={uid})")
+
+                response_data = {
+                    'success': True,
+                    'requires_2fa': True,
+                    'pending_token': pending_token,
+                    'expires_in': PENDING_2FA_TOKEN_EXPIRY_MINUTES * 60,
+                    'user': {
+                        'id': user.id,
+                        'name': user.name,
+                        'email': user.email or '',
+                    }
+                }
+
+                if isinstance(body, dict) and 'jsonrpc' in body:
+                    response_data = {'jsonrpc': '2.0', 'id': body.get('id', 1), 'result': response_data}
+
+                return request.make_json_response(response_data, headers=cors_headers)
+
+            # Pas de 2FA - générer JWT access token (15 min)
             access_token = generate_access_token(
                 user_id=uid,
                 user_login=user.login,

@@ -82,3 +82,5 @@ from . import cors_entry
 from . import audit_log
 # Password history
 from . import password_history
+# 2FA/TOTP
+from . import user_totp

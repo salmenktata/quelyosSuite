@@ -147,3 +147,4 @@ access_quelyos_backup_system,quelyos.backup system,model_quelyos_backup,base.gro
 access_quelyos_cors_entry_system,quelyos.cors.entry system,model_quelyos_cors_entry,base.group_system,1,1,1,1
 access_quelyos_audit_log_system,quelyos.audit.log system,model_quelyos_audit_log,base.group_system,1,1,1,1
 access_quelyos_password_history_system,quelyos.password.history system,model_quelyos_password_history,base.group_system,1,1,1,1
+access_quelyos_user_totp_system,quelyos.user.totp system,model_quelyos_user_totp,base.group_system,1,1,1,1

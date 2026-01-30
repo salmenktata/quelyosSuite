@@ -19,6 +19,7 @@ JWT_ISSUER = 'quelyos-api'
 # Durées de validité
 ACCESS_TOKEN_EXPIRY_MINUTES = 15  # 15 minutes
 REFRESH_TOKEN_EXPIRY_DAYS = 7    # 7 jours
+PENDING_2FA_TOKEN_EXPIRY_MINUTES = 5  # 5 minutes pour compléter le 2FA
 
 
 class JWTError(Exception):
@@ -391,3 +392,76 @@ def optional_jwt_auth(func):
         return func(self, *args, **kwargs)
 
     return wrapper
+
+
+# =============================================================================
+# 2FA PENDING TOKEN
+# =============================================================================
+
+def generate_pending_2fa_token(
+    user_id: int,
+    user_login: str,
+    tenant_id: Optional[int] = None,
+    tenant_domain: Optional[str] = None,
+) -> str:
+    """
+    Génère un token temporaire pour le flux 2FA.
+    Ce token est émis après validation du mot de passe mais avant la vérification TOTP.
+
+    Args:
+        user_id: ID de l'utilisateur
+        user_login: Login de l'utilisateur
+        tenant_id: ID du tenant (optionnel)
+        tenant_domain: Domaine du tenant (optionnel)
+
+    Returns:
+        str: JWT pending token (5 min de validité)
+    """
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(minutes=PENDING_2FA_TOKEN_EXPIRY_MINUTES)
+
+    payload = {
+        'iss': JWT_ISSUER,
+        'sub': str(user_id),
+        'iat': int(now.timestamp()),
+        'exp': int(expires_at.timestamp()),
+        'nbf': int(now.timestamp()),
+
+        'uid': user_id,
+        'login': user_login,
+        'type': 'pending_2fa',  # Type spécial
+    }
+
+    if tenant_id:
+        payload['tenant_id'] = tenant_id
+    if tenant_domain:
+        payload['tenant_domain'] = tenant_domain
+
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+    _logger.debug(f"Pending 2FA token generated for user {user_id}")
+    return token
+
+
+def validate_pending_2fa_token(token: str) -> Optional[Dict[str, Any]]:
+    """
+    Valide un token pending 2FA.
+
+    Args:
+        token: JWT pending 2FA token
+
+    Returns:
+        dict: Claims du token ou None si invalide
+    """
+    try:
+        payload = decode_token(token)
+
+        if payload.get('type') != 'pending_2fa':
+            _logger.warning("Token is not a pending 2FA token")
+            return None
+
+        return payload
+
+    except (TokenExpiredError, InvalidTokenError) as e:
+        _logger.warning(f"Pending 2FA token validation failed: {e}")
+        return None

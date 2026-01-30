@@ -38,3 +38,5 @@ from . import payment_stripe_connect
 from . import theme_analytics
 # Super Admin
 from . import super_admin
+# 2FA/TOTP
+from . import totp
