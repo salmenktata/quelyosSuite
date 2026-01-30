@@ -14,6 +14,8 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
 import { TicketStatusBadge, TicketPriorityBadge } from '@/components/support/TicketBadges'
 import { useTicketDetail, useReplyTicket, useCloseTicket } from '@/hooks/useTickets'
+import { useChannel } from '@/lib/websocket/hooks'
+import { useQueryClient } from '@tanstack/react-query'
 import { Send, CheckCircle, MessageSquare, Clock, User } from 'lucide-react'
 import type { TicketMessage } from '@/types/support'
 
@@ -21,6 +23,7 @@ export default function TicketDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const queryClient = useQueryClient()
 
   const ticketId = id ? parseInt(id, 10) : null
   const { data, isLoading, error } = useTicketDetail(ticketId)
@@ -28,6 +31,19 @@ export default function TicketDetail() {
   const closeMutation = useCloseTicket(ticketId || 0)
 
   const [replyContent, setReplyContent] = useState('')
+
+  // WebSocket : écouter les réponses du staff
+  useChannel('tickets', (message) => {
+    const data = message.data as { ticketId?: number; isStaff?: boolean }
+    if (message.event === 'ticket.replied' && data.ticketId === ticketId && data.isStaff) {
+      // Un staff a répondu à ce ticket
+      queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] })
+    }
+    if (message.event === 'ticket.updated' && data.ticketId === ticketId) {
+      // Le ticket a été mis à jour (statut, priorité)
+      queryClient.invalidateQueries({ queryKey: ['ticket', ticketId] })
+    }
+  })
 
   // Auto-scroll vers dernier message
   useEffect(() => {

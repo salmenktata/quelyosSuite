@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { Loader2 } from 'lucide-react'
 
 // Pages essentielles (chargées immédiatement)
+import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import AuthCallback from './pages/AuthCallback'
 import Dashboard from './pages/Dashboard'
@@ -296,7 +297,7 @@ export default function App() {
               <SessionManager />
               <Suspense fallback={<PageLoader />}>
               <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/auth-callback" element={<AuthCallback />} />
               <Route
