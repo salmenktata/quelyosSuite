@@ -11,6 +11,13 @@ from ..config import is_origin_allowed, get_cors_headers
 from ..lib.cache import get_cache_service, CacheTTL
 from ..lib.rate_limiter import check_rate_limit, RateLimitConfig
 from ..lib.validation import sanitize_string, sanitize_dict, validate_no_injection
+from ..lib.password_policy import (
+    validate_password_strength,
+    get_password_strength_score,
+    is_account_locked,
+    record_failed_login,
+    reset_failed_attempts,
+)
 from .base import BaseController
 
 _logger = logging.getLogger(__name__)
@@ -450,6 +457,16 @@ class QuelyosAPI(BaseController):
                     'error': 'Email and password are required'
                 }
 
+            # Vérifier si le compte est bloqué
+            is_locked, remaining_seconds = is_account_locked(email)
+            if is_locked:
+                _logger.warning(f"Account locked for {email}, {remaining_seconds}s remaining")
+                return {
+                    'success': False,
+                    'error': 'Account temporarily locked due to too many failed attempts',
+                    'locked_until_seconds': remaining_seconds,
+                }
+
             # Authentifier l'utilisateur avec Odoo (vérifie le mot de passe)
             try:
                 db_name = request.db or 'quelyos'
@@ -490,10 +507,22 @@ class QuelyosAPI(BaseController):
                 _logger.info(f"Password verification result for {email}: {valid}")
                 if not valid:
                     _logger.warning(f"Invalid password for {email}")
+                    # Enregistrer l'échec et vérifier le blocage
+                    attempts, is_now_locked = record_failed_login(email)
+                    if is_now_locked:
+                        return {
+                            'success': False,
+                            'error': 'Account locked due to too many failed attempts',
+                            'attempts': attempts,
+                        }
                     return {
                         'success': False,
-                        'error': 'Invalid email or password'
+                        'error': 'Invalid email or password',
+                        'attempts_remaining': 5 - attempts,
                     }
+
+                # Réinitialiser le compteur d'échecs après succès
+                reset_failed_attempts(email)
 
                 uid = user.id
                 _logger.info(f"Authentication successful for {email}, uid={uid}")
@@ -622,6 +651,16 @@ class QuelyosAPI(BaseController):
                 return {
                     'success': False,
                     'error': 'Name, email and password are required'
+                }
+
+            # Valider la force du mot de passe
+            is_valid, password_errors = validate_password_strength(password)
+            if not is_valid:
+                return {
+                    'success': False,
+                    'error': 'Password does not meet requirements',
+                    'password_errors': password_errors,
+                    'password_score': get_password_strength_score(password),
                 }
 
             # Vérifier si l'email existe déjà

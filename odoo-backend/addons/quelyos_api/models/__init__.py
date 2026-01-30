@@ -80,3 +80,5 @@ from . import backup
 from . import cors_entry
 # Audit logging
 from . import audit_log
+# Password history
+from . import password_history
