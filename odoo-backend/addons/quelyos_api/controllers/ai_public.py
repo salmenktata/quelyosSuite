@@ -41,7 +41,7 @@ class AiPublicController(http.Controller):
         response = request.make_json_response(data, status=status)
         return self._add_cors_headers(response)
 
-    @http.route('/api/ai/active-config', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/ai/active-config', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def get_active_config(self):
         """
         Retourne la configuration du provider IA actif.
@@ -85,7 +85,7 @@ class AiPublicController(http.Controller):
                 'error': str(e)
             }
 
-    @http.route('/api/ai/report-usage', type='json', auth='public', csrf=False, methods=['POST'])
+    @http.route('/api/ai/report-usage', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
     def report_usage(self, **kwargs):
         """
         Reçoit les métriques d'usage depuis vitrine-quelyos.

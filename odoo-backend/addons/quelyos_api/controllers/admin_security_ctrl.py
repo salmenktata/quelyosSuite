@@ -1006,7 +1006,7 @@ class AdminSecurityController(SuperAdminController):
                 headers=cors_headers, status=500
             )
 
-    @http.route('/api/super-admin/security/rate-limits', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/super-admin/security/rate-limits', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def rate_limits_create(self):
         """Créer une règle de rate limiting"""
         if not request.session.uid:
@@ -1041,7 +1041,7 @@ class AdminSecurityController(SuperAdminController):
             _logger.error(f"Rate limit create error: {e}")
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/super-admin/security/rate-limits/<int:rule_id>', type='json', auth='public', methods=['PUT', 'DELETE'], csrf=False)
+    @http.route('/api/super-admin/security/rate-limits/<int:rule_id>', type='jsonrpc', auth='public', methods=['PUT', 'DELETE'], csrf=False)
     def rate_limits_update_delete(self, rule_id):
         """Modifier ou supprimer une règle de rate limiting"""
         if not request.session.uid:
@@ -1270,7 +1270,7 @@ class AdminSecurityController(SuperAdminController):
                 headers=cors_headers, status=500
             )
 
-    @http.route('/api/super-admin/security/waf-rules', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/super-admin/security/waf-rules', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def waf_rules_create(self):
         """Créer une règle WAF"""
         if not request.session.uid:
@@ -1309,7 +1309,7 @@ class AdminSecurityController(SuperAdminController):
             _logger.error(f"WAF rule create error: {e}")
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/super-admin/security/waf-rules/<int:rule_id>', type='json', auth='public', methods=['PUT', 'DELETE'], csrf=False)
+    @http.route('/api/super-admin/security/waf-rules/<int:rule_id>', type='jsonrpc', auth='public', methods=['PUT', 'DELETE'], csrf=False)
     def waf_rules_update_delete(self, rule_id):
         """Modifier ou supprimer une règle WAF"""
         if not request.session.uid:
@@ -1349,7 +1349,7 @@ class AdminSecurityController(SuperAdminController):
             _logger.error(f"WAF rule update/delete error: {e}")
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/super-admin/security/waf-rules/init-defaults', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/super-admin/security/waf-rules/init-defaults', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def waf_rules_init_defaults(self):
         """Initialiser les règles WAF par défaut"""
         if not request.session.uid:
