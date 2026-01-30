@@ -152,7 +152,7 @@ export default function Orders() {
         {/* Filtres rapides par état (Pills) */}
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <span className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
               Filtres rapides :
             </span>
             <Button
@@ -165,7 +165,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === ''
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               Tous
@@ -180,7 +180,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === 'draft'
                   ? 'bg-gray-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               📝 Brouillons
@@ -195,7 +195,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === 'sent'
                   ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               📧 Envoyés
@@ -210,7 +210,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === 'sale'
                   ? 'bg-green-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               ✅ Confirmés
@@ -225,7 +225,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === 'done'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               🎉 Terminés
@@ -240,7 +240,7 @@ export default function Orders() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                 statusFilter === 'cancel'
                   ? 'bg-red-600 text-white shadow-sm'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               ❌ Annulés
@@ -271,7 +271,7 @@ export default function Orders() {
             <div className="flex flex-wrap items-center gap-4">
               {/* Filtre par statut */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Statut :
                 </label>
                 <select
@@ -293,7 +293,7 @@ export default function Orders() {
 
               {/* Filtre par date */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Du :
                 </label>
                 <input
@@ -308,7 +308,7 @@ export default function Orders() {
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Au :
                 </label>
                 <input
@@ -526,7 +526,7 @@ export default function Orders() {
               {/* Pagination */}
               {total > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                  <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                     Affichage {page * limit + 1} à {Math.min((page + 1) * limit, total)} sur{' '}
                     {total}
                   </div>

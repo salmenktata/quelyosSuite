@@ -190,7 +190,7 @@ export default function AbandonedCarts() {
             <div className="flex flex-wrap items-center gap-4">
               {/* Filtre seuil d'heures */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Inactif depuis :
                 </label>
                 <select
@@ -212,7 +212,7 @@ export default function AbandonedCarts() {
 
               {/* Période stats */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Statistiques :
                 </label>
                 <select

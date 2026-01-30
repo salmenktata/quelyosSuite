@@ -441,7 +441,7 @@ export default function ProductForm() {
                 <div>
                   <label
                     htmlFor="category_id"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                   >
                     Catégorie
                   </label>
@@ -465,7 +465,7 @@ export default function ProductForm() {
                 <div>
                   <label
                     htmlFor="ribbon_id"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                   >
                     Badge produit
                   </label>
@@ -516,7 +516,7 @@ export default function ProductForm() {
 
                 {/* Options Marketing E-commerce */}
                 <div className="col-span-full">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Options marketing
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -595,7 +595,7 @@ export default function ProductForm() {
                 />
 
                 <div>
-                  <label htmlFor="offer_end_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="offer_end_date" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Date fin de l'offre
                   </label>
                   <input
@@ -657,7 +657,7 @@ export default function ProductForm() {
 
                 {/* Dimensions */}
                 <div className="col-span-full">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Dimensions (cm)
                   </label>
                   <div className="grid grid-cols-3 gap-3">
@@ -701,7 +701,7 @@ export default function ProductForm() {
                 <div>
                   <label
                     htmlFor="detailed_type"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                   >
                     Type de produit
                   </label>
@@ -736,7 +736,7 @@ export default function ProductForm() {
                 <div>
                   <label
                     htmlFor="uom_id"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                   >
                     Unité de mesure
                   </label>
@@ -763,7 +763,7 @@ export default function ProductForm() {
 
                 {/* Taxes de vente */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Taxes de vente
                   </label>
                   <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
@@ -789,7 +789,7 @@ export default function ProductForm() {
                             }}
                             className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                           />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                             {tax.name}
                             <span className="text-gray-500 dark:text-gray-400 ml-1">
                               ({tax.amount_type === 'percent' ? `${tax.amount}%` : `${tax.amount} €`}
@@ -809,7 +809,7 @@ export default function ProductForm() {
 
                 {/* Tags produit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Tags
                   </label>
                   {/* Tags sélectionnés */}
@@ -905,7 +905,7 @@ export default function ProductForm() {
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                 >
                   Description (vente)
                 </label>
@@ -924,7 +924,7 @@ export default function ProductForm() {
               <div>
                 <label
                   htmlFor="description_purchase"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                 >
                   Description (achat/fournisseur)
                 </label>
@@ -943,7 +943,7 @@ export default function ProductForm() {
               <div>
                 <label
                   htmlFor="technical_description"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
                 >
                   Description technique
                 </label>
@@ -963,7 +963,7 @@ export default function ProductForm() {
 
               {/* Images */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Images du produit
                 </label>
                 {isEditing ? (

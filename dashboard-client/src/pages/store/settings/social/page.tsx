@@ -128,7 +128,7 @@ export default function SocialSettingsPage() {
 
             return (
               <div key={network.key}>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   <Icon className={`h-4 w-4 ${hasValue ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400"}`} />
                   {network.label}
                 </label>

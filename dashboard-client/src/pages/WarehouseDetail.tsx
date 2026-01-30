@@ -137,7 +137,7 @@ export default function WarehouseDetail() {
                   // TODO: Ouvrir modal d'édition
                   alert('Fonctionnalité de modification à venir')
                 }}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
               >
                 <Pencil className="h-4 w-4 mr-2" />
                 Modifier
@@ -217,7 +217,7 @@ export default function WarehouseDetail() {
               className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'stock'
                   ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 dark:text-white dark:text-gray-400'
               }`}
             >
               <Package className="h-5 w-5 inline mr-2" />
@@ -228,7 +228,7 @@ export default function WarehouseDetail() {
               className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'locations'
                   ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 dark:text-white dark:text-gray-400'
               }`}
             >
               <MapPin className="h-5 w-5 inline mr-2" />

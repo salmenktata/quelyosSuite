@@ -109,7 +109,7 @@ export function SessionCloseModal({
 
               {/* Payments breakdown */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Par mode de paiement</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">Par mode de paiement</p>
                 {zReport.paymentsByMethod.map((pm) => (
                   <div key={pm.method} className="flex justify-between text-sm">
                     <span className="text-gray-500 dark:text-gray-400">{pm.method} ({pm.count})</span>
@@ -120,7 +120,7 @@ export function SessionCloseModal({
 
               {/* Cash reconciliation */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Réconciliation caisse</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">Réconciliation caisse</p>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Fond de caisse</span>
                   <span className="text-gray-900 dark:text-white">{zReport.session.openingCash.toFixed(2)} TND</span>
@@ -152,7 +152,7 @@ export function SessionCloseModal({
             <div className="flex gap-3">
               <button
                 onClick={handlePrintReport}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white dark:text-gray-300 rounded-lg transition-colors"
               >
                 <Printer className="h-4 w-4" />
                 Imprimer
@@ -193,7 +193,7 @@ export function SessionCloseModal({
 
             {/* Cash count */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Espèces comptées (TND)
               </label>
               <div className="relative">
@@ -234,7 +234,7 @@ export function SessionCloseModal({
 
             {/* Note */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Note (optionnel)
               </label>
               <textarea

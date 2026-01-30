@@ -211,7 +211,7 @@ export function VariantManager({
       {/* Section Attributs */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
             Attributs ({attributeLines.length})
           </h4>
           {availableAttributes.length > 0 && !showAddAttribute && (
@@ -266,7 +266,7 @@ export function VariantManager({
               Ajouter un attribut
             </h5>
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Attribut
               </label>
               <select

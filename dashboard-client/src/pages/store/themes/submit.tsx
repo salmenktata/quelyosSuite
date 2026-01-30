@@ -230,7 +230,7 @@ export default function SubmitThemePage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Nom du Thème *
                 </label>
                 <input
@@ -244,7 +244,7 @@ export default function SubmitThemePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Description *
                 </label>
                 <textarea
@@ -258,7 +258,7 @@ export default function SubmitThemePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Catégorie *
                 </label>
                 <select
@@ -285,7 +285,7 @@ export default function SubmitThemePage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Fichier JSON *
                 </label>
                 <label className="cursor-pointer flex items-center justify-center gap-2 w-full px-4 py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-500 dark:hover:border-primary-500 transition-colors">
@@ -304,7 +304,7 @@ export default function SubmitThemePage() {
 
               {formData.config_json && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Aperçu JSON
                   </label>
                   <textarea
@@ -353,14 +353,14 @@ export default function SubmitThemePage() {
                   onChange={(e) => setFormData({ ...formData, is_premium: e.target.checked })}
                   className="h-4 w-4 text-primary-600 rounded"
                 />
-                <label htmlFor="is_premium" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="is_premium" className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Thème Premium (payant)
                 </label>
               </div>
 
               {formData.is_premium && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Prix (TND)
                   </label>
                   <div className="relative">

@@ -106,7 +106,7 @@ export default function ReorderingSettingsPage() {
         </h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Quantité minimum
             </label>
             <input
@@ -122,7 +122,7 @@ export default function ReorderingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Quantité maximum
             </label>
             <input
@@ -146,7 +146,7 @@ export default function ReorderingSettingsPage() {
         </h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Délai d'approvisionnement
             </label>
             <div className="relative">
@@ -167,7 +167,7 @@ export default function ReorderingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Stock de sécurité
             </label>
             <div className="relative">
@@ -191,7 +191,7 @@ export default function ReorderingSettingsPage() {
 
       {/* Fréquence */}
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
           Fréquence de vérification
         </label>
         <select

@@ -163,7 +163,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Quantité à transférer
                 </label>
                 <Input
@@ -238,7 +238,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
         <div className="space-y-6">
           {/* Source */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Entrepôt source
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -286,7 +286,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
 
           {/* Destination */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Entrepôt destination
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -331,7 +331,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
 
           {/* Note */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Note (optionnel)
             </label>
             <textarea

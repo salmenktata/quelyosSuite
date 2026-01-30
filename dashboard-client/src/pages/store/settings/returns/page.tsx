@@ -100,7 +100,7 @@ export default function ReturnsSettingsPage() {
         <div className="space-y-6">
           {/* Délai retour */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <RotateCcw className="h-4 w-4" />
               Délai de retour
             </label>
@@ -123,7 +123,7 @@ export default function ReturnsSettingsPage() {
 
           {/* Délai remboursement */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <Clock className="h-4 w-4" />
               Délai de remboursement
             </label>
@@ -141,7 +141,7 @@ export default function ReturnsSettingsPage() {
 
           {/* Garantie */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <Shield className="h-4 w-4" />
               Durée de garantie
             </label>

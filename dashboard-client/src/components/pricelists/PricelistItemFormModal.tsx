@@ -271,7 +271,7 @@ export function PricelistItemFormModal({
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                   {/* Type d'application */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                       Appliquer sur <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -294,7 +294,7 @@ export function PricelistItemFormModal({
                             className={`text-sm font-medium ${
                               appliedOn === value
                                 ? 'text-indigo-700 dark:text-indigo-300'
-                                : 'text-gray-700 dark:text-gray-300'
+                                : 'text-gray-900 dark:text-white dark:text-gray-300'
                             }`}
                           >
                             {getAppliedOnLabel(value)}
@@ -307,7 +307,7 @@ export function PricelistItemFormModal({
                   {/* Champ conditionnel : Produit */}
                   {appliedOn === '1_product' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                         Sélectionner un produit <span className="text-red-500">*</span>
                       </label>
                       <Controller
@@ -335,7 +335,7 @@ export function PricelistItemFormModal({
                     <div>
                       <label
                         htmlFor="categ_id"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                       >
                         Sélectionner une catégorie <span className="text-red-500">*</span>
                       </label>
@@ -358,7 +358,7 @@ export function PricelistItemFormModal({
 
                   {/* Type de calcul */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                       Type de calcul <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -381,7 +381,7 @@ export function PricelistItemFormModal({
                             className={`text-sm font-medium ${
                               computePrice === value
                                 ? 'text-indigo-700 dark:text-indigo-300'
-                                : 'text-gray-700 dark:text-gray-300'
+                                : 'text-gray-900 dark:text-white dark:text-gray-300'
                             }`}
                           >
                             {value === 'percentage' ? 'Pourcentage' : 'Prix fixe'}
@@ -397,7 +397,7 @@ export function PricelistItemFormModal({
                       <div className="col-span-2">
                         <label
                           htmlFor="fixed_price"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                          className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                         >
                           Prix fixe ({currencySymbol}) <span className="text-red-500">*</span>
                         </label>
@@ -423,7 +423,7 @@ export function PricelistItemFormModal({
                         <div>
                           <label
                             htmlFor="percent_price"
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                           >
                             % du prix de base
                           </label>
@@ -445,7 +445,7 @@ export function PricelistItemFormModal({
                         <div>
                           <label
                             htmlFor="price_discount"
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                           >
                             % de remise
                           </label>
@@ -472,7 +472,7 @@ export function PricelistItemFormModal({
                   <div>
                     <label
                       htmlFor="min_quantity"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                     >
                       Quantité minimale
                     </label>
@@ -495,7 +495,7 @@ export function PricelistItemFormModal({
                     <div>
                       <label
                         htmlFor="date_start"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                       >
                         Date début (optionnel)
                       </label>
@@ -509,7 +509,7 @@ export function PricelistItemFormModal({
                     <div>
                       <label
                         htmlFor="date_end"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                       >
                         Date fin (optionnel)
                       </label>
@@ -527,7 +527,7 @@ export function PricelistItemFormModal({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      className="px-4 py-2 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       Annuler
                     </button>

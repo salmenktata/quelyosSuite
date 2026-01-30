@@ -268,7 +268,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
           Rechercher une image
         </label>
 
@@ -280,7 +280,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
             className={`px-3 py-1 text-sm rounded-md transition ${
               source === 'both'
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             Les deux
@@ -291,7 +291,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
             className={`px-3 py-1 text-sm rounded-md transition ${
               source === 'unsplash'
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             Unsplash
@@ -302,7 +302,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
             className={`px-3 py-1 text-sm rounded-md transition ${
               source === 'pexels'
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             Pexels
@@ -356,7 +356,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       {/* Preview image actuelle */}
       {selectedUrl && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
             Image sélectionnée
           </label>
           <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
@@ -372,7 +372,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       {/* Grille d'images */}
       {images.length > 0 ? (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Sélectionnez une image ({images.length} résultats)
           </label>
           <div className="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto">
@@ -421,7 +421,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       {/* Images de démo si aucune recherche */}
       {!query && images.length === 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Images de démonstration
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -454,7 +454,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
 
       {/* Ou saisir URL manuellement */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
           Ou coller une URL d'image
         </label>
         <input

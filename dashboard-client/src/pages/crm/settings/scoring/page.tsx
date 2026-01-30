@@ -120,7 +120,7 @@ export default function ScoringSettingsPage() {
         </h3>
         <div className="grid gap-6 md:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <span className="inline-flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500" />
                 Lead chaud
@@ -140,7 +140,7 @@ export default function ScoringSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <span className="inline-flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 Lead tiède
@@ -160,7 +160,7 @@ export default function ScoringSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <span className="inline-flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-violet-500" />
                 Auto-qualification

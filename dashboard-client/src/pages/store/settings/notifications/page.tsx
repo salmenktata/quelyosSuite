@@ -167,7 +167,7 @@ export default function NotificationsPage() {
                       />
                       <label
                         htmlFor={`${type.key}-email`}
-                        className="flex items-center text-sm text-gray-700 dark:text-gray-300"
+                        className="flex items-center text-sm text-gray-900 dark:text-white dark:text-gray-300"
                       >
                         <Mail className="w-4 h-4 mr-1.5 text-gray-400" />
                         Email
@@ -185,7 +185,7 @@ export default function NotificationsPage() {
                       />
                       <label
                         htmlFor={`${type.key}-sms`}
-                        className="flex items-center text-sm text-gray-700 dark:text-gray-300"
+                        className="flex items-center text-sm text-gray-900 dark:text-white dark:text-gray-300"
                       >
                         <MessageSquare className="w-4 h-4 mr-1.5 text-gray-400" />
                         SMS

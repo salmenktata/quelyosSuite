@@ -211,7 +211,7 @@ export default function Attributes() {
               {attr.values.slice(0, 8).map((value) => (
                 <span
                   key={value.id}
-                  className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded"
+                  className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 rounded"
                 >
                   {value.name}
                 </span>
@@ -298,7 +298,7 @@ export default function Attributes() {
                   {editing.values.map((value, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded"
+                      className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 rounded"
                     >
                       {value.name}
                       <button

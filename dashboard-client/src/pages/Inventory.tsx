@@ -219,7 +219,7 @@ export default function Inventory() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Recherche par nom ou SKU (optionnel)
                 </label>
                 <Input
@@ -231,7 +231,7 @@ export default function Inventory() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Catégorie (optionnel)
                 </label>
                 <Input

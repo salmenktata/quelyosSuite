@@ -99,7 +99,7 @@ function GeneralSettings() {
       <SettingsCard title="Format des matricules">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Préfixe matricule
             </label>
             <input
@@ -118,13 +118,13 @@ function GeneralSettings() {
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Activer la validation hiérarchique des congés
             </span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Afficher le solde de congés aux employés
             </span>
           </label>
@@ -141,7 +141,7 @@ function AttendanceSettings() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Heure de début (matin)
               </label>
               <input
@@ -151,7 +151,7 @@ function AttendanceSettings() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Heure de fin (soir)
               </label>
               <input
@@ -162,7 +162,7 @@ function AttendanceSettings() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Tolérance retard (minutes)
             </label>
             <input
@@ -178,13 +178,13 @@ function AttendanceSettings() {
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Activer le pointage automatique
             </span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Exiger la géolocalisation
             </span>
           </label>
@@ -200,7 +200,7 @@ function LeavesSettings() {
       <SettingsCard title="Allocations par défaut">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Congés payés annuels (jours)
             </label>
             <input
@@ -210,7 +210,7 @@ function LeavesSettings() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               RTT annuels (jours)
             </label>
             <input
@@ -226,13 +226,13 @@ function LeavesSettings() {
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Autoriser le report des congés non pris
             </span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Exiger un délai minimum de demande (7 jours)
             </span>
           </label>
@@ -249,19 +249,19 @@ function NotificationsSettings() {
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Nouvelle demande de congé
             </span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Contrat arrivant à échéance
             </span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">
               Rappel d'évaluation à planifier
             </span>
           </label>
@@ -271,7 +271,7 @@ function NotificationsSettings() {
       <SettingsCard title="Alertes">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Alerte contrat (jours avant échéance)
             </label>
             <input

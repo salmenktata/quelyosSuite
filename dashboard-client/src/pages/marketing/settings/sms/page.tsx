@@ -171,7 +171,7 @@ export default function MarketingSMSSettingsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">API Key *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">API Key *</label>
             <div className="relative">
               <input
                 type={showApiKey ? "text" : "password"}
@@ -191,7 +191,7 @@ export default function MarketingSMSSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom expéditeur</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Nom expéditeur</label>
             <input
               type="text"
               value={formData.senderName}
@@ -204,7 +204,7 @@ export default function MarketingSMSSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Endpoint API</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Endpoint API</label>
             <input
               type="text"
               value={formData.endpoint}
@@ -224,7 +224,7 @@ export default function MarketingSMSSettingsPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Numéro *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Numéro *</label>
             <input
               type="tel"
               value={testPhone}
@@ -234,7 +234,7 @@ export default function MarketingSMSSettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Message</label>
             <input
               type="text"
               value={testMessage}

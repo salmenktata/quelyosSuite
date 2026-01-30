@@ -243,7 +243,7 @@ export default function Invoices() {
             <div className="flex flex-wrap items-center gap-4">
               {/* Filtre par état */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   État :
                 </label>
                 <select
@@ -263,7 +263,7 @@ export default function Invoices() {
 
               {/* Filtre par paiement */}
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                   Paiement :
                 </label>
                 <select
@@ -423,7 +423,7 @@ export default function Invoices() {
 
                   {/* Pagination */}
                   <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                    <div className="text-sm text-gray-700 dark:text-gray-300">
+                    <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                       Affichage de {page * limit + 1} à {Math.min((page + 1) * limit, total)} sur{' '}
                       {total} factures
                     </div>
@@ -435,7 +435,7 @@ export default function Invoices() {
                       >
                         Précédent
                       </Button>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                         Page {page + 1} sur {Math.ceil(total / limit)}
                       </span>
                       <Button

@@ -136,7 +136,7 @@ export default function NewTicket() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Catégorie */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
               Catégorie <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -168,7 +168,7 @@ export default function NewTicket() {
 
           {/* Priorité */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
               Priorité <span className="text-red-500">*</span>
             </label>
             <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function NewTicket() {
           <div>
             <label
               htmlFor="subject"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
             >
               Sujet <span className="text-red-500">*</span>
             </label>
@@ -232,7 +232,7 @@ export default function NewTicket() {
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2"
             >
               Description détaillée <span className="text-red-500">*</span>
             </label>

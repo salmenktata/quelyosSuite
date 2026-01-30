@@ -158,7 +158,7 @@ function MetricGauge({
       <Icon className="h-8 w-8 text-gray-400" />
       <div className="flex-1">
         <div className="flex justify-between mb-1">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
+          <span className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">{label}</span>
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {value.toFixed(1)}
             {unit}
@@ -267,7 +267,7 @@ export function HealthDashboard() {
           <button
             onClick={fetchHealth}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
           >
             <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
             Rafraîchir

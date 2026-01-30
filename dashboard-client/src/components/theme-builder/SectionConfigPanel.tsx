@@ -93,7 +93,7 @@ export function SectionConfigPanel() {
       <div className="p-4 space-y-6">
         {/* Sélecteur de variant */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Variant
           </label>
           <div className="space-y-2">
@@ -122,7 +122,7 @@ export function SectionConfigPanel() {
 
         {/* Configuration avancée (à implémenter selon le type de section) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Configuration avancée
           </label>
           <p className="text-sm text-gray-500 dark:text-gray-400">

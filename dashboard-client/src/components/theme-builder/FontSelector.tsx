@@ -124,7 +124,7 @@ export function FontSelector({
   return (
     <div className="space-y-4">
       {/* Label */}
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
         {label}
       </label>
 
@@ -187,7 +187,7 @@ export function FontSelector({
               className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                 value === font
                   ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  : 'text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
               style={{ fontFamily: font }}
             >
@@ -203,7 +203,7 @@ export function FontSelector({
       {/* Sélecteur weight */}
       {onWeightChange && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Épaisseur (Weight)
           </label>
           <select

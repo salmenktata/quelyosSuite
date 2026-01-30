@@ -171,7 +171,7 @@ export default function TicketDetail() {
                 <TicketStatusBadge state={ticket.state} />
                 <TicketPriorityBadge priority={ticket.priority} />
               </div>
-              <h2 className="text-lg text-gray-700 dark:text-gray-300">{ticket.subject}</h2>
+              <h2 className="text-lg text-gray-900 dark:text-white dark:text-gray-300">{ticket.subject}</h2>
 
               {/* Badges SLA */}
               {(ticket.slaFirstResponseStatus || ticket.slaResolutionStatus) && (
@@ -220,7 +220,7 @@ export default function TicketDetail() {
           {/* Description initiale */}
           <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <div
-              className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300"
+              className="prose dark:prose-invert max-w-none text-gray-900 dark:text-white dark:text-gray-300"
               dangerouslySetInnerHTML={{ __html: ticket.description }}
             />
           </div>
@@ -297,7 +297,7 @@ export default function TicketDetail() {
           {/* Upload pièce jointe */}
           {ticket.state !== 'closed' && (
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
-              <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 w-fit">
+              <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 w-fit">
                 <Upload className="w-4 h-4" />
                 <span className="text-sm font-medium">
                   {uploadMutation.isPending ? 'Upload en cours...' : 'Ajouter une pièce jointe'}
@@ -324,7 +324,7 @@ export default function TicketDetail() {
               {/* Sélection template */}
               {templatesData?.templates && templatesData.templates.length > 0 && (
                 <div className="mb-4">
-                  <label htmlFor="template" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="template" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Utiliser un template
                   </label>
                   <select
@@ -343,7 +343,7 @@ export default function TicketDetail() {
                 </div>
               )}
 
-              <label htmlFor="reply" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="reply" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Votre réponse
               </label>
               <textarea

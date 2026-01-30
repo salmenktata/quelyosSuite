@@ -165,7 +165,7 @@ export default function CouponForm() {
 
             {/* Type de réduction */}
             <div>
-              <label htmlFor="discount_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="discount_type" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Type de réduction *
               </label>
               <select
@@ -204,7 +204,7 @@ export default function CouponForm() {
 
             {/* Date de début */}
             <div>
-              <label htmlFor="date_from" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="date_from" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Date de début
               </label>
               <input
@@ -222,7 +222,7 @@ export default function CouponForm() {
 
             {/* Date de fin */}
             <div>
-              <label htmlFor="date_to" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="date_to" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Date de fin
               </label>
               <input
@@ -243,7 +243,7 @@ export default function CouponForm() {
 
             {/* Limite d'utilisation */}
             <div>
-              <label htmlFor="max_usage" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="max_usage" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Nombre maximum d'utilisations
               </label>
               <input

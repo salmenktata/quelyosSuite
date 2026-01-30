@@ -207,7 +207,7 @@ export default function EmailSettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Serveur SMTP *
                 </label>
                 <input
@@ -220,7 +220,7 @@ export default function EmailSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Port
                 </label>
                 <input
@@ -232,7 +232,7 @@ export default function EmailSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Utilisateur
                 </label>
                 <input
@@ -245,7 +245,7 @@ export default function EmailSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -267,7 +267,7 @@ export default function EmailSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Chiffrement
                 </label>
                 <select
@@ -295,7 +295,7 @@ export default function EmailSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 API Key *
               </label>
               <div className="relative">
@@ -329,7 +329,7 @@ export default function EmailSettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Adresse email *
               </label>
               <input
@@ -342,7 +342,7 @@ export default function EmailSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Nom affiché
               </label>
               <input
@@ -378,7 +378,7 @@ export default function EmailSettingsPage() {
                 onChange={(e) => setFormData((d) => ({ ...d, isActive: e.target.checked }))}
                 className="w-5 h-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
               />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                 Configuration active
               </span>
             </label>
@@ -419,7 +419,7 @@ export default function EmailSettingsPage() {
                         className={`font-medium ${
                           isEnabled
                             ? "text-indigo-700 dark:text-indigo-300"
-                            : "text-gray-700 dark:text-gray-300"
+                            : "text-gray-900 dark:text-white dark:text-gray-300"
                         }`}
                       >
                         {mod.label}
@@ -451,7 +451,7 @@ export default function EmailSettingsPage() {
 
           <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Email de test (optionnel)
               </label>
               <input

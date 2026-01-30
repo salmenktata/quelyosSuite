@@ -315,7 +315,7 @@ function CreateTypeModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nom
             </label>
             <input
@@ -329,7 +329,7 @@ function CreateTypeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Couleur
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -410,7 +410,7 @@ function CreateSkillModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nom
             </label>
             <input
@@ -424,7 +424,7 @@ function CreateSkillModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Type
             </label>
             <select
@@ -440,7 +440,7 @@ function CreateSkillModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Description
             </label>
             <textarea

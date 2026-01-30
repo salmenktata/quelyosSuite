@@ -243,7 +243,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
           {/* Nom */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nom du Provider *
             </label>
             <input
@@ -257,7 +257,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
           {/* Type Provider */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Type de Provider *
             </label>
             <select
@@ -284,7 +284,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
           {/* API Key */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               API Key {!isEdit && '*'}
             </label>
             <input
@@ -305,7 +305,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
           {/* Modèle */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Modèle *
             </label>
             <select
@@ -324,7 +324,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
           <div className="grid grid-cols-2 gap-4">
             {/* Max Tokens */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Max Tokens
               </label>
               <input
@@ -341,7 +341,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
             {/* Température */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Température
               </label>
               <input
@@ -359,7 +359,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
 
             {/* Priorité */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Priorité (1=highest)
               </label>
               <input
@@ -384,7 +384,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
                   }
                   className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                <span className="ml-2 text-sm text-gray-900 dark:text-white dark:text-gray-300">
                   Activer ce provider
                 </span>
               </label>

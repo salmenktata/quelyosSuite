@@ -112,7 +112,7 @@ export default function Tickets() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Recherche
               </label>
               <div className="relative">
@@ -128,7 +128,7 @@ export default function Tickets() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Statut
               </label>
               <select
@@ -146,7 +146,7 @@ export default function Tickets() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Priorité
               </label>
               <select
@@ -163,7 +163,7 @@ export default function Tickets() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Catégorie
               </label>
               <select

@@ -337,7 +337,7 @@ export default function BrandSettingsPage() {
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition ${
                 activeTab === id
                   ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 hover:border-gray-300"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -446,7 +446,7 @@ export default function BrandSettingsPage() {
 
             {COLOR_GROUPS.map((group) => (
               <div key={group.title}>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
                   {group.title}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -482,7 +482,7 @@ export default function BrandSettingsPage() {
 
             {/* Color Preview */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-4">
                 Prévisualisation
               </h3>
               <div
@@ -544,7 +544,7 @@ export default function BrandSettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Logo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Logo
                 </label>
                 <div className="flex items-center gap-4">
@@ -577,7 +577,7 @@ export default function BrandSettingsPage() {
 
               {/* Favicon */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Favicon
                 </label>
                 <div className="flex items-center gap-4">
@@ -611,7 +611,7 @@ export default function BrandSettingsPage() {
 
             {/* Brand name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Nom de la marque
               </label>
               <input
@@ -628,7 +628,7 @@ export default function BrandSettingsPage() {
 
             {/* Slogan */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Slogan
               </label>
               <input
@@ -642,7 +642,7 @@ export default function BrandSettingsPage() {
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Description
               </label>
               <textarea
@@ -669,7 +669,7 @@ export default function BrandSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                 Police principale
               </label>
               <select
@@ -687,7 +687,7 @@ export default function BrandSettingsPage() {
 
             {/* Font Preview */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-4">
                 Aperçu de la police
               </h3>
               <div
@@ -708,7 +708,7 @@ export default function BrandSettingsPage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Corps de texte (16px)</p>
-                  <p className="text-base text-gray-700 dark:text-gray-300">
+                  <p className="text-base text-gray-900 dark:text-white dark:text-gray-300">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                     incididunt ut labore et dolore magna aliqua.
                   </p>

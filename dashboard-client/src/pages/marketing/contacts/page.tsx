@@ -249,7 +249,7 @@ export default function ContactListsPage() {
 
         {/* Segments rapides */}
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
             Segments rapides
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -388,7 +388,7 @@ export default function ContactListsPage() {
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Nom *
                   </label>
                   <input
@@ -401,7 +401,7 @@ export default function ContactListsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Description
                   </label>
                   <textarea
@@ -413,7 +413,7 @@ export default function ContactListsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Type
                   </label>
                   <div className="grid grid-cols-2 gap-3">
@@ -518,7 +518,7 @@ export default function ContactListsPage() {
 
                 {/* Column mapping */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Correspondance des colonnes
                   </h4>
                   <div className="grid grid-cols-3 gap-3">
@@ -566,7 +566,7 @@ export default function ContactListsPage() {
 
                 {/* Preview table */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2 flex items-center gap-2">
                     <Eye className="w-4 h-4" />
                     Aperçu (10 premières lignes)
                   </h4>
@@ -600,7 +600,7 @@ export default function ContactListsPage() {
 
                 {/* Target list */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Liste de destination
                   </h4>
                   <div className="space-y-3">
@@ -612,7 +612,7 @@ export default function ContactListsPage() {
                           onChange={() => dispatch({ type: "SET_IMPORT_LIST_ID", payload: null })}
                           className="text-violet-600"
                         />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Créer une nouvelle liste</span>
+                        <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Créer une nouvelle liste</span>
                       </label>
                       {!state.importListId && (
                         <input
@@ -633,7 +633,7 @@ export default function ContactListsPage() {
                             onChange={() => dispatch({ type: "SET_IMPORT_LIST_ID", payload: lists[0]?.id || null })}
                             className="text-violet-600"
                           />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">Ajouter à une liste existante</span>
+                          <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Ajouter à une liste existante</span>
                         </label>
                         {state.importListId && (
                           <select

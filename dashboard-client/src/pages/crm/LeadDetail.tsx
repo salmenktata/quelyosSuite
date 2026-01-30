@@ -148,7 +148,7 @@ export default function LeadDetail() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 <X className="w-5 h-5" />
                 Annuler
@@ -175,7 +175,7 @@ export default function LeadDetail() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Nom de l'opportunité
                   </label>
                   {isEditing ? (
@@ -191,7 +191,7 @@ export default function LeadDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Revenu attendu
                   </label>
                   {isEditing ? (
@@ -211,7 +211,7 @@ export default function LeadDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Probabilité (%)
                   </label>
                   {isEditing ? (
@@ -231,7 +231,7 @@ export default function LeadDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Date limite
                   </label>
                   {isEditing ? (
@@ -251,7 +251,7 @@ export default function LeadDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Description
                   </label>
                   {isEditing ? (

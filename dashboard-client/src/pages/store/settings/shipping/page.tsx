@@ -345,7 +345,7 @@ export default function ShippingSettingsPage() {
               <div className="space-y-6">
                 {/* Délai standard */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     <Clock className="h-4 w-4" />
                     Délai livraison standard
                   </label>
@@ -363,7 +363,7 @@ export default function ShippingSettingsPage() {
 
                 {/* Délai express */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     <Truck className="h-4 w-4" />
                     Délai livraison express
                   </label>
@@ -381,7 +381,7 @@ export default function ShippingSettingsPage() {
 
                 {/* Seuil livraison gratuite */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     <Gift className="h-4 w-4" />
                     Seuil livraison gratuite
                   </label>
@@ -433,7 +433,7 @@ export default function ShippingSettingsPage() {
       >
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nom *
             </label>
             <input
@@ -447,7 +447,7 @@ export default function ShippingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Prix fixe (TND) *
             </label>
             <input
@@ -462,7 +462,7 @@ export default function ShippingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Gratuit à partir de (TND)
             </label>
             <input
@@ -496,7 +496,7 @@ export default function ShippingSettingsPage() {
       >
         <form onSubmit={handleUpdate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nom *
             </label>
             <input
@@ -509,7 +509,7 @@ export default function ShippingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Prix fixe (TND) *
             </label>
             <input
@@ -524,7 +524,7 @@ export default function ShippingSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Gratuit à partir de (TND)
             </label>
             <input
@@ -546,7 +546,7 @@ export default function ShippingSettingsPage() {
                 onChange={(e) => setForm({ ...form, active: e.target.checked })}
                 className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
               />
-              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</span>
+              <span className="ml-2 text-sm text-gray-900 dark:text-white dark:text-gray-300">Active</span>
             </label>
           </div>
 

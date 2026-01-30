@@ -132,7 +132,7 @@ export default function ContactSettingsPage() {
         <div className="space-y-6">
           {/* Email */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <Mail className="h-4 w-4" />
               Email de contact
             </label>
@@ -157,7 +157,7 @@ export default function ContactSettingsPage() {
 
           {/* Téléphone */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <Phone className="h-4 w-4" />
               Téléphone
             </label>
@@ -182,7 +182,7 @@ export default function ContactSettingsPage() {
 
           {/* WhatsApp */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               <MessageCircle className="h-4 w-4" />
               WhatsApp (optionnel)
             </label>

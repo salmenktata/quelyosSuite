@@ -164,7 +164,7 @@ export default function SMSSettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 API Key *
               </label>
               <div className="relative">
@@ -186,7 +186,7 @@ export default function SMSSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Nom expéditeur (max 11 caractères)
               </label>
               <input
@@ -204,7 +204,7 @@ export default function SMSSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Endpoint API
             </label>
             <input
@@ -238,7 +238,7 @@ export default function SMSSettingsPage() {
                 onChange={(e) => setFormData((d) => ({ ...d, isActive: e.target.checked }))}
                 className="w-5 h-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
               />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                 SMS actif
               </span>
             </label>
@@ -279,7 +279,7 @@ export default function SMSSettingsPage() {
                         className={`font-medium ${
                           isEnabled
                             ? "text-indigo-700 dark:text-indigo-300"
-                            : "text-gray-700 dark:text-gray-300"
+                            : "text-gray-900 dark:text-white dark:text-gray-300"
                         }`}
                       >
                         {mod.label}
@@ -360,7 +360,7 @@ export default function SMSSettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Numéro de téléphone
               </label>
               <input
@@ -373,7 +373,7 @@ export default function SMSSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Message
               </label>
               <input

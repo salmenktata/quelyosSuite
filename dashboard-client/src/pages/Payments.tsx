@@ -182,7 +182,7 @@ export default function Payments() {
             </form>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                 Statut :
               </label>
               <select
@@ -345,7 +345,7 @@ export default function Payments() {
               {/* Pagination */}
               {total > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                  <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                     Affichage {page * limit + 1} a {Math.min((page + 1) * limit, total)} sur {total}
                   </div>
                   <div className="flex gap-2">
@@ -417,7 +417,7 @@ export default function Payments() {
             {selectedTransaction && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Montant à rembourser
                   </label>
                   <div className="flex items-center gap-2">
@@ -441,7 +441,7 @@ export default function Payments() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Raison du remboursement
                   </label>
                   <textarea

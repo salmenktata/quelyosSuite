@@ -345,7 +345,7 @@ export default function FAQPage() {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Nom
                   </label>
                   <input
@@ -356,7 +356,7 @@ export default function FAQPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Code
                   </label>
                   <input
@@ -388,7 +388,7 @@ export default function FAQPage() {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Catégorie
                   </label>
                   <select
@@ -402,7 +402,7 @@ export default function FAQPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Question
                   </label>
                   <input
@@ -413,7 +413,7 @@ export default function FAQPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Réponse
                   </label>
                   <textarea
@@ -431,7 +431,7 @@ export default function FAQPage() {
                       onChange={(e) => setEditingFaq({ ...editingFaq, isPublished: e.target.checked })}
                       className="rounded"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Publié</span>
+                    <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Publié</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -440,7 +440,7 @@ export default function FAQPage() {
                       onChange={(e) => setEditingFaq({ ...editingFaq, isFeatured: e.target.checked })}
                       className="rounded"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Mise en avant</span>
+                    <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Mise en avant</span>
                   </label>
                 </div>
               </div>

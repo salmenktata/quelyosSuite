@@ -187,7 +187,7 @@ export default function SatisfactionPublic() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Ticket</p>
                 <p className="font-semibold text-gray-900 dark:text-white">{ticketInfo.reference}</p>
-                <p className="text-gray-700 dark:text-gray-300 mt-1">{ticketInfo.subject}</p>
+                <p className="text-gray-900 dark:text-white dark:text-gray-300 mt-1">{ticketInfo.subject}</p>
               </div>
 
               <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
@@ -212,7 +212,7 @@ export default function SatisfactionPublic() {
               {comment && (
                 <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Votre commentaire</p>
-                  <p className="text-gray-700 dark:text-gray-300 italic">"{comment}"</p>
+                  <p className="text-gray-900 dark:text-white dark:text-gray-300 italic">"{comment}"</p>
                 </div>
               )}
             </div>
@@ -242,10 +242,10 @@ export default function SatisfactionPublic() {
         {ticketInfo && (
           <div className="bg-teal-50 dark:bg-teal-900/20 border-l-4 border-teal-500 dark:border-teal-400 rounded-lg p-4 mb-8">
             <p className="text-sm font-medium text-teal-800 dark:text-teal-300 mb-2">Récapitulatif</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
               <span className="font-semibold">Ticket :</span> {ticketInfo.reference}
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+            <p className="text-sm text-gray-900 dark:text-white dark:text-gray-300 mt-1">
               <span className="font-semibold">Sujet :</span> {ticketInfo.subject}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -256,7 +256,7 @@ export default function SatisfactionPublic() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
               Note de satisfaction *
             </label>
             <div className="flex items-center gap-3 justify-center">
@@ -287,7 +287,7 @@ export default function SatisfactionPublic() {
           </div>
 
           <div>
-            <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="comment" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Commentaire (optionnel)
             </label>
             <textarea

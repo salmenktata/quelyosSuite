@@ -32,7 +32,7 @@ export function AddAttributeForm({
 
       {/* Sélection attribut */}
       <div className="mb-3">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
           Attribut
         </label>
         <select
@@ -52,7 +52,7 @@ export function AddAttributeForm({
       {/* Sélection valeurs */}
       {selectedAttribute && (
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Valeurs ({selectedValueIds.length} sélectionnée{selectedValueIds.length > 1 ? 's' : ''})
           </label>
           <div className="flex flex-wrap gap-2">
@@ -64,7 +64,7 @@ export function AddAttributeForm({
                 className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition ${
                   selectedValueIds.includes(value.id)
                     ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
                 {value.html_color && (

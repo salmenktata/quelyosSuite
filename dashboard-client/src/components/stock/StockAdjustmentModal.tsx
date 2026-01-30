@@ -248,7 +248,7 @@ export function StockAdjustmentModal({
 
           {/* Quantité actuelle */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Quantité actuelle
             </label>
             <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export function StockAdjustmentModal({
 
           {/* Nouvelle quantité */}
           <div>
-            <label htmlFor="newQuantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="newQuantity" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Nouvelle quantité <span className="text-red-500">*</span>
             </label>
             <Input
@@ -306,7 +306,7 @@ export function StockAdjustmentModal({
 
           {/* Raison */}
           <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="reason" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Raison de l'ajustement <span className="text-red-500">*</span>
             </label>
             <select
@@ -326,7 +326,7 @@ export function StockAdjustmentModal({
 
           {/* Notes */}
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Notes (optionnel)
             </label>
             <textarea

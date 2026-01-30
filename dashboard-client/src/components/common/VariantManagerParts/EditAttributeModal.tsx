@@ -30,7 +30,7 @@ export function EditAttributeModal({
         </h3>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
             Valeurs sélectionnées ({selectedValueIds.length})
           </label>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -45,7 +45,7 @@ export function EditAttributeModal({
                 className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition ${
                   selectedValueIds.includes(value.id)
                     ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                    : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
                 }`}
               >
                 {value.html_color && (

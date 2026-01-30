@@ -181,7 +181,7 @@ export default function Coupons() {
                 }}
                 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
               />
-              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+              <span className="ml-2 text-sm text-gray-900 dark:text-white dark:text-gray-300">
                 Actifs uniquement
               </span>
             </label>
@@ -295,7 +295,7 @@ export default function Coupons() {
               {/* Pagination */}
               {data.data.total > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                  <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                     Affichage {page * limit + 1} a{' '}
                     {Math.min((page + 1) * limit, data.data.total)} sur {data.data.total}
                   </div>
@@ -359,7 +359,7 @@ export default function Coupons() {
         >
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                 Nom *
               </label>
               <input
@@ -379,13 +379,13 @@ export default function Coupons() {
                   onChange={(e) => setEditForm({ ...editForm, active: e.target.checked })}
                   className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Actif</span>
+                <span className="ml-2 text-sm text-gray-900 dark:text-white dark:text-gray-300">Actif</span>
               </label>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Date debut
                 </label>
                 <input
@@ -396,7 +396,7 @@ export default function Coupons() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Date fin
                 </label>
                 <input
@@ -410,7 +410,7 @@ export default function Coupons() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Type de reduction
                 </label>
                 <select
@@ -425,7 +425,7 @@ export default function Coupons() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Valeur
                 </label>
                 <input

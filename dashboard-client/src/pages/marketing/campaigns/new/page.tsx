@@ -178,7 +178,7 @@ export default function NewCampaignPage() {
           {step === 'channel' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Nom de la campagne *
                 </label>
                 <input
@@ -191,7 +191,7 @@ export default function NewCampaignPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
                   Canal de diffusion *
                 </label>
                 <div className="grid grid-cols-2 gap-4">
@@ -262,7 +262,7 @@ export default function NewCampaignPage() {
                 <>
                   {/* Category filter */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                       Catégorie
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -294,7 +294,7 @@ export default function NewCampaignPage() {
 
                   {/* Template grid */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                       Choisir un template
                     </label>
                     <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
@@ -347,7 +347,7 @@ export default function NewCampaignPage() {
 
               {/* Subject field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Objet de l'email *
                 </label>
                 <input
@@ -361,7 +361,7 @@ export default function NewCampaignPage() {
 
               {/* Content field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Contenu de l'email *
                 </label>
                 <textarea
@@ -381,7 +381,7 @@ export default function NewCampaignPage() {
           {step === 'content' && formData.channel === 'sms' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Message SMS *
                 </label>
                 <textarea
@@ -404,7 +404,7 @@ export default function NewCampaignPage() {
           {step === 'recipients' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                   Liste de contacts *
                 </label>
                 {contactLists.length === 0 ? (
@@ -453,7 +453,7 @@ export default function NewCampaignPage() {
           {step === 'schedule' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
                   Quand envoyer cette campagne ?
                 </label>
                 <div className="space-y-3">
@@ -494,7 +494,7 @@ export default function NewCampaignPage() {
 
               {!formData.sendNow && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
                     Date et heure d'envoi
                   </label>
                   <input
@@ -546,7 +546,7 @@ export default function NewCampaignPage() {
 
               {formData.channel === 'email' && formData.content && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Aperçu du contenu</h4>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">Aperçu du contenu</h4>
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div
                       className="text-sm text-gray-600 dark:text-gray-300"
@@ -558,7 +558,7 @@ export default function NewCampaignPage() {
 
               {formData.channel === 'sms' && formData.sms_message && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Aperçu du message</h4>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">Aperçu du message</h4>
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
                     <p className="text-sm text-gray-600 dark:text-gray-300">{formData.sms_message}</p>
                   </div>

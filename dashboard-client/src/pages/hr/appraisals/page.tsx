@@ -340,7 +340,7 @@ function CreateAppraisalModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Employé *
             </label>
             <select
@@ -357,7 +357,7 @@ function CreateAppraisalModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
               Type d'évaluation *
             </label>
             <select
@@ -375,7 +375,7 @@ function CreateAppraisalModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Début période</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Début période</label>
               <input
                 type="date"
                 value={formData.period_start}
@@ -384,7 +384,7 @@ function CreateAppraisalModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fin période</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Fin période</label>
               <input
                 type="date"
                 value={formData.period_end}
@@ -396,7 +396,7 @@ function CreateAppraisalModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date entretien</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Date entretien</label>
               <input
                 type="datetime-local"
                 value={formData.date_scheduled}
@@ -405,7 +405,7 @@ function CreateAppraisalModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Durée (heures)</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Durée (heures)</label>
               <input
                 type="number"
                 min="0.5"
@@ -418,7 +418,7 @@ function CreateAppraisalModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lieu</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Lieu</label>
             <input
               type="text"
               value={formData.location}

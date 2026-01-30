@@ -297,7 +297,7 @@ export default function Pricelists() {
               className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
             />
             <Filter className="w-4 h-4 text-gray-400" />
-            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300 whitespace-nowrap">
               Actives uniquement
             </span>
           </label>

@@ -235,7 +235,7 @@ export default function Testimonials() {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Nom du client
                   </label>
                   <input
@@ -247,7 +247,7 @@ export default function Testimonials() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                       Titre/Fonction
                     </label>
                     <input
@@ -259,7 +259,7 @@ export default function Testimonials() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                       Entreprise
                     </label>
                     <input
@@ -271,7 +271,7 @@ export default function Testimonials() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Témoignage
                   </label>
                   <textarea
@@ -282,7 +282,7 @@ export default function Testimonials() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Note
                   </label>
                   <div className="flex gap-1">
@@ -300,7 +300,7 @@ export default function Testimonials() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Afficher sur
                   </label>
                   <select
@@ -322,7 +322,7 @@ export default function Testimonials() {
                       onChange={(e) => setEditing({ ...editing, isPublished: e.target.checked })}
                       className="rounded"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Publié</span>
+                    <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Publié</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -331,7 +331,7 @@ export default function Testimonials() {
                       onChange={(e) => setEditing({ ...editing, isFeatured: e.target.checked })}
                       className="rounded"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Mise en avant</span>
+                    <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Mise en avant</span>
                   </label>
                 </div>
               </div>

@@ -273,7 +273,7 @@ function ScoreRow({ label, score, large }: { label: string; score: string | null
   const value = score ? parseInt(score) : 0
   return (
     <div className="flex items-center justify-between">
-      <span className={large ? 'font-medium text-gray-700 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'}>{label}</span>
+      <span className={large ? 'font-medium text-gray-900 dark:text-white dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'}>{label}</span>
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map(i => (
           <Star key={i} className={`${large ? 'w-5 h-5' : 'w-4 h-4'} ${i <= value ? 'text-amber-400 fill-amber-400' : 'text-gray-300 dark:text-gray-600'}`} />
@@ -289,7 +289,7 @@ function RecommendationItem({ icon: Icon, label, recommended }: { icon: React.Co
       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${recommended ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
         <Icon className={`w-4 h-4 ${recommended ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400'}`} />
       </div>
-      <span className="text-gray-700 dark:text-gray-300">{label} {recommended ? 'recommandée' : 'non recommandée'}</span>
+      <span className="text-gray-900 dark:text-white dark:text-gray-300">{label} {recommended ? 'recommandée' : 'non recommandée'}</span>
     </div>
   )
 }
@@ -340,7 +340,7 @@ function FeedbackTab({ appraisal, onUpdate, isUpdating }: { appraisal: Appraisal
 function ScoreSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{label}</label>
+      <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">{label}</label>
       <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white">
         <option value="">-</option>
         <option value="1">1 - Insuffisant</option>
@@ -356,7 +356,7 @@ function ScoreSelect({ label, value, onChange }: { label: string; value: string;
 function TextareaCard({ label, value, onChange, placeholder, rows = 5 }: { label: string; value: string; onChange: (v: string) => void; placeholder: string; rows?: number }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{label}</label>
+      <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">{label}</label>
       <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows} className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white" placeholder={placeholder} />
     </div>
   )
@@ -443,11 +443,11 @@ function DevelopmentTab({ appraisal, onUpdate, isUpdating }: { appraisal: Apprai
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={formData.promotion_recommended} onChange={(e) => setFormData({ ...formData, promotion_recommended: e.target.checked })} className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">Promotion recommandée</span>
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">Promotion recommandée</span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={formData.salary_increase_recommended} onChange={(e) => setFormData({ ...formData, salary_increase_recommended: e.target.checked })} className="w-5 h-5 rounded text-cyan-600" />
-            <span className="text-gray-700 dark:text-gray-300">Augmentation salariale recommandée</span>
+            <span className="text-gray-900 dark:text-white dark:text-gray-300">Augmentation salariale recommandée</span>
           </label>
         </div>
       </div>
@@ -506,22 +506,22 @@ function AddGoalModal({ employeeId, appraisalId, onClose }: { employeeId: number
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Titre *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Titre *</label>
             <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Description</label>
             <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={2} className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Échéance *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Échéance *</label>
               <input type="date" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} required className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Type</label>
               <select value={formData.goal_type} onChange={(e) => setFormData({ ...formData, goal_type: e.target.value })} className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white">
                 <option value="performance">Performance</option>
                 <option value="development">Développement</option>

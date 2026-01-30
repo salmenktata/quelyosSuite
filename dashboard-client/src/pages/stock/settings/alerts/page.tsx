@@ -305,7 +305,7 @@ export default function AlertsSettingsPage() {
 
         {config.notify_email && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Destinataires email
             </label>
             <input

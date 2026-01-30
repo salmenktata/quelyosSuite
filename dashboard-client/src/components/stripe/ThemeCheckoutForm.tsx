@@ -139,7 +139,7 @@ export function ThemeCheckoutForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Résumé commande */}
       <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white dark:text-gray-300 mb-2">
           Récapitulatif
         </h3>
         <div className="flex items-center justify-between">
@@ -152,7 +152,7 @@ export function ThemeCheckoutForm({
 
       {/* Formulaire carte */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
           <CreditCard className="inline h-4 w-4 mr-2" />
           Informations carte bancaire
         </label>

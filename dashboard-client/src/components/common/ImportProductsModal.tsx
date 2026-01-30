@@ -330,7 +330,7 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
         {step === 'preview' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-gray-900 dark:text-white dark:text-gray-300">
                 {parsedData.length} produit{parsedData.length > 1 ? 's' : ''} détecté
                 {parsedData.length > 1 ? 's' : ''}
               </p>
@@ -341,7 +341,7 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
                   onChange={(e) => setUpdateExisting(e.target.checked)}
                   className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                   Mettre à jour les produits existants (par SKU/code-barres)
                 </span>
               </label>
@@ -378,13 +378,13 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
                           <tr key={globalIdx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                             <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{globalIdx + 1}</td>
                             <td className="px-3 py-2 text-gray-900 dark:text-white">{row.name}</td>
-                            <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                            <td className="px-3 py-2 text-gray-900 dark:text-white dark:text-gray-300">
                               {row.price ? `${row.price.toFixed(2)} €` : '—'}
                             </td>
-                            <td className="px-3 py-2 font-mono text-gray-700 dark:text-gray-300">
+                            <td className="px-3 py-2 font-mono text-gray-900 dark:text-white dark:text-gray-300">
                               {row.default_code || '—'}
                             </td>
-                            <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                            <td className="px-3 py-2 text-gray-900 dark:text-white dark:text-gray-300">
                               {row.category || '—'}
                             </td>
                           </tr>
@@ -397,7 +397,7 @@ Casquette;29.99;12.00;Casquette ajustable;CAP-001;3760012345680;0.1;Accessoires`
               {/* Pagination de la preview */}
               {parsedData.length > previewPageSize && (
                 <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                     {previewPage * previewPageSize + 1}-{Math.min((previewPage + 1) * previewPageSize, parsedData.length)} sur {parsedData.length}
                   </span>
                   <div className="flex gap-2">

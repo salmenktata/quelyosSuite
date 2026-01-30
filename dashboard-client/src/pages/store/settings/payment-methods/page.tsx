@@ -270,7 +270,7 @@ function ConfigModal({
             <div className="space-y-4">
               {/* App Token */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   App Token *
                 </label>
                 <div className="relative">
@@ -293,7 +293,7 @@ function ConfigModal({
 
               {/* App Secret */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   App Secret *
                 </label>
                 <div className="relative">
@@ -315,7 +315,7 @@ function ConfigModal({
 
               {/* Timeout */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Timeout (minutes)
                 </label>
                 <input
@@ -337,7 +337,7 @@ function ConfigModal({
                   onChange={(e) => handleChange('flouci_accept_cards', e.target.checked)}
                   className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500 dark:focus:ring-indigo-400"
                 />
-                <label htmlFor="accept_cards" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                <label htmlFor="accept_cards" className="ml-2 text-sm text-gray-900 dark:text-white dark:text-gray-300">
                   Accepter les cartes bancaires
                 </label>
               </div>
@@ -349,7 +349,7 @@ function ConfigModal({
             <div className="space-y-4">
               {/* API Key */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   API Key *
                 </label>
                 <div className="relative">
@@ -371,7 +371,7 @@ function ConfigModal({
 
               {/* Wallet ID */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Wallet ID *
                 </label>
                 <input
@@ -385,7 +385,7 @@ function ConfigModal({
 
               {/* Lifespan */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Durée de vie lien (minutes)
                 </label>
                 <input
@@ -400,7 +400,7 @@ function ConfigModal({
 
               {/* Theme */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                   Thème checkout
                 </label>
                 <select

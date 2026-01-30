@@ -99,7 +99,7 @@ export function AIGeneratorModal({ isOpen, onClose, onGenerate }: AIGeneratorMod
         <div className="p-6 space-y-6">
           {/* Prompt Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Décrivez votre thème idéal
             </label>
             <textarea
@@ -117,7 +117,7 @@ export function AIGeneratorModal({ isOpen, onClose, onGenerate }: AIGeneratorMod
 
           {/* Examples */}
           <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <p className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
               Exemples de prompts :
             </p>
             <div className="space-y-2">
@@ -126,7 +126,7 @@ export function AIGeneratorModal({ isOpen, onClose, onGenerate }: AIGeneratorMod
                   key={index}
                   onClick={() => setPrompt(example)}
                   disabled={loading}
-                  className="w-full text-left px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-700 dark:text-gray-300 disabled:opacity-50"
+                  className="w-full text-left px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-900 dark:text-white dark:text-gray-300 disabled:opacity-50"
                 >
                   {example}
                 </button>

@@ -153,7 +153,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                     >
                       Nom de la liste <span className="text-red-500">*</span>
                     </label>
@@ -179,7 +179,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                   <div>
                     <label
                       htmlFor="currency_id"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                     >
                       Devise <span className="text-red-500">*</span>
                     </label>
@@ -211,7 +211,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                   <div>
                     <label
                       htmlFor="discount_policy"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                     >
                       Politique de remise
                     </label>
@@ -238,7 +238,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                     />
                     <label
                       htmlFor="active"
-                      className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+                      className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 cursor-pointer"
                     >
                       Liste de prix active
                     </label>
@@ -249,7 +249,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      className="px-4 py-2 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       Annuler
                     </button>

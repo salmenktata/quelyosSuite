@@ -436,7 +436,7 @@ export default function PortfoliosPage() {
                         key={account.id}
                         className="flex items-center justify-between rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2 text-xs"
                       >
-                        <span className="text-gray-700 dark:text-gray-300">{account.name}</span>
+                        <span className="text-gray-900 dark:text-white dark:text-gray-300">{account.name}</span>
                         <span className="font-medium text-emerald-200">
                           {account.balance.toFixed(2)} {globalCurrency}
                         </span>

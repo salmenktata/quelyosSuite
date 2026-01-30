@@ -186,7 +186,7 @@ export default function MarketingEmailSettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Serveur SMTP *</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Serveur SMTP *</label>
               <input
                 type="text"
                 value={formData.smtpHost}
@@ -196,7 +196,7 @@ export default function MarketingEmailSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Port</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Port</label>
               <input
                 type="number"
                 value={formData.smtpPort}
@@ -205,7 +205,7 @@ export default function MarketingEmailSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Utilisateur</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Utilisateur</label>
               <input
                 type="text"
                 value={formData.smtpUser}
@@ -215,7 +215,7 @@ export default function MarketingEmailSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mot de passe</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Mot de passe</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -234,7 +234,7 @@ export default function MarketingEmailSettingsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chiffrement</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Chiffrement</label>
               <select
                 value={formData.smtpEncryption}
                 onChange={(e) => setFormData((d) => ({ ...d, smtpEncryption: e.target.value as SmtpEncryption }))}
@@ -257,7 +257,7 @@ export default function MarketingEmailSettingsPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configuration API</h2>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">API Key *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">API Key *</label>
             <div className="relative">
               <input
                 type={showApiKey ? "text" : "password"}
@@ -286,7 +286,7 @@ export default function MarketingEmailSettingsPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Adresse email *</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Adresse email *</label>
             <input
               type="email"
               value={formData.emailFrom}
@@ -296,7 +296,7 @@ export default function MarketingEmailSettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom affiché</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">Nom affiché</label>
             <input
               type="text"
               value={formData.emailFromName}

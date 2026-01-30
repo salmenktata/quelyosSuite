@@ -230,7 +230,7 @@ export default function Bundles() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                       Nom
                     </label>
                     <input
@@ -241,7 +241,7 @@ export default function Bundles() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                       Slug
                     </label>
                     <input
@@ -253,7 +253,7 @@ export default function Bundles() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Description
                   </label>
                   <textarea
@@ -264,7 +264,7 @@ export default function Bundles() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Prix du pack (TND)
                   </label>
                   <input
@@ -282,7 +282,7 @@ export default function Bundles() {
                     onChange={(e) => setEditing({ ...editing, isPublished: e.target.checked })}
                     className="rounded"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Publié</span>
+                  <span className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Publié</span>
                 </label>
               </div>
               <div className="flex justify-end gap-2 mt-6">

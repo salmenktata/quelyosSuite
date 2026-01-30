@@ -114,14 +114,14 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
 
                   {/* Filtres dates */}
                   <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-4">
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300">
                       Filtres (optionnels)
                     </h3>
 
                     <div>
                       <label
                         htmlFor="date_from"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                       >
                         Date création depuis
                       </label>
@@ -139,7 +139,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
                     <div>
                       <label
                         htmlFor="date_to"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1"
                       >
                         Date création jusqu'à
                       </label>
@@ -167,7 +167,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      className="px-4 py-2 text-gray-900 dark:text-white dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       Annuler
                     </button>
