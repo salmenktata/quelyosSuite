@@ -82,26 +82,22 @@ export default function PortfoliosPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      if (editingId) {
-        await api(`/portfolios/${editingId}`, {
-          method: "PATCH",
-          body: formData as UpdatePortfolioRequest,
-        });
-      } else {
-        await api("/portfolios", {
-          method: "POST",
-          body: formData as CreatePortfolioRequest,
-        });
-      }
-
-      setFormData({ name: "", description: "", status: "ACTIVE" });
-      setShowForm(false);
-      setEditingId(null);
-      await refetchPortfolios();
-    } catch (err) {
-      throw err; // Error will be handled by useApiData
+    if (editingId) {
+      await api(`/portfolios/${editingId}`, {
+        method: "PATCH",
+        body: formData as UpdatePortfolioRequest,
+      });
+    } else {
+      await api("/portfolios", {
+        method: "POST",
+        body: formData as CreatePortfolioRequest,
+      });
     }
+
+    setFormData({ name: "", description: "", status: "ACTIVE" });
+    setShowForm(false);
+    setEditingId(null);
+    await refetchPortfolios();
   };
 
   const handleEdit = (portfolio: Portfolio) => {

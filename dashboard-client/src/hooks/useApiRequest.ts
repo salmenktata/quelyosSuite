@@ -251,35 +251,18 @@ export function useApiGet<T = unknown>(
  * Hook simplifié pour POST requests
  *
  * @example
- * const { execute: createProduct, loading } = useApiPost<Product>('/api/products')
- * await createProduct({ name: 'Product 1' })
+ * const { execute: createProduct, loading } = useApiPost<Product>('/api/products', { body: { name: 'Product 1' } })
+ * await createProduct()
  */
 export function useApiPost<T = unknown>(
   url: string,
   options?: Omit<UseApiRequestOptions<T>, 'url' | 'method'>
 ) {
-  const { execute, ...rest } = useApiRequest<T>({
+  return useApiRequest<T>({
     url,
     method: 'POST',
     ...options,
   })
-
-  const executeWithBody = useCallback(
-    (body: unknown) => {
-      return useApiRequest<T>({
-        url,
-        method: 'POST',
-        body,
-        ...options,
-      }).execute()
-    },
-    [url, options]
-  )
-
-  return {
-    execute: executeWithBody,
-    ...rest,
-  }
 }
 
 /**

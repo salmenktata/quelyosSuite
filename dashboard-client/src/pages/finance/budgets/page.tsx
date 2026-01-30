@@ -124,26 +124,22 @@ export default function BudgetsPage() {
     startDate: string
     endDate: string
   }) => {
-    try {
-      const payload = {
-        name: formData.name,
-        amount: parseFloat(formData.amount),
-        categoryId: formData.categoryId || null,
-        period: formData.period,
-        startDate: formData.startDate,
-        endDate: formData.period === 'CUSTOM' && formData.endDate ? formData.endDate : null
-      }
-
-      await api('/budgets', {
-        method: 'POST',
-        body: payload as CreateBudgetRequest
-      })
-
-      await refetchBudgets()
-      setShowCreateForm(false)
-    } catch (err) {
-      throw err
+    const payload = {
+      name: formData.name,
+      amount: parseFloat(formData.amount),
+      categoryId: formData.categoryId || null,
+      period: formData.period,
+      startDate: formData.startDate,
+      endDate: formData.period === 'CUSTOM' && formData.endDate ? formData.endDate : null
     }
+
+    await api('/budgets', {
+      method: 'POST',
+      body: payload as CreateBudgetRequest
+    })
+
+    await refetchBudgets()
+    setShowCreateForm(false)
   }, [refetchBudgets])
 
   const filteredBudgets = useMemo(() => {
@@ -283,26 +279,22 @@ export default function BudgetsPage() {
   }) => {
     if (!editingBudget) return
 
-    try {
-      const payload = {
-        name: formData.name,
-        amount: parseFloat(formData.amount),
-        categoryId: formData.categoryId || null,
-        period: formData.period,
-        startDate: formData.startDate,
-        endDate: formData.period === 'CUSTOM' && formData.endDate ? formData.endDate : null
-      }
-
-      await api(`/budgets/${editingBudget.id}`, {
-        method: 'PUT',
-        body: payload as UpdateBudgetRequest
-      })
-
-      await refetchBudgets()
-      setEditingBudget(null)
-    } catch (err) {
-      throw err
+    const payload = {
+      name: formData.name,
+      amount: parseFloat(formData.amount),
+      categoryId: formData.categoryId || null,
+      period: formData.period,
+      startDate: formData.startDate,
+      endDate: formData.period === 'CUSTOM' && formData.endDate ? formData.endDate : null
     }
+
+    await api(`/budgets/${editingBudget.id}`, {
+      method: 'PUT',
+      body: payload as UpdateBudgetRequest
+    })
+
+    await refetchBudgets()
+    setEditingBudget(null)
   }, [editingBudget, refetchBudgets])
 
   return (
