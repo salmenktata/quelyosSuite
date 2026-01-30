@@ -3491,6 +3491,13 @@ class SuperAdminController(http.Controller):
             if params.get('category'):
                 domain.append(('category', '=', params['category']))
 
+            if params.get('assigned_to'):
+                assigned_value = params['assigned_to']
+                if assigned_value == 'unassigned':
+                    domain.append(('assigned_to', '=', False))
+                else:
+                    domain.append(('assigned_to', '=', int(assigned_value)))
+
             if params.get('search'):
                 search = params['search']
                 domain.append('|')

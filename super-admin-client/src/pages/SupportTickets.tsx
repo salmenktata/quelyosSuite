@@ -26,9 +26,17 @@ import {
   UserPlus,
   Loader2,
   Eye,
+  Save,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { useToast } from '@/hooks/useToast'
+
+interface AdminUser {
+  id: number
+  name: string
+  login: string
+  email: string
+}
 
 interface Ticket {
   id: number
@@ -69,11 +77,13 @@ export function SupportTickets() {
   const [page, setPage] = useState(1)
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
   const [replyContent, setReplyContent] = useState('')
-  const [internalNote, setInternalNote] = useState('')
+  const [internalNotes, setInternalNotes] = useState('')
+  const [showAssignModal, setShowAssignModal] = useState(false)
+  const [assignedFilter, setAssignedFilter] = useState<string>('all')
 
   // Requête liste tickets
   const { data, isLoading } = useQuery({
-    queryKey: ['super-admin-tickets', search, tenantFilter, stateFilter, priorityFilter, categoryFilter, page],
+    queryKey: ['super-admin-tickets', search, tenantFilter, stateFilter, priorityFilter, categoryFilter, assignedFilter, page],
     queryFn: async () => {
       const response = await api.request<{ success: boolean; tickets: Ticket[]; total: number }>({
         method: 'GET',
@@ -84,6 +94,7 @@ export function SupportTickets() {
           state: stateFilter !== 'all' ? stateFilter : undefined,
           priority: priorityFilter !== 'all' ? priorityFilter : undefined,
           category: categoryFilter !== 'all' ? categoryFilter : undefined,
+          assigned_to: assignedFilter !== 'all' ? assignedFilter : undefined,
           page,
           limit: 50,
         },
@@ -145,6 +156,56 @@ export function SupportTickets() {
     },
   })
 
+  // Query liste admins
+  const { data: adminsData } = useQuery({
+    queryKey: ['super-admin-users'],
+    queryFn: async () => {
+      const response = await api.request<{ success: boolean; users: AdminUser[] }>({
+        method: 'GET',
+        path: '/api/super-admin/users',
+      })
+      return response.data
+    },
+  })
+
+  // Mutation assigner
+  const assignMutation = useMutation({
+    mutationFn: async ({ ticketId, userId }: { ticketId: number; userId: number | null }) => {
+      return api.request({
+        method: 'POST',
+        path: `/api/super-admin/tickets/${ticketId}/assign`,
+        body: { userId },
+      })
+    },
+    onSuccess: () => {
+      toast.success('Ticket assigné avec succès')
+      setShowAssignModal(false)
+      queryClient.invalidateQueries({ queryKey: ['super-admin-ticket', selectedTicket?.id] })
+      queryClient.invalidateQueries({ queryKey: ['super-admin-tickets'] })
+    },
+    onError: () => {
+      toast.error('Erreur lors de l\'assignation')
+    },
+  })
+
+  // Mutation sauvegarder notes internes
+  const saveNotesMutation = useMutation({
+    mutationFn: async ({ ticketId, notes }: { ticketId: number; notes: string }) => {
+      return api.request({
+        method: 'PUT',
+        path: `/api/super-admin/tickets/${ticketId}/notes`,
+        body: { notes },
+      })
+    },
+    onSuccess: () => {
+      toast.success('Notes sauvegardées')
+      queryClient.invalidateQueries({ queryKey: ['super-admin-ticket', selectedTicket?.id] })
+    },
+    onError: () => {
+      toast.error('Erreur lors de la sauvegarde des notes')
+    },
+  })
+
   // Statistiques calculées
   const stats = useMemo(() => {
     if (!data?.tickets) return { new: 0, open: 0, pending: 0, urgent: 0 }
@@ -173,6 +234,22 @@ export function SupportTickets() {
     await changeStatusMutation.mutateAsync({ ticketId: selectedTicket.id, status })
   }
 
+  const handleAssign = async (userId: number | null) => {
+    if (!selectedTicket) return
+    await assignMutation.mutateAsync({ ticketId: selectedTicket.id, userId })
+  }
+
+  const handleSaveNotes = async () => {
+    if (!selectedTicket) return
+    await saveNotesMutation.mutateAsync({ ticketId: selectedTicket.id, notes: internalNotes })
+  }
+
+  // Initialiser notes quand on ouvre un ticket
+  const handleSelectTicket = (ticket: Ticket) => {
+    setSelectedTicket(ticket)
+    setInternalNotes(ticket.internalNotes || '')
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -193,7 +270,7 @@ export function SupportTickets() {
 
       {/* Filtres */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {/* Recherche */}
           <div className="lg:col-span-2">
             <div className="relative">
@@ -248,6 +325,21 @@ export function SupportTickets() {
             <option value="feature_request">Fonctionnalité</option>
             <option value="question">Question</option>
             <option value="other">Autre</option>
+          </select>
+
+          {/* Filtre Assigné à */}
+          <select
+            value={assignedFilter}
+            onChange={(e) => setAssignedFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="all">Tous</option>
+            <option value="unassigned">Non assignés</option>
+            {adminsData?.users.map((admin) => (
+              <option key={admin.id} value={admin.id.toString()}>
+                {admin.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -317,7 +409,7 @@ export function SupportTickets() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <button
-                        onClick={() => setSelectedTicket(ticket)}
+                        onClick={() => handleSelectTicket(ticket)}
                         className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
                       >
                         <Eye className="w-4 h-4" />
@@ -421,9 +513,34 @@ export function SupportTickets() {
                 </div>
               )}
 
+              {/* Notes internes (Super Admin uniquement) */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <label htmlFor="internal-notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Notes internes (visibles uniquement par les admins)
+                </label>
+                <textarea
+                  id="internal-notes"
+                  value={internalNotes}
+                  onChange={(e) => setInternalNotes(e.target.value)}
+                  placeholder="Notes privées, contexte, actions à mener..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+                />
+                <div className="flex justify-end mt-2">
+                  <button
+                    onClick={handleSaveNotes}
+                    disabled={saveNotesMutation.isPending}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    {saveNotesMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder notes'}
+                  </button>
+                </div>
+              </div>
+
               {/* Formulaire réponse */}
               {selectedTicket.state !== 'closed' && (
-                <div>
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <label htmlFor="reply" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Votre réponse
                   </label>
@@ -442,6 +559,13 @@ export function SupportTickets() {
             {/* Actions modal */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div className="flex gap-2">
+                <button
+                  onClick={() => setShowAssignModal(true)}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Assigner
+                </button>
                 {selectedTicket.state !== 'closed' && (
                   <button
                     onClick={() => handleChangeStatus('resolved')}
@@ -470,6 +594,59 @@ export function SupportTickets() {
                   {replyMutation.isPending ? 'Envoi...' : 'Envoyer'}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal assignation */}
+      {showAssignModal && selectedTicket && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Assigner le ticket</h2>
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Ticket : <span className="font-medium">{selectedTicket.reference}</span>
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Assigner à
+                </label>
+                <select
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  onChange={(e) => {
+                    const userId = e.target.value ? parseInt(e.target.value) : null
+                    handleAssign(userId)
+                  }}
+                  defaultValue={selectedTicket.assignedTo || ''}
+                >
+                  <option value="">Non assigné</option>
+                  {adminsData?.users.map((admin) => (
+                    <option key={admin.id} value={admin.id}>
+                      {admin.name} ({admin.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
+              >
+                Fermer
+              </button>
             </div>
           </div>
         </div>
