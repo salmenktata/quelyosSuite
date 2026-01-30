@@ -28,57 +28,58 @@ class SitemapService(models.AbstractModel):
     @api.model
     def get_sitemap_cached(self):
         """
-        Récupère sitemap depuis cache ou régénère.
-        Cache Redis avec TTL 5 minutes.
+        Récupère sitemap en scannant les fichiers.
+        TODO: Ajouter cache Redis pour optimisation.
         """
-        # Essayer cache Redis
-        cache = self.env['quelyos.cache'].sudo()
-        cached_data = cache.get(self.CACHE_KEY)
-
-        if cached_data:
-            _logger.info('[Sitemap] Serving from cache')
-            return json.loads(cached_data)
-
-        # Régénérer sitemap
-        _logger.info('[Sitemap] Cache miss, generating...')
+        _logger.info('[Sitemap] Generating sitemap...')
         sitemap_data = self._generate_sitemap()
-
-        # Mettre en cache
-        cache.set(self.CACHE_KEY, json.dumps(sitemap_data), ttl=self.CACHE_TTL)
-
         return sitemap_data
 
     def _generate_sitemap(self):
         """
-        Génère sitemap en scannant les 4 apps.
-        Utilise script TypeScript generate-sitemap.ts via subprocess.
+        Génère sitemap basique.
+        TODO: Scanner les fichiers ou lire depuis fichier généré.
         """
         try:
-            # Exécuter script TypeScript
-            root_dir = '/Users/salmenktata/Projets/GitHub/QuelyosSuite'
-            result = subprocess.run(
-                ['pnpm', 'tsx', 'scripts/generate-sitemap.ts', '--json'],
-                cwd=root_dir,
-                capture_output=True,
-                text=True,
-                timeout=30
-            )
+            # Pour l'instant, retourner structure basique
+            # Le frontend peut utiliser son propre sitemap.ts
+            sitemap = {
+                'apps': [
+                    {
+                        'id': 'vitrine-quelyos',
+                        'name': 'Site Vitrine',
+                        'baseUrl': 'http://localhost:3000',
+                        'routes': []
+                    },
+                    {
+                        'id': 'dashboard-client',
+                        'name': 'Dashboard Client',
+                        'baseUrl': 'http://localhost:5175',
+                        'routes': []
+                    },
+                    {
+                        'id': 'super-admin-client',
+                        'name': 'Panel Super Admin',
+                        'baseUrl': 'http://localhost:5176',
+                        'routes': []
+                    },
+                    {
+                        'id': 'vitrine-client',
+                        'name': 'Boutique E-commerce',
+                        'baseUrl': 'http://localhost:3001',
+                        'routes': []
+                    }
+                ],
+                'totalRoutes': 0,
+                'lastGenerated': datetime.now().isoformat(),
+                'version': '3.0.0'
+            }
 
-            if result.returncode == 0:
-                # Parse output JSON
-                sitemap = json.loads(result.stdout)
+            # Enrichir avec healthcheck récent si disponible
+            sitemap = self._enrich_with_health(sitemap)
 
-                # Enrichir avec healthcheck récent si disponible
-                sitemap = self._enrich_with_health(sitemap)
+            return sitemap
 
-                return sitemap
-            else:
-                _logger.error(f'[Sitemap] Script error: {result.stderr}')
-                return self._get_fallback_sitemap()
-
-        except subprocess.TimeoutExpired:
-            _logger.error('[Sitemap] Script timeout')
-            return self._get_fallback_sitemap()
         except Exception as e:
             _logger.error(f'[Sitemap] Error generating: {str(e)}', exc_info=True)
             return self._get_fallback_sitemap()
@@ -135,13 +136,13 @@ class SitemapService(models.AbstractModel):
     def trigger_healthcheck(self, app_id=None):
         """
         Lance healthcheck sur une ou toutes les apps.
-        Exécute en async via job queue pour ne pas bloquer.
+        Exécution synchrone simplifiée (MVP).
 
         Args:
             app_id (str): ID app à checker, ou None pour toutes
 
         Returns:
-            dict: Info sur le healthcheck démarré
+            dict: Info sur le healthcheck effectué
         """
         # Récupérer sitemap
         sitemap = self.get_sitemap_cached()
@@ -153,21 +154,18 @@ class SitemapService(models.AbstractModel):
         if not apps_to_check:
             raise ValueError(f'App not found: {app_id}')
 
-        # Créer job async pour healthcheck
-        job_uuid = self.env['quelyos.job.queue'].sudo().enqueue(
-            'quelyos.sitemap.service',
-            '_run_healthcheck_job',
-            args=[apps_to_check],
-            description=f'Healthcheck sitemap: {app_id or "all apps"}'
-        )
+        # Exécuter healthcheck directement (synchrone)
+        started_at = datetime.now()
+        self._run_healthcheck_job(apps_to_check)
+        duration = (datetime.now() - started_at).total_seconds()
 
         total_routes = sum(len(app.get('routes', [])) for app in apps_to_check)
 
         return {
-            'job_id': job_uuid,
             'apps_checked': len(apps_to_check),
             'total_routes': total_routes,
-            'started_at': datetime.now().isoformat()
+            'started_at': started_at.isoformat(),
+            'duration_seconds': duration
         }
 
     def _run_healthcheck_job(self, apps):
@@ -252,7 +250,3 @@ class SitemapService(models.AbstractModel):
                 f'[Sitemap] {app["name"]} healthcheck done: '
                 f'{ok_count}/{len(routes)} OK ({duration_ms}ms)'
             )
-
-        # Invalider cache pour forcer refresh
-        cache = self.env['quelyos.cache'].sudo()
-        cache.delete(self.CACHE_KEY)
