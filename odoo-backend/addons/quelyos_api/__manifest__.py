@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.3.1',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
     'website': 'https://quelyos.com',
     'license': 'LGPL-3',
+    'external_dependencies': {
+        'python': ['qrcode', 'Pillow'],
+    },
     'depends': [
         'base',
         'mail',
