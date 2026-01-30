@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Vérification anonymisation Odoo (P0 et P1 uniquement)
 echo "🔍 Vérification anonymisation /no-odoo..."
 
