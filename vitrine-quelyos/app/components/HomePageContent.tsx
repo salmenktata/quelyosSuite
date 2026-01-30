@@ -180,7 +180,7 @@ export default function HomePageContent() {
               </div>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/finance/register"
+                  href="/register"
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
                 >
                   Essai gratuit 30 jours
@@ -401,7 +401,7 @@ export default function HomePageContent() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/finance/register"
+                  href="/register"
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-medium text-white transition-all hover:from-indigo-600 hover:to-purple-700"
                 >
                   Essai gratuit 30 jours

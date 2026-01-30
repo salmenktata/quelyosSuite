@@ -70,7 +70,7 @@ const suitePlans = [
     highlight: true,
     badge: "Meilleure offre",
     cta: "Essai gratuit 30 jours",
-    href: "/finance/register?plan=business",
+    href: "/register?plan=business",
     icon: Rocket,
     color: "indigo" as const,
     features: [
@@ -95,7 +95,7 @@ const suitePlans = [
     annualPrice: "14",
     highlight: false,
     cta: "Essai gratuit 30 jours",
-    href: "/finance/register?plan=starter",
+    href: "/register?plan=starter",
     icon: Layers,
     color: "emerald" as const,
     features: [
@@ -436,7 +436,7 @@ function ROICalculator() {
           </div>
 
           <Link
-            href="/finance/register?plan=business"
+            href="/register?plan=business"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-400"
           >
             Essayer Business gratuitement
@@ -1107,7 +1107,7 @@ export default function TarifsPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/finance/register?plan=business"
+                href="/register?plan=business"
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-lg font-bold text-white transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/25"
               >
                 Essayer Business à 49€/mois

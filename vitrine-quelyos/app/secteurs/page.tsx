@@ -237,7 +237,7 @@ export default function SecteursPage() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/marketing/register"
+                  href="/register"
                   className="flex items-center gap-2 rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/10 px-6 py-3 font-medium text-fuchsia-400 transition-all hover:bg-fuchsia-500/20"
                 >
                   <Sparkles className="h-4 w-4" />

@@ -196,9 +196,7 @@ function detectIntent(message: string, history?: ChatMessage[]): ChatResponse {
 
   // Trouver la catégorie avec le meilleur score
   const bestCategory = Object.entries(scores)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_category, score]) => score > 0)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .sort(([_keyA, a], [_keyB, b]) => b - a)[0];
 
   if (bestCategory) {

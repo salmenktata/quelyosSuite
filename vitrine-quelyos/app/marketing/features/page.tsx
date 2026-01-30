@@ -297,7 +297,7 @@ export default function FeaturesPage() {
             Testez toutes les fonctionnalités gratuitement pendant 30 jours.
           </p>
           <Link
-            href="/marketing/register"
+            href="/register"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors"
           >
             <span>Essai gratuit 30 jours</span>

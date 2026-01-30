@@ -155,7 +155,7 @@ export default function AboutPage() {
           
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link 
-              href="/finance/register"
+              href="/register"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all group"
             >
               <span>Rejoindre l&apos;aventure</span>
@@ -443,7 +443,7 @@ export default function AboutPage() {
                 leur trésorerie et gagner en sérénité.
               </p>
               <Link 
-                href="/finance/register"
+                href="/register"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all group w-full justify-center"
               >
                 <span>Commencer gratuitement</span>

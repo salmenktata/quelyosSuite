@@ -534,7 +534,7 @@ function LoginForm() {
           <div className="mt-8 space-y-4 text-center">
             <p className="text-sm text-slate-400">Pas encore de compte ?</p>
             <Link
-              href="/finance/register"
+              href="/register"
               className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/30 font-medium text-white transition-all hover:border-slate-600/50 hover:bg-slate-800/50"
             >
               <span>Créer un compte gratuit</span>

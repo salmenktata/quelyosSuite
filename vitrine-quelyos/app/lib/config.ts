@@ -30,8 +30,8 @@ export const config = {
   // URLs Finance
   finance: {
     app: FINANCE_BASE,
-    login: "/auth/login",
-    register: "/auth/register",
+    login: join(FINANCE_BASE, "/login"),
+    register: join(FINANCE_BASE, "/register"),
     dashboard: join(FINANCE_BASE, "/dashboard"),
     accounts: join(FINANCE_BASE, "/dashboard/accounts"),
     forecast: join(FINANCE_BASE, "/dashboard/forecast"),
@@ -42,8 +42,8 @@ export const config = {
   // URLs Marketing
   marketing: {
     app: MARKETING_BASE,
-    login: "/marketing/login",
-    register: "/marketing/register",
+    login: join(MARKETING_BASE, "/login"),
+    register: join(MARKETING_BASE, "/register"),
     dashboard: join(MARKETING_BASE, "/dashboard"),
   },
   // URLs Super Admin

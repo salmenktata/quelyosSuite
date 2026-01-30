@@ -38,7 +38,7 @@ const plans = [
     period: "Pour toujours",
     highlight: false,
     cta: "Commencer gratuitement",
-    ctaHref: "/finance/register",
+    ctaHref: "/register",
     icon: PiggyBank,
     color: "emerald",
     features: [
@@ -60,7 +60,7 @@ const plans = [
     highlight: true,
     badge: "Le + populaire",
     cta: "Essai gratuit 14 jours",
-    ctaHref: "/finance/register?plan=pro",
+    ctaHref: "/register?plan=pro",
     icon: Target,
     color: "indigo",
     features: [
@@ -83,7 +83,7 @@ const plans = [
     highlight: false,
     badge: "Multi-users",
     cta: "Essai gratuit 14 jours",
-    ctaHref: "/finance/register?plan=expert",
+    ctaHref: "/register?plan=expert",
     icon: BarChart3,
     color: "violet",
     features: [
@@ -382,7 +382,7 @@ function ROICalculator() {
           </div>
 
           <Link
-            href="/finance/register?plan=pro"
+            href="/register?plan=pro"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-400"
           >
             Essayer Pro gratuitement
@@ -792,7 +792,7 @@ export default function PricingPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/finance/register?plan=pro"
+                href="/register?plan=pro"
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-sm font-semibold text-slate-900 shadow-lg shadow-white/10 transition-all hover:-translate-y-0.5 hover:shadow-xl"
               >
                 <Sparkles size={16} />

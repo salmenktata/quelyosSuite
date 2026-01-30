@@ -124,7 +124,7 @@ export async function trackEvent(event: AnalyticsEvent): Promise<void> {
  * logger.info(stats.topIntents);    // ['pricing', 'modules', 'signup']
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export async function getConversationStats(_startDate?: string, _endDate?: string) {
   // TODO: Implémenter les statistiques
   // Exemple avec Prisma:

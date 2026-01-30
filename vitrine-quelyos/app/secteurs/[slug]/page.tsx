@@ -400,7 +400,7 @@ export default function SecteurPage() {
                   <p className="mb-8 max-w-2xl text-lg text-slate-400">{secteur.longDescription}</p>
                   <div className="flex flex-col gap-4 sm:flex-row">
                     <Link
-                      href="/marketing/register"
+                      href="/register"
                       className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-medium text-white transition-all hover:from-indigo-600 hover:to-purple-700"
                     >
                       <Sparkles className="h-4 w-4" />
@@ -521,7 +521,7 @@ export default function SecteurPage() {
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/marketing/register"
+                  href="/register"
                   className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-medium text-white transition-all hover:from-indigo-600 hover:to-purple-700"
                 >
                   <Sparkles className="h-4 w-4" />

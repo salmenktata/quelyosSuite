@@ -80,7 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Auth Pages (Global)
     { path: "/auth/login", changeFrequency: "monthly", priority: 0.4 },
-    { path: "/auth/register", changeFrequency: "monthly", priority: 0.4 },
+    { path: "/register", changeFrequency: "monthly", priority: 0.4 },
     { path: "/auth/forgot-password", changeFrequency: "monthly", priority: 0.3 },
 
     // Marketing App - Main Pages
