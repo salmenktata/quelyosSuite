@@ -1,5 +1,29 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Vérification anonymisation Odoo (P0 et P1 uniquement)
+echo "🔍 Vérification anonymisation /no-odoo..."
+
+# P0 - UI visible (critique)
+P0_COUNT=$(grep -rE "Odoo|odoo" vitrine-client/src dashboard-client/src vitrine-quelyos/app --include="*.tsx" --include="*.ts" 2>/dev/null | \
+  grep -vE "legal/|api-anonymizer|\.test\.|lib/backend/|node_modules" | \
+  grep -vE "^[^:]*:\s*(//|/\*|\*)" | \
+  wc -l | tr -d ' ')
+
+# P1 - Variables .env et métadonnées
+P1_ENV_COUNT=$(grep -rE "ODOO_|NEXT_PUBLIC_ODOO|VITE_ODOO" vitrine-client/.env.example dashboard-client/.env.example vitrine-quelyos/.env.example 2>/dev/null | wc -l | tr -d ' ')
+
+if [ "$P0_COUNT" -gt 0 ] || [ "$P1_ENV_COUNT" -gt 0 ]; then
+  echo "❌ Violations anonymisation détectées :"
+  echo "   P0 (UI visible) : $P0_COUNT"
+  echo "   P1 (variables .env) : $P1_ENV_COUNT"
+  echo ""
+  echo "   Exécutez '/no-odoo' pour voir les détails"
+  echo "   Corrigez les violations avant de commiter"
+  exit 1
+fi
+
+echo "✅ Anonymisation conforme (P0=0, P1=0)"
+
 # Run lint-staged
 pnpm exec lint-staged
