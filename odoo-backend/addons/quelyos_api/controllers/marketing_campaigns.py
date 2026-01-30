@@ -854,3 +854,197 @@ class MarketingCampaignController(BaseController):
             }
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
+
+    # =========================================================================
+    # A/B TESTING (Campaign Variants)
+    # =========================================================================
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/variants', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_campaign_variants(self, campaign_id, **kwargs):
+        """Liste des variantes d'une campagne"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            return {
+                'success': True,
+                'campaign_id': campaign_id,
+                'ab_testing_enabled': campaign.ab_testing_enabled,
+                'variants': [v.to_dict() for v in campaign.variant_ids],
+                'variant_count': len(campaign.variant_ids),
+                'winner': campaign.winner_variant_id.to_dict() if campaign.winner_variant_id else None,
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/<int:campaign_id>/variants/create', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def create_campaign_variant(self, campaign_id, **kwargs):
+        """Créer une nouvelle variante pour campagne"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            required_fields = ['variant_letter', 'subject', 'body']
+            for field in required_fields:
+                if not kwargs.get(field):
+                    return {'success': False, 'error': f'Champ requis: {field}'}
+
+            Campaign = request.env['quelyos.marketing.campaign'].sudo()
+            campaign = Campaign.browse(campaign_id)
+
+            if not campaign.exists():
+                return {
+                    'success': False,
+                    'error': f'Campagne {campaign_id} introuvable'
+                }
+
+            # Activer A/B testing si pas déjà fait
+            if not campaign.ab_testing_enabled:
+                campaign.write({'ab_testing_enabled': True})
+
+            Variant = request.env['quelyos.marketing.campaign.variant'].sudo()
+
+            vals = {
+                'campaign_id': campaign_id,
+                'variant_letter': kwargs['variant_letter'],
+                'subject': kwargs['subject'],
+                'body': kwargs['body'],
+            }
+
+            variant = Variant.create(vals)
+
+            return {
+                'success': True,
+                'message': f'Variante {kwargs["variant_letter"]} créée avec succès',
+                'variant': variant.to_dict(),
+            }
+
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e) if str(e) else 'Erreur serveur'
+            }
+
+    @http.route('/api/marketing/campaigns/variants/<int:variant_id>', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def get_variant_detail(self, variant_id, **kwargs):
+        """Détails d'une variante"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Variant = request.env['quelyos.marketing.campaign.variant'].sudo()
+            variant = Variant.browse(variant_id)
+
+            if not variant.exists():
+                return {
+                    'success': False,
+                    'error': f'Variante {variant_id} introuvable'
+                }
+
+            return {
+                'success': True,
+                'variant': variant.to_dict(),
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/variants/<int:variant_id>/select-winner', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def select_variant_as_winner(self, variant_id, **kwargs):
+        """Sélectionner une variante comme gagnante"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Variant = request.env['quelyos.marketing.campaign.variant'].sudo()
+            variant = Variant.browse(variant_id)
+
+            if not variant.exists():
+                return {
+                    'success': False,
+                    'error': f'Variante {variant_id} introuvable'
+                }
+
+            # Marquer comme gagnante et copier contenu dans campagne
+            variant.action_select_as_winner()
+
+            return {
+                'success': True,
+                'message': f'Variante {variant.variant_letter} sélectionnée comme gagnante',
+                'variant': variant.to_dict(),
+                'campaign_updated': True,
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/variants/<int:variant_id>/update', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def update_campaign_variant(self, variant_id, **kwargs):
+        """Mettre à jour une variante"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Variant = request.env['quelyos.marketing.campaign.variant'].sudo()
+            variant = Variant.browse(variant_id)
+
+            if not variant.exists():
+                return {
+                    'success': False,
+                    'error': f'Variante {variant_id} introuvable'
+                }
+
+            vals = {}
+            if kwargs.get('subject'):
+                vals['subject'] = kwargs['subject']
+            if kwargs.get('body'):
+                vals['body'] = kwargs['body']
+
+            if vals:
+                variant.write(vals)
+
+            return {
+                'success': True,
+                'message': 'Variante mise à jour avec succès',
+                'variant': variant.to_dict(),
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/campaigns/variants/<int:variant_id>/delete', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def delete_campaign_variant(self, variant_id, **kwargs):
+        """Supprimer une variante"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+        try:
+            Variant = request.env['quelyos.marketing.campaign.variant'].sudo()
+            variant = Variant.browse(variant_id)
+
+            if not variant.exists():
+                return {
+                    'success': False,
+                    'error': f'Variante {variant_id} introuvable'
+                }
+
+            if variant.is_winner:
+                return {
+                    'success': False,
+                    'error': 'Impossible de supprimer la variante gagnante'
+                }
+
+            variant.unlink()
+
+            return {
+                'success': True,
+                'message': 'Variante supprimée avec succès'
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}

@@ -49,6 +49,8 @@ access_email_config_admin,quelyos.email.config admin,model_quelyos_email_config,
 access_marketing_campaign_public,quelyos.marketing.campaign public,model_quelyos_marketing_campaign,base.group_public,1,0,0,0
 access_marketing_campaign_user,quelyos.marketing.campaign user,model_quelyos_marketing_campaign,group_quelyos_marketing_user,1,1,1,0
 access_marketing_campaign_manager,quelyos.marketing.campaign manager,model_quelyos_marketing_campaign,group_quelyos_marketing_manager,1,1,1,1
+access_marketing_campaign_variant_user,quelyos.marketing.campaign.variant user,model_quelyos_marketing_campaign_variant,group_quelyos_marketing_user,1,1,1,0
+access_marketing_campaign_variant_manager,quelyos.marketing.campaign.variant manager,model_quelyos_marketing_campaign_variant,group_quelyos_marketing_manager,1,1,1,1
 access_contact_list_public,quelyos.contact.list public,model_quelyos_contact_list,base.group_public,1,0,0,0
 access_contact_list_user,quelyos.contact.list user,model_quelyos_contact_list,group_quelyos_marketing_user,1,1,1,0
 access_contact_list_manager,quelyos.contact.list manager,model_quelyos_contact_list,group_quelyos_marketing_manager,1,1,1,1

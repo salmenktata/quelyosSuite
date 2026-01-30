@@ -91,6 +91,34 @@ class MarketingCampaign(models.Model):
         compute='_compute_rates'
     )
 
+    # A/B Testing
+    ab_testing_enabled = fields.Boolean(
+        string='A/B Testing activé',
+        default=False,
+        help='Activer pour tester plusieurs variantes et sélectionner la gagnante'
+    )
+
+    variant_ids = fields.One2many(
+        'quelyos.marketing.campaign.variant',
+        'campaign_id',
+        string='Variantes A/B',
+        help='Variantes de la campagne pour tests A/B/C'
+    )
+
+    variant_count = fields.Integer(
+        string='Nombre de variantes',
+        compute='_compute_variant_count',
+        store=True
+    )
+
+    winner_variant_id = fields.Many2one(
+        'quelyos.marketing.campaign.variant',
+        string='Variante gagnante',
+        compute='_compute_winner_variant',
+        store=True,
+        help='Variante avec le meilleur score de conversion'
+    )
+
     # Métadonnées
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(
@@ -111,6 +139,29 @@ class MarketingCampaign(models.Model):
                 record.recipient_count = record.contact_list_id.contact_count
             else:
                 record.recipient_count = 0
+
+    @api.depends('variant_ids')
+    def _compute_variant_count(self):
+        """Compter le nombre de variantes"""
+        for record in self:
+            record.variant_count = len(record.variant_ids)
+
+    @api.depends('variant_ids.is_winner', 'variant_ids.conversion_score')
+    def _compute_winner_variant(self):
+        """Identifier la variante gagnante (marquée ou meilleur score)"""
+        for record in self:
+            # Chercher variante marquée comme gagnante
+            winner = record.variant_ids.filtered(lambda v: v.is_winner)
+            if winner:
+                record.winner_variant_id = winner[0]
+            elif record.variant_ids:
+                # Sinon, prendre celle avec le meilleur conversion_score
+                record.winner_variant_id = record.variant_ids.sorted(
+                    key=lambda v: v.conversion_score,
+                    reverse=True
+                )[0]
+            else:
+                record.winner_variant_id = False
 
     @api.depends('stats_sent', 'stats_delivered', 'stats_opened', 'stats_clicked')
     def _compute_rates(self):
