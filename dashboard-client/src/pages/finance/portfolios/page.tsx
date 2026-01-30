@@ -1,6 +1,6 @@
 
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { _useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";

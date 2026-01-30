@@ -78,7 +78,7 @@ export async function fetchWithRequestId(
     const response = await fetch(input, { ...init, headers })
 
     const duration = performance.now() - startTime
-    const responseRequestId = getRequestIdFromResponse(response)
+    const _responseRequestId = getRequestIdFromResponse(response)
 
     // Log en dev
     if (import.meta.env.DEV) {

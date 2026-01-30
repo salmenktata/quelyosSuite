@@ -1,6 +1,6 @@
 
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Area, ComposedChart } from "recharts";
+import { _LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Area, ComposedChart } from "recharts";
 import { GlassPanel } from "@/components/ui/glass";
 import { Loader2, TrendingUp, AlertCircle } from "lucide-react";
 

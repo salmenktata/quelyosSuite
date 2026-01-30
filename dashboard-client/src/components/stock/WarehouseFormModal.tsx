@@ -142,7 +142,7 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
     if (step > 1) setStep(step - 1)
   }
 
-  const handleReset = () => {
+  const _handleReset = () => {
     setStep(1)
     setStep1Data(null)
     setStep2Data(null)

@@ -13,7 +13,6 @@
 import { useEffect, useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, SkeletonTable } from '@/components/common';
-import { storeNotices } from '@/lib/notices';
 import { logger } from '@quelyos/logger';
 import {
   TrendingUp,

@@ -41,7 +41,7 @@ import {
 export default function PricelistDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const pricelistId = parseInt(id || '0', 10);
+  const _pricelistId = parseInt(id || '0', 10);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -365,7 +365,7 @@ export default function PricelistDetail() {
                       }}
                       onDelete={(itemId) => {
                         if (confirm('Confirmer la suppression de cette règle ?')) {
-                          deleteItemMutation.mutate({ pricelistId, itemId });
+                          deleteItemMutation.mutate({ _pricelistId, itemId });
                         }
                       }}
                     />

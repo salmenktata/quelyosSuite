@@ -95,7 +95,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
   useRequireAuth();
   const { currency } = useCurrency();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const targetId = useMemo(() => {
     const raw = searchParams?.get("id");
     return raw ? Number(raw) : null;
@@ -573,7 +573,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
               amount={Number(newTx.amount)}
               type={config.type}
               currentCategoryId={newTx.categoryId}
-              onAccept={(categoryId, categoryName) => {
+              onAccept={(categoryId, _categoryName) => {
                 setNewTx({ ...newTx, categoryId: String(categoryId) });
               }}
               onReject={() => {

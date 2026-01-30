@@ -143,3 +143,5 @@ access_quelyos_theme_purchase_user,quelyos.theme.purchase user,model_quelyos_the
 access_quelyos_theme_purchase_manager,quelyos.theme.purchase manager,model_quelyos_theme_purchase,group_quelyos_home_manager,1,1,1,1
 access_quelyos_theme_revenue_user,quelyos.theme.revenue user,model_quelyos_theme_revenue,base.group_user,1,0,0,0
 access_quelyos_theme_revenue_manager,quelyos.theme.revenue manager,model_quelyos_theme_revenue,group_quelyos_home_manager,1,1,1,1
+access_quelyos_backup_system,quelyos.backup system,model_quelyos_backup,base.group_system,1,1,1,1
+access_quelyos_cors_entry_system,quelyos.cors.entry system,model_quelyos_cors_entry,base.group_system,1,1,1,1

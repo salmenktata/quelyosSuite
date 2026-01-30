@@ -1,6 +1,6 @@
 
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { _useCallback, useMemo, useState } from "react";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { ModularLayout } from "@/components/ModularLayout";
 import { useCurrency } from "@/lib/finance/CurrencyContext";

@@ -10,6 +10,8 @@ import { Tenants } from '@/pages/Tenants'
 import { Subscriptions } from '@/pages/Subscriptions'
 import { Billing } from '@/pages/Billing'
 import { Monitoring } from '@/pages/Monitoring'
+import { Backups } from '@/pages/Backups'
+import { Settings } from '@/pages/Settings'
 import { InactivityWarning } from './InactivityWarning'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
 import { useAuth } from '@/hooks/useAuth'
@@ -30,6 +32,8 @@ function PageViewTracker() {
       '/subscriptions': 'Subscriptions',
       '/billing': 'Billing',
       '/monitoring': 'Monitoring',
+      '/backups': 'Backups',
+      '/settings': 'Settings',
     }
 
     const pageName = pageNames[location.pathname] || location.pathname
@@ -74,6 +78,8 @@ export function AuthenticatedApp() {
           <Route path="subscriptions" element={<Subscriptions />} />
           <Route path="billing" element={<Billing />} />
           <Route path="monitoring" element={<Monitoring />} />
+          <Route path="backups" element={<Backups />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

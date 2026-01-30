@@ -73,3 +73,6 @@ from . import account_move
 from . import res_partner
 # Provisioning async
 from . import provisioning_job
+# Super Admin - Backups & CORS
+from . import backup
+from . import cors_entry

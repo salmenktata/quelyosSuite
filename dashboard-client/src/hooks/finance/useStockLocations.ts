@@ -126,14 +126,14 @@ export function useUpdateLocation() {
       return { previousLocations }
     },
     // Rollback on error
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       if (context?.previousLocations) {
         queryClient.setQueryData(['stock', 'locations', 'tree'], context.previousLocations)
       }
       logger.error('[useUpdateLocation] Error:', error)
     },
     // Refetch on success
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       queryClient.invalidateQueries({ queryKey: ['stock', 'locations'] })
       logger.info('[useUpdateLocation] Location updated successfully')
     },

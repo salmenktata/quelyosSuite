@@ -42,7 +42,7 @@ import {
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const _navigate = useNavigate()
   const { tenant } = useMyTenant()
   const employeeId = Number(id)
 

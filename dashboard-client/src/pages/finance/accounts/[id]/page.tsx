@@ -36,7 +36,7 @@ export default function AccountDetailPage() {
   const { id } = useParams<{ id: string }>();
   const accountId = parseInt(id || '0', 10);
   
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const { user, isLoading: authLoading } = useRequireAuth();
   const { currency: globalCurrency } = useCurrency();
 

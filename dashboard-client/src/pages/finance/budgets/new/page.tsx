@@ -102,7 +102,7 @@ export default function NewBudgetPage() {
     }
   }
 
-  const money = new Intl.NumberFormat("fr-FR", { style: "currency", currency });
+  const _money = new Intl.NumberFormat("fr-FR", { style: "currency", currency });
 
   if (loading) {
     return (

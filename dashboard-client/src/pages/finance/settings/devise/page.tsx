@@ -51,7 +51,7 @@ export default function DeviseFormatsPage() {
 
   async function saveLanguage() {
     try {
-      const payload = { lang };
+      const _payload = { lang };
       if (typeof window !== "undefined") {
         const raw = localStorage.getItem(SETTINGS_KEY);
         const settings = raw ? JSON.parse(raw) : {};

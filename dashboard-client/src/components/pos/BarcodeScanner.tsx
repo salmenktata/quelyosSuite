@@ -71,7 +71,7 @@ export function useBarcodeScan(
 /**
  * Composant bouton pour activer le scan caméra
  */
-export function BarcodeScanButton({ onScan, enabled = true }: BarcodeScannerProps) {
+export function BarcodeScanButton({ _onScan, enabled = true }: BarcodeScannerProps) {
   const [showCamera, setShowCamera] = useState(false)
 
   // Use keyboard scanner hook
@@ -110,7 +110,7 @@ interface CameraScannerModalProps {
   onClose: () => void
 }
 
-function CameraScannerModal({ onScan, onClose }: CameraScannerModalProps) {
+function CameraScannerModal({ _onScan, onClose }: CameraScannerModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)

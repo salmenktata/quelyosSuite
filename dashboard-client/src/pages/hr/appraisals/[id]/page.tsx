@@ -42,7 +42,7 @@ export default function AppraisalDetailPage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [showGoalModal, setShowGoalModal] = useState(false)
 
-  const appraisal = data?.appraisal
+  const _appraisal = data?.appraisal
   const goals = data?.goals || []
 
   if (isLoading) {
@@ -215,7 +215,7 @@ export default function AppraisalDetailPage() {
   )
 }
 
-function OverviewTab({ appraisal, goals }: { appraisal: Appraisal; goals: Goal[] }) {
+function OverviewTab({ _appraisal, goals }: { appraisal: Appraisal; goals: Goal[] }) {
   const goalsInProgress = goals.filter(g => g.state === 'in_progress').length
   const goalsDone = goals.filter(g => g.state === 'done').length
 
@@ -294,7 +294,7 @@ function RecommendationItem({ icon: Icon, label, recommended }: { icon: React.Co
   )
 }
 
-function FeedbackTab({ appraisal, onUpdate, isUpdating }: { appraisal: Appraisal; onUpdate: (data: Partial<Appraisal>) => void; isUpdating: boolean }) {
+function FeedbackTab({ _appraisal, onUpdate, isUpdating }: { appraisal: Appraisal; onUpdate: (data: Partial<Appraisal>) => void; isUpdating: boolean }) {
   const [formData, setFormData] = useState({
     employee_score: (appraisal.employee_score as string) || '',
     manager_score: (appraisal.manager_score as string) || '',
@@ -362,7 +362,7 @@ function TextareaCard({ label, value, onChange, placeholder, rows = 5 }: { label
   )
 }
 
-function GoalsTab({ appraisal, goals, onAction, onAddGoal }: { appraisal: Appraisal; goals: Goal[]; onAction: (params: { id: number; action: string }) => void; onAddGoal: () => void }) {
+function GoalsTab({ _appraisal, goals, onAction, onAddGoal }: { appraisal: Appraisal; goals: Goal[]; onAction: (params: { id: number; action: string }) => void; onAddGoal: () => void }) {
   const getStateColor = (state: string) => {
     switch (state) {
       case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
@@ -425,7 +425,7 @@ function GoalsTab({ appraisal, goals, onAction, onAddGoal }: { appraisal: Apprai
   )
 }
 
-function DevelopmentTab({ appraisal, onUpdate, isUpdating }: { appraisal: Appraisal; onUpdate: (data: Partial<Appraisal>) => void; isUpdating: boolean }) {
+function DevelopmentTab({ _appraisal, onUpdate, isUpdating }: { appraisal: Appraisal; onUpdate: (data: Partial<Appraisal>) => void; isUpdating: boolean }) {
   const [formData, setFormData] = useState({
     training_needs: (appraisal.training_needs as string) || '',
     training_plan: (appraisal.training_plan as string) || '',

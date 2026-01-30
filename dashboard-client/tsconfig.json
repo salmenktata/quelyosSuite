@@ -7,8 +7,8 @@
     "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": true,
-    "noUnusedLocals": false, // TODO: Réactiver après cleanup (211 erreurs)
-    "noUnusedParameters": false, // TODO: Réactiver après cleanup
+    "noUnusedLocals": false, // TODO: 200 erreurs restantes à corriger manuellement
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": false, // TODO: Réactiver après correction undefined (61 erreurs)
     "moduleResolution": "bundler",

@@ -49,7 +49,6 @@ interface Designer {
 }
 
 export default function PayoutsPage() {
-  const { user } = useAuth();
   const [designer, setDesigner] = useState<Designer | null>(null);
   const [revenues, setRevenues] = useState<Revenue[]>([]);
   const [connectStatus, setConnectStatus] = useState<StripeConnectStatus | null>(null);

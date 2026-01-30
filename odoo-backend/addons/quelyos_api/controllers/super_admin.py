@@ -563,3 +563,450 @@ class SuperAdminController(http.Controller):
             'orders_usage': tenant.orders_count if tenant else 0,
             'max_orders_per_year': subscription.max_orders_per_year,
         }
+
+    # =========================================================================
+    # BACKUPS
+    # =========================================================================
+
+    @http.route('/api/super-admin/backups', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_backups(self):
+        """Liste tous les backups"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Backup = request.env['quelyos.backup'].sudo()
+            backups = Backup.search([], order='create_date desc', limit=100)
+
+            # Récupérer paramètres backup auto
+            ICP = request.env['ir.config_parameter'].sudo()
+            last_auto = ICP.get_param('quelyos.backup.last_auto', False)
+            next_scheduled = ICP.get_param('quelyos.backup.next_scheduled', False)
+
+            data = {
+                'success': True,
+                'data': [self._serialize_backup(b) for b in backups],
+                'total': len(backups),
+                'last_auto_backup': last_auto,
+                'next_scheduled_backup': next_scheduled,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List backups error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/backups/trigger', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def trigger_backup(self):
+        """Déclenche un backup manuel"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            backup_type = data.get('type', 'full')
+
+            Backup = request.env['quelyos.backup'].sudo()
+            backup = Backup.create({
+                'type': backup_type,
+                'status': 'pending',
+                'triggered_by': request.env.user.id,
+            })
+
+            # Lancer le backup en tâche de fond
+            backup.with_delay().execute_backup()
+
+            _logger.info(
+                f"[AUDIT] Backup triggered - User: {request.env.user.login} | "
+                f"Type: {backup_type} | Backup ID: {backup.id}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'backup_id': backup.id,
+                'message': 'Backup déclenché avec succès'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Trigger backup error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/backups/<int:backup_id>/restore', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def restore_backup(self, backup_id):
+        """Restaure un backup"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Backup = request.env['quelyos.backup'].sudo()
+            backup = Backup.browse(backup_id)
+
+            if not backup.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Backup non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if backup.status != 'completed':
+                return request.make_json_response(
+                    {'success': False, 'error': 'Backup non disponible pour restauration'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            _logger.warning(
+                f"[AUDIT] Backup RESTORE initiated - User: {request.env.user.login} | "
+                f"Backup ID: {backup_id} | Filename: {backup.filename}"
+            )
+
+            # Lancer la restauration en tâche de fond
+            backup.with_delay().execute_restore()
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Restauration lancée'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Restore backup error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    def _serialize_backup(self, backup):
+        """Sérialise un backup pour l'API"""
+        return {
+            'id': backup.id,
+            'filename': backup.filename,
+            'type': backup.type,
+            'tenant_id': backup.tenant_id.id if backup.tenant_id else None,
+            'tenant_name': backup.tenant_id.name if backup.tenant_id else None,
+            'size_mb': backup.size_mb,
+            'status': backup.status,
+            'created_at': backup.create_date.isoformat() if backup.create_date else None,
+            'completed_at': backup.completed_at.isoformat() if backup.completed_at else None,
+            'download_url': f'/api/super-admin/backups/{backup.id}/download' if backup.status == 'completed' else None,
+            'error_message': backup.error_message,
+        }
+
+    # =========================================================================
+    # CORS SETTINGS
+    # =========================================================================
+
+    @http.route('/api/super-admin/settings/cors', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_cors_entries(self):
+        """Liste les entrées CORS whitelist"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            CorsEntry = request.env['quelyos.cors.entry'].sudo()
+            entries = CorsEntry.search([], order='domain')
+
+            ICP = request.env['ir.config_parameter'].sudo()
+            allow_credentials = ICP.get_param('quelyos.cors.allow_credentials', 'true') == 'true'
+            max_age = int(ICP.get_param('quelyos.cors.max_age', '3600'))
+
+            data = {
+                'success': True,
+                'entries': [self._serialize_cors_entry(e) for e in entries],
+                'allow_credentials': allow_credentials,
+                'max_age_seconds': max_age,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List CORS entries error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/settings/cors', type='http', auth='public', methods=['POST'], csrf=False)
+    def add_cors_entry(self):
+        """Ajoute un domaine à la whitelist CORS"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            domain = data.get('domain', '').strip().lower()
+
+            if not domain:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Domaine requis'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            # Vérifier doublon
+            CorsEntry = request.env['quelyos.cors.entry'].sudo()
+            existing = CorsEntry.search([('domain', '=', domain)], limit=1)
+            if existing:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Domaine déjà configuré'},
+                    headers=cors_headers,
+                    status=409
+                )
+
+            entry = CorsEntry.create({
+                'domain': domain,
+                'is_active': True,
+                'created_by': request.env.user.login,
+            })
+
+            _logger.info(
+                f"[AUDIT] CORS entry added - User: {request.env.user.login} | "
+                f"Domain: {domain}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'entry': self._serialize_cors_entry(entry)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Add CORS entry error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/settings/cors/<int:entry_id>', type='http', auth='public', methods=['PATCH', 'OPTIONS'], csrf=False)
+    def update_cors_entry(self, entry_id):
+        """Met à jour une entrée CORS (toggle active)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+
+            CorsEntry = request.env['quelyos.cors.entry'].sudo()
+            entry = CorsEntry.browse(entry_id)
+
+            if not entry.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Entrée non trouvée'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if 'is_active' in data:
+                entry.is_active = data['is_active']
+                _logger.info(
+                    f"[AUDIT] CORS entry toggled - User: {request.env.user.login} | "
+                    f"Domain: {entry.domain} | Active: {entry.is_active}"
+                )
+
+            return request.make_json_response({
+                'success': True,
+                'entry': self._serialize_cors_entry(entry)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Update CORS entry error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/settings/cors/<int:entry_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
+    def delete_cors_entry(self, entry_id):
+        """Supprime une entrée CORS"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            CorsEntry = request.env['quelyos.cors.entry'].sudo()
+            entry = CorsEntry.browse(entry_id)
+
+            if not entry.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Entrée non trouvée'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            domain = entry.domain
+            entry.unlink()
+
+            _logger.info(
+                f"[AUDIT] CORS entry deleted - User: {request.env.user.login} | "
+                f"Domain: {domain}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Domaine supprimé'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Delete CORS entry error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    def _serialize_cors_entry(self, entry):
+        """Sérialise une entrée CORS pour l'API"""
+        return {
+            'id': entry.id,
+            'domain': entry.domain,
+            'tenant_id': entry.tenant_id.id if entry.tenant_id else None,
+            'tenant_name': entry.tenant_id.name if entry.tenant_id else None,
+            'created_at': entry.create_date.isoformat() if entry.create_date else None,
+            'created_by': entry.created_by,
+            'is_active': entry.is_active,
+        }

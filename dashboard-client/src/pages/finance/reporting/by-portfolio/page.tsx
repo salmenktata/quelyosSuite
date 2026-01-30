@@ -104,7 +104,7 @@ export default function ByPortfolioReportPage() {
     amber: "bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30",
   };
 
-  const selectedPortfolioData = selectedPortfolio
+  const _selectedPortfolioData = selectedPortfolio
     ? portfolios.find((p) => p.id === selectedPortfolio)
     : null;
 

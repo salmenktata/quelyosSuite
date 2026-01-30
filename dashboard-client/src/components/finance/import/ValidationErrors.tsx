@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Download, XCircle, AlertTriangle, Info } from "lucide-react";
+import { _AlertCircle, Download, XCircle, AlertTriangle, Info } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass";
 import type { ValidationErrorsProps } from "@/types/import";
 
@@ -13,7 +13,7 @@ export function ValidationErrors({
   const warningsList = errors.filter(e => e.severity === 'warning');
   const infosList = errors.filter(e => e.severity === 'info');
 
-  const getSeverityIcon = (severity: 'error' | 'warning' | 'info') => {
+  const _getSeverityIcon = (severity: 'error' | 'warning' | 'info') => {
     switch (severity) {
       case 'error':
         return <XCircle className="h-5 w-5 text-rose-400" />;

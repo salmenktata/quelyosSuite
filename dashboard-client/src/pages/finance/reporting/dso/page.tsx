@@ -387,7 +387,7 @@ export default function DSOReportPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {apiData.byCustomer?.map((customer, idx) => (
+                    {apiData.byCustomer?.map((customer, _idx) => (
                       <tr key={customer.customerId} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="py-3 text-gray-900 dark:text-white">{customer.customerName}</td>
                         <td className="py-3 text-right font-semibold text-gray-900 dark:text-white">

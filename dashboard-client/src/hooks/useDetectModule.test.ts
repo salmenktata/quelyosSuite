@@ -7,11 +7,11 @@ describe('useDetectModule', () => {
   const allModules = MODULES
   const home = allModules.find(m => m.id === 'home')!
   const finance = allModules.find(m => m.id === 'finance')!
-  const stock = allModules.find(m => m.id === 'stock')!
+  const _stock = allModules.find(m => m.id === 'stock')!
   const store = allModules.find(m => m.id === 'store')!
-  const crm = allModules.find(m => m.id === 'crm')!
-  const marketing = allModules.find(m => m.id === 'marketing')!
-  const hr = allModules.find(m => m.id === 'hr')!
+  const _crm = allModules.find(m => m.id === 'crm')!
+  const _marketing = allModules.find(m => m.id === 'marketing')!
+  const _hr = allModules.find(m => m.id === 'hr')!
 
   describe('Module detection from pathname', () => {
     it('devrait détecter le module home depuis /dashboard', () => {

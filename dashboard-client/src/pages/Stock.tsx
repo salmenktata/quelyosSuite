@@ -92,7 +92,7 @@ export default function Stock() {
     refetch: refetchVariants,
   } = useProductVariants(selectedProductForVariants?.id || null)
 
-  const updateStockMutation = useUpdateProductStock()
+  const _updateStockMutation = useUpdateProductStock()
 
   // Helpers
   const formatPrice = (price: number) => {

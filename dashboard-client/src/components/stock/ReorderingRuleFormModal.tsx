@@ -82,7 +82,7 @@ export function ReorderingRuleFormModal({
   }, [isOpen, rule, form])
 
   const selectedProductId = form.watch('product_id')
-  const selectedWarehouseId = form.watch('warehouse_id')
+  const _selectedWarehouseId = form.watch('warehouse_id')
   const minQty = form.watch('product_min_qty')
   const maxQty = form.watch('product_max_qty')
   const multiple = form.watch('qty_multiple')

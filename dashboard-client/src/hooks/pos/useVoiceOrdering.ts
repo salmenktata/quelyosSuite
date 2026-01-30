@@ -36,7 +36,7 @@ interface UseVoiceOrderingReturn {
 // Mots-clés pour parser les commandes
 const ADD_KEYWORDS = ['ajoute', 'ajouter', 'met', 'mets', 'donne', 'je veux', 'je voudrais', 'un', 'une', 'des']
 const REMOVE_KEYWORDS = ['enlève', 'enlever', 'retire', 'retirer', 'supprime', 'supprimer', 'annule']
-const QUANTITY_KEYWORDS = ['deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix']
+const _QUANTITY_KEYWORDS = ['deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix']
 const QUANTITY_MAP: Record<string, number> = {
   'un': 1, 'une': 1, 'deux': 2, 'trois': 3, 'quatre': 4, 'cinq': 5,
   'six': 6, 'sept': 7, 'huit': 8, 'neuf': 9, 'dix': 10,
@@ -63,7 +63,7 @@ function parseVoiceCommand(text: string, products: { name: string; aliases?: str
   const isRemove = REMOVE_KEYWORDS.some(k => lowerText.includes(k))
 
   // Détection ajout
-  const isAdd = ADD_KEYWORDS.some(k => lowerText.includes(k)) || !isRemove
+  const _isAdd = ADD_KEYWORDS.some(k => lowerText.includes(k)) || !isRemove
 
   // Extraire la quantité
   let quantity = 1

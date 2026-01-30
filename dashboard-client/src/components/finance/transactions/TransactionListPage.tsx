@@ -138,7 +138,7 @@ interface TransactionListPageProps {
 
 export function TransactionListPage({ type }: TransactionListPageProps) {
   useRequireAuth();
-  const { currency, formatAmount } = useCurrency();
+  const { _currency, formatAmount } = useCurrency();
   const config = CONFIGS[type];
 
   // State
@@ -264,12 +264,12 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
 
   const Icon = config.icon;
   const TotalIcon = config.totalIcon;
-  const colorClass = config.color === "rose" ? "rose" : "emerald";
-  const gradientClass = config.color === "rose" ? "to-rose-200" : "to-emerald-200";
-  const bgGradient = config.color === "rose" ? "bg-rose-500/20" : "bg-emerald-500/20";
-  const textColor = config.color === "rose" ? "text-rose-400" : "text-emerald-400";
-  const borderColor = config.color === "rose" ? "border-rose-400/30" : "border-emerald-400/30";
-  const focusColor = config.color === "rose" ? "rose-400" : "emerald-400";
+  const _colorClass = config.color === "rose" ? "rose" : "emerald";
+  const _gradientClass = config.color === "rose" ? "to-rose-200" : "to-emerald-200";
+  const _bgGradient = config.color === "rose" ? "bg-rose-500/20" : "bg-emerald-500/20";
+  const _textColor = config.color === "rose" ? "text-rose-400" : "text-emerald-400";
+  const _borderColor = config.color === "rose" ? "border-rose-400/30" : "border-emerald-400/30";
+  const _focusColor = config.color === "rose" ? "rose-400" : "emerald-400";
 
   return (
     <ModularLayout>

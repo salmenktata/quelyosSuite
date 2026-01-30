@@ -95,7 +95,7 @@ export default function ByAccountReportPage() {
     ? accounts.reduce((sum, acc) => sum + acc.evolution, 0) / accounts.length
     : 0;
 
-  const selectedAccountData = selectedAccount
+  const _selectedAccountData = selectedAccount
     ? accounts.find((a) => a.id === selectedAccount)
     : null;
 

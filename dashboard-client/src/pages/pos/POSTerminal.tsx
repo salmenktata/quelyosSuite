@@ -22,7 +22,7 @@ export default function POSTerminal() {
 
   // Session and cart state
   const { session, config, isOpen, canMakeSales, connectionStatus } = usePOSActiveSession()
-  const closeSession = useCloseSession()
+  const _closeSession = useCloseSession()
   const { checkout, isLoading: isCheckingOut } = usePOSCheckout()
 
   // Cart store

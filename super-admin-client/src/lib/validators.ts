@@ -202,6 +202,47 @@ export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown
 }
 
 // ============================================================================
+// SCHEMAS BACKUPS & CORS
+// ============================================================================
+
+export const BackupSchema = z.object({
+  id: z.number(),
+  filename: z.string(),
+  type: z.enum(['full', 'incremental', 'tenant']),
+  tenant_id: z.number().nullable(),
+  tenant_name: z.string().nullable(),
+  size_mb: z.number().nonnegative(),
+  status: z.enum(['pending', 'running', 'completed', 'failed']),
+  created_at: z.string(),
+  completed_at: z.string().nullable(),
+  download_url: z.string().nullable(),
+  error_message: z.string().nullable(),
+})
+
+export const BackupsResponseSchema = z.object({
+  data: z.array(BackupSchema),
+  total: z.number().nonnegative(),
+  last_auto_backup: z.string().nullable(),
+  next_scheduled_backup: z.string().nullable(),
+})
+
+export const CorsEntrySchema = z.object({
+  id: z.number(),
+  domain: z.string(),
+  tenant_id: z.number().nullable(),
+  tenant_name: z.string().nullable(),
+  created_at: z.string(),
+  created_by: z.string(),
+  is_active: z.boolean(),
+})
+
+export const CorsSettingsSchema = z.object({
+  entries: z.array(CorsEntrySchema),
+  allow_credentials: z.boolean(),
+  max_age_seconds: z.number().nonnegative(),
+})
+
+// ============================================================================
 // TYPES TYPESCRIPT INFÉRÉS
 // ============================================================================
 
@@ -216,3 +257,7 @@ export type MRRBreakdown = z.infer<typeof MRRBreakdownSchema>
 export type ChurnAnalysis = z.infer<typeof ChurnAnalysisSchema>
 export type InvoicesSummary = z.infer<typeof InvoicesSummarySchema>
 export type TenantsResponse = z.infer<typeof TenantsResponseSchema>
+export type Backup = z.infer<typeof BackupSchema>
+export type BackupsResponse = z.infer<typeof BackupsResponseSchema>
+export type CorsEntry = z.infer<typeof CorsEntrySchema>
+export type CorsSettings = z.infer<typeof CorsSettingsSchema>
