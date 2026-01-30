@@ -71,6 +71,8 @@ from . import tenant_mixin
 from . import account_move
 # Contacts multi-tenant
 from . import res_partner
+# Users multi-tenant (tenant_id computed field)
+from . import res_users
 # Provisioning async
 from . import provisioning_job
 # Super Admin - Backups & CORS
