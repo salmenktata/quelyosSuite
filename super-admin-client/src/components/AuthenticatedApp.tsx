@@ -7,10 +7,12 @@ import { Routes, Route, Navigate, useLocation } from 'react-router'
 import { Layout } from './Layout'
 import { Dashboard } from '@/pages/Dashboard'
 import { Tenants } from '@/pages/Tenants'
+import { Plans } from '@/pages/Plans'
 import { Subscriptions } from '@/pages/Subscriptions'
 import { Billing } from '@/pages/Billing'
 import { Monitoring } from '@/pages/Monitoring'
 import { Backups } from '@/pages/Backups'
+import { Security } from '@/pages/Security'
 import { Settings } from '@/pages/Settings'
 import { InactivityWarning } from './InactivityWarning'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
@@ -29,9 +31,11 @@ function PageViewTracker() {
     const pageNames: Record<string, string> = {
       '/dashboard': 'Dashboard',
       '/tenants': 'Tenants',
+      '/plans': 'Plans',
       '/subscriptions': 'Subscriptions',
       '/billing': 'Billing',
       '/monitoring': 'Monitoring',
+      '/security': 'Security',
       '/backups': 'Backups',
       '/settings': 'Settings',
     }
@@ -75,9 +79,11 @@ export function AuthenticatedApp() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="tenants" element={<Tenants />} />
+          <Route path="plans" element={<Plans />} />
           <Route path="subscriptions" element={<Subscriptions />} />
           <Route path="billing" element={<Billing />} />
           <Route path="monitoring" element={<Monitoring />} />
+          <Route path="security" element={<Security />} />
           <Route path="backups" element={<Backups />} />
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

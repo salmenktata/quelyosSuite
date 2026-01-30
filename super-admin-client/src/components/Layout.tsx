@@ -1,14 +1,16 @@
 import { Outlet, Link, useLocation } from 'react-router'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/hooks/useAuth'
-import { LayoutDashboard, Users, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, Package, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut, Shield } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Tenants', path: '/tenants', icon: Users },
+  { name: 'Plans', path: '/plans', icon: Package },
   { name: 'Abonnements', path: '/subscriptions', icon: CreditCard },
   { name: 'Facturation', path: '/billing', icon: DollarSign },
   { name: 'Monitoring', path: '/monitoring', icon: Activity },
+  { name: 'Sécurité', path: '/security', icon: Shield },
   { name: 'Backups', path: '/backups', icon: Database },
   { name: 'Paramètres', path: '/settings', icon: Settings },
 ]
