@@ -1,4 +1,5 @@
 import { PageNoticeConfig } from './types'
+import { Info, Lightbulb, Clipboard } from 'lucide-react'
 
 export const supportNotices: Record<string, PageNoticeConfig> = {
   tickets: {
@@ -8,7 +9,7 @@ export const supportNotices: Record<string, PageNoticeConfig> = {
     sections: [
       {
         title: 'Informations',
-        icon: 'info',
+        icon: Info,
         items: [
           'Notre équipe répond sous 24h en semaine',
           'Les tickets urgents sont traités en priorité',
@@ -17,7 +18,7 @@ export const supportNotices: Record<string, PageNoticeConfig> = {
       },
       {
         title: 'Conseils',
-        icon: 'lightbulb',
+        icon: Lightbulb,
         items: [
           'Choisissez la bonne catégorie pour une réponse rapide',
           'Ajoutez des captures d\'écran si possible',
@@ -34,7 +35,7 @@ export const supportNotices: Record<string, PageNoticeConfig> = {
     sections: [
       {
         title: 'Informations requises',
-        icon: 'clipboard',
+        icon: Clipboard,
         items: [
           'Catégorie : Aide à orienter votre demande',
           'Priorité : Urgente, Haute, Moyenne ou Basse',

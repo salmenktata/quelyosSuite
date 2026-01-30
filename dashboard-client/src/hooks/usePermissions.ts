@@ -1,6 +1,6 @@
 import { useAuth } from '@/lib/finance/compat/auth'
 
-type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos'
+type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support'
 
 /**
  * Hook pour vérifier les permissions utilisateur basées sur les groupes backend.
@@ -24,6 +24,7 @@ export function usePermissions() {
     'marketing': ['Quelyos Marketing User', 'Quelyos Marketing Manager'],
     'hr': ['Quelyos HR User', 'Quelyos HR Manager'],
     'pos': ['Quelyos POS User', 'Quelyos POS Manager'],
+    'support': ['Quelyos Store User', 'Quelyos Store Manager'], // Support accessible aux utilisateurs Store
   }
 
   /**

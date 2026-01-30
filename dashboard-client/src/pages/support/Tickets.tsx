@@ -40,12 +40,12 @@ export default function Tickets() {
   // Stats calculées
   const stats = useMemo(() => {
     if (!data?.tickets) return { new: 0, open: 0, pending: 0, resolved: 0 }
-    return data.tickets.reduce(
+    return data.tickets.reduce<Record<string, number>>(
       (acc, ticket) => {
         acc[ticket.state] = (acc[ticket.state] || 0) + 1
         return acc
       },
-      {} as Record<string, number>
+      {}
     )
   }, [data])
 
