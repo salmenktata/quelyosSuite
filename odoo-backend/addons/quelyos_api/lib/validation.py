@@ -9,13 +9,166 @@ Validation des données avec Pydantic:
 """
 
 import re
-from typing import Optional, List, Dict, Any
+import html
+from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 from decimal import Decimal
 from functools import wraps
 import logging
 
 _logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# SANITIZATION XSS/HTML
+# =============================================================================
+
+# Patterns dangereux à bloquer
+DANGEROUS_PATTERNS = [
+    r'<script[^>]*>.*?</script>',  # Script tags
+    r'javascript:',                 # JavaScript URLs
+    r'on\w+\s*=',                   # Event handlers (onclick, onerror, etc.)
+    r'<iframe[^>]*>',               # iframes
+    r'<object[^>]*>',               # objects
+    r'<embed[^>]*>',                # embeds
+    r'<form[^>]*>',                 # forms
+    r'data:text/html',              # Data URLs with HTML
+    r'vbscript:',                   # VBScript
+    r'expression\s*\(',             # CSS expressions
+]
+
+DANGEROUS_REGEX = re.compile('|'.join(DANGEROUS_PATTERNS), re.IGNORECASE | re.DOTALL)
+
+
+def sanitize_html(value: str) -> str:
+    """
+    Échappe les caractères HTML dangereux.
+
+    Args:
+        value: Chaîne à sanitiser
+
+    Returns:
+        Chaîne sécurisée
+    """
+    if not value or not isinstance(value, str):
+        return value
+
+    # Échapper les caractères HTML
+    return html.escape(value, quote=True)
+
+
+def sanitize_string(value: str, max_length: int = None, allow_html: bool = False) -> str:
+    """
+    Sanitise une chaîne de caractères.
+
+    Args:
+        value: Chaîne à sanitiser
+        max_length: Longueur maximale (optionnel)
+        allow_html: Autoriser le HTML (défaut: False)
+
+    Returns:
+        Chaîne sécurisée
+    """
+    if not value or not isinstance(value, str):
+        return value
+
+    # Supprimer les caractères de contrôle (sauf newline, tab)
+    value = ''.join(c for c in value if c.isprintable() or c in '\n\t')
+
+    # Strip whitespace
+    value = value.strip()
+
+    # Échapper HTML si non autorisé
+    if not allow_html:
+        value = sanitize_html(value)
+
+    # Tronquer si nécessaire
+    if max_length and len(value) > max_length:
+        value = value[:max_length]
+
+    return value
+
+
+def contains_dangerous_content(value: str) -> bool:
+    """
+    Vérifie si une chaîne contient du contenu potentiellement dangereux.
+
+    Args:
+        value: Chaîne à vérifier
+
+    Returns:
+        True si contenu dangereux détecté
+    """
+    if not value or not isinstance(value, str):
+        return False
+
+    return bool(DANGEROUS_REGEX.search(value))
+
+
+def sanitize_dict(data: Dict[str, Any], fields_to_sanitize: List[str] = None) -> Dict[str, Any]:
+    """
+    Sanitise les champs d'un dictionnaire.
+
+    Args:
+        data: Dictionnaire à sanitiser
+        fields_to_sanitize: Liste des champs à sanitiser (tous si None)
+
+    Returns:
+        Dictionnaire avec valeurs sanitisées
+    """
+    if not data or not isinstance(data, dict):
+        return data
+
+    result = {}
+    for key, value in data.items():
+        if fields_to_sanitize and key not in fields_to_sanitize:
+            result[key] = value
+        elif isinstance(value, str):
+            result[key] = sanitize_string(value)
+        elif isinstance(value, dict):
+            result[key] = sanitize_dict(value, fields_to_sanitize)
+        elif isinstance(value, list):
+            result[key] = [
+                sanitize_string(v) if isinstance(v, str) else v
+                for v in value
+            ]
+        else:
+            result[key] = value
+
+    return result
+
+
+def validate_no_injection(value: str) -> bool:
+    """
+    Vérifie qu'une chaîne ne contient pas de tentative d'injection.
+
+    Args:
+        value: Chaîne à vérifier
+
+    Returns:
+        True si sécurisé, False si suspect
+    """
+    if not value or not isinstance(value, str):
+        return True
+
+    # Vérifier XSS
+    if contains_dangerous_content(value):
+        return False
+
+    # Vérifier SQL injection basique (l'ORM protège déjà mais double vérification)
+    sql_patterns = [
+        r"'\s*or\s+'1'\s*=\s*'1",
+        r";\s*drop\s+table",
+        r";\s*delete\s+from",
+        r"union\s+select",
+        r"--\s*$",
+    ]
+    for pattern in sql_patterns:
+        if re.search(pattern, value, re.IGNORECASE):
+            _logger.warning(f"Potential SQL injection detected: {value[:100]}")
+            return False
+
+    return True
 
 # Essayer d'importer Pydantic v2, sinon v1
 try:
@@ -285,15 +438,19 @@ if PYDANTIC_V2 is not None:
 # VALIDATION DECORATOR
 # =============================================================================
 
-def validate_input(schema_class):
+def validate_input(schema_class, sanitize: bool = True):
     """
-    Décorateur pour valider les données d'entrée d'un endpoint.
+    Décorateur pour valider et sanitiser les données d'entrée d'un endpoint.
 
     Usage:
         @validate_input(ProductSchema)
         def create_product(self, **kwargs):
             validated_data = kwargs['validated_data']
             # ...
+
+    Args:
+        schema_class: Classe Pydantic pour validation
+        sanitize: Sanitiser les strings contre XSS (défaut: True)
     """
     def decorator(func):
         @wraps(func)
@@ -303,6 +460,20 @@ def validate_input(schema_class):
             try:
                 # Récupérer les données JSON
                 data = request.get_json_data() if hasattr(request, 'get_json_data') else {}
+
+                # Sanitiser les données contre XSS
+                if sanitize and data:
+                    data = sanitize_dict(data)
+
+                # Vérifier les injections
+                for key, value in data.items() if data else []:
+                    if isinstance(value, str) and not validate_no_injection(value):
+                        _logger.warning(f"Injection attempt detected in field '{key}'")
+                        return {
+                            'success': False,
+                            'error': 'Invalid input detected',
+                            'error_code': 'INVALID_INPUT',
+                        }
 
                 # Valider avec Pydantic
                 if PYDANTIC_V2 is not None:
@@ -325,6 +496,47 @@ def validate_input(schema_class):
 
         return wrapper
     return decorator
+
+
+def sanitize_input(func):
+    """
+    Décorateur simple pour sanitiser les entrées sans validation Pydantic.
+
+    Usage:
+        @sanitize_input
+        def search_products(self, **kwargs):
+            # kwargs sont sanitisés
+            query = kwargs.get('query', '')
+    """
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        from odoo.http import request
+
+        try:
+            # Récupérer et sanitiser les données
+            data = request.get_json_data() if hasattr(request, 'get_json_data') else {}
+            if data:
+                data = sanitize_dict(data)
+
+            # Vérifier les injections
+            for key, value in data.items() if data else []:
+                if isinstance(value, str) and not validate_no_injection(value):
+                    _logger.warning(f"Injection attempt detected in field '{key}'")
+                    return {
+                        'success': False,
+                        'error': 'Invalid input detected',
+                        'error_code': 'INVALID_INPUT',
+                    }
+
+            # Mettre à jour kwargs avec les données sanitisées
+            kwargs.update(data)
+            return func(self, *args, **kwargs)
+
+        except Exception as e:
+            _logger.error(f"Sanitization error: {e}")
+            return func(self, *args, **kwargs)
+
+    return wrapper
 
 
 def validate_data(schema_class, data: dict) -> tuple:

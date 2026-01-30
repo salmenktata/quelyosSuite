@@ -10,6 +10,7 @@ from passlib.context import CryptContext
 from ..config import is_origin_allowed, get_cors_headers
 from ..lib.cache import get_cache_service, CacheTTL
 from ..lib.rate_limiter import check_rate_limit, RateLimitConfig
+from ..lib.validation import sanitize_string, sanitize_dict, validate_no_injection
 from .base import BaseController
 
 _logger = logging.getLogger(__name__)
@@ -602,10 +603,20 @@ class QuelyosAPI(BaseController):
 
         try:
             params = self._get_params()
-            name = params.get('name')
-            email = params.get('email')
-            password = params.get('password')
-            phone = params.get('phone', '')
+
+            # Sanitization des entrées contre XSS
+            name = sanitize_string(params.get('name', ''), max_length=255)
+            email = sanitize_string(params.get('email', ''), max_length=255)
+            password = params.get('password', '')  # Ne pas sanitiser le mot de passe
+            phone = sanitize_string(params.get('phone', ''), max_length=50)
+
+            # Vérification injection
+            if not validate_no_injection(name) or not validate_no_injection(email):
+                _logger.warning(f"Injection attempt in registration from {request.httprequest.remote_addr}")
+                return {
+                    'success': False,
+                    'error': 'Invalid input detected'
+                }
 
             if not name or not email or not password:
                 return {
