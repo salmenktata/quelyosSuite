@@ -80,7 +80,7 @@ export const SubscriptionSchema = z.object({
   plan_id: z.number().nullable().optional(),
   plan_code: z.string().nullable().optional(),
   plan_name: z.string().nullable().optional(),
-  state: z.string(),
+  state: z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']),
   billing_cycle: z.string(),
   mrr: z.number().nonnegative(),
   price: z.number().nonnegative(),

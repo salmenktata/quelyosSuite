@@ -147,6 +147,12 @@ export function isRetryable(
     return config.retryableStatuses.includes(error.status)
   }
 
+  // Vérifier si l'erreur a un status HTTP (même si ce n'est pas une Response)
+  const status = (error as any).status
+  if (typeof status === 'number') {
+    return config.retryableStatuses.includes(status)
+  }
+
   // Erreur réseau ou custom
   const errorName = error.name || ''
   const errorMessage = error.message || ''
@@ -171,7 +177,8 @@ export function isRetryable(
     return true
   }
 
-  return false
+  // Par défaut, retrier toutes les autres erreurs (sauf 4xx déjà filtrées ci-dessus)
+  return true
 }
 
 /**
