@@ -165,7 +165,7 @@ function RegisterForm() {
           <div className="flex items-start justify-between">
             <Link href="/" className="flex w-fit items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
-                <Layers className="h-6 w-6 text-white" />
+                <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">Quelyos</h1>
@@ -255,7 +255,7 @@ function RegisterForm() {
           <div className="mb-8 flex items-center justify-between lg:hidden">
             <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-                <Layers className="h-5 w-5 text-white" />
+                <Sparkles className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Quelyos</span>
             </Link>
