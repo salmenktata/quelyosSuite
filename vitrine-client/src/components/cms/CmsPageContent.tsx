@@ -11,7 +11,7 @@ interface CmsPageContentProps {
 }
 
 /**
- * Rendu du contenu d'une page CMS selon son template
+ * Rendu du contenu d&apos;une page CMS selon son template
  */
 export const CmsPageContent: React.FC<CmsPageContentProps> = ({ page }) => {
   const renderBreadcrumbs = () => {
@@ -86,7 +86,7 @@ export const CmsPageContent: React.FC<CmsPageContentProps> = ({ page }) => {
 
   // Détection automatique du template basé sur le slug si template est "standard"
   const getEffectiveTemplate = (): string => {
-    // Si un template spécifique est défini (pas "standard"), l'utiliser
+    // Si un template spécifique est défini (pas "standard"), l&apos;utiliser
     if (page.template && page.template !== 'standard') {
       return page.template;
     }
@@ -414,7 +414,7 @@ const ContactTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Horaires d'ouverture</h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">Horaires d&apos;ouverture</h3>
                   <div className="text-gray-600 space-y-1">
                     <p>Lundi - Vendredi : 9h00 - 18h00</p>
                     <p>Samedi : 10h00 - 16h00</p>
@@ -644,7 +644,7 @@ const FaqTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
     { question: "Comment passer une commande ?", answer: "Parcourez notre catalogue, ajoutez les produits au panier et suivez le processus de checkout sécurisé." },
     { question: "Quels sont les délais de livraison ?", answer: "La livraison standard est de 3 à 5 jours ouvrés. La livraison express est disponible en 24-48h." },
     { question: "Comment suivre ma commande ?", answer: "Connectez-vous à votre compte et accédez à la section 'Mes commandes' pour suivre l'état de votre livraison." },
-    { question: "Quelle est votre politique de retour ?", answer: "Vous disposez de 30 jours après réception pour retourner un article dans son état d'origine." },
+    { question: "Quelle est votre politique de retour ?", answer: "Vous disposez de 30 jours après réception pour retourner un article dans son état d&apos;origine." },
     { question: "Les paiements sont-ils sécurisés ?", answer: "Oui, tous les paiements sont cryptés et sécurisés via nos partenaires certifiés PCI-DSS." },
   ];
 
@@ -733,7 +733,7 @@ const FaqTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Vous n'avez pas trouvé votre réponse ?</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Vous n&apos;avez pas trouvé votre réponse ?</h3>
             <p className="text-gray-600 mb-6">Notre équipe est disponible pour vous aider</p>
             <Link
               href="/pages/contact"
@@ -800,7 +800,7 @@ const AboutTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           </div>
         )}
 
-        {/* Valeurs de l'entreprise */}
+        {/* Valeurs de l&apos;entreprise */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1047,7 +1047,7 @@ const ReturnsTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Satisfait ou remboursé - 30 jours</h2>
-            <p className="text-gray-600">Vous avez changé d'avis ? Pas de problème ! Retournez votre article dans son emballage d'origine sous 30 jours et nous vous remboursons intégralement.</p>
+            <p className="text-gray-600">Vous avez changé d&apos;avis ? Pas de problème ! Retournez votre article dans son emballage d&apos;origine sous 30 jours et nous vous remboursons intégralement.</p>
           </div>
         </div>
 
@@ -1057,7 +1057,7 @@ const ReturnsTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
           {[
             { step: 1, title: "Connectez-vous", desc: "Accédez à votre espace client", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
             { step: 2, title: "Demandez un retour", desc: "Sélectionnez la commande concernée", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
-            { step: 3, title: "Emballez l'article", desc: "Dans son emballage d'origine", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
+            { step: 3, title: "Emballez l'article", desc: "Dans son emballage d&apos;origine", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
             { step: 4, title: "Expédiez", desc: "Avec l'étiquette prépayée", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
           ].map((item) => (
             <div key={item.step} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center relative">

@@ -118,7 +118,7 @@ export default function ProductDetailPage() {
     }
   }, [product, selectedVariantId, quantity, addToCart, toast]);
 
-  // Early returns (garder les mêmes hooks conditionnels que l'original)
+  // Early returns (garder les mêmes hooks conditionnels que l&apos;original)
   if (isLoading) {
     return <ProductDetailSkeleton />;
   }
@@ -127,12 +127,12 @@ export default function ProductDetailPage() {
     return null;
   }
 
-  // Calculs après validation product (comme dans l'original)
+  // Calculs après validation product (comme dans l&apos;original)
   // Image affichée : priorité au survol > variante sélectionnée > produit
   const baseImage = displayImages?.find(img => img.is_main)?.url || displayImages?.[0]?.url || '/placeholder-product.svg';
   const mainImage = hoveredImageUrl || baseImage;
 
-  // Les miniatures ne changent pas au survol, seule l'image principale change
+  // Les miniatures ne changent pas au survol, seule l&apos;image principale change
   const galleryImages = displayImages || [];
 
   const hasDiscount = product.is_featured;
@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
         <div className="grid lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           {/* Images produit - Galerie avancée avec swipe et zoom */}
           <div className="relative">
-            {/* Badges sur l'image */}
+            {/* Badges sur l&apos;image */}
             <div className="absolute top-4 left-4 flex flex-col gap-2 z-20 pointer-events-none">
               {hasDiscount && (
                 <div className="bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded-md shadow-lg">

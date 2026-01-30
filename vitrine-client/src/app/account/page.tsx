@@ -185,7 +185,7 @@ export default function AccountDashboardPage() {
               </svg>
               <div>
                 <p className="font-semibold mb-1">Livraison gratuite</p>
-                <p className="text-sm opacity-90">Dès 200 TND d'achat</p>
+                <p className="text-sm opacity-90">Dès 200 TND d&apos;achat</p>
               </div>
             </div>
 
@@ -205,7 +205,7 @@ export default function AccountDashboardPage() {
               </svg>
               <div>
                 <p className="font-semibold mb-1">Retour gratuit</p>
-                <p className="text-sm opacity-90">14 jours pour changer d'avis</p>
+                <p className="text-sm opacity-90">14 jours pour changer d&apos;avis</p>
               </div>
             </div>
           </div>

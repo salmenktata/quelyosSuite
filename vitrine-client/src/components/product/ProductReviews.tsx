@@ -221,7 +221,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
         </div>
       )}
 
-      {/* Formulaire d'avis */}
+      {/* Formulaire d&apos;avis */}
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg space-y-4">
           <h3 className="font-semibold text-gray-900">Votre avis sur {productName}</h3>

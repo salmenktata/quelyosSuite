@@ -12,7 +12,7 @@ interface ActiveFilterChipsProps {
 }
 
 /**
- * Composant d'affichage des filtres actifs sous forme de chips
+ * Composant d&apos;affichage des filtres actifs sous forme de chips
  */
 export function ActiveFilterChips({
   filters,

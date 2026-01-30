@@ -187,7 +187,7 @@ function LoginContent() {
           {/* Lien inscription */}
           <div className="mt-8 text-center">
             <p className="text-gray-600">
-              Vous n'avez pas de compte?{' '}
+              Vous n&apos;avez pas de compte?{' '}
               <Link
                 href="/register"
                 className="text-primary hover:text-primary-dark font-bold transition-colors"

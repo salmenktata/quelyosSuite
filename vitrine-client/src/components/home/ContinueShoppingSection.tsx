@@ -1,6 +1,6 @@
 /**
  * ContinueShoppingSection - Section "Continuer vos achats" pour la homepage
- * Affiche les produits récemment consultés par l'utilisateur
+ * Affiche les produits récemment consultés par l&apos;utilisateur
  */
 
 'use client';
@@ -15,7 +15,7 @@ import { getProxiedImageUrl } from '@/lib/image-proxy';
 export function ContinueShoppingSection() {
   const { products } = useRecentlyViewedStore();
 
-  // Ne rien afficher s'il n'y a pas de produits consultés
+  // Ne rien afficher s&apos;il n'y a pas de produits consultés
   if (products.length === 0) {
     return null;
   }

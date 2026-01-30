@@ -38,8 +38,8 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
         return;
       }
 
-      // TODO: Intégrer avec l'API backend pour enregistrer l'email
-      // Pour l'instant, simulation d'un appel API
+      // TODO: Intégrer avec l'API backend pour enregistrer l&apos;email
+      // Pour l&apos;instant, simulation d&apos;un appel API
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       setIsSuccess(true);
@@ -60,7 +60,7 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
   };
 
   const handleClose = () => {
-    // Stocker que l'utilisateur a fermé le popup (ne plus afficher pendant 30 jours)
+    // Stocker que l&apos;utilisateur a fermé le popup (ne plus afficher pendant 30 jours)
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
     localStorage.setItem('newsletter_popup_dismissed', thirtyDaysFromNow.toISOString());
@@ -155,7 +155,7 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
                     Inscription en cours...
                   </span>
                 ) : (
-                  "Je m'inscris gratuitement"
+                  "Je m&apos;inscris gratuitement"
                 )}
               </button>
             </form>

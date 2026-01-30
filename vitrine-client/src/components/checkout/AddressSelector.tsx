@@ -224,7 +224,7 @@ export function AddressSelector({
 
           <input
             type="text"
-            placeholder="Complement d'adresse"
+            placeholder="Complement d&apos;adresse"
             value={newAddress.street2 || ''}
             onChange={(e) => setNewAddress({ ...newAddress, street2: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"

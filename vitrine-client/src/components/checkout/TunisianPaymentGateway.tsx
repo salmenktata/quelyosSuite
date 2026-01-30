@@ -62,7 +62,7 @@ export const TunisianPaymentGateway: React.FC<TunisianPaymentGatewayProps> = ({
     } catch (error) {
       logger.error(`Failed to initialize ${providerName} payment:`, error);
       setIsRedirecting(false);
-      alert(`Erreur lors de l'initialisation du paiement: ${error}`);
+      alert(`Erreur lors de l&apos;initialisation du paiement: ${error}`);
     }
   };
 

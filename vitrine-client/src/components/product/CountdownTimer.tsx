@@ -138,7 +138,7 @@ export function CountdownTimer({
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">⚡ Offre à durée limitée</p>
-            <p className="text-xs text-gray-600">Profitez-en avant qu'il ne soit trop tard !</p>
+            <p className="text-xs text-gray-600">Profitez-en avant qu&apos;il ne soit trop tard !</p>
           </div>
         </div>
       </div>

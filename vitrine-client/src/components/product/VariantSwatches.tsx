@@ -18,7 +18,7 @@ interface VariantSwatchesProps {
   onVariantSelect?: (variantId: number) => void;
   onImagePreview?: (imageUrl: string) => void;
   maxVisible?: number;
-  maxAttributes?: number; // Nombre max d'attributs à afficher
+  maxAttributes?: number; // Nombre max d&apos;attributs à afficher
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -72,7 +72,7 @@ export function VariantSwatches({
     { keywords: ['pattern', 'motif'], weight: 7 },
   ];
 
-  // Fonction pour calculer la priorité d'un attribut
+  // Fonction pour calculer la priorité d&apos;un attribut
   const getAttributePriority = (attr: AttributeLine): number => {
     const attrNameLower = attr.attribute_name.toLowerCase();
 
@@ -103,7 +103,7 @@ export function VariantSwatches({
     return sortedAttributes.slice(0, maxAttributes);
   }, [attributeLines, maxAttributes]);
 
-  // Fonction générique pour extraire valeurs uniques d'un attribut
+  // Fonction générique pour extraire valeurs uniques d&apos;un attribut
   const getAttributeValues = (attribute: AttributeLine) => {
     const valueMap = new Map<number, {
       valueId: number;
@@ -154,12 +154,12 @@ export function VariantSwatches({
     });
 
     // 3. Pour les attributs qui ne sont pas dans les variantes (attributs non-variant),
-    //    considérer comme "disponibles" s'il y a au moins une variante en stock
+    //    considérer comme "disponibles" s&apos;il y a au moins une variante en stock
     const hasStockVariant = variants.some(v => v.in_stock && (v.stock_quantity || 0) > 0);
     if (hasStockVariant) {
       valueMap.forEach((value, id) => {
         if (value.count === 0) {
-          // Cet attribut n'est pas présent dans les variantes
+          // Cet attribut n&apos;est pas présent dans les variantes
           // On le marque comme disponible avec la première variante en stock
           const firstStockVariant = variants.find(v => v.in_stock && (v.stock_quantity || 0) > 0);
           valueMap.set(id, {
@@ -195,7 +195,7 @@ export function VariantSwatches({
     if (value.variant) {
       setHoveredId(value.variant.id);
 
-      // Précharger l'image
+      // Précharger l&apos;image
       if (typeof window !== 'undefined' && value.variant.image_url) {
         const link = document.createElement('link');
         link.rel = 'preload';
@@ -204,7 +204,7 @@ export function VariantSwatches({
         document.head.appendChild(link);
       }
 
-      // Notifier le parent pour changer l'image
+      // Notifier le parent pour changer l&apos;image
       if (value.variant.image_url) {
         onImagePreview?.(value.variant.image_url);
       }

@@ -735,7 +735,7 @@ export function SearchAutocomplete({
                 <div className="mt-3 space-y-2">
                   <p className="text-xs text-gray-400">Suggestions :</p>
                   <ul className="text-xs text-gray-500 space-y-1">
-                    <li>• Vérifiez l'orthographe de votre recherche</li>
+                    <li>• Vérifiez l&apos;orthographe de votre recherche</li>
                     <li>• Utilisez des termes plus généraux</li>
                     <li>• Essayez des synonymes</li>
                   </ul>

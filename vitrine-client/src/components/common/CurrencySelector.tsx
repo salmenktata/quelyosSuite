@@ -15,7 +15,7 @@ export function CurrencySelector() {
   };
 
   if (isLoading || !currencies || currencies.length <= 1) {
-    // Ne pas afficher le sélecteur s'il n'y a qu'une seule devise
+    // Ne pas afficher le sélecteur s&apos;il n'y a qu&apos;une seule devise
     return null;
   }
 

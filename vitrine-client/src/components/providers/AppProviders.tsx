@@ -3,7 +3,7 @@
 /**
  * AppProviders - Composant client qui connecte tous les providers.
  *
- * Ordre des providers (de l'extérieur vers l'intérieur):
+ * Ordre des providers (de l&apos;extérieur vers l&apos;intérieur):
  * 1. TenantProvider - Détecte et charge la config du tenant
  * 2. SiteConfigProvider - Charge la config du site (legacy, sera fusionné avec tenant)
  * 3. ThemeProvider - Applique le thème (tenant > site config > default)
@@ -25,7 +25,7 @@ interface AppProvidersProps {
 }
 
 /**
- * Charge les produits déjà achetés quand l'utilisateur est connecté.
+ * Charge les produits déjà achetés quand l&apos;utilisateur est connecté.
  */
 function PurchasedProductsLoader() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);

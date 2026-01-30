@@ -83,7 +83,7 @@ function StripePaymentFormContent({
       onSuccess('stripe'); // Appeler le callback parent avec succès
     },
     onError: (error) => {
-      onError(error); // Propager l'erreur au parent
+      onError(error); // Propager l&apos;erreur au parent
     },
   });
 
@@ -223,7 +223,7 @@ function StripePaymentFormContent({
             </div>
           </div>
 
-          {/* Date d'expiration et CVC */}
+          {/* Date d&apos;expiration et CVC */}
           <div className="grid grid-cols-2 gap-3">
             <div className="px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
               <CardExpiryElement
@@ -241,7 +241,7 @@ function StripePaymentFormContent({
         </div>
       </div>
 
-      {/* Message d'erreur */}
+      {/* Message d&apos;erreur */}
       {errorMessage && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-start gap-3">
@@ -288,7 +288,7 @@ function StripePaymentFormContent({
         </div>
       </div>
 
-      {/* Boutons d'action */}
+      {/* Boutons d&apos;action */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
           type="button"

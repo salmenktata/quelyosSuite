@@ -142,7 +142,7 @@ export const GovernorateSelect: React.FC<GovernorateSelectProps> = ({
 
           {!isFreeShipping && freeThreshold > 0 && (
             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              Livraison gratuite dès {freeThreshold.toFixed(0)} TND d'achat
+              Livraison gratuite dès {freeThreshold.toFixed(0)} TND d&apos;achat
               {cartTotal > 0 && (
                 <span className="ml-1">
                   (encore {(freeThreshold - cartTotal).toFixed(2)} TND)

@@ -257,7 +257,7 @@ export function OnePageCheckout() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Complément d'adresse (optionnel)</label>
+                  <label className="block text-sm font-medium text-gray-700">Complément d&apos;adresse (optionnel)</label>
                   <input
                     type="text"
                     value={shippingAddress.street2}

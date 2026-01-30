@@ -42,7 +42,7 @@ export default function LegalPage() {
             <div className="prose prose-gray max-w-none">
               <p>
                 L'interface utilisateur de Quelyos ERP, incluant la boutique en ligne
-                (Frontend Next.js) et le backoffice d'administration (React), est
+                (Frontend Next.js) et le backoffice d&apos;administration (React), est
                 développée par l'équipe Quelyos.
               </p>
               <p className="mt-2">
@@ -50,7 +50,7 @@ export default function LegalPage() {
                 <strong>© 2026 Quelyos. Tous droits réservés.</strong>
               </p>
               <p className="mt-4 text-sm text-gray-600">
-                Le code source de l'interface utilisateur est protégé par le droit d'auteur
+                Le code source de l&apos;interface utilisateur est protégé par le droit d&apos;auteur
                 et ne peut être redistribué ou modifié sans autorisation écrite.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function LegalPage() {
               <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
                 <p className="text-sm">
                   <strong>Note importante :</strong> Odoo est une marque déposée d'Odoo S.A.
-                  Quelyos ERP n'est pas affilié, approuvé ou sponsorisé par Odoo S.A.
+                  Quelyos ERP n&apos;est pas affilié, approuvé ou sponsorisé par Odoo S.A.
                   L'utilisation d'Odoo Community Edition respecte intégralement les termes
                   de la licence LGPL-3.0.
                 </p>
@@ -102,23 +102,23 @@ export default function LegalPage() {
               <p>
                 La GNU Lesser General Public License v3.0 (LGPL-3.0) est une licence
                 de logiciel libre publiée par la Free Software Foundation. Elle autorise
-                l'utilisation, la modification et la redistribution du code source sous
+                l&apos;utilisation, la modification et la redistribution du code source sous
                 certaines conditions.
               </p>
               <p className="mt-4">
                 <strong>Points clés de la LGPL-3.0 :</strong>
               </p>
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Liberté d'utiliser le logiciel à toute fin</li>
+                <li>Liberté d&apos;utiliser le logiciel à toute fin</li>
                 <li>Liberté d'étudier le fonctionnement du logiciel</li>
                 <li>Liberté de redistribuer des copies</li>
-                <li>Liberté d'améliorer le logiciel et de publier les améliorations</li>
+                <li>Liberté d&apos;améliorer le logiciel et de publier les améliorations</li>
                 <li>
                   Les modifications du code LGPL doivent être publiées sous LGPL
                 </li>
                 <li>
                   Les applications utilisant une bibliothèque LGPL peuvent utiliser
-                  d'autres licences (cas de Quelyos)
+                  d&apos;autres licences (cas de Quelyos)
                 </li>
               </ul>
               <p className="mt-4">

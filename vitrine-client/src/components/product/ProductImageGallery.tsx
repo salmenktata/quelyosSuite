@@ -1,5 +1,5 @@
 /**
- * ProductImageGallery - Galerie d'images avancée pour produits
+ * ProductImageGallery - Galerie d&apos;images avancée pour produits
  * Features: swipe gestures, keyboard navigation, zoom modal, thumbnails
  */
 
@@ -23,9 +23,9 @@ interface ProductImageGalleryProps {
   images: Image[];
   /** Nom du produit (pour alt text fallback) */
   productName: string;
-  /** Callback quand l'image change */
+  /** Callback quand l&apos;image change */
   onImageChange?: (index: number) => void;
-  /** Image de preview temporaire (survol couleur) - surcharge l'image principale */
+  /** Image de preview temporaire (survol couleur) - surcharge l&apos;image principale */
   previewImageUrl?: string;
 }
 
@@ -49,7 +49,7 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     ? images
     : [{ url: '/placeholder-product.svg', alt: productName, is_main: true }];
 
-  // Gestion de la sélection d'image
+  // Gestion de la sélection d&apos;image
   const handleImageSelect = (index: number) => {
     setDirection(index > selectedIndex ? 1 : -1);
     setSelectedIndex(index);
@@ -94,7 +94,7 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     }
   };
 
-  // Si previewImageUrl est défini (survol couleur), l'utiliser comme image principale
+  // Si previewImageUrl est défini (survol couleur), l&apos;utiliser comme image principale
   const currentImage = previewImageUrl
     ? { url: previewImageUrl, alt: 'Aperçu couleur' }
     : (safeImages[selectedIndex] || safeImages[0]);
@@ -210,7 +210,7 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                     : 'border-gray-200 hover:border-primary/50'
                 }
               `}
-              aria-label={`Voir l'image ${index + 1}`}
+              aria-label={`Voir l&apos;image ${index + 1}`}
             >
               <Image
                 src={getProxiedImageUrl(image.url)}

@@ -69,11 +69,11 @@ export function VisualSearch({ onClose }: VisualSearchProps) {
     setResults([]);
 
     try {
-      // Extraire la couleur dominante de l'image (simplification)
+      // Extraire la couleur dominante de l&apos;image (simplification)
       const dominantColor = await extractDominantColor(imageData);
 
       // Rechercher des produits similaires
-      // En l'absence d'une vraie API de vision, on utilise la recherche semantique
+      // En l'absence d&apos;une vraie API de vision, on utilise la recherche semantique
       // avec des termes basés sur la couleur
       const colorTerms: Record<string, string[]> = {
         red: ['rouge', 'red', 'bordeaux'],

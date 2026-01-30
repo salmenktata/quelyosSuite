@@ -18,7 +18,7 @@ export function ReactQueryProvider({ children }: { children: ReactNode }) {
             refetchOnWindowFocus: false,
             refetchOnMount: false,
             refetchOnReconnect: false,
-            // Retry une fois en cas d'erreur
+            // Retry une fois en cas d&apos;erreur
             retry: 1,
             // Cache par défaut : 5 minutes
             staleTime: 5 * 60 * 1000,

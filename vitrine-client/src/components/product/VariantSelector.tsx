@@ -11,7 +11,7 @@ interface VariantSelectorProps {
   variantsData: VariantsResponse;
   selectedVariant: ExtendedProductVariant | null;
   onVariantChange: (variant: ExtendedProductVariant) => void;
-  onImagePreview?: (imageUrl: string) => void; // Callback pour changer l'image au survol
+  onImagePreview?: (imageUrl: string) => void; // Callback pour changer l&apos;image au survol
   className?: string;
 }
 
@@ -69,7 +69,7 @@ export function VariantSelector({
     }
   }, [matchingVariant]);
 
-  // Déterminer quelles valeurs d'attribut sont disponibles selon la sélection actuelle
+  // Déterminer quelles valeurs d&apos;attribut sont disponibles selon la sélection actuelle
   const getAvailableValues = (attributeId: number) => {
     if (!attributes) return new Set<number>();
     const attribute = attributes.find(a => a.attribute_id === attributeId);
@@ -86,7 +86,7 @@ export function VariantSelector({
 
       return Object.entries(selectedAttributes).every(([attrIdStr, valueId]) => {
         const attrId = parseInt(attrIdStr);
-        // Ignorer l'attribut actuel qu'on est en train de sélectionner
+        // Ignorer l'attribut actuel qu&apos;on est en train de sélectionner
         if (attrId === attributeId) return true;
 
         const variantAttrValue = variant.attribute_values?.find(av => av.attribute_id === attrId);
@@ -94,7 +94,7 @@ export function VariantSelector({
       });
     });
 
-    // Extraire les valeurs d'attribut disponibles depuis ces variantes
+    // Extraire les valeurs d&apos;attribut disponibles depuis ces variantes
     const availableValueIds = new Set<number>();
     compatibleVariants.forEach((variant) => {
       const attrValue = variant.attribute_values?.find(av => av.attribute_id === attributeId);
@@ -106,7 +106,7 @@ export function VariantSelector({
     return availableValueIds;
   };
 
-  // Handler pour la sélection d'une valeur d'attribut
+  // Handler pour la sélection d&apos;une valeur d&apos;attribut
   const handleAttributeSelect = (attributeId: number, valueId: number) => {
     setSelectedAttributes({
       ...selectedAttributes,
@@ -114,7 +114,7 @@ export function VariantSelector({
     });
   };
 
-  // Obtenir les détails d'une variante spécifique pour une valeur d'attribut
+  // Obtenir les détails d&apos;une variante spécifique pour une valeur d&apos;attribut
   const getVariantForAttributeValue = (attributeId: number, valueId: number): ExtendedProductVariant | undefined => {
     // Créer une sélection temporaire
     const tempSelection = {
@@ -155,7 +155,7 @@ export function VariantSelector({
               )}
             </h4>
 
-            {/* Rendu conditionnel selon le type d'attribut */}
+            {/* Rendu conditionnel selon le type d&apos;attribut */}
             {isColorAttribute ? (
               // Swatches de couleur compacts style Zalando
               <div className="flex flex-wrap gap-2">
@@ -176,14 +176,14 @@ export function VariantSelector({
                       disabled={!isAvailable || !inStock}
                       onClick={() => handleAttributeSelect(attributeLine.attribute_id, value.id)}
                       onHover={() => {
-                        // Changer l'image au survol (comme Zalando)
+                        // Changer l&apos;image au survol (comme Zalando)
                         const imageUrl = variantForValue?.images?.[0]?.url || variantForValue?.image_url;
                         if (imageUrl) {
                           onImagePreview?.(imageUrl);
                         }
                       }}
                       onLeave={() => {
-                        // Retour à l'image de la variante sélectionnée
+                        // Retour à l&apos;image de la variante sélectionnée
                         onImagePreview?.('');
                       }}
                       size="md"

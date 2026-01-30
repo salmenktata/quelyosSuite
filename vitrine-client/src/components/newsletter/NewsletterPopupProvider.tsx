@@ -9,7 +9,7 @@ import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
  * Manages popup display with configured settings from backoffice
  */
 export function NewsletterPopupProvider() {
-  // Configuration depuis les variables d'environnement (avec valeurs par défaut)
+  // Configuration depuis les variables d&apos;environnement (avec valeurs par défaut)
   const newsletterConfig = {
     enabled: true,
     delaySeconds: 30,

@@ -1,5 +1,5 @@
 /**
- * Page Offline - Affichée quand l'utilisateur est hors ligne
+ * Page Offline - Affichée quand l&apos;utilisateur est hors ligne
  */
 
 'use client';

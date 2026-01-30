@@ -139,7 +139,7 @@ export default function LoyaltyPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Programme de Fidélité</h1>
         <p className="mt-2 text-gray-600">
-          Gagnez des points sur chaque achat et profitez d'avantages exclusifs
+          Gagnez des points sur chaque achat et profitez d&apos;avantages exclusifs
         </p>
       </div>
 
@@ -338,7 +338,7 @@ export default function LoyaltyPage() {
                   <div>
                     <p className="font-semibold">Montez de niveau</p>
                     <p className="text-gray-600">
-                      Plus vous cumulez de points, plus vous débloquez d'avantages
+                      Plus vous cumulez de points, plus vous débloquez d&apos;avantages
                     </p>
                   </div>
                 </div>

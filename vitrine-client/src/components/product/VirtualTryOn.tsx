@@ -155,7 +155,7 @@ export function VirtualTryOn({
             </button>
 
             <p className="text-xs text-gray-500 mt-4">
-              Votre vie privee est respectee - aucune image n'est enregistree
+              Votre vie privee est respectee - aucune image n&apos;est enregistree
             </p>
           </div>
         ) : (

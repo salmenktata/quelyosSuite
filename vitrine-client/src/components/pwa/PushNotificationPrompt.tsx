@@ -19,8 +19,8 @@ export function PushNotificationPrompt() {
 
     // Ne montrer le prompt que si:
     // 1. L'utilisateur est connecté
-    // 2. La permission n'est pas encore accordée/refusée
-    // 3. Le prompt n'a pas été ignoré récemment
+    // 2. La permission n&apos;est pas encore accordée/refusée
+    // 3. Le prompt n&apos;a pas été ignoré récemment
     const lastDismissed = localStorage.getItem('push_prompt_dismissed');
     const dismissedTime = lastDismissed ? parseInt(lastDismissed) : 0;
     const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
@@ -30,7 +30,7 @@ export function PushNotificationPrompt() {
       Notification.permission === 'default' &&
       daysSinceDismissed > 7 // Redemander après 7 jours
     ) {
-      // Attendre un peu avant d'afficher le prompt
+      // Attendre un peu avant d&apos;afficher le prompt
       const timer = setTimeout(() => setShowPrompt(true), 5000);
       return () => clearTimeout(timer);
     }

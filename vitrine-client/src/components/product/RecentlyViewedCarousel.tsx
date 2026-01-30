@@ -18,7 +18,7 @@ export const RecentlyViewedCarousel: React.FC = () => {
   const { products } = useRecentlyViewedStore();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Ne rien afficher s'il n'y a pas de produits
+  // Ne rien afficher s&apos;il n'y a pas de produits
   if (products.length === 0) {
     return null;
   }

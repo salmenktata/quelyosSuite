@@ -22,7 +22,7 @@ interface AttributeImageButtonProps {
   selected: boolean;
   disabled: boolean;
   onClick: () => void;
-  colorHex?: string; // Couleur hex si pas d'image
+  colorHex?: string; // Couleur hex si pas d&apos;image
 }
 
 export function AttributeImageButton({

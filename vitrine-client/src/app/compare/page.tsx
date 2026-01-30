@@ -135,7 +135,7 @@ export default function ComparePage() {
               </thead>
 
               <tbody>
-                {/* Lignes d'attributs */}
+                {/* Lignes d&apos;attributs */}
                 {attributes.map((attr, idx) => (
                   <tr key={attr.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="p-4 font-semibold text-gray-700 sticky left-0 bg-inherit border-r border-gray-200 z-10">

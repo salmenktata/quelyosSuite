@@ -118,7 +118,7 @@ export function ThemeProvider({
     const baseTheme = themes[themeName] || defaultTheme;
     const mergedColors = { ...baseTheme.colors };
 
-    // 1. Si tenantTheme est fourni, l'utiliser en priorité
+    // 1. Si tenantTheme est fourni, l&apos;utiliser en priorité
     if (tenantTheme?.colors) {
       const tc = tenantTheme.colors;
       mergedColors.primary = tc.primary;
@@ -183,8 +183,8 @@ export function ThemeProvider({
 
   // Appliquer le favicon du tenant
   useEffect(() => {
-    // Note: tenantTheme n'a pas le branding, on ne peut pas accéder au favicon ici
-    // Le favicon est géré dans le branding du tenant qui n'est pas passé au ThemeProvider
+    // Note: tenantTheme n&apos;a pas le branding, on ne peut pas accéder au favicon ici
+    // Le favicon est géré dans le branding du tenant qui n&apos;est pas passé au ThemeProvider
     // Il faudrait créer un composant séparé ou passer le branding aussi
   }, []);
 

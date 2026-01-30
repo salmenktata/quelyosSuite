@@ -12,14 +12,14 @@ import { staggerContainer, staggerItem } from '@/lib/animations/variants';
 interface ProductGridProps {
   /** Contenu de la grille (cartes produits) */
   children: React.ReactNode;
-  /** Mode d'affichage */
+  /** Mode d&apos;affichage */
   viewMode?: 'grid' | 'list';
   /** Classes CSS supplémentaires */
   className?: string;
 }
 
 /**
- * Grille de produits avec animations d'entrée en cascade
+ * Grille de produits avec animations d&apos;entrée en cascade
  * Les produits apparaissent un par un avec un effet stagger
  */
 export const ProductGrid: React.FC<ProductGridProps> = ({
@@ -27,7 +27,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   viewMode = 'grid',
   className = '',
 }) => {
-  // Classes selon le mode d'affichage
+  // Classes selon le mode d&apos;affichage
   const gridClasses = viewMode === 'grid'
     ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'
     : 'space-y-4';

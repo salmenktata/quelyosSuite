@@ -324,7 +324,7 @@ export default function ContactPage() {
                   )}
                 </div>
 
-                {/* Bouton d'envoi */}
+                {/* Bouton d&apos;envoi */}
                 <button
                   type="submit"
                   disabled={isSubmitting}

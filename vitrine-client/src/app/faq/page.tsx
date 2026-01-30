@@ -49,13 +49,13 @@ const getDefaultFAQs = (config: any): FAQItem[] => {
       categoryCode: 'livraison',
       categoryName: 'Livraison',
       question: 'La livraison est-elle gratuite?',
-      answer: `Oui, la livraison est gratuite pour toute commande superieure a ${shipping.freeThreshold} ${config.currency.symbol}. En dessous de ce montant, des frais de livraison s'appliquent.`,
+      answer: `Oui, la livraison est gratuite pour toute commande superieure a ${shipping.freeThreshold} ${config.currency.symbol}. En dessous de ce montant, des frais de livraison s&apos;appliquent.`,
     },
     {
       categoryCode: 'retours',
       categoryName: 'Retours',
       question: 'Quelle est votre politique de retour?',
-      answer: `Vous disposez de ${returns.windowDays} jours apres reception pour retourner un article. Le produit doit etre dans son etat d'origine, non utilise et dans son emballage d'origine.`,
+      answer: `Vous disposez de ${returns.windowDays} jours apres reception pour retourner un article. Le produit doit etre dans son etat d&apos;origine, non utilise et dans son emballage d&apos;origine.`,
     },
     {
       categoryCode: 'retours',

@@ -1,5 +1,5 @@
 /**
- * Page détail d'une commande
+ * Page détail d&apos;une commande
  */
 
 'use client';
@@ -239,7 +239,7 @@ export default function OrderDetailPage() {
                   Télécharger la facture
                 </Button>
                 <Button variant="outline" size="lg" className="w-full rounded-full">
-                  Besoin d'aide ?
+                  Besoin d&apos;aide ?
                 </Button>
               </div>
             </div>

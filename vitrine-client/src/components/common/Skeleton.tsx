@@ -134,7 +134,7 @@ export const ProductDetailSkeleton: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Galerie d'images skeleton */}
+          {/* Galerie d&apos;images skeleton */}
           <div className="space-y-4">
             {/* Image principale */}
             <Skeleton className="w-full aspect-square rounded-xl" />

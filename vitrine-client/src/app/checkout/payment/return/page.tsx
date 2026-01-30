@@ -128,7 +128,7 @@ function PaymentReturnContent() {
         {status !== 'success' && (
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-              Besoin d'aide ?{' '}
+              Besoin d&apos;aide ?{' '}
               <Link href="/contact" className="text-indigo-600 dark:text-indigo-400 hover:underline">
                 Contactez-nous
               </Link>

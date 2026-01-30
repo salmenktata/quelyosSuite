@@ -1,5 +1,5 @@
 /**
- * Page d'inscription - Style lesportif.com.tn
+ * Page d&apos;inscription - Style lesportif.com.tn
  */
 
 'use client';
@@ -33,7 +33,7 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Effacer l'erreur du champ modifié
+    // Effacer l&apos;erreur du champ modifié
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }

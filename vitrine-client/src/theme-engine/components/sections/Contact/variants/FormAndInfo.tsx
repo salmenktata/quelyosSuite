@@ -125,7 +125,7 @@ export default function FormAndInfo({ config, className = '', theme }: FormAndIn
 
             <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                Horaires d'ouverture
+                Horaires d&apos;ouverture
               </h4>
               <p className="text-gray-600 dark:text-gray-400">
                 Lun - Ven : 9h00 - 18h00<br />

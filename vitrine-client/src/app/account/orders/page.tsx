@@ -149,7 +149,7 @@ export default function AccountOrdersPage() {
               Aucune commande
             </h2>
             <p className="text-gray-500 mb-6">
-              Vous n'avez pas encore passé de commande
+              Vous n&apos;avez pas encore passé de commande
             </p>
             <Link href="/products">
               <Button variant="primary" size="lg" className="rounded-full">

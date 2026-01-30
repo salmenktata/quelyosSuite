@@ -1,6 +1,6 @@
 /**
  * FilterDrawer - Drawer de filtres mobile avec bottom sheet
- * Permet d'accéder aux filtres sur mobile (<lg screens)
+ * Permet d&apos;accéder aux filtres sur mobile (<lg screens)
  */
 
 'use client';

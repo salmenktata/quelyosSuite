@@ -175,10 +175,10 @@ export function UpsellModal({
             <>
               <div className="mb-4 rounded-lg bg-gradient-to-r from-primary/10 to-purple-100 p-4">
                 <h3 className="mb-1 text-lg font-bold text-gray-900">
-                  🎁 Profitez d'un upgrade maintenant
+                  🎁 Profitez d&apos;un upgrade maintenant
                 </h3>
                 <p className="text-sm text-gray-700">
-                  Passez à un produit supérieur et bénéficiez d'une meilleure qualité
+                  Passez à un produit supérieur et bénéficiez d&apos;une meilleure qualité
                 </p>
               </div>
 
@@ -248,7 +248,7 @@ export function UpsellModal({
                 />
               </svg>
               <p className="text-gray-600">
-                Aucune suggestion d'upgrade disponible
+                Aucune suggestion d&apos;upgrade disponible
               </p>
             </div>
           )}

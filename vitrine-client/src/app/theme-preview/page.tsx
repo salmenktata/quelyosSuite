@@ -82,7 +82,7 @@ export default function ThemePreviewPage() {
 
     // Écouter les messages du Theme Builder
     function handleMessage(event: MessageEvent) {
-      // Vérifier l'origine pour sécurité (en production)
+      // Vérifier l&apos;origine pour sécurité (en production)
       // if (event.origin !== 'http://localhost:5175') return;
 
       if (event.data.type === 'THEME_UPDATE') {

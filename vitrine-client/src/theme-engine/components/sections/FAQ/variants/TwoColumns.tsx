@@ -96,7 +96,7 @@ export default function TwoColumns({ config, className = '', theme }: TwoColumns
           style={{ backgroundColor: `${theme.colors.primary}10` }}
         >
           <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-            Besoin d'aide supplémentaire ?
+            Besoin d&apos;aide supplémentaire ?
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Notre équipe est disponible pour répondre à toutes vos questions
