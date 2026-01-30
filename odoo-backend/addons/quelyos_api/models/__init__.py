@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from . import ir_http
 from . import auth_refresh_token
+from . import sitemap_healthcheck
+from . import sitemap_service
 from . import product_image
 from . import product_template
 from . import product_product

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cron: Sitemap Healthcheck Automatique -->
+        <record id="ir_cron_sitemap_healthcheck" model="ir.cron">
+            <field name="name">Sitemap: Healthcheck Automatique (toutes apps)</field>
+            <field name="model_id" ref="model_quelyos_sitemap_service"/>
+            <field name="state">code</field>
+            <field name="code">model.trigger_healthcheck()</field>
+            <field name="interval_number">6</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="active" eval="True"/>
+            <field name="priority">20</field>
+        </record>
+
+        <!-- Cron: Nettoyage ancien historique (> 30 jours) -->
+        <record id="ir_cron_sitemap_cleanup" model="ir.cron">
+            <field name="name">Sitemap: Nettoyage historique ancien (> 30 jours)</field>
+            <field name="model_id" ref="model_quelyos_sitemap_healthcheck"/>
+            <field name="state">code</field>
+            <field name="code">
+                # Supprimer healthchecks > 30 jours
+                from datetime import datetime, timedelta
+                cutoff = datetime.now() - timedelta(days=30)
+                old_checks = model.search([('create_date', '&lt;', cutoff)])
+                old_checks.unlink()
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="active" eval="True"/>
+            <field name="priority">30</field>
+        </record>
+    </data>
+</odoo>

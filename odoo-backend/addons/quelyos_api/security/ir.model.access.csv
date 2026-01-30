@@ -167,3 +167,7 @@ access_quelyos_sla_policy_user,quelyos.sla.policy user,model_quelyos_sla_policy,
 access_quelyos_sla_policy_system,quelyos.sla.policy system,model_quelyos_sla_policy,base.group_system,1,1,1,1
 access_quelyos_ai_unanswered_system,quelyos.ai.unanswered system,model_quelyos_ai_unanswered,base.group_system,1,1,1,1
 access_quelyos_backup_schedule_system,quelyos.backup.schedule system,model_quelyos_backup_schedule,base.group_system,1,1,1,1
+access_quelyos_sitemap_healthcheck_public,quelyos.sitemap.healthcheck public,model_quelyos_sitemap_healthcheck,,1,0,0,0
+access_quelyos_sitemap_healthcheck_system,quelyos.sitemap.healthcheck system,model_quelyos_sitemap_healthcheck,base.group_system,1,1,1,1
+access_quelyos_sitemap_alert_public,quelyos.sitemap.alert public,model_quelyos_sitemap_alert,,1,0,0,0
+access_quelyos_sitemap_alert_system,quelyos.sitemap.alert system,model_quelyos_sitemap_alert,base.group_system,1,1,1,1
