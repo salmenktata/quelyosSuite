@@ -12,7 +12,7 @@ function App() {
   // TEMPORAIRE DEV: Désactiver redirection auto
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log('[App] DEV MODE - Auth checks disabled')
+      // DEV MODE - Auth checks disabled (intentionnel)
       return
     }
     if (!isLoading && !isAuthenticated && location.pathname !== '/login') {

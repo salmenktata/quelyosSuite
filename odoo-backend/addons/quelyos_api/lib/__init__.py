@@ -95,6 +95,7 @@ from . import circuit_dashboard
 from . import mocking
 from . import load_shedding
 from . import priority_queue
+from . import rls_context
 
 # Raccourcis pratiques
 from .rate_limiter import rate_limited, RateLimitConfig
@@ -142,3 +143,4 @@ from .circuit_dashboard import get_circuit_dashboard, CircuitState
 from .mocking import mock_response, get_mock_server
 from .load_shedding import get_load_shedder, LoadLevel
 from .priority_queue import Priority, PriorityQueue
+from .rls_context import set_rls_tenant, reset_rls_tenant, rls_tenant_context, get_current_rls_tenant

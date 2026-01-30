@@ -4,11 +4,15 @@ Fonctions de sécurité et validation pour le système multi-tenant.
 
 Ce module renforce l'isolation des données en validant que les utilisateurs
 accèdent uniquement aux données de leur propre tenant.
+
+SÉCURITÉ CRITIQUE : Utilise Row Level Security (RLS) PostgreSQL pour isolation
+au niveau base de données via set_rls_tenant().
 """
 
 import logging
 from odoo.http import request
 from odoo.exceptions import AccessError
+from . import rls_context
 
 _logger = logging.getLogger(__name__)
 
@@ -17,6 +21,7 @@ def get_tenant_from_header():
     """
     Récupère le tenant depuis le header X-Tenant-Domain.
     Valide que le tenant existe et appartient à la company de l'utilisateur.
+    Active automatiquement Row Level Security (RLS) pour ce tenant.
 
     Returns:
         quelyos.tenant: Record du tenant validé
@@ -57,6 +62,11 @@ def get_tenant_from_header():
                 "Vous n'avez pas accès à ce tenant. "
                 "Cette tentative a été enregistrée."
             )
+
+    # SÉCURITÉ CRITIQUE : Activer Row Level Security PostgreSQL
+    # Configure app.current_tenant pour filtrer automatiquement toutes les requêtes SQL
+    rls_context.set_rls_tenant(request.env.cr, tenant.id)
+    _logger.debug(f"RLS activated for tenant {tenant.id} ({tenant_domain})")
 
     return tenant
 

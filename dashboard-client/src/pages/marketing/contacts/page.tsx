@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useReducer, useRef } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Badge, Skeleton, ConfirmModal, Modal } from '@/components/common';
 import {
@@ -7,9 +7,9 @@ import {
   useDeleteContactList,
   usePreviewCSV,
   useImportCSV,
-  type CSVPreviewResult,
 } from '@/hooks/useContactLists';
 import { useToast } from '@/contexts/ToastContext';
+import { contactsReducer, initialContactsState } from './contactsReducer';
 import {
   Plus,
   Users,
@@ -69,60 +69,44 @@ export default function ContactListsPage() {
   const createMutation = useCreateContactList();
   const deleteMutation = useDeleteContactList();
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [newListName, setNewListName] = useState('');
-  const [newListDescription, setNewListDescription] = useState('');
-  const [newListType, setNewListType] = useState<'static' | 'dynamic'>('static');
+  // ✨ REFACTORING: 16 useState → 1 useReducer pour meilleure gestion état
+  const [state, dispatch] = useReducer(contactsReducer, initialContactsState);
 
-  // Import CSV states
+  // Ref pour file input CSV
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [csvData, setCsvData] = useState<string | null>(null);
-  const [csvFileName, setCsvFileName] = useState('');
-  const [csvPreview, setCsvPreview] = useState<CSVPreviewResult | null>(null);
-  const [importStep, setImportStep] = useState<'upload' | 'preview' | 'result'>('upload');
-  const [importListName, setImportListName] = useState('');
-  const [importListId, setImportListId] = useState<number | null>(null);
-  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
-  const [importResult, setImportResult] = useState<{ created: number; updated: number; errors: string[] } | null>(null);
 
   const previewMutation = usePreviewCSV();
   const importMutation = useImportCSV();
 
   const lists = data?.lists || [];
   const filteredLists = lists.filter((l) =>
-    l.name.toLowerCase().includes(searchTerm.toLowerCase())
+    l.name.toLowerCase().includes(state.searchTerm.toLowerCase())
   );
 
   const handleCreate = async () => {
-    if (!newListName.trim()) {
+    if (!state.newListName.trim()) {
       toast.error('Nom requis');
       return;
     }
     try {
       await createMutation.mutateAsync({
-        name: newListName,
-        description: newListDescription,
-        list_type: newListType,
+        name: state.newListName,
+        description: state.newListDescription,
+        list_type: state.newListType,
       });
       toast.success('Liste créée avec succès');
-      setShowCreateModal(false);
-      setNewListName('');
-      setNewListDescription('');
-      setNewListType('static');
+      dispatch({ type: 'CLOSE_CREATE_MODAL' });
     } catch {
       toast.error('Erreur lors de la création');
     }
   };
 
   const handleDelete = async () => {
-    if (!deleteId) return;
+    if (!state.deleteId) return;
     try {
-      await deleteMutation.mutateAsync(deleteId);
+      await deleteMutation.mutateAsync(state.deleteId);
       toast.success('Liste supprimée');
-      setDeleteId(null);
+      dispatch({ type: 'SET_DELETE_ID', payload: null });
     } catch {
       toast.error('Erreur lors de la suppression');
     }
@@ -167,18 +151,16 @@ export default function ContactListsPage() {
       return;
     }
 
-    setCsvFileName(file.name);
-
     const reader = new FileReader();
     reader.onload = async (event) => {
       const base64 = btoa(event.target?.result as string);
-      setCsvData(base64);
+      dispatch({ type: "SET_CSV_DATA", payload: { data: base64, fileName: file.name } });
 
       try {
         const preview = await previewMutation.mutateAsync(base64);
-        setCsvPreview(preview);
-        setColumnMapping(preview.column_mapping);
-        setImportStep('preview');
+        dispatch({ type: "SET_CSV_PREVIEW", payload: preview });
+        dispatch({ type: "SET_COLUMN_MAPPING", payload: preview.column_mapping });
+        dispatch({ type: "SET_IMPORT_STEP", payload: 'preview' });
       } catch (err) {
         toast.error('Erreur lors de la lecture du fichier');
       }
@@ -187,27 +169,27 @@ export default function ContactListsPage() {
   };
 
   const handleImport = async () => {
-    if (!csvData) return;
+    if (!state.csvData) return;
 
-    if (!importListName && !importListId) {
+    if (!state.importListName && !state.importListId) {
       toast.error('Veuillez entrer un nom de liste');
       return;
     }
 
     try {
       const result = await importMutation.mutateAsync({
-        csv_data: csvData,
-        list_id: importListId || undefined,
-        list_name: importListName || undefined,
-        column_mapping: columnMapping,
+        csv_data: state.csvData,
+        list_id: state.importListId || undefined,
+        list_name: state.importListName || undefined,
+        column_mapping: state.columnMapping,
       });
 
-      setImportResult({
+      dispatch({ type: "SET_IMPORT_RESULT", payload: {
         created: result.created,
         updated: result.updated,
         errors: result.errors,
-      });
-      setImportStep('result');
+      } });
+      dispatch({ type: "SET_IMPORT_STEP", payload: 'result' });
       toast.success(`${result.total} contacts importés`);
     } catch (err) {
       toast.error('Erreur lors de l\'import');
@@ -215,15 +197,7 @@ export default function ContactListsPage() {
   };
 
   const resetImportModal = () => {
-    setShowImportModal(false);
-    setCsvData(null);
-    setCsvFileName('');
-    setCsvPreview(null);
-    setImportStep('upload');
-    setImportListName('');
-    setImportListId(null);
-    setColumnMapping({});
-    setImportResult(null);
+    dispatch({ type: "CLOSE_IMPORT_MODAL" });
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -256,7 +230,7 @@ export default function ContactListsPage() {
           <div className="flex gap-3">
             <button
               data-testid="btn-import-csv"
-              onClick={() => setShowImportModal(true)}
+              onClick={() => dispatch({ type: "OPEN_IMPORT_MODAL" })}
               className="inline-flex items-center gap-2 px-4 py-2 border border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20 transition text-sm font-medium"
             >
               <Upload className="w-4 h-4" />
@@ -264,7 +238,7 @@ export default function ContactListsPage() {
             </button>
             <button
               data-testid="btn-create-list"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => dispatch({ type: "OPEN_CREATE_MODAL" })}
               className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition text-sm font-medium"
             >
               <Plus className="w-4 h-4" />
@@ -317,8 +291,8 @@ export default function ContactListsPage() {
             data-testid="search-input"
             type="text"
             placeholder="Rechercher une liste..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={state.searchTerm}
+            onChange={(e) => dispatch({ type: "SET_SEARCH_TERM", payload: e.target.value })}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent"
           />
         </div>
@@ -336,11 +310,11 @@ export default function ContactListsPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
             <Users className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              {searchTerm ? 'Aucune liste trouvée' : 'Aucune liste de contacts'}
+              {state.searchTerm ? 'Aucune liste trouvée' : 'Aucune liste de contacts'}
             </p>
-            {!searchTerm && (
+            {!state.searchTerm && (
               <button
-                onClick={() => setShowCreateModal(true)}
+                onClick={() => dispatch({ type: "OPEN_CREATE_MODAL" })}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition text-sm"
               >
                 <Plus className="w-4 h-4" />
@@ -374,7 +348,7 @@ export default function ContactListsPage() {
                   </div>
                   <button
                     data-testid={`btn-delete-${list.id}`}
-                    onClick={() => setDeleteId(list.id)}
+                    onClick={() => dispatch({ type: "SET_DELETE_ID", payload: list.id })}
                     className="p-2 text-gray-400 hover:text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -404,7 +378,7 @@ export default function ContactListsPage() {
         )}
 
         {/* Modal création */}
-        {showCreateModal && (
+        {state.showCreateModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -420,8 +394,8 @@ export default function ContactListsPage() {
                   <input
                     data-testid="input-list-name"
                     type="text"
-                    value={newListName}
-                    onChange={(e) => setNewListName(e.target.value)}
+                    value={state.newListName}
+                    onChange={(e) => dispatch({ type: "SET_NEW_LIST_NAME", payload: e.target.value })}
                     placeholder="Ex: Clients VIP"
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500"
                   />
@@ -431,8 +405,8 @@ export default function ContactListsPage() {
                     Description
                   </label>
                   <textarea
-                    value={newListDescription}
-                    onChange={(e) => setNewListDescription(e.target.value)}
+                    value={state.newListDescription}
+                    onChange={(e) => dispatch({ type: "SET_NEW_LIST_DESCRIPTION", payload: e.target.value })}
                     placeholder="Description de la liste..."
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500"
@@ -444,26 +418,26 @@ export default function ContactListsPage() {
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => setNewListType('static')}
+                      onClick={() => dispatch({ type: "SET_NEW_LIST_TYPE", payload: 'static' })}
                       className={`p-3 rounded-lg border-2 text-left transition ${
-                        newListType === 'static'
+                        state.newListType === 'static'
                           ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20'
                           : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
-                      <Users className={`w-5 h-5 mb-1 ${newListType === 'static' ? 'text-violet-600' : 'text-gray-400'}`} />
+                      <Users className={`w-5 h-5 mb-1 ${state.newListType === 'static' ? 'text-violet-600' : 'text-gray-400'}`} />
                       <div className="font-medium text-gray-900 dark:text-white text-sm">Statique</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">Contacts fixes</div>
                     </button>
                     <button
-                      onClick={() => setNewListType('dynamic')}
+                      onClick={() => dispatch({ type: "SET_NEW_LIST_TYPE", payload: 'dynamic' })}
                       className={`p-3 rounded-lg border-2 text-left transition ${
-                        newListType === 'dynamic'
+                        state.newListType === 'dynamic'
                           ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20'
                           : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
-                      <Filter className={`w-5 h-5 mb-1 ${newListType === 'dynamic' ? 'text-violet-600' : 'text-gray-400'}`} />
+                      <Filter className={`w-5 h-5 mb-1 ${state.newListType === 'dynamic' ? 'text-violet-600' : 'text-gray-400'}`} />
                       <div className="font-medium text-gray-900 dark:text-white text-sm">Dynamique</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">Basée sur filtres</div>
                     </button>
@@ -472,7 +446,7 @@ export default function ContactListsPage() {
               </div>
               <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <button
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={() => dispatch({ type: "CLOSE_CREATE_MODAL" })}
                   className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Annuler
@@ -480,7 +454,7 @@ export default function ContactListsPage() {
                 <button
                   data-testid="btn-submit-create"
                   onClick={handleCreate}
-                  disabled={createMutation.isPending || !newListName.trim()}
+                  disabled={createMutation.isPending || !state.newListName.trim()}
                   className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition"
                 >
                   {createMutation.isPending ? 'Création...' : 'Créer'}
@@ -492,14 +466,14 @@ export default function ContactListsPage() {
 
         {/* Modal Import CSV */}
         <Modal
-          isOpen={showImportModal}
+          isOpen={state.showImportModal}
           onClose={resetImportModal}
           title="Importer des contacts"
           size="lg"
         >
           <div className="p-6 space-y-6">
             {/* Step: Upload */}
-            {importStep === 'upload' && (
+            {state.importStep === 'upload' && (
               <div className="space-y-4">
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -531,14 +505,14 @@ export default function ContactListsPage() {
             )}
 
             {/* Step: Preview */}
-            {importStep === 'preview' && csvPreview && (
+            {state.importStep === 'preview' && state.csvPreview && (
               <div className="space-y-4">
                 {/* File info */}
                 <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                   <FileSpreadsheet className="w-5 h-5 text-violet-500" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{csvFileName}</p>
-                    <p className="text-sm text-gray-500">{csvPreview.total_rows} lignes détectées</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{state.csvFileName}</p>
+                    <p className="text-sm text-gray-500">{state.csvPreview.total_rows} lignes détectées</p>
                   </div>
                 </div>
 
@@ -551,12 +525,12 @@ export default function ContactListsPage() {
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400">Nom</label>
                       <select
-                        value={columnMapping.name || ''}
-                        onChange={(e) => setColumnMapping({ ...columnMapping, name: e.target.value })}
+                        value={state.columnMapping.name || ''}
+                        onChange={(e) => dispatch({ type: "SET_COLUMN_MAPPING", payload: { ...state.columnMapping, name: e.target.value } })}
                         className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
                       >
                         <option value="">-- Non mappé --</option>
-                        {csvPreview.headers.map((h) => (
+                        {state.csvPreview.headers.map((h) => (
                           <option key={h} value={h}>{h}</option>
                         ))}
                       </select>
@@ -564,12 +538,12 @@ export default function ContactListsPage() {
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400">Email</label>
                       <select
-                        value={columnMapping.email || ''}
-                        onChange={(e) => setColumnMapping({ ...columnMapping, email: e.target.value })}
+                        value={state.columnMapping.email || ''}
+                        onChange={(e) => dispatch({ type: "SET_COLUMN_MAPPING", payload: { ...state.columnMapping, email: e.target.value } })}
                         className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
                       >
                         <option value="">-- Non mappé --</option>
-                        {csvPreview.headers.map((h) => (
+                        {state.csvPreview.headers.map((h) => (
                           <option key={h} value={h}>{h}</option>
                         ))}
                       </select>
@@ -577,12 +551,12 @@ export default function ContactListsPage() {
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400">Téléphone</label>
                       <select
-                        value={columnMapping.phone || ''}
-                        onChange={(e) => setColumnMapping({ ...columnMapping, phone: e.target.value })}
+                        value={state.columnMapping.phone || ''}
+                        onChange={(e) => dispatch({ type: "SET_COLUMN_MAPPING", payload: { ...state.columnMapping, phone: e.target.value } })}
                         className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
                       >
                         <option value="">-- Non mappé --</option>
-                        {csvPreview.headers.map((h) => (
+                        {state.csvPreview.headers.map((h) => (
                           <option key={h} value={h}>{h}</option>
                         ))}
                       </select>
@@ -606,16 +580,16 @@ export default function ContactListsPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {csvPreview.preview.map((row, i) => (
+                        {state.csvPreview.preview.map((row, i) => (
                           <tr key={i}>
                             <td className="px-3 py-2 text-gray-900 dark:text-white">
-                              {row._raw[columnMapping.name || ''] || '-'}
+                              {row._raw[state.columnMapping.name || ''] || '-'}
                             </td>
                             <td className="px-3 py-2 text-gray-600 dark:text-gray-300">
-                              {row._raw[columnMapping.email || ''] || '-'}
+                              {row._raw[state.columnMapping.email || ''] || '-'}
                             </td>
                             <td className="px-3 py-2 text-gray-600 dark:text-gray-300">
-                              {row._raw[columnMapping.phone || ''] || '-'}
+                              {row._raw[state.columnMapping.phone || ''] || '-'}
                             </td>
                           </tr>
                         ))}
@@ -634,17 +608,17 @@ export default function ContactListsPage() {
                       <label className="flex items-center gap-2">
                         <input
                           type="radio"
-                          checked={!importListId}
-                          onChange={() => setImportListId(null)}
+                          checked={!state.importListId}
+                          onChange={() => dispatch({ type: "SET_IMPORT_LIST_ID", payload: null })}
                           className="text-violet-600"
                         />
                         <span className="text-sm text-gray-700 dark:text-gray-300">Créer une nouvelle liste</span>
                       </label>
-                      {!importListId && (
+                      {!state.importListId && (
                         <input
                           type="text"
-                          value={importListName}
-                          onChange={(e) => setImportListName(e.target.value)}
+                          value={state.importListName}
+                          onChange={(e) => dispatch({ type: "SET_IMPORT_LIST_NAME", payload: e.target.value })}
                           placeholder="Nom de la nouvelle liste"
                           className="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
                         />
@@ -655,16 +629,16 @@ export default function ContactListsPage() {
                         <label className="flex items-center gap-2">
                           <input
                             type="radio"
-                            checked={!!importListId}
-                            onChange={() => setImportListId(lists[0]?.id || null)}
+                            checked={!!state.importListId}
+                            onChange={() => dispatch({ type: "SET_IMPORT_LIST_ID", payload: lists[0]?.id || null })}
                             className="text-violet-600"
                           />
                           <span className="text-sm text-gray-700 dark:text-gray-300">Ajouter à une liste existante</span>
                         </label>
-                        {importListId && (
+                        {state.importListId && (
                           <select
-                            value={importListId || ''}
-                            onChange={(e) => setImportListId(Number(e.target.value))}
+                            value={state.importListId}
+                            onChange={(e) => dispatch({ type: "SET_IMPORT_LIST_ID", payload: Number(e.target.value) })}
                             className="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
                           >
                             {lists.map((list) => (
@@ -682,7 +656,7 @@ export default function ContactListsPage() {
             )}
 
             {/* Step: Result */}
-            {importStep === 'result' && importResult && (
+            {state.importStep === 'result' && state.importResult && (
               <div className="space-y-4 text-center py-4">
                 <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto">
                   <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -692,23 +666,23 @@ export default function ContactListsPage() {
                 </h3>
                 <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
                   <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{importResult.created}</p>
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{state.importResult.created}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Créés</p>
                   </div>
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{importResult.updated}</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{state.importResult.updated}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Mis à jour</p>
                   </div>
                 </div>
 
-                {importResult.errors.length > 0 && (
+                {state.importResult.errors.length > 0 && (
                   <div className="text-left bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
                     <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 mb-2">
                       <AlertCircle className="w-4 h-4" />
-                      <span className="text-sm font-medium">{importResult.errors.length} erreur(s)</span>
+                      <span className="text-sm font-medium">{state.importResult.errors.length} erreur(s)</span>
                     </div>
                     <ul className="text-xs text-amber-600 dark:text-amber-300 space-y-1">
-                      {importResult.errors.slice(0, 5).map((err, i) => (
+                      {state.importResult.errors.slice(0, 5).map((err, i) => (
                         <li key={i}>{err}</li>
                       ))}
                     </ul>
@@ -720,7 +694,7 @@ export default function ContactListsPage() {
 
           {/* Footer */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
-            {importStep === 'upload' && (
+            {state.importStep === 'upload' && (
               <button
                 onClick={resetImportModal}
                 className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -728,24 +702,24 @@ export default function ContactListsPage() {
                 Annuler
               </button>
             )}
-            {importStep === 'preview' && (
+            {state.importStep === 'preview' && (
               <>
                 <button
-                  onClick={() => setImportStep('upload')}
+                  onClick={() => dispatch({ type: "SET_IMPORT_STEP", payload: 'upload' })}
                   className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Retour
                 </button>
                 <button
                   onClick={handleImport}
-                  disabled={importMutation.isPending || (!importListName && !importListId)}
+                  disabled={importMutation.isPending || (!state.importListName && !state.importListId)}
                   className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 transition"
                 >
-                  {importMutation.isPending ? 'Import en cours...' : `Importer ${csvPreview?.total_rows || 0} contacts`}
+                  {importMutation.isPending ? 'Import en cours...' : `Importer ${state.csvPreview?.total_rows || 0} contacts`}
                 </button>
               </>
             )}
-            {importStep === 'result' && (
+            {state.importStep === 'result' && (
               <button
                 onClick={resetImportModal}
                 className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition"
@@ -757,8 +731,8 @@ export default function ContactListsPage() {
         </Modal>
 
         <ConfirmModal
-          isOpen={deleteId !== null}
-          onClose={() => setDeleteId(null)}
+          isOpen={state.deleteId !== null}
+          onClose={() => dispatch({ type: "SET_DELETE_ID", payload: null })}
           onConfirm={handleDelete}
           title="Supprimer la liste"
           message="Êtes-vous sûr de vouloir supprimer cette liste ? Cette action est irréversible."

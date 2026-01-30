@@ -120,6 +120,13 @@ export class BaseApiClient {
       headers['Authorization'] = `Bearer ${token}`
     }
 
+    // CRITIQUE SÉCURITÉ : Injecter X-Tenant-Domain pour isolation multi-tenant
+    // Extrait automatiquement depuis window.location.hostname
+    const tenantDomain = window.location.hostname
+    if (tenantDomain) {
+      headers['X-Tenant-Domain'] = tenantDomain
+    }
+
     return headers
   }
 

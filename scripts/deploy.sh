@@ -171,7 +171,7 @@ echo -e "  • Status:     docker-compose -f docker-compose.prod.yml ps"
 
 echo -e "\n${YELLOW}Prochaines étapes:${NC}"
 echo -e "  1. Vérifier les logs pour détecter d'éventuelles erreurs"
-echo -e "  2. Configurer les sauvegardes automatiques avec: ./scripts/backup.sh"
+echo -e "  2. Configurer les sauvegardes automatiques avec: ./scripts/backup-db.sh"
 echo -e "  3. Configurer Stripe dans .env.production (si non fait)"
 
 echo ""

@@ -24,6 +24,12 @@ function getAuthHeaders(): HeadersInit {
     headers['X-Session-Id'] = sessionId
   }
 
+  // CRITIQUE SÉCURITÉ : Injecter X-Tenant-Domain pour isolation multi-tenant
+  const tenantDomain = window.location.hostname
+  if (tenantDomain) {
+    headers['X-Tenant-Domain'] = tenantDomain
+  }
+
   return headers
 }
 

@@ -60,6 +60,7 @@ const API_URL = import.meta.env.VITE_API_URL || ''
 class ApiClient {
   private baseUrl: string
   private tenantId: number | null = null
+  private tenantDomain: string | null = null
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl
@@ -73,6 +74,8 @@ class ApiClient {
         this.tenantId = parseInt(storedTenantId, 10)
       }
     }
+    // Initialiser le tenant domain depuis window.location.hostname
+    this.tenantDomain = window.location.hostname
   }
 
   /**
@@ -94,6 +97,21 @@ class ApiClient {
     return this.tenantId
   }
 
+  /**
+   * Définir le tenant domain pour toutes les requêtes API
+   * Injecte automatiquement le header X-Tenant-Domain
+   */
+  setTenantDomain(domain: string | null): void {
+    this.tenantDomain = domain
+  }
+
+  /**
+   * Récupérer le tenant domain courant
+   */
+  getTenantDomain(): string | null {
+    return this.tenantDomain
+  }
+
   async request<T>(endpoint: string, data?: unknown): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
     logger.debug('[API] request() ->', endpoint, 'URL:', url)
@@ -106,6 +124,11 @@ class ApiClient {
     const accessToken = tokenService.getAccessToken()
     if (accessToken) {
       headers['Authorization'] = `Bearer ${accessToken}`
+    }
+
+    // CRITIQUE SÉCURITÉ : Injecter X-Tenant-Domain pour isolation multi-tenant
+    if (this.tenantDomain) {
+      headers['X-Tenant-Domain'] = this.tenantDomain
     }
 
     logger.debug('[API] Sending fetch to:', url)
