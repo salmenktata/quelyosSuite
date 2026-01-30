@@ -1272,6 +1272,7 @@ class SuperAdminController(http.Controller):
             'status': tenant.status,
             'logo': tenant.logo_url or None,
             'slogan': tenant.slogan,
+            'partner_id': tenant.company_id.partner_id.id if tenant.company_id and tenant.company_id.partner_id else None,
             'subscription_id': sub.id if sub else None,
             'subscription_state': tenant.subscription_state,
             'plan_code': sub.plan_id.code if sub and sub.plan_id else None,
@@ -4964,6 +4965,320 @@ class SuperAdminController(http.Controller):
 
         except Exception as e:
             _logger.exception("Error fetching customer ticket history")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    # =========================================================================
+    # EMAIL SETTINGS
+    # =========================================================================
+
+    @http.route('/api/super-admin/settings/email', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_email_settings(self):
+        """Récupère la configuration SMTP actuelle"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            # Récupérer tous les serveurs SMTP (ordre par sequence)
+            servers = request.env['ir.mail_server'].sudo().search([], order='sequence, id')
+
+            data = {
+                'success': True,
+                'data': [
+                    {
+                        'id': s.id,
+                        'name': s.name,
+                        'smtp_host': s.smtp_host,
+                        'smtp_port': s.smtp_port,
+                        'smtp_user': s.smtp_user,
+                        'smtp_pass': '••••••' if s.smtp_pass else None,  # Masquer password
+                        'smtp_encryption': s.smtp_encryption,
+                        'smtp_authentication': s.smtp_authentication,
+                        'active': s.active,
+                        'sequence': s.sequence,
+                        'from_filter': s.from_filter,
+                    }
+                    for s in servers
+                ],
+                'total': len(servers),
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Get email settings error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/settings/email', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def create_or_update_email_settings(self):
+        """Créer ou mettre à jour un serveur SMTP"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            payload = json.loads(request.httprequest.data.decode('utf-8'))
+            server_id = payload.get('id')
+
+            # Validation des champs requis
+            required_fields = ['name', 'smtp_host', 'smtp_port', 'smtp_encryption']
+            for field in required_fields:
+                if not payload.get(field):
+                    return request.make_json_response({
+                        'success': False,
+                        'error': f'Champ requis: {field}'
+                    }, headers=cors_headers, status=400)
+
+            # Valeurs par défaut
+            vals = {
+                'name': payload['name'],
+                'smtp_host': payload['smtp_host'],
+                'smtp_port': int(payload['smtp_port']),
+                'smtp_encryption': payload['smtp_encryption'],
+                'smtp_authentication': payload.get('smtp_authentication', 'login'),
+                'smtp_user': payload.get('smtp_user'),
+                'active': payload.get('active', True),
+                'sequence': payload.get('sequence', 10),
+                'from_filter': payload.get('from_filter'),
+            }
+
+            # Password : uniquement si fourni et différent de '••••••'
+            if payload.get('smtp_pass') and payload['smtp_pass'] != '••••••':
+                vals['smtp_pass'] = payload['smtp_pass']
+
+            MailServer = request.env['ir.mail_server'].sudo()
+
+            if server_id:
+                # Update existant
+                server = MailServer.browse(server_id)
+                if not server.exists():
+                    return request.make_json_response({
+                        'success': False,
+                        'error': 'Serveur SMTP introuvable'
+                    }, headers=cors_headers, status=404)
+
+                server.write(vals)
+                message = 'Serveur SMTP mis à jour'
+            else:
+                # Créer nouveau
+                server = MailServer.create(vals)
+                message = 'Serveur SMTP créé'
+
+            _logger.info(
+                f"[AUDIT] Email settings {'updated' if server_id else 'created'} - "
+                f"User: {request.env.user.login} | Server: {server.name}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': message,
+                'data': {
+                    'id': server.id,
+                    'name': server.name,
+                    'smtp_host': server.smtp_host,
+                    'smtp_port': server.smtp_port,
+                    'smtp_user': server.smtp_user,
+                    'smtp_pass': '••••••' if server.smtp_pass else None,
+                    'smtp_encryption': server.smtp_encryption,
+                    'smtp_authentication': server.smtp_authentication,
+                    'active': server.active,
+                    'sequence': server.sequence,
+                    'from_filter': server.from_filter,
+                }
+            }, headers=cors_headers)
+
+        except json.JSONDecodeError:
+            return request.make_json_response(
+                {'success': False, 'error': 'JSON invalide'},
+                headers=cors_headers, status=400
+            )
+        except Exception as e:
+            _logger.error(f"Create/update email settings error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/settings/email/<int:server_id>', type='http', auth='public', methods=['DELETE', 'OPTIONS'], csrf=False)
+    def delete_email_server(self, server_id):
+        """Supprimer un serveur SMTP"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            server = request.env['ir.mail_server'].sudo().browse(server_id)
+
+            if not server.exists():
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Serveur SMTP introuvable'
+                }, headers=cors_headers, status=404)
+
+            server_name = server.name
+            server.unlink()
+
+            _logger.warning(
+                f"[AUDIT] Email server DELETED - User: {request.env.user.login} | "
+                f"Server: {server_name} (ID: {server_id})"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Serveur SMTP supprimé'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Delete email server error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/settings/email/test', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def test_email_server(self):
+        """Tester l'envoi d'un email via le serveur SMTP configuré"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            payload = json.loads(request.httprequest.data.decode('utf-8'))
+            email_to = payload.get('email_to')
+            server_id = payload.get('server_id')
+
+            if not email_to:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Email destinataire requis'
+                }, headers=cors_headers, status=400)
+
+            # Créer et envoyer email de test
+            mail_values = {
+                'subject': '[Quelyos] Test Email SMTP',
+                'body_html': '''
+                    <p>Bonjour,</p>
+                    <p>Ceci est un email de test pour valider la configuration SMTP de votre plateforme Quelyos.</p>
+                    <p><strong>Date:</strong> {}</p>
+                    <p>Si vous recevez cet email, la configuration est correcte ✅</p>
+                    <p>Cordialement,<br/>Système Quelyos</p>
+                '''.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                'email_to': email_to,
+                'auto_delete': False,  # Garder pour debug
+            }
+
+            # Si server_id spécifié, forcer utilisation de ce serveur
+            if server_id:
+                mail_values['mail_server_id'] = server_id
+
+            mail = request.env['mail.mail'].sudo().create(mail_values)
+            mail.send()
+
+            # Vérifier le statut après envoi
+            if mail.state == 'sent':
+                _logger.info(
+                    f"[AUDIT] Test email SENT - User: {request.env.user.login} | "
+                    f"To: {email_to} | Server ID: {server_id or 'default'}"
+                )
+                return request.make_json_response({
+                    'success': True,
+                    'message': f'Email de test envoyé à {email_to}'
+                }, headers=cors_headers)
+            else:
+                error_msg = mail.failure_reason or 'Échec envoi (raison inconnue)'
+                _logger.warning(
+                    f"[AUDIT] Test email FAILED - User: {request.env.user.login} | "
+                    f"To: {email_to} | Error: {error_msg}"
+                )
+                return request.make_json_response({
+                    'success': False,
+                    'error': error_msg
+                }, headers=cors_headers, status=500)
+
+        except json.JSONDecodeError:
+            return request.make_json_response(
+                {'success': False, 'error': 'JSON invalide'},
+                headers=cors_headers, status=400
+            )
+        except Exception as e:
+            _logger.error(f"Test email error: {e}")
             return request.make_json_response(
                 {'success': False, 'error': str(e)},
                 headers=cors_headers, status=500

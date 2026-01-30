@@ -9,6 +9,32 @@ import { z } from 'zod'
 // SCHEMAS DE BASE
 // ============================================================================
 
+export const EmailServerSchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  smtp_host: z.string(),
+  smtp_port: z.number().int().positive(),
+  smtp_user: z.string().optional().nullable(),
+  smtp_pass: z.string().optional().nullable(),
+  smtp_encryption: z.enum(['none', 'starttls', 'ssl']),
+  smtp_authentication: z.enum(['login', 'plain', 'cram-md5']).optional(),
+  active: z.boolean().optional(),
+  sequence: z.number().optional(),
+  from_filter: z.string().optional().nullable(),
+})
+
+export type EmailServer = z.infer<typeof EmailServerSchema>
+
+export const EmailServerListSchema = z.array(EmailServerSchema)
+
+export const EmailTestSchema = z.object({
+  success: z.boolean(),
+  message: z.string().optional(),
+  error: z.string().optional(),
+})
+
+export type EmailTest = z.infer<typeof EmailTestSchema>
+
 export const TenantSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -17,6 +43,7 @@ export const TenantSchema = z.object({
   status: z.enum(['provisioning', 'active', 'suspended', 'archived']).optional(),
   logo: z.string().nullable().optional(),
   slogan: z.string().nullable().optional(),
+  partner_id: z.number().nullable().optional(),
   subscription_id: z.number().nullable().optional(),
   subscription_state: z.union([
     z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']),

@@ -20,6 +20,7 @@ import { SupportTemplates } from '@/pages/SupportTemplates'
 import { CustomerTicketHistory } from '@/pages/CustomerTicketHistory'
 import { AuditLogs } from '@/pages/AuditLogs'
 import { Settings } from '@/pages/Settings'
+import { EmailSettings } from '@/pages/EmailSettings'
 import { Sitemap } from '@/pages/Sitemap'
 import { InactivityWarning } from './InactivityWarning'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
@@ -50,6 +51,7 @@ function PageViewTracker() {
       '/backups': 'Backups',
       '/backup-schedules': 'Backup Schedules',
       '/settings': 'Settings',
+      '/email-settings': 'Email Settings',
       '/sitemap': 'Sitemap',
     }
 
@@ -110,6 +112,7 @@ export function AuthenticatedApp() {
           <Route path="backups" element={<Backups />} />
           <Route path="backup-schedules" element={<BackupSchedules />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="email-settings" element={<EmailSettings />} />
           <Route path="sitemap" element={<Sitemap />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
