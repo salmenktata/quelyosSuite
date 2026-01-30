@@ -53,6 +53,12 @@ const ChevronRight = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const ArrowLeft = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  </svg>
+)
+
 // Icônes OAuth
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -145,7 +151,7 @@ export default function Login() {
         <div className="relative z-10 flex w-full flex-col justify-between p-12 text-white xl:p-16">
           {/* Logo & Brand */}
           <div className="flex items-start justify-between">
-            <Link to="/" className="flex w-fit items-center gap-3 transition-opacity hover:opacity-80">
+            <a href="http://localhost:3000" className="flex w-fit items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-orange-500 shadow-lg shadow-orange-500/25">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
@@ -153,7 +159,11 @@ export default function Login() {
                 <h1 className="text-2xl font-bold tracking-tight">Quelyos</h1>
                 <p className="text-xs uppercase tracking-widest text-fuchsia-200/80">Backoffice</p>
               </div>
-            </Link>
+            </a>
+            <a href="http://localhost:3000" className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden xl:inline">Retour</span>
+            </a>
           </div>
 
           {/* Main headline */}
@@ -221,13 +231,17 @@ export default function Login() {
 
         <div className="relative z-10 mx-auto w-full max-w-md px-6 py-12 lg:px-12">
           {/* Mobile logo */}
-          <div className="mb-8 flex items-center justify-center lg:hidden">
-            <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="mb-8 flex items-center justify-between lg:hidden">
+            <a href="http://localhost:3000" className="flex items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-orange-500 shadow-lg">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Quelyos</span>
-            </Link>
+            </a>
+            <a href="http://localhost:3000" className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Retour</span>
+            </a>
           </div>
 
           {/* Header */}
