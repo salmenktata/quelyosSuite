@@ -119,6 +119,27 @@ class SitemapHealthcheck(models.Model):
                         'message': f'Health degraded: {previous.success_rate:.1f}% → {record.success_rate:.1f}%',
                     })
 
+    @api.model
+    def cleanup_old_checks(self, days=30):
+        """
+        Supprimer healthchecks plus anciens que X jours.
+        Appelé par cron job daily.
+
+        Args:
+            days (int): Nombre de jours à garder (défaut: 30)
+        """
+        from datetime import datetime, timedelta
+
+        cutoff = datetime.now() - timedelta(days=days)
+        old_checks = self.search([('create_date', '<', cutoff.strftime('%Y-%m-%d %H:%M:%S'))])
+
+        if old_checks:
+            count = len(old_checks)
+            old_checks.unlink()
+            _logger.info(f'[Sitemap Cleanup] Deleted {count} old healthchecks (> {days} days)')
+        else:
+            _logger.info(f'[Sitemap Cleanup] No old healthchecks to delete (> {days} days)')
+
 
 class SitemapAlert(models.Model):
     """Alertes dégradation healthcheck"""
