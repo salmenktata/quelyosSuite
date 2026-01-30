@@ -5,27 +5,14 @@
 import { renderHook, act } from '@testing-library/react';
 import { useComparisonStore, ComparisonProduct } from '@/store/comparisonStore';
 
-// Mock du localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString();
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+// Mock toastStore (used by comparisonStore)
+jest.mock('@/store/toastStore', () => ({
+  useToastStore: {
+    getState: () => ({
+      addToast: jest.fn(),
+    }),
+  },
+}));
 
 // Mock product data
 const mockProduct1: ComparisonProduct = {
@@ -67,11 +54,9 @@ const mockProduct5: ComparisonProduct = {
 
 describe('comparisonStore', () => {
   beforeEach(() => {
-    localStorageMock.clear();
-    const { result } = renderHook(() => useComparisonStore());
-    act(() => {
-      result.current.clearComparison();
-    });
+    // Reset store state directly
+    useComparisonStore.setState({ products: [], maxProducts: 4 });
+    localStorage.clear();
   });
 
   it('should initialize with empty products', () => {
@@ -95,7 +80,6 @@ describe('comparisonStore', () => {
   it('should not add more than maxProducts', () => {
     const { result } = renderHook(() => useComparisonStore());
 
-    // Ajouter 4 produits (max)
     act(() => {
       result.current.addProduct(mockProduct1);
       result.current.addProduct(mockProduct2);
@@ -105,7 +89,6 @@ describe('comparisonStore', () => {
 
     expect(result.current.products).toHaveLength(4);
 
-    // Essayer d'ajouter un 5ème
     act(() => {
       const success = result.current.addProduct(mockProduct5);
       expect(success).toBe(false);
@@ -187,7 +170,7 @@ describe('comparisonStore', () => {
     });
 
     const stored = JSON.parse(
-      localStorageMock.getItem('quelyos-comparison-storage') || '{}'
+      localStorage.getItem('quelyos-comparison-storage') || '{}'
     );
     expect(stored.state?.products).toHaveLength(1);
     expect(stored.state?.products[0].id).toBe(1);

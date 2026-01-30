@@ -21,20 +21,18 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() {}
 };
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+// Mock localStorage (functional: stores values)
+const createStorageMock = () => {
+  let store = {};
+  return {
+    getItem: jest.fn((key) => store[key] ?? null),
+    setItem: jest.fn((key, value) => { store[key] = String(value); }),
+    removeItem: jest.fn((key) => { delete store[key]; }),
+    clear: jest.fn(() => { store = {}; }),
+    get length() { return Object.keys(store).length; },
+    key: jest.fn((i) => Object.keys(store)[i] ?? null),
+  };
 };
-global.localStorage = localStorageMock;
 
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-};
-global.sessionStorage = sessionStorageMock;
+Object.defineProperty(window, 'localStorage', { value: createStorageMock(), configurable: true });
+Object.defineProperty(window, 'sessionStorage', { value: createStorageMock(), configurable: true });

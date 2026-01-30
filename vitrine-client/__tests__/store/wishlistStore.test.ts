@@ -5,37 +5,20 @@
 import { renderHook, act } from '@testing-library/react';
 import { useWishlistStore } from '@/store/wishlistStore';
 
-// Mock du localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString();
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+// Mock backendClient
+jest.mock('@/lib/backend/client', () => ({
+  backendClient: {
+    getWishlist: jest.fn().mockResolvedValue({ success: true, wishlist: [] }),
+    addToWishlist: jest.fn().mockResolvedValue({ success: true }),
+    removeFromWishlist: jest.fn().mockResolvedValue({ success: true }),
+  },
+}));
 
 describe('wishlistStore', () => {
   beforeEach(() => {
-    // Nettoyer le localStorage avant chaque test
-    localStorageMock.clear();
-    // Réinitialiser le store
-    const { result } = renderHook(() => useWishlistStore());
-    act(() => {
-      result.current.clearWishlist();
-    });
+    // Reset store state directly
+    useWishlistStore.setState({ items: [], isLoading: false, error: null });
+    localStorage.clear();
   });
 
   it('should initialize with empty items', () => {
@@ -58,12 +41,10 @@ describe('wishlistStore', () => {
   it('should remove product from wishlist', async () => {
     const { result } = renderHook(() => useWishlistStore());
 
-    // Ajouter d'abord
     await act(async () => {
       await result.current.addToWishlist(123);
     });
 
-    // Puis retirer
     await act(async () => {
       await result.current.removeFromWishlist(123);
     });
@@ -87,7 +68,6 @@ describe('wishlistStore', () => {
   it('should clear all wishlist items', async () => {
     const { result } = renderHook(() => useWishlistStore());
 
-    // Ajouter plusieurs produits
     await act(async () => {
       await result.current.addToWishlist(123);
       await result.current.addToWishlist(456);
@@ -96,7 +76,6 @@ describe('wishlistStore', () => {
 
     expect(result.current.items.length).toBe(3);
 
-    // Vider
     act(() => {
       result.current.clearWishlist();
     });
@@ -111,9 +90,8 @@ describe('wishlistStore', () => {
       await result.current.addToWishlist(123);
     });
 
-    // Vérifier que c'est dans localStorage
     const stored = JSON.parse(
-      localStorageMock.getItem('quelyos-wishlist-storage') || '{}'
+      localStorage.getItem('quelyos-wishlist-storage') || '{}'
     );
     expect(stored.state?.items).toContain(123);
   });
