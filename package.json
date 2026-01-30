@@ -2,6 +2,7 @@
   "name": "quelyos-suite",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.28.1",
   "pnpm": {
     "overrides": {
       "@types/react": "^18.3.3",
@@ -10,22 +11,31 @@
   },
   "workspaces": [
     "packages/*",
+    "apps/*",
     "api",
     "dashboard-client",
     "vitrine-quelyos",
-    "vitrine-client"
+    "vitrine-client",
+    "super-admin-client"
   ],
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "turbo run build",
     "dev": "echo 'Use pnpm dev:<app> or pnpm dev:all'",
-    "dev:all": "pnpm -r --parallel dev",
-    "dev:api": "pnpm --filter @quelyos/api dev",
-    "dev:dashboard": "pnpm --filter quelyos-backoffice dev",
-    "dev:vitrine-quelyos": "pnpm --filter @quelyos/website dev",
-    "dev:vitrine-client": "pnpm --filter frontend dev",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test",
-    "type-check": "pnpm -r type-check",
+    "dev:all": "turbo run dev --parallel",
+    "dev:api": "turbo run dev --filter=@quelyos/api",
+    "dev:dashboard": "turbo run dev --filter=quelyos-backoffice",
+    "dev:vitrine-quelyos": "turbo run dev --filter=@quelyos/website",
+    "dev:vitrine-client": "turbo run dev --filter=frontend",
+    "dev:finance": "turbo run dev --filter=finance-os",
+    "dev:store": "turbo run dev --filter=store-os",
+    "dev:copilote": "turbo run dev --filter=copilote-ops",
+    "dev:sales": "turbo run dev --filter=sales-os",
+    "dev:retail": "turbo run dev --filter=retail-os",
+    "dev:team": "turbo run dev --filter=team-os",
+    "dev:support": "turbo run dev --filter=support-os",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "type-check": "turbo run type-check",
     "clean": "pnpm -r exec rm -rf node_modules dist .next .turbo",
     "prepare": "husky",
     "generate-sitemap": "tsx scripts/generate-sitemap.ts",
@@ -37,7 +47,8 @@
     "globby": "^14.0.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "turbo": "^2.8.1"
   },
   "lint-staged": {
     "dashboard-client/**/*.{ts,tsx}": [

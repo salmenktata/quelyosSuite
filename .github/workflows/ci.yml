@@ -129,6 +129,111 @@ jobs:
         run: pnpm type-check
 
   # ==========================================================================
+  # LINT & TYPE CHECK - 7 SaaS Apps (Matrix)
+  # ==========================================================================
+  lint-saas:
+    name: Lint ${{ matrix.saas }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        saas: [finance-os, store-os, copilote-ops, sales-os, retail-os, team-os, support-os]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if app exists
+        id: check
+        run: |
+          if [ -d "apps/${{ matrix.saas }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup pnpm
+        if: steps.check.outputs.exists == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        if: steps.check.outputs.exists == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        if: steps.check.outputs.exists == 'true'
+        working-directory: apps/${{ matrix.saas }}
+        run: pnpm tsc --noEmit
+
+      - name: Build check
+        if: steps.check.outputs.exists == 'true'
+        working-directory: apps/${{ matrix.saas }}
+        run: pnpm build
+
+  # ==========================================================================
+  # LINT & TYPE CHECK - Shared Packages
+  # ==========================================================================
+  lint-packages:
+    name: Lint Shared Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if packages exist
+        id: check
+        run: |
+          if [ -d "packages/ui-kit" ] || [ -d "packages/api-client" ] || [ -d "packages/utils" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup pnpm
+        if: steps.check.outputs.exists == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        if: steps.check.outputs.exists == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @quelyos/ui-kit
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          if [ -d "packages/ui-kit" ]; then
+            cd packages/ui-kit && pnpm build
+          fi
+
+      - name: Build @quelyos/api-client
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          if [ -d "packages/api-client" ]; then
+            cd packages/api-client && pnpm build
+          fi
+
+      - name: Build @quelyos/utils
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          if [ -d "packages/utils" ]; then
+            cd packages/utils && pnpm build
+          fi
+
+  # ==========================================================================
   # PYTHON SYNTAX CHECK - Odoo Backend
   # ==========================================================================
   lint-odoo:
@@ -281,13 +386,32 @@ jobs:
         working-directory: super-admin-client
         run: pnpm build
 
+      - name: Build SaaS Apps
+        run: |
+          for app in finance-os store-os copilote-ops sales-os retail-os team-os support-os; do
+            if [ -d "apps/$app" ]; then
+              echo "Building $app..."
+              cd "apps/$app" && pnpm build && cd ../..
+            fi
+          done
+
+      - name: No-Odoo check (apps)
+        run: |
+          FOUND=$(grep -r -l --include="*.ts" --include="*.tsx" -i "odoo\|openerp\|werkzeug" apps/*/src/ 2>/dev/null || true)
+          if [ -n "$FOUND" ]; then
+            echo "CRITICAL: Odoo references found in SaaS apps:"
+            echo "$FOUND"
+            exit 1
+          fi
+          echo "No-Odoo check passed for apps/"
+
   # ==========================================================================
   # FINAL STATUS CHECK
   # ==========================================================================
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
-    needs: [lint-dashboard, lint-super-admin, lint-vitrine-client, lint-vitrine-quelyos, lint-odoo, build]
+    needs: [lint-dashboard, lint-super-admin, lint-vitrine-client, lint-vitrine-quelyos, lint-saas, lint-odoo, build]
     if: always()
     steps:
       - name: Check all jobs
@@ -296,6 +420,7 @@ jobs:
              [[ "\${{ needs.lint-super-admin.result }}" == "failure" ]] || \
              [[ "\${{ needs.lint-vitrine-client.result }}" == "failure" ]] || \
              [[ "\${{ needs.lint-vitrine-quelyos.result }}" == "failure" ]] || \
+             [[ "\${{ needs.lint-saas.result }}" == "failure" ]] || \
              [[ "\${{ needs.lint-odoo.result }}" == "failure" ]] || \
              [[ "\${{ needs.build.result }}" == "failure" ]]; then
             echo "One or more required jobs failed"
