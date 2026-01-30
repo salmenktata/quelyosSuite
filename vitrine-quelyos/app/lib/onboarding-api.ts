@@ -7,6 +7,8 @@
  * - getPlans: Récupère les plans d'abonnement
  */
 
+import { logger } from './logger';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 interface CheckSlugResponse {
@@ -79,7 +81,7 @@ export async function checkSlugAvailability(slug: string): Promise<CheckSlugResp
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error checking slug availability:', error);
+    logger.error('Erreur vérification slug', error);
     return {
       success: false,
       error: 'Erreur de connexion au serveur',
@@ -103,7 +105,7 @@ export async function createTenant(request: CreateTenantRequest): Promise<Create
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error creating tenant:', error);
+    logger.error('Erreur création tenant', error);
     return {
       success: false,
       error: 'Erreur de connexion au serveur',
@@ -127,7 +129,7 @@ export async function getSubscriptionPlans(): Promise<GetPlansResponse> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching plans:', error);
+    logger.error('Erreur récupération plans', error);
     return {
       success: false,
       error: 'Erreur de connexion au serveur',
@@ -190,7 +192,7 @@ export async function createTenantAsync(request: CreateTenantRequest): Promise<C
 
     return await response.json();
   } catch (error) {
-    console.error('Error creating tenant async:', error);
+    logger.error('Erreur création tenant async', error);
     return {
       success: false,
       error: 'Erreur de connexion au serveur',
@@ -209,7 +211,7 @@ export async function getJobStatus(jobId: number): Promise<JobStatusResponse> {
 
     return await response.json();
   } catch (error) {
-    console.error('Error getting job status:', error);
+    logger.error('Erreur récupération statut job', error);
     return {
       success: false,
       error: 'Erreur de connexion',

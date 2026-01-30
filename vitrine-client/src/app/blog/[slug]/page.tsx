@@ -7,6 +7,7 @@ import { backendClient, BlogPost } from '@/lib/backend/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getProxiedImageUrl } from '@/lib/image-proxy';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 import type { Metadata } from 'next';
 
 export const revalidate = 60;
@@ -120,7 +121,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
                 prose-a:text-primary hover:prose-a:underline
                 prose-img:rounded-lg prose-img:shadow-md"
-              dangerouslySetInnerHTML={{ __html: post.content || '' }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
             />
 
             {/* Tags */}

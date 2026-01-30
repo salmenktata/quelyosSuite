@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MessageSquare, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { logger } from "../lib/logger";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
@@ -26,9 +27,9 @@ export default function ContactPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // In production, send to API
-    if (process.env.NODE_ENV === 'development') {
-      console.log("Form submitted:", formData);
-    }
+    logger.debug('Form submitted', {
+      fields: Object.keys(formData) // Log uniquement les noms de champs, pas les valeurs
+    });
 
     setIsSubmitting(false);
     setIsSubmitted(true);

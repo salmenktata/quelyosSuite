@@ -2,12 +2,15 @@
  * Providers IA pour l'Assistant Quelyos
  *
  * Ce fichier contient les intégrations avec différentes IA :
- * - Anthropic Claude (Recommandé)
+ * - Groq (Gratuit - Llama 3.1)
+ * - Anthropic Claude
  * - OpenAI GPT-4
- * - Fallback sur détection locale
+ *
+ * Configuration dynamique depuis le backend Odoo.
  */
 
 import { createApiLogger } from '@/lib/logger';
+import { getAiConfig, reportAiUsage, type AiProviderConfig } from '@/lib/ai-config';
 
 const log = createApiLogger('POST /api/chat/ai-providers');
 
@@ -20,7 +23,7 @@ interface AIResponse {
   response: string;
   suggestions: string[];
   confidence: number;
-  provider: 'claude' | 'openai' | 'local';
+  provider: 'groq' | 'claude' | 'openai' | 'local';
 }
 
 const SYSTEM_PROMPT = `Tu es l'assistant virtuel de Quelyos Suite, une plateforme ERP française pour TPE/PME.
@@ -107,29 +110,77 @@ Pense à Quelyos comme le pilotage au quotidien, ton comptable fait la déclarat
 Prêt à assister les utilisateurs de manière professionnelle et efficace !`;
 
 /**
- * Anthropic Claude (Recommandé 🌟)
- * Meilleur rapport qualité/prix et compréhension contextuelle
+ * Groq (Gratuit) - Llama 3.1 70B Versatile
+ * Ultra-rapide (~300 tokens/s), gratuit (14400 req/jour)
  */
-export async function getClaudeResponse(
+async function getGroqResponse(
   message: string,
-  history: AIMessage[]
+  history: AIMessage[],
+  config: AiProviderConfig
 ): Promise<AIResponse> {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY manquante');
+  if (!config.api_key) {
+    throw new Error('Groq API key not configured');
   }
 
   try {
-    // Import dynamique pour éviter l'erreur si pas installé
+    const Groq = (await import('groq-sdk')).default;
+
+    const groq = new Groq({
+      apiKey: config.api_key,
+    });
+
+    const completion = await groq.chat.completions.create({
+      model: config.model || 'llama-3.1-70b-versatile',
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...history.map(h => ({ role: h.role, content: h.content })),
+        { role: 'user', content: message }
+      ],
+      temperature: config.temperature || 0.7,
+      max_tokens: config.max_tokens || 800,
+      top_p: 1,
+    });
+
+    const responseText = completion.choices[0].message.content || '';
+    const suggestions = extractSuggestionsFromText(responseText);
+
+    return {
+      response: responseText,
+      suggestions,
+      confidence: 0.90,
+      provider: 'groq'
+    };
+
+  } catch (error) {
+    log.error('[Groq] Erreur API:', error);
+    throw error;
+  }
+}
+
+/**
+ * Anthropic Claude
+ * Meilleur rapport qualité/prix et compréhension contextuelle
+ */
+async function getClaudeResponse(
+  message: string,
+  history: AIMessage[],
+  config: AiProviderConfig
+): Promise<AIResponse> {
+  if (!config.api_key) {
+    throw new Error('Claude API key not configured');
+  }
+
+  try {
     const Anthropic = (await import('@anthropic-ai/sdk')).default;
 
     const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+      apiKey: config.api_key,
     });
 
     const response = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 800,
-      temperature: 0.7,
+      model: config.model || 'claude-3-5-sonnet-20241022',
+      max_tokens: config.max_tokens || 800,
+      temperature: config.temperature || 0.7,
       system: SYSTEM_PROMPT,
       messages: [
         ...history,
@@ -241,38 +292,65 @@ function extractSuggestionsFromText(text: string): string[] {
 }
 
 /**
- * Router intelligent : choisit le meilleur provider disponible
+ * Router intelligent avec configuration dynamique depuis le backend.
+ * Utilise le provider configuré dans le panel Super Admin.
  */
 export async function getAIResponse(
   message: string,
   history: AIMessage[]
 ): Promise<AIResponse> {
-  const providers = [];
+  const startTime = Date.now();
 
-  // Ordre de préférence : Claude > OpenAI > Local
-  if (process.env.ANTHROPIC_API_KEY) {
-    providers.push({ name: 'claude', fn: getClaudeResponse });
-  }
+  try {
+    // Récupérer la config dynamique depuis le backend
+    const config = await getAiConfig();
 
-  if (process.env.OPENAI_API_KEY) {
-    providers.push({ name: 'openai', fn: getOpenAIResponse });
-  }
-
-  // Essayer les providers dans l'ordre
-  for (const provider of providers) {
-    try {
-      log.info(`[AI] Tentative avec ${provider.name}...`);
-      const response = await provider.fn(message, history);
-      log.info(`[AI] ✅ Succès avec ${provider.name}`);
-      return response;
-    } catch {
-      log.warn(`[AI] ❌ Échec ${provider.name}, tentative suivante...`);
-      continue;
+    if (!config) {
+      throw new Error('No active AI provider configured in backend');
     }
-  }
 
-  // Si tous les providers ont échoué, lever une erreur
-  throw new Error('Aucun provider IA disponible');
+    log.info(`[AI] Using provider: ${config.provider} (${config.model})`);
+
+    let response: AIResponse;
+
+    // Router selon le provider configuré
+    if (config.provider === 'groq') {
+      response = await getGroqResponse(message, history, config);
+    } else if (config.provider === 'claude') {
+      response = await getClaudeResponse(message, history, config);
+    } else if (config.provider === 'openai') {
+      response = await getOpenAIResponse(message, history);
+    } else {
+      throw new Error(`Unsupported provider: ${config.provider}`);
+    }
+
+    const latency = Date.now() - startTime;
+    log.info(`[AI] ✅ Success with ${config.provider} (${latency}ms)`);
+
+    // Reporter les métriques au backend (async, non-bloquant)
+    reportAiUsage(
+      config.id,
+      0, // tokens_used (TODO: extraire des réponses API)
+      0, // cost
+      latency,
+      true
+    ).catch(err => log.warn('[AI] Failed to report usage:', err));
+
+    return response;
+
+  } catch (error) {
+    const latency = Date.now() - startTime;
+    log.error('[AI] Provider failed:', error);
+
+    // Reporter l'échec si on a la config
+    const config = await getAiConfig().catch(() => null);
+    if (config) {
+      reportAiUsage(config.id, 0, 0, latency, false)
+        .catch(() => {/* ignore */});
+    }
+
+    throw error;
+  }
 }
 
 /**

@@ -7,6 +7,8 @@
  * - getStripeConfig: Récupère la clé publique Stripe
  */
 
+import { logger } from './logger';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
 
 interface CreateCheckoutSessionRequest {
@@ -59,7 +61,7 @@ export async function createCheckoutSession(
 
     return await response.json();
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    logger.error('Erreur création session checkout', error);
     return {
       success: false,
       error: 'Erreur de connexion',
@@ -92,7 +94,7 @@ export async function createPortalSession(
 
     return await response.json();
   } catch (error) {
-    console.error('Error creating portal session:', error);
+    logger.error('Erreur création session portail', error);
     return {
       success: false,
       error: 'Erreur de connexion',
@@ -111,7 +113,7 @@ export async function getStripeConfig(): Promise<StripeConfigResponse> {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching Stripe config:', error);
+    logger.error('Erreur récupération config Stripe', error);
     return {
       publishable_key: '',
       available: false,

@@ -91,7 +91,8 @@ const getApiBase = () => {
   return '/api/backend';
 };
 
-const _DB = process.env.BACKEND_DATABASE || 'quelyos';
+// Nom de la base de données (hardcodé, pas de secret)
+const _DB = 'quelyos';
 
 export class BackendClient {
   private api: AxiosInstance;
