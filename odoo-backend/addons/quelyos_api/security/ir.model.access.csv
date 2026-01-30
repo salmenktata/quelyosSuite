@@ -161,3 +161,6 @@ access_quelyos_waf_log_system,quelyos.waf.log system,model_quelyos_waf_log,base.
 access_quelyos_support_template_public,quelyos.support.template public,model_quelyos_support_template,base.group_public,1,0,0,0
 access_quelyos_support_template_user,quelyos.support.template user,model_quelyos_support_template,base.group_user,1,0,0,0
 access_quelyos_support_template_system,quelyos.support.template system,model_quelyos_support_template,base.group_system,1,1,1,1
+access_quelyos_sla_policy_public,quelyos.sla.policy public,model_quelyos_sla_policy,base.group_public,1,0,0,0
+access_quelyos_sla_policy_user,quelyos.sla.policy user,model_quelyos_sla_policy,base.group_user,1,0,0,0
+access_quelyos_sla_policy_system,quelyos.sla.policy system,model_quelyos_sla_policy,base.group_system,1,1,1,1

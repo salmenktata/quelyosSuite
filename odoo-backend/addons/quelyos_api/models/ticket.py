@@ -127,6 +127,21 @@ class SupportTicket(models.Model):
     response_time = fields.Float('Temps première réponse (h)', compute='_compute_times')
     resolution_time = fields.Float('Temps résolution (h)', compute='_compute_times')
 
+    # SLA (Service Level Agreement)
+    sla_policy_id = fields.Many2one('quelyos.sla.policy', string='Politique SLA', compute='_compute_sla_policy', store=True)
+    sla_first_response_deadline = fields.Datetime('SLA Deadline première réponse', compute='_compute_sla_deadlines', store=True)
+    sla_resolution_deadline = fields.Datetime('SLA Deadline résolution', compute='_compute_sla_deadlines', store=True)
+    sla_first_response_status = fields.Selection([
+        ('ok', 'Respecté'),
+        ('warning', 'Alerte'),
+        ('breached', 'Dépassé'),
+    ], string='Statut SLA première réponse', compute='_compute_sla_status')
+    sla_resolution_status = fields.Selection([
+        ('ok', 'Respecté'),
+        ('warning', 'Alerte'),
+        ('breached', 'Dépassé'),
+    ], string='Statut SLA résolution', compute='_compute_sla_status')
+
     @api.model
     def create(self, vals):
         """Surcharge create pour générer séquence et publier événement WebSocket"""
@@ -170,6 +185,87 @@ class SupportTicket(models.Model):
                 if ticket.resolution_date:
                     delta = ticket.resolution_date - ticket.create_date
                     ticket.resolution_time = round(delta.total_seconds() / 3600, 2)
+
+    @api.depends('priority', 'category')
+    def _compute_sla_policy(self):
+        """Détermine la politique SLA applicable"""
+        for ticket in self:
+            policy = self.env['quelyos.sla.policy'].get_policy_for_ticket(
+                ticket.priority,
+                ticket.category
+            )
+            ticket.sla_policy_id = policy.id if policy else False
+
+    @api.depends('create_date', 'sla_policy_id')
+    def _compute_sla_deadlines(self):
+        """Calcule les deadlines SLA"""
+        from datetime import timedelta
+        for ticket in self:
+            if ticket.create_date and ticket.sla_policy_id:
+                # Deadline première réponse
+                ticket.sla_first_response_deadline = ticket.create_date + timedelta(
+                    hours=ticket.sla_policy_id.target_first_response
+                )
+                # Deadline résolution
+                ticket.sla_resolution_deadline = ticket.create_date + timedelta(
+                    hours=ticket.sla_policy_id.target_resolution
+                )
+            else:
+                ticket.sla_first_response_deadline = False
+                ticket.sla_resolution_deadline = False
+
+    @api.depends('response_time', 'resolution_time', 'sla_policy_id', 'sla_first_response_deadline', 'sla_resolution_deadline', 'message_ids', 'state')
+    def _compute_sla_status(self):
+        """Calcule le statut SLA (ok/warning/breached)"""
+        from datetime import datetime, timezone
+        for ticket in self:
+            # Statut SLA première réponse
+            if ticket.response_time > 0:
+                # Réponse déjà donnée
+                if ticket.sla_policy_id and ticket.response_time <= ticket.sla_policy_id.target_first_response:
+                    ticket.sla_first_response_status = 'ok'
+                else:
+                    ticket.sla_first_response_status = 'breached'
+            elif ticket.sla_first_response_deadline:
+                # Pas encore de réponse, vérifier si on approche
+                now = datetime.now(timezone.utc)
+                deadline = ticket.sla_first_response_deadline.replace(tzinfo=timezone.utc)
+                if now >= deadline:
+                    ticket.sla_first_response_status = 'breached'
+                else:
+                    elapsed = (now - ticket.create_date.replace(tzinfo=timezone.utc)).total_seconds()
+                    total = (deadline - ticket.create_date.replace(tzinfo=timezone.utc)).total_seconds()
+                    percentage = (elapsed / total * 100) if total > 0 else 0
+                    if percentage >= ticket.sla_policy_id.warning_threshold:
+                        ticket.sla_first_response_status = 'warning'
+                    else:
+                        ticket.sla_first_response_status = 'ok'
+            else:
+                ticket.sla_first_response_status = False
+
+            # Statut SLA résolution
+            if ticket.state in ('resolved', 'closed'):
+                # Ticket résolu
+                if ticket.sla_policy_id and ticket.resolution_time <= ticket.sla_policy_id.target_resolution:
+                    ticket.sla_resolution_status = 'ok'
+                else:
+                    ticket.sla_resolution_status = 'breached'
+            elif ticket.sla_resolution_deadline:
+                # Pas encore résolu, vérifier si on approche
+                now = datetime.now(timezone.utc)
+                deadline = ticket.sla_resolution_deadline.replace(tzinfo=timezone.utc)
+                if now >= deadline:
+                    ticket.sla_resolution_status = 'breached'
+                else:
+                    elapsed = (now - ticket.create_date.replace(tzinfo=timezone.utc)).total_seconds()
+                    total = (deadline - ticket.create_date.replace(tzinfo=timezone.utc)).total_seconds()
+                    percentage = (elapsed / total * 100) if total > 0 else 0
+                    if percentage >= ticket.sla_policy_id.warning_threshold:
+                        ticket.sla_resolution_status = 'warning'
+                    else:
+                        ticket.sla_resolution_status = 'ok'
+            else:
+                ticket.sla_resolution_status = False
 
     def action_open(self):
         self.write({'state': 'open'})
@@ -229,6 +325,14 @@ class SupportTicket(models.Model):
             'messageCount': self.message_count,
             'createdAt': self.create_date.isoformat() if self.create_date else None,
             'updatedAt': self.write_date.isoformat() if self.write_date else None,
+            # Temps
+            'responseTime': self.response_time,
+            'resolutionTime': self.resolution_time,
+            # SLA
+            'slaFirstResponseDeadline': self.sla_first_response_deadline.isoformat() if self.sla_first_response_deadline else None,
+            'slaResolutionDeadline': self.sla_resolution_deadline.isoformat() if self.sla_resolution_deadline else None,
+            'slaFirstResponseStatus': self.sla_first_response_status or None,
+            'slaResolutionStatus': self.sla_resolution_status or None,
         }
 
     def to_dict_super_admin(self):
