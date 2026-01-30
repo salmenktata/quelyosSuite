@@ -84,3 +84,10 @@ from . import audit_log
 from . import password_history
 # 2FA/TOTP
 from . import user_totp
+# Security P4 - Super Admin
+from . import admin_session
+from . import ip_whitelist
+from . import api_key
+from . import security_alert
+# Dunning (payment collection)
+from . import dunning

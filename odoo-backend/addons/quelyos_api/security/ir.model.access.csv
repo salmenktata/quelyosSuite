@@ -148,3 +148,7 @@ access_quelyos_cors_entry_system,quelyos.cors.entry system,model_quelyos_cors_en
 access_quelyos_audit_log_system,quelyos.audit.log system,model_quelyos_audit_log,base.group_system,1,1,1,1
 access_quelyos_password_history_system,quelyos.password.history system,model_quelyos_password_history,base.group_system,1,1,1,1
 access_quelyos_user_totp_system,quelyos.user.totp system,model_quelyos_user_totp,base.group_system,1,1,1,1
+access_quelyos_admin_session_system,quelyos.admin.session system,model_quelyos_admin_session,base.group_system,1,1,1,1
+access_quelyos_ip_whitelist_system,quelyos.ip.whitelist system,model_quelyos_ip_whitelist,base.group_system,1,1,1,1
+access_quelyos_api_key_system,quelyos.api.key system,model_quelyos_api_key,base.group_system,1,1,1,1
+access_quelyos_security_alert_system,quelyos.security.alert system,model_quelyos_security_alert,base.group_system,1,1,1,1

@@ -162,6 +162,23 @@ class SuperAdminController(http.Controller):
                 'created_at': s.create_date.isoformat() if s.create_date else None,
             } for s in recent_subs]
 
+            # At-risk customers (basé sur health_score)
+            at_risk_subs = Subscription.search([
+                ('state', 'in', ['active', 'trial', 'past_due']),
+                ('health_status', 'in', ['at_risk', 'critical'])
+            ], order='health_score asc', limit=5)
+            at_risk_customers = []
+            for sub in at_risk_subs:
+                tenant = sub.tenant_ids[0] if sub.tenant_ids else None
+                at_risk_customers.append({
+                    'id': sub.id,
+                    'name': tenant.name if tenant else sub.name,
+                    'mrr': sub.mrr,
+                    'plan': sub.plan_id.code if sub.plan_id else None,
+                    'health_score': sub.health_score,
+                    'health_status': sub.health_status,
+                })
+
             data = {
                 'success': True,
                 'mrr': total_mrr,
@@ -171,7 +188,7 @@ class SuperAdminController(http.Controller):
                 'mrr_history': self._get_mrr_history(6),
                 'revenue_by_plan': revenue_by_plan,
                 'top_customers': top_customers,
-                'at_risk_customers': [],
+                'at_risk_customers': at_risk_customers,
                 'recent_subscriptions': recent_subscriptions,
             }
             return request.make_json_response(data, headers=cors_headers)
@@ -279,6 +296,159 @@ class SuperAdminController(http.Controller):
             )
 
     # =========================================================================
+    # TENANT ACTIONS (Suspend / Activate)
+    # =========================================================================
+
+    @http.route('/api/super-admin/tenants/<int:tenant_id>/suspend', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def suspend_tenant(self, tenant_id):
+        """Suspend a tenant - blocks user access"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            reason = data.get('reason', 'Suspended by super admin')
+
+            Tenant = request.env['quelyos.tenant'].sudo()
+            tenant = Tenant.browse(tenant_id)
+
+            if not tenant.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if tenant.status == 'suspended':
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant déjà suspendu'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            # Suspend tenant
+            tenant.write({
+                'status': 'suspended',
+                'suspension_reason': reason,
+                'suspended_at': datetime.now(),
+                'suspended_by': request.env.user.id,
+            })
+
+            # Log audit
+            _logger.warning(
+                f"[AUDIT] Tenant SUSPENDED - User: {request.env.user.login} | "
+                f"Tenant: {tenant.name} (ID: {tenant_id}) | Reason: {reason}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'Tenant "{tenant.name}" suspendu avec succès',
+                'tenant': self._serialize_tenant(tenant),
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Suspend tenant error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/tenants/<int:tenant_id>/activate', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def activate_tenant(self, tenant_id):
+        """Reactivate a suspended tenant"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Tenant = request.env['quelyos.tenant'].sudo()
+            tenant = Tenant.browse(tenant_id)
+
+            if not tenant.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if tenant.status == 'active':
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant déjà actif'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            # Reactivate tenant
+            tenant.write({
+                'status': 'active',
+                'suspension_reason': False,
+                'suspended_at': False,
+                'suspended_by': False,
+            })
+
+            # Log audit
+            _logger.info(
+                f"[AUDIT] Tenant REACTIVATED - User: {request.env.user.login} | "
+                f"Tenant: {tenant.name} (ID: {tenant_id})"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'Tenant "{tenant.name}" réactivé avec succès',
+                'tenant': self._serialize_tenant(tenant),
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Activate tenant error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    # =========================================================================
     # SUBSCRIPTIONS
     # =========================================================================
 
@@ -328,6 +498,103 @@ class SuperAdminController(http.Controller):
 
         except Exception as e:
             _logger.error(f"List subscriptions error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/subscriptions/health-overview', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def health_overview(self):
+        """Retourne la distribution santé des subscriptions + at-risk customers"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Subscription = request.env['quelyos.subscription'].sudo()
+
+            # Force le recalcul des health scores
+            active_subs = Subscription.search([('state', 'in', ['active', 'trial', 'past_due'])])
+            active_subs._compute_health_score()
+
+            # Distribution par health_status
+            healthy_count = Subscription.search_count([
+                ('state', 'in', ['active', 'trial']),
+                ('health_status', '=', 'healthy')
+            ])
+            at_risk_count = Subscription.search_count([
+                ('state', 'in', ['active', 'trial', 'past_due']),
+                ('health_status', '=', 'at_risk')
+            ])
+            critical_count = Subscription.search_count([
+                ('state', 'in', ['active', 'trial', 'past_due']),
+                ('health_status', '=', 'critical')
+            ])
+
+            # At-risk customers détaillés (at_risk + critical)
+            at_risk_subs = Subscription.search([
+                ('state', 'in', ['active', 'trial', 'past_due']),
+                ('health_status', 'in', ['at_risk', 'critical'])
+            ], order='health_score asc', limit=10)
+
+            at_risk_customers = []
+            for sub in at_risk_subs:
+                tenant = sub.tenant_ids[0] if sub.tenant_ids else None
+                at_risk_customers.append({
+                    'id': sub.id,
+                    'name': tenant.name if tenant else sub.name,
+                    'tenant_id': tenant.id if tenant else None,
+                    'plan': sub.plan_id.code if sub.plan_id else None,
+                    'mrr': sub.mrr,
+                    'health_score': sub.health_score,
+                    'health_status': sub.health_status,
+                    'state': sub.state,
+                    'usage_score': sub.usage_score,
+                    'payment_health': sub.payment_health,
+                    'engagement_score': sub.engagement_score,
+                    'churn_risk': sub.churn_risk,
+                    'trial_end_date': sub.trial_end_date.isoformat() if sub.trial_end_date else None,
+                })
+
+            # Total MRR at risk
+            total_mrr_at_risk = sum(sub.mrr for sub in at_risk_subs)
+
+            data = {
+                'success': True,
+                'distribution': {
+                    'healthy': healthy_count,
+                    'at_risk': at_risk_count,
+                    'critical': critical_count,
+                    'total': healthy_count + at_risk_count + critical_count,
+                },
+                'at_risk_customers': at_risk_customers,
+                'total_mrr_at_risk': total_mrr_at_risk,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Health overview error: {e}")
             return request.make_json_response(
                 {'success': False, 'error': 'Erreur serveur'},
                 headers=cors_headers,
@@ -880,17 +1147,103 @@ class SuperAdminController(http.Controller):
             last_auto = ICP.get_param('quelyos.backup.last_auto', False)
             next_scheduled = ICP.get_param('quelyos.backup.next_scheduled', False)
 
+            # Récupérer schedule
+            schedule = {
+                'enabled': ICP.get_param('quelyos.backup.schedule.enabled', 'false') == 'true',
+                'frequency': ICP.get_param('quelyos.backup.schedule.frequency', 'daily'),
+                'day_of_week': int(ICP.get_param('quelyos.backup.schedule.day_of_week', '1')),
+                'day_of_month': int(ICP.get_param('quelyos.backup.schedule.day_of_month', '1')),
+                'hour': int(ICP.get_param('quelyos.backup.schedule.hour', '2')),
+                'minute': int(ICP.get_param('quelyos.backup.schedule.minute', '0')),
+                'backup_type': ICP.get_param('quelyos.backup.schedule.type', 'full'),
+                'retention_count': int(ICP.get_param('quelyos.backup.schedule.retention', '7')),
+            }
+
             data = {
                 'success': True,
                 'data': [self._serialize_backup(b) for b in backups],
                 'total': len(backups),
                 'last_auto_backup': last_auto,
                 'next_scheduled_backup': next_scheduled,
+                'schedule': schedule,
             }
             return request.make_json_response(data, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"List backups error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/backups/schedule', type='http', auth='public', methods=['GET', 'POST', 'OPTIONS'], csrf=False)
+    def backup_schedule(self):
+        """GET/POST schedule de backup automatique"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            ICP = request.env['ir.config_parameter'].sudo()
+
+            if request.httprequest.method == 'GET':
+                schedule = {
+                    'enabled': ICP.get_param('quelyos.backup.schedule.enabled', 'false') == 'true',
+                    'frequency': ICP.get_param('quelyos.backup.schedule.frequency', 'daily'),
+                    'day_of_week': int(ICP.get_param('quelyos.backup.schedule.day_of_week', '1')),
+                    'day_of_month': int(ICP.get_param('quelyos.backup.schedule.day_of_month', '1')),
+                    'hour': int(ICP.get_param('quelyos.backup.schedule.hour', '2')),
+                    'minute': int(ICP.get_param('quelyos.backup.schedule.minute', '0')),
+                    'backup_type': ICP.get_param('quelyos.backup.schedule.type', 'full'),
+                    'retention_count': int(ICP.get_param('quelyos.backup.schedule.retention', '7')),
+                }
+                return request.make_json_response({'success': True, 'schedule': schedule}, headers=cors_headers)
+
+            # POST - Save schedule
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+
+            ICP.set_param('quelyos.backup.schedule.enabled', 'true' if data.get('enabled') else 'false')
+            ICP.set_param('quelyos.backup.schedule.frequency', data.get('frequency', 'daily'))
+            ICP.set_param('quelyos.backup.schedule.day_of_week', str(data.get('day_of_week', 1)))
+            ICP.set_param('quelyos.backup.schedule.day_of_month', str(data.get('day_of_month', 1)))
+            ICP.set_param('quelyos.backup.schedule.hour', str(data.get('hour', 2)))
+            ICP.set_param('quelyos.backup.schedule.minute', str(data.get('minute', 0)))
+            ICP.set_param('quelyos.backup.schedule.type', data.get('backup_type', 'full'))
+            ICP.set_param('quelyos.backup.schedule.retention', str(data.get('retention_count', 7)))
+
+            _logger.info(
+                f"[AUDIT] Backup schedule updated - User: {request.env.user.login} | "
+                f"Enabled: {data.get('enabled')} | Frequency: {data.get('frequency')}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Schedule sauvegardé'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Backup schedule error: {e}")
             return request.make_json_response(
                 {'success': False, 'error': 'Erreur serveur'},
                 headers=cors_headers,
@@ -1286,3 +1639,1004 @@ class SuperAdminController(http.Controller):
             'created_by': entry.created_by,
             'is_active': entry.is_active,
         }
+
+    # =========================================================================
+    # SUBSCRIPTION PLANS
+    # =========================================================================
+
+    @http.route('/api/super-admin/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_plans(self):
+        """Liste tous les plans tarifaires"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            plans = Plan.search([], order='sequence, id')
+
+            data = {
+                'success': True,
+                'data': [self._serialize_plan(p) for p in plans],
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List plans error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/plans', type='http', auth='public', methods=['POST'], csrf=False)
+    def create_plan(self):
+        """Crée un nouveau plan tarifaire"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+
+            # Vérifier doublon code
+            existing = Plan.search([('code', '=', data.get('code'))], limit=1)
+            if existing:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Code plan déjà utilisé'},
+                    headers=cors_headers,
+                    status=409
+                )
+
+            features = data.get('features', {})
+            plan = Plan.create({
+                'code': data.get('code'),
+                'name': data.get('name'),
+                'description': data.get('description'),
+                'price_monthly': data.get('price_monthly', 0),
+                'price_yearly': data.get('price_yearly', 0),
+                'max_users': data.get('max_users', 5),
+                'max_products': data.get('max_products', 100),
+                'max_orders_per_year': data.get('max_orders_per_year', 1000),
+                'feature_wishlist': features.get('wishlist_enabled', False),
+                'feature_reviews': features.get('reviews_enabled', False),
+                'feature_newsletter': features.get('newsletter_enabled', False),
+                'feature_comparison': features.get('product_comparison_enabled', False),
+                'feature_guest_checkout': features.get('guest_checkout_enabled', True),
+                'feature_api_access': features.get('api_access', False),
+                'feature_priority_support': features.get('priority_support', False),
+                'feature_custom_domain': features.get('custom_domain', False),
+                'active': True,
+            })
+
+            _logger.info(
+                f"[AUDIT] Plan created - User: {request.env.user.login} | "
+                f"Plan: {plan.code} (ID: {plan.id})"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'plan': self._serialize_plan(plan)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Create plan error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/plans/<int:plan_id>', type='http', auth='public', methods=['PUT', 'OPTIONS'], csrf=False)
+    def update_plan(self, plan_id):
+        """Met à jour un plan tarifaire"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            plan = Plan.browse(plan_id)
+
+            if not plan.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Plan non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            features = data.get('features', {})
+            plan.write({
+                'name': data.get('name', plan.name),
+                'description': data.get('description', plan.description),
+                'price_monthly': data.get('price_monthly', plan.price_monthly),
+                'price_yearly': data.get('price_yearly', plan.price_yearly),
+                'max_users': data.get('max_users', plan.max_users),
+                'max_products': data.get('max_products', plan.max_products),
+                'max_orders_per_year': data.get('max_orders_per_year', plan.max_orders_per_year),
+                'feature_wishlist': features.get('wishlist_enabled', plan.feature_wishlist),
+                'feature_reviews': features.get('reviews_enabled', plan.feature_reviews),
+                'feature_newsletter': features.get('newsletter_enabled', plan.feature_newsletter),
+                'feature_comparison': features.get('product_comparison_enabled', plan.feature_comparison),
+                'feature_guest_checkout': features.get('guest_checkout_enabled', plan.feature_guest_checkout),
+                'feature_api_access': features.get('api_access', plan.feature_api_access),
+                'feature_priority_support': features.get('priority_support', plan.feature_priority_support),
+                'feature_custom_domain': features.get('custom_domain', plan.feature_custom_domain),
+            })
+
+            _logger.info(
+                f"[AUDIT] Plan updated - User: {request.env.user.login} | "
+                f"Plan: {plan.code} (ID: {plan.id})"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'plan': self._serialize_plan(plan)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Update plan error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/plans/<int:plan_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
+    def archive_plan(self, plan_id):
+        """Archive un plan tarifaire (soft delete)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            plan = Plan.browse(plan_id)
+
+            if not plan.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Plan non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            plan.active = False
+
+            _logger.info(
+                f"[AUDIT] Plan archived - User: {request.env.user.login} | "
+                f"Plan: {plan.code} (ID: {plan.id})"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Plan archivé'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Archive plan error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    def _serialize_plan(self, plan):
+        """Sérialise un plan pour l'API"""
+        # Compter les subscribers
+        Subscription = request.env['quelyos.subscription'].sudo()
+        subscribers_count = Subscription.search_count([
+            ('plan_id', '=', plan.id),
+            ('state', 'in', ['active', 'trial'])
+        ])
+
+        return {
+            'id': plan.id,
+            'code': plan.code,
+            'name': plan.name,
+            'description': plan.description or '',
+            'price_monthly': plan.price_monthly,
+            'price_yearly': plan.price_yearly or plan.price_monthly * 12 * 0.8,
+            'max_users': plan.max_users,
+            'max_products': plan.max_products,
+            'max_orders_per_year': plan.max_orders_per_year,
+            'features': {
+                'wishlist_enabled': getattr(plan, 'feature_wishlist', False),
+                'reviews_enabled': getattr(plan, 'feature_reviews', False),
+                'newsletter_enabled': getattr(plan, 'feature_newsletter', False),
+                'product_comparison_enabled': getattr(plan, 'feature_comparison', False),
+                'guest_checkout_enabled': getattr(plan, 'feature_guest_checkout', True),
+                'api_access': getattr(plan, 'feature_api_access', False),
+                'priority_support': getattr(plan, 'feature_priority_support', False),
+                'custom_domain': getattr(plan, 'feature_custom_domain', False),
+            },
+            'group_ids': [{'id': g.id, 'name': g.name, 'full_name': g.full_name or g.name} for g in plan.group_ids],
+            'is_active': plan.active,
+            'subscribers_count': subscribers_count,
+            'created_at': plan.create_date.isoformat() if plan.create_date else None,
+        }
+
+    # =========================================================================
+    # SESSION MANAGEMENT
+    # =========================================================================
+
+    @http.route('/api/super-admin/sessions', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_sessions(self, user_id=None):
+        """Liste les sessions actives (toutes ou par utilisateur)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            AdminSession = request.env['quelyos.admin.session'].sudo()
+            domain = [('is_active', '=', True)]
+            if user_id:
+                domain.append(('user_id', '=', int(user_id)))
+
+            sessions = AdminSession.search(domain, order='last_activity desc', limit=100)
+
+            data = [{
+                'id': s.id,
+                'user_id': s.user_id.id,
+                'user_name': s.user_id.name,
+                'user_login': s.user_id.login,
+                'ip_address': s.ip_address,
+                'device_info': s.device_info,
+                'location': s.location or 'Unknown',
+                'created_at': s.created_at.isoformat() if s.created_at else None,
+                'last_activity': s.last_activity.isoformat() if s.last_activity else None,
+                'is_current': s.user_id.id == request.env.user.id,
+            } for s in sessions]
+
+            return request.make_json_response({
+                'success': True,
+                'data': data,
+                'total': len(data)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List sessions error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/sessions/<int:session_id>/revoke', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def revoke_session(self, session_id):
+        """Révoque une session spécifique"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            AdminSession = request.env['quelyos.admin.session'].sudo()
+            session = AdminSession.browse(session_id)
+
+            if not session.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Session non trouvée'},
+                    headers=cors_headers, status=404
+                )
+
+            session.revoke(revoked_by_id=request.env.user.id, reason='Revoked by super admin')
+
+            _logger.info(f"[AUDIT] Session revoked by {request.env.user.login}: {session_id}")
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Session révoquée'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Revoke session error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/sessions/revoke-user/<int:target_user_id>', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def revoke_user_sessions(self, target_user_id):
+        """Révoque toutes les sessions d'un utilisateur"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            AdminSession = request.env['quelyos.admin.session'].sudo()
+            sessions = AdminSession.search([
+                ('user_id', '=', target_user_id),
+                ('is_active', '=', True)
+            ])
+
+            count = len(sessions)
+            sessions.revoke(revoked_by_id=request.env.user.id, reason='All sessions revoked by super admin')
+
+            _logger.info(f"[AUDIT] {count} sessions revoked for user {target_user_id} by {request.env.user.login}")
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'{count} sessions révoquées',
+                'count': count
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Revoke user sessions error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    # =========================================================================
+    # IP WHITELIST
+    # =========================================================================
+
+    @http.route('/api/super-admin/ip-whitelist', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_ip_whitelist(self):
+        """Liste les règles IP whitelist"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            IPWhitelist = request.env['quelyos.ip.whitelist'].sudo()
+            rules = IPWhitelist.search([], order='sequence, id')
+
+            data = [{
+                'id': r.id,
+                'name': r.name,
+                'ip_address': r.ip_address,
+                'ip_type': r.ip_type,
+                'is_active': r.is_active,
+                'sequence': r.sequence,
+                'user_ids': [{'id': u.id, 'name': u.name} for u in r.user_ids],
+                'valid_from': r.valid_from.isoformat() if r.valid_from else None,
+                'valid_until': r.valid_until.isoformat() if r.valid_until else None,
+                'notes': r.notes,
+            } for r in rules]
+
+            # Statut global
+            status = IPWhitelist.get_whitelist_status()
+
+            return request.make_json_response({
+                'success': True,
+                'data': data,
+                'status': status,
+                'current_ip': request.httprequest.remote_addr
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List IP whitelist error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/ip-whitelist', type='http', auth='public', methods=['POST'], csrf=False)
+    def create_ip_whitelist(self):
+        """Crée une règle IP whitelist"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            body = request.get_json_data() or {}
+            name = body.get('name')
+            ip_address = body.get('ip_address')
+
+            if not name or not ip_address:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Nom et adresse IP requis'},
+                    headers=cors_headers, status=400
+                )
+
+            IPWhitelist = request.env['quelyos.ip.whitelist'].sudo()
+            rule = IPWhitelist.create({
+                'name': name,
+                'ip_address': ip_address,
+                'is_active': body.get('is_active', True),
+                'notes': body.get('notes'),
+                'sequence': body.get('sequence', 10),
+            })
+
+            _logger.info(f"[AUDIT] IP whitelist rule created by {request.env.user.login}: {ip_address}")
+
+            return request.make_json_response({
+                'success': True,
+                'id': rule.id,
+                'message': 'Règle créée'
+            }, headers=cors_headers)
+
+        except ValueError as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=400
+            )
+
+        except Exception as e:
+            _logger.error(f"Create IP whitelist error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/ip-whitelist/<int:rule_id>', type='http', auth='public', methods=['DELETE', 'OPTIONS'], csrf=False)
+    def delete_ip_whitelist(self, rule_id):
+        """Supprime une règle IP whitelist"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            IPWhitelist = request.env['quelyos.ip.whitelist'].sudo()
+            rule = IPWhitelist.browse(rule_id)
+
+            if not rule.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Règle non trouvée'},
+                    headers=cors_headers, status=404
+                )
+
+            ip_address = rule.ip_address
+            rule.unlink()
+
+            _logger.info(f"[AUDIT] IP whitelist rule deleted by {request.env.user.login}: {ip_address}")
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Règle supprimée'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Delete IP whitelist error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    # =========================================================================
+    # API KEYS
+    # =========================================================================
+
+    @http.route('/api/super-admin/api-keys', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_api_keys(self):
+        """Liste toutes les clés API"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            APIKey = request.env['quelyos.api.key'].sudo()
+            keys = APIKey.search([], order='create_date desc')
+
+            data = [{
+                'id': k.id,
+                'name': k.name,
+                'key_prefix': k.key_prefix,
+                'description': k.description,
+                'user_id': k.user_id.id,
+                'user_name': k.user_id.name,
+                'tenant_id': k.tenant_id.id if k.tenant_id else None,
+                'tenant_name': k.tenant_id.name if k.tenant_id else None,
+                'scope': k.scope,
+                'rate_limit': k.rate_limit,
+                'is_active': k.is_active,
+                'created_at': k.create_date.isoformat() if k.create_date else None,
+                'expires_at': k.expires_at.isoformat() if k.expires_at else None,
+                'last_used_at': k.last_used_at.isoformat() if k.last_used_at else None,
+                'usage_count': k.usage_count,
+            } for k in keys]
+
+            return request.make_json_response({
+                'success': True,
+                'data': data,
+                'total': len(data)
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List API keys error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/api-keys', type='http', auth='public', methods=['POST'], csrf=False)
+    def create_api_key(self):
+        """Crée une nouvelle clé API"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            body = request.get_json_data() or {}
+            name = body.get('name')
+
+            if not name:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Nom requis'},
+                    headers=cors_headers, status=400
+                )
+
+            APIKey = request.env['quelyos.api.key'].sudo()
+            record, plain_key = APIKey.generate_key(
+                name=name,
+                user_id=body.get('user_id', request.env.user.id),
+                scope=body.get('scope', 'read'),
+                tenant_id=body.get('tenant_id'),
+                expires_days=body.get('expires_days'),
+                description=body.get('description'),
+                rate_limit=body.get('rate_limit', 60),
+                ip_restrictions=body.get('ip_restrictions'),
+                allowed_endpoints=body.get('allowed_endpoints'),
+            )
+
+            _logger.info(f"[AUDIT] API key created by {request.env.user.login}: {record.key_prefix}...")
+
+            return request.make_json_response({
+                'success': True,
+                'id': record.id,
+                'key_prefix': record.key_prefix,
+                'api_key': plain_key,  # IMPORTANT: retourné UNE SEULE FOIS
+                'message': 'Clé API créée. Copiez-la maintenant, elle ne sera plus affichée!'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Create API key error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/api-keys/<int:key_id>/revoke', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def revoke_api_key(self, key_id):
+        """Révoque une clé API"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            APIKey = request.env['quelyos.api.key'].sudo()
+            key = APIKey.browse(key_id)
+
+            if not key.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Clé non trouvée'},
+                    headers=cors_headers, status=404
+                )
+
+            key.revoke()
+
+            _logger.info(f"[AUDIT] API key revoked by {request.env.user.login}: {key.key_prefix}...")
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Clé API révoquée'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Revoke API key error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    # =========================================================================
+    # SECURITY ALERTS
+    # =========================================================================
+
+    @http.route('/api/super-admin/security/alerts', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_security_alerts(self, status=None, severity=None, limit=50):
+        """Liste les alertes de sécurité"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            SecurityAlert = request.env['quelyos.security.alert'].sudo()
+            alerts = SecurityAlert.get_recent_alerts(
+                limit=int(limit),
+                status=status,
+                severity=severity
+            )
+            summary = SecurityAlert.get_alerts_summary(hours=24)
+
+            return request.make_json_response({
+                'success': True,
+                'data': alerts,
+                'summary': summary,
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List security alerts error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/security/alerts/<int:alert_id>/acknowledge', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def acknowledge_alert(self, alert_id):
+        """Marque une alerte comme prise en compte"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            SecurityAlert = request.env['quelyos.security.alert'].sudo()
+            alert = SecurityAlert.browse(alert_id)
+
+            if not alert.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Alerte non trouvée'},
+                    headers=cors_headers, status=404
+                )
+
+            alert.acknowledge()
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Alerte prise en compte'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Acknowledge alert error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/security/alerts/<int:alert_id>/resolve', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def resolve_alert(self, alert_id):
+        """Résout une alerte"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            body = request.get_json_data() or {}
+            notes = body.get('notes')
+            is_false_positive = body.get('is_false_positive', False)
+
+            SecurityAlert = request.env['quelyos.security.alert'].sudo()
+            alert = SecurityAlert.browse(alert_id)
+
+            if not alert.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Alerte non trouvée'},
+                    headers=cors_headers, status=404
+                )
+
+            alert.resolve(notes=notes, is_false_positive=is_false_positive)
+
+            return request.make_json_response({
+                'success': True,
+                'message': 'Alerte résolue'
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Resolve alert error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
+
+    @http.route('/api/super-admin/security/summary', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def security_summary(self):
+        """Résumé global de la sécurité"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            return request.make_response('', headers=list(cors_headers.items()))
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            # Alertes
+            SecurityAlert = request.env['quelyos.security.alert'].sudo()
+            alerts_summary = SecurityAlert.get_alerts_summary(hours=24)
+
+            # Sessions actives
+            AdminSession = request.env['quelyos.admin.session'].sudo()
+            active_sessions = AdminSession.search_count([('is_active', '=', True)])
+
+            # IP Whitelist
+            IPWhitelist = request.env['quelyos.ip.whitelist'].sudo()
+            whitelist_status = IPWhitelist.get_whitelist_status()
+
+            # API Keys
+            APIKey = request.env['quelyos.api.key'].sudo()
+            active_keys = APIKey.search_count([('is_active', '=', True)])
+            keys_used_today = APIKey.search_count([
+                ('is_active', '=', True),
+                ('last_used_at', '>=', datetime.now().replace(hour=0, minute=0, second=0))
+            ])
+
+            return request.make_json_response({
+                'success': True,
+                'alerts': alerts_summary,
+                'sessions': {
+                    'active': active_sessions,
+                },
+                'ip_whitelist': whitelist_status,
+                'api_keys': {
+                    'active': active_keys,
+                    'used_today': keys_used_today,
+                },
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Security summary error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers, status=500
+            )
