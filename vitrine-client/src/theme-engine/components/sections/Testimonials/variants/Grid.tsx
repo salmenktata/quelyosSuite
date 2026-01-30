@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import type { ThemeContextValue } from '../../../../engine/types';
 import { Star } from 'lucide-react';
 
@@ -65,11 +67,7 @@ export default function Grid({ config, className = '', theme }: GridProps) {
                 {testimonial.content}
               </p>
               <div className="flex items-center gap-3">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full"
-                />
+                <Image src={testimonial.avatar || '/placeholder-avatar.png'} alt={testimonial.name} width={64} height={64} className="w-12 h-12 rounded-full" style={{width: "auto", height: "auto"}} unoptimized />
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white">
                     {testimonial.name}

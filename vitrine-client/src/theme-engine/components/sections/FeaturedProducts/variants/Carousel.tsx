@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import type { ThemeContextValue } from '../../../../engine/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -70,14 +71,13 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
                   style={{ width: `calc((100% - 4.5rem) / ${visibleProducts})` }}
                 >
                   <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden hover:shadow-xl transition-all">
-                    <div className="aspect-square bg-gray-200 dark:bg-gray-700">
-                      <img
-                        src={product.image}
+                    <div className="aspect-square bg-gray-200 dark:bg-gray-700 relative">
+                      <Image
+                        src={product.image || 'https://via.placeholder.com/400?text=Product'}
                         alt={product.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://via.placeholder.com/400?text=Product';
-                        }}
+                        fill
+                        className="object-cover"
+                        unoptimized
                       />
                     </div>
                     <div className="p-4">

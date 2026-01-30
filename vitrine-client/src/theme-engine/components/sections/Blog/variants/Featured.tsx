@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ThemeContextValue } from '../../../../engine/types';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
@@ -77,14 +78,13 @@ export default function Featured({ config, className = '', theme }: FeaturedProp
 
         {/* Featured Post */}
         <article className="grid md:grid-cols-2 gap-8 mb-12 bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div className="aspect-video md:aspect-auto">
-            <img
-              src={featuredPost.image}
+          <div className="aspect-video md:aspect-auto relative">
+            <Image
+              src={featuredPost.image || 'https://via.placeholder.com/800x600?text=Featured+Post'}
               alt={featuredPost.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = 'https://via.placeholder.com/800x600?text=Featured+Post';
-              }}
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
           <div className="p-8 flex flex-col justify-center">
@@ -131,14 +131,13 @@ export default function Featured({ config, className = '', theme }: FeaturedProp
               key={post.id}
               className="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700">
-                <img
-                  src={post.image}
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
+                <Image
+                  src={post.image || 'https://via.placeholder.com/600x400?text=Blog+Post'}
                   alt={post.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://via.placeholder.com/600x400?text=Blog+Post';
-                  }}
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
               <div className="p-6">

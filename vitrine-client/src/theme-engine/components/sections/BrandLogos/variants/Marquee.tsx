@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import type { ThemeContextValue } from '../../../../engine/types';
 
 interface MarqueeProps {
@@ -19,7 +21,7 @@ export default function Marquee({ config, className = '', theme }: MarqueeProps)
         {[...brands, ...brands].map((brand, index) => (
           <div key={index} className="flex-shrink-0 flex items-center justify-center opacity-60">
             {brand.logo ? (
-              <img src={brand.logo} alt={brand.name} className="max-h-12 w-auto grayscale" />
+              <Image src={brand.logo} alt={brand.name} width={200} height={80} className="max-h-12 w-auto grayscale" style={{width: "auto", height: "auto"}} unoptimized />
             ) : (
               <div className="text-gray-400 dark:text-gray-600 font-bold text-xl px-8">{brand.name}</div>
             )}

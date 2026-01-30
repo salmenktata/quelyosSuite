@@ -208,6 +208,26 @@ export function SupportTickets() {
   })
 
   // Statistiques calculées
+  // Query stats avancées
+  const { data: statsData } = useQuery({
+    queryKey: ['super-admin-tickets-stats'],
+    queryFn: async () => {
+      const response = await api.request<{
+        success: boolean
+        total: number
+        byState: Record<string, number>
+        byPriority: Record<string, number>
+        avgResponseTime: number
+        avgResolutionTime: number
+        avgSatisfaction: number
+      }>({
+        method: 'GET',
+        path: '/api/super-admin/tickets/stats',
+      })
+      return response.data
+    },
+  })
+
   const stats = useMemo(() => {
     if (!data?.tickets) return { new: 0, open: 0, pending: 0, urgent: 0 }
     return data.tickets.reduce(
@@ -296,6 +316,37 @@ export function SupportTickets() {
         <StatCard label="En attente" value={stats.pending} color="purple" icon={AlertCircle} />
         <StatCard label="Urgents" value={stats.urgent} color="red" icon={AlertCircle} />
       </div>
+
+      {/* Stats avancées */}
+      {statsData && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Statistiques globales</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total tickets</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{statsData.total}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Temps réponse moyen</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                {statsData.avgResponseTime.toFixed(1)}h
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Temps résolution moyen</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                {statsData.avgResolutionTime.toFixed(1)}h
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Satisfaction moyenne</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                {statsData.avgSatisfaction.toFixed(1)}/5
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filtres */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">

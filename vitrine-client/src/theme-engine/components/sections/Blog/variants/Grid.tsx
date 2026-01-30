@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { ThemeContextValue } from '../../../../engine/types';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
@@ -61,14 +62,13 @@ export default function Grid({ config, className = '', theme }: GridProps) {
               key={post.id}
               className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700">
-                <img
-                  src={post.image}
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
+                <Image
+                  src={post.image || 'https://via.placeholder.com/600x400?text=Blog+Post'}
                   alt={post.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://via.placeholder.com/600x400?text=Blog+Post';
-                  }}
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
               <div className="p-6">

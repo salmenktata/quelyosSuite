@@ -60,6 +60,7 @@ export const MotionImg = dynamic(
   () => import('framer-motion').then((mod) => mod.motion.img),
   {
     ssr: false,
+    // eslint-disable-next-line @next/next/no-img-element
     loading: () => <img alt="" />,
   }
 );

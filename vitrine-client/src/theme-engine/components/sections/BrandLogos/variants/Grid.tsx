@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import type { ThemeContextValue } from '../../../../engine/types';
 
 interface GridProps {
@@ -34,7 +36,7 @@ export default function Grid({ config, className = '', theme }: GridProps) {
               className="flex items-center justify-center p-4 grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
             >
               {brand.logo ? (
-                <img src={brand.logo} alt={brand.name} className="max-h-12 w-auto" />
+                <Image src={brand.logo} alt={brand.name} width={200} height={80} className="max-h-12 w-auto" style={{width: "auto", height: "auto"}} unoptimized />
               ) : (
                 <div className="text-gray-400 dark:text-gray-600 font-bold text-xl">{brand.name}</div>
               )}

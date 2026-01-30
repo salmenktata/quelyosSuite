@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import type { ThemeContextValue } from '../../../../engine/types';
@@ -66,11 +68,7 @@ export default function Tabbed({ config, className = '', theme }: TabbedProps) {
             >
               <div className="aspect-square bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
                 {product.image ? (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+                  <Image src={product.image} alt={product.name} width={400} height={400} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" style={{width: "auto", height: "auto"}} unoptimized />
                 ) : (
                   <div
                     className="w-full h-full flex items-center justify-center"

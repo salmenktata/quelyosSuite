@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -104,11 +106,7 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
                 <div className="aspect-square rounded-lg overflow-hidden mb-3 relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   {category.image_url ? (
-                    <img
-                      src={category.image_url}
-                      alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <Image src={category.image_url} alt={category.name} width={300} height={200} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" style={{width: "auto", height: "auto"}} unoptimized />
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"

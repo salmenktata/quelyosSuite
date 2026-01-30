@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { useState } from 'react';
 import type { ThemeContextValue } from '../../../../engine/types';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -90,11 +92,7 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
               {current.content}
             </p>
             <div className="flex items-center justify-center gap-4">
-              <img
-                src={current.avatar}
-                alt={current.name}
-                className="w-16 h-16 rounded-full"
-              />
+              <Image src={current.avatar || '/placeholder-avatar.png'} alt={current.name} width={64} height={64} className="w-16 h-16 rounded-full" style={{width: "auto", height: "auto"}} unoptimized />
               <div className="text-left">
                 <p className="font-semibold text-lg text-gray-900 dark:text-white">
                   {current.name}

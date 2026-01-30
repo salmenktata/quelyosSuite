@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import Link from 'next/link';
 import { Calendar, ArrowRight } from 'lucide-react';
 import type { ThemeContextValue } from '../../../../engine/types';
@@ -60,11 +62,7 @@ export default function Grid3Cols({ config, className = '', theme }: Grid3ColsPr
             >
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
                 {post.image ? (
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+                  <Image src={post.image} alt={post.title} width={600} height={400} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" style={{width: "auto", height: "auto"}} unoptimized />
                 ) : (
                   <div
                     className="w-full h-full flex items-center justify-center"

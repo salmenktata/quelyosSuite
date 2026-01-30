@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import Link from 'next/link';
 import type { ThemeContextValue } from '../../../../engine/types';
 
@@ -38,7 +40,7 @@ export default function Split({ config, className = '', theme }: SplitProps) {
           </div>
           <div className="h-full min-h-[400px] bg-gray-200 dark:bg-gray-700">
             {imageUrl ? (
-              <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+              <Image src={imageUrl} alt={title} width={400} height={300} className="w-full h-full object-cover" style={{width: "auto", height: "auto"}} unoptimized />
             ) : (
               <div
                 className="w-full h-full flex items-center justify-center"
