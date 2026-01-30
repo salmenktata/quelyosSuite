@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
@@ -70,15 +69,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/80 backdrop-blur-xl">
       <Container className="py-4">
         <div className="flex items-center justify-between">
-          {/* Logo avec SVG */}
+          {/* Logo avec Sparkles */}
           <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logos/icon-suite.svg"
-              alt="Quelyos Suite"
-              width={40}
-              height={40}
-              className="rounded-lg"
-            />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/25">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
             <div>
               <h1 className="text-xl font-bold text-white">Quelyos</h1>
               <p className="text-xs text-slate-400">Suite TPE/PME</p>
@@ -243,7 +238,7 @@ export default function Header() {
           {/* CTA Desktop */}
           <div className="hidden items-center gap-3 lg:flex">
             <Link
-              href="/marketing/register"
+              href="/register"
               className="flex items-center gap-2 rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-2 text-sm font-medium text-fuchsia-400 transition-all hover:bg-fuchsia-500/20"
             >
               <Sparkles className="h-4 w-4" />
@@ -378,7 +373,7 @@ export default function Header() {
 
               <div className="mt-4 flex flex-col gap-2">
                 <Link
-                  href="/marketing/register"
+                  href="/register"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-3 text-sm font-medium text-fuchsia-400"
                 >

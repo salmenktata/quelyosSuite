@@ -10,8 +10,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-              <div className="rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-2">
-                <span className="text-xl font-bold text-white">Q</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
+                <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div>
                 <p className="font-bold text-white">Quelyos</p>
@@ -96,7 +96,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/marketing/register"
+                  href="/register"
                   className="flex items-center gap-2 text-sm text-fuchsia-400 hover:text-fuchsia-300"
                 >
                   <Sparkles className="h-3 w-3" />
