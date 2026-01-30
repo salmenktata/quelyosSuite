@@ -10,8 +10,9 @@
  */
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Search, Eye, Plus, Loader2, X, Pause, Play, ArrowUpDown, AlertTriangle } from 'lucide-react'
+import { Search, Eye, Plus, Loader2, X, Pause, Play, ArrowUpDown, AlertTriangle, History } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { TenantsResponseSchema, PlansResponseSchema, validateApiResponse } from '@/lib/validators'
 import type { Tenant, Plan } from '@/lib/validators'
@@ -29,6 +30,7 @@ interface CreateTenantForm {
 export function Tenants() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [planFilter, setPlanFilter] = useState<string>('all')
   const [stateFilter, setStateFilter] = useState<string>('all')
@@ -369,6 +371,7 @@ export function Tenants() {
           onClose={() => setSelectedTenant(null)}
           onSuspend={() => setSuspendTarget(selectedTenant)}
           onActivate={() => setActivateTarget(selectedTenant)}
+          navigate={navigate}
         />
       )}
 
@@ -574,11 +577,13 @@ function TenantDetailModal({
   onClose,
   onSuspend,
   onActivate,
+  navigate,
 }: {
   tenant: Tenant
   onClose: () => void
   onSuspend?: () => void
   onActivate?: () => void
+  navigate: ReturnType<typeof useNavigate>
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
@@ -646,37 +651,52 @@ function TenantDetailModal({
           </div>
         </div>
 
-        <div className="mt-6 flex gap-3">
-          {tenant.status === 'active' && onSuspend && (
-            <button
-              onClick={() => {
-                onClose()
-                onSuspend()
-              }}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
-            >
-              <Pause className="w-4 h-4" />
-              Suspendre
-            </button>
-          )}
-          {tenant.status === 'suspended' && onActivate && (
-            <button
-              onClick={() => {
-                onClose()
-                onActivate()
-              }}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <Play className="w-4 h-4" />
-              Réactiver
-            </button>
-          )}
+        <div className="mt-6 space-y-3">
+          {/* Bouton Historique Tickets */}
           <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            onClick={() => {
+              onClose()
+              navigate(`/customers/${tenant.partner_id}/tickets`)
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
           >
-            Fermer
+            <History className="w-4 h-4" />
+            Historique Tickets Support
           </button>
+
+          {/* Boutons d'action */}
+          <div className="flex gap-3">
+            {tenant.status === 'active' && onSuspend && (
+              <button
+                onClick={() => {
+                  onClose()
+                  onSuspend()
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+              >
+                <Pause className="w-4 h-4" />
+                Suspendre
+              </button>
+            )}
+            {tenant.status === 'suspended' && onActivate && (
+              <button
+                onClick={() => {
+                  onClose()
+                  onActivate()
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              >
+                <Play className="w-4 h-4" />
+                Réactiver
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              Fermer
+            </button>
+          </div>
         </div>
       </div>
     </div>

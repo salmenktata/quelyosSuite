@@ -15,6 +15,7 @@ import { Backups } from '@/pages/Backups'
 import { Security } from '@/pages/Security'
 import { SupportTickets } from '@/pages/SupportTickets'
 import { SupportTemplates } from '@/pages/SupportTemplates'
+import { CustomerTicketHistory } from '@/pages/CustomerTicketHistory'
 import { AuditLogs } from '@/pages/AuditLogs'
 import { Settings } from '@/pages/Settings'
 import { InactivityWarning } from './InactivityWarning'
@@ -44,6 +45,11 @@ function PageViewTracker() {
       '/audit-logs': 'Audit Logs',
       '/backups': 'Backups',
       '/settings': 'Settings',
+    }
+
+    // Gérer les routes dynamiques (ex: /customers/:id/tickets)
+    if (location.pathname.match(/^\/customers\/\d+\/tickets$/)) {
+      return 'Customer Ticket History'
     }
 
     const pageName = pageNames[location.pathname] || location.pathname
@@ -92,6 +98,7 @@ export function AuthenticatedApp() {
           <Route path="security" element={<Security />} />
           <Route path="support-tickets" element={<SupportTickets />} />
           <Route path="support-templates" element={<SupportTemplates />} />
+          <Route path="customers/:customerId/tickets" element={<CustomerTicketHistory />} />
           <Route path="audit-logs" element={<AuditLogs />} />
           <Route path="backups" element={<Backups />} />
           <Route path="settings" element={<Settings />} />
