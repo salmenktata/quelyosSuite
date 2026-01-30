@@ -99,11 +99,11 @@ export default function AccountsPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteConflictId, setDeleteConflictId] = useState<number | null>(null)
-  const [deleteAction, setDeleteAction] = useState<'archive' | 'reassign'>('archive')
-  const [reassignTargetId, setReassignTargetId] = useState<number | ''>('')
+  const [_deleteAction, setDeleteAction] = useState<'archive' | 'reassign'>('archive')
+  const [_reassignTargetId, setReassignTargetId] = useState<number | ''>('')
   const [resolvingConflict, setResolvingConflict] = useState(false)
   const [conflictError, setConflictError] = useState<string | null>(null)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [_deleteError, setDeleteError] = useState<string | null>(null)
 
   const withCompanyParam = useCallback(
     (path: string) => {
@@ -117,7 +117,7 @@ export default function AccountsPage() {
 
   const {
     data: portfoliosData,
-    refetch: refetchPortfolios
+    refetch: _refetchPortfolios
   } = useApiData<Portfolio[]>({
     fetcher: async () => {
       const data = await api(withCompanyParam('/portfolios'))

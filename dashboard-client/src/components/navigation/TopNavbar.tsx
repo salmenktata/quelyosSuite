@@ -9,6 +9,7 @@ import {
   Menu,
   ExternalLink,
   Settings,
+  Home,
 } from 'lucide-react'
 
 interface TopNavbarProps {
@@ -28,6 +29,7 @@ interface TopNavbarProps {
  * - Bouton App Launcher
  * - Logo Quelyos
  * - Quick access pour 5 modules (home, finance, store, crm, stock)
+ * - Lien vers site vitrine
  * - Lien "Voir mon site" vers e-commerce
  * - Toggle dark/light mode
  * - Bouton menu mobile
@@ -107,6 +109,18 @@ export function TopNavbar({
 
       {/* Right side */}
       <div className="flex items-center gap-2 ml-auto">
+        {/* View vitrine button */}
+        <a
+          href="http://localhost:3000"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+          title="Retour au site vitrine"
+        >
+          <Home className="h-4 w-4" />
+          <span className="hidden md:inline">Site vitrine</span>
+        </a>
+
         {/* View site button */}
         <a
           href={import.meta.env.VITE_SHOP_URL || 'http://localhost:3001'}

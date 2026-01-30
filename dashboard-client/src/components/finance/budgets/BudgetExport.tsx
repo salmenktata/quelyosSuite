@@ -40,7 +40,7 @@ const statusLabels: Record<BudgetStatus, string> = {
   EXCEEDED: "Dépassé"
 };
 
-export function BudgetExport({ allBudgets, filteredBudgets, formatCurrency }: BudgetExportProps) {
+export function BudgetExport({ allBudgets, filteredBudgets, formatCurrency: _formatCurrency }: BudgetExportProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const exportToCSV = (budgets: Budget[], filename: string) => {

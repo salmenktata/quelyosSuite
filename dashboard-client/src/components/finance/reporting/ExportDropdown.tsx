@@ -13,7 +13,7 @@ interface ExportDropdownProps {
 export function ExportDropdown({
   onExport,
   filename,
-  reportTitle,
+  reportTitle: _reportTitle,
   className = ""
 }: ExportDropdownProps) {
   const [loading, setLoading] = useState(false);

@@ -81,7 +81,7 @@ interface StaggerProps {
   'data-guide'?: string
 }
 
-export function Stagger({ children, className = '', staggerDelay = 50, speed, delay, ...rest }: StaggerProps) {
+export function Stagger({ children, className = '', staggerDelay = 50, speed: _speed, delay: _delay, ..._rest }: StaggerProps) {
   return (
     <div className={className}>
       {React.Children.map(children, (child, index) => (
@@ -99,7 +99,7 @@ export function Stagger({ children, className = '', staggerDelay = 50, speed, de
 }
 
 // StaggerContainer - Container pour animations staggerées
-export function StaggerContainer({ children, className = '', staggerDelay = 50, speed, delay, ...rest }: StaggerProps) {
+export function StaggerContainer({ children, className = '', staggerDelay = 50, speed: _speed, delay: _delay, ..._rest }: StaggerProps) {
   return (
     <div className={`animate-fade-in ${className}`}>
       {React.Children.map(children, (child, index) => (
@@ -149,7 +149,7 @@ interface HoverableProps extends AnimatedProps {
   enableScale?: boolean
 }
 
-export function Hoverable({ children, className = '', scale = 1.02, enableScale }: HoverableProps) {
+export function Hoverable({ children, className = '', scale = 1.02, enableScale: _enableScale }: HoverableProps) {
   return (
     <div
       className={`transition-transform hover:scale-[${scale}] ${className}`}

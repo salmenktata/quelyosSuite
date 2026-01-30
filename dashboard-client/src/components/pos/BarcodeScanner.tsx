@@ -110,7 +110,7 @@ interface CameraScannerModalProps {
   onClose: () => void
 }
 
-function CameraScannerModal({ onScan, onClose }: CameraScannerModalProps) {
+function CameraScannerModal({ onScan: _onScan, onClose }: CameraScannerModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)

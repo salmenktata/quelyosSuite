@@ -13,7 +13,7 @@ interface QuickAccessProps {
 /**
  * Section sticky d'accès rapide affichant favoris et pages récentes
  */
-export function QuickAccess({ favorites, recentPages, moduleColor, isActive }: QuickAccessProps) {
+export function QuickAccess({ favorites, recentPages: _recentPages, moduleColor: _moduleColor, isActive }: QuickAccessProps) {
   // Trouver les items correspondants dans la config
   const findMenuItem = (path: string) => {
     for (const module of MODULES) {

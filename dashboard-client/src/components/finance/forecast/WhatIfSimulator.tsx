@@ -114,7 +114,7 @@ const SCENARIO_TEMPLATES: Omit<ScenarioImpact, "enabled" | "value">[] = [
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function WhatIfSimulator({
-  baseBalance,
+  baseBalance: _baseBalance,
   onSimulate,
   onReset,
 }: WhatIfSimulatorProps) {
