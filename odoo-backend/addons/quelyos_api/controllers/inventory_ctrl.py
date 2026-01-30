@@ -5987,3 +5987,195 @@ class QuelyosInventoryAPI(BaseController):
                 'success': False,
                 'error': 'Une erreur est survenue'
             }
+
+    # =========================================================================
+    # STOCK SCRAP (Mise au rebut)
+    # =========================================================================
+
+    @http.route('/api/stock/scraps', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_stock_scraps(self, **kwargs):
+        """Liste des mises au rebut avec filtres"""
+        try:
+            auth_result = self._authenticate_from_header()
+            if auth_result:
+                return auth_result
+
+            state = kwargs.get('state')  # 'draft', 'done'
+            product_id = kwargs.get('product_id')
+            limit = kwargs.get('limit', 50)
+            offset = kwargs.get('offset', 0)
+
+            Scrap = request.env['quelyos.stock.scrap'].sudo()
+
+            domain = []
+            if state:
+                domain.append(('state', '=', state))
+            if product_id:
+                domain.append(('product_id', '=', int(product_id)))
+
+            total = Scrap.search_count(domain)
+            scraps = Scrap.search(domain, limit=limit, offset=offset, order='create_date desc')
+
+            return {
+                'success': True,
+                'scraps': [s.to_dict() for s in scraps],
+                'total': total,
+                'limit': limit,
+                'offset': offset,
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock scraps error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': 'Une erreur est survenue'
+            }
+
+    @http.route('/api/stock/scraps/<int:scrap_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def get_stock_scrap_detail(self, scrap_id, **kwargs):
+        """Détails d'une mise au rebut"""
+        try:
+            auth_result = self._authenticate_from_header()
+            if auth_result:
+                return auth_result
+
+            Scrap = request.env['quelyos.stock.scrap'].sudo()
+            scrap = Scrap.browse(scrap_id)
+
+            if not scrap.exists():
+                return {
+                    'success': False,
+                    'error': f'Mise au rebut {scrap_id} introuvable'
+                }
+
+            return {
+                'success': True,
+                'scrap': scrap.to_dict(),
+            }
+
+        except Exception as e:
+            _logger.error(f"Get stock scrap detail error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': 'Une erreur est survenue'
+            }
+
+    @http.route('/api/stock/scraps/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def create_stock_scrap(self, **kwargs):
+        """Créer une nouvelle mise au rebut"""
+        try:
+            auth_result = self._authenticate_from_header()
+            if auth_result:
+                return auth_result
+
+            # Validation champs requis
+            required_fields = ['product_id', 'scrap_qty', 'location_id', 'reason']
+            for field in required_fields:
+                if not kwargs.get(field):
+                    return {
+                        'success': False,
+                        'error': f'Champ requis: {field}'
+                    }
+
+            Scrap = request.env['quelyos.stock.scrap'].sudo()
+
+            # Préparer valeurs
+            vals = {
+                'product_id': int(kwargs['product_id']),
+                'scrap_qty': float(kwargs['scrap_qty']),
+                'location_id': int(kwargs['location_id']),
+                'reason': kwargs['reason'],
+            }
+
+            # Champs optionnels
+            if kwargs.get('scrap_location_id'):
+                vals['scrap_location_id'] = int(kwargs['scrap_location_id'])
+            if kwargs.get('lot_id'):
+                vals['lot_id'] = int(kwargs['lot_id'])
+            if kwargs.get('notes'):
+                vals['notes'] = kwargs['notes']
+
+            scrap = Scrap.create(vals)
+
+            return {
+                'success': True,
+                'message': 'Mise au rebut créée avec succès',
+                'scrap': scrap.to_dict(),
+            }
+
+        except Exception as e:
+            _logger.error(f"Create stock scrap error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e) if str(e) else 'Une erreur est survenue'
+            }
+
+    @http.route('/api/stock/scraps/<int:scrap_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def validate_stock_scrap(self, scrap_id, **kwargs):
+        """Valider une mise au rebut (génère mouvement stock)"""
+        try:
+            auth_result = self._authenticate_from_header()
+            if auth_result:
+                return auth_result
+
+            Scrap = request.env['quelyos.stock.scrap'].sudo()
+            scrap = Scrap.browse(scrap_id)
+
+            if not scrap.exists():
+                return {
+                    'success': False,
+                    'error': f'Mise au rebut {scrap_id} introuvable'
+                }
+
+            # Valider
+            scrap.action_validate()
+
+            return {
+                'success': True,
+                'message': 'Mise au rebut validée avec succès',
+                'scrap': scrap.to_dict(),
+            }
+
+        except Exception as e:
+            _logger.error(f"Validate stock scrap error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e) if str(e) else 'Une erreur est survenue'
+            }
+
+    @http.route('/api/stock/scraps/<int:scrap_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def delete_stock_scrap(self, scrap_id, **kwargs):
+        """Supprimer une mise au rebut (brouillon uniquement)"""
+        try:
+            auth_result = self._authenticate_from_header()
+            if auth_result:
+                return auth_result
+
+            Scrap = request.env['quelyos.stock.scrap'].sudo()
+            scrap = Scrap.browse(scrap_id)
+
+            if not scrap.exists():
+                return {
+                    'success': False,
+                    'error': f'Mise au rebut {scrap_id} introuvable'
+                }
+
+            if scrap.state == 'done':
+                return {
+                    'success': False,
+                    'error': 'Impossible de supprimer une mise au rebut validée'
+                }
+
+            scrap.unlink()
+
+            return {
+                'success': True,
+                'message': 'Mise au rebut supprimée avec succès'
+            }
+
+        except Exception as e:
+            _logger.error(f"Delete stock scrap error: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': 'Une erreur est survenue'
+            }

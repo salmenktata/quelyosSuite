@@ -142,23 +142,75 @@ class MarketingCampaign(models.Model):
             self._send_sms_campaign()
 
     def _send_email_campaign(self):
-        """Envoi de campagne email via Brevo/SMTP"""
+        """Envoi de campagne email via Brevo/SMTP avec unsubscribe RGPD"""
         if not self.contact_list_id:
             return
 
         contacts = self.contact_list_id.get_contacts()
+        Blacklist = self.env['quelyos.marketing.blacklist'].sudo()
+
         sent_count = 0
+        skipped_blacklist = 0
+
+        # Récupérer base_url pour liens unsubscribe
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', 'http://localhost:5175')
 
         for contact in contacts:
-            if contact.email:
-                # TODO: Intégrer envoi via email_config
-                sent_count += 1
+            if not contact.email:
+                continue
+
+            # Filtrer blacklistés (RGPD)
+            if Blacklist.is_blacklisted(contact.email):
+                skipped_blacklist += 1
+                continue
+
+            # Créer/récupérer entrée blacklist avec token pour ce contact
+            blacklist_entry = Blacklist.search([
+                ('email', '=', contact.email.lower()),
+                ('company_id', '=', self.env.company.id)
+            ], limit=1)
+
+            if not blacklist_entry:
+                blacklist_entry = Blacklist.create({
+                    'email': contact.email.lower(),
+                    'campaign_id': self.id,
+                    'active': False,  # Pas encore désabonné
+                })
+
+            # Générer lien unsubscribe
+            unsubscribe_url = f"{base_url}/unsubscribe/{blacklist_entry.token}"
+
+            # Injecter footer unsubscribe dans le contenu
+            email_content = self._inject_unsubscribe_footer(self.content, unsubscribe_url)
+
+            # TODO: Intégrer envoi via email_config avec email_content
+            # Pour l'instant, on simule l'envoi
+            sent_count += 1
 
         self.write({
             'stats_sent': sent_count,
             'sent_date': datetime.now(),
             'status': 'sent',
         })
+
+    def _inject_unsubscribe_footer(self, html_content, unsubscribe_url):
+        """Ajouter footer unsubscribe automatique (RGPD)"""
+        footer_html = f'''
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #666; text-align: center;">
+            <p>Vous recevez cet email car vous êtes abonné à notre liste de diffusion.</p>
+            <p>
+                <a href="{unsubscribe_url}" style="color: #666; text-decoration: underline;">
+                    Se désabonner
+                </a>
+            </p>
+        </div>
+        '''
+
+        # Insérer footer avant </body> ou à la fin
+        if '</body>' in html_content:
+            return html_content.replace('</body>', f'{footer_html}</body>')
+        else:
+            return html_content + footer_html
 
     def _send_sms_campaign(self):
         """

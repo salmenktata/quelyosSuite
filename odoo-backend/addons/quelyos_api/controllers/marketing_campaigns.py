@@ -621,3 +621,102 @@ class MarketingCampaignController(BaseController):
             }
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
+
+    # =========================================================================
+    # UNSUBSCRIBE (RGPD)
+    # =========================================================================
+
+    @http.route('/api/marketing/unsubscribe/<string:token>', type='http', auth='public', csrf=False, methods=['GET', 'POST'], cors='*')
+    def unsubscribe(self, token, **kwargs):
+        """
+        Désabonnement public via token (lien email).
+        Conforme RGPD - aucune authentification requise.
+
+        GET: Afficher page confirmation
+        POST: Confirmer désabonnement
+        """
+        try:
+            Blacklist = request.env['quelyos.marketing.blacklist'].sudo()
+
+            # Chercher l'entrée par token
+            blacklist_entry = Blacklist.search([('token', '=', token)], limit=1)
+
+            if not blacklist_entry:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Token invalide ou expiré'
+                }, status=404)
+
+            email = blacklist_entry.email
+
+            # POST : Confirmer le désabonnement
+            if request.httprequest.method == 'POST':
+                # Activer l'entrée blacklist si elle était inactive
+                if not blacklist_entry.active:
+                    blacklist_entry.write({'active': True})
+
+                # Incrémenter stats_unsubscribed de la campagne si applicable
+                if blacklist_entry.campaign_id:
+                    campaign = blacklist_entry.campaign_id
+                    campaign.write({
+                        'stats_unsubscribed': campaign.stats_unsubscribed + 1
+                    })
+
+                return request.make_json_response({
+                    'success': True,
+                    'message': f'Vous avez été désabonné avec succès de notre liste de diffusion.',
+                    'email': email,
+                })
+
+            # GET : Retourner info pour page confirmation
+            return request.make_json_response({
+                'success': True,
+                'email': email,
+                'campaign_name': blacklist_entry.campaign_id.name if blacklist_entry.campaign_id else None,
+                'already_unsubscribed': blacklist_entry.active,
+            })
+
+        except Exception as e:
+            return request.make_json_response({
+                'success': False,
+                'error': 'Erreur serveur'
+            }, status=500)
+
+    @http.route('/api/marketing/blacklist/check', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def check_blacklist(self, email, **kwargs):
+        """Vérifier si un email est blacklisté (usage interne)"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+
+        try:
+            Blacklist = request.env['quelyos.marketing.blacklist'].sudo()
+            is_blacklisted = Blacklist.is_blacklisted(email)
+
+            return {
+                'success': True,
+                'blacklisted': is_blacklisted,
+                'email': email,
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}
+
+    @http.route('/api/marketing/blacklist/add', type='jsonrpc', auth='public', csrf=False, methods=['POST'])
+    def add_to_blacklist(self, email, campaign_id=None, reason='user_request', **kwargs):
+        """Ajouter manuellement un email à la blacklist"""
+        auth_error = self._auth_check()
+        if auth_error:
+            return auth_error
+
+        try:
+            Blacklist = request.env['quelyos.marketing.blacklist'].sudo()
+            entry = Blacklist.add_to_blacklist(email, campaign_id, reason)
+
+            return {
+                'success': True,
+                'message': f'Email {email} ajouté à la blacklist',
+                'blacklist_id': entry.id,
+                'token': entry.token,
+            }
+        except Exception as e:
+            return {'success': False, 'error': 'Erreur serveur'}

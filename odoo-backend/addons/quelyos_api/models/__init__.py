@@ -10,6 +10,7 @@ from . import product_template
 from . import product_product
 from . import stock_quant
 from . import stock_location
+from . import stock_scrap
 from . import sale_order
 from . import subscription_quota_mixin
 from . import subscription_plan
@@ -34,6 +35,7 @@ from . import payment_transaction
 from . import email_config
 from . import contact_list
 from . import marketing_campaign
+from . import marketing_blacklist
 from . import sms_template
 from . import email_builder
 # Store Extended Models
