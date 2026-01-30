@@ -165,6 +165,21 @@ class QuelyosTenant(models.Model):
         ('dedicated', 'Dédié'),
     ], string='Type de déploiement', default='shared')
 
+    # Suspension fields (SaaS admin action)
+    suspension_reason = fields.Text(
+        string='Raison suspension',
+        help='Motif de la suspension du tenant'
+    )
+    suspended_at = fields.Datetime(
+        string='Date suspension',
+        help='Date et heure de la suspension'
+    )
+    suspended_by = fields.Many2one(
+        'res.users',
+        string='Suspendu par',
+        help='Super admin ayant effectué la suspension'
+    )
+
     # ═══════════════════════════════════════════════════════════════════════════
     # BRANDING
     # ═══════════════════════════════════════════════════════════════════════════

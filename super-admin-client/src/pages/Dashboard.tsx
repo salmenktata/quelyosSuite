@@ -198,32 +198,44 @@ export function Dashboard() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Tenant
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                    État
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    Score Santé
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                    Usage
+                    Statut
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    MRR
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {metrics.at_risk_customers.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
-                      Aucun customer à risque
+                    <td colSpan={4} className="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
+                      Aucun customer à risque 🎉
                     </td>
                   </tr>
                 ) : (
-                  metrics.at_risk_customers.map((tenant) => (
-                    <tr key={tenant.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{tenant.name}</td>
+                  metrics.at_risk_customers.map((customer) => (
+                    <tr key={customer.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{customer.name}</td>
+                      <td className="px-6 py-4 text-center">
+                        <HealthScoreBadge score={customer.health_score || 50} />
+                      </td>
                       <td className="px-6 py-4 text-sm">
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
-                          {tenant.plan?.toUpperCase() ?? 'N/A'}
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            customer.health_status === 'critical'
+                              ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                              : 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
+                          }`}
+                        >
+                          {customer.health_status === 'critical' ? 'Critique' : 'À risque'}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                        {tenant.mrr.toLocaleString('fr-FR')} €
+                        {customer.mrr.toLocaleString('fr-FR')} €
                       </td>
                     </tr>
                   ))
@@ -338,5 +350,19 @@ function KPICard({ title, value, icon: Icon, trend, color, trendInverted }: KPIC
         </div>
       </div>
     </div>
+  )
+}
+
+function HealthScoreBadge({ score }: { score: number }) {
+  const getColor = () => {
+    if (score >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+    if (score >= 40) return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
+    return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+  }
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full ${getColor()}`}>
+      {score}
+    </span>
   )
 }

@@ -46,29 +46,29 @@ export const TenantSchema = z.object({
 
 export const SubscriptionSchema = z.object({
   id: z.number(),
-  name: z.string().optional(),
+  name: z.string().nullable().optional(),
   tenant_id: z.number().nullable().optional(),
   tenant_name: z.string().nullable().optional(),
   tenant_domain: z.string().nullable().optional(),
   plan_id: z.number().nullable().optional(),
-  plan_code: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan_code: z.string().nullable().optional(),
   plan_name: z.string().nullable().optional(),
-  state: z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']),
-  billing_cycle: z.enum(['monthly', 'yearly']),
+  state: z.string(),
+  billing_cycle: z.string(),
   mrr: z.number().nonnegative(),
   price: z.number().nonnegative(),
   start_date: z.string().nullable().optional(),
   trial_end_date: z.string().nullable().optional(),
   next_billing_date: z.string().nullable().optional(),
   end_date: z.string().nullable().optional(),
-  stripe_subscription_id: z.string().nullable().optional(),
-  stripe_customer_id: z.string().nullable().optional(),
+  stripe_subscription_id: z.union([z.string(), z.literal(false)]).nullable().optional(),
+  stripe_customer_id: z.union([z.string(), z.literal(false)]).nullable().optional(),
   users_usage: z.number().nonnegative().optional(),
-  max_users: z.number().nonnegative(), // 0 = illimité
+  max_users: z.number().nonnegative(),
   products_usage: z.number().nonnegative().optional(),
-  max_products: z.number().nonnegative(), // 0 = illimité
+  max_products: z.number().nonnegative(),
   orders_usage: z.number().nonnegative().optional(),
-  max_orders_per_year: z.number().nonnegative(), // 0 = illimité
+  max_orders_per_year: z.number().nonnegative(),
 })
 
 export const InvoiceSchema = z.object({
@@ -111,6 +111,7 @@ export const ProvisioningJobSchema = z.object({
 })
 
 export const SystemHealthSchema = z.object({
+  success: z.boolean().optional(),
   backend_status: z.enum(['up', 'down']),
   backend_response_time_ms: z.number().nonnegative(),
   postgres_status: z.enum(['up', 'down']),
@@ -119,6 +120,36 @@ export const SystemHealthSchema = z.object({
   redis_memory_mb: z.number().nonnegative(),
   stripe_status: z.enum(['up', 'down']),
   last_webhook_received: z.string().nullable(),
+})
+
+export const PlanSchema = z.object({
+  id: z.number(),
+  code: z.enum(['starter', 'pro', 'enterprise']),
+  name: z.string(),
+  description: z.string().optional(),
+  price_monthly: z.number().nonnegative(),
+  price_yearly: z.number().nonnegative().optional(),
+  max_users: z.number().nonnegative(),
+  max_products: z.number().nonnegative(),
+  max_orders_per_year: z.number().nonnegative(),
+  features: z.object({
+    wishlist_enabled: z.boolean().optional(),
+    reviews_enabled: z.boolean().optional(),
+    newsletter_enabled: z.boolean().optional(),
+    product_comparison_enabled: z.boolean().optional(),
+    guest_checkout_enabled: z.boolean().optional(),
+    api_access: z.boolean().optional(),
+    priority_support: z.boolean().optional(),
+    custom_domain: z.boolean().optional(),
+  }).optional(),
+  is_active: z.boolean().optional(),
+  subscribers_count: z.number().nonnegative().optional(),
+  created_at: z.string().optional(),
+})
+
+export const PlansResponseSchema = z.object({
+  success: z.boolean().optional(),
+  data: z.array(PlanSchema),
 })
 
 // ============================================================================
@@ -133,6 +164,34 @@ export const TopCustomerSchema = z.object({
   plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
 })
 
+export const AtRiskCustomerSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  tenant_id: z.number().nullable().optional(),
+  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  mrr: z.number().nonnegative(),
+  health_score: z.number().min(0).max(100),
+  health_status: z.enum(['healthy', 'at_risk', 'critical']),
+  state: z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']).optional(),
+  usage_score: z.number().optional(),
+  payment_health: z.number().optional(),
+  engagement_score: z.number().optional(),
+  churn_risk: z.number().optional(),
+  trial_end_date: z.string().nullable().optional(),
+})
+
+export const HealthOverviewSchema = z.object({
+  success: z.boolean().optional(),
+  distribution: z.object({
+    healthy: z.number().nonnegative(),
+    at_risk: z.number().nonnegative(),
+    critical: z.number().nonnegative(),
+    total: z.number().nonnegative(),
+  }),
+  at_risk_customers: z.array(AtRiskCustomerSchema),
+  total_mrr_at_risk: z.number().nonnegative(),
+})
+
 export const RecentSubscriptionSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -140,6 +199,16 @@ export const RecentSubscriptionSchema = z.object({
   state: z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']),
   mrr: z.number().nonnegative(),
   created_at: z.string().nullable().optional(),
+})
+
+// Dashboard At-Risk Customer (simplified with health_score)
+export const DashboardAtRiskCustomerSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  mrr: z.number().nonnegative(),
+  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  health_score: z.number().min(0).max(100).optional(),
+  health_status: z.enum(['healthy', 'at_risk', 'critical']).optional(),
 })
 
 export const DashboardMetricsSchema = z.object({
@@ -161,25 +230,33 @@ export const DashboardMetricsSchema = z.object({
     })
   ),
   top_customers: z.array(TopCustomerSchema),
-  at_risk_customers: z.array(TopCustomerSchema),
+  at_risk_customers: z.array(DashboardAtRiskCustomerSchema),
   recent_subscriptions: z.array(RecentSubscriptionSchema),
 })
 
 export const MRRBreakdownSchema = z.object({
+  success: z.boolean().optional(),
   starter: z.number().nonnegative(),
   pro: z.number().nonnegative(),
   enterprise: z.number().nonnegative(),
   total: z.number().nonnegative(),
 })
 
-export const ChurnAnalysisSchema = z.object({
+export const ChurnAnalysisItemSchema = z.object({
   month: z.string(),
   churn_rate: z.number().min(0).max(100),
   churned_count: z.number().nonnegative(),
   active_start_count: z.number().nonnegative(),
 })
 
+export const ChurnAnalysisSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(ChurnAnalysisItemSchema).optional().default([]),
+})
+
 export const InvoicesSummarySchema = z.object({
+  success: z.boolean().optional(),
   total_revenue: z.number().nonnegative(),
   unpaid_invoices: z.number().nonnegative(),
   unpaid_amount: z.number().nonnegative(),
@@ -208,8 +285,9 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
     return schema.parse(data)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('Validation API failed:', error.issues)
-      throw new Error(`Invalid API response: ${error.issues.map((e) => e.message).join(', ')}`)
+      const details = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
+      console.error('Validation API failed:', details, '\nData received:', JSON.stringify(data, null, 2).slice(0, 500))
+      throw new Error(`Invalid API response: ${details}`)
     }
     throw error
   }
@@ -241,15 +319,29 @@ export const BackupSchema = z.object({
   status: z.enum(['pending', 'running', 'completed', 'failed']),
   created_at: z.string(),
   completed_at: z.string().nullable(),
-  download_url: z.string().nullable(),
-  error_message: z.string().nullable(),
+  download_url: z.union([z.string(), z.literal(false)]).nullable(),
+  error_message: z.union([z.string(), z.literal(false)]).nullable(),
+})
+
+export const BackupScheduleSchema = z.object({
+  enabled: z.boolean(),
+  frequency: z.enum(['daily', 'weekly', 'monthly']),
+  day_of_week: z.number().min(0).max(6).optional(), // 0=dimanche, 6=samedi
+  day_of_month: z.number().min(1).max(28).optional(),
+  hour: z.number().min(0).max(23),
+  minute: z.number().min(0).max(59),
+  backup_type: z.enum(['full', 'incremental']),
+  retention_count: z.number().min(1).max(365),
 })
 
 export const BackupsResponseSchema = z.object({
-  data: z.array(BackupSchema),
-  total: z.number().nonnegative(),
-  last_auto_backup: z.string().nullable(),
-  next_scheduled_backup: z.string().nullable(),
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(BackupSchema).optional().default([]),
+  total: z.number().nonnegative().optional().default(0),
+  last_auto_backup: z.union([z.string(), z.literal(false)]).nullable().optional(),
+  next_scheduled_backup: z.union([z.string(), z.literal(false)]).nullable().optional(),
+  schedule: BackupScheduleSchema.optional(),
 })
 
 export const CorsEntrySchema = z.object({
@@ -269,6 +361,64 @@ export const CorsSettingsSchema = z.object({
 })
 
 // ============================================================================
+// SCHEMAS DUNNING
+// ============================================================================
+
+export const DunningStepSchema = z.object({
+  id: z.number(),
+  subscription_id: z.number(),
+  tenant_name: z.string(),
+  tenant_id: z.number().nullable().optional(),
+  days_overdue: z.number().nonnegative(),
+  next_action: z.enum(['email_soft', 'email_urgent', 'suspend', 'cancel']),
+  next_action_date: z.string().nullable().optional(),
+  step_number: z.number(),
+  amount_due: z.number().nonnegative(),
+})
+
+export const DunningOverviewSchema = z.object({
+  success: z.boolean().optional(),
+  stats: z.object({
+    pending_steps: z.number().nonnegative(),
+    executed_today: z.number().nonnegative(),
+    total_past_due: z.number().nonnegative(),
+    total_amount_due: z.number().nonnegative(),
+    recovered_this_month: z.number().nonnegative(),
+    recovered_count: z.number().nonnegative(),
+  }),
+  active_collections: z.array(DunningStepSchema),
+})
+
+// ============================================================================
+// SCHEMAS RÉPONSES API (wrappers avec success et data)
+// ============================================================================
+
+export const SubscriptionsResponseSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(SubscriptionSchema).optional().default([]),
+  total: z.number().nonnegative().optional().default(0),
+})
+
+export const InvoicesResponseSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(InvoiceSchema).optional().default([]),
+})
+
+export const TransactionsResponseSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(TransactionSchema).optional().default([]),
+})
+
+export const ProvisioningJobsResponseSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+  data: z.array(ProvisioningJobSchema).optional().default([]),
+})
+
+// ============================================================================
 // TYPES TYPESCRIPT INFÉRÉS
 // ============================================================================
 
@@ -280,10 +430,18 @@ export type ProvisioningJob = z.infer<typeof ProvisioningJobSchema>
 export type SystemHealth = z.infer<typeof SystemHealthSchema>
 export type DashboardMetrics = z.infer<typeof DashboardMetricsSchema>
 export type MRRBreakdown = z.infer<typeof MRRBreakdownSchema>
+export type ChurnAnalysisItem = z.infer<typeof ChurnAnalysisItemSchema>
 export type ChurnAnalysis = z.infer<typeof ChurnAnalysisSchema>
 export type InvoicesSummary = z.infer<typeof InvoicesSummarySchema>
 export type TenantsResponse = z.infer<typeof TenantsResponseSchema>
 export type Backup = z.infer<typeof BackupSchema>
+export type BackupSchedule = z.infer<typeof BackupScheduleSchema>
 export type BackupsResponse = z.infer<typeof BackupsResponseSchema>
 export type CorsEntry = z.infer<typeof CorsEntrySchema>
 export type CorsSettings = z.infer<typeof CorsSettingsSchema>
+export type SubscriptionsResponse = z.infer<typeof SubscriptionsResponseSchema>
+export type InvoicesResponse = z.infer<typeof InvoicesResponseSchema>
+export type TransactionsResponse = z.infer<typeof TransactionsResponseSchema>
+export type ProvisioningJobsResponse = z.infer<typeof ProvisioningJobsResponseSchema>
+export type Plan = z.infer<typeof PlanSchema>
+export type PlansResponse = z.infer<typeof PlansResponseSchema>

@@ -9,30 +9,35 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { DollarSign, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
+import { DollarSign, AlertCircle, CheckCircle, XCircle, Clock, TrendingUp, Mail, Pause, Ban } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
-import { InvoiceSchema, TransactionSchema, InvoicesSummarySchema, validateApiResponse } from '@/lib/validators'
-import type { Invoice, Transaction } from '@/lib/validators'
+import { InvoicesResponseSchema, TransactionsResponseSchema, InvoicesSummarySchema, DunningOverviewSchema, validateApiResponse } from '@/lib/validators'
+import type { InvoicesResponse, TransactionsResponse, Invoice, Transaction } from '@/lib/validators'
 import { z } from 'zod'
+
+type DunningOverview = z.infer<typeof DunningOverviewSchema>
 
 export function Billing() {
   const [view, setView] = useState<'invoices' | 'transactions'>('invoices')
 
-  const { data: invoices } = useQuery({
+  const { data: invoicesResponse } = useQuery({
     queryKey: ['super-admin-invoices'],
     queryFn: async () => {
-      const response = await api.request<Invoice[]>({ method: 'GET', path: '/api/super-admin/invoices' })
-      return validateApiResponse(z.array(InvoiceSchema), response.data)
+      const response = await api.request<InvoicesResponse>({ method: 'GET', path: '/api/super-admin/invoices' })
+      return validateApiResponse(InvoicesResponseSchema, response.data)
     },
   })
 
-  const { data: transactions } = useQuery({
+  const { data: transactionsResponse } = useQuery({
     queryKey: ['super-admin-transactions'],
     queryFn: async () => {
-      const response = await api.request<Transaction[]>({ method: 'GET', path: '/api/super-admin/transactions' })
-      return validateApiResponse(z.array(TransactionSchema), response.data)
+      const response = await api.request<TransactionsResponse>({ method: 'GET', path: '/api/super-admin/transactions' })
+      return validateApiResponse(TransactionsResponseSchema, response.data)
     },
   })
+
+  const invoices = invoicesResponse?.data
+  const transactions = transactionsResponse?.data
 
   const { data: summary } = useQuery({
     queryKey: ['super-admin-invoices-summary'],
@@ -47,6 +52,15 @@ export function Billing() {
       return validateApiResponse(InvoicesSummarySchema, response.data)
     },
     staleTime: 5 * 60 * 1000,
+  })
+
+  const { data: dunningOverview } = useQuery({
+    queryKey: ['super-admin-dunning-overview'],
+    queryFn: async () => {
+      const response = await api.request<DunningOverview>({ method: 'GET', path: '/api/super-admin/dunning/overview' })
+      return validateApiResponse(DunningOverviewSchema, response.data)
+    },
+    staleTime: 2 * 60 * 1000,
   })
 
   return (
@@ -84,6 +98,105 @@ export function Billing() {
             icon={XCircle}
             color="red"
           />
+        </div>
+      )}
+
+      {/* Dunning Section */}
+      {dunningOverview && dunningOverview.stats.total_past_due > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Clock className="w-5 h-5 text-orange-500" />
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Relances en cours</h2>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 dark:text-gray-400">Retard total :</span>
+                <span className="font-bold text-orange-600 dark:text-orange-400">
+                  {dunningOverview.stats.total_amount_due.toLocaleString('fr-FR')} €
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-green-500" />
+                <span className="text-gray-500 dark:text-gray-400">Récupéré ce mois :</span>
+                <span className="font-bold text-green-600 dark:text-green-400">
+                  {dunningOverview.stats.recovered_this_month.toLocaleString('fr-FR')} €
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {dunningOverview.active_collections.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-700/50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Tenant
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Jours retard
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Prochaine action
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Date prévue
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Montant dû
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {dunningOverview.active_collections.map((collection) => (
+                    <tr key={collection.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {collection.tenant_name}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                          collection.days_overdue > 7
+                            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                            : collection.days_overdue > 3
+                              ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
+                              : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+                        }`}>
+                          J+{collection.days_overdue}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {collection.next_action === 'email_soft' && <Mail className="w-4 h-4 text-blue-500" />}
+                          {collection.next_action === 'email_urgent' && <Mail className="w-4 h-4 text-orange-500" />}
+                          {collection.next_action === 'suspend' && <Pause className="w-4 h-4 text-red-500" />}
+                          {collection.next_action === 'cancel' && <Ban className="w-4 h-4 text-red-700" />}
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {collection.next_action === 'email_soft' && 'Email rappel'}
+                            {collection.next_action === 'email_urgent' && 'Email urgent'}
+                            {collection.next_action === 'suspend' && 'Suspension'}
+                            {collection.next_action === 'cancel' && 'Annulation'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                        {collection.next_action_date
+                          ? new Date(collection.next_action_date).toLocaleDateString('fr-FR')
+                          : '-'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-right font-bold text-gray-900 dark:text-white">
+                        {collection.amount_due.toLocaleString('fr-FR')} €
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+              Aucune relance en cours
+            </div>
+          )}
         </div>
       )}
 

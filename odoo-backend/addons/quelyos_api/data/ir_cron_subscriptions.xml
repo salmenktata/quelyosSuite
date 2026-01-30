@@ -33,5 +33,16 @@
             <field name="interval_type">days</field>
             <field name="active" eval="True"/>
         </record>
+
+        <!-- Cron: Process Dunning Steps (quotidien à 9h) -->
+        <record id="ir_cron_process_dunning" model="ir.cron">
+            <field name="name">Quelyos: Process Dunning Steps</field>
+            <field name="model_id" eval="ref('quelyos_api.model_quelyos_subscription')"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_process_dunning()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
     </data>
 </odoo>

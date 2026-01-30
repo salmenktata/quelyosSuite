@@ -183,6 +183,143 @@ class Subscription(models.Model):
         string='Tenants'
     )
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # HEALTH SCORE (SaaS monitoring)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    health_score = fields.Integer(
+        string='Score Santé',
+        compute='_compute_health_score',
+        store=True,
+        help='Score global de santé client (0-100)'
+    )
+
+    health_status = fields.Selection([
+        ('healthy', 'Sain'),
+        ('at_risk', 'À risque'),
+        ('critical', 'Critique'),
+    ], string='Statut Santé', compute='_compute_health_score', store=True)
+
+    usage_score = fields.Float(
+        string='Score Usage',
+        compute='_compute_health_score',
+        store=True,
+        help='Score basé sur l\'utilisation des quotas'
+    )
+
+    payment_health = fields.Float(
+        string='Santé Paiement',
+        compute='_compute_health_score',
+        store=True,
+        help='Score basé sur l\'état des paiements'
+    )
+
+    engagement_score = fields.Float(
+        string='Score Engagement',
+        compute='_compute_health_score',
+        store=True,
+        help='Score basé sur l\'activité récente'
+    )
+
+    churn_risk = fields.Float(
+        string='Risque Churn',
+        compute='_compute_health_score',
+        store=True,
+        help='Probabilité de désabonnement (0-100)'
+    )
+
+    @api.depends('state', 'trial_end_date', 'users_usage_percentage', 'products_usage_percentage',
+                 'orders_usage_percentage', 'current_users_count')
+    def _compute_health_score(self):
+        """
+        Calcule le score de santé client basé sur plusieurs facteurs.
+        Score de base: 100 points
+        Déductions:
+        - -30 si état past_due
+        - -15 à -0 si trial proche expiration (progressif)
+        - -10 à -40 selon usage quotas (>70% = -10, >80% = -20, >90% = -40)
+        Bonus:
+        - Engagement si utilisateurs actifs
+        """
+        today = fields.Date.today()
+
+        for record in self:
+            base_score = 100
+            payment_score = 100.0
+            usage_penalty = 0.0
+            engagement = 50.0  # Score par défaut
+            trial_penalty = 0.0
+
+            # 1. Pénalité paiement
+            if record.state == 'past_due':
+                payment_score = 0.0
+                base_score -= 30
+            elif record.state == 'cancelled':
+                payment_score = 0.0
+                base_score -= 50
+
+            # 2. Pénalité trial proche expiration
+            if record.state == 'trial' and record.trial_end_date:
+                days_remaining = (record.trial_end_date - today).days
+                if days_remaining <= 0:
+                    trial_penalty = 20
+                elif days_remaining <= 3:
+                    trial_penalty = 15
+                elif days_remaining <= 7:
+                    trial_penalty = 10
+                elif days_remaining <= 14:
+                    trial_penalty = 5
+                base_score -= trial_penalty
+
+            # 3. Score usage (pénalité si proche des limites)
+            max_usage = max(
+                record.users_usage_percentage or 0,
+                record.products_usage_percentage or 0,
+                record.orders_usage_percentage or 0
+            )
+            if max_usage > 95:
+                usage_penalty = 40
+            elif max_usage > 90:
+                usage_penalty = 30
+            elif max_usage > 80:
+                usage_penalty = 20
+            elif max_usage > 70:
+                usage_penalty = 10
+            base_score -= usage_penalty
+            usage_score_val = max(0, 100 - usage_penalty * 2.5)
+
+            # 4. Engagement score (basé sur nombre d'utilisateurs actifs)
+            if record.current_users_count >= 5:
+                engagement = 100.0
+            elif record.current_users_count >= 3:
+                engagement = 80.0
+            elif record.current_users_count >= 1:
+                engagement = 60.0
+            else:
+                engagement = 30.0
+                base_score -= 10
+
+            # Calcul final
+            final_score = max(0, min(100, base_score))
+
+            # Détermination du statut
+            if final_score >= 70:
+                health_status = 'healthy'
+            elif final_score >= 40:
+                health_status = 'at_risk'
+            else:
+                health_status = 'critical'
+
+            # Calcul risque churn (inverse du score)
+            churn_risk_val = max(0, min(100, 100 - final_score))
+
+            record.health_score = final_score
+            record.health_status = health_status
+            record.usage_score = usage_score_val
+            record.payment_health = payment_score
+            record.engagement_score = engagement
+            record.churn_risk = churn_risk_val
+
     @api.depends('plan_id', 'plan_id.price_monthly', 'plan_id.price_yearly', 'billing_cycle', 'state')
     def _compute_mrr(self):
         """Calcule le MRR (Monthly Recurring Revenue) pour cet abonnement."""
@@ -632,3 +769,129 @@ class Subscription(models.Model):
                 _logger.info(f"Trial ending reminder sent for subscription {sub.name}")
             except Exception as e:
                 _logger.error(f"Failed to send trial ending email for {sub.name}: {e}")
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # DUNNING (Payment Collection Automation)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    dunning_step_ids = fields.One2many(
+        'quelyos.dunning.step',
+        'subscription_id',
+        string='Étapes de relance',
+    )
+
+    def _create_dunning_steps(self):
+        """Crée les étapes de dunning quand une subscription passe en past_due"""
+        DunningStep = self.env['quelyos.dunning.step']
+        DunningConfig = self.env['quelyos.dunning.config']
+        config = DunningConfig.get_config()
+
+        for subscription in self:
+            # Supprimer anciennes étapes pending
+            subscription.dunning_step_ids.filtered(lambda s: s.state == 'pending').unlink()
+
+            today = fields.Date.today()
+
+            # Créer les étapes selon la config
+            steps_data = [
+                (1, config.step1_days, 'email_soft'),
+                (2, config.step2_days, 'email_urgent'),
+            ]
+
+            # Ajouter suspension et annulation si stratégie aggressive
+            if config.strategy == 'aggressive':
+                steps_data.extend([
+                    (3, config.step3_days, 'suspend'),
+                    (4, config.step4_days, 'cancel'),
+                ])
+
+            for step_num, days, action in steps_data:
+                DunningStep.create({
+                    'subscription_id': subscription.id,
+                    'step_number': step_num,
+                    'days_overdue': days,
+                    'action': action,
+                    'scheduled_date': today + timedelta(days=days),
+                    'state': 'pending',
+                })
+
+            _logger.info(f"[DUNNING] Created {len(steps_data)} dunning steps for {subscription.name}")
+
+    def _skip_pending_dunning_steps(self):
+        """Skip toutes les étapes pending quand paiement reçu"""
+        for subscription in self:
+            pending_steps = subscription.dunning_step_ids.filtered(lambda s: s.state == 'pending')
+            pending_steps.write({
+                'state': 'skipped',
+                'notes': 'Paiement reçu - étape ignorée',
+            })
+            if pending_steps:
+                _logger.info(f"[DUNNING] Skipped {len(pending_steps)} steps for {subscription.name} (payment received)")
+
+    @api.model
+    def _cron_process_dunning(self):
+        """
+        Cron job pour traiter les étapes de dunning.
+        Exécuté quotidiennement à 9h.
+        """
+        DunningConfig = self.env['quelyos.dunning.config']
+        config = DunningConfig.get_config()
+
+        if not config.enabled:
+            _logger.info("[DUNNING] Dunning disabled in config, skipping")
+            return
+
+        today = fields.Date.today()
+
+        # 1. Créer les étapes dunning pour les nouvelles subscriptions past_due
+        new_past_due = self.search([
+            ('state', '=', 'past_due'),
+            ('dunning_step_ids', '=', False),  # Pas encore d'étapes
+        ])
+        new_past_due._create_dunning_steps()
+
+        # 2. Exécuter les étapes dont la date est arrivée
+        DunningStep = self.env['quelyos.dunning.step']
+        due_steps = DunningStep.search([
+            ('state', '=', 'pending'),
+            ('scheduled_date', '<=', today),
+        ])
+
+        executed_count = 0
+        for step in due_steps:
+            # Vérifier que la subscription est toujours past_due
+            if step.subscription_id.state != 'past_due':
+                step.action_skip()
+                continue
+
+            try:
+                step._execute_step()
+                executed_count += 1
+            except Exception as e:
+                _logger.error(f"[DUNNING] Error executing step #{step.id}: {e}")
+                step.notes = f"Erreur: {str(e)}"
+
+        _logger.info(f"[DUNNING] Cron completed: {len(new_past_due)} new subscriptions, {executed_count} steps executed")
+
+    def write(self, vals):
+        """Override write pour gérer le changement d'état vers/depuis past_due"""
+        # Détecter changement d'état
+        state_changing = 'state' in vals
+        old_states = {sub.id: sub.state for sub in self}
+
+        result = super().write(vals)
+
+        if state_changing:
+            for subscription in self:
+                old_state = old_states.get(subscription.id)
+                new_state = vals.get('state')
+
+                # Si passage en past_due, créer les étapes de dunning
+                if new_state == 'past_due' and old_state != 'past_due':
+                    subscription._create_dunning_steps()
+
+                # Si sortie de past_due (paiement reçu), skip les étapes pending
+                if old_state == 'past_due' and new_state in ('active', 'trial'):
+                    subscription._skip_pending_dunning_steps()
+
+        return result

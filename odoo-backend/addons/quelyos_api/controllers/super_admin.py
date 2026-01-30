@@ -448,6 +448,124 @@ class SuperAdminController(http.Controller):
                 status=500
             )
 
+    @http.route('/api/super-admin/tenants/<int:tenant_id>/plan', type='http', auth='public', methods=['PUT', 'OPTIONS'], csrf=False)
+    def change_tenant_plan(self, tenant_id):
+        """Change le plan d'un tenant (upgrade/downgrade)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            new_plan_code = data.get('plan_code')
+
+            if not new_plan_code:
+                return request.make_json_response(
+                    {'success': False, 'error': 'plan_code requis'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            Tenant = request.env['quelyos.tenant'].sudo()
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+
+            tenant = Tenant.browse(tenant_id)
+            if not tenant.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if not tenant.subscription_id:
+                return request.make_json_response(
+                    {'success': False, 'error': 'Tenant sans abonnement'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            new_plan = Plan.search([('code', '=', new_plan_code)], limit=1)
+            if not new_plan:
+                return request.make_json_response(
+                    {'success': False, 'error': f'Plan "{new_plan_code}" non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            old_plan = tenant.subscription_id.plan_id
+            old_mrr = tenant.subscription_id.mrr
+
+            # Vérifier les quotas si downgrade
+            quota_warnings = []
+            if new_plan.max_users < tenant.users_count and new_plan.max_users > 0:
+                quota_warnings.append(f"Utilisateurs: {tenant.users_count}/{new_plan.max_users}")
+            if new_plan.max_products < tenant.products_count and new_plan.max_products > 0:
+                quota_warnings.append(f"Produits: {tenant.products_count}/{new_plan.max_products}")
+            if new_plan.max_orders_per_year < tenant.orders_count and new_plan.max_orders_per_year > 0:
+                quota_warnings.append(f"Commandes: {tenant.orders_count}/{new_plan.max_orders_per_year}")
+
+            # Mettre à jour le plan de la subscription
+            tenant.subscription_id.write({
+                'plan_id': new_plan.id,
+            })
+
+            # Recalculer MRR
+            tenant.subscription_id._compute_mrr()
+            new_mrr = tenant.subscription_id.mrr
+
+            # Déterminer si upgrade ou downgrade
+            is_upgrade = new_plan.price_monthly > old_plan.price_monthly
+
+            # Log audit
+            _logger.info(
+                f"[AUDIT] Plan changed - User: {request.env.user.login} | "
+                f"Tenant: {tenant.name} (ID: {tenant_id}) | "
+                f"Old plan: {old_plan.code} -> New plan: {new_plan.code} | "
+                f"MRR: {old_mrr} -> {new_mrr}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'Plan {"upgradé" if is_upgrade else "downgradé"} avec succès',
+                'tenant': self._serialize_tenant(tenant),
+                'plan_change': {
+                    'old_plan': old_plan.code,
+                    'new_plan': new_plan.code,
+                    'old_mrr': old_mrr,
+                    'new_mrr': new_mrr,
+                    'is_upgrade': is_upgrade,
+                },
+                'quota_warnings': quota_warnings,
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Change plan error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
     # =========================================================================
     # SUBSCRIPTIONS
     # =========================================================================
@@ -673,6 +791,105 @@ class SuperAdminController(http.Controller):
 
         except Exception as e:
             _logger.error(f"Churn analysis error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    # =========================================================================
+    # DUNNING (Payment Collection)
+    # =========================================================================
+
+    @http.route('/api/super-admin/dunning/overview', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def dunning_overview(self):
+        """Retourne l'overview des relances en cours"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            DunningStep = request.env['quelyos.dunning.step'].sudo()
+            Subscription = request.env['quelyos.subscription'].sudo()
+
+            # Stats globales
+            pending_steps = DunningStep.search_count([('state', '=', 'pending')])
+            executed_today = DunningStep.search_count([
+                ('state', '=', 'executed'),
+                ('executed_at', '>=', datetime.now().replace(hour=0, minute=0, second=0))
+            ])
+
+            # Subscriptions past_due
+            past_due_subs = Subscription.search([('state', '=', 'past_due')])
+            total_past_due = len(past_due_subs)
+            total_amount_due = sum(sub.mrr for sub in past_due_subs)
+
+            # Recovered this month (past_due -> active dans le mois)
+            month_start = datetime.now().replace(day=1, hour=0, minute=0, second=0)
+            recovered_subs = Subscription.search([
+                ('state', '=', 'active'),
+                ('dunning_step_ids.state', '=', 'skipped'),
+                ('dunning_step_ids.create_date', '>=', month_start)
+            ])
+            recovered_amount = sum(sub.mrr for sub in recovered_subs)
+
+            # Relances en cours détaillées (prochaines actions)
+            pending_dunning = DunningStep.search([
+                ('state', '=', 'pending')
+            ], order='scheduled_date asc', limit=10)
+
+            active_collections = []
+            for step in pending_dunning:
+                tenant = step.subscription_id.tenant_ids[0] if step.subscription_id.tenant_ids else None
+                days_overdue = (datetime.now().date() - step.subscription_id.next_billing_date).days if step.subscription_id.next_billing_date else step.days_overdue
+                active_collections.append({
+                    'id': step.id,
+                    'subscription_id': step.subscription_id.id,
+                    'tenant_name': tenant.name if tenant else step.subscription_id.name,
+                    'tenant_id': tenant.id if tenant else None,
+                    'days_overdue': max(0, days_overdue),
+                    'next_action': step.action,
+                    'next_action_date': step.scheduled_date.isoformat() if step.scheduled_date else None,
+                    'step_number': step.step_number,
+                    'amount_due': step.amount_due,
+                })
+
+            data = {
+                'success': True,
+                'stats': {
+                    'pending_steps': pending_steps,
+                    'executed_today': executed_today,
+                    'total_past_due': total_past_due,
+                    'total_amount_due': total_amount_due,
+                    'recovered_this_month': recovered_amount,
+                    'recovered_count': len(recovered_subs),
+                },
+                'active_collections': active_collections,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Dunning overview error: {e}")
             return request.make_json_response(
                 {'success': False, 'error': 'Erreur serveur'},
                 headers=cors_headers,
@@ -1726,7 +1943,7 @@ class SuperAdminController(http.Controller):
                 )
 
             features = data.get('features', {})
-            plan = Plan.create({
+            create_vals = {
                 'code': data.get('code'),
                 'name': data.get('name'),
                 'description': data.get('description'),
@@ -1744,7 +1961,14 @@ class SuperAdminController(http.Controller):
                 'feature_priority_support': features.get('priority_support', False),
                 'feature_custom_domain': features.get('custom_domain', False),
                 'active': True,
-            })
+            }
+
+            # Gérer les groupes de sécurité
+            if 'group_ids' in data:
+                group_ids = data.get('group_ids', [])
+                create_vals['group_ids'] = [(6, 0, group_ids)]
+
+            plan = Plan.create(create_vals)
 
             _logger.info(
                 f"[AUDIT] Plan created - User: {request.env.user.login} | "
@@ -1805,7 +2029,7 @@ class SuperAdminController(http.Controller):
                 )
 
             features = data.get('features', {})
-            plan.write({
+            update_vals = {
                 'name': data.get('name', plan.name),
                 'description': data.get('description', plan.description),
                 'price_monthly': data.get('price_monthly', plan.price_monthly),
@@ -1821,7 +2045,14 @@ class SuperAdminController(http.Controller):
                 'feature_api_access': features.get('api_access', plan.feature_api_access),
                 'feature_priority_support': features.get('priority_support', plan.feature_priority_support),
                 'feature_custom_domain': features.get('custom_domain', plan.feature_custom_domain),
-            })
+            }
+
+            # Gérer les groupes de sécurité
+            if 'group_ids' in data:
+                group_ids = data.get('group_ids', [])
+                update_vals['group_ids'] = [(6, 0, group_ids)]
+
+            plan.write(update_vals)
 
             _logger.info(
                 f"[AUDIT] Plan updated - User: {request.env.user.login} | "
@@ -1928,6 +2159,76 @@ class SuperAdminController(http.Controller):
             'subscribers_count': subscribers_count,
             'created_at': plan.create_date.isoformat() if plan.create_date else None,
         }
+
+    # =========================================================================
+    # SECURITY GROUPS
+    # =========================================================================
+
+    @http.route('/api/super-admin/security-groups', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_security_groups(self):
+        """Liste les groupes de sécurité disponibles pour les plans"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Groups = request.env['res.groups'].sudo()
+            # Récupérer tous les groupes triés par nom
+            groups = Groups.search([], order='name')
+
+            # Exclure certains groupes système trop techniques
+            excluded_names = ['Portal', 'Public', 'Anonymous']
+
+            result_groups = []
+            for g in groups:
+                full_name = g.full_name or g.name
+                # Ignorer les groupes Portal/Public/Anonymous
+                if any(excl in full_name for excl in excluded_names):
+                    continue
+                # Extraire la catégorie depuis full_name (format: "Module / Group")
+                category = 'Général'
+                if ' / ' in full_name:
+                    category = full_name.split(' / ')[0]
+                result_groups.append({
+                    'id': g.id,
+                    'name': g.name,
+                    'full_name': full_name,
+                    'category': category,
+                })
+
+            data = {
+                'success': True,
+                'data': result_groups,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List security groups error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
 
     # =========================================================================
     # SESSION MANAGEMENT
