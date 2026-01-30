@@ -6,6 +6,8 @@ Permet de tracer les motifs d'ajustements de stock (casse, vol, inventaire, etc.
 Remplace le module OCA stock_change_qty_reason.
 """
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+from odoo.tools.translate import _
 
 
 class QuelyosStockChangeReason(models.Model):
@@ -52,6 +54,14 @@ class QuelyosStockChangeReason(models.Model):
         for record in self:
             record.usage_count = 0
 
-    _sql_constraints = [
-        ('code_unique', 'unique(code)', 'Le code doit être unique !'),
-    ]
+    @api.constrains('code')
+    def _check_code_unique(self):
+        """Contrainte: Le code doit être unique"""
+        for record in self:
+            if record.code:
+                duplicate = self.search([
+                    ('code', '=', record.code),
+                    ('id', '!=', record.id)
+                ], limit=1)
+                if duplicate:
+                    raise ValidationError(_('Le code doit être unique !'))
