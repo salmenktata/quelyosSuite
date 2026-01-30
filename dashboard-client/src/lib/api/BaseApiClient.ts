@@ -358,7 +358,7 @@ export class BaseApiClient {
   }
 
   /**
-   * Requête JSON-RPC (pour backend Odoo)
+   * Requête JSON-RPC (pour backend)
    */
   async rpc<T>(endpoint: string, params?: Record<string, unknown>): Promise<{
     success: boolean

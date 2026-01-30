@@ -6,7 +6,7 @@
  * - Anthropic Claude
  * - OpenAI GPT-4
  *
- * Configuration dynamique depuis le backend Odoo.
+ * Configuration dynamique depuis le backend.
  */
 
 import { createApiLogger } from '@/lib/logger';

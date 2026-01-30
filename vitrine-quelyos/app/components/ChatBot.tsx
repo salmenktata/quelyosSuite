@@ -62,7 +62,7 @@ export default function ChatBot() {
     setHasNewMessage(false)
 
     try {
-      // Appel à l'API backend Odoo
+      // Appel à l'API backend
       const response = await fetch('http://localhost:8069/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

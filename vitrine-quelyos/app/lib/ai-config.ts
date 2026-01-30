@@ -1,6 +1,6 @@
 /**
  * Service de configuration dynamique des providers IA.
- * Récupère la config active depuis le backend Odoo avec cache 5 minutes.
+ * Récupère la config active depuis le backend avec cache 5 minutes.
  */
 import { createApiLogger } from '@/lib/logger';
 
