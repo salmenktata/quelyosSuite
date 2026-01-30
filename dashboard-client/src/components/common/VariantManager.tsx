@@ -9,7 +9,7 @@ import {
   VariantsTable,
   type AttributeLine,
   type ProductVariant,
-} from './VariantManager/'
+} from './VariantManagerParts'
 import {
   useAllAttributes,
   useProductVariants,
