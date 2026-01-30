@@ -4054,3 +4054,63 @@ class SuperAdminController(http.Controller):
                 {'success': False, 'error': str(e)},
                 headers=cors_headers, status=500
             )
+
+    @http.route('/api/super-admin/tickets/<int:ticket_id>/attachments', type='http', auth='public',
+                methods=['GET', 'OPTIONS'], csrf=False)
+    def ticket_attachments(self, ticket_id):
+        """Liste les pièces jointes d'un ticket (Super Admin)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers, status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=403
+            )
+
+        try:
+            ticket = request.env['quelyos.ticket'].sudo().browse(ticket_id)
+
+            if not ticket.exists():
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Ticket non trouvé'
+                }, headers=cors_headers, status=404)
+
+            # Récupérer les attachments
+            attachments = request.env['ir.attachment'].sudo().search([
+                ('res_model', '=', 'quelyos.ticket'),
+                ('res_id', '=', ticket.id)
+            ], order='create_date desc')
+
+            return request.make_json_response({
+                'success': True,
+                'attachments': [{
+                    'id': att.id,
+                    'name': att.name,
+                    'mimetype': att.mimetype,
+                    'file_size': att.file_size,
+                    'created_at': att.create_date.isoformat() if att.create_date else None,
+                    'url': f'/web/content/{att.id}?download=true'
+                } for att in attachments]
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.exception("Error listing ticket attachments")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers, status=500
+            )

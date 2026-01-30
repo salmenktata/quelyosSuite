@@ -13,10 +13,10 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
 import { TicketStatusBadge, TicketPriorityBadge } from '@/components/support/TicketBadges'
-import { useTicketDetail, useReplyTicket, useCloseTicket } from '@/hooks/useTickets'
+import { useTicketDetail, useReplyTicket, useCloseTicket, useTicketAttachments, useUploadAttachment, useDeleteAttachment } from '@/hooks/useTickets'
 import { useChannel } from '@/lib/websocket/hooks'
 import { useQueryClient } from '@tanstack/react-query'
-import { Send, CheckCircle, MessageSquare, Clock, User } from 'lucide-react'
+import { Send, CheckCircle, MessageSquare, Clock, User, Paperclip, Upload, X, Download } from 'lucide-react'
 import type { TicketMessage } from '@/types/support'
 
 export default function TicketDetail() {
@@ -27,10 +27,14 @@ export default function TicketDetail() {
 
   const ticketId = id ? parseInt(id, 10) : null
   const { data, isLoading, error } = useTicketDetail(ticketId)
+  const { data: attachmentsData } = useTicketAttachments(ticketId)
   const replyMutation = useReplyTicket(ticketId || 0)
   const closeMutation = useCloseTicket(ticketId || 0)
+  const uploadMutation = useUploadAttachment(ticketId || 0)
+  const deleteMutation = useDeleteAttachment(ticketId || 0)
 
   const [replyContent, setReplyContent] = useState('')
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   // WebSocket : écouter les réponses du staff
   useChannel('tickets', (message) => {
@@ -68,6 +72,37 @@ export default function TicketDetail() {
 
     try {
       await closeMutation.mutateAsync()
+    } catch (_error) {
+      // Erreur gérée par le hook
+    }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !ticketId) return
+
+    setUploadError(null)
+
+    // Vérifier taille (10 MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Fichier trop volumineux (max 10 MB)')
+      return
+    }
+
+    try {
+      await uploadMutation.mutateAsync(file)
+      // Reset input
+      e.target.value = ''
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Erreur lors de l\'upload')
+    }
+  }
+
+  const handleDeleteAttachment = async (attachmentId: number) => {
+    if (!confirm('Supprimer cette pièce jointe ?')) return
+
+    try {
+      await deleteMutation.mutateAsync(attachmentId)
     } catch (_error) {
       // Erreur gérée par le hook
     }
@@ -176,6 +211,79 @@ export default function TicketDetail() {
             )}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Pièces jointes */}
+          {attachmentsData?.attachments && attachmentsData.attachments.length > 0 && (
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
+              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <Paperclip className="w-4 h-4" />
+                Pièces jointes ({attachmentsData.attachments.length})
+              </h4>
+              <div className="space-y-2">
+                {attachmentsData.attachments.map((att) => (
+                  <div
+                    key={att.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <Paperclip className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {att.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {(att.file_size / 1024).toFixed(1)} KB • {new Date(att.created_at).toLocaleDateString('fr-FR')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`${import.meta.env.VITE_API_URL || ''}${att.url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                      >
+                        <Download className="w-4 h-4" />
+                      </a>
+                      {ticket.state !== 'closed' && (
+                        <button
+                          onClick={() => handleDeleteAttachment(att.id)}
+                          className="p-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                          disabled={deleteMutation.isPending}
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Upload pièce jointe */}
+          {ticket.state !== 'closed' && (
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
+              <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 w-fit">
+                <Upload className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {uploadMutation.isPending ? 'Upload en cours...' : 'Ajouter une pièce jointe'}
+                </span>
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={uploadMutation.isPending}
+                />
+              </label>
+              {uploadError && (
+                <p className="text-sm text-red-600 dark:text-red-400 mt-2">{uploadError}</p>
+              )}
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Taille max : 10 MB
+              </p>
+            </div>
+          )}
 
           {/* Formulaire de réponse */}
           {ticket.state !== 'closed' && (

@@ -177,3 +177,94 @@ export function useRateTicket(ticketId: number) {
     },
   })
 }
+
+export interface Attachment {
+  id: number
+  name: string
+  mimetype: string
+  file_size: number
+  created_at: string
+  url: string
+}
+
+export function useTicketAttachments(ticketId: number | null) {
+  return useQuery({
+    queryKey: ['ticket-attachments', ticketId],
+    queryFn: async () => {
+      if (!ticketId) return null
+
+      const response = await fetch(`${API_URL}/api/tickets/${ticketId}/attachments`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data as { success: boolean; attachments: Attachment[] }
+    },
+    enabled: !!ticketId,
+  })
+}
+
+export function useUploadAttachment(ticketId: number) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const accessToken = tokenService.getAccessToken()
+      const headers: HeadersInit = {}
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`
+      }
+
+      const response = await fetch(`${API_URL}/api/tickets/${ticketId}/attachments`, {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || `HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result as { success: boolean; attachment: Attachment }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ticket-attachments', ticketId] })
+    },
+  })
+}
+
+export function useDeleteAttachment(ticketId: number) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (attachmentId: number) => {
+      const response = await fetch(`${API_URL}/api/attachments/${attachmentId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result as { success: boolean }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ticket-attachments', ticketId] })
+    },
+  })
+}

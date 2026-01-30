@@ -28,6 +28,7 @@ import {
   Eye,
   Save,
   Download,
+  Paperclip,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { useToast } from '@/hooks/useToast'
@@ -64,6 +65,15 @@ interface TicketMessage {
   content: string
   isStaff: boolean
   createdAt: string
+}
+
+interface Attachment {
+  id: number
+  name: string
+  mimetype: string
+  file_size: number
+  created_at: string
+  url: string
 }
 
 export function SupportTickets() {
@@ -112,6 +122,20 @@ export function SupportTickets() {
       const response = await api.request<{ success: boolean; ticket: Ticket; messages: TicketMessage[] }>({
         method: 'GET',
         path: `/api/super-admin/tickets/${selectedTicket.id}`,
+      })
+      return response.data
+    },
+    enabled: !!selectedTicket,
+  })
+
+  // Requête pièces jointes
+  const { data: attachmentsData } = useQuery({
+    queryKey: ['super-admin-ticket-attachments', selectedTicket?.id],
+    queryFn: async () => {
+      if (!selectedTicket) return null
+      const response = await api.request<{ success: boolean; attachments: Attachment[] }>({
+        method: 'GET',
+        path: `/api/super-admin/tickets/${selectedTicket.id}/attachments`,
       })
       return response.data
     },
@@ -590,6 +614,44 @@ export function SupportTickets() {
                       />
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Pièces jointes */}
+              {attachmentsData?.attachments && attachmentsData.attachments.length > 0 && (
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <Paperclip className="w-4 h-4" />
+                    Pièces jointes ({attachmentsData.attachments.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {attachmentsData.attachments.map((att) => (
+                      <div
+                        key={att.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Paperclip className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                              {att.name}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {(att.file_size / 1024).toFixed(1)} KB • {new Date(att.created_at).toLocaleDateString('fr-FR')}
+                            </p>
+                          </div>
+                        </div>
+                        <a
+                          href={`${import.meta.env.VITE_API_URL || ''}${att.url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

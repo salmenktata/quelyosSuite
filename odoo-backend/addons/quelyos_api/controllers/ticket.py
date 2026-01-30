@@ -3,6 +3,7 @@
 Contrôleur API Tickets Support - Client
 """
 import logging
+import base64
 from odoo import http
 from odoo.http import request
 from .base import BaseController
@@ -293,6 +294,174 @@ class TicketController(BaseController):
             }, headers=cors_headers)
         except Exception as e:
             _logger.exception("Error rating ticket")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=500)
+
+    @http.route('/api/tickets/<int:ticket_id>/attachments', type='http', auth='public',
+                methods=['POST'], csrf=False)
+    def upload_attachment(self, ticket_id):
+        """Upload une pièce jointe pour un ticket"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        error = self._authenticate_from_header()
+        if error:
+            return request.make_json_response(error, headers=cors_headers, status=401)
+
+        try:
+            # Vérifier que le ticket existe et appartient au tenant
+            ticket = request.env['quelyos.ticket'].search([
+                ('id', '=', ticket_id),
+                ('company_id', '=', request.env.company.id)
+            ], limit=1)
+
+            if not ticket:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Ticket non trouvé'
+                }, headers=cors_headers, status=404)
+
+            # Récupérer le fichier
+            uploaded_file = request.httprequest.files.get('file')
+            if not uploaded_file:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Aucun fichier fourni'
+                }, headers=cors_headers, status=400)
+
+            # Limiter la taille (10 MB)
+            file_data = uploaded_file.read()
+            if len(file_data) > 10 * 1024 * 1024:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Fichier trop volumineux (max 10 MB)'
+                }, headers=cors_headers, status=400)
+
+            # Créer l'attachment via ir.attachment
+            attachment = request.env['ir.attachment'].create({
+                'name': uploaded_file.filename,
+                'datas': base64.b64encode(file_data),
+                'res_model': 'quelyos.ticket',
+                'res_id': ticket.id,
+                'mimetype': uploaded_file.content_type,
+            })
+
+            return request.make_json_response({
+                'success': True,
+                'attachment': {
+                    'id': attachment.id,
+                    'name': attachment.name,
+                    'mimetype': attachment.mimetype,
+                    'file_size': attachment.file_size,
+                    'created_at': attachment.create_date.isoformat() if attachment.create_date else None,
+                }
+            }, headers=cors_headers)
+        except Exception as e:
+            _logger.exception("Error uploading attachment")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=500)
+
+    @http.route('/api/tickets/<int:ticket_id>/attachments', type='http', auth='public',
+                methods=['GET', 'OPTIONS'], csrf=False)
+    def list_attachments(self, ticket_id):
+        """Liste les pièces jointes d'un ticket"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        error = self._authenticate_from_header()
+        if error:
+            return request.make_json_response(error, headers=cors_headers, status=401)
+
+        try:
+            # Vérifier que le ticket existe et appartient au tenant
+            ticket = request.env['quelyos.ticket'].search([
+                ('id', '=', ticket_id),
+                ('company_id', '=', request.env.company.id)
+            ], limit=1)
+
+            if not ticket:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Ticket non trouvé'
+                }, headers=cors_headers, status=404)
+
+            # Récupérer les attachments
+            attachments = request.env['ir.attachment'].search([
+                ('res_model', '=', 'quelyos.ticket'),
+                ('res_id', '=', ticket.id)
+            ], order='create_date desc')
+
+            return request.make_json_response({
+                'success': True,
+                'attachments': [{
+                    'id': att.id,
+                    'name': att.name,
+                    'mimetype': att.mimetype,
+                    'file_size': att.file_size,
+                    'created_at': att.create_date.isoformat() if att.create_date else None,
+                    'url': f'/web/content/{att.id}?download=true'
+                } for att in attachments]
+            }, headers=cors_headers)
+        except Exception as e:
+            _logger.exception("Error listing attachments")
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=500)
+
+    @http.route('/api/attachments/<int:attachment_id>', type='http', auth='public',
+                methods=['DELETE', 'OPTIONS'], csrf=False)
+    def delete_attachment(self, attachment_id):
+        """Supprimer une pièce jointe"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        error = self._authenticate_from_header()
+        if error:
+            return request.make_json_response(error, headers=cors_headers, status=401)
+
+        try:
+            # Récupérer l'attachment et vérifier qu'il appartient à un ticket du tenant
+            attachment = request.env['ir.attachment'].search([
+                ('id', '=', attachment_id),
+                ('res_model', '=', 'quelyos.ticket')
+            ], limit=1)
+
+            if not attachment:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Pièce jointe non trouvée'
+                }, headers=cors_headers, status=404)
+
+            # Vérifier que le ticket appartient au tenant
+            ticket = request.env['quelyos.ticket'].browse(attachment.res_id)
+            if ticket.company_id.id != request.env.company.id:
+                return request.make_json_response({
+                    'success': False,
+                    'error': 'Non autorisé'
+                }, headers=cors_headers, status=403)
+
+            attachment.unlink()
+
+            return request.make_json_response({
+                'success': True
+            }, headers=cors_headers)
+        except Exception as e:
+            _logger.exception("Error deleting attachment")
             return request.make_json_response({
                 'success': False,
                 'error': str(e)
