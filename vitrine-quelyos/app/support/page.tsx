@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
+import { createComponentLogger } from "@/lib/logger";
+
+const log = createComponentLogger('SupportPage');
 import {
   Mail,
   Phone,
   MapPin,
   Send,
-  MessageSquare,
   CheckCircle2,
   HelpCircle,
   ChevronDown,
@@ -250,12 +252,104 @@ const faqs = [
   },
 ];
 
-// Chatbot messages
-const chatbotResponses = [
-  "Bonjour ! Je suis l'assistant Quelyos. Comment puis-je vous aider ?",
-  "Vous pouvez me poser des questions sur les fonctionnalités, la facturation ou le support technique.",
-  "Pour une assistance personnalisée, n'hésitez pas à utiliser le formulaire de contact ou rejoindre notre Discord !",
-];
+// Types pour les messages
+type ChatMessage = {
+  type: "bot" | "user";
+  text: string;
+  suggestions?: string[];
+  timestamp?: Date;
+};
+
+// Chatbot intelligent avec détection de mots-clés
+const detectIntent = (message: string): { response: string; suggestions?: string[] } => {
+  const msg = message.toLowerCase();
+
+  // Prix / Tarifs
+  if (msg.includes("prix") || msg.includes("tarif") || msg.includes("coût") || msg.includes("combien")) {
+    return {
+      response: "Nos tarifs commencent à 19€/mois (plan Starter) avec 30 jours d'essai gratuit. Le plan Business à 49€/mois inclut tous les 8 modules. Souhaitez-vous voir les détails ?",
+      suggestions: ["Voir les tarifs", "Comparer les plans", "Essai gratuit"]
+    };
+  }
+
+  // Inscription / Démarrage
+  if (msg.includes("inscri") || msg.includes("créer") || msg.includes("commencer") || msg.includes("démarrer")) {
+    return {
+      response: "Pour commencer avec Quelyos Suite, cliquez simplement sur 'Essai gratuit' en haut de page. Vous aurez accès immédiat aux 8 modules pendant 30 jours, sans carte bancaire.",
+      suggestions: ["Créer mon compte", "Voir la démo", "Documentation"]
+    };
+  }
+
+  // Modules / Fonctionnalités
+  if (msg.includes("module") || msg.includes("fonctionnalit") || msg.includes("finance") || msg.includes("stock") || msg.includes("crm")) {
+    return {
+      response: "Quelyos Suite propose 8 modules intégrés : Finance (avec IA), Boutique, CRM, Stock, RH, Point de Vente, Marketing et Dashboard. Tous vos modules sont synchronisés automatiquement.",
+      suggestions: ["Voir les modules", "Documentation", "Demander une démo"]
+    };
+  }
+
+  // Support / Aide
+  if (msg.includes("aide") || msg.includes("support") || msg.includes("problème") || msg.includes("bug")) {
+    return {
+      response: "Notre support est disponible par email (support@quelyos.com, réponse sous 24h) ou via notre communauté Discord. Les clients Pro/Expert bénéficient d'un support prioritaire sous 4h.",
+      suggestions: ["Contacter le support", "Rejoindre Discord", "Voir la FAQ"]
+    };
+  }
+
+  // Sécurité / RGPD
+  if (msg.includes("sécurit") || msg.includes("rgpd") || msg.includes("donné") || msg.includes("confidentiel")) {
+    return {
+      response: "Vos données sont hébergées en France, chiffrées (AES-256) et 100% conformes RGPD. Nous ne vendons jamais vos données et vous pouvez les exporter/supprimer à tout moment.",
+      suggestions: ["En savoir plus", "Politique de confidentialité", "Sécurité"]
+    };
+  }
+
+  // IA / Prévisions
+  if (msg.includes("ia") || msg.includes("prévision") || msg.includes("intelligence artificielle") || msg.includes("prédiction")) {
+    return {
+      response: "Notre IA analyse vos données financières pour prédire votre trésorerie sur 90 jours avec une précision de 85-90%. Plus vous utilisez Quelyos, plus les prévisions deviennent précises.",
+      suggestions: ["Voir la démo IA", "Comment ça marche", "Documentation"]
+    };
+  }
+
+  // Démo
+  if (msg.includes("démo") || msg.includes("demo") || msg.includes("essai") || msg.includes("test")) {
+    return {
+      response: "Vous pouvez tester Quelyos gratuitement pendant 30 jours avec accès complet aux 8 modules. Aucune carte bancaire requise. Voulez-vous commencer maintenant ?",
+      suggestions: ["Démarrer l'essai", "Demander une démo guidée", "Voir une vidéo"]
+    };
+  }
+
+  // Salutations
+  if (msg.includes("bonjour") || msg.includes("salut") || msg.includes("hello") || msg.includes("hey")) {
+    return {
+      response: "Bonjour ! 👋 Je suis l'assistant virtuel Quelyos. Je peux vous aider avec les tarifs, les fonctionnalités, l'inscription ou toute autre question. Comment puis-je vous aider ?",
+      suggestions: ["Voir les tarifs", "Découvrir les modules", "Créer un compte"]
+    };
+  }
+
+  // Merci
+  if (msg.includes("merci") || msg.includes("parfait") || msg.includes("super")) {
+    return {
+      response: "Avec plaisir ! N'hésitez pas si vous avez d'autres questions. Notre équipe est également disponible par email (support@quelyos.com) pour une aide personnalisée. 😊",
+      suggestions: ["Poser une autre question", "Contacter le support", "Fermer"]
+    };
+  }
+
+  // Réponse par défaut
+  return {
+    response: "Je n'ai pas bien compris votre question. Pourriez-vous reformuler ou choisir parmi ces sujets ?",
+    suggestions: ["Tarifs et plans", "Fonctionnalités", "Créer un compte", "Support technique"]
+  };
+};
+
+// Message de bienvenue initial
+const welcomeMessage: ChatMessage = {
+  type: "bot",
+  text: "Bonjour ! 👋 Je suis l'assistant Quelyos, votre guide pour découvrir notre Suite ERP. Je peux répondre à vos questions sur les tarifs, les fonctionnalités, l'inscription ou le support. Comment puis-je vous aider aujourd'hui ?",
+  suggestions: ["Voir les tarifs", "Découvrir les modules", "Essai gratuit", "Aide technique"],
+  timestamp: new Date()
+};
 
 export default function SupportPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -271,10 +365,10 @@ export default function SupportPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<
-    Array<{ type: "bot" | "user"; text: string }>
-  >([{ type: "bot", text: chatbotResponses[0] }]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([welcomeMessage]);
   const [chatInput, setChatInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasNewMessage, setHasNewMessage] = useState(false);
 
   const filteredFaqs = faqs.filter((faq) => {
     const matchesCategory = faq.category === activeCategory;
@@ -299,22 +393,130 @@ export default function SupportPage() {
     setFormSubmitted(true);
   };
 
-  const handleChatSend = () => {
-    if (!chatInput.trim()) return;
+  const handleChatSend = async (suggestionText?: string) => {
+    const messageText = suggestionText || chatInput.trim();
+    if (!messageText) return;
 
-    setChatMessages((prev) => [...prev, { type: "user", text: chatInput }]);
+    // Ajouter le message utilisateur
+    const userMessage: ChatMessage = {
+      type: "user",
+      text: messageText,
+      timestamp: new Date()
+    };
+    setChatMessages((prev) => [...prev, userMessage]);
     setChatInput("");
+    setIsTyping(true);
+    setHasNewMessage(false);
 
-    // Simulate bot response
-    setTimeout(() => {
-      const randomResponse =
-        chatbotResponses[Math.floor(Math.random() * chatbotResponses.length)];
-      setChatMessages((prev) => [
-        ...prev,
-        { type: "bot", text: randomResponse },
-      ]);
-    }, 1000);
+    try {
+      // Appel à l'API backend pour des réponses intelligentes
+      const apiResponse = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: messageText,
+          history: chatMessages,
+          metadata: {
+            page: '/support',
+            userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined
+          }
+        }),
+      });
+
+      if (!apiResponse.ok) {
+        throw new Error('Erreur API');
+      }
+
+      const data = await apiResponse.json();
+
+      const botMessage: ChatMessage = {
+        type: "bot",
+        text: data.response,
+        suggestions: data.suggestions,
+        timestamp: new Date()
+      };
+
+      setIsTyping(false);
+      setChatMessages((prev) => [...prev, botMessage]);
+
+      if (!chatOpen) {
+        setHasNewMessage(true);
+      }
+
+    } catch (error) {
+      log.error('Erreur chat:', error);
+
+      // Fallback en cas d'erreur API
+      const { response, suggestions } = detectIntent(messageText);
+
+      const botMessage: ChatMessage = {
+        type: "bot",
+        text: response,
+        suggestions,
+        timestamp: new Date()
+      };
+
+      setIsTyping(false);
+      setChatMessages((prev) => [...prev, botMessage]);
+    }
   };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    // Gérer les actions spéciales
+    const actions: Record<string, () => void> = {
+      'Créer mon compte': () => window.location.href = '/register',
+      'Créer mon compte maintenant': () => window.location.href = '/register',
+      'Démarrer l\'essai gratuit': () => window.location.href = '/register',
+      'Essai gratuit': () => window.location.href = '/register',
+      'Voir les tarifs': () => window.location.href = '/tarifs',
+      'Voir le comparatif détaillé': () => window.location.href = '/tarifs',
+      'Comparer les plans': () => window.location.href = '/tarifs',
+      'Voir les modules': () => window.location.href = '/modules',
+      'Découvrir les modules': () => window.location.href = '/modules',
+      'Voir les détails des modules': () => window.location.href = '/modules',
+      'Contacter le support': () => window.location.href = 'mailto:support@quelyos.com',
+      'Envoyer un email au support': () => window.location.href = 'mailto:support@quelyos.com',
+      'Rejoindre Discord': () => window.open('https://discord.gg/quelyos', '_blank'),
+      'Documentation': () => window.location.href = '/docs',
+      'Consulter la documentation': () => window.location.href = '/docs',
+      'Voir la FAQ': () => window.location.href = '/faq',
+      'Questions fréquentes': () => window.location.href = '/faq',
+      'Demander une démo': () => window.location.href = '/contact',
+      'Demander une démo guidée': () => window.location.href = '/contact',
+      'Réserver une démo personnalisée': () => window.location.href = '/contact',
+      'Contacter un commercial': () => window.location.href = '/contact',
+      'Politique de confidentialité': () => window.location.href = '/legal/confidentialite',
+      'Voir notre politique de sécurité': () => window.location.href = '/security',
+      'Fermer': () => setChatOpen(false)
+    };
+
+    // Si c'est une action spéciale, l'exécuter
+    if (actions[suggestion]) {
+      actions[suggestion]();
+    } else {
+      // Sinon, envoyer comme message
+      handleChatSend(suggestion);
+    }
+  };
+
+  // Ref pour scroll automatique
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll vers le bas quand de nouveaux messages arrivent
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
+
+  // Message de bienvenue automatique après 3 secondes si pas ouvert
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!chatOpen) {
+        setHasNewMessage(true);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [chatOpen]);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -824,115 +1026,222 @@ export default function SupportPage() {
         </Container>
       </section>
 
-      {/* Chatbot Placeholder */}
+      {/* Chatbot Amélioré */}
       <AnimatePresence>
         {chatOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-80 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl sm:w-96"
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed bottom-24 right-6 z-50 w-80 overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900 shadow-2xl shadow-indigo-500/10 sm:w-96"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 bg-indigo-500 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-                  <MessageSquare size={16} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">
-                    Assistant Quelyos
-                  </p>
-                  <p className="text-xs text-indigo-200">En ligne</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setChatOpen(false)}
-                className="rounded-lg p-1 text-white/80 hover:bg-white/10 hover:text-white"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Messages */}
-            <div className="h-64 space-y-3 overflow-y-auto p-4">
-              {chatMessages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                      msg.type === "user"
-                        ? "bg-indigo-500 text-white"
-                        : "bg-white/10 text-slate-300"
-                    }`}
-                  >
-                    {msg.text}
+            {/* Header avec gradient */}
+            <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3">
+              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10" />
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                      <Sparkles size={18} className="text-white" />
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 animate-pulse rounded-full border-2 border-indigo-600 bg-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">
+                      Assistant Quelyos IA
+                    </p>
+                    <p className="flex items-center gap-1 text-xs text-indigo-100">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      En ligne • Réponse instantanée
+                    </p>
                   </div>
                 </div>
-              ))}
+                <button
+                  onClick={() => setChatOpen(false)}
+                  className="rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label="Fermer le chat"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
-            {/* Input */}
-            <div className="border-t border-white/10 p-3">
+            {/* Messages avec scroll auto */}
+            <div className="h-80 space-y-3 overflow-y-auto bg-gradient-to-b from-slate-900 to-slate-950 p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-700">
+              {chatMessages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div className="max-w-[85%] space-y-2">
+                    <div
+                      className={`rounded-2xl px-4 py-2.5 text-sm shadow-lg ${
+                        msg.type === "user"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+                          : "border border-white/10 bg-slate-800/80 text-slate-200 backdrop-blur-sm"
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+
+                    {/* Suggestions */}
+                    {msg.suggestions && msg.suggestions.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {msg.suggestions.map((suggestion, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300 transition-all hover:border-indigo-500/50 hover:bg-indigo-500/20"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Typing indicator */}
+              {isTyping && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-start"
+                >
+                  <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-800/80 px-4 py-2.5">
+                    <div className="flex gap-1">
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: "0ms" }} />
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: "150ms" }} />
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Scroll anchor */}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input amélioré */}
+            <div className="border-t border-white/10 bg-slate-900/95 p-3 backdrop-blur-sm">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleChatSend()}
-                  placeholder="Écrivez votre message..."
-                  className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                  onKeyPress={(e) => e.key === "Enter" && !isTyping && handleChatSend()}
+                  placeholder="Posez votre question..."
+                  disabled={isTyping}
+                  className="flex-1 rounded-lg border border-white/10 bg-slate-800/50 px-3 py-2 text-sm text-white placeholder-slate-500 transition-all focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50"
                 />
                 <button
-                  onClick={handleChatSend}
-                  className="rounded-lg bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+                  onClick={() => handleChatSend()}
+                  disabled={isTyping || !chatInput.trim()}
+                  className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-3 py-2 text-white transition-all hover:from-indigo-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="Envoyer"
                 >
                   <Send size={16} />
                 </button>
               </div>
-              <p className="mt-2 text-center text-xs text-slate-500">
-                Assistant automatique • Réponses non personnalisées
-              </p>
+              <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-500">
+                <Sparkles size={12} className="text-indigo-400" />
+                <span>Propulsé par l&apos;IA Quelyos</span>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Chatbot Toggle Button */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        onClick={() => setChatOpen(!chatOpen)}
-        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all ${
-          chatOpen
-            ? "bg-slate-700 text-white"
-            : "bg-indigo-500 text-white hover:bg-indigo-400"
-        }`}
+      {/* Chatbot Toggle Button avec badge */}
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", damping: 15, stiffness: 200, delay: 0.5 }}
+        className="fixed bottom-6 right-6 z-50"
       >
-        <AnimatePresence mode="wait">
-          {chatOpen ? (
+        <button
+          onClick={() => {
+            setChatOpen(!chatOpen);
+            setHasNewMessage(false);
+          }}
+          className={`group relative flex h-16 w-16 items-center justify-center rounded-full shadow-2xl transition-all duration-300 ${
+            chatOpen
+              ? "bg-slate-700 text-white hover:bg-slate-600"
+              : "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:scale-110 hover:shadow-indigo-500/50"
+          }`}
+          aria-label={chatOpen ? "Fermer le chat" : "Ouvrir le chat"}
+        >
+          {/* Badge de notification */}
+          {hasNewMessage && !chatOpen && (
             <motion.div
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-xs font-bold text-white shadow-lg"
             >
-              <X size={24} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="chat"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-            >
-              <MessageCircle size={24} />
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              >
+                1
+              </motion.span>
             </motion.div>
           )}
-        </AnimatePresence>
-      </motion.button>
+
+          {/* Pulse ring */}
+          {!chatOpen && (
+            <motion.div
+              className="absolute inset-0 rounded-full bg-indigo-500"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            />
+          )}
+
+          <AnimatePresence mode="wait">
+            {chatOpen ? (
+              <motion.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <X size={26} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="chat"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <MessageCircle size={26} className="transition-transform group-hover:scale-110" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </button>
+
+        {/* Tooltip */}
+        {!chatOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1 }}
+            className="absolute bottom-4 right-20 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-sm text-white shadow-xl"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles size={14} className="text-indigo-400" />
+              <span>Besoin d&apos;aide ? Je suis là !</span>
+            </div>
+            <div className="absolute right-0 top-1/2 h-3 w-3 -translate-y-1/2 translate-x-1/2 rotate-45 bg-slate-900" />
+          </motion.div>
+        )}
+      </motion.div>
 
       {/* Footer CTA */}
       <section className="border-t border-white/5 py-16">
