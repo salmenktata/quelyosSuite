@@ -1448,3 +1448,69 @@ class AdminSecurityController(SuperAdminController):
                 {'success': False, 'error': 'Erreur serveur'},
                 headers=cors_headers, status=500
             )
+
+    @http.route('/api/super-admin/security-groups', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def list_security_groups(self):
+        """Liste les groupes de sécurité disponibles pour les plans"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        if not request.session.uid:
+            return request.make_json_response(
+                {'success': False, 'error': 'Non authentifié'},
+                headers=cors_headers,
+                status=401
+            )
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Groups = request.env['res.groups'].sudo()
+            # Récupérer tous les groupes triés par nom
+            groups = Groups.search([], order='name')
+
+            # Exclure certains groupes système trop techniques
+            excluded_names = ['Portal', 'Public', 'Anonymous']
+
+            result_groups = []
+            for g in groups:
+                full_name = g.full_name or g.name
+                # Ignorer les groupes Portal/Public/Anonymous
+                if any(excl in full_name for excl in excluded_names):
+                    continue
+                # Extraire la catégorie depuis full_name (format: "Module / Group")
+                category = 'Général'
+                if ' / ' in full_name:
+                    category = full_name.split(' / ')[0]
+                result_groups.append({
+                    'id': g.id,
+                    'name': g.name,
+                    'full_name': full_name,
+                    'category': category,
+                })
+
+            data = {
+                'success': True,
+                'data': result_groups,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"List security groups error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
