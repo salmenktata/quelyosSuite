@@ -28,7 +28,7 @@
 - **vitrine-quelyos** : Port **3000** FIXE
 - **vitrine-client** : Port **3001** FIXE
 - **dashboard-client** : Port **5175** FIXE (Backoffice clients)
-- **super-admin-client** : Port **5176** FIXE (Panel super admin SaaS)
+- **super-admin-client** : Port **9000** FIXE (Panel super admin SaaS)
 - **odoo-backend** : Port **8069** FIXE
 - **PostgreSQL** : Port **5432** FIXE
 - **Redis** : Port **6379** FIXE

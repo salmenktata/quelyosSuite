@@ -65,8 +65,8 @@ const APPS_CONFIG: AppConfig[] = [
   {
     id: 'super-admin-client',
     name: 'Super Admin Client',
-    baseUrl: 'http://localhost:5176',
-    port: 5176,
+    baseUrl: 'http://localhost:9000',
+    port: 9000,
     icon: 'ShieldCheck',
     color: 'text-teal-600 dark:text-teal-400',
     bgColor: 'bg-teal-50',

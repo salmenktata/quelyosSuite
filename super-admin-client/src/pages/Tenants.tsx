@@ -279,21 +279,27 @@ export function Tenants() {
                                 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                                 : tenant.subscription_state === 'past_due'
                                   ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
-                                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                  : tenant.subscription_state === 'cancelled'
+                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                    : tenant.subscription_state === 'expired'
+                                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                      : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-white'
                           }`}
                         >
-                          {tenant.subscription_state || 'N/A'}
+                          {tenant.subscription_state && tenant.subscription_state !== false
+                            ? String(tenant.subscription_state).toUpperCase()
+                            : 'AUCUN ABONNEMENT'}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-900 dark:text-white">
-                      {tenant.users_count}/{tenant.max_users}
+                      {tenant.users_count ?? 0}/{tenant.max_users ?? 0}
                     </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-900 dark:text-white">
-                      {tenant.products_count}/{tenant.max_products}
+                      {tenant.products_count ?? 0}/{tenant.max_products ?? 0}
                     </td>
                     <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                      {tenant.mrr.toLocaleString('fr-FR')} €
+                      {(tenant.mrr ?? 0).toLocaleString('fr-FR')} €
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-1">
@@ -616,15 +622,19 @@ function TenantDetailModal({
               </div>
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Plan</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{tenant.plan_name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{tenant.plan_name || 'Aucun plan'}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">État Subscription</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{tenant.subscription_state}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {tenant.subscription_state && tenant.subscription_state !== false
+                    ? String(tenant.subscription_state).toUpperCase()
+                    : 'Aucun abonnement'}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">MRR</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{tenant.mrr} €</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{(tenant.mrr ?? 0).toLocaleString('fr-FR')} €</p>
               </div>
             </div>
           </div>
@@ -632,37 +642,41 @@ function TenantDetailModal({
           <div>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Usage Quotas</h3>
             <div className="space-y-3">
-              <QuotaBar label="Utilisateurs" current={tenant.users_count} max={tenant.max_users} />
-              <QuotaBar label="Produits" current={tenant.products_count} max={tenant.max_products} />
-              <QuotaBar label="Commandes (annuelles)" current={tenant.orders_count} max={tenant.max_orders_per_year} />
+              <QuotaBar label="Utilisateurs" current={tenant.users_count ?? 0} max={tenant.max_users ?? 0} />
+              <QuotaBar label="Produits" current={tenant.products_count ?? 0} max={tenant.max_products ?? 0} />
+              <QuotaBar label="Commandes (annuelles)" current={tenant.orders_count ?? 0} max={tenant.max_orders_per_year ?? 0} />
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Features Activées</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(tenant.features).map(([key, value]) => (
-                <div key={key} className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${value ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{formatFeatureName(key)}</span>
-                </div>
-              ))}
+          {tenant.features && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Features Activées</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(tenant.features).map(([key, value]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${value ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{formatFeatureName(key)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-6 space-y-3">
           {/* Bouton Historique Tickets */}
-          <button
-            onClick={() => {
-              onClose()
-              navigate(`/customers/${tenant.partner_id}/tickets`)
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
-          >
-            <History className="w-4 h-4" />
-            Historique Tickets Support
-          </button>
+          {tenant.partner_id && (
+            <button
+              onClick={() => {
+                onClose()
+                navigate(`/customers/${tenant.partner_id}/tickets`)
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
+            >
+              <History className="w-4 h-4" />
+              Historique Tickets Support
+            </button>
+          )}
 
           {/* Boutons d'action */}
           <div className="flex gap-3">
@@ -759,14 +773,14 @@ function ChangePlanModal({
   // Vérifier si le downgrade dépasse les quotas
   const quotaWarnings: string[] = []
   if (newPlan && isDowngrade) {
-    if (newPlan.max_users > 0 && tenant.users_count > newPlan.max_users) {
-      quotaWarnings.push(`Utilisateurs: ${tenant.users_count}/${newPlan.max_users}`)
+    if (newPlan.max_users > 0 && (tenant.users_count ?? 0) > newPlan.max_users) {
+      quotaWarnings.push(`Utilisateurs: ${tenant.users_count ?? 0}/${newPlan.max_users}`)
     }
-    if (newPlan.max_products > 0 && tenant.products_count > newPlan.max_products) {
-      quotaWarnings.push(`Produits: ${tenant.products_count}/${newPlan.max_products}`)
+    if (newPlan.max_products > 0 && (tenant.products_count ?? 0) > newPlan.max_products) {
+      quotaWarnings.push(`Produits: ${tenant.products_count ?? 0}/${newPlan.max_products}`)
     }
-    if (newPlan.max_orders_per_year > 0 && tenant.orders_count > newPlan.max_orders_per_year) {
-      quotaWarnings.push(`Commandes: ${tenant.orders_count}/${newPlan.max_orders_per_year}`)
+    if (newPlan.max_orders_per_year > 0 && (tenant.orders_count ?? 0) > newPlan.max_orders_per_year) {
+      quotaWarnings.push(`Commandes: ${tenant.orders_count ?? 0}/${newPlan.max_orders_per_year}`)
     }
   }
 

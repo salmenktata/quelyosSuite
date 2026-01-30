@@ -20,7 +20,7 @@
 ┌─────┴───────────────┐   ┌───────────┴─────────────────┐
 │ BACKOFFICE TENANTS  │   │  SUPER ADMIN GLOBAL         │
 │ (dashboard-client)  │   │  (super-admin-client)       │
-│ Port 5175           │   │  Port 5176                  │
+│ Port 5175           │   │  Port 9000                  │
 │ Multi-tenant        │   │  Admin SaaS                 │
 └─────┬───────────────┘   └───────────┬─────────────────┘
       │                               │
@@ -40,7 +40,7 @@
 | **Site Vitrine** | `vitrine-quelyos/` | 3000 | http://localhost:3000 | Site marketing principal (Next.js 14) |
 | **E-commerce** | `vitrine-client/` | 3001 | http://localhost:3001 | Boutique en ligne (Next.js 16) |
 | **Backoffice** | `dashboard-client/` | 5175 | http://localhost:5175 | Interface admin (React + Vite) |
-| **Super Admin** | `super-admin-client/` | 5176 | http://localhost:5176 | Admin SaaS (React + Vite) |
+| **Super Admin** | `super-admin-client/` | 9000 | http://localhost:9000 | Admin SaaS (React + Vite) |
 | **Backend API** | `odoo-backend/` | 8069 | http://localhost:8069/api/* | API REST Odoo |
 | **Interface Odoo** | `odoo-backend/` | 8069 | http://localhost:8069 | Interface native Odoo (admin/admin) |
 | **PostgreSQL** | Docker | 5432 | localhost:5432 | Base de données principale |
@@ -124,7 +124,7 @@ Backend (8069) ─┐
   - POS (ventes en magasin, sessions)
   - Support (tickets clients)
 
-### 2. **Super-Admin-Client** (Port 5176)
+### 2. **Super-Admin-Client** (Port 9000)
 - **Rôle** : Panel d'administration SaaS global
 - **Utilisateurs** : Équipe Quelyos uniquement (administrateurs système)
 - **Authentification** : Via compte super admin dédié

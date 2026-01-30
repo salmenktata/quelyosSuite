@@ -1031,8 +1031,8 @@
     {
       "id": "super-admin-client",
       "name": "Super Admin Client",
-      "baseUrl": "http://localhost:5176",
-      "port": 5176,
+      "baseUrl": "http://localhost:9000",
+      "port": 9000,
       "routes": [
         {
           "path": "/ai-config",
@@ -1321,6 +1321,6 @@
     }
   ],
   "totalRoutes": 236,
-  "lastGenerated": "2026-01-30T17:16:15.381Z",
+  "lastGenerated": "2026-01-30T17:58:00.884Z",
   "version": "3.0.0"
 }

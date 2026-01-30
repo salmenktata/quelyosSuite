@@ -2,6 +2,16 @@
 from . import auth
 from . import base
 from . import main
+# Domain Controllers (extracted from main.py)
+from . import products_ctrl
+from . import orders_ctrl
+from . import customers_ctrl
+from . import inventory_ctrl
+from . import finance_ctrl
+from . import cart_ctrl
+from . import analytics_ctrl
+from . import delivery_payment_ctrl
+from . import crm_ctrl
 from . import health
 from . import cms
 from . import checkout

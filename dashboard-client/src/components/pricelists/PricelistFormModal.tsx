@@ -68,13 +68,16 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
 
   const onSubmit = async (data: PricelistFormData) => {
     try {
+      // Convertir currency_id en number (le select retourne une string)
+      const currencyId = typeof data.currency_id === 'string' ? parseInt(data.currency_id, 10) : data.currency_id;
+
       if (isEditing && pricelist) {
         // Mode édition
         await updateMutation.mutateAsync({
           pricelistId: pricelist.id,
           params: {
             name: data.name,
-            currency_id: data.currency_id,
+            currency_id: currencyId,
             discount_policy: data.discount_policy,
             active: data.active,
           },
@@ -84,7 +87,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
         // Mode création
         await createMutation.mutateAsync({
           name: data.name,
-          currency_id: data.currency_id,
+          currency_id: currencyId,
           discount_policy: data.discount_policy,
           active: data.active,
         });

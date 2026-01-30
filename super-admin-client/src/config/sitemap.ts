@@ -7,7 +7,7 @@ import { Globe, LayoutDashboard, ShieldCheck, ShoppingBag, type LucideIcon } fro
  * Ne pas modifier manuellement - Utiliser `pnpm generate-sitemap`
  *
  * Total routes: 236
- * Généré le: 2026-01-30T17:16:15.380Z
+ * Généré le: 2026-01-30T17:58:00.882Z
  */
 
 export interface AppRoute {
@@ -239,8 +239,8 @@ export const sitemapData: AppSection[] = [
   {
     id: 'super-admin-client',
     name: 'Super Admin Client',
-    baseUrl: 'http://localhost:5176',
-    port: 5176,
+    baseUrl: 'http://localhost:9000',
+    port: 9000,
     icon: ShieldCheck,
     color: 'text-teal-600 dark:text-teal-400',
     bgColor: 'bg-teal-50',
