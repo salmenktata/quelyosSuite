@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workflow Exemple : Email Bienvenue Nouveau Contact -->
+    <record id="workflow_welcome_email" model="quelyos.marketing.automation">
+        <field name="name">Email Bienvenue Nouveau Contact</field>
+        <field name="trigger_type">contact_created</field>
+        <field name="active" eval="False"/>
+        <field name="sequence">10</field>
+        <field name="filter_domain">[]</field>
+    </record>
+
+    <!-- Activité 1 : Envoyer email immédiat -->
+    <record id="activity_welcome_email_send" model="quelyos.marketing.automation.activity">
+        <field name="automation_id" ref="workflow_welcome_email"/>
+        <field name="name">Envoyer Email Bienvenue</field>
+        <field name="sequence">10</field>
+        <field name="activity_type">email</field>
+        <!-- email_template_id à configurer manuellement -->
+    </record>
+
+    <!-- Activité 2 : Attendre 3 jours -->
+    <record id="activity_welcome_wait" model="quelyos.marketing.automation.activity">
+        <field name="automation_id" ref="workflow_welcome_email"/>
+        <field name="name">Attendre 3 jours</field>
+        <field name="sequence">20</field>
+        <field name="activity_type">wait</field>
+        <field name="wait_days">3</field>
+    </record>
+
+    <!-- Activité 3 : Email de suivi -->
+    <record id="activity_welcome_followup" model="quelyos.marketing.automation.activity">
+        <field name="automation_id" ref="workflow_welcome_email"/>
+        <field name="name">Email Suivi</field>
+        <field name="sequence">30</field>
+        <field name="activity_type">email</field>
+        <!-- email_template_id à configurer -->
+    </record>
+
+    <!-- Workflow Exemple : Relance Panier Abandonné -->
+    <record id="workflow_cart_abandoned" model="quelyos.marketing.automation">
+        <field name="name">Relance Panier Abandonné</field>
+        <field name="trigger_type">cart_abandoned</field>
+        <field name="active" eval="False"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Activité : Attendre 1 heure -->
+    <record id="activity_cart_wait" model="quelyos.marketing.automation.activity">
+        <field name="automation_id" ref="workflow_cart_abandoned"/>
+        <field name="name">Attendre 1 heure</field>
+        <field name="sequence">10</field>
+        <field name="activity_type">wait</field>
+        <field name="wait_hours">1</field>
+    </record>
+
+    <!-- Activité : Email relance -->
+    <record id="activity_cart_email" model="quelyos.marketing.automation.activity">
+        <field name="automation_id" ref="workflow_cart_abandoned"/>
+        <field name="name">Email Relance Panier</field>
+        <field name="sequence">20</field>
+        <field name="activity_type">email</field>
+    </record>
+
+</odoo>

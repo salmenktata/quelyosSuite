@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cron : Traitement workflows automation -->
+    <record id="cron_process_automation_workflows" model="ir.cron">
+        <field name="name">Marketing Automation: Process Workflows</field>
+        <field name="model_id" ref="model_quelyos_marketing_automation"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_process_workflows()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

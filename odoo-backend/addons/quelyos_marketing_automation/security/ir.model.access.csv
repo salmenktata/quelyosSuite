@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_automation_user,quelyos.marketing.automation.user,model_quelyos_marketing_automation,base.group_user,1,0,0,0
+access_automation_manager,quelyos.marketing.automation.manager,model_quelyos_marketing_automation,mass_mailing.group_mass_mailing_user,1,1,1,1
+access_activity_user,quelyos.marketing.automation.activity.user,model_quelyos_marketing_automation_activity,base.group_user,1,0,0,0
+access_activity_manager,quelyos.marketing.automation.activity.manager,model_quelyos_marketing_automation_activity,mass_mailing.group_mass_mailing_user,1,1,1,1
+access_participant_user,quelyos.marketing.automation.participant.user,model_quelyos_marketing_automation_participant,base.group_user,1,0,0,0
+access_participant_manager,quelyos.marketing.automation.participant.manager,model_quelyos_marketing_automation_participant,mass_mailing.group_mass_mailing_user,1,1,1,1
