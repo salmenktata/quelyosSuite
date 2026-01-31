@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence pour équipements maintenance -->
+        <record id="seq_maintenance_equipment" model="ir.sequence">
+            <field name="name">Équipement Maintenance</field>
+            <field name="code">maintenance.equipment</field>
+            <field name="prefix">EQP-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Séquence pour demandes maintenance -->
+        <record id="seq_maintenance_request" model="ir.sequence">
+            <field name="name">Demande Maintenance</field>
+            <field name="code">maintenance.request</field>
+            <field name="prefix">REQ-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

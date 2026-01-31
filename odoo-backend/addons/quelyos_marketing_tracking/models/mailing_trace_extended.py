@@ -58,13 +58,13 @@ class MailingTrace(models.Model):
         help='Score 0-100 basé sur ouvertures et clics'
     )
     
-    # Relations liens cliqués
-    link_click_ids = fields.One2many(
-        'quelyos.link.tracker.click',
-        'trace_id',
-        string='Clics Liens',
-        help='Détail clics par lien'
-    )
+    #     # Relations liens cliqués
+    #     link_click_ids = fields.One2many(
+    #         'quelyos.link.tracker.click',
+    #         'trace_id',
+    #         string='Clics Liens',
+    #         help='Détail clics par lien'
+    #     )
 
     @api.depends('open_date', 'click_date')
     def _compute_last_interaction(self):

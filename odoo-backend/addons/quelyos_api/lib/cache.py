@@ -60,7 +60,7 @@ class CacheService:
             self.redis_client = None
             self.enabled = False
 
-    def _generate_key(self, prefix, **kwargs):
+    def _generate_key(self, prefix, tenant_id=None, **kwargs):
         """
         Génère une clé de cache unique basée sur les paramètres.
 
@@ -68,6 +68,10 @@ class CacheService:
         >>> _generate_key('products', limit=12, category=5)
         'products:limit=12:category=5:hash123abc'
         """
+        # CRITIQUE SÉCURITÉ : Isolation multi-tenant
+        if tenant_id:
+            prefix = f"tenant:{tenant_id}:{prefix}"
+
         # Trier les paramètres pour consistance
         sorted_params = sorted(kwargs.items())
         params_str = ':'.join(f"{k}={v}" for k, v in sorted_params if v is not None)
@@ -295,58 +299,58 @@ class CacheStrategies:
     """
 
     @staticmethod
-    def cache_products_list(result: dict, params: dict) -> bool:
+    def cache_products_list(tenant_id: int, result: dict, params: dict) -> bool:
         """Cache la liste des produits"""
         cache = get_cache_service()
-        key = cache._generate_key('products:list', **params)
+        key = cache._generate_key('products:list', tenant_id=tenant_id, **params)
         return cache.set(key, result, CacheTTL.PRODUCTS_LIST)
 
     @staticmethod
-    def get_cached_products_list(params: dict) -> dict | None:
+    def get_cached_products_list(tenant_id: int, params: dict) -> dict | None:
         """Récupère la liste des produits depuis le cache"""
         cache = get_cache_service()
-        key = cache._generate_key('products:list', **params)
+        key = cache._generate_key('products:list', tenant_id=tenant_id, **params)
         return cache.get(key)
 
     @staticmethod
-    def cache_product_detail(product_id: int, result: dict) -> bool:
+    def cache_product_detail(tenant_id: int, product_id: int, result: dict) -> bool:
         """Cache le détail d'un produit"""
         cache = get_cache_service()
-        key = f"products:detail:{product_id}"
+        key = f"tenant:{tenant_id}:products:detail:{product_id}"
         return cache.set(key, result, CacheTTL.PRODUCT_DETAIL)
 
     @staticmethod
-    def get_cached_product_detail(product_id: int) -> dict | None:
+    def get_cached_product_detail(tenant_id: int, product_id: int) -> dict | None:
         """Récupère le détail d'un produit depuis le cache"""
         cache = get_cache_service()
-        key = f"products:detail:{product_id}"
+        key = f"tenant:{tenant_id}:products:detail:{product_id}"
         return cache.get(key)
 
     @staticmethod
-    def invalidate_product(product_id: int = None):
+    def invalidate_product(tenant_id: int, product_id: int = None):
         """Invalide le cache d'un produit ou de tous les produits"""
         cache = get_cache_service()
         if product_id:
-            cache.delete(f"products:detail:{product_id}")
-        cache.invalidate_pattern("products:list:*")
+            cache.delete(f"tenant:{tenant_id}:products:detail:{product_id}")
+        cache.invalidate_pattern(f"tenant:{tenant_id}:products:list:*")
 
     @staticmethod
-    def cache_categories(result: list) -> bool:
+    def cache_categories(tenant_id: int, result: list) -> bool:
         """Cache les catégories"""
         cache = get_cache_service()
-        return cache.set("categories:all", result, CacheTTL.CATEGORIES)
+        return cache.set(f"tenant:{tenant_id}:categories:all", result, CacheTTL.CATEGORIES)
 
     @staticmethod
-    def get_cached_categories() -> list | None:
+    def get_cached_categories(tenant_id: int) -> list | None:
         """Récupère les catégories depuis le cache"""
         cache = get_cache_service()
-        return cache.get("categories:all")
+        return cache.get(f"tenant:{tenant_id}:categories:all")
 
     @staticmethod
-    def invalidate_categories():
+    def invalidate_categories(tenant_id: int):
         """Invalide le cache des catégories"""
         cache = get_cache_service()
-        cache.invalidate_pattern("categories:*")
+        cache.invalidate_pattern(f"tenant:{tenant_id}:categories:*")
 
     @staticmethod
     def cache_site_config(tenant_id: int, config: dict) -> bool:
@@ -363,15 +367,15 @@ class CacheStrategies:
         return cache.get(key)
 
     @staticmethod
-    def cache_dashboard_stats(user_id: int, stats: dict) -> bool:
+    def cache_dashboard_stats(tenant_id: int, user_id: int, stats: dict) -> bool:
         """Cache les stats dashboard d'un utilisateur"""
         cache = get_cache_service()
-        key = f"dashboard:stats:{user_id}"
+        key = f"tenant:{tenant_id}:dashboard:stats:{user_id}"
         return cache.set(key, stats, CacheTTL.DASHBOARD_STATS)
 
     @staticmethod
-    def get_cached_dashboard_stats(user_id: int) -> dict | None:
+    def get_cached_dashboard_stats(tenant_id: int, user_id: int) -> dict | None:
         """Récupère les stats dashboard depuis le cache"""
         cache = get_cache_service()
-        key = f"dashboard:stats:{user_id}"
+        key = f"tenant:{tenant_id}:dashboard:stats:{user_id}"
         return cache.get(key)

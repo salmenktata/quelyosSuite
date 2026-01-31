@@ -99,7 +99,7 @@ class ApiClient {
 
   /**
    * Définir le tenant domain pour toutes les requêtes API
-   * Injecte automatiquement le header X-Tenant-Domain
+   * Injecte automatiquement les headers X-Tenant-Domain et X-Tenant-ID
    */
   setTenantDomain(domain: string | null): void {
     this.tenantDomain = domain
@@ -113,6 +113,25 @@ class ApiClient {
   }
 
   async request<T>(endpoint: string, data?: unknown): Promise<T> {
+    // CRITIQUE SÉCURITÉ : Validation tenant obligatoire (sauf endpoints publics)
+    const publicEndpoints = [
+      '/login',
+      '/register',
+      '/health',
+      '/logout',
+      '/api/auth/sso-login',
+      '/api/auth/passkey-login',
+      '/api/auth/refresh',
+      '/api/health',
+    ]
+    
+    const isPublicEndpoint = publicEndpoints.some(e => endpoint.includes(e))
+    
+    if (!isPublicEndpoint && !this.tenantDomain && !this.tenantId) {
+      logger.error('[API] Tenant context required but missing for endpoint:', endpoint)
+      throw new Error('Tenant context required. Please login to access this resource.')
+    }
+
     const url = `${this.baseUrl}${endpoint}`
     logger.debug('[API] request() ->', endpoint, 'URL:', url)
 
@@ -129,6 +148,11 @@ class ApiClient {
     // CRITIQUE SÉCURITÉ : Injecter X-Tenant-Domain pour isolation multi-tenant
     if (this.tenantDomain) {
       headers['X-Tenant-Domain'] = this.tenantDomain
+    }
+
+    // CRITIQUE SÉCURITÉ : Injecter X-Tenant-ID (number) pour compatibilité backend
+    if (this.tenantId) {
+      headers['X-Tenant-ID'] = String(this.tenantId)
     }
 
     logger.debug('[API] Sending fetch to:', url)

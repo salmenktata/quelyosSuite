@@ -1,0 +1,721 @@
+📋 Inventaire Champs à Migrer - 2026-01-31 20:19
+=========================================================
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/blog.py
+Champs (29):
+  - name → x_name
+  - slug → x_slug
+  - description → x_description
+  - color → x_color
+  - sequence → x_sequence
+  - company_id → x_company_id
+  - post_ids → x_post_ids
+  - title → x_title
+  - slug → x_slug
+  - excerpt → x_excerpt
+  - content → x_content
+  - cover_image → x_cover_image
+  - cover_image_alt → x_cover_image_alt
+  - category_id → x_category_id
+  - tag_ids → x_tag_ids
+  - author_id → x_author_id
+  - author_name → x_author_name
+  - state → x_state
+  - published_date → x_published_date
+  - company_id → x_company_id
+  - allow_comments → x_allow_comments
+  - is_featured → x_is_featured
+  - product_ids → x_product_ids
+  - meta_title → x_meta_title
+  - meta_description → x_meta_description
+  - views_count → x_views_count
+  - name → x_name
+  - slug → x_slug
+  - company_id → x_company_id
+
+Modèle: crm.stage
+Fichier: odoo-backend/addons/quelyos_api/models/crm_lead.py
+Champs (1):
+  - is_global → x_is_global
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/cycle_count.py
+Champs (21):
+  - name → x_name
+  - scheduled_date → x_scheduled_date
+  - default → x_default
+  - state → x_state
+  - location_ids → x_location_ids
+  - category_ids → x_category_ids
+  - user_id → x_user_id
+  - product_count → x_product_count
+  - counted_products → x_counted_products
+  - line_ids → x_line_ids
+  - notes → x_notes
+  - completion_date → x_completion_date
+  - cycle_count_id → x_cycle_count_id
+  - product_id → x_product_id
+  - location_id → x_location_id
+  - theoretical_qty → x_theoretical_qty
+  - counted_qty → x_counted_qty
+  - difference → x_difference
+  - standard_price → x_standard_price
+  - value_difference → x_value_difference
+  - notes → x_notes
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/email_builder.py
+Champs (15):
+  - name → x_name
+  - category → x_category
+  - subject → x_subject
+  - preview_text → x_preview_text
+  - blocks_json → x_blocks_json
+  - blocks_count → x_blocks_count
+  - html_content → x_html_content
+  - primary_color → x_primary_color
+  - secondary_color → x_secondary_color
+  - font_family → x_font_family
+  - usage_count → x_usage_count
+  - last_used_date → x_last_used_date
+  - active → x_active
+  - is_template → x_is_template
+  - company_id → x_company_id
+
+Modèle: hr.attendance
+Fichier: odoo-backend/addons/quelyos_api/models/hr_attendance.py
+Champs (13):
+  - overtime → x_overtime
+  - check_in_mode → x_check_in_mode
+  - check_out_mode → x_check_out_mode
+  - check_in_latitude → x_check_in_latitude
+  - check_in_longitude → x_check_in_longitude
+  - check_out_latitude → x_check_out_latitude
+  - check_out_longitude → x_check_out_longitude
+  - attendance_state → x_attendance_state
+  - anomaly_reason → x_anomaly_reason
+  - validated_by → x_validated_by
+  - validated_date → x_validated_date
+  - notes → x_notes
+  - today_start → x_today_start
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/hr_contract.py
+Champs (19):
+  - name → x_name
+  - employee_id → x_employee_id
+  - department_id → x_department_id
+  - job_id → x_job_id
+  - contract_type → x_contract_type
+  - date_start → x_date_start
+  - default → x_default
+  - date_end → x_date_end
+  - trial_date_end → x_trial_date_end
+  - wage → x_wage
+  - wage_type → x_wage_type
+  - currency_id → x_currency_id
+  - schedule_pay → x_schedule_pay
+  - hours_per_week → x_hours_per_week
+  - time_type → x_time_type
+  - state → x_state
+  - notes → x_notes
+  - advantages → x_advantages
+  - today → x_today
+
+Modèle: hr.department
+Fichier: odoo-backend/addons/quelyos_api/models/hr_department.py
+Champs (1):
+  - code → x_code
+
+Modèle: hr.employee
+Fichier: odoo-backend/addons/quelyos_api/models/hr_employee.py
+Champs (11):
+  - employee_number → x_employee_number
+  - first_name → x_first_name
+  - last_name → x_last_name
+  - cnss_number → x_cnss_number
+  - cin_number → x_cin_number
+  - employee_state → x_employee_state
+  - bank_name → x_bank_name
+  - bank_account_number → x_bank_account_number
+  - seniority → x_seniority
+  - hire_date → x_hire_date
+  - today → x_today
+
+Modèle: hr.job
+Fichier: odoo-backend/addons/quelyos_api/models/hr_job.py
+Champs (1):
+  - code → x_code
+
+Modèle: hr.leave.allocation
+Fichier: odoo-backend/addons/quelyos_api/models/hr_leave_allocation.py
+Champs (6):
+  - reference → x_reference
+  - year → x_year
+  - date_from → x_date_from
+  - date_to → x_date_to
+  - today → x_today
+  - today → x_today
+
+Modèle: hr.leave.type
+Fichier: odoo-backend/addons/quelyos_api/models/hr_leave_type.py
+Champs (2):
+  - code → x_code
+  - min_notice_days → x_min_notice_days
+
+Modèle: hr.leave
+Fichier: odoo-backend/addons/quelyos_api/models/hr_leave.py
+Champs (4):
+  - reference → x_reference
+  - refuse_reason → x_refuse_reason
+  - refused_date → x_refused_date
+  - min_date → x_min_date
+
+Modèle: hr.employee.skill
+Fichier: odoo-backend/addons/quelyos_api/models/hr_skill.py
+Champs (9):
+  - name → x_name
+  - sequence → x_sequence
+  - color → x_color
+  - skill_ids → x_skill_ids
+  - active → x_active
+  - name → x_name
+  - description → x_description
+  - skill_type_id → x_skill_type_id
+  - active → x_active
+
+Modèle: payment.provider
+Fichier: odoo-backend/addons/quelyos_api/models/payment_provider.py
+Champs (9):
+  - code → x_code
+  - flouci_app_token → x_flouci_app_token
+  - flouci_app_secret → x_flouci_app_secret
+  - flouci_timeout → x_flouci_timeout
+  - flouci_accept_cards → x_flouci_accept_cards
+  - konnect_api_key → x_konnect_api_key
+  - konnect_wallet_id → x_konnect_wallet_id
+  - konnect_lifespan → x_konnect_lifespan
+  - konnect_theme → x_konnect_theme
+
+Modèle: payment.transaction
+Fichier: odoo-backend/addons/quelyos_api/models/payment_transaction.py
+Champs (6):
+  - provider_payment_id → x_provider_payment_id
+  - provider_request_payload → x_provider_request_payload
+  - provider_response_payload → x_provider_response_payload
+  - webhook_calls_count → x_webhook_calls_count
+  - last_webhook_date → x_last_webhook_date
+  - customer_phone → x_customer_phone
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/pos_config.py
+Champs (27):
+  - name → x_name
+  - code → x_code
+  - sequence → x_sequence
+  - company_id → x_company_id
+  - warehouse_id → x_warehouse_id
+  - picking_type_id → x_picking_type_id
+  - pricelist_id → x_pricelist_id
+  - currency_id → x_currency_id
+  - sale_journal_id → x_sale_journal_id
+  - income_account_id → x_income_account_id
+  - payment_method_ids → x_payment_method_ids
+  - user_ids → x_user_ids
+  - restrict_users → x_restrict_users
+  - is_kiosk → x_is_kiosk
+  - allow_manual_discount → x_allow_manual_discount
+  - require_customer → x_require_customer
+  - allow_order_notes → x_allow_order_notes
+  - receipt_printer → x_receipt_printer
+  - receipt_header → x_receipt_header
+  - receipt_footer → x_receipt_footer
+  - barcode_scanner → x_barcode_scanner
+  - cash_drawer → x_cash_drawer
+  - customer_display → x_customer_display
+  - session_ids → x_session_ids
+  - current_session_id → x_current_session_id
+  - current_session_state → x_current_session_state
+  - active → x_active
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/pos_order.py
+Champs (46):
+  - name → x_name
+  - session_id → x_session_id
+  - config_id → x_config_id
+  - company_id → x_company_id
+  - currency_id → x_currency_id
+  - pricelist_id → x_pricelist_id
+  - partner_id → x_partner_id
+  - user_id → x_user_id
+  - state → x_state
+  - line_ids → x_line_ids
+  - amount_untaxed → x_amount_untaxed
+  - amount_tax → x_amount_tax
+  - amount_total → x_amount_total
+  - discount_type → x_discount_type
+  - discount_value → x_discount_value
+  - discount_amount → x_discount_amount
+  - payment_ids → x_payment_ids
+  - amount_paid → x_amount_paid
+  - amount_return → x_amount_return
+  - note → x_note
+  - offline_id → x_offline_id
+  - synced_at → x_synced_at
+  - is_offline_order → x_is_offline_order
+  - paid_at → x_paid_at
+  - sale_order_id → x_sale_order_id
+  - invoice_id → x_invoice_id
+  - picking_ids → x_picking_ids
+  - order_id → x_order_id
+  - sequence → x_sequence
+  - product_id → x_product_id
+  - product_name → x_product_name
+  - product_sku → x_product_sku
+  - quantity → x_quantity
+  - price_unit → x_price_unit
+  - discount → x_discount
+  - price_subtotal_untaxed → x_price_subtotal_untaxed
+  - price_tax → x_price_tax
+  - price_subtotal → x_price_subtotal
+  - note → x_note
+  - offline_line_id → x_offline_line_id
+  - order_id → x_order_id
+  - payment_method_id → x_payment_method_id
+  - amount → x_amount
+  - transaction_id → x_transaction_id
+  - payment_transaction_id → x_payment_transaction_id
+  - pos_order_id → x_pos_order_id
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/pos_session.py
+Champs (22):
+  - name → x_name
+  - config_id → x_config_id
+  - user_id → x_user_id
+  - company_id → x_company_id
+  - currency_id → x_currency_id
+  - state → x_state
+  - opening_cash → x_opening_cash
+  - closing_cash → x_closing_cash
+  - cash_difference → x_cash_difference
+  - theoretical_closing_cash → x_theoretical_closing_cash
+  - order_count → x_order_count
+  - total_amount → x_total_amount
+  - total_cash → x_total_cash
+  - total_card → x_total_card
+  - total_digital → x_total_digital
+  - total_other → x_total_other
+  - total_returns → x_total_returns
+  - opened_at → x_opened_at
+  - closed_at → x_closed_at
+  - order_ids → x_order_ids
+  - opening_notes → x_opening_notes
+  - closing_notes → x_closing_notes
+
+Modèle: product.image
+Fichier: odoo-backend/addons/quelyos_api/models/product_image.py
+Champs (1):
+  - product_template_attribute_value_id → x_product_template_attribute_value_id
+
+Modèle: product.product
+Fichier: odoo-backend/addons/quelyos_api/models/product_product.py
+Champs (4):
+  - qty_available_unreserved → x_qty_available_unreserved
+  - qty_reserved_manual → x_qty_reserved_manual
+  - qty_available_after_manual_reservations → x_qty_available_after_manual_reservations
+  - days_of_stock → x_days_of_stock
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/product_review.py
+Champs (21):
+  - name → x_name
+  - product_id → x_product_id
+  - partner_id → x_partner_id
+  - company_id → x_company_id
+  - rating → x_rating
+  - comment → x_comment
+  - pros → x_pros
+  - cons → x_cons
+  - image_ids → x_image_ids
+  - state → x_state
+  - moderated_by → x_moderated_by
+  - moderated_date → x_moderated_date
+  - rejection_reason → x_rejection_reason
+  - seller_reply → x_seller_reply
+  - seller_reply_date → x_seller_reply_date
+  - seller_reply_by → x_seller_reply_by
+  - helpful_count → x_helpful_count
+  - reported_count → x_reported_count
+  - is_verified_purchase → x_is_verified_purchase
+  - review_id → x_review_id
+  - image → x_image
+
+Modèle: product.template
+Fichier: odoo-backend/addons/quelyos_api/models/product_template.py
+Champs (1):
+  - qty_available_unreserved → x_qty_available_unreserved
+
+Modèle: sale.order
+Fichier: odoo-backend/addons/quelyos_api/models/sale_order.py
+Champs (6):
+  - recovery_token → x_recovery_token
+  - recovery_email_sent_date → x_recovery_email_sent_date
+  - can_fulfill_now → x_can_fulfill_now
+  - expected_fulfillment_date → x_expected_fulfillment_date
+  - missing_stock_details → x_missing_stock_details
+  - fulfillment_priority → x_fulfillment_priority
+
+Modèle: stock.location
+Fichier: odoo-backend/addons/quelyos_api/models/stock_location.py
+Champs (4):
+  - is_locked → x_is_locked
+  - lock_reason → x_lock_reason
+  - locked_by_id → x_locked_by_id
+  - locked_date → x_locked_date
+
+Modèle: stock.quant
+Fichier: odoo-backend/addons/quelyos_api/models/stock_quant.py
+Champs (3):
+  - currency_id → x_currency_id
+  - adjustment_cost → x_adjustment_cost
+  - low_stock_threshold → x_low_stock_threshold
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/stock_reservation.py
+Champs (15):
+  - name → x_name
+  - product_id → x_product_id
+  - product_uom_id → x_product_uom_id
+  - reserved_qty → x_reserved_qty
+  - location_id → x_location_id
+  - reservation_date → x_reservation_date
+  - default → x_default
+  - expiration_date → x_expiration_date
+  - reason → x_reason
+  - notes → x_notes
+  - state → x_state
+  - user_id → x_user_id
+  - company_id → x_company_id
+  - stock_available_at_creation → x_stock_available_at_creation
+  - now → x_now
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/stock_scrap.py
+Champs (15):
+  - name → x_name
+  - product_id → x_product_id
+  - product_tmpl_id → x_product_tmpl_id
+  - scrap_qty → x_scrap_qty
+  - product_uom_id → x_product_uom_id
+  - location_id → x_location_id
+  - scrap_location_id → x_scrap_location_id
+  - lot_id → x_lot_id
+  - reason → x_reason
+  - notes → x_notes
+  - state → x_state
+  - move_id → x_move_id
+  - date_done → x_date_done
+  - user_id → x_user_id
+  - company_id → x_company_id
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/subscription.py
+Champs (36):
+  - name → x_name
+  - partner_id → x_partner_id
+  - company_id → x_company_id
+  - plan_id → x_plan_id
+  - state → x_state
+  - start_date → x_start_date
+  - default → x_default
+  - trial_end_date → x_trial_end_date
+  - next_billing_date → x_next_billing_date
+  - end_date → x_end_date
+  - billing_cycle → x_billing_cycle
+  - stripe_subscription_id → x_stripe_subscription_id
+  - stripe_customer_id → x_stripe_customer_id
+  - current_users_count → x_current_users_count
+  - current_products_count → x_current_products_count
+  - current_orders_count → x_current_orders_count
+  - users_usage_percentage → x_users_usage_percentage
+  - products_usage_percentage → x_products_usage_percentage
+  - orders_usage_percentage → x_orders_usage_percentage
+  - mrr → x_mrr
+  - price → x_price
+  - health_score → x_health_score
+  - health_status → x_health_status
+  - usage_score → x_usage_score
+  - payment_health → x_payment_health
+  - engagement_score → x_engagement_score
+  - churn_risk → x_churn_risk
+  - today → x_today
+  - year_start → x_year_start
+  - start → x_start
+  - today → x_today
+  - today → x_today
+  - target_date → x_target_date
+  - dunning_step_ids → x_dunning_step_ids
+  - today → x_today
+  - today → x_today
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/tenant.py
+Champs (67):
+  - name → x_name
+  - code → x_code
+  - domain → x_domain
+  - backoffice_domain → x_backoffice_domain
+  - domains_json → x_domains_json
+  - company_id → x_company_id
+  - active → x_active
+  - plan_id → x_plan_id
+  - subscription_id → x_subscription_id
+  - subscription_state → x_subscription_state
+  - user_ids → x_user_ids
+  - users_count → x_users_count
+  - admin_email → x_admin_email
+  - products_count → x_products_count
+  - orders_count → x_orders_count
+  - status → x_status
+  - provisioning_job_id → x_provisioning_job_id
+  - stripe_customer_id → x_stripe_customer_id
+  - deployment_tier → x_deployment_tier
+  - suspension_reason → x_suspension_reason
+  - suspended_at → x_suspended_at
+  - suspended_by → x_suspended_by
+  - logo → x_logo
+  - logo_filename → x_logo_filename
+  - logo_url → x_logo_url
+  - favicon → x_favicon
+  - favicon_filename → x_favicon_filename
+  - favicon_url → x_favicon_url
+  - slogan → x_slogan
+  - description → x_description
+  - primary_color → x_primary_color
+  - primary_dark → x_primary_dark
+  - primary_light → x_primary_light
+  - secondary_color → x_secondary_color
+  - secondary_dark → x_secondary_dark
+  - secondary_light → x_secondary_light
+  - accent_color → x_accent_color
+  - background_color → x_background_color
+  - foreground_color → x_foreground_color
+  - muted_color → x_muted_color
+  - muted_foreground → x_muted_foreground
+  - border_color → x_border_color
+  - ring_color → x_ring_color
+  - font_family → x_font_family
+  - active_theme_id → x_active_theme_id
+  - purchased_theme_ids → x_purchased_theme_ids
+  - theme_overrides → x_theme_overrides
+  - email → x_email
+  - phone → x_phone
+  - whatsapp → x_whatsapp
+  - social_links_json → x_social_links_json
+  - social_facebook → x_social_facebook
+  - social_instagram → x_social_instagram
+  - social_twitter → x_social_twitter
+  - social_youtube → x_social_youtube
+  - social_linkedin → x_social_linkedin
+  - social_tiktok → x_social_tiktok
+  - meta_title → x_meta_title
+  - meta_description → x_meta_description
+  - enable_dark_mode → x_enable_dark_mode
+  - default_dark → x_default_dark
+  - feature_wishlist → x_feature_wishlist
+  - feature_comparison → x_feature_comparison
+  - feature_reviews → x_feature_reviews
+  - feature_newsletter → x_feature_newsletter
+  - feature_guest_checkout → x_feature_guest_checkout
+  - year_start → x_year_start
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/theme.py
+Champs (29):
+  - code → x_code
+  - name → x_name
+  - description → x_description
+  - category → x_category
+  - sequence → x_sequence
+  - active → x_active
+  - config_json → x_config_json
+  - version → x_version
+  - is_public → x_is_public
+  - is_premium → x_is_premium
+  - price → x_price
+  - is_marketplace → x_is_marketplace
+  - designer_id → x_designer_id
+  - thumbnail → x_thumbnail
+  - preview_url → x_preview_url
+  - screenshot_ids → x_screenshot_ids
+  - downloads → x_downloads
+  - rating → x_rating
+  - review_count → x_review_count
+  - review_ids → x_review_ids
+  - theme_id → x_theme_id
+  - sequence → x_sequence
+  - name → x_name
+  - image → x_image
+  - theme_id → x_theme_id
+  - user_id → x_user_id
+  - rating → x_rating
+  - title → x_title
+  - comment → x_comment
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_api/models/ticket.py
+Champs (36):
+  - name → x_name
+  - subject → x_subject
+  - partner_id → x_partner_id
+  - email → x_email
+  - phone → x_phone
+  - order_id → x_order_id
+  - product_id → x_product_id
+  - description → x_description
+  - category → x_category
+  - priority → x_priority
+  - state → x_state
+  - assigned_to → x_assigned_to
+  - company_id → x_company_id
+  - resolution → x_resolution
+  - resolution_date → x_resolution_date
+  - attachment_ids → x_attachment_ids
+  - message_ids → x_message_ids
+  - satisfaction_rating → x_satisfaction_rating
+  - satisfaction_comment → x_satisfaction_comment
+  - satisfaction_token → x_satisfaction_token
+  - satisfaction_email_sent → x_satisfaction_email_sent
+  - satisfaction_email_sent_date → x_satisfaction_email_sent_date
+  - parent_ticket_id → x_parent_ticket_id
+  - child_ticket_ids → x_child_ticket_ids
+  - child_ticket_count → x_child_ticket_count
+  - has_parent → x_has_parent
+  - internal_notes → x_internal_notes
+  - is_visible_to_customer → x_is_visible_to_customer
+  - source → x_source
+  - sla_first_response_status → x_sla_first_response_status
+  - sla_resolution_status → x_sla_resolution_status
+  - ticket_id → x_ticket_id
+  - author_id → x_author_id
+  - content → x_content
+  - is_staff → x_is_staff
+  - attachment_ids → x_attachment_ids
+
+Modèle: product.wishlist
+Fichier: odoo-backend/addons/quelyos_api/models/wishlist.py
+Champs (2):
+  - share_token → x_share_token
+  - is_public → x_is_public
+
+Modèle: maintenance.equipment
+Fichier: odoo-backend/addons/quelyos_maintenance/models/maintenance_equipment_extended.py
+Champs (8):
+  - mtbf_hours → x_mtbf_hours
+  - mttr_hours → x_mttr_hours
+  - uptime_percentage → x_uptime_percentage
+  - is_critical → x_is_critical
+  - serial_number → x_serial_number
+  - purchase_date → x_purchase_date
+  - warranty_end_date → x_warranty_end_date
+  - next_preventive_date → x_next_preventive_date
+
+Modèle: maintenance.request
+Fichier: odoo-backend/addons/quelyos_maintenance/models/maintenance_request_extended.py
+Champs (6):
+  - labor_cost → x_labor_cost
+  - parts_cost → x_parts_cost
+  - actual_duration_hours → x_actual_duration_hours
+  - planned_duration_hours → x_planned_duration_hours
+  - is_emergency → x_is_emergency
+  - downtime_impact → x_downtime_impact
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_marketing_automation/models/marketing_automation_participant.py
+Champs (10):
+  - automation_id → x_automation_id
+  - partner_id → x_partner_id
+  - state → x_state
+  - current_activity_id → x_current_activity_id
+  - next_activity_date → x_next_activity_date
+  - activities_done → x_activities_done
+  - activities_total → x_activities_total
+  - progress_percent → x_progress_percent
+  - now → x_now
+  - now → x_now
+
+Modèle: mailing.trace
+Fichier: odoo-backend/addons/quelyos_marketing_tracking/models/mailing_trace_extended.py
+Champs (6):
+  - open_date → x_open_date
+  - open_count → x_open_count
+  - click_date → x_click_date
+  - click_count → x_click_count
+  - last_interaction_date → x_last_interaction_date
+  - engagement_score → x_engagement_score
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_sms_tn/models/sms_log.py
+Champs (16):
+  - company_id → x_company_id
+  - mobile → x_mobile
+  - message → x_message
+  - status → x_status
+  - notification_type → x_notification_type
+  - partner_id → x_partner_id
+  - order_id → x_order_id
+  - cost → x_cost
+  - retry_count → x_retry_count
+  - error_message → x_error_message
+  - provider_response → x_provider_response
+  - sent_date → x_sent_date
+  - delivered_date → x_delivered_date
+  - message_length → x_message_length
+  - is_international → x_is_international
+  - can_retry → x_can_retry
+
+Modèle: quelyos.subscription.plan
+Fichier: odoo-backend/addons/quelyos_sms_tn/models/subscription_plan.py
+Champs (2):
+  - sms_quota → x_sms_quota
+  - sms_overage_price → x_sms_overage_price
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_stock_advanced/models/quelyos_stock_inventory.py
+Champs (9):
+  - name → x_name
+  - date → x_date
+  - default → x_default
+  - location_id → x_location_id
+  - user_id → x_user_id
+  - state → x_state
+  - line_ids → x_line_ids
+  - note → x_note
+  - line_count → x_line_count
+
+Modèle: mail.thread
+Fichier: odoo-backend/addons/quelyos_stock_advanced/models/quelyos_stock_location_lock.py
+Champs (10):
+  - name → x_name
+  - location_id → x_location_id
+  - reason → x_reason
+  - date_start → x_date_start
+  - default → x_default
+  - date_end → x_date_end
+  - user_id → x_user_id
+  - active → x_active
+  - is_locked → x_is_locked
+  - now → x_now
+
+Modèle: stock.quant
+Fichier: odoo-backend/addons/quelyos_stock_advanced/models/stock_quant_unreserved.py
+Champs (2):
+  - unreserved_quantity → x_unreserved_quantity
+  - reserved_quantity_detail → x_reserved_quantity_detail
+
+=========================================================
+TOTAL: 551 champs dans 41 modèles
+

@@ -32,6 +32,12 @@
 - Commande `/docs` pour sync documentation
 - Endpoints API complexes (voir `.claude/API_CONVENTIONS.md`)
 
+**README Dual** :
+- **README.md** (racine) : Version marketing publique SANS mentions "Odoo"
+- **README-DEV.md** (racine) : Version technique développeurs AVEC détails Odoo
+- **Raison** : Anonymisation commerciale (audit /no-odoo recommandation P0)
+- **TOUJOURS** référencer README-DEV.md pour détails architecture backend
+
 ## ⛔ RÈGLE PORTS - NE JAMAIS MODIFIER
 **INTERDICTION ABSOLUE** : Ne JAMAIS modifier les ports des services
 
@@ -258,6 +264,26 @@ Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, pari
 
 Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
+## ⚠️ ISOLATION ODOO - RÈGLE CRITIQUE
+**PRINCIPE ABSOLU** : Les modules Quelyos ne doivent JAMAIS provoquer de conflit, modification destructive ou erreur avec les modules de base Odoo 19.
+
+**LIRE OBLIGATOIREMENT** : `.claude/ODOO_ISOLATION_RULES.md` avant toute modification de modèle Odoo.
+
+**Règles strictes** :
+- ✅ Ajout champs avec préfixe (`x_`, `tenant_id`, `quelyos_`)
+- ✅ Override CRUD avec `super()` OBLIGATOIRE
+- ❌ JAMAIS modifier champs core Odoo (required, default, readonly)
+- ❌ JAMAIS SQL direct (`env.cr.execute()`)
+- ❌ JAMAIS `auto_install=True` (sauf orchestrateur)
+
+**Checklist pré-commit** :
+1. Tous les overrides appellent `super()`
+2. Champs ajoutés ont préfixe
+3. Pas de modification comportement core
+4. Tests installation/désinstallation propre
+
+**Si un module Quelyos casse une fonctionnalité Odoo standard = BUG CRITIQUE P0**
+
 ## 🔒🔒🔒 ANONYMISATION ODOO - PRIORITÉ MAXIMALE
 **OBJECTIF CRITIQUE** : Masquer **TOUTE** trace d'Odoo dans **TOUS** les frontends et SaaS. AUCUN utilisateur final ne doit jamais savoir que le backend est Odoo.
 
@@ -448,7 +474,7 @@ grep -r "from '@/lib/api'" apps/*/src/pages/Login.tsx
 - Maintenance technique corrective répétitive
 - Expérience utilisateur dégradée sur certains SaaS
 ## Essentiels
-1. Lire [README.md](README.md), [ARCHITECTURE.md](ARCHITECTURE.md) et [LOGME.md](docs/LOGME.md) en début de session
+1. Lire [README.md](README.md) (présentation) et [README-DEV.md](README-DEV.md) (détails techniques Odoo), [ARCHITECTURE.md](ARCHITECTURE.md) et [LOGME.md](docs/LOGME.md) en début de session
 2. Lire [docs/QUELYOS_SUITE_7_SAAS_PLAN.md](docs/QUELYOS_SUITE_7_SAAS_PLAN.md) pour le contexte stratégique
 3. Utiliser scripts `./scripts/dev-start.sh all` et `./scripts/dev-stop.sh all`
 4. Lire code avant modification
@@ -457,3 +483,74 @@ grep -r "from '@/lib/api'" apps/*/src/pages/Login.tsx
 7. Logger sécurisé (`@quelyos/logger` au lieu de `console.log`)
 8. Tailwind + Zod uniquement
 9. Composants partagés via `@quelyos/ui-kit` (pas de duplication entre SaaS)
+
+## 🔧 DÉVELOPPEMENT MODULES ODOO - CHECKLIST OBLIGATOIRE
+
+**AVANT d'ajouter/modifier un modèle Odoo, suivre STRICTEMENT** :
+
+### 1. Nouveau modèle Quelyos (_name)
+```python
+class MyModel(models.Model):
+    _name = 'quelyos.my_model'  # ✅ Préfixe quelyos.
+    _description = 'Description'
+    
+    # Champs libres (pas d'héritage)
+    name = fields.Char()
+    code = fields.Char()
+```
+
+### 2. Héritage modèle Odoo (_inherit)
+```python
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+    
+    # ✅ OBLIGATOIRE : Préfixe x_ ou tenant_id
+    x_is_featured = fields.Boolean()
+    x_trending_score = fields.Integer()
+    tenant_id = fields.Many2one('quelyos.tenant')
+    
+    # ❌ INTERDIT : Champs sans préfixe
+    # trending_score = fields.Integer()  # Risque collision Odoo
+    
+    # ✅ Override CRUD : TOUJOURS super()
+    @api.model
+    def create(self, vals):
+        # Logique pré-traitement
+        record = super(ProductTemplate, self).create(vals)
+        # Logique post-traitement
+        return record
+```
+
+### 3. Checklist pré-commit
+- [ ] Si `_inherit` → Tous les champs ont préfixe `x_` ou `tenant_id`
+- [ ] Si override `create/write/unlink` → Appel `super()` présent
+- [ ] Pas de SQL direct (`env.cr.execute`) sauf analytics
+- [ ] Pas de modification champs core (required, default, readonly)
+- [ ] `auto_install=False` (sauf orchestrateur)
+- [ ] Lancer `./scripts/check-odoo-isolation.sh`
+
+### 4. Vérification automatique
+```bash
+# OBLIGATOIRE avant chaque commit modifiant modules Odoo
+./scripts/check-odoo-isolation.sh
+```
+
+**Si ce script échoue → NE PAS COMMITTER**
+
+### 5. Migration progressive champs sans préfixe
+**Contexte** : 552 champs existants sans préfixe `x_` détectés.
+
+**Plan migration** : Voir `.claude/MIGRATION_FIELDS_PREFIX.md`
+
+**Workflow migration** :
+1. Identifier champ à migrer : `./scripts/generate-migration-report.sh`
+2. Suivre template : `.claude/MIGRATION_TEMPLATE.py`
+3. Créer migration SQL : `migrations/19.0.X.Y.Z/post-migrate.py`
+4. Ajouter alias computed pour compatibilité backend
+5. Tester upgrade : `docker exec odoo-backend odoo-bin -u quelyos_api`
+6. Documenter dans tracking `.claude/MIGRATION_FIELDS_PREFIX.md`
+
+**NE PAS migrer** :
+- Champs Odoo core : `name`, `active`, `sequence`, `company_id`, `state`
+- Computed fields non-stockés
+- Modèles `_name = 'quelyos.*'`
