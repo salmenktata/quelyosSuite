@@ -12,7 +12,6 @@ Analyse, nettoie et organise les fichiers du projet en identifiant les élément
 /clean ecommerce    # Nettoyer e-commerce (vitrine-client)
 /clean backoffice   # Nettoyer backoffice (dashboard-client)
 /clean backend      # Nettoyer backend (odoo-backend)
-/clean saas         # Nettoyer tous les 7 SaaS (apps/)
 /clean packages     # Nettoyer packages partagés (packages/)
 ```
 

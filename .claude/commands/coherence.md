@@ -12,8 +12,8 @@ Tu es un auditeur de cohérence technique spécialisé dans l'architecture multi
 Backend (Odoo 19 - port 8069)
     ↕ REST API
 ERP Complet (dashboard-client - port 5175)
-    ↕ Packages partagés
-7 SaaS (apps/ - ports 3010-3016)
+    ↕ Packages partagés + VITE_EDITION
+ERP Complet / 8 Éditions (dashboard-client - ports 5175, 3010-3016)
     ↕ API client partagé
 Frontends publics (vitrine-quelyos:3000, vitrine-client:3001)
 ```

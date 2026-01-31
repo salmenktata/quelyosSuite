@@ -11,7 +11,7 @@ Exécute une suite de tests complète pour valider le bon fonctionnement de la Q
 /test frontend             # Tests Playwright E2E frontend uniquement
 /test backoffice           # Tests Playwright E2E backoffice uniquement
 /test parity               # Tests de parité Odoo ↔ Quelyos uniquement
-/test saas                 # Tests E2E tous les SaaS (apps/)
+/test saas                 # Tests E2E toutes les éditions
 /test saas [name]          # Tests E2E un SaaS spécifique (ex: /test saas finance)
 /test cross-saas           # Tests isolation et cohérence cross-SaaS
 /test [module]             # Tests d'un module spécifique (ex: products, orders)

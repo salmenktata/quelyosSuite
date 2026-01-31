@@ -1,7 +1,7 @@
 # Commande /restart-all - Relancer Tous les Services
 
 ## Description
-Relance l'intégralité des services du projet Quelyos Suite : Backend Odoo (8069), ERP Complet (5175), Site Vitrine (3000), E-commerce (3001), Super Admin (9000), et les 7 SaaS spécialisés (3010-3016) si leurs dossiers existent.
+Relance l'intégralité des services du projet Quelyos Suite : Backend Odoo (8069), ERP Complet (5175), Site Vitrine (3000), E-commerce (3001), Super Admin (9000), et les 7 Éditions spécialisées (3010-3016) via VITE_EDITION.
 
 **Alternative recommandée** : Utiliser `./scripts/dev-start.sh all` pour un contrôle plus granulaire.
 
@@ -84,9 +84,18 @@ cd vitrine-client && pnpm dev &
 # 6. Relancer Super Admin
 cd super-admin-client && pnpm dev &
 
-# 7. Relancer les SaaS disponibles (si dossier existe)
-for saas in finance-os store-os copilote-ops sales-os retail-os team-os support-os; do
-  [ -d "apps/$saas" ] && (cd "apps/$saas" && pnpm dev &)
+# 7. Relancer les 7 Éditions (système éditions unifié)
+for edition in finance team sales store copilote retail support; do
+  port=$(case $edition in
+    finance) echo 3010;;
+    store) echo 3011;;
+    copilote) echo 3012;;
+    sales) echo 3013;;
+    retail) echo 3014;;
+    team) echo 3015;;
+    support) echo 3016;;
+  esac)
+  VITE_EDITION=$edition pnpm --filter dashboard-client dev --port $port &
 done
 ```
 
