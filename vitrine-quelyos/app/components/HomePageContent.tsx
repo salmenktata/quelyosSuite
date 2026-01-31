@@ -150,7 +150,7 @@ export default function HomePageContent() {
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
                 <MapPin className="h-4 w-4" />
-                Suite ERP française • 8 modules intégrés
+                Suite ERP française • 9 modules intégrés
               </div>
               <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
                 Pilotez toute votre entreprise{" "}
@@ -165,7 +165,7 @@ export default function HomePageContent() {
               <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-slate-400">
                 <span className="flex items-center gap-1">
                   <Layers className="h-4 w-4 text-indigo-400" />
-                  8 modules
+                  9 modules
                 </span>
                 <span className="text-slate-600">•</span>
                 <span className="flex items-center gap-1">
@@ -207,7 +207,7 @@ export default function HomePageContent() {
               className="mb-12 text-center"
             >
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                8 modules intégrés, données synchronisées
+                9 modules intégrés, données synchronisées
               </h2>
               <p className="mt-4 text-lg text-slate-400">
                 Une vente = stock mis à jour + revenu Finance + fiche client enrichie. Automatique.
@@ -287,7 +287,7 @@ export default function HomePageContent() {
             </m.div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[
-                { icon: Layers, title: "8 modules = 1 abonnement", desc: "Finance, Vente, Stock, CRM, RH, POS, Marketing — tout inclus sans frais cachés.", color: "text-indigo-400" },
+                { icon: Layers, title: "9 modules = 1 abonnement", desc: "Finance, Store, Stock, CRM, RH, POS, Marketing, Support — tout inclus sans frais cachés.", color: "text-indigo-400" },
                 { icon: Sparkles, title: "IA intégrée", desc: "Prévisions trésorerie 90j, détection anomalies, scoring leads. Machine Learning natif.", color: "text-purple-400" },
                 { icon: RefreshCw, title: "Données synchronisées", desc: "Une vente = stock mis à jour + revenu en Finance + fiche client enrichie. Automatique.", color: "text-emerald-400" },
                 { icon: Shield, title: "Made in France", desc: "Hébergement France, RGPD natif, support francophone. Pas de transfert US.", color: "text-blue-400" },

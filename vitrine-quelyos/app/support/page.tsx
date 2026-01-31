@@ -267,7 +267,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Prix / Tarifs
   if (msg.includes("prix") || msg.includes("tarif") || msg.includes("coût") || msg.includes("combien")) {
     return {
-      response: "Nos tarifs commencent à 19€/mois (plan Starter) avec 30 jours d'essai gratuit. Le plan Business à 49€/mois inclut tous les 8 modules. Souhaitez-vous voir les détails ?",
+      response: "Nos tarifs commencent à 19€/mois (plan Starter) avec 30 jours d'essai gratuit. Le plan Business à 49€/mois inclut tous les 9 modules. Souhaitez-vous voir les détails ?",
       suggestions: ["Voir les tarifs", "Comparer les plans", "Essai gratuit"]
     };
   }
@@ -275,7 +275,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Inscription / Démarrage
   if (msg.includes("inscri") || msg.includes("créer") || msg.includes("commencer") || msg.includes("démarrer")) {
     return {
-      response: "Pour commencer avec Quelyos Suite, cliquez simplement sur 'Essai gratuit' en haut de page. Vous aurez accès immédiat aux 8 modules pendant 30 jours, sans carte bancaire.",
+      response: "Pour commencer avec Quelyos Suite, cliquez simplement sur 'Essai gratuit' en haut de page. Vous aurez accès immédiat aux 9 modules pendant 30 jours, sans carte bancaire.",
       suggestions: ["Créer mon compte", "Voir la démo", "Documentation"]
     };
   }
@@ -283,7 +283,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Modules / Fonctionnalités
   if (msg.includes("module") || msg.includes("fonctionnalit") || msg.includes("finance") || msg.includes("stock") || msg.includes("crm")) {
     return {
-      response: "Quelyos Suite propose 8 modules intégrés : Finance (avec IA), Boutique, CRM, Stock, RH, Point de Vente, Marketing et Dashboard. Tous vos modules sont synchronisés automatiquement.",
+      response: "Quelyos Suite propose 9 modules intégrés : Finance (avec IA), Store, CRM, Stock, RH, Point de Vente, Marketing, Support et Home. Tous vos modules sont synchronisés automatiquement.",
       suggestions: ["Voir les modules", "Documentation", "Demander une démo"]
     };
   }
@@ -315,7 +315,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Démo
   if (msg.includes("démo") || msg.includes("demo") || msg.includes("essai") || msg.includes("test")) {
     return {
-      response: "Vous pouvez tester Quelyos gratuitement pendant 30 jours avec accès complet aux 8 modules. Aucune carte bancaire requise. Voulez-vous commencer maintenant ?",
+      response: "Vous pouvez tester Quelyos gratuitement pendant 30 jours avec accès complet aux 9 modules. Aucune carte bancaire requise. Voulez-vous commencer maintenant ?",
       suggestions: ["Démarrer l'essai", "Demander une démo guidée", "Voir une vidéo"]
     };
   }

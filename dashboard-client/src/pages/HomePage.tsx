@@ -139,7 +139,7 @@ export default function HomePage() {
 
             {/* Sous-titre */}
             <p className="mx-auto mb-8 max-w-2xl text-lg text-slate-300/90 md:text-xl">
-              Finance, Stock, CRM, RH, Marketing, Point de Vente — 8 modules intégrés pour simplifier votre gestion quotidienne.
+              Finance, Stock, CRM, RH, Marketing, Point de Vente, Support — 9 modules intégrés pour simplifier votre gestion quotidienne.
             </p>
 
             {/* CTA Buttons */}

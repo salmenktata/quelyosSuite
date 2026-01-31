@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Shield, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 
-// Définition des 8 modules Quelyos
+// Définition des 9 modules Quelyos
 const QUELYOS_MODULES = [
   { key: 'home', label: 'Accueil' },
   { key: 'finance', label: 'Finance' },
@@ -10,6 +10,7 @@ const QUELYOS_MODULES = [
   { key: 'crm', label: 'CRM' },
   { key: 'marketing', label: 'Marketing' },
   { key: 'hr', label: 'RH' },
+  { key: 'support', label: 'Support' },
   { key: 'pos', label: 'Caisse' },
 ] as const
 

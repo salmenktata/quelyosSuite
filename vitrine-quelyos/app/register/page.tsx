@@ -193,7 +193,7 @@ function RegisterForm() {
                 </span>
               </h2>
               <p className="max-w-lg text-lg text-slate-300/90">
-                8 modules intégrés : Finance, Boutique, CRM, Stock, RH, Point de Vente, Marketing — tout synchronisé automatiquement.
+                9 modules intégrés : Finance, Store, CRM, Stock, RH, Point de Vente, Marketing, Support — tout synchronisé automatiquement.
               </p>
 
               {/* Features highlights */}
@@ -274,7 +274,7 @@ function RegisterForm() {
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
                 <Check className="h-3 w-3" />
-                8 modules inclus
+                9 modules inclus
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-400">
                 <Check className="h-3 w-3" />
