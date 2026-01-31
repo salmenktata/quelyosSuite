@@ -7,9 +7,8 @@ import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { GlassCard, GlassPanel } from "@/components/ui/glass";
-import { PaymentFlowManager } from "@/components/PaymentFlowManager";
-import {
 import { logger } from '@quelyos/logger';
+import {
   ArrowLeft,
   Building2,
   Wallet,

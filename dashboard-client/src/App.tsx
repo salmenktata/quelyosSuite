@@ -107,6 +107,8 @@ const StockLocations = lazy(() => import('./pages/StockLocations'))
 const ReorderingRules = lazy(() => import('./pages/stock/ReorderingRules'))
 const StockValuation = lazy(() => import('./pages/stock/valuation/page'))
 const StockTurnover = lazy(() => import('./pages/stock/turnover/page'))
+const InventoryGroups = lazy(() => import('./pages/stock/InventoryGroups'))
+const WarehouseCalendars = lazy(() => import('./pages/stock/WarehouseCalendars'))
 const Warehouses = lazy(() => import('./pages/Warehouses'))
 const WarehouseDetail = lazy(() => import('./pages/WarehouseDetail'))
 

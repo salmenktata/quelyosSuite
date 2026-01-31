@@ -28,8 +28,8 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts"
-import {
 import { logger } from '@quelyos/logger';
+import {
   Save,
   Trash2,
   Plus,
@@ -38,7 +38,6 @@ import { logger } from '@quelyos/logger';
   Download,
   GitBranch,
 } from "lucide-react"
-import { logger } from '@quelyos/logger';
 
 // Types
 type DailyRow = {
