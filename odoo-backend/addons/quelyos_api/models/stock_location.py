@@ -45,8 +45,8 @@ class StockLocation(models.Model):
         for location in self:
             location.write({
                 'x_is_locked': True,
-                'lock_reason': reason or 'Inventaire en cours',
-                'locked_by_id': self.env.user.id,
+                'x_lock_reason': reason or 'Inventaire en cours',
+                'x_locked_by_id': self.env.user.id,
                 'x_locked_date': fields.Datetime.now(),
             })
 
@@ -55,8 +55,8 @@ class StockLocation(models.Model):
         for location in self:
             location.write({
                 'x_is_locked': False,
-                'lock_reason': False,
-                'locked_by_id': False,
+                'x_lock_reason': False,
+                'x_locked_by_id': False,
                 'x_locked_date': False,
             })
 
@@ -73,40 +73,40 @@ class StockMove(models.Model):
                 continue
 
             # Vérifier location source
-            if move.location_id.is_locked:
+            if move.location_id.x_is_locked:
                 raise UserError(_(
                     "Impossible de créer un mouvement depuis l'emplacement '{}' car il est verrouillé.\n"
                     "Raison : {}"
                 ).format(
                     move.location_id.complete_name,
-                    move.location_id.lock_reason or 'Non spécifiée'
+                    move.location_id.x_lock_reason or 'Non spécifiée'
                 ))
 
             # Vérifier location destination
-            if move.location_dest_id.is_locked:
+            if move.location_dest_id.x_is_locked:
                 raise UserError(_(
                     "Impossible de créer un mouvement vers l'emplacement '{}' car il est verrouillé.\n"
                     "Raison : {}"
                 ).format(
                     move.location_dest_id.complete_name,
-                    move.location_dest_id.lock_reason or 'Non spécifiée'
+                    move.location_dest_id.x_lock_reason or 'Non spécifiée'
                 ))
 
     def _action_done(self, cancel_backorder=False):
         """Override pour vérifier verrouillage avant validation"""
         # Vérifier verrouillage avant de valider
         for move in self:
-            if move.location_id.is_locked or move.location_dest_id.is_locked:
-                locked_loc = move.location_id if move.location_id.is_locked else move.location_dest_id
+            if move.location_id.x_is_locked or move.location_dest_id.x_is_locked:
+                locked_loc = move.location_id if move.location_id.x_is_locked else move.location_dest_id
                 raise UserError(_(
                     "Impossible de valider le mouvement : l'emplacement '{}' est verrouillé.\n"
                     "Raison : {}\n"
                     "Verrouillé par : {} le {}"
                 ).format(
                     locked_loc.complete_name,
-                    locked_loc.lock_reason or 'Non spécifiée',
-                    locked_loc.locked_by_id.name if locked_loc.locked_by_id else 'Inconnu',
-                    locked_loc.locked_date.strftime('%d/%m/%Y %H:%M') if locked_loc.locked_date else ''
+                    locked_loc.x_lock_reason or 'Non spécifiée',
+                    locked_loc.x_locked_by_id.name if locked_loc.x_locked_by_id else 'Inconnu',
+                    locked_loc.x_locked_date.strftime('%d/%m/%Y %H:%M') if locked_loc.x_locked_date else ''
                 ))
 
         return super()._action_done(cancel_backorder=cancel_backorder)

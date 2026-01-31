@@ -199,15 +199,17 @@ class SaleOrder(models.Model):
         3. Par défaut : 14 jours
         """
         # Vérifier purchase orders en cours (state = 'purchase')
-        PurchaseOrderLine = self.env['purchase.order.line'].sudo()
-        incoming_purchases = PurchaseOrderLine.search([
-            ('product_id', '=', product.id),
-            ('order_id.state', 'in', ['draft', 'sent', 'to approve', 'purchase']),
-        ], order='date_planned asc', limit=1)
+        # NOTE: Module purchase optionnel, vérifier existence du modèle
+        if 'purchase.order.line' in self.env:
+            PurchaseOrderLine = self.env['purchase.order.line'].sudo()
+            incoming_purchases = PurchaseOrderLine.search([
+                ('product_id', '=', product.id),
+                ('order_id.state', 'in', ['draft', 'sent', 'to approve', 'purchase']),
+            ], order='date_planned asc', limit=1)
 
-        if incoming_purchases and incoming_purchases.date_planned:
-            days_until = (incoming_purchases.date_planned.date() - date.today()).days
-            return max(0, days_until)
+            if incoming_purchases and incoming_purchases.date_planned:
+                days_until = (incoming_purchases.date_planned.date() - date.today()).days
+                return max(0, days_until)
 
         # Utiliser lead time fournisseur
         if product.seller_ids:
