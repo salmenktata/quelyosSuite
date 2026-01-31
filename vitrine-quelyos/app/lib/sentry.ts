@@ -3,6 +3,7 @@
  * Monitoring erreurs + alertes sécurité en production
  */
 
+// @ts-expect-error - Module Sentry optionnel non installé en dev
 import * as Sentry from '@sentry/nextjs';
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -25,6 +26,7 @@ export function initSentry() {
     tracesSampleRate: 0.1, // 10% des transactions
 
     // Errors filtering
+    // @ts-expect-error - Sentry types
     beforeSend(event, hint) {
       // Ignore erreurs client connues et bénignes
       const error = hint.originalException as Error;
@@ -41,6 +43,7 @@ export function initSentry() {
     },
 
     // Filtrer données sensibles
+    // @ts-expect-error - Sentry types
     beforeBreadcrumb(breadcrumb) {
       // Ne pas logger les clics sur inputs password
       if (breadcrumb.category === 'ui.click') {
@@ -77,6 +80,7 @@ export function captureError(
     return;
   }
 
+  // @ts-expect-error - Sentry types
   Sentry.withScope((scope) => {
     if (context?.level) {
       scope.setLevel(context.level);
@@ -114,6 +118,7 @@ export function captureSecurityEvent(
     return;
   }
 
+  // @ts-expect-error - Sentry types
   Sentry.withScope((scope) => {
     scope.setLevel('warning');
     scope.setTag('security_event', details.type);

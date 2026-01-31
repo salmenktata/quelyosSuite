@@ -12,11 +12,11 @@
  *   logger.info('Panier créé:', cartId);
  */
 
-import { captureError } from './sentry';
+import { captureError as _captureError } from './sentry';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
-const isProduction = process.env.NODE_ENV === 'production';
+const _isProduction = process.env.NODE_ENV === 'production';
 
 /**
  * Interface Logger pour maintenir compatibilité avec console

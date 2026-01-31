@@ -14,11 +14,11 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   metadataBase: new URL("https://quelyos.com"),
   title: {
-    default: "Quelyos — Suite ERP française | 8 modules intégrés",
+    default: "Quelyos — Suite ERP française | Solutions métier intégrées",
     template: "%s | Quelyos",
   },
-  description: "Suite ERP française pour TPE/PME : 8 modules intégrés (Finance, CRM, Stock, RH, POS, Marketing, E-commerce). IA intégrée, données synchronisées, hébergement France.",
-  keywords: ["ERP", "ERP français", "logiciel gestion", "trésorerie IA", "CRM", "gestion stock", "RH", "point de vente", "marketing automation", "TPE", "PME", "SaaS", "Made in France", "RGPD"],
+  description: "Suite ERP française pour TPE/PME : solutions métier complètes (Finance, CRM, Stock, RH, POS, Marketing, E-commerce). IA intégrée, données synchronisées, hébergement France.",
+  keywords: ["ERP", "ERP français", "logiciel gestion", "trésorerie IA", "CRM", "gestion stock", "RH", "point de vente", "marketing automation", "TPE", "PME", "SaaS", "Made in France", "RGPD", "solutions métier", "restaurant", "commerce", "e-commerce"],
   authors: [{ name: "Quelyos" }],
   creator: "Quelyos",
   publisher: "Quelyos",
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Quelyos — Suite ERP française | 8 modules intégrés",
-    description: "Pilotez toute votre entreprise depuis une seule plateforme. Finance, CRM, Stock, RH, POS, Marketing — tout inclus. IA intégrée, hébergement France.",
+    title: "Quelyos — Suite ERP française | Solutions métier intégrées",
+    description: "Pilotez toute votre entreprise depuis une seule plateforme. Solutions Finance, CRM, Stock, RH, POS, Marketing — tout inclus. IA intégrée, hébergement France.",
     url: "https://quelyos.com",
     siteName: "Quelyos",
     locale: "fr_FR",
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quelyos — Suite ERP française | 8 modules intégrés",
-    description: "8 modules intégrés, IA native, hébergement France. L'ERP pensé pour les TPE/PME françaises.",
+    title: "Quelyos — Suite ERP française | Solutions métier intégrées",
+    description: "Solutions métier intégrées, IA native, hébergement France. L'ERP pensé pour les TPE/PME françaises.",
     images: ["/og-image.png"],
   },
   robots: {

@@ -30,6 +30,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
 import config from "@/app/lib/config";
+import { getAllSolutions } from "@/app/lib/solutions-data";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DONNÉES DES PLANS - SUITE QUELYOS (Ordre: Enterprise → Business → Starter)
@@ -49,7 +50,7 @@ const suitePlans = [
     color: "amber" as const,
     features: [
       "Utilisateurs illimités",
-      "Tous les 8 modules",
+      "Toutes les solutions",
       "SLA garanti 99.9%",
       "Account manager dédié",
       "Personnalisation complète",
@@ -75,7 +76,7 @@ const suitePlans = [
     color: "indigo" as const,
     features: [
       "10 utilisateurs inclus",
-      "Tous les 8 modules inclus",
+      "Toutes les solutions incluses",
       "Prévisions IA avancées 24 mois",
       "API REST complète",
       "Intégrations 50+ apps",
@@ -100,7 +101,7 @@ const suitePlans = [
     color: "emerald" as const,
     features: [
       "3 utilisateurs inclus",
-      "Finance + 2 modules au choix",
+      "Finance + 2 solutions au choix",
       "Prévisions IA 12 mois",
       "API basique incluse",
       "Support prioritaire 24h",
@@ -111,7 +112,7 @@ const suitePlans = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MODULES INDIVIDUELS (collapsed by default)
+// SOLUTIONS INDIVIDUELLES (collapsed by default)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const moduleFinance = [
@@ -521,12 +522,17 @@ function FAQSection() {
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════════════════════
 
+type TabType = "packages" | "plans" | "individual";
+
 export default function TarifsPage() {
+  const [activeTab, setActiveTab] = useState<TabType>("packages");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
-  const [showModules, setShowModules] = useState(false);
+  const [_showModules, _setShowModules] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+
+  const solutions = getAllSolutions();
 
   const getPrice = (basePrice: string, annualPrice?: string) => {
     if (basePrice === "Sur devis") return basePrice;
@@ -630,19 +636,140 @@ export default function TarifsPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          SUITE QUELYOS - PLANS PRINCIPAUX (3 cards, ordre ancré)
+          TABS NAVIGATION
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative py-12">
+      <section className="relative border-b border-white/10 bg-slate-900/30">
         <Container>
-          <div className="mb-8 flex items-center justify-center gap-3">
-            <div className="rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-2">
-              <Layers className="h-6 w-6 text-indigo-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">Suite Quelyos</h2>
-            <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-400">
-              ERP Complet
-            </span>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => setActiveTab("packages")}
+              className={`relative px-6 py-4 text-sm font-medium transition-all ${
+                activeTab === "packages"
+                  ? "text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Packages sectoriels
+              {activeTab === "packages" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
+                  transition={{ type: "spring", duration: 0.5 }}
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab("plans")}
+              className={`relative px-6 py-4 text-sm font-medium transition-all ${
+                activeTab === "plans"
+                  ? "text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Plans universels
+              {activeTab === "plans" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
+                  transition={{ type: "spring", duration: 0.5 }}
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab("individual")}
+              className={`relative px-6 py-4 text-sm font-medium transition-all ${
+                activeTab === "individual"
+                  ? "text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Solutions individuelles
+              {activeTab === "individual" && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
+                  transition={{ type: "spring", duration: 0.5 }}
+                />
+              )}
+            </button>
           </div>
+        </Container>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          TAB CONTENT: PACKAGES SECTORIELS
+      ═══════════════════════════════════════════════════════════════════ */}
+      {activeTab === "packages" && (
+        <section className="relative py-12">
+          <Container>
+            <div className="mb-12 text-center">
+              <h2 className="mb-4 text-3xl font-bold text-white">
+                Des solutions clés en main pour votre métier
+              </h2>
+              <p className="text-lg text-slate-400">
+                Chaque package regroupe les solutions essentielles pour votre secteur d&apos;activité
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {solutions.map((solution, index) => (
+                <motion.div
+                  key={solution.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-all hover:border-indigo-500/30 hover:bg-white/[0.04]"
+                >
+                  <h3 className="mb-2 text-xl font-bold text-white">{solution.name}</h3>
+                  <p className="mb-4 text-sm text-slate-400">{solution.sectorName}</p>
+
+                  <div className="mb-4 flex items-baseline gap-1">
+                    <span className="text-3xl font-bold text-white">{solution.pricing.basePrice}€</span>
+                    <span className="text-sm text-slate-400">/mois</span>
+                  </div>
+
+                  <div className="mb-4 text-xs text-slate-500">
+                    {solution.modulesIncluded.join(" • ")}
+                  </div>
+
+                  <Link
+                    href={`/solutions/${solution.id}`}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-indigo-400"
+                  >
+                    En savoir plus
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <p className="text-sm text-slate-400">
+                Vous ne trouvez pas votre secteur ?{" "}
+                <Link href="/contact" className="text-indigo-400 hover:text-indigo-300">
+                  Contactez-nous pour une solution sur mesure
+                </Link>
+              </p>
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          TAB CONTENT: PLANS UNIVERSELS (SUITE QUELYOS)
+      ═══════════════════════════════════════════════════════════════════ */}
+      {activeTab === "plans" && (
+        <section className="relative py-12">
+          <Container>
+            <div className="mb-8 flex items-center justify-center gap-3">
+              <div className="rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-2">
+                <Layers className="h-6 w-6 text-indigo-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white">Suite Quelyos</h2>
+              <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-400">
+                ERP Complet
+              </span>
+            </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
             {suitePlans.map((plan, index) => {
@@ -758,41 +885,30 @@ export default function TarifsPage() {
           </div>
         </Container>
       </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════════════
-          MODULES INDIVIDUELS (collapsed by default)
+          TAB CONTENT: SOLUTIONS INDIVIDUELLES
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative border-t border-white/5 py-8">
-        <Container>
-          <button
-            onClick={() => setShowModules(!showModules)}
-            className="mx-auto flex items-center gap-2 text-slate-400 transition-colors hover:text-white"
-          >
-            <span className="text-sm">
-              Vous préférez commencer petit ? Découvrez nos modules individuels
-            </span>
-            <ChevronDown
-              size={18}
-              className={`transition-transform ${showModules ? "rotate-180" : ""}`}
-            />
-          </button>
+      {activeTab === "individual" && (
+        <section className="relative py-12">
+          <Container>
+            <div className="mb-8 text-center">
+              <h2 className="mb-4 text-2xl font-bold text-white">
+                Démarrez avec une solution, étendez selon vos besoins
+              </h2>
+              <p className="text-slate-400">
+                Testez une solution individuellement avant de passer à un package complet
+              </p>
+            </div>
 
-          <AnimatePresence>
-            {showModules && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-8 rounded-2xl border border-white/10 bg-slate-900/50 p-6">
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6">
                   <div className="mb-6 flex items-center gap-3">
                     <div className="rounded-lg bg-emerald-500/20 p-2">
                       <BarChart3 className="h-5 w-5 text-emerald-400" />
                     </div>
                     <h3 className="text-xl font-bold text-white">
-                      Module Finance seul
+                      Solution Finance seule
                     </h3>
                     <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-400">
                       Disponible
@@ -869,7 +985,7 @@ export default function TarifsPage() {
                     <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-indigo-400" />
                     <div>
                       <p className="text-sm font-medium text-white">
-                        Les modules individuels sont parfaits pour tester.
+                        Les solutions individuelles sont parfaites pour tester.
                       </p>
                       <p className="mt-1 text-sm text-slate-400">
                         La Suite débloque l&apos;IA avancée, l&apos;API
@@ -884,7 +1000,7 @@ export default function TarifsPage() {
                     onClick={() => setShowComparison(!showComparison)}
                     className="mt-4 flex items-center gap-2 text-sm text-indigo-400 transition-colors hover:text-indigo-300"
                   >
-                    Voir le comparatif détaillé Suite vs Module
+                    Voir le comparatif détaillé Suite vs Solution
                     <ChevronDown
                       size={14}
                       className={`transition-transform ${showComparison ? "rotate-180" : ""}`}
@@ -907,7 +1023,7 @@ export default function TarifsPage() {
                                   Fonctionnalité
                                 </th>
                                 <th className="py-2 text-center text-slate-400">
-                                  Module seul
+                                  Solution seule
                                 </th>
                                 <th className="py-2 text-center text-indigo-400">
                                   Suite Quelyos
@@ -958,14 +1074,12 @@ export default function TarifsPage() {
                     )}
                   </AnimatePresence>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Container>
-      </section>
+          </Container>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════════════
-          CALCULATEUR ROI
+          CALCULATEUR ROI (affiché pour tous les tabs)
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative py-16">
         <Container narrow>

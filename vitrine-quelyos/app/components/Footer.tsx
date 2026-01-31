@@ -6,9 +6,9 @@ export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-slate-900/50">
       <Container className="py-12">
-        <div className="grid gap-8 md:grid-cols-5">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-6">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
                 <Sparkles className="h-5 w-5 text-white" />
@@ -19,72 +19,40 @@ export default function Footer() {
               </div>
             </Link>
             <p className="mt-4 text-sm text-slate-400">
-              La suite SaaS qui simplifie la vie des TPE/PME françaises.
+              Des solutions métier qui s&apos;adaptent à votre activité.
             </p>
           </div>
 
-          {/* Modules */}
+          {/* Solutions métier */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
-              Modules
+              Solutions métier
             </h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/finance"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Finance
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ecommerce"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Boutique
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/crm"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  CRM
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/stock"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Stock
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/hr"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  RH
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pos"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Point de Vente
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/marketing"
-                  className="text-sm text-slate-400 hover:text-white"
-                >
-                  Marketing
-                </Link>
-              </li>
+              <li><Link href="/solutions/restaurant" className="text-sm text-slate-400 hover:text-white">Quelyos Resto</Link></li>
+              <li><Link href="/solutions/commerce" className="text-sm text-slate-400 hover:text-white">Quelyos Boutique</Link></li>
+              <li><Link href="/solutions/ecommerce" className="text-sm text-slate-400 hover:text-white">Quelyos Store</Link></li>
+              <li><Link href="/solutions/services" className="text-sm text-slate-400 hover:text-white">Quelyos Pro</Link></li>
+              <li><Link href="/solutions/sante" className="text-sm text-slate-400 hover:text-white">Quelyos Care</Link></li>
+              <li><Link href="/solutions/btp" className="text-sm text-slate-400 hover:text-white">Quelyos Build</Link></li>
+              <li><Link href="/solutions/hotellerie" className="text-sm text-slate-400 hover:text-white">Quelyos Hotel</Link></li>
+              <li><Link href="/solutions/associations" className="text-sm text-slate-400 hover:text-white">Quelyos Club</Link></li>
+            </ul>
+          </div>
+
+          {/* Solutions */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
+              Solutions
+            </h3>
+            <ul className="space-y-2">
+              <li><Link href="/finance" className="text-sm text-slate-400 hover:text-white">Finance</Link></li>
+              <li><Link href="/ecommerce" className="text-sm text-slate-400 hover:text-white">Boutique</Link></li>
+              <li><Link href="/crm" className="text-sm text-slate-400 hover:text-white">CRM</Link></li>
+              <li><Link href="/stock" className="text-sm text-slate-400 hover:text-white">Stock</Link></li>
+              <li><Link href="/hr" className="text-sm text-slate-400 hover:text-white">RH</Link></li>
+              <li><Link href="/pos" className="text-sm text-slate-400 hover:text-white">Point de Vente</Link></li>
+              <li><Link href="/marketing" className="text-sm text-slate-400 hover:text-white">Marketing</Link></li>
             </ul>
           </div>
 

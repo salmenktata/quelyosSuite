@@ -42,19 +42,19 @@ const modulesNav = [
   { id: "marketing", name: "Marketing", tagline: "Campagnes Email & SMS", icon: Megaphone, href: "/marketing", color: "text-pink-400" },
 ];
 
-// Activités par secteur pour le mega menu
-const activitiesNav = {
+// Solutions métier par secteur pour le mega menu
+const solutionsNav = {
   commerce: [
-    { id: "restauration", name: "Restauration", tagline: "Restaurants, cafés, traiteurs", icon: UtensilsCrossed, href: "/secteurs/restauration", color: "text-orange-400" },
-    { id: "retail", name: "Retail", tagline: "Boutiques, commerces de détail", icon: ShoppingBag, href: "/secteurs/retail", color: "text-pink-400" },
-    { id: "ecommerce", name: "E-commerce", tagline: "Vente en ligne, marketplaces", icon: Globe, href: "/secteurs/ecommerce", color: "text-indigo-400" },
-    { id: "services", name: "Services", tagline: "Consulting, agences, freelances", icon: Briefcase, href: "/secteurs/services", color: "text-blue-400" },
+    { id: "restaurant", name: "Quelyos Resto", tagline: "Solution complète restauration", icon: UtensilsCrossed, href: "/solutions/restaurant", color: "text-orange-400" },
+    { id: "commerce", name: "Quelyos Boutique", tagline: "Solution commerce omnicanal", icon: ShoppingBag, href: "/solutions/commerce", color: "text-pink-400" },
+    { id: "ecommerce", name: "Quelyos Store", tagline: "Solution vente en ligne", icon: Globe, href: "/solutions/ecommerce", color: "text-indigo-400" },
+    { id: "services", name: "Quelyos Pro", tagline: "Solution agences & services B2B", icon: Briefcase, href: "/solutions/services", color: "text-blue-400" },
   ],
   metiers: [
-    { id: "sante", name: "Santé & Bien-être", tagline: "Cliniques, salons, coachs", icon: Heart, href: "/secteurs/sante", color: "text-red-400" },
-    { id: "btp", name: "BTP & Artisanat", tagline: "Construction, artisans", icon: Hammer, href: "/secteurs/btp", color: "text-amber-400" },
-    { id: "hotellerie", name: "Hôtellerie", tagline: "Hôtels, gîtes, locations", icon: Building2, href: "/secteurs/hotellerie", color: "text-cyan-400" },
-    { id: "associations", name: "Associations", tagline: "ONG, clubs, fondations", icon: Users, href: "/secteurs/associations", color: "text-green-400" },
+    { id: "sante", name: "Quelyos Care", tagline: "Solution santé & bien-être", icon: Heart, href: "/solutions/sante", color: "text-red-400" },
+    { id: "btp", name: "Quelyos Build", tagline: "Solution BTP & artisanat", icon: Hammer, href: "/solutions/btp", color: "text-amber-400" },
+    { id: "hotellerie", name: "Quelyos Hotel", tagline: "Solution hôtellerie", icon: Building2, href: "/solutions/hotellerie", color: "text-cyan-400" },
+    { id: "associations", name: "Quelyos Club", tagline: "Solution vie associative", icon: Users, href: "/solutions/associations", color: "text-green-400" },
   ]
 };
 
@@ -62,7 +62,7 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modulesDropdown, setModulesDropdown] = useState(false);
-  const [activitiesDropdown, setActivitiesDropdown] = useState(false);
+  const [solutionsDropdown, setSolutionsDropdown] = useState(false);
 
 
   return (
@@ -82,7 +82,95 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 lg:flex">
-            {/* Modules Dropdown */}
+            {/* Solutions métier Mega Menu (PREMIER) */}
+            <div
+              className="relative"
+              onMouseEnter={() => setSolutionsDropdown(true)}
+              onMouseLeave={() => setSolutionsDropdown(false)}
+            >
+              <button
+                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all text-slate-300 hover:bg-white/5 hover:text-white`}
+              >
+                <Compass className="h-4 w-4 text-cyan-400" />
+                Solutions métier
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${solutionsDropdown ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {solutionsDropdown && (
+                <div className="absolute left-0 top-full pt-2">
+                  <div className="w-[520px] rounded-xl border border-white/10 bg-slate-800/95 p-4 shadow-xl backdrop-blur-xl">
+                    <div className="grid grid-cols-2 gap-6">
+                      {/* Colonne Commerce & Services */}
+                      <div>
+                        <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          Commerce & Services
+                        </p>
+                        <div className="space-y-1">
+                          {solutionsNav.commerce.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={item.href}
+                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                            >
+                              <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.color}`} />
+                              <div>
+                                <p className="text-sm font-medium text-white">{item.name}</p>
+                                <p className="text-xs text-slate-400">{item.tagline}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Colonne Métiers spécialisés */}
+                      <div>
+                        <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          Métiers spécialisés
+                        </p>
+                        <div className="space-y-1">
+                          {solutionsNav.metiers.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={item.href}
+                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                            >
+                              <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.color}`} />
+                              <div>
+                                <p className="text-sm font-medium text-white">{item.name}</p>
+                                <p className="text-xs text-slate-400">{item.tagline}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 border-t border-white/10 pt-3">
+                      <Link
+                        href="/solutions"
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-cyan-400 transition-colors hover:text-cyan-300"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                        Découvrir toutes les solutions métier
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/tarifs"
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                pathname === "/tarifs"
+                  ? "bg-white/10 text-white"
+                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              Tarifs
+            </Link>
+
+            {/* Solutions individuelles Dropdown (SECOND) */}
             <div
               className="relative"
               onMouseEnter={() => setModulesDropdown(true)}
@@ -92,7 +180,7 @@ export default function Header() {
                 className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all text-slate-300 hover:bg-white/5 hover:text-white`}
               >
                 <Layers className="h-4 w-4 text-indigo-400" />
-                Modules
+                Solutions
                 <ChevronDown
                   className={`h-4 w-4 transition-transform ${modulesDropdown ? "rotate-180" : ""}`}
                 />
@@ -103,7 +191,7 @@ export default function Header() {
                   <div className="w-[320px] rounded-xl border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-xl">
                     <div className="mb-3 border-b border-white/10 px-3 pb-2">
                       <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                        Suite ERP complète
+                        Solutions individuelles
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -127,95 +215,7 @@ export default function Header() {
                         className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
                       >
                         <ArrowRight className="h-4 w-4" />
-                        Voir tous les modules
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Link
-              href="/tarifs"
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                pathname === "/tarifs"
-                  ? "bg-white/10 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              Tarifs
-            </Link>
-
-            {/* Activités Mega Menu */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActivitiesDropdown(true)}
-              onMouseLeave={() => setActivitiesDropdown(false)}
-            >
-              <button
-                className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-all text-slate-300 hover:bg-white/5 hover:text-white`}
-              >
-                <Compass className="h-4 w-4 text-cyan-400" />
-                Activités
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${activitiesDropdown ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {activitiesDropdown && (
-                <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[520px] rounded-xl border border-white/10 bg-slate-800/95 p-4 shadow-xl backdrop-blur-xl">
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Colonne Commerce & Services */}
-                      <div>
-                        <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                          Commerce & Services
-                        </p>
-                        <div className="space-y-1">
-                          {activitiesNav.commerce.map((item) => (
-                            <Link
-                              key={item.id}
-                              href={item.href}
-                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                            >
-                              <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.color}`} />
-                              <div>
-                                <p className="text-sm font-medium text-white">{item.name}</p>
-                                <p className="text-xs text-slate-400">{item.tagline}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                      {/* Colonne Métiers spécialisés */}
-                      <div>
-                        <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                          Métiers spécialisés
-                        </p>
-                        <div className="space-y-1">
-                          {activitiesNav.metiers.map((item) => (
-                            <Link
-                              key={item.id}
-                              href={item.href}
-                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
-                            >
-                              <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.color}`} />
-                              <div>
-                                <p className="text-sm font-medium text-white">{item.name}</p>
-                                <p className="text-xs text-slate-400">{item.tagline}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-4 border-t border-white/10 pt-3">
-                      <Link
-                        href="/secteurs"
-                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-cyan-400 transition-colors hover:text-cyan-300"
-                      >
-                        <ArrowRight className="h-4 w-4" />
-                        Découvrir tous les secteurs
+                        Voir toutes les solutions
                       </Link>
                     </div>
                   </div>
@@ -276,11 +276,69 @@ export default function Header() {
             className="mt-4 border-t border-white/10 pt-4 lg:hidden"
           >
             <nav className="flex flex-col gap-2">
-              {/* Modules Section Mobile */}
+              {/* Solutions métier Section Mobile (PREMIER) */}
+              <div className="rounded-lg bg-white/5 p-3">
+                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-cyan-400">
+                  <Compass className="h-4 w-4" />
+                  Solutions métier
+                </p>
+                <div className="space-y-3">
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Commerce & Services</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {solutionsNav.commerce.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+                        >
+                          <item.icon className={`h-4 w-4 ${item.color}`} />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Métiers spécialisés</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {solutionsNav.metiers.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+                        >
+                          <item.icon className={`h-4 w-4 ${item.color}`} />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href="/solutions"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-3 flex items-center gap-2 text-sm font-medium text-cyan-400"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  Découvrir toutes les solutions métier
+                </Link>
+              </div>
+
+              <Link
+                href="/tarifs"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`rounded-lg px-4 py-3 text-sm font-medium ${pathname === "/tarifs" ? "bg-white/10 text-white" : "text-slate-300"}`}
+              >
+                Tarifs
+              </Link>
+
+              {/* Solutions individuelles Mobile (SECOND) */}
               <div className="rounded-lg bg-white/5 p-3">
                 <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-indigo-400">
                   <Layers className="h-4 w-4" />
-                  Modules ERP
+                  Solutions individuelles
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {modulesNav.map((mod) => (
@@ -301,65 +359,7 @@ export default function Header() {
                   className="mt-3 flex items-center gap-2 text-sm font-medium text-indigo-400"
                 >
                   <ArrowRight className="h-4 w-4" />
-                  Voir tous les modules
-                </Link>
-              </div>
-
-              <Link
-                href="/tarifs"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`rounded-lg px-4 py-3 text-sm font-medium ${pathname === "/tarifs" ? "bg-white/10 text-white" : "text-slate-300"}`}
-              >
-                Tarifs
-              </Link>
-
-              {/* Activités Section Mobile */}
-              <div className="rounded-lg bg-white/5 p-3">
-                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-cyan-400">
-                  <Compass className="h-4 w-4" />
-                  Activités par secteur
-                </p>
-                <div className="space-y-3">
-                  <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Commerce & Services</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {activitiesNav.commerce.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={item.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
-                        >
-                          <item.icon className={`h-4 w-4 ${item.color}`} />
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Métiers spécialisés</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {activitiesNav.metiers.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={item.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
-                        >
-                          <item.icon className={`h-4 w-4 ${item.color}`} />
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <Link
-                  href="/secteurs"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="mt-3 flex items-center gap-2 text-sm font-medium text-cyan-400"
-                >
-                  <ArrowRight className="h-4 w-4" />
-                  Découvrir tous les secteurs
+                  Voir toutes les solutions
                 </Link>
               </div>
 

@@ -18,7 +18,7 @@ type ChatMessage = {
 const welcomeMessage: ChatMessage = {
   type: 'bot',
   text: 'Bonjour ! 👋 Je suis l\'assistant Quelyos IA. Je peux répondre à vos questions sur les tarifs, les fonctionnalités, l\'inscription ou le support. Comment puis-je vous aider aujourd\'hui ?',
-  suggestions: ['Voir les tarifs', 'Découvrir les modules', 'Essai gratuit', 'Aide technique'],
+  suggestions: ['Voir les tarifs', 'Découvrir nos solutions', 'Essai gratuit', 'Aide technique'],
   timestamp: new Date()
 }
 
@@ -115,8 +115,8 @@ export default function ChatBot() {
       'Essai gratuit': () => window.location.href = '/register',
       'Voir les tarifs': () => window.location.href = '/tarifs',
       'Comparer les plans': () => window.location.href = '/tarifs',
-      'Voir les modules': () => window.location.href = '/modules',
-      'Découvrir les modules': () => window.location.href = '/modules',
+      'Voir les solutions': () => window.location.href = '/solutions',
+      'Découvrir nos solutions': () => window.location.href = '/solutions',
       'Contacter le support': () => window.location.href = 'mailto:support@quelyos.com',
       'Aide technique': () => window.location.href = '/support',
       'Rejoindre Discord': () => window.open('https://discord.gg/quelyos', '_blank'),

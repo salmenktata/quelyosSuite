@@ -1,15 +1,17 @@
 import Link from "next/link";
 import * as Icons from "./Icons";
+import { Target, Compass } from "lucide-react";
 import Footer from "./Footer";
 import Container from "./Container";
 import Header from "./Header";
+import { getAllSolutions } from "../lib/solutions-data";
 
-const modules = [
+const _modules = [
   {
     id: "home",
     name: "Dashboard",
     tagline: "Vue unifiée",
-    description: "Tableau de bord consolidé avec KPIs temps réel de tous vos modules.",
+    description: "Tableau de bord consolidé avec KPIs temps réel de toutes vos solutions.",
     features: ["KPIs consolidés", "Alertes", "Raccourcis", "Analytics global"],
     status: "production",
     color: "slate",
@@ -79,7 +81,7 @@ const modules = [
   },
 ];
 
-const colorClasses: Record<string, { bg: string; text: string; border: string }> = {
+const _colorClasses: Record<string, { bg: string; text: string; border: string }> = {
   slate: { bg: "bg-slate-500/20", text: "text-slate-300", border: "border-slate-500/30" },
   emerald: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
   indigo: { bg: "bg-indigo-500/20", text: "text-indigo-400", border: "border-indigo-500/30" },
@@ -90,14 +92,14 @@ const colorClasses: Record<string, { bg: string; text: string; border: string }>
   pink: { bg: "bg-pink-500/20", text: "text-pink-400", border: "border-pink-500/30" },
 };
 
-const secteurs = [
+const _secteurs = [
   { emoji: "🏪", name: "Commerce & Retail", desc: "Boutiques, e-commerce, click & collect", modules: ["Boutique", "Stock", "POS", "CRM"] },
   { emoji: "🍽️", name: "Restauration", desc: "Restaurants, traiteurs, food trucks", modules: ["POS", "Stock", "Finance", "Marketing"] },
   { emoji: "🔧", name: "Services B2B", desc: "Agences, conseil, prestataires", modules: ["CRM", "Finance", "Marketing", "RH"] },
   { emoji: "🏭", name: "Artisans & Production", desc: "Ateliers, fabrication, BTP", modules: ["Stock", "CRM", "Finance", "RH"] },
 ];
 
-const moduleHrefs: Record<string, string> = {
+const _moduleHrefs: Record<string, string> = {
   home: "/modules",
   finance: "/finance",
   store: "/ecommerce",
@@ -120,32 +122,32 @@ export default function HomePageContentServer() {
           <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
               <Icons.MapPin className="h-4 w-4" />
-              Suite ERP française • 8 modules intégrés
+              Suite ERP française • Solutions métier intégrées
             </div>
             <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
-              Pilotez toute votre entreprise{" "}
+              Des solutions métier{" "}
               <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                depuis une seule plateforme
+                qui s&apos;adaptent à votre activité
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
-              IA intégrée pour vos prévisions, données synchronisées entre modules.
-              Finance, Commerce, CRM, Stock, RH, POS, Marketing — tout en un.
+              Pas de modules à choisir, des packages clés en main pour votre métier.
+              Restaurant, Commerce, E-commerce, Services — solutions complètes.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-slate-400">
               <span className="flex items-center gap-1">
-                <Icons.Layers className="h-4 w-4 text-indigo-400" />
-                8 modules
+                <Compass className="h-4 w-4 text-indigo-400" />
+                8 solutions métier
               </span>
               <span className="text-slate-600">•</span>
               <span className="flex items-center gap-1">
                 <Icons.Sparkles className="h-4 w-4 text-purple-400" />
-                +250 fonctionnalités
+                Tout-en-un par secteur
               </span>
               <span className="text-slate-600">•</span>
               <span className="flex items-center gap-1">
-                <Icons.Code className="h-4 w-4 text-emerald-400" />
-                API REST complète
+                <Icons.Zap className="h-4 w-4 text-emerald-400" />
+                Opérationnel en 1h
               </span>
             </div>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -167,65 +169,64 @@ export default function HomePageContentServer() {
         </Container>
       </section>
 
-      {/* Modules */}
-      <section id="modules" className="relative py-20">
+      {/* Solutions métier */}
+      <section id="solutions" className="relative py-20">
         <Container>
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              8 modules intégrés, données synchronisées
+              Solutions complètes par métier
             </h2>
             <p className="mt-4 text-lg text-slate-400">
-              Une vente = stock mis à jour + revenu Finance + fiche client enrichie. Automatique.
+              Pas de modules à choisir. Des packages clés en main pensés pour votre activité.
             </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {modules.map((mod) => {
-              const colors = colorClasses[mod.color];
+            {getAllSolutions().map((solution) => {
               return (
-                <div
-                  key={mod.id}
-                  className={`group relative overflow-hidden rounded-xl border ${colors.border} bg-slate-900/50 p-6 backdrop-blur-sm transition-all hover:border-opacity-70 hover:shadow-lg`}
+                <Link
+                  key={solution.id}
+                  href={`/solutions/${solution.id}`}
+                  className="group relative overflow-hidden rounded-xl border border-indigo-500/20 bg-slate-900/50 p-6 backdrop-blur-sm transition-all hover:border-indigo-500/40 hover:shadow-lg"
                 >
                   <div className="relative">
-                    <div className={`mb-4 inline-flex rounded-xl ${colors.bg} p-3`}>
-                      <Icons.Layers className={`h-8 w-8 ${colors.text}`} />
+                    <div className="mb-4 inline-flex rounded-xl bg-indigo-500/10 p-3">
+                      <Icons.Sparkles className="h-8 w-8 text-indigo-400" />
                     </div>
                     <h3 className="mb-1 text-xl font-bold text-white">
-                      {mod.name}
+                      {solution.name}
                     </h3>
-                    <p className={`mb-3 text-sm font-medium ${colors.text}`}>
-                      {mod.tagline}
+                    <p className="mb-3 text-sm font-medium text-cyan-400">
+                      {solution.sectorName}
                     </p>
                     <p className="mb-4 text-sm text-slate-400">
-                      {mod.description}
+                      {solution.subheadline}
                     </p>
-                    <div className="mb-4 flex flex-wrap gap-2">
-                      {mod.features.map((feature) => (
-                        <span
-                          key={feature}
-                          className="rounded-full bg-white/5 px-2 py-1 text-xs text-slate-300"
-                        >
-                          {feature}
-                        </span>
-                      ))}
+                    <div className="mb-4 flex items-baseline gap-1">
+                      <span className="text-2xl font-bold text-white">{solution.pricing.basePrice}€</span>
+                      <span className="text-sm text-slate-500">/mois</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <Link
-                        href={moduleHrefs[mod.id] || "/modules"}
-                        className={`inline-flex items-center gap-1 text-sm font-medium ${colors.text} transition-all hover:underline`}
-                      >
-                        En savoir plus
+                      <span className="inline-flex items-center gap-1 text-sm font-medium text-indigo-400 transition-all group-hover:underline">
+                        Découvrir
                         <Icons.ArrowRight className="h-4 w-4" />
-                      </Link>
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                        Disponible
+                      </span>
+                      <div className="text-xs text-slate-500">
+                        {solution.stats.clients}
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
+          </div>
+          <div className="mt-12 text-center">
+            <Link
+              href="/solutions"
+              className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+            >
+              Voir toutes les solutions métier
+              <Icons.ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </Container>
       </section>
@@ -235,20 +236,20 @@ export default function HomePageContentServer() {
         <Container>
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Ce qui nous différencie
+              Une approche métier, pas technique
             </h2>
             <p className="mt-4 text-lg text-slate-400">
-              Une suite pensée pour les TPE/PME françaises
+              Des solutions pensées pour votre activité, pas un ERP générique
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: Icons.Layers, title: "8 modules = 1 abonnement", desc: "Finance, Vente, Stock, CRM, RH, POS, Marketing — tout inclus sans frais cachés.", color: "text-indigo-400" },
-              { icon: Icons.Sparkles, title: "IA intégrée", desc: "Prévisions trésorerie 90j, détection anomalies, scoring leads. Machine Learning natif.", color: "text-purple-400" },
-              { icon: Icons.RefreshCw, title: "Données synchronisées", desc: "Une vente = stock mis à jour + revenu en Finance + fiche client enrichie. Automatique.", color: "text-emerald-400" },
-              { icon: Icons.Shield, title: "Made in France", desc: "Hébergement France, RGPD natif, support francophone. Pas de transfert US.", color: "text-blue-400" },
-              { icon: Icons.Code, title: "API REST complète", desc: "Intégrez Quelyos à vos outils. Export illimité, vos données vous appartiennent.", color: "text-cyan-400" },
-              { icon: Icons.Server, title: "SaaS multi-tenant", desc: "Zéro maintenance, mises à jour auto, accessible partout. Instance dédiée isolée.", color: "text-orange-400" },
+              { icon: Target, title: "Solutions métier clés en main", desc: "Chaque solution est pensée pour votre secteur. Pas de fonctionnalités inutiles, que l'essentiel.", color: "text-indigo-400" },
+              { icon: Icons.Zap, title: "Opérationnel en 1 heure", desc: "Import automatique, configuration guidée. Vous êtes productif dès le premier jour.", color: "text-purple-400" },
+              { icon: Icons.Sparkles, title: "IA qui anticipe vos besoins", desc: "Prévisions trésorerie à 90%, suggestions de commandes, alertes proactives.", color: "text-emerald-400" },
+              { icon: Icons.TrendingUp, title: "ROI mesurable", desc: "Nos clients gagnent en moyenne 10h/semaine et augmentent leur CA de 30%.", color: "text-blue-400" },
+              { icon: Icons.Shield, title: "Made in France, RGPD natif", desc: "Hébergement France, support francophone, conformité garantie.", color: "text-cyan-400" },
+              { icon: Icons.DollarSign, title: "Tarifs transparents", desc: "Un prix fixe par solution. Pas de surprise, pas de frais cachés.", color: "text-orange-400" },
             ].map((item, i) => (
               <div
                 key={i}
@@ -263,38 +264,34 @@ export default function HomePageContentServer() {
         </Container>
       </section>
 
-      {/* Secteurs d'activité */}
+      {/* Call to Action finale */}
       <section className="relative py-20">
         <Container>
-          <div className="mb-12 text-center">
+          <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/50 to-violet-950/50 p-12 text-center backdrop-blur-sm">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Adapté à votre secteur
+              Prêt à transformer votre activité ?
             </h2>
-            <p className="mt-4 text-lg text-slate-400">
-              Des modules recommandés selon votre activité
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-300">
+              Rejoignez les entrepreneurs qui ont choisi Quelyos pour piloter leur business.
             </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {secteurs.map((secteur, i) => (
-              <div
-                key={i}
-                className="group rounded-xl border border-white/10 bg-slate-900/50 p-6 backdrop-blur-sm transition-all hover:border-indigo-500/30 hover:bg-slate-900/70"
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link
+                href="/solutions"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
               >
-                <span className="mb-3 block text-4xl">{secteur.emoji}</span>
-                <h3 className="mb-1 text-lg font-semibold text-white">{secteur.name}</h3>
-                <p className="mb-4 text-sm text-slate-400">{secteur.desc}</p>
-                <div className="flex flex-wrap gap-1">
-                  {secteur.modules.map((mod) => (
-                    <span
-                      key={mod}
-                      className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-300"
-                    >
-                      {mod}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+                Découvrir les solutions
+                <Icons.ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-lg font-medium text-white transition-all hover:bg-white/10"
+              >
+                Nous contacter
+              </Link>
+            </div>
+            <p className="mt-6 text-sm text-slate-400">
+              Essai gratuit 30 jours • Sans carte bancaire • Support français
+            </p>
           </div>
         </Container>
       </section>
@@ -304,7 +301,7 @@ export default function HomePageContentServer() {
         <Container>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
             {[
-              { label: "Modules intégrés", value: "8", icon: Icons.Layers },
+              { label: "Solutions intégrées", value: "8", icon: Icons.Layers },
               { label: "Fonctionnalités", value: "+250", icon: Icons.Sparkles },
               { label: "Prévisions IA", value: "90j", icon: Icons.RefreshCw },
               { label: "Hébergement", value: "France", icon: Icons.MapPin },

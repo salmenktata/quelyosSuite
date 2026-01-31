@@ -62,6 +62,52 @@ const nextConfig = {
         destination: "/finance/templates/:path*",
         permanent: true,
       },
+      // Redirections secteurs → solutions (transformation marketing)
+      {
+        source: "/secteurs/restauration",
+        destination: "/solutions/restaurant",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/retail",
+        destination: "/solutions/commerce",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/ecommerce",
+        destination: "/solutions/ecommerce",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/services",
+        destination: "/solutions/services",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/sante",
+        destination: "/solutions/sante",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/btp",
+        destination: "/solutions/btp",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/hotellerie",
+        destination: "/solutions/hotellerie",
+        permanent: true,
+      },
+      {
+        source: "/secteurs/associations",
+        destination: "/solutions/associations",
+        permanent: true,
+      },
+      {
+        source: "/secteurs",
+        destination: "/solutions",
+        permanent: true,
+      },
     ];
   },
 
