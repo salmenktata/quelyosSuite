@@ -10,7 +10,7 @@ from odoo.exceptions import UserError, ValidationError
 class PaymentProvider(models.Model):
     _inherit = 'payment.provider'
 
-    code = fields.Selection(
+    x_code = fields.Selection(
         selection_add=[
             ('flouci', 'Flouci'),
             ('konnect', 'Konnect')
@@ -19,44 +19,44 @@ class PaymentProvider(models.Model):
     )
 
     # Flouci specific fields
-    flouci_app_token = fields.Char(
+    x_flouci_app_token = fields.Char(
         string='Flouci App Token',
         groups='base.group_system',
         help='API Token from Flouci dashboard'
     )
-    flouci_app_secret = fields.Char(
+    x_flouci_app_secret = fields.Char(
         string='Flouci App Secret',
         groups='base.group_system',
         help='API Secret for webhook signature validation'
     )
-    flouci_timeout = fields.Integer(
+    x_flouci_timeout = fields.Integer(
         string='Payment Timeout (minutes)',
         default=60,
         help='Payment session timeout in minutes'
     )
-    flouci_accept_cards = fields.Boolean(
+    x_flouci_accept_cards = fields.Boolean(
         string='Accept Credit Cards',
         default=True,
         help='Allow customers to pay with credit/debit cards'
     )
 
     # Konnect specific fields
-    konnect_api_key = fields.Char(
+    x_konnect_api_key = fields.Char(
         string='Konnect API Key',
         groups='base.group_system',
         help='API Key from Konnect dashboard'
     )
-    konnect_wallet_id = fields.Char(
+    x_konnect_wallet_id = fields.Char(
         string='Konnect Wallet ID',
         groups='base.group_system',
         help='Your Konnect wallet identifier'
     )
-    konnect_lifespan = fields.Integer(
+    x_konnect_lifespan = fields.Integer(
         string='Payment Link Lifespan (minutes)',
         default=10,
         help='Payment link expiration time in minutes'
     )
-    konnect_theme = fields.Selection(
+    x_konnect_theme = fields.Selection(
         [('light', 'Light'), ('dark', 'Dark')],
         string='Checkout Theme',
         default='light',
@@ -67,16 +67,16 @@ class PaymentProvider(models.Model):
     def _check_flouci_credentials(self):
         """Validate Flouci credentials format"""
         for provider in self:
-            if provider.code == 'flouci' and provider.state != 'disabled':
-                if not provider.flouci_app_token or not provider.flouci_app_secret:
+            if provider.x_code == 'flouci' and provider.state != 'disabled':
+                if not provider.x_flouci_app_token or not provider.x_flouci_app_secret:
                     raise ValidationError(_('Flouci App Token and Secret are required when provider is enabled.'))
 
     @api.constrains('konnect_api_key', 'konnect_wallet_id')
     def _check_konnect_credentials(self):
         """Validate Konnect credentials format"""
         for provider in self:
-            if provider.code == 'konnect' and provider.state != 'disabled':
-                if not provider.konnect_api_key or not provider.konnect_wallet_id:
+            if provider.x_code == 'konnect' and provider.state != 'disabled':
+                if not provider.x_konnect_api_key or not provider.x_konnect_wallet_id:
                     raise ValidationError(_('Konnect API Key and Wallet ID are required when provider is enabled.'))
 
     def _flouci_get_api_url(self):
@@ -111,11 +111,11 @@ class PaymentProvider(models.Model):
         api_url = self._flouci_get_api_url()
 
         payload = {
-            'app_token': self.flouci_app_token,
-            'app_secret': self.flouci_app_secret,
+            'app_token': self.x_flouci_app_token,
+            'app_secret': self.x_flouci_app_secret,
             'amount': int(amount * 1000),  # Convert to millimes
-            'accept_card': 'true' if self.flouci_accept_cards else 'false',
-            'session_timeout_secs': self.flouci_timeout * 60,
+            'accept_card': 'true' if self.x_flouci_accept_cards else 'false',
+            'session_timeout_secs': self.x_flouci_timeout * 60,
             'success_link': f'{return_url}?status=success',
             'fail_link': f'{return_url}?status=fail',
             'developer_tracking_id': reference,
@@ -160,13 +160,13 @@ class PaymentProvider(models.Model):
         api_url = self._konnect_get_api_url()
 
         payload = {
-            'receiverWalletId': self.konnect_wallet_id,
-            'token': self.konnect_api_key,
+            'receiverWalletId': self.x_konnect_wallet_id,
+            'token': self.x_konnect_api_key,
             'amount': int(amount * 1000),  # Convert to millimes
             'type': 'immediate',
             'description': f'Order {reference}',
             'acceptedPaymentMethods': ['wallet', 'bank_card', 'd17'],
-            'lifespan': self.konnect_lifespan,
+            'lifespan': self.x_konnect_lifespan,
             'checkoutForm': True,
             'addPaymentFeesToAmount': True,
             'firstName': customer_data.get('firstName', ''),
@@ -178,7 +178,7 @@ class PaymentProvider(models.Model):
             'silentWebhook': True,
             'successUrl': f'{return_url}?status=success',
             'failUrl': f'{return_url}?status=fail',
-            'theme': self.konnect_theme,
+            'theme': self.x_konnect_theme,
         }
 
         try:
@@ -212,7 +212,7 @@ class PaymentProvider(models.Model):
         self.ensure_one()
 
         expected_signature = hmac.new(
-            self.flouci_app_secret.encode('utf-8'),
+            self.x_flouci_app_secret.encode('utf-8'),
             json.dumps(payload, separators=(',', ':')).encode('utf-8'),
             hashlib.sha256
         ).hexdigest()
@@ -230,7 +230,7 @@ class PaymentProvider(models.Model):
         self.ensure_one()
 
         expected_signature = hmac.new(
-            self.konnect_api_key.encode('utf-8'),
+            self.x_konnect_api_key.encode('utf-8'),
             json.dumps(payload, sort_keys=True, separators=(',', ':')).encode('utf-8'),
             hashlib.sha256
         ).hexdigest()
@@ -245,9 +245,9 @@ class PaymentProvider(models.Model):
         """
         self.ensure_one()
 
-        if self.code == 'flouci':
+        if self.x_code == 'flouci':
             return self._test_flouci_connection()
-        elif self.code == 'konnect':
+        elif self.x_code == 'konnect':
             return self._test_konnect_connection()
         else:
             return super().test_connection()
@@ -283,7 +283,7 @@ class PaymentProvider(models.Model):
         try:
             api_url = self._konnect_get_api_url()
             # Try to get wallet info as connection test
-            headers = {'Authorization': f'Bearer {self.konnect_api_key}'}
+            headers = {'Authorization': f'Bearer {self.x_konnect_api_key}'}
             response = requests.get(f'{api_url}/payments/wallet-info', headers=headers, timeout=10)
 
             if response.status_code == 200:
@@ -312,25 +312,25 @@ class PaymentProvider(models.Model):
 
         config = {
             'id': self.id,
-            'code': self.code,
+            'x_code': self.x_code,
             'name': self.name,
             'state': self.state,
             'imageUrl': f'/web/image/payment.provider/{self.id}/image_128' if self.image_128 else None,
         }
 
-        if self.code == 'flouci':
+        if self.x_code == 'flouci':
             config.update({
-                'appToken': self.flouci_app_token if self.env.user.has_group('base.group_system') else '***',
+                'appToken': self.x_flouci_app_token if self.env.user.has_group('base.group_system') else '***',
                 'appSecret': '***',  # Never expose secret
-                'timeout': self.flouci_timeout,
-                'acceptCards': self.flouci_accept_cards,
+                'timeout': self.x_flouci_timeout,
+                'acceptCards': self.x_flouci_accept_cards,
             })
-        elif self.code == 'konnect':
+        elif self.x_code == 'konnect':
             config.update({
                 'apiKey': '***',  # Never expose API key
-                'walletId': self.konnect_wallet_id,
-                'lifespan': self.konnect_lifespan,
-                'theme': self.konnect_theme,
+                'walletId': self.x_konnect_wallet_id,
+                'lifespan': self.x_konnect_lifespan,
+                'theme': self.x_konnect_theme,
             })
 
         return config

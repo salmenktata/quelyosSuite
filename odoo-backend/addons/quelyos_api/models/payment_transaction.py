@@ -17,18 +17,18 @@ class PaymentTransaction(models.Model):
     )
 
     # Additional fields for Tunisian payment providers
-    provider_payment_id = fields.Char(
+    x_provider_payment_id = fields.Char(
         string='Provider Payment ID',
         help='Unique payment identifier from provider (Flouci payment_id, Konnect paymentRef)',
         readonly=True,
         index=True
     )
-    provider_request_payload = fields.Text(
+    x_provider_request_payload = fields.Text(
         string='Request Payload',
         help='JSON payload sent to payment provider for audit',
         readonly=True
     )
-    provider_response_payload = fields.Text(
+    x_provider_response_payload = fields.Text(
         string='Response Payload',
         help='JSON response received from payment provider for audit',
         readonly=True
@@ -136,7 +136,7 @@ class PaymentTransaction(models.Model):
 
         # Store webhook response
         self.sudo().write({
-            'provider_response_payload': json.dumps(webhook_data, indent=2)
+            'x_provider_response_payload': json.dumps(webhook_data, indent=2)
         })
 
         # Process payment status
@@ -164,7 +164,7 @@ class PaymentTransaction(models.Model):
 
         # Store webhook response
         self.sudo().write({
-            'provider_response_payload': json.dumps(webhook_data, indent=2)
+            'x_provider_response_payload': json.dumps(webhook_data, indent=2)
         })
 
         # Process payment status
@@ -195,7 +195,7 @@ class PaymentTransaction(models.Model):
             'state': self.state,
             'providerCode': self.provider_code,
             'providerName': self.provider_id.name,
-            'providerPaymentId': self.provider_payment_id,
+            'providerPaymentId': self.x_provider_payment_id,
             'webhookCallsCount': self.webhook_calls_count,
             'lastWebhookDate': self.last_webhook_date.isoformat() if self.last_webhook_date else None,
             'createdAt': self.create_date.isoformat() if self.create_date else None,
