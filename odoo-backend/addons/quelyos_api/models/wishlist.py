@@ -9,13 +9,13 @@ from odoo import models, fields, api
 class ProductWishlist(models.Model):
     _inherit = 'product.wishlist'
 
-    share_token = fields.Char(
+    x_share_token = fields.Char(
         string='Token de partage',
         index=True,
         copy=False,
         help='Token unique pour partager la wishlist publiquement'
     )
-    is_public = fields.Boolean(
+    x_is_public = fields.Boolean(
         string='Wishlist publique',
         default=False,
         help='Si activé, la wishlist peut être consultée via le lien de partage'
@@ -30,8 +30,8 @@ class ProductWishlist(models.Model):
         wishlists = self.search([('partner_id', '=', partner_id)])
         if wishlists:
             wishlists.write({
-                'share_token': token,
-                'is_public': True
+                'x_share_token': token,
+                'x_is_public': True
             })
 
         return token
@@ -50,7 +50,7 @@ class ProductWishlist(models.Model):
         wishlists = self.search([('partner_id', '=', partner_id)])
         if wishlists:
             wishlists.write({
-                'share_token': False,
-                'is_public': False
+                'x_share_token': False,
+                'x_is_public': False
             })
         return True
