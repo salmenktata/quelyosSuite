@@ -16,6 +16,7 @@ import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/com
 import { marketingNotices } from '@/lib/notices';
 import { useMarketingLists, type MailingList } from '@/hooks/useMarketingLists';
 import { Users, Plus, Trash2, UserPlus, RefreshCw, Mail } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 
 const breadcrumbItems = [
   { label: 'Accueil', href: '/home' },
@@ -41,6 +42,7 @@ export default function MailingLists() {
       setLists(result.mailing_lists);
       setTotalCount(result.total_count);
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };
@@ -63,6 +65,7 @@ export default function MailingLists() {
       setShowCreateModal(false);
       await loadLists();
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };
@@ -74,6 +77,7 @@ export default function MailingLists() {
       await deleteMailingList(id);
       await loadLists();
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };

@@ -15,6 +15,7 @@ import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/com
 import { useMarketingAutomation } from '@/hooks/useMarketingAutomation';
 import type { AutomationWorkflow, AutomationDetail } from '@/hooks/useMarketingAutomation';
 import { Play, Square, Trash2, Users, Activity, AlertCircle } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 
 export function AutomationWorkflows() {
   const { listAutomations, getAutomation, startAutomation, stopAutomation, deleteAutomation, loading } = useMarketingAutomation();
@@ -33,7 +34,7 @@ export function AutomationWorkflows() {
       const data = await listAutomations(params);
       setWorkflows(data.automations);
     } catch (err) {
-      console.error('Erreur chargement workflows:', err);
+      logger.error('Erreur chargement workflows:', err);
     }
   };
 
@@ -46,7 +47,7 @@ export function AutomationWorkflows() {
       }
       loadWorkflows();
     } catch (err) {
-      console.error('Erreur toggle workflow:', err);
+      logger.error('Erreur toggle workflow:', err);
     }
   };
 
@@ -58,7 +59,7 @@ export function AutomationWorkflows() {
       loadWorkflows();
       if (selectedWorkflow?.id === id) setSelectedWorkflow(null);
     } catch (err) {
-      console.error('Erreur suppression workflow:', err);
+      logger.error('Erreur suppression workflow:', err);
     }
   };
 
@@ -67,7 +68,7 @@ export function AutomationWorkflows() {
       const detail = await getAutomation(id);
       setSelectedWorkflow(detail);
     } catch (err) {
-      console.error('Erreur chargement détail:', err);
+      logger.error('Erreur chargement détail:', err);
     }
   };
 

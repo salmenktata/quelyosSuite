@@ -13,6 +13,7 @@ import {
   Send,
   Settings,
 } from "lucide-react";
+import { logger } from '@quelyos/logger';
 import {
   useEmailConfig,
   useUpdateEmailConfig,
@@ -79,6 +80,7 @@ export default function MarketingEmailSettingsPage() {
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration email enregistrée");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };
@@ -88,6 +90,7 @@ export default function MarketingEmailSettingsPage() {
       const result = await testMutation.mutateAsync(testEmail ? { testEmail } : undefined);
       toast.success(result.message || "Connexion réussie");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };

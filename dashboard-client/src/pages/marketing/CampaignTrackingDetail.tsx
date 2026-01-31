@@ -18,6 +18,7 @@ import { useMarketingCampaigns } from '@/hooks/useMarketingCampaigns';
 import type { TrackingStats, HeatmapLink, TimelineEvent } from '@/hooks/useMarketingTracking';
 import type { MarketingCampaign } from '@/hooks/useMarketingCampaigns';
 import { ArrowLeft, TrendingUp, Users, MousePointerClick, Clock } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 
 export function CampaignTrackingDetail() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +51,7 @@ export function CampaignTrackingDetail() {
       setHeatmap(heatmapData);
       setTimeline(timelineData.timeline);
     } catch (err) {
-      console.error('Erreur chargement tracking:', err);
+      logger.error('Erreur chargement tracking:', err);
     }
   };
 

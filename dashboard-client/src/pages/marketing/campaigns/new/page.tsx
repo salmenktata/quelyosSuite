@@ -8,6 +8,7 @@ import { useContactLists } from '@/hooks/useContactLists';
 import { useEmailTemplates, TEMPLATE_CATEGORIES, type TemplateCategory } from '@/hooks/useEmailTemplates';
 import { useToast } from '@/contexts/ToastContext';
 import {
+import { logger } from '@quelyos/logger';
   Mail,
   MessageSquare,
   ArrowRight,
@@ -101,6 +102,7 @@ export default function NewCampaignPage() {
       toast.success('Campagne créée avec succès');
       navigate(`/marketing/campaigns/${campaign.id}`);
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la création');
     }
   };

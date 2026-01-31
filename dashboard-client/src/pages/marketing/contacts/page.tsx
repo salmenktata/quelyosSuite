@@ -11,6 +11,7 @@ import {
 import { useToast } from '@/contexts/ToastContext';
 import { contactsReducer, initialContactsState } from './contactsReducer';
 import {
+import { logger } from '@quelyos/logger';
   Plus,
   Users,
   Filter,
@@ -162,6 +163,7 @@ export default function ContactListsPage() {
         dispatch({ type: "SET_COLUMN_MAPPING", payload: preview.column_mapping });
         dispatch({ type: "SET_IMPORT_STEP", payload: 'preview' });
       } catch (err) {
+      logger.error("Erreur:", err);
         toast.error('Erreur lors de la lecture du fichier');
       }
     };
@@ -192,6 +194,7 @@ export default function ContactListsPage() {
       dispatch({ type: "SET_IMPORT_STEP", payload: 'result' });
       toast.success(`${result.total} contacts importés`);
     } catch (err) {
+      logger.error("Erreur:", err);
       toast.error('Erreur lors de l\'import');
     }
   };

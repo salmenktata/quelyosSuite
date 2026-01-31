@@ -5,6 +5,7 @@ import { Breadcrumbs, Badge, Skeleton, ConfirmModal } from '@/components/common'
 import { useMarketingCampaigns, useDeleteCampaign, useDuplicateCampaign } from '@/hooks/useMarketingCampaigns';
 import { useToast } from '@/contexts/ToastContext';
 import {
+import { logger } from '@quelyos/logger';
   Plus,
   Mail,
   MessageSquare,
@@ -62,6 +63,7 @@ export default function CampaignsPage() {
       toast.success('Campagne supprimée');
       setDeleteId(null);
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la suppression');
     }
   };
@@ -72,6 +74,7 @@ export default function CampaignsPage() {
       toast.success('Campagne dupliquée');
       navigate(`/marketing/campaigns/${newCampaign.id}`);
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la duplication');
     }
     setMenuOpen(null);

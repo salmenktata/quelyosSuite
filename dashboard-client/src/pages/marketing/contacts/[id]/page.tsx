@@ -5,6 +5,7 @@ import { useContactList, useDeleteContactList } from '@/hooks/useContactLists';
 import { useToast } from '@/contexts/ToastContext';
 import { useState } from 'react';
 import {
+import { logger } from '@quelyos/logger';
   Users,
   Mail,
   Phone,
@@ -32,6 +33,7 @@ export default function ContactListDetailPage() {
       toast.success('Liste supprimée');
       navigate('/marketing/contacts');
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la suppression');
     }
   };

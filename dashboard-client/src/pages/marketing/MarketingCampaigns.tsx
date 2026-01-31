@@ -16,6 +16,7 @@ import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/com
 import { marketingNotices } from '@/lib/notices';
 import { useMarketingCampaigns, type MarketingCampaign } from '@/hooks/useMarketingCampaigns';
 import { Mail, Plus, Send, Trash2, BarChart3, RefreshCw } from 'lucide-react';
+import { logger } from '@quelyos/logger';
 
 const breadcrumbItems = [
   { label: 'Accueil', href: '/home' },
@@ -54,6 +55,7 @@ export default function MarketingCampaigns() {
       setCampaigns(result.campaigns);
       setTotalCount(result.total_count);
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };
@@ -71,6 +73,7 @@ export default function MarketingCampaigns() {
       await sendCampaign(id);
       await loadCampaigns();
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };
@@ -82,6 +85,7 @@ export default function MarketingCampaigns() {
       await deleteCampaign(id);
       await loadCampaigns();
     } catch {
+      logger.error("Erreur attrapée");
       // Error handled by hook
     }
   };

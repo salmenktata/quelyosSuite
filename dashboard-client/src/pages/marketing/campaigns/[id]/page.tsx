@@ -6,6 +6,7 @@ import { useCampaign, useSendCampaign, useDeleteCampaign } from '@/hooks/useMark
 import { useToast } from '@/contexts/ToastContext';
 import { useState } from 'react';
 import {
+import { logger } from '@quelyos/logger';
   Mail,
   MessageSquare,
   Send,
@@ -47,6 +48,7 @@ export default function CampaignDetailPage() {
       toast.success('Campagne envoyée avec succès');
       setShowSendModal(false);
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de l\'envoi');
     }
   };
@@ -58,6 +60,7 @@ export default function CampaignDetailPage() {
       toast.success('Campagne supprimée');
       navigate('/marketing/campaigns');
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la suppression');
     }
   };
