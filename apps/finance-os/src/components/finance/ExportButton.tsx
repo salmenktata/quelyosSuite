@@ -10,7 +10,7 @@ import {
   Calendar,
   Check
 } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { logger } from '@quelyos/logger';
 
 type ExportFormat = "csv" | "pdf";

@@ -1,7 +1,7 @@
 
 
 import { useState } from "react";
-import { GlassButton } from "@/components/ui/glass";
+import { GlassButton } from '@quelyos/ui/glass';
 import { Download, FileDown, Filter } from "lucide-react";
 
 type BudgetStatus = "ON_TRACK" | "WARNING" | "EXCEEDED";

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, AlertCircle, Info, ChevronDown, X } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { cn } from "@/lib/utils";
 import type { ColumnMappingTableProps, ColumnMapping, FieldType } from "@/types/import";
 import { TARGET_FIELDS } from "@/types/import";

@@ -21,7 +21,9 @@
     "./css-variables": "./css-variables.ts",
     "./animated": "./animated.tsx",
     "./animation-variants": "./animation-variants.ts",
-    "./use-animation": "./use-animation.ts"
+    "./use-animation": "./use-animation.ts",
+    "./glass": "./glass.tsx",
+    "./Login": "./Login.tsx"
   },
   "scripts": {
     "lint": "echo 'Skipping lint for ui package'",

@@ -1,7 +1,7 @@
 
 
 import { useState, useEffect, useRef, memo } from "react";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
+import { GlassPanel, GlassCard } from '@quelyos/ui/glass';
 import { Plus, Sparkles } from "lucide-react";
 
 type Category = {

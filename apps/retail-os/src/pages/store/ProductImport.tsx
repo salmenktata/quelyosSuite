@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { Upload, Download, FileSpreadsheet, Check, AlertCircle, X } from 'lucide-react';
 import { Breadcrumbs, PageNotice, Button } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface ImportResult {
   created: number;

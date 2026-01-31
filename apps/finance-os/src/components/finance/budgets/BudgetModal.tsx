@@ -1,7 +1,7 @@
 
 
 import { useState, useEffect } from "react";
-import { GlassCard, GlassButton } from "@/components/ui/glass";
+import { GlassCard, GlassButton } from '@quelyos/ui/glass';
 import { X } from "lucide-react";
 import { api } from "@/lib/finance/api";
 import type { CreateBudgetRequest, UpdateBudgetRequest } from "@/types/api";

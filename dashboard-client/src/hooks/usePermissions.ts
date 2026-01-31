@@ -1,4 +1,5 @@
 import { useAuth } from '@/lib/finance/compat/auth'
+import { getCurrentEdition } from '@/lib/editionDetector'
 
 type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support'
 
@@ -7,6 +8,8 @@ type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | '
  *
  * Les groupes sont récupérés depuis l'API backend et stockés dans le profil utilisateur.
  * Chaque module du backoffice nécessite un groupe minimum pour être accessible.
+ *
+ * NOUVEAU : Filtrage édition intégré (whiteliste modules par édition)
  */
 export function usePermissions() {
   const { user } = useAuth()
@@ -52,13 +55,23 @@ export function usePermissions() {
   /**
    * Vérifie si l'utilisateur peut accéder à un module.
    *
+   * NOUVEAU : Double filtrage (édition + permissions utilisateur)
+   *
    * @param moduleId - Identifiant du module (ex: 'stock', 'crm')
    * @returns true si l'utilisateur a les permissions, false sinon
    */
   const canAccessModule = (moduleId: ModuleId): boolean => {
     if (!user || !user.groups) return false
 
-    // Super-admin : accès complet à TOUS les modules (existant et futur)
+    // 1. Filtrage édition (whiteliste modules)
+    const edition = getCurrentEdition()
+    if (!edition.modules.includes(moduleId)) {
+      // Module non disponible dans cette édition
+      return false
+    }
+
+    // 2. Filtrage permissions utilisateur (groupes backend)
+    // Super-admin : accès complet à TOUS les modules whitelistés
     if (isSuperAdmin()) return true
 
     const requiredGroups = MODULE_GROUP_MAP[moduleId]
@@ -84,15 +97,22 @@ export function usePermissions() {
   /**
    * Retourne la liste des modules accessibles par l'utilisateur.
    *
+   * NOUVEAU : Filtre modules selon édition avant permissions
+   *
    * @returns Array des IDs de modules accessibles
    */
   const getAccessibleModules = (): ModuleId[] => {
-    const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos']
+    const edition = getCurrentEdition()
+    const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support']
 
-    // Super-admin : accès à TOUS les modules (existant et futur)
-    if (isSuperAdmin()) return allModules
+    // 1. Filtrer modules par édition
+    const editionModules = allModules.filter(module => edition.modules.includes(module))
 
-    return allModules.filter(module => canAccessModule(module))
+    // 2. Super-admin : accès à TOUS les modules de l'édition
+    if (isSuperAdmin()) return editionModules
+
+    // 3. Filtrer par permissions utilisateur
+    return editionModules.filter(module => canAccessModule(module))
   }
 
   return {

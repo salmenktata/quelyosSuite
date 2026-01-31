@@ -6,7 +6,7 @@ import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { DuplicateConfirmModal } from "./DuplicateConfirmModal";
-import { TransactionFormFields, TransactionListItem } from './TransactionFormPage/'
+import { TransactionFormFields, TransactionListItem } from './TransactionFormPage/index'
 import type { CreateTransactionRequest } from "@/types/api";
 import { logger } from '@quelyos/logger';
 import {

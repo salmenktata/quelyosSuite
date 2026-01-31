@@ -15,7 +15,7 @@ import {
   Clock,
   ShieldCheck,
 } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 
 const reports = [
   {

@@ -13,7 +13,7 @@ import { Plus, Edit, Trash2, Eye, EyeOff, Image, Package, AlertCircle, Search } 
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
 import { logger } from '@/lib/logger';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface Collection {
   id: number;

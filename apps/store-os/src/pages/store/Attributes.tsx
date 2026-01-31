@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Palette, Tag } from 'lucide-react';
 import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 import { useRequireAuth } from '@/lib/store/compat/auth';
 
 interface AttributeValue {

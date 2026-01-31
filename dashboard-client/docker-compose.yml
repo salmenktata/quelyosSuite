@@ -1,0 +1,152 @@
+version: '3.8'
+
+# ============================================================================
+# DOCKER COMPOSE - QUELYOS ÉDITIONS
+# ============================================================================
+# Démarrage rapide de toutes les éditions en parallèle pour tests
+# Usage : docker-compose up -d
+
+services:
+  # ==========================================================================
+  # ÉDITION FINANCE (Port 3010)
+  # ==========================================================================
+  finance:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: finance
+    image: quelyos-finance:latest
+    container_name: quelyos-finance
+    ports:
+      - "3010:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=finance
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.finance.rule=Host(`finance.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION STORE (Port 3011)
+  # ==========================================================================
+  store:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: store
+    image: quelyos-store:latest
+    container_name: quelyos-store
+    ports:
+      - "3011:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=store
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.store.rule=Host(`store.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION COPILOTE (Port 3012)
+  # ==========================================================================
+  copilote:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: copilote
+    image: quelyos-copilote:latest
+    container_name: quelyos-copilote
+    ports:
+      - "3012:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=copilote
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.copilote.rule=Host(`copilote.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION SALES (Port 3013)
+  # ==========================================================================
+  sales:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: sales
+    image: quelyos-sales:latest
+    container_name: quelyos-sales
+    ports:
+      - "3013:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=sales
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sales.rule=Host(`sales.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION RETAIL (Port 3014)
+  # ==========================================================================
+  retail:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: retail
+    image: quelyos-retail:latest
+    container_name: quelyos-retail
+    ports:
+      - "3014:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=retail
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.retail.rule=Host(`retail.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION TEAM (Port 3015)
+  # ==========================================================================
+  team:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: team
+    image: quelyos-team:latest
+    container_name: quelyos-team
+    ports:
+      - "3015:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=team
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.team.rule=Host(`team.quelyos.local`)"
+
+  # ==========================================================================
+  # ÉDITION SUPPORT (Port 3016)
+  # ==========================================================================
+  support:
+    build:
+      context: ..
+      dockerfile: dashboard-client/Dockerfile
+      args:
+        EDITION: support
+    image: quelyos-support:latest
+    container_name: quelyos-support
+    ports:
+      - "3016:80"
+    restart: unless-stopped
+    environment:
+      - VITE_EDITION=support
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.support.rule=Host(`support.quelyos.local`)"
+
+networks:
+  default:
+    name: quelyos-network

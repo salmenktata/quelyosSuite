@@ -5,6 +5,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
 import { useSessionManager } from './hooks/useSessionManager'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { useBranding } from './hooks/useBranding'
 import { CurrencyProvider } from './lib/finance/CurrencyContext'
 import { FinanceErrorBoundary } from './components/finance/FinanceErrorBoundary'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
@@ -319,6 +320,7 @@ function PosModule({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useBranding() // Appliquer branding dynamique selon édition
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>

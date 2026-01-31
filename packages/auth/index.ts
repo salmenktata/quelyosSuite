@@ -18,3 +18,7 @@ export { authLogger } from "./src/logger";
 export { authEvents, useAuthEvent } from "./src/events";
 export { authConfig } from "./src/config";
 export type { User, AuthContextType, AuthProviderProps } from "./src/types";
+
+// Token Service - JWT Management
+export { tokenService } from "./src/tokenService";
+export type { TokenState, TokenPayload } from "./src/tokenService";

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { api } from "@/lib/finance/api";
-import { GlassCard, GlassButton } from "@/components/ui/glass";
+import { GlassCard, GlassButton } from '@quelyos/ui/glass';
 import { X, AlertTriangle, Info } from "lucide-react";
 import { logger } from '@quelyos/logger';
 

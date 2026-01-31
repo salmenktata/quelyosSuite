@@ -6,7 +6,7 @@ import { ROUTES } from "@/lib/finance/compat/routes";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { GlassCard, GlassPanel } from "@/components/ui/glass";
+import { GlassCard, GlassPanel } from '@quelyos/ui/glass';
 import { ArrowLeft, Save, Loader2, AlertCircle } from "lucide-react";
 import type { CreateBudgetRequest, UpdateBudgetRequest } from "@/types/api";
 

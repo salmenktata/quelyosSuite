@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { GlassCard, GlassPanel, GlassBadge } from "@/components/ui/glass";
+import { GlassCard, GlassPanel, GlassBadge } from '@quelyos/ui/glass';
 import { ArrowLeft, TrendingDown, Calendar, DollarSign, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 

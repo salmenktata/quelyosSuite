@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Target, TrendingUp, AlertCircle, CheckCircle, Activity, Info } from "lucide-react";
 import { api } from "@/lib/finance/api";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 
 type MetricsData = {
   success: boolean;

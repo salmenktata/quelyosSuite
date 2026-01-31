@@ -13,7 +13,7 @@ import DOMPurify from 'dompurify';
 import { Plus, Edit, Trash2, ChevronDown, ChevronRight, HelpCircle, AlertCircle } from 'lucide-react';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface FAQCategory {
   id: number;

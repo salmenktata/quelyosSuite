@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { HORIZONS, type Horizon } from "@/types/forecast";
 
 interface HorizonSelectorProps {

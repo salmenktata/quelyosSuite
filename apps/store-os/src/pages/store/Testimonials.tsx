@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Quote, Star, User, AlertCircle } from 'lucide-react';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface Testimonial {
   id: number;

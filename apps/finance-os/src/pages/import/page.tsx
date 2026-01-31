@@ -24,7 +24,7 @@ import { ValidationStep } from "@/components/finance/import/ValidationStep";
 import { useImportWizard } from "@/hooks/useImportWizard";
 import { logger } from "@quelyos/logger";
 import type { StepInfo, FieldType } from "@/types/import";
-import { apiFetchJson } from "@/lib/apiFetch";
+import { apiFetchJson } from '@quelyos/api-client';
 
 const STEPS: StepInfo[] = [
   { id: "upload", label: "Téléversement", icon: Upload, completed: false },

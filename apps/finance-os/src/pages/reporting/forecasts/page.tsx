@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, Zap, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { ForecastChart } from "@/components/finance/charts/ForecastChart";

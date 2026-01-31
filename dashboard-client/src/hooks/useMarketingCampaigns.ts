@@ -211,3 +211,77 @@ export function useMarketingCampaigns() {
     error,
   };
 }
+
+/**
+ * Hook standalone pour supprimer une campagne
+ */
+export function useDeleteCampaign() {
+  const { deleteCampaign, loading, error } = useMarketingCampaigns()
+  return { deleteCampaign, loading, error }
+}
+
+/**
+ * Hook standalone pour dupliquer une campagne
+ */
+export function useDuplicateCampaign() {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const duplicateCampaign = async (campaignId: number) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const result = await api.post<{
+        success: boolean
+        campaign: MarketingCampaign
+        error?: string
+      }>(`/api/ecommerce/marketing/campaigns/${campaignId}/duplicate`, {})
+      
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la duplication')
+      }
+      
+      return result.data.campaign
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue'
+      setError(errorMsg)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { duplicateCampaign, loading, error }
+}
+
+/**
+ * Hook standalone pour créer une campagne
+ */
+export function useCreateCampaign() {
+  const { createCampaign, loading, error } = useMarketingCampaigns()
+  return { createCampaign, loading, error }
+}
+
+/**
+ * Hook standalone pour envoyer une campagne
+ */
+export function useSendCampaign() {
+  const { sendCampaign, loading, error } = useMarketingCampaigns()
+  return { sendCampaign, loading, error }
+}
+
+/**
+ * Hook standalone pour récupérer les stats d'une campagne
+ */
+export function useGetCampaignStats() {
+  const { getCampaignStats, loading, error } = useMarketingCampaigns()
+  return { getCampaignStats, loading, error }
+}
+
+/**
+ * Hook standalone pour récupérer une campagne
+ */
+export function useCampaign(campaignId: number) {
+  const { getCampaign, loading, error } = useMarketingCampaigns()
+  return { getCampaign: () => getCampaign(campaignId), loading, error }
+}

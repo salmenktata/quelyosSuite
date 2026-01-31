@@ -13,7 +13,7 @@ import DOMPurify from 'dompurify';
 import { MessageSquare, Clock, User, Send, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface Ticket {
   id: number;

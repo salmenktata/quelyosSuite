@@ -1,7 +1,7 @@
 
 
 import { useMemo } from "react";
-import { GlassCard, GlassButton } from "@/components/ui/glass";
+import { GlassCard, GlassButton } from '@quelyos/ui/glass';
 import { ChevronDown, TrendingUp, AlertTriangle, Calendar } from "lucide-react";
 import {
   BarChart,

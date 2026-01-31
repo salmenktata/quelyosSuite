@@ -19,7 +19,7 @@ import { TrendingUp, TrendingDown, Target, Sparkles, BarChart3 } from "lucide-re
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { useForecast } from "@/hooks/finance/useForecast";
-import { GlassStatCard, GlassPanel } from "@/components/ui/glass";
+import { GlassStatCard, GlassPanel } from '@quelyos/ui/glass';
 import { EventMarkers } from "@/components/finance/forecast/EventMarkers";
 import { OptimizedForecastChart } from "@/components/finance/forecast/OptimizedForecastChart";
 import WhatIfSimulator from "@/components/finance/forecast/WhatIfSimulator";

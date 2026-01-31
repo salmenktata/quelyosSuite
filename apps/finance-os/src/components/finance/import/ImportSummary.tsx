@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle, AlertTriangle, XCircle, ArrowRight } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import type { ImportSummaryProps } from "@/types/import";
 
 interface ImportErrorDetail {

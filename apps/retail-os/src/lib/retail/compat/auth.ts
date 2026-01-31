@@ -5,7 +5,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { tokenService } from '@/lib/tokenService'
+import { tokenService } from '@quelyos/auth'
 import { api } from '@/lib/api'
 
 export interface User {

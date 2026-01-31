@@ -1,45 +1,64 @@
-# Multi-stage build for Vite React production (pnpm monorepo)
-# Build context: root of monorepo
+# ============================================================================
+# DOCKERFILE MULTI-STAGE - QUELYOS ÉDITIONS
+# ============================================================================
+# Build image séparée par édition (finance, store, copilote, sales, retail, team, support)
+# Usage : docker build --build-arg EDITION=finance -t quelyos-finance:latest .
 
-# Stage 1: Builder
+# ============================================================================
+# STAGE 1 : BUILDER
+# ============================================================================
 FROM node:20-alpine AS builder
+
+# Arg pour sélectionner l'édition à builder
+ARG EDITION=full
+ENV VITE_EDITION=${EDITION}
+
 WORKDIR /app
 
-# Enable pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@9 --activate
+# Installation pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy workspace config and lockfile
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-
-# Copy all package.json files for workspace resolution
-COPY packages/ ./packages/
+# Copie des fichiers de dépendances (layer cache)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY dashboard-client/package.json ./dashboard-client/
+COPY packages/ ./packages/
 
-# Install dependencies
+# Installation dépendances
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY packages/ ./packages/
+# Copie du code source
 COPY dashboard-client/ ./dashboard-client/
 
-# Build Vite app
-ENV NODE_ENV=production
+# Build de l'édition spécifique
 WORKDIR /app/dashboard-client
-RUN pnpm build
+RUN VITE_EDITION=${EDITION} pnpm run build
 
-# Stage 2: Production with Nginx
-FROM nginx:alpine AS runner
+# ============================================================================
+# STAGE 2 : RUNNER (NGINX)
+# ============================================================================
+FROM nginx:alpine
 
-# Copy custom nginx config
-COPY dashboard-client/nginx.conf /etc/nginx/conf.d/default.conf
+# Arg pour récupérer l'édition (utilisé dans labels)
+ARG EDITION=full
 
-# Copy built assets from builder
-COPY --from=builder /app/dashboard-client/dist /usr/share/nginx/html
+# Labels Docker
+LABEL org.opencontainers.image.title="Quelyos ${EDITION}"
+LABEL org.opencontainers.image.description="Quelyos ${EDITION} Edition"
+LABEL org.opencontainers.image.vendor="Quelyos"
+LABEL edition="${EDITION}"
 
-# Add healthcheck
+# Copie des fichiers buildés depuis le builder
+COPY --from=builder /app/dashboard-client/dist-${EDITION} /usr/share/nginx/html
+
+# Configuration Nginx optimisée pour SPA
+COPY dashboard-client/nginx.conf /etc/nginx/nginx.conf
+
+# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:80/health || exit 1
+  CMD wget --quiet --tries=1 --spider http://localhost:80/ || exit 1
 
+# Exposition port 80
 EXPOSE 80
 
+# Démarrage Nginx
 CMD ["nginx", "-g", "daemon off;"]

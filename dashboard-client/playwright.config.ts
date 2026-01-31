@@ -1,56 +1,55 @@
 import { defineConfig, devices } from '@playwright/test'
 
 /**
- * Configuration Playwright pour tests E2E Quelyos Dashboard
+ * Configuration Playwright pour tests E2E Éditions
+ * @see https://playwright.dev/docs/test-configuration
  */
-
 export default defineConfig({
   testDir: './e2e',
-  timeout: 30000,
-  expect: { timeout: 10000 },
   fullyParallel: true,
+  forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-
-  reporter: [
-    ['html', { open: 'never' }],
-    ['list'],
-  ],
-
+  reporter: 'html',
+  
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5175',
+    baseURL: process.env.VITE_EDITION 
+      ? getUrlForEdition(process.env.VITE_EDITION)
+      : 'http://localhost:5175',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-    viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
-    actionTimeout: 10000,
-    navigationTimeout: 15000,
   },
 
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: 'e2e/.auth/user.json' },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'], storageState: 'e2e/.auth/user.json' },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'], storageState: 'e2e/.auth/user.json' },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:5175',
+    command: process.env.VITE_EDITION 
+      ? 'pnpm run dev:' + process.env.VITE_EDITION
+      : 'pnpm run dev',
+    url: process.env.VITE_EDITION
+      ? getUrlForEdition(process.env.VITE_EDITION)
+      : 'http://localhost:5175',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
 })
+
+function getUrlForEdition(edition: string): string {
+  const ports: Record<string, number> = {
+    finance: 3010,
+    store: 3011,
+    copilote: 3012,
+    sales: 3013,
+    retail: 3014,
+    team: 3015,
+    support: 3016,
+    full: 5175,
+  }
+  const port = ports[edition] || 5175
+  return 'http://localhost:' + port
+}

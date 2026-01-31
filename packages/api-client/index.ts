@@ -12,3 +12,7 @@ export type {
   ApiMethod,
   RequestConfig,
 } from "./src/types";
+
+// ApiFetch - HTTP Wrapper with auth & tenant headers
+export { apiFetch, apiFetchJson, apiGet, apiPost, apiPut, apiDelete } from "./src/apiFetch";
+export type { ApiFetchOptions } from "./src/apiFetch";

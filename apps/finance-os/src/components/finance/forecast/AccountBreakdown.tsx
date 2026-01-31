@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BarChart3, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import type { ForecastAccount } from "@/types/forecast";
 
 interface AccountBreakdownProps {

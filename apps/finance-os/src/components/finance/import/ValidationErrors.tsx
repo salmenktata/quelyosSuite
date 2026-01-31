@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, XCircle, AlertTriangle, Info } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import type { ValidationErrorsProps } from "@/types/import";
 
 export function ValidationErrors({

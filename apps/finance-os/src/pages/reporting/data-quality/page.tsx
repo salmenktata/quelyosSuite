@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { ReliabilityBadge } from "@/components/kpis/ReliabilityBadge";
 import { reportingClient } from "@/lib/finance/reporting";

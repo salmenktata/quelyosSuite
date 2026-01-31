@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { Award, Users, TrendingUp, Star, Gift, Truck, AlertCircle } from 'lucide-react';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
-import { apiFetchJson } from '@/lib/apiFetch';
+import { apiFetchJson } from '@quelyos/api-client';
 
 interface LoyaltyLevel {
   id: number;

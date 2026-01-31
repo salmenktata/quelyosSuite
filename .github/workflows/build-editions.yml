@@ -1,0 +1,209 @@
+name: Build Éditions Quelyos
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'dashboard-client/**'
+      - 'shared/**'
+      - '.github/workflows/build-editions.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'dashboard-client/**'
+      - 'shared/**'
+
+# Permissions minimales (security best practice)
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ==========================================================================
+  # JOB 1 : MATRIX BUILD (7 éditions en parallèle)
+  # ==========================================================================
+  build:
+    name: Build ${{ matrix.edition }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false # Continuer même si une édition échoue
+      matrix:
+        edition:
+          - finance
+          - store
+          - copilote
+          - sales
+          - retail
+          - team
+          - support
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Node.js 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Setup pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      # Cache pnpm dependencies
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Build édition
+      - name: Build ${{ matrix.edition }}
+        run: pnpm run build:${{ matrix.edition }}
+        working-directory: dashboard-client
+        env:
+          VITE_EDITION: ${{ matrix.edition }}
+
+      # Vérifier bundle size
+      - name: Check bundle size
+        run: |
+          echo "📦 Bundle size for ${{ matrix.edition }}:"
+          du -sh dist-${{ matrix.edition }}
+          echo ""
+          echo "📊 Asset sizes:"
+          ls -lh dist-${{ matrix.edition }}/assets/*.js | head -10
+        working-directory: dashboard-client
+
+      # Upload artifact (pour tests E2E ultérieurs)
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.edition }}
+          path: dashboard-client/dist-${{ matrix.edition }}
+          retention-days: 7
+
+  # ==========================================================================
+  # JOB 2 : DOCKER BUILD (multi-platform)
+  # ==========================================================================
+  docker:
+    name: Docker ${{ matrix.edition }}
+    runs-on: ubuntu-latest
+    needs: build # Attend que build réussisse
+
+    strategy:
+      fail-fast: false
+      matrix:
+        edition:
+          - finance
+          - store
+          - copilote
+          - sales
+          - retail
+          - team
+          - support
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Login GitHub Container Registry (si push activé)
+      - name: Login to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build & Push image
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: dashboard-client/Dockerfile
+          build-args: |
+            EDITION=${{ matrix.edition }}
+          tags: |
+            ghcr.io/${{ github.repository }}/quelyos-${{ matrix.edition }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}/quelyos-${{ matrix.edition }}:latest
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ==========================================================================
+  # JOB 3 : E2E TESTS (Playwright sur chaque édition)
+  # ==========================================================================
+  e2e:
+    name: E2E ${{ matrix.edition }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        edition:
+          - finance
+          - store
+          - sales
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Setup pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Download build artifact
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ matrix.edition }}
+          path: dashboard-client/dist-${{ matrix.edition }}
+
+      # Install Playwright
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      # Run E2E tests
+      - name: Run E2E tests
+        run: pnpm run test:e2e
+        working-directory: dashboard-client
+        env:
+          VITE_EDITION: ${{ matrix.edition }}
+
+      # Upload test results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.edition }}
+          path: dashboard-client/playwright-report/
+          retention-days: 7

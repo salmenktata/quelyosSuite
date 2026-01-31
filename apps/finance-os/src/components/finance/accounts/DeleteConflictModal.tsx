@@ -1,7 +1,7 @@
 
 
 import { memo, useState } from "react";
-import { GlassCard, GlassBadge, GlassListItem } from "@/components/ui/glass";
+import { GlassCard, GlassBadge, GlassListItem } from '@quelyos/ui/glass';
 import { Archive, Check } from "lucide-react";
 
 type Account = {

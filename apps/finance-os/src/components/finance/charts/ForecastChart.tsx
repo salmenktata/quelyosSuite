@@ -1,7 +1,7 @@
 
 
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from "recharts";
-import { GlassPanel } from "@/components/ui/glass";
+import { GlassPanel } from '@quelyos/ui/glass';
 import { Loader2, TrendingUp, AlertCircle } from "lucide-react";
 
 type ForecastChartProps = {

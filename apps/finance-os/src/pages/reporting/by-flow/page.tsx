@@ -5,7 +5,7 @@ import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { reportingClient, type ByFlowResponse } from "@/lib/finance/reporting";
 import { useApiData } from "@/hooks/finance/useApiData";
-import { GlassCard, GlassStatCard, GlassPanel, GlassListItem } from "@/components/ui/glass";
+import { GlassCard, GlassStatCard, GlassPanel, GlassListItem } from '@quelyos/ui/glass';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { TrendingUp, TrendingDown, Filter, Loader2, AlertCircle, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, MoreHorizontal, ChevronLeft, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Link } from "react-router-dom";

@@ -2,7 +2,7 @@
  * API client for stock/finance operations
  */
 import { API_BASE_URL } from '@/lib/api-base'
-import { tokenService } from '@/lib/tokenService'
+import { tokenService } from '@quelyos/auth'
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const token = tokenService.getAccessToken()

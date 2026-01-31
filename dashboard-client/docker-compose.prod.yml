@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  finance:
+    image: quelyos/quelyos-finance:latest
+    container_name: quelyos-finance
+    ports:
+      - "3010:80"
+    environment:
+      - VITE_EDITION=finance
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quelyos-network
+
+  team:
+    image: quelyos/quelyos-team:latest
+    container_name: quelyos-team
+    ports:
+      - "3015:80"
+    environment:
+      - VITE_EDITION=team
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+  sales:
+    image: quelyos/quelyos-sales:latest
+    container_name: quelyos-sales
+    ports:
+      - "3013:80"
+    environment:
+      - VITE_EDITION=sales
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+  store:
+    image: quelyos/quelyos-store:latest
+    container_name: quelyos-store
+    ports:
+      - "3011:80"
+    environment:
+      - VITE_EDITION=store
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+  copilote:
+    image: quelyos/quelyos-copilote:latest
+    container_name: quelyos-copilote
+    ports:
+      - "3012:80"
+    environment:
+      - VITE_EDITION=copilote
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+  retail:
+    image: quelyos/quelyos-retail:latest
+    container_name: quelyos-retail
+    ports:
+      - "3014:80"
+    environment:
+      - VITE_EDITION=retail
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+  support:
+    image: quelyos/quelyos-support:latest
+    container_name: quelyos-support
+    ports:
+      - "3016:80"
+    environment:
+      - VITE_EDITION=support
+      - VITE_API_URL=${API_URL:-https://api.quelyos.com}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quelyos-network
+
+networks:
+  quelyos-network:
+    driver: bridge

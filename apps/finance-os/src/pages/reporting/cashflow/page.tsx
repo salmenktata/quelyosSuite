@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
+import { GlassPanel, GlassCard } from '@quelyos/ui/glass';
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
 import { PageNotice } from "@/components/common";
