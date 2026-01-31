@@ -56,6 +56,7 @@ export interface ProductImage {
 export interface Category {
   id: number
   name: string
+  complete_name?: string
   parent_id?: number | null
   parent_name?: string
   children?: Category[]
@@ -76,7 +77,7 @@ export interface Order {
   amount_tax: number
   partner_id: number
   partner_name: string
-  customer?: { id: number; name: string } | null
+  customer?: { id: number; name: string; email?: string } | null
   partner_email?: string
   lines?: OrderLine[]
   created_at?: string
@@ -103,8 +104,10 @@ export interface Coupon {
   max_uses?: number
   current_uses?: number
   active: boolean
-  start_date?: string
-  end_date?: string
+  date_from?: string
+  date_to?: string
+  program_type?: string
+  trigger?: string
 }
 
 export interface Attribute {

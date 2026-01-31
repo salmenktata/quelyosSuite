@@ -19,7 +19,7 @@ interface BackendRpcResponse<T = unknown> {
  */
 export async function backendRpc<T = unknown>(
   endpoint: string,
-  params?: Record<string, any> | object
+  params?: Record<string, unknown> | object
 ): Promise<BackendRpcResponse<T>> {
   const url = `${API_URL}${endpoint}`
 

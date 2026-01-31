@@ -64,3 +64,5 @@ from . import ai_public
 from . import super_admin_ai
 # Sitemap Dynamique V3
 from . import sitemap
+from . import stock_oca
+from . import hr_oca

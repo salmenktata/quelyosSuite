@@ -15,7 +15,7 @@ export interface StockProduct {
   stock_status: 'in_stock' | 'low_stock' | 'out_of_stock'
 }
 
-export interface StockMove {
+export interface BackofficeStockMove {
   id: number
   product: {
     id: number
@@ -59,7 +59,7 @@ export interface StockTransfer {
   user_name: string | null
 }
 
-export interface StockLocation {
+export interface BackofficeStockLocation {
   id: number
   name: string
   complete_name: string

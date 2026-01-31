@@ -251,7 +251,7 @@ export default function ProductForm() {
 
     setUpdatingStock(true)
     try {
-      await api.updateProductStock(productId, newQty)
+      await api.updateProduct(productId, newQty)
       setStockQty(newQty)
       toast.success('Stock mis à jour avec succès')
     } catch {
