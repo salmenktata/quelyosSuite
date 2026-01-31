@@ -22,6 +22,7 @@ import { useToast } from '../contexts/ToastContext'
 import { TransferModal } from '../components/stock/TransferModal'
 import type { StockTransfer, TransferState } from '@/types'
 import {
+import { logger } from '@quelyos/logger';
   ArrowLeftRight,
   Plus,
   Check,
@@ -110,6 +111,7 @@ export default function StockTransfers() {
       toast.success(`Transfert ${confirmModal.transfer.name} validé`)
       setConfirmModal(null)
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la validation')
     }
   }
@@ -122,6 +124,7 @@ export default function StockTransfers() {
       toast.success(`Transfert ${confirmModal.transfer.name} annulé`)
       setConfirmModal(null)
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de l'annulation")
     }
   }

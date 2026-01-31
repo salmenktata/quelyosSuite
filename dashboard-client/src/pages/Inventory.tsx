@@ -16,6 +16,7 @@ import { Badge, Button, Breadcrumbs, Input, PageNotice } from '../components/com
 import { stockNotices } from '@/lib/notices'
 import { useToast } from '../contexts/ToastContext'
 import {
+import { logger } from '@quelyos/logger';
   ClipboardList,
   CheckCircle2,
   ArrowLeft,
@@ -63,6 +64,7 @@ export default function Inventory() {
         toast.error(result.error || 'Erreur lors de la préparation de l\'inventaire')
       }
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error('Erreur lors de la préparation de l\'inventaire')
     }
   }
@@ -109,6 +111,7 @@ export default function Inventory() {
         toast.error(result.error || 'Erreur lors de la validation de l\'inventaire')
       }
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error('Erreur lors de la validation de l\'inventaire')
     }
   }

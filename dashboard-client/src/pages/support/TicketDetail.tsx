@@ -19,6 +19,7 @@ import { useChannel } from '@/lib/websocket/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { Send, CheckCircle, MessageSquare, Clock, User, Paperclip, Upload, X, Download } from 'lucide-react'
 import type { TicketMessage } from '@quelyos/types'
+import { logger } from '@quelyos/logger';
 
 export default function TicketDetail() {
   const { id } = useParams<{ id: string }>()
@@ -65,6 +66,7 @@ export default function TicketDetail() {
       await replyMutation.mutateAsync(replyContent)
       setReplyContent('')
     } catch (_error) {
+      logger.error("Erreur:", _error);
       // Erreur gérée par le hook
     }
   }
@@ -75,6 +77,7 @@ export default function TicketDetail() {
     try {
       await closeMutation.mutateAsync()
     } catch (_error) {
+      logger.error("Erreur:", _error);
       // Erreur gérée par le hook
     }
   }
@@ -96,6 +99,7 @@ export default function TicketDetail() {
       // Reset input
       e.target.value = ''
     } catch (err) {
+      logger.error("Erreur:", err);
       setUploadError(err instanceof Error ? err.message : 'Erreur lors de l\'upload')
     }
   }
@@ -106,6 +110,7 @@ export default function TicketDetail() {
     try {
       await deleteMutation.mutateAsync(attachmentId)
     } catch (_error) {
+      logger.error("Erreur:", _error);
       // Erreur gérée par le hook
     }
   }

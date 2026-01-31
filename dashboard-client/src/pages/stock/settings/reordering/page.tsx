@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { RefreshCw, Save, Loader2,  Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 export default function ReorderingSettingsPage() {
   const toast = useToast();
@@ -23,6 +24,7 @@ export default function ReorderingSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Configuration de réapprovisionnement mise à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);

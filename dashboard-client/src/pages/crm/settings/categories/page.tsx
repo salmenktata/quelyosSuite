@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Tag, Save, Loader2, Plus, Edit2, Trash2 , Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 interface CustomerCategory {
   id: number;
@@ -31,6 +32,7 @@ export default function CategoriesSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Catégories clients mises à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);

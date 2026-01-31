@@ -30,6 +30,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import type { TicketCategory, TicketPriority } from '@quelyos/types'
+import { logger } from '@quelyos/logger';
 
 const CATEGORIES = [
   { id: 'technical' as TicketCategory, label: 'Support technique', icon: Zap, color: 'blue' },
@@ -106,6 +107,7 @@ export default function NewTicket() {
         navigate(`/support/tickets/${result.ticket.id}`)
       }
     } catch (_error) {
+      logger.error("Erreur:", _error);
       setErrors({ submit: 'Erreur lors de la création du ticket. Veuillez réessayer.' })
     }
   }

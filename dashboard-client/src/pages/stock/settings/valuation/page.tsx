@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Layers, Save, Loader2, Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 const valuationMethods = [
   { value: "fifo", label: "FIFO (Premier entré, premier sorti)", description: "Les articles les plus anciens sont vendus en premier." },
@@ -28,6 +29,7 @@ export default function ValuationSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Configuration de valorisation mise à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);

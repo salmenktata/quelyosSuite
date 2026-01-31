@@ -21,6 +21,7 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
+import { logger } from '@quelyos/logger';
 import {
   useSMSConfig,
   useUpdateSMSConfig,
@@ -94,6 +95,7 @@ export default function SMSSettingsPage() {
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration SMS enregistrée");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };
@@ -112,6 +114,7 @@ export default function SMSSettingsPage() {
       toast.success("SMS de test envoyé");
       setTestMobile("");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };

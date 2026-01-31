@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Bell, Save, Loader2, Mail, MessageSquare, AlertTriangle , Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 export default function AlertsSettingsPage() {
   const toast = useToast();
@@ -28,6 +29,7 @@ export default function AlertsSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Configuration des alertes mise à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);

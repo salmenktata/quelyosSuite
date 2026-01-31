@@ -3,6 +3,7 @@ import { Layout } from '../components/Layout'
 import { useTenants, useTenant, useUpdateTenantTheme, useUploadTenantLogo, useUploadTenantFavicon, Tenant } from '../hooks/useTenants'
 import { Button, ImageUpload, SkeletonTable } from '../components/common'
 import { useToast } from '../hooks/useToast'
+import { logger } from '@quelyos/logger';
 
 export default function Tenants() {
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null)
@@ -69,6 +70,7 @@ export default function Tenants() {
       toast.success('Thème mis à jour avec succès')
       handleCancel()
     } catch {
+      logger.error("Erreur attrapée");
       toast.error('Erreur lors de la mise à jour du thème')
     }
   }

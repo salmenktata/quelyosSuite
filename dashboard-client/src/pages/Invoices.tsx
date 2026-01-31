@@ -6,6 +6,7 @@ import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../compon
 import { crmNotices } from '@/lib/notices'
 import { FileTextIcon, DownloadIcon, MailIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { logger } from '@quelyos/logger';
 
 export default function Invoices() {
   const [page, setPage] = useState(0)
@@ -123,6 +124,7 @@ export default function Invoices() {
       await sendEmailMutation.mutateAsync(invoiceId)
       toast.success(`Facture ${invoiceName} envoyée par email`)
     } catch (err) {
+      logger.error("Erreur:", err);
       toast.error(`Erreur lors de l'envoi de la facture: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
     }
   }
@@ -132,6 +134,7 @@ export default function Invoices() {
       await downloadPDFMutation.mutateAsync({ invoiceId, invoiceName })
       toast.success(`Facture ${invoiceName} téléchargée`)
     } catch (err) {
+      logger.error("Erreur:", err);
       toast.error(`Erreur lors du téléchargement: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
     }
   }

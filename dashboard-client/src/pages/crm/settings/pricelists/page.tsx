@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { ClipboardList, Save, Loader2, Plus, Edit2, Trash2, ExternalLink , Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 interface Pricelist {
   id: number;
@@ -32,6 +33,7 @@ export default function PricelistsSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Listes de prix mises à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);

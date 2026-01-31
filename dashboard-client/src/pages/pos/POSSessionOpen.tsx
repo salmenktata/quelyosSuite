@@ -17,6 +17,7 @@ import { Breadcrumbs, Button, PageNotice } from '../../components/common'
 import { posNotices } from '../../lib/notices/pos-notices'
 import { usePOSConfigs } from '../../hooks/pos/usePOSConfigs'
 import { useOpenSession } from '../../hooks/pos/usePOSSession'
+import { logger } from '@quelyos/logger';
 
 export default function POSSessionOpen() {
   const navigate = useNavigate()
@@ -49,6 +50,7 @@ export default function POSSessionOpen() {
       // Redirect to terminal
       navigate('/pos/terminal')
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'ouverture de la session')
     }
   }

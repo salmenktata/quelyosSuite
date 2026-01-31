@@ -5,6 +5,7 @@ import { usePaymentTransactions, useRefundTransaction, PaymentTransaction } from
 import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../components/common'
 import { crmNotices } from '@/lib/notices'
 import { RefreshCw } from 'lucide-react'
+import { logger } from '@quelyos/logger';
 
 export default function Payments() {
   const [page, setPage] = useState(0)
@@ -59,6 +60,7 @@ export default function Payments() {
       alert(`Remboursement de ${formatPrice(parseFloat(refundAmount), selectedTransaction.currency)} effectué avec succès !`)
       handleCloseRefundModal()
     } catch (error) {
+      logger.error("Erreur:", error);
       alert("Erreur lors du remboursement : " + (error as Error).message)
     }
   }

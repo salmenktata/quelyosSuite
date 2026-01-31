@@ -4,6 +4,7 @@ import { Layout } from '../../components/Layout'
 import { useCustomer, useUpdateCustomer } from '../../hooks/useCustomerDetail'
 import { Badge, Button, Breadcrumbs, Skeleton, Modal } from '../../components/common'
 import { useToast } from '../../hooks/useToast'
+import { logger } from '@quelyos/logger';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>()
@@ -47,6 +48,7 @@ export default function CustomerDetail() {
       addToast('success', 'Client mis à jour avec succès')
       setIsEditModalOpen(false)
     } catch {
+      logger.error("Erreur attrapée");
       addToast('error', 'Erreur lors de la mise à jour')
     }
   }

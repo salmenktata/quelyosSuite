@@ -20,6 +20,7 @@ import {
   Briefcase,
   Package,
 } from "lucide-react";
+import { logger } from '@quelyos/logger';
 import {
   useEmailConfig,
   useUpdateEmailConfig,
@@ -106,6 +107,7 @@ export default function EmailSettingsPage() {
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration email enregistrée");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };
@@ -115,6 +117,7 @@ export default function EmailSettingsPage() {
       const result = await testMutation.mutateAsync(testEmail ? { testEmail } : undefined);
       toast.success(result.message || "Connexion réussie");
     } catch (error) {
+      logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
   };

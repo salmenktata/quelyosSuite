@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Kanban, Save, Loader2, Plus, GripVertical, Trash2, Edit2 , Info } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 interface Stage {
   id: string;
@@ -33,6 +34,7 @@ export default function StagesSettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       toast.success("Étapes du pipeline mises à jour");
     } catch {
+      logger.error("Erreur attrapée");
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setSaving(false);
