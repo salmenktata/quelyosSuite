@@ -18,7 +18,6 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-
 type Account = {
   id: number;
   name: string;
