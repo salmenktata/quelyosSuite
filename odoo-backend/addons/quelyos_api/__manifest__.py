@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.38.0',
+    'version': '19.0.1.39.0',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -15,6 +15,10 @@
         'mail',
         'sale_management',
         'stock',
+        # OCA Stock modules (Odoo Community Association)
+        'stock_inventory',
+        'stock_warehouse_calendar',
+        'stock_inventory_lockdown',
         'website',
         'website_sale',
         'product',
