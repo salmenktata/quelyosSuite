@@ -1,7 +1,9 @@
-# Commande /restart-sales - Relancer le serveur Quelyos Sales
+# Commande /restart-sales - Relancer Quelyos Sales (Édition)
 
 ## Description
-Relance le serveur de développement Vite pour Quelyos Sales (port 3013).
+Relance le serveur de développement pour l'édition Sales du système Quelyos (port 3013).
+
+**Architecture** : Système éditions unifié (dashboard-client avec VITE_EDITION=sales)
 
 ## Usage
 ```bash
@@ -16,8 +18,8 @@ Relance le serveur de développement Vite pour Quelyos Sales (port 3013).
 3. Vérifier que le port est libéré
 
 ### Étape 2 : Relancer le serveur
-1. Se placer dans le dossier `apps/sales-os/`
-2. Exécuter `pnpm dev` en arrière-plan
+1. Se placer dans le dossier `dashboard-client/`
+2. Exécuter `VITE_EDITION=sales pnpm dev` en arrière-plan
 3. Attendre que le serveur soit prêt (message "Local: http://localhost:3013/")
 4. Confirmer que le serveur est accessible
 
@@ -28,7 +30,7 @@ Relance le serveur de développement Vite pour Quelyos Sales (port 3013).
 lsof -ti:3013 | xargs kill -9 2>/dev/null || true
 
 # 2. Relancer le serveur
-cd apps/sales-os && pnpm dev
+cd dashboard-client && VITE_EDITION=sales pnpm dev
 ```
 
 ## Messages de sortie attendus
@@ -36,24 +38,41 @@ cd apps/sales-os && pnpm dev
 ### Succès
 ```
 ✅ Serveur Quelyos Sales arrêté (port 3013)
-🚀 Redémarrage du serveur Quelyos Sales...
-✅ Serveur Quelyos Sales démarré avec succès sur http://localhost:3013/
+🚀 Redémarrage édition Sales...
+✅ Édition Sales démarrée avec succès sur http://localhost:3013/
+
+📊 Édition active : Sales
+   - Modules : crm + marketing
+   - Couleur : Bleu #2563EB
+   - Build time : ~7.55s
 ```
 
 ### Erreur
 ```
-❌ Erreur lors du redémarrage de Quelyos Sales
+❌ Erreur lors du redémarrage de l'édition Sales
 💡 Solutions possibles :
-- Vérifier que le dossier apps/sales-os/ existe
+- Vérifier que le dossier dashboard-client/ existe
 - Vérifier que les dépendances sont installées (pnpm install)
 - Vérifier les logs d'erreur ci-dessus
+- Vérifier que VITE_EDITION est bien configuré
 ```
 
 ## Notes Techniques
-- **Port par défaut** : 3013 (configuré dans `vite.config.ts`)
-- **Processus** : Node.js exécutant Vite
-- **Modules ERP inclus** : crm + marketing
-- **Packages partagés** : @quelyos/ui-kit, @quelyos/api-client, @quelyos/utils
+- **Port** : 3013 (configuré dans `vite.config.ts`)
+- **Édition** : Sales (VITE_EDITION=sales)
+- **Modules inclus** : crm + marketing
+- **Branding** : Bleu #2563EB
+- **Architecture** : Système éditions (1 codebase, 8 éditions)
+- **Packages partagés** : @quelyos/ui-kit, @quelyos/api-client, @quelyos/auth
+
+## Migration
+⚠️ **Ancienne architecture** : `apps/sales-os/` (supprimé)  
+✅ **Nouvelle architecture** : `dashboard-client/` + `VITE_EDITION=sales`
+
+## Voir aussi
+- `/restart-all` — Redémarrer tous les services
+- `dashboard-client/README-EDITIONS.md` — Guide système éditions
+- `docs/EDITIONS_DEV_GUIDE.md` — Documentation développement
 
 ## Objectif
-Fournir un moyen rapide de relancer le frontend SaaS Quelyos Sales sans chercher manuellement le processus.
+Fournir un moyen rapide de relancer l'édition Sales du système Quelyos.
