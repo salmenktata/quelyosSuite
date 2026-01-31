@@ -28,7 +28,7 @@ class HRLeaveAllocation(models.Model):
     # CHAMPS ADDITIONNELS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    reference = fields.Char(
+    x_reference = fields.Char(
         string='Référence',
         readonly=True,
         copy=False,
@@ -98,7 +98,7 @@ class HRLeaveAllocation(models.Model):
         leave_type = self.holiday_status_id
         return {
             'id': self.id,
-            'reference': self.reference or '',
+            'x_reference': self.x_reference or '',
             'name': self.name,
             'employee_id': self.employee_id.id,
             'employee_name': self.employee_id.name,

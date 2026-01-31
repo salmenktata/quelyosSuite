@@ -30,7 +30,7 @@ class HRJob(models.Model):
     # CHAMPS ADDITIONNELS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    code = fields.Char(
+    x_code = fields.Char(
         string='Code',
         index=True,
         help="Code unique du poste (ex: DEV-SR, MGR-HR)"
@@ -65,7 +65,7 @@ class HRJob(models.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'code': self.code or '',
+            'x_code': self.x_code or '',
             'department_id': self.department_id.id if self.department_id else None,
             'department_name': self.department_id.name if self.department_id else None,
             'description': self.description or '',

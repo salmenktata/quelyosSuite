@@ -29,16 +29,16 @@ class HRLeave(models.Model):
     # CHAMPS ADDITIONNELS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    reference = fields.Char(
+    x_reference = fields.Char(
         string='Référence',
         readonly=True,
         copy=False,
         default='Nouveau'
     )
-    refuse_reason = fields.Text(
+    x_refuse_reason = fields.Text(
         string='Motif de refus'
     )
-    refused_date = fields.Datetime(
+    x_refused_date = fields.Datetime(
         string='Date refus'
     )
 
@@ -78,8 +78,8 @@ class HRLeave(models.Model):
     def action_refuse_with_reason(self, reason=None):
         """Refuser avec motif."""
         self.write({
-            'refuse_reason': reason,
-            'refused_date': fields.Datetime.now(),
+            'x_refuse_reason': reason,
+            'x_refused_date': fields.Datetime.now(),
         })
         return self.action_refuse()
 
@@ -93,7 +93,7 @@ class HRLeave(models.Model):
         leave_type = self.holiday_status_id
         return {
             'id': self.id,
-            'reference': self.reference or '',
+            'x_reference': self.x_reference or '',
             'name': self.name,
             'employee_id': self.employee_id.id,
             'employee_name': self.employee_id.name,
@@ -111,7 +111,7 @@ class HRLeave(models.Model):
             'manager_name': self.employee_id.parent_id.name if self.employee_id.parent_id else None,
             'first_approver': self.first_approver_id.name if self.first_approver_id else None,
             'validated_date': self.date_approve.isoformat() if hasattr(self, 'date_approve') and self.date_approve else None,
-            'refuse_reason': self.refuse_reason or '',
+            'x_refuse_reason': self.x_refuse_reason or '',
             'has_attachments': bool(self.supported_attachment_ids) if hasattr(self, 'supported_attachment_ids') else False,
         }
 

@@ -34,7 +34,7 @@ class HRDepartment(models.Model):
         for record in self:
             # Chercher un doublon
             duplicate = self.search([
-                ('code', '=', record.code),
+                ('code', '=', record.x_code),
                 ('tenant_id', '=', record.tenant_id),
                 ('id', '!=', record.id)
             ], limit=1)
@@ -52,7 +52,7 @@ class HRDepartment(models.Model):
     # CHAMPS ADDITIONNELS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    code = fields.Char(
+    x_code = fields.Char(
         string='Code',
         index=True,
         help="Code unique du département (ex: IT, RH, COMPTA)"
@@ -71,7 +71,7 @@ class HRDepartment(models.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'code': self.code or '',
+            'x_code': self.x_code or '',
             'complete_name': self.complete_name,
             'parent_id': self.parent_id.id if self.parent_id else None,
             'parent_name': self.parent_id.name if self.parent_id else None,
@@ -88,7 +88,7 @@ class HRDepartment(models.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'code': self.code or '',
+            'x_code': self.x_code or '',
             'manager': {
                 'id': self.manager_id.id,
                 'name': self.manager_id.name,
