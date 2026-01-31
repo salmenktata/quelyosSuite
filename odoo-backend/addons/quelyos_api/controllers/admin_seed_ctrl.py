@@ -105,6 +105,9 @@ class AdminSeedController(SuperAdminController):
                     status=400
                 )
 
+            # Récupérer le modèle SeedJob
+            SeedJob = request.env['quelyos.seed.job'].sudo()
+
             # Rate limiting : 1 génération / 5 minutes par tenant (DÉSACTIVÉ EN DEV)
             is_dev_tenant = tenant.domain in ['localhost', '127.0.0.1'] or _DEV_MODE
 
@@ -124,7 +127,6 @@ class AdminSeedController(SuperAdminController):
                         )
 
                 # Vérifier jobs concurrents globaux
-                SeedJob = request.env['quelyos.seed.job'].sudo()
                 running_count = SeedJob.search_count([('status', 'in', ['pending', 'running'])])
                 if running_count >= _MAX_CONCURRENT_JOBS:
                     return request.make_json_response(

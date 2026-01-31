@@ -8,6 +8,7 @@ from . import orders_ctrl
 from . import customers_ctrl
 from . import inventory_ctrl
 from . import finance_ctrl
+from . import invoices_ctrl
 from . import cart_ctrl
 from . import analytics_ctrl
 from . import delivery_payment_ctrl
