@@ -102,7 +102,7 @@ export default function MarketingCampaigns() {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            leftIcon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
+            icon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
             onClick={handleRefresh}
             disabled={isRefreshing}
           >
@@ -110,7 +110,7 @@ export default function MarketingCampaigns() {
           </Button>
           <Button
             variant="primary"
-            leftIcon={<Plus />}
+            icon={<Plus />}
             onClick={() => alert('Création campagne : modal éditeur HTML à implémenter')}
           >
             Nouvelle Campagne
@@ -215,7 +215,7 @@ export default function MarketingCampaigns() {
                         <Button
                           variant="primary"
                           size="sm"
-                          leftIcon={<Send />}
+                          icon={<Send />}
                           onClick={() => handleSend(campaign.id)}
                         >
                           Envoyer
@@ -224,7 +224,7 @@ export default function MarketingCampaigns() {
                       <Button
                         variant="secondary"
                         size="sm"
-                        leftIcon={<BarChart3 />}
+                        icon={<BarChart3 />}
                         onClick={() => alert('Stats campagne ' + campaign.id + ' : à implémenter')}
                       >
                         Stats
@@ -233,7 +233,7 @@ export default function MarketingCampaigns() {
                         <Button
                           variant="danger"
                           size="sm"
-                          leftIcon={<Trash2 />}
+                          icon={<Trash2 />}
                           onClick={() => handleDelete(campaign.id)}
                         >
                           Supprimer

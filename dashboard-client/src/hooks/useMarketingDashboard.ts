@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import type { Campaign } from './useMarketingCampaigns';
+import type { MarketingCampaign } from './useMarketingCampaigns';
 
 export interface MarketingDashboardStats {
   active_campaigns: number;
@@ -17,7 +17,7 @@ export interface MarketingDashboardStats {
 
 export interface MarketingDashboardData {
   stats: MarketingDashboardStats;
-  recent_campaigns: Campaign[];
+  recent_campaigns: MarketingCampaign[];
 }
 
 export function useMarketingDashboard() {
@@ -28,7 +28,7 @@ export function useMarketingDashboard() {
         success: boolean;
         error?: string;
         stats: MarketingDashboardStats;
-        recent_campaigns: Campaign[];
+        recent_campaigns: MarketingCampaign[];
       }>('/api/marketing/dashboard', {});
 
       if (!response.data.success) {

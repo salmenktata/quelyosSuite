@@ -7,7 +7,7 @@ export const marketingNotices: Record<string, PageNoticeConfig> = {
     title: 'Campagnes Marketing',
     purpose: "Créez, envoyez et suivez vos campagnes d'emailing marketing en exploitant les fonctionnalités natives du système (module mass_mailing). Analysez les performances (ouvertures, clics, bounces) pour optimiser vos communications.",
     icon: Mail,
-    moduleColor: 'purple',
+    moduleColor: 'pink',
     sections: [{
       title: 'Bonnes pratiques',
       icon: Lightbulb,
@@ -28,7 +28,7 @@ export const marketingNotices: Record<string, PageNoticeConfig> = {
     title: 'Listes de Diffusion',
     purpose: "Gérez vos listes de contacts marketing pour structurer vos audiences (clients, prospects, newsletter, événements). Ajoutez, retirez et segmentez vos contacts pour des campagnes ciblées.",
     icon: Users,
-    moduleColor: 'purple',
+    moduleColor: 'pink',
     sections: [{
       title: 'Bonnes pratiques',
       icon: Lightbulb,

@@ -11,7 +11,7 @@
  */
 
 import { useState } from 'react';
-import { jsonRpcRequest } from '@/lib/api';
+import { api } from '@/lib/api';
 
 export interface MarketingCampaign {
   id: number;
@@ -54,18 +54,18 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         campaigns: MarketingCampaign[];
         total_count: number;
         error?: string;
       }>('/api/ecommerce/marketing/campaigns', params);
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors du chargement des campagnes');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors du chargement des campagnes');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -79,17 +79,17 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         campaign: MarketingCampaign;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Campagne non trouvée');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Campagne non trouvée');
       }
       
-      return result.campaign;
+      return result.data.campaign;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -109,17 +109,17 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         campaign: MarketingCampaign;
         error?: string;
       }>('/api/ecommerce/marketing/campaigns/create', data);
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de la création');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la création');
       }
       
-      return result.campaign;
+      return result.data.campaign;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -133,17 +133,17 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         state: string;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}/send`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de l\'envoi');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de l envoi');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -157,17 +157,17 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         stats: CampaignStats;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}/stats`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors du chargement des stats');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors du chargement des stats');
       }
       
-      return result.stats;
+      return result.data.stats;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -181,16 +181,16 @@ export function useMarketingCampaigns() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}/delete`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de la suppression');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la suppression');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);

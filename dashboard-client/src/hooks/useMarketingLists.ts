@@ -1,5 +1,5 @@
 /**
- * Hook React pour gérer les listes de diffusion marketing (mailing.list natif Odoo 19)
+ * Hook React pour gérer les listes de diffusion marketing (mailing.list natif)
  * 
  * Endpoints :
  * - list_mailing_lists() : Liste listes de diffusion
@@ -10,7 +10,7 @@
  */
 
 import { useState } from 'react';
-import { jsonRpcRequest } from '@/lib/api';
+import { api } from '@/lib/api';
 
 export interface MailingContact {
   id: number;
@@ -40,18 +40,18 @@ export function useMarketingLists() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         mailing_lists: MailingList[];
         total_count: number;
         error?: string;
       }>('/api/ecommerce/marketing/lists', params);
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors du chargement des listes');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors du chargement des listes');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -65,17 +65,17 @@ export function useMarketingLists() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         mailing_list: MailingList;
         error?: string;
       }>(`/api/ecommerce/marketing/lists/${listId}`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Liste non trouvée');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Liste non trouvée');
       }
       
-      return result.mailing_list;
+      return result.data.mailing_list;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -92,17 +92,17 @@ export function useMarketingLists() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         mailing_list: MailingList;
         error?: string;
       }>('/api/ecommerce/marketing/lists/create', data);
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de la création');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la création');
       }
       
-      return result.mailing_list;
+      return result.data.mailing_list;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -116,17 +116,17 @@ export function useMarketingLists() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         added_count: number;
         error?: string;
       }>(`/api/ecommerce/marketing/lists/${listId}/contacts`, { contacts });
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de l\'ajout des contacts');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de l ajout des contacts');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
@@ -140,16 +140,16 @@ export function useMarketingLists() {
     setLoading(true);
     setError(null);
     try {
-      const result = await jsonRpcRequest<{
+      const result = await api.post<{
         success: boolean;
         error?: string;
       }>(`/api/ecommerce/marketing/lists/${listId}/delete`, {});
       
-      if (!result.success) {
-        throw new Error(result.error || 'Erreur lors de la suppression');
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la suppression');
       }
       
-      return result;
+      return result.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);

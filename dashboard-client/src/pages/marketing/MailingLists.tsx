@@ -94,7 +94,7 @@ export default function MailingLists() {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            leftIcon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
+            icon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
             onClick={handleRefresh}
             disabled={isRefreshing}
           >
@@ -102,7 +102,7 @@ export default function MailingLists() {
           </Button>
           <Button
             variant="primary"
-            leftIcon={<Plus />}
+            icon={<Plus />}
             onClick={() => setShowCreateModal(true)}
           >
             Nouvelle Liste
@@ -205,7 +205,7 @@ export default function MailingLists() {
                 <Button
                   variant="secondary"
                   size="sm"
-                  leftIcon={<UserPlus />}
+                  icon={<UserPlus />}
                   onClick={() => alert('Ajout contacts liste ' + list.id + ' : modal import CSV/saisie manuelle à implémenter')}
                   className="flex-1"
                 >
@@ -214,7 +214,7 @@ export default function MailingLists() {
                 <Button
                   variant="danger"
                   size="sm"
-                  leftIcon={<Trash2 />}
+                  icon={<Trash2 />}
                   onClick={() => handleDelete(list.id, list.name)}
                 >
                   Supprimer
