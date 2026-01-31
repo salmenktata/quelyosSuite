@@ -50,14 +50,6 @@
 - **PostgreSQL** : Port **5432** FIXE
 - **Redis** : Port **6379** FIXE
 
-### 7 SaaS spécialisés
-- **finance-os** : Port **3010** FIXE (Quelyos Finance)
-- **store-os** : Port **3011** FIXE (Quelyos Store)
-- **copilote-ops** : Port **3012** FIXE (Quelyos Copilote / GMAO)
-- **sales-os** : Port **3013** FIXE (Quelyos Sales / CRM)
-- **retail-os** : Port **3014** FIXE (Quelyos Retail / Omnicanal)
-- **team-os** : Port **3015** FIXE (Quelyos Team / RH)
-- **support-os** : Port **3016** FIXE (Quelyos Support / Helpdesk)
 
 **En cas de conflit de port** :
 1. ❌ NE PAS changer le port dans la config
@@ -216,7 +208,7 @@ import { ... } from 'lucide-react'  // JAMAIS heroicons
 
 **Voir** : `.claude/ROUTING_CONVENTIONS.md` pour détails complets
 
-**8 modules** : `home`, `finance`, `store`, `stock`, `crm`, `marketing`, `hr`, `pos`
+**9 modules** : `home`, `finance`, `store`, `stock`, `crm`, `marketing`, `hr`, `support`, `pos`
 
 ## Architecture
 
@@ -229,15 +221,6 @@ import { ... } from 'lucide-react'  // JAMAIS heroicons
 - `dashboard-client/` : React + Vite (ERP Complet / Full Suite : 5175)
 - `super-admin-client/` : React + Vite (Admin SaaS : 9000)
 
-### 7 SaaS spécialisés (frontends dédiés)
-- `apps/finance-os/` : Quelyos Finance (:3010) — module `finance`
-- `apps/store-os/` : Quelyos Store (:3011) — modules `store` + `marketing`
-- `apps/copilote-ops/` : Quelyos Copilote (:3012) — modules `stock` + GMAO + `hr`
-- `apps/sales-os/` : Quelyos Sales (:3013) — modules `crm` + `marketing`
-- `apps/retail-os/` : Quelyos Retail (:3014) — modules `pos` + `store` + `stock`
-- `apps/team-os/` : Quelyos Team (:3015) — module `hr`
-- `apps/support-os/` : Quelyos Support (:3016) — modules `support` + `crm`
-
 ### Packages partagés (monorepo Turborepo)
 - `packages/ui-kit/` : @quelyos/ui-kit (composants React partagés)
 - `packages/api-client/` : @quelyos/api-client (client API partagé)
@@ -245,7 +228,6 @@ import { ... } from 'lucide-react'  // JAMAIS heroicons
 - `packages/logger/` : @quelyos/logger (existant)
 
 Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour détails complets.
-Voir [docs/QUELYOS_SUITE_7_SAAS_PLAN.md](docs/QUELYOS_SUITE_7_SAAS_PLAN.md) pour le plan stratégique 7 SaaS.
 
 ## Guides détaillés
 Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, parité Odoo.
@@ -285,11 +267,11 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 **Si un module Quelyos casse une fonctionnalité Odoo standard = BUG CRITIQUE P0**
 
 ## 🔒🔒🔒 ANONYMISATION ODOO - PRIORITÉ MAXIMALE
-**OBJECTIF CRITIQUE** : Masquer **TOUTE** trace d'Odoo dans **TOUS** les frontends et SaaS. AUCUN utilisateur final ne doit jamais savoir que le backend est Odoo.
+**OBJECTIF CRITIQUE** : Masquer **TOUTE** trace d'Odoo dans **TOUS** les frontends. AUCUN utilisateur final ne doit jamais savoir que le backend est Odoo.
 
-**Périmètre** : vitrine-client, dashboard-client, vitrine-quelyos, super-admin-client, **ET TOUS les 7 SaaS** (apps/finance-os, apps/store-os, apps/copilote-ops, apps/sales-os, apps/retail-os, apps/team-os, apps/support-os)
+**Périmètre** : vitrine-client, dashboard-client, vitrine-quelyos, super-admin-client
 
-**Raison stratégique** : Les 7 SaaS Quelyos sont vendus comme des solutions propriétaires. Toute fuite "Odoo" dans l'UI, le code client, les URLs ou les messages d'erreur compromettrait le positionnement commercial.
+**Raison stratégique** : Quelyos Suite est vendue comme une solution propriétaire. Toute fuite "Odoo" dans l'UI, le code client, les URLs ou les messages d'erreur compromettrait le positionnement commercial.
 
 ### ⚠️ RÈGLE ABSOLUE - À RESPECTER LORS DE L'ÉCRITURE DU CODE
 **JAMAIS écrire "Odoo" ou "odoo" dans** :
@@ -362,7 +344,7 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 - ❌ `"technologie Odoo"` → ✅ `"technologie open-source"`
 
 ### Packages partagés (@quelyos/*)
-**Critique** : Les packages partagés sont utilisés par TOUS les SaaS. Toute référence Odoo dans un package se propage à 7+ apps.
+**Critique** : Les packages partagés sont utilisés par tous les frontends.
 - ❌ `packages/api-client/src/odoo.ts` → ✅ `packages/api-client/src/client.ts`
 - ❌ `OdooApiClient` → ✅ `ApiClient`
 - ❌ Commentaire `// Odoo XML-RPC` → ✅ `// Backend API`
@@ -370,7 +352,6 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 ### Vérification
 **OBLIGATOIRE** : Lancer `/no-odoo` **AVANT chaque commit** pour vérifier conformité dans :
 - vitrine-client, dashboard-client, vitrine-quelyos, super-admin-client
-- **Tous les 7 SaaS** : apps/finance-os, apps/store-os, apps/copilote-ops, apps/sales-os, apps/retail-os, apps/team-os, apps/support-os
 - **Packages partagés** : packages/ui-kit, packages/api-client, packages/utils
 
 **Tolérance ZÉRO** : Tout mot "Odoo"/"odoo"/"OCA"/"OpenERP" dans le code client = bug CRITIQUE à corriger immédiatement.
@@ -378,111 +359,20 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 ## Commandes disponibles
 **DevOps** : `/ship`, `/commit`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`
 **Odoo** : `/upgrade-odoo`, `/restart-odoo`, `/restart-backoffice`, `/restart-vitrine`, `/restart-ecommerce`, `/restart-all`
-**SaaS** : `/restart-finance`, `/restart-store`, `/restart-copilote`, `/restart-sales`, `/restart-retail`, `/restart-team`, `/restart-support`
-**Qualité** : `/polish`, `/parity`, `/coherence`, `/clean`, `/analyze-page`, `/docs`, `/uiux`, `/saas-parity`
+**Qualité** : `/polish`, `/parity`, `/coherence`, `/clean`, `/analyze-page`, `/docs`, `/uiux`
 **Architecture** : `/architect` (analyse architecture), `/leverage` (capitalisation sur existant Odoo vs custom), `/no-odoo` (anonymisation)
 **Développement** : `/evolve` (analyse holistique + développement feature : réflexion, technique, contexte, perspective, amélioration)
 **E-commerce** : `/ecommerce` (audit exploitation Backoffice + roadmap évolutions 2026)
 
-## 🧩 CRÉATION PAGES SAAS - RÈGLES SPÉCIFIQUES
-**Quand on crée/modifie une page dans un SaaS (apps/*)** :
-1. **Toujours** importer depuis `@quelyos/ui-kit` (pas de copie locale)
-2. **Toujours** importer depuis `@quelyos/api-client` (pas de client API local)
-3. **Respecter** le branding du SaaS (`src/config/branding.ts`)
-4. **Vérifier** que la page existe dans `dashboard-client` (source de vérité)
-5. **Ne jamais** ajouter de fonctionnalité à un SaaS qui n'existe pas dans le ERP complet
-
-
-## 🔄 CORRECTIONS CROSS-SAAS - PROPAGATION OBLIGATOIRE
-**RÈGLE ABSOLUE** : À chaque correction de bug dans un SaaS, TOUJOURS vérifier et corriger les 6 autres SaaS si applicable.
-
-**Principe** : Les 7 SaaS partagent une architecture commune. Un bug dans `store-os` existe probablement dans `finance-os`, `sales-os`, `retail-os`, `team-os`, `support-os`, `copilote-ops`.
-
-### Fichiers à vérifier systématiquement
-**Après correction dans `apps/[saas-name]/src/`, TOUJOURS vérifier** :
-
-| Fichier corrigé | SaaS à vérifier |
-|----------------|-----------------|
-| `lib/*/compat/auth.ts` | **TOUS les 7 SaaS** (authentification commune) |
-| `lib/api.ts` | **TOUS les 7 SaaS** (client API commun) |
-| `lib/tokenService.ts` | **TOUS les 7 SaaS** (gestion tokens JWT) |
-| `main.tsx` | **TOUS les 7 SaaS** (point d'entrée React) |
-| `pages/Login.tsx` | **TOUS les 7 SaaS** (page login commune) |
-| `vite.config.ts` | **TOUS les 7 SaaS** (config build) |
-| `hooks/use*.ts` | SaaS avec modules similaires |
-| `components/common/*` | SaaS avec modules similaires |
-
-### Processus obligatoire
-**À chaque correction de bug** :
-1. ✅ Corriger le bug dans le SaaS actuel
-2. ✅ Identifier le fichier/pattern corrigé
-3. ✅ **Utiliser Grep** : `grep -r "pattern_problématique" apps/*/src/` pour trouver occurrences
-4. ✅ **Corriger tous les SaaS** concernés en une seule passe
-5. ✅ Vérifier que la correction compile partout (`pnpm build --filter=@quelyos/*`)
-6. ✅ Mentionner dans le commit : "fix(cross-saas): [description] — 7 SaaS"
-
-### Exemples concrets
-
-#### Exemple 1 : Virgule mal placée dans auth.ts (bug actuel)
-```bash
-# ❌ MAUVAIS - Corriger uniquement store-os
-sed -i '' 's/!!user \/\//!!user, \/\//' apps/store-os/src/lib/store/compat/auth.ts
-
-# ✅ BON - Corriger TOUS les SaaS
-for saas in finance-os store-os copilote-ops sales-os retail-os team-os support-os; do
-  sed -i '' 's/!!user \/\//!!user, \/\//' apps/$saas/src/lib/*/compat/auth.ts
-done
-```
-
-#### Exemple 2 : useEffect avec deps manquantes
-```bash
-# Après correction dans retail-os, vérifier les autres
-grep -r "useEffect.*fetchData" apps/*/src/hooks/
-# Corriger toutes les occurrences trouvées
-```
-
-#### Exemple 3 : Import manquant
-```bash
-# Si ajout d'import dans sales-os
-grep -r "from '@/lib/api'" apps/*/src/pages/Login.tsx
-# Vérifier cohérence des imports partout
-```
-
-### Modules partagés entre SaaS
-| Module | SaaS concernés |
-|--------|---------------|
-| `store` | store-os, retail-os |
-| `marketing` | store-os, sales-os |
-| `crm` | sales-os, support-os |
-| `stock` | copilote-ops, retail-os |
-| `hr` | copilote-ops, team-os |
-| `pos` | retail-os |
-| `finance` | finance-os |
-| `support` | support-os |
-
-**Correction dans un hook de module** → Vérifier les SaaS qui partagent ce module.
-
-### Tolérance ZÉRO
-- ❌ Ne JAMAIS corriger un seul SaaS et ignorer les autres
-- ❌ Ne JAMAIS attendre qu'un utilisateur signale le même bug ailleurs
-- ✅ TOUJOURS penser "correction = propagation cross-SaaS"
-- ✅ TOUJOURS utiliser `grep` pour détecter patterns similaires
-
-**Cette règle évite** :
-- Bugs identiques dans plusieurs SaaS
-- Incohérences d'implémentation
-- Maintenance technique corrective répétitive
-- Expérience utilisateur dégradée sur certains SaaS
 ## Essentiels
 1. Lire [README.md](README.md) (présentation) et [README-DEV.md](README-DEV.md) (détails techniques Odoo), [ARCHITECTURE.md](ARCHITECTURE.md) et [LOGME.md](docs/LOGME.md) en début de session
-2. Lire [docs/QUELYOS_SUITE_7_SAAS_PLAN.md](docs/QUELYOS_SUITE_7_SAAS_PLAN.md) pour le contexte stratégique
-3. Utiliser scripts `./scripts/dev-start.sh all` et `./scripts/dev-stop.sh all`
-4. Lire code avant modification
-5. Modifications minimales
-6. Alerter avant modif structurelle Odoo
-7. Logger sécurisé (`@quelyos/logger` au lieu de `console.log`)
-8. Tailwind + Zod uniquement
-9. Composants partagés via `@quelyos/ui-kit` (pas de duplication entre SaaS)
+2. Utiliser scripts `./scripts/dev-start.sh all` et `./scripts/dev-stop.sh all`
+3. Lire code avant modification
+4. Modifications minimales
+5. Alerter avant modif structurelle Odoo
+6. Logger sécurisé (`@quelyos/logger` au lieu de `console.log`)
+7. Tailwind + Zod uniquement
+8. Composants partagés via `@quelyos/ui-kit`
 
 ## 🔧 DÉVELOPPEMENT MODULES ODOO - CHECKLIST OBLIGATOIRE
 

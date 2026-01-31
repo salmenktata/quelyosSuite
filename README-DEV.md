@@ -1,22 +1,21 @@
 # Quelyos Suite
 
-Suite de **7 SaaS spécialisés** partageant un backend unique Odoo 19 Community.
+Suite ERP modulaire partageant un backend unique Odoo 19 Community.
 
 ## Vision
 
-Transformer un ERP monolithique en **suite de SaaS ciblés** : chaque SaaS = package transparent de 1-3 modules avec frontend dédié, branding propre et pricing indépendant. Le tout propulsé par un backend unique (101 modèles, 764 endpoints API).
+ERP modulaire moderne avec backend Odoo 19 puissant (101 modèles, 764 endpoints API) et frontends spécialisés.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│   1 BACKEND UNIQUE (Odoo 19 + PostgreSQL + Redis)            │
+│   BACKEND UNIQUE (Odoo 19 + PostgreSQL + Redis)              │
 │   101 modèles · 764 endpoints API · Multi-tenant             │
 └──────────────────────────┬───────────────────────────────────┘
                            │ REST API
-    ┌──────┬──────┬────────┼────────┬──────┬──────┬──────┐
-    │      │      │        │        │      │      │      │
-  Finance Store Copilote Sales  Retail  Team Support  ERP
-   OS      OS    Ops      OS     OS     OS    OS    Complet
-  :3010  :3011  :3012   :3013  :3014  :3015 :3016  :5175
+    ┌──────────────┬───────┴────────┬──────────────┐
+    │              │                │              │
+  Vitrine      E-commerce      ERP Complet    Super Admin
+  :3000          :3001            :5175          :9000
 ```
 
 ## Structure
@@ -26,15 +25,6 @@ vitrine-quelyos/       → Next.js 14 (site marketing : 3000)
 vitrine-client/        → Next.js 16 (boutique e-commerce : 3001)
 dashboard-client/      → React 19 + Vite (ERP Complet / Full Suite : 5175)
 super-admin-client/    → React + Vite (Admin SaaS : 9000)
-
-apps/                  → 7 SaaS spécialisés (frontends dédiés)
-  ├── finance-os/      → Quelyos Finance (:3010)
-  ├── store-os/        → Quelyos Store (:3011)
-  ├── copilote-ops/    → Quelyos Copilote (:3012)
-  ├── sales-os/        → Quelyos Sales (:3013)
-  ├── retail-os/       → Quelyos Retail (:3014)
-  ├── team-os/         → Quelyos Team (:3015)
-  └── support-os/      → Quelyos Support (:3016)
 
 packages/              → Packages partagés (monorepo Turborepo)
   ├── ui-kit/          → @quelyos/ui-kit (composants React)
@@ -50,7 +40,6 @@ scripts/               → Scripts de gestion (dev-start.sh, dev-stop.sh)
 ```
 
 **Voir [ARCHITECTURE.md](ARCHITECTURE.md)** pour la documentation complète.
-**Voir [docs/QUELYOS_SUITE_7_SAAS_PLAN.md](docs/QUELYOS_SUITE_7_SAAS_PLAN.md)** pour le plan stratégique 7 SaaS.
 
 ## Stack
 

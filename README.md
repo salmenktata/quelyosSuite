@@ -1,46 +1,37 @@
 # Quelyos Suite
 
-Suite de **7 SaaS spécialisés** partageant un backend ERP unique et puissant.
+Suite ERP modulaire avec backend unique et puissant.
 
 ## Vision
 
-Transformer un ERP monolithique en **suite de SaaS ciblés** : chaque SaaS = package transparent de 1-3 modules avec frontend dédié, branding propre et pricing indépendant. Le tout propulsé par un backend unique (101 modèles, 764 endpoints API).
+ERP modulaire et moderne avec backend puissant (101 modèles, 764 endpoints API) et frontends spécialisés pour chaque usage.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│   1 BACKEND UNIQUE (ERP + PostgreSQL + Redis)                │
+│   BACKEND UNIQUE (ERP + PostgreSQL + Redis)                  │
 │   101 modèles · 764 endpoints API · Multi-tenant             │
 └──────────────────────────┬───────────────────────────────────┘
                            │ REST API
-    ┌──────┬──────┬────────┼────────┬──────┬──────┬──────┐
-    │      │      │        │        │      │      │      │
-  Finance Store Copilote Sales  Retail  Team Support  ERP
-   OS      OS    Ops      OS     OS     OS    OS    Complet
-  :3010  :3011  :3012   :3013  :3014  :3015 :3016  :5175
+    ┌──────────────┬───────┴────────┬──────────────┐
+    │              │                │              │
+  Vitrine      E-commerce      ERP Complet    Super Admin
+  :3000          :3001            :5175          :9000
 ```
 
 ## Produits
 
-### 🏢 7 SaaS Spécialisés
+### 🎯 ERP Complet
 
-| Produit | Description | Modules | Port |
-|---------|-------------|---------|------|
-| **Quelyos Finance** | Gestion financière complète | Finance | 3010 |
-| **Quelyos Store** | E-commerce & Marketing | Store + Marketing | 3011 |
-| **Quelyos Copilote** | GMAO & Gestion Stock | Stock + GMAO + RH | 3012 |
-| **Quelyos Sales** | CRM & Gestion Commerciale | CRM + Marketing | 3013 |
-| **Quelyos Retail** | Point de Vente Omnicanal | POS + Store + Stock | 3014 |
-| **Quelyos Team** | Gestion des Ressources Humaines | RH | 3015 |
-| **Quelyos Support** | Helpdesk & Support Client | Support + CRM | 3016 |
-
-### 🎯 Backoffice Complet
-
-**Dashboard ERP** (port 5175) : Interface complète d'administration avec tous les modules accessibles.
+**Dashboard ERP** (port 5175) : Interface complète d'administration avec 9 modules intégrés (Finance, Store, Stock, CRM, Marketing, RH, Support, POS, Accueil).
 
 ### 🌐 Sites Publics
 
 - **Site Vitrine** (port 3000) : Site marketing Quelyos
 - **E-commerce** (port 3001) : Boutique en ligne client
+
+### 🔧 Administration
+
+- **Super Admin** (port 9000) : Gestion multi-tenant et administration SaaS
 
 ## Structure Technique
 
@@ -50,22 +41,13 @@ vitrine-client/        → Next.js 16 (boutique e-commerce : 3001)
 dashboard-client/      → React 19 + Vite (ERP Complet : 5175)
 super-admin-client/    → React + Vite (Admin SaaS : 9000)
 
-apps/                  → 7 SaaS spécialisés
-  ├── finance-os/      → Quelyos Finance (:3010)
-  ├── store-os/        → Quelyos Store (:3011)
-  ├── copilote-ops/    → Quelyos Copilote (:3012)
-  ├── sales-os/        → Quelyos Sales (:3013)
-  ├── retail-os/       → Quelyos Retail (:3014)
-  ├── team-os/         → Quelyos Team (:3015)
-  └── support-os/      → Quelyos Support (:3016)
-
 packages/              → Packages partagés (monorepo Turborepo)
   ├── ui-kit/          → Composants React partagés
   ├── api-client/      → Client API partagé
   ├── utils/           → Utilitaires communs
   └── logger/          → Système de logs
 
-backend/               → Backend ERP (API REST : 8069)
+odoo-backend/          → Backend ERP (API REST : 8069)
 scripts/               → Scripts de gestion (dev-start.sh, dev-stop.sh)
 ```
 
@@ -106,14 +88,8 @@ pnpm install
 |---------|-----|--------------|
 | **Site Vitrine** | http://localhost:3000 | - |
 | **E-commerce** | http://localhost:3001 | - |
-| **Backoffice** | http://localhost:5175 | admin / admin |
-| **Finance OS** | http://localhost:3010 | admin / admin |
-| **Store OS** | http://localhost:3011 | admin / admin |
-| **Copilote Ops** | http://localhost:3012 | admin / admin |
-| **Sales OS** | http://localhost:3013 | admin / admin |
-| **Retail OS** | http://localhost:3014 | admin / admin |
-| **Team OS** | http://localhost:3015 | admin / admin |
-| **Support OS** | http://localhost:3016 | admin / admin |
+| **ERP Complet** | http://localhost:5175 | admin / admin |
+| **Super Admin** | http://localhost:9000 | admin / admin |
 | **Backend API** | http://localhost:8069 | admin / admin |
 
 ### Gestion des Services
@@ -127,7 +103,6 @@ pnpm install
 
 - **[README-DEV.md](README-DEV.md)** - Documentation technique détaillée (développeurs)
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture système complète
-- **[docs/QUELYOS_SUITE_7_SAAS_PLAN.md](docs/QUELYOS_SUITE_7_SAAS_PLAN.md)** - Plan stratégique 7 SaaS
 - **[.claude/](/.claude/)** - Guides développeur et conventions
 
 ## Fonctionnalités Clés
@@ -231,12 +206,13 @@ pnpm build                  # Build de production
 pnpm test                   # Suite de tests
 
 # Gestion services
-./scripts/dev-start.sh all  # Tous les services
-./scripts/dev-start.sh finance  # Service spécifique
-./scripts/dev-stop.sh all   # Arrêter tous
+./scripts/dev-start.sh all        # Tous les services
+./scripts/dev-start.sh backend    # Backend uniquement
+./scripts/dev-start.sh backoffice # ERP complet
+./scripts/dev-stop.sh all         # Arrêter tous
 
 # Backend
-cd backend && docker-compose up -d
+cd odoo-backend && docker-compose up -d
 ```
 
 ### Conventions de Code

@@ -1,42 +1,36 @@
-# Apps - 7 SaaS Spécialisés Quelyos Suite
+# Apps - Éditions Quelyos Suite (Template)
 
-Ce dossier contient les **7 frontends SaaS spécialisés** partageant le backend unique Odoo 19.
+Ce dossier est prévu pour contenir les **frontends d'éditions spécialisées** Quelyos Suite. Actuellement, seul un template de référence existe.
 
-## 📦 Architecture
+## 📦 Architecture Prévue
 
-Chaque SaaS = **frontend dédié** consommant **sous-ensemble de modules** du backend.
+Chaque édition = **frontend dédié** consommant **sous-ensemble de modules** du backend unique.
 
-## 🎯 Les 7 SaaS
+## 🏗️ État Actuel
 
-| SaaS | Port | Modules | Cible | Réutilisation |
-|------|------|---------|-------|---------------|
-| **Finance** | 3010 | finance | TPE/PME, DAF | 85% |
-| **Store** | 3011 | store + marketing | E-commerce | 80% |
-| **Copilote** | 3012 | stock + GMAO + hr | PME industrie | 40% |
-| **Sales** | 3013 | crm + marketing | Commercial | 70% |
-| **Retail** | 3014 | pos + store + stock | Retail | 75% |
-| **Team** | 3015 | hr | RH | 90% |
-| **Support** | 3016 | support + crm | Helpdesk | 65% |
-
-## 🚀 Démarrage
-
-```bash
-# Installation
-pnpm install
-
-# Lancer un SaaS
-pnpm --filter finance-os dev     # Port 3010
-./scripts/dev-start.sh finance   # Alternative
 ```
+apps/
+  └── _template/      → Template de référence pour futures éditions
+```
+
+**Note** : Les éditions spécialisées ne sont pas encore implémentées. L'ERP complet accessible via `dashboard-client` (port 5175) contient tous les 9 modules.
+
+## 🎯 Système d'Éditions
+
+Le système d'éditions existe dans `dashboard-client/src/config/editions.ts` et permet de configurer quels modules sont accessibles par édition.
+
+**Édition actuelle** : `full` (tous les modules activés)
 
 ## 🧩 Packages Partagés
 
+Les packages sont prêts pour être utilisés par de futures éditions :
+
 - `@quelyos/ui-kit` - Composants React
-- `@quelyos/api-client` - Client API Odoo
+- `@quelyos/api-client` - Client API
 - `@quelyos/utils` - Helpers
 - `@quelyos/logger` - Logger sécurisé
 
-## 📝 Conventions
+## 📝 Conventions Futures
 
 **Règle d'or** : ERP Complet (dashboard-client) = source de vérité
 - Toujours vérifier si fonctionnalité existe dans ERP Complet
@@ -45,8 +39,8 @@ pnpm --filter finance-os dev     # Port 3010
 
 ## 🔗 Ressources
 
-- [Documentation 7 SaaS](../docs/QUELYOS_SUITE_7_SAAS_PLAN.md)
 - [Architecture](../ARCHITECTURE.md)
 - [Conventions API](../.claude/API_CONVENTIONS.md)
+- [Guide Éditions](../dashboard-client/README-EDITIONS.md)
 
-**Version** : 1.0.0-alpha | **Mise à jour** : 2026-01-31
+**Version** : 1.0.0 | **Mise à jour** : 2026-01-31

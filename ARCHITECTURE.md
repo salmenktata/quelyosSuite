@@ -2,14 +2,14 @@
 
 ## Vision
 
-Quelyos Suite = **7 SaaS sp&eacute;cialis&eacute;s** partageant un **backend unique Odoo 19**. Chaque SaaS est un package transparent de 1 a 3 modules avec frontend dédié, branding propre et pricing indépendant.
+Quelyos Suite = ERP modulaire partageant un **backend unique Odoo 19** avec frontends spécialisés pour chaque usage.
 
 ## Vue d'ensemble
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │       SITE VITRINE (vitrine-quelyos) - Next.js 14 - :3000   │
-│       Marketing, Landing Pages SaaS, Finance Login           │
+│       Marketing, Landing Pages, Login                        │
 ├──────────────────────────────────────────────────────────────┤
 │       BOUTIQUE E-COMMERCE (vitrine-client) - Next.js 16 - :3001
 │       Catalogue, Panier, Commandes client final              │
@@ -21,28 +21,14 @@ Quelyos Suite = **7 SaaS sp&eacute;cialis&eacute;s** partageant un **backend uni
 │ ERP COMPLET          │   │  SUPER ADMIN GLOBAL              │
 │ (dashboard-client)   │   │  (super-admin-client)            │
 │ Port 5175            │   │  Port 9000                       │
-│ Full Suite (8 modules│   │  Admin SaaS, Tenants, Billing    │
+│ Full Suite (9 modules│   │  Admin SaaS, Tenants, Billing    │
 └───┬──────────────────┘   └──────────────────────────┬──────┘
-    │                                                 │
-    │   ┌─────────────────────────────────────────┐   │
-    │   │        7 SaaS SPÉCIALISÉS               │   │
-    │   │                                         │   │
-    │   │  Quelyos Finance (:3010)  · Quelyos Store (:3011) │   │
-    │   │  Quelyos Copilote (:3012)· Quelyos Sales (:3013) │   │
-    │   │  Quelyos Retail (:3014)   · Quelyos Team (:3015)  │   │
-    │   │  Quelyos Support (:3016)                     │   │
-    │   │                                         │   │
-    │   │  Chaque SaaS = subset de modules ERP    │   │
-    │   │  Frontend dédié + branding propre        │   │
-    │   └────────────────────┬────────────────────┘   │
-    │                        │                        │
-    └────────────┬───────────┴────────────┬───────────┘
-                 │        API REST        │
-┌────────────────┴────────────────────────┴────────────────────┐
-│         BACKEND UNIQUE (odoo-backend)                         │
-│         Odoo 19 Community - Port 8069                         │
-│         101 modèles · 764 endpoints · Multi-tenant            │
-│         PostgreSQL (5432) + Redis (6379)                       │
+    │                        API REST                  │
+┌───┴──────────────────────────────────────────────────┴──────┐
+│         BACKEND UNIQUE (odoo-backend)                        │
+│         Odoo 19 Community - Port 8069                        │
+│         101 modèles · 764 endpoints · Multi-tenant           │
+│         PostgreSQL (5432) + Redis (6379)                     │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -61,31 +47,25 @@ Quelyos Suite = **7 SaaS sp&eacute;cialis&eacute;s** partageant un **backend uni
 | **PostgreSQL** | Docker | 5432 | localhost:5432 | Base de données principale |
 | **Redis** | Docker | 6379 | localhost:6379 | Cache et sessions |
 
-### 7 SaaS spécialisés (à déployer)
+### Modules ERP
 
-| SaaS | Répertoire | Port | Modules ERP | Cible |
-|------|-----------|------|-------------|-------|
-| **Quelyos Finance** | `apps/finance-os/` | 3010 | finance | TPE/PME, DAF, comptables |
-| **Quelyos Store** | `apps/store-os/` | 3011 | store + marketing | E-commerçants, D2C |
-| **Quelyos Copilote** | `apps/copilote-ops/` | 3012 | stock + GMAO + hr | PME industrielles |
-| **Quelyos Sales** | `apps/sales-os/` | 3013 | crm + marketing | Equipes commerciales |
-| **Quelyos Retail** | `apps/retail-os/` | 3014 | pos + store + stock | Retailers, franchises |
-| **Quelyos Team** | `apps/team-os/` | 3015 | hr | PME, startups, RH |
-| **Quelyos Support** | `apps/support-os/` | 3016 | support + crm | SaaS, helpdesk |
-
-### Relation ERP Complet vs SaaS
-
-- **dashboard-client (port 5175)** = ERP complet = **Full Suite** (tous les 8 modules intégrés)
-- **7 SaaS** = frontends allégés qui consomment le **même backend Odoo**
-- Un client Full Suite utilise dashboard-client
-- Un client Quelyos Finance utilise uniquement apps/finance-os/ (même API backend)
+**dashboard-client (port 5175)** = ERP complet = **Full Suite** avec 9 modules intégrés :
+- home (Accueil)
+- finance (Finance)
+- store (Boutique)
+- stock (Stock/Inventaire)
+- crm (CRM)
+- marketing (Marketing)
+- hr (Ressources Humaines)
+- support (Support/Helpdesk)
+- pos (Point de Vente)
 
 ## Démarrage des Services
 
 ### Méthode 1 : Script global (recommandé)
 
 ```bash
-# Démarrer tous les services (ERP + existants)
+# Démarrer tous les services
 ./scripts/dev-start.sh all
 
 # Démarrer individuellement
@@ -95,15 +75,6 @@ Quelyos Suite = **7 SaaS sp&eacute;cialis&eacute;s** partageant un **backend uni
 ./scripts/dev-start.sh ecommerce    # Boutique (3001)
 ./scripts/dev-start.sh superadmin   # Super Admin (9000)
 
-# Démarrer un SaaS spécifique
-./scripts/dev-start.sh finance      # Quelyos Finance (3010)
-./scripts/dev-start.sh store        # Quelyos Store (3011)
-./scripts/dev-start.sh copilote     # Quelyos Copilote (3012)
-./scripts/dev-start.sh sales        # Quelyos Sales (3013)
-./scripts/dev-start.sh retail       # Quelyos Retail (3014)
-./scripts/dev-start.sh team         # Quelyos Team (3015)
-./scripts/dev-start.sh support      # Quelyos Support (3016)
-
 # Arrêter tous les services
 ./scripts/dev-stop.sh all
 ```
@@ -111,21 +82,11 @@ Quelyos Suite = **7 SaaS sp&eacute;cialis&eacute;s** partageant un **backend uni
 ### Méthode 2 : Commande Claude Code
 
 ```bash
-# Services existants
 /restart-all          # Relancer tous les services
 /restart-odoo         # Backend Odoo
 /restart-backoffice   # ERP complet (dashboard-client)
 /restart-vitrine      # Site marketing
 /restart-ecommerce    # Boutique e-commerce
-
-# SaaS spécialisés
-/restart-finance      # Quelyos Finance (3010)
-/restart-store        # Quelyos Store (3011)
-/restart-copilote     # Quelyos Copilote (3012)
-/restart-sales        # Quelyos Sales (3013)
-/restart-retail       # Quelyos Retail (3014)
-/restart-team         # Quelyos Team (3015)
-/restart-support      # Quelyos Support (3016)
 ```
 
 ### Méthode 3 : Manuel
@@ -145,11 +106,6 @@ cd vitrine-client && pnpm dev
 
 # Super Admin
 cd super-admin-client && pnpm dev
-
-# SaaS (quand disponibles)
-cd apps/finance-os && pnpm dev     # Quelyos Finance
-cd apps/store-os && pnpm dev       # Quelyos Store
-cd apps/copilote-ops && pnpm dev   # Quelyos Copilote
 ```
 
 ## Dépendances entre Services
@@ -159,68 +115,38 @@ Backend Odoo (8069) ─┐
                      ├─→ ERP Complet / Full Suite (5175)
                      ├─→ Site Vitrine (3000)
                      ├─→ E-commerce (3001)
-                     ├─→ Super Admin (9000)
-                     │
-                     ├─→ Quelyos Finance (3010)
-                     ├─→ Quelyos Store (3011)
-                     ├─→ Quelyos Copilote (3012)
-                     ├─→ Quelyos Sales (3013)
-                     ├─→ Quelyos Retail (3014)
-                     ├─→ Quelyos Team (3015)
-                     └─→ Quelyos Support (3016)
+                     └─→ Super Admin (9000)
 ```
 
 - **Le backend doit démarrer en premier** (tous les frontends en dépendent)
-- Les frontends (existants + SaaS) peuvent démarrer en parallèle une fois le backend prêt
-- Les 7 SaaS et le dashboard-client utilisent les **mêmes endpoints API** du backend
+- Les frontends peuvent démarrer en parallèle une fois le backend prêt
+- Tous les frontends utilisent les **mêmes endpoints API** du backend
 - Temps de démarrage : Backend (~30s), Frontends (~5-10s chacun)
 
-## IMPORTANT : Dashboard-Client vs SaaS Apps vs Super-Admin
+## IMPORTANT : Dashboard-Client vs Super-Admin
 
-**Il existe TROIS niveaux d'applications frontend** :
+**Il existe DEUX niveaux d'applications frontend** :
 
 ### 1. **Dashboard-Client / ERP Complet** (Port 5175)
 - **Rôle** : Backoffice multi-tenant = **Full Suite** (tous les modules)
-- **Utilisateurs** : Clients abonnés Full Suite
-- **Modules** : Finance + Boutique + Stock + CRM + Marketing + HR + POS + Support
-- **Correspond au** : Bundle "Full Suite" (tous les 7 SaaS combinés)
+- **Utilisateurs** : Clients finaux
+- **Modules** : 9 modules intégrés (Finance + Store + Stock + CRM + Marketing + HR + POS + Support + Home)
 
-### 2. **7 SaaS Apps** (Ports 3010-3016)
-- **Rôle** : Frontends spécialisés = **subset de modules** du ERP complet
-- **Utilisateurs** : Clients abonnés à un SaaS individuel
-- **Backend** : Le MÊME backend Odoo que le dashboard-client
-- **Exemples** :
-  - **Quelyos Finance** (3010) = uniquement les pages Finance du dashboard-client
-  - **Quelyos Store** (3011) = pages Store + Marketing
-  - **Quelyos Team** (3015) = pages HR uniquement
-
-| SaaS | Port | Modules ERP inclus | Prix |
-|------|------|--------------------|------|
-| Quelyos Finance | 3010 | `finance` | 49-99/mois |
-| Quelyos Store | 3011 | `store` + `marketing` | 79-149/mois |
-| Quelyos Copilote | 3012 | `stock` + `GMAO` + `hr` | 99-199/mois |
-| Quelyos Sales | 3013 | `crm` + `marketing` | 59-129/mois |
-| Quelyos Retail | 3014 | `pos` + `store` + `stock` | 129-249/mois |
-| Quelyos Team | 3015 | `hr` | 39-79/mois |
-| Quelyos Support | 3016 | `support` + `crm` | 29-69/mois |
-
-### 3. **Super-Admin-Client** (Port 9000)
+### 2. **Super-Admin-Client** (Port 9000)
 - **Rôle** : Panel d'administration SaaS global
 - **Utilisateurs** : Equipe Quelyos uniquement (administrateurs)
 - **Scope** : Vue transversale sur TOUS les tenants + gestion abonnements/SaaS
 
-### Regle de Developpement
+### Règle de Développement
 
 **Quand ajouter une page** :
-- **dashboard-client** : Fonctionnalité métier pour le ERP complet (Full Suite)
-- **apps/[saas-name]/** : Fonctionnalité pour un SaaS spécifique (reprend des pages du dashboard)
+- **dashboard-client** : Fonctionnalité métier pour l'ERP complet (9 modules)
 - **super-admin-client** : Admin système Quelyos (monitoring, tenants, billing)
 
 **Partage de code** :
 - Composants UI communs : `packages/ui-kit/` (@quelyos/ui-kit)
 - Client API partagé : `packages/api-client/` (@quelyos/api-client)
 - Helpers partagés : `packages/utils/` (@quelyos/utils)
-- Chaque SaaS app importe depuis ces packages communs
 
 ## Architecture Backend Odoo
 
@@ -323,15 +249,6 @@ quelyosSuite/
 ├── vitrine-client/            # E-commerce client (Next.js 16, :3001)
 ├── super-admin-client/        # Admin SaaS (React + Vite, :9000)
 │
-├── apps/                      # 7 SaaS spécialisés (à créer)
-│   ├── finance-os/            # Quelyos Finance (:3010)
-│   ├── store-os/              # Quelyos Store (:3011)
-│   ├── copilote-ops/          # Quelyos Copilote (:3012)
-│   ├── sales-os/              # Quelyos Sales (:3013)
-│   ├── retail-os/             # Quelyos Retail (:3014)
-│   ├── team-os/               # Quelyos Team (:3015)
-│   └── support-os/            # Quelyos Support (:3016)
-│
 ├── packages/                  # Packages partagés (monorepo)
 │   ├── ui-kit/                # @quelyos/ui-kit (composants React)
 │   ├── api-client/            # @quelyos/api-client (client API)
@@ -351,8 +268,8 @@ quelyosSuite/
 ### Vérifier les services actifs
 
 ```bash
-# Vérifier ports existants + SaaS
-lsof -i:3000,3001,5175,8069,9000,3010,3011,3012,3013,3014,3015,3016
+# Vérifier ports existants
+lsof -i:3000,3001,5175,8069,9000
 
 # Vérifier les conteneurs Docker
 docker ps --filter "name=quelyos"
@@ -418,16 +335,4 @@ Voir `nginx/` et `docs/deployment/` pour la configuration de production avec rev
 
 ---
 
-## Plan Stratégique 7 SaaS
-
-Voir `docs/QUELYOS_SUITE_7_SAAS_PLAN.md` et `docs/QUELYOS_SUITE_7_SAAS_PLAN.html` pour le plan détaillé :
-- Architecture monorepo Turborepo
-- Détail fonctionnel des 7 SaaS
-- Roadmap 18 mois
-- Stratégie pricing et bundles
-- Branding et design system
-- Nouveaux modèles Odoo (GMAO, Quelyos Finance)
-
----
-
-**Dernière mise à jour** : 2026-01-30
+**Dernière mise à jour** : 2026-01-31
