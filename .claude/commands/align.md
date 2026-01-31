@@ -1,9 +1,4 @@
----
-name: align
-description: Vérification et Correction Alignement SaaS ↔ ERP
----
-
-# /align - Vérification Alignement SaaS ↔ ERP
+# Commande /align - Vérification et Correction Alignement SaaS ↔ ERP
 
 ## Objectif
 Détecter et corriger les problèmes d'alignement entre :
@@ -93,19 +88,19 @@ cp dashboard-client/src/pages/[module]/[Page].tsx apps/[saas]/src/pages/[module]
 
 ### Vérifier tous les SaaS
 ```bash
-/align-saas
+/align
 ```
 
 ### Vérifier un SaaS spécifique
 ```bash
-/align-saas support-os
-/align-saas finance-os
+/align support-os
+/align finance-os
 ```
 
 ### Appliquer corrections automatiques
 ```bash
-/align-saas --fix
-/align-saas support-os --fix
+/align --fix
+/align support-os --fix
 ```
 
 ## Output Attendu
@@ -191,7 +186,7 @@ function detectDuplication(saasName: string): AlignmentIssue[] {
 ```
 
 ### Intégration Skill Claude
-Le skill `/align-saas` appelle le script TypeScript et analyse les résultats.
+Le skill `/align` appelle le script TypeScript et analyse les résultats.
 
 ## Bénéfices
 
@@ -209,5 +204,5 @@ Le skill `/align-saas` appelle le script TypeScript et analyse les résultats.
 
 1. Migrer autres modules vers `packages/types/` (marketing, crm, stock, hr, pos, finance)
 2. Créer `packages/business-hooks/` si duplication hooks devient problématique
-3. Intégrer `/align-saas` dans CI/CD (vérification pre-commit)
+3. Intégrer `/align` dans CI/CD (vérification pre-commit)
 4. Étendre skill pour corrections auto-push
