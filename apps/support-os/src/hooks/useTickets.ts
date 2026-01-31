@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchApi, buildQueryString } from '@/lib/api-base'
 import { tokenService } from '@/lib/tokenService'
-import type { Ticket, CreateTicketData, TicketMessage } from '@/types/support'
+import type { Ticket, CreateTicketData, TicketMessage } from '@quelyos/types'
 
 interface TicketsFilters {
   state?: string

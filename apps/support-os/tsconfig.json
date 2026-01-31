@@ -26,7 +26,7 @@
       "@quelyos/auth": ["../../packages/auth"],
       "@quelyos/utils": ["../../packages/utils"],
       "@quelyos/logger": ["./src/lib/logger"],
-      "@quelyos/types": ["./src/types"]
+      "@quelyos/types": ["../../packages/types"]
     }
   },
   "include": ["src"],

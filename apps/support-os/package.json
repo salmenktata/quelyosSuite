@@ -15,6 +15,7 @@
     "@quelyos/api-client": "workspace:*",
     "@quelyos/auth": "workspace:*",
     "@quelyos/hooks": "workspace:*",
+    "@quelyos/types": "workspace:*",
     "@quelyos/ui": "workspace:*",
     "@quelyos/utils": "workspace:*",
     "@tanstack/react-query": "^5.90.20",

@@ -14,6 +14,7 @@ import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/com
 import { storeNotices } from '@/lib/notices';
 import { apiFetchJson } from '@/lib/apiFetch';
 import { useRequireAuth } from '@/lib/retail/compat/auth';
+import { useRequireAuth } from '@/lib/retail/compat/auth';
 
 interface AttributeValue {
   id: number;
@@ -29,6 +30,7 @@ interface Attribute {
 }
 
 export default function Attributes() {
+  useRequireAuth(); // Protection auth avec redirection auto
   useRequireAuth();
 
   const [attributes, setAttributes] = useState<Attribute[]>([]);

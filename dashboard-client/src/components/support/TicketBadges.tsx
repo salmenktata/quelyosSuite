@@ -1,6 +1,6 @@
 import { Badge } from '@/components/common'
 import { AlertCircle } from 'lucide-react'
-import type { TicketState, TicketPriority } from '@/types/support'
+import type { TicketState, TicketPriority } from '@quelyos/types'
 
 interface TicketStatusBadgeProps {
   state: TicketState

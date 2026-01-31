@@ -57,7 +57,7 @@ export function useAuth(): AuthContextType {
     }
 
     try {
-      const { data: response } = await api.getUserInfo() as { data: { success: boolean; user?: { id: number; name: string; email: string; login?: string; groups?: string[] } } }
+      const response = await api.getUserInfo() as { success: boolean; user?: { id: number; name: string; email: string; login?: string; groups?: string[] } }
       const userData = response.user
 
       if (response.success && userData) {
@@ -93,7 +93,7 @@ export function useAuth(): AuthContextType {
       setIsLoading(true)
 
       try {
-        const { data: result } = await api.login(email, password) as { data: { success: boolean; error?: string; user?: { id: number; name: string; email: string; login?: string; groups?: string[] } } }
+        const result = await api.login(email, password) as { success: boolean; error?: string; user?: { id: number; name: string; email: string; login?: string; groups?: string[] } }
         const userData = result.user
 
         if (result.success && userData) {

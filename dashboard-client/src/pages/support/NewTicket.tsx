@@ -29,7 +29,7 @@ import {
   User,
   MoreHorizontal,
 } from 'lucide-react'
-import type { TicketCategory, TicketPriority } from '@/types/support'
+import type { TicketCategory, TicketPriority } from '@quelyos/types'
 
 const CATEGORIES = [
   { id: 'technical' as TicketCategory, label: 'Support technique', icon: Zap, color: 'blue' },

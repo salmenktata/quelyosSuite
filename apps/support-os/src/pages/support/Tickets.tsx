@@ -22,7 +22,7 @@ import {
   CheckCircle,
   Search,
 } from 'lucide-react'
-import type { Ticket } from '@/types/support'
+import type { Ticket } from '@quelyos/types'
 
 export default function Tickets() {
   const navigate = useNavigate()
@@ -287,7 +287,7 @@ function TicketsTable({ tickets, onSelectTicket }: TicketsTableProps) {
                 {ticket.messageCount}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {new Date(ticket.createdAt || ticket.created_at).toLocaleDateString('fr-FR')}
+                {new Date(ticket.createdAt || ticket.created_at || '').toLocaleDateString('fr-FR')}
               </td>
             </tr>
           ))}

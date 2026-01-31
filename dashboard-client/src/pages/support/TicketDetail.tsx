@@ -18,7 +18,7 @@ import { useTicketDetail, useReplyTicket, useCloseTicket, useTicketAttachments, 
 import { useChannel } from '@/lib/websocket/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { Send, CheckCircle, MessageSquare, Clock, User, Paperclip, Upload, X, Download } from 'lucide-react'
-import type { TicketMessage } from '@/types/support'
+import type { TicketMessage } from '@quelyos/types'
 
 export default function TicketDetail() {
   const { id } = useParams<{ id: string }>()

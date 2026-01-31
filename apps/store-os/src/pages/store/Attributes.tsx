@@ -29,7 +29,7 @@ interface Attribute {
 }
 
 export default function Attributes() {
-  useRequireAuth();
+  useRequireAuth(); // Protection auth avec redirection auto
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
