@@ -54,7 +54,7 @@ class HRLeave(models.Model):
                 continue
             min_notice = leave.holiday_status_id.min_notice_days if hasattr(leave.holiday_status_id, 'min_notice_days') else 0
             if min_notice:
-                min_date = fields.Date.today() + timedelta(days=min_notice)
+                x_min_date = fields.Date.today() + timedelta(days=min_notice)
                 if leave.request_date_from and leave.request_date_from < min_date:
                     raise ValidationError(_(
                         "Un préavis de %d jours est requis pour ce type de congé !"

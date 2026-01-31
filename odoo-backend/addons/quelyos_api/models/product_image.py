@@ -21,7 +21,7 @@ class ProductImage(models.Model):
     """
     _inherit = 'product.image'
 
-    product_template_attribute_value_id = fields.Many2one(
+    x_product_template_attribute_value_id = fields.Many2one(
         'product.template.attribute.value',
         string='Valeur attribut',
         ondelete='cascade',

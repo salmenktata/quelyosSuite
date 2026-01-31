@@ -1,4 +1,4 @@
-📋 Inventaire Champs à Migrer - 2026-01-31 20:28
+📋 Inventaire Champs à Migrer - 2026-01-31 20:38
 =========================================================
 
 Modèle: mail.thread
@@ -33,11 +33,6 @@ Champs (29):
   - name → x_name
   - slug → x_slug
   - company_id → x_company_id
-
-Modèle: crm.stage
-Fichier: odoo-backend/addons/quelyos_api/models/crm_lead.py
-Champs (1):
-  - is_global → x_is_global
 
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/cycle_count.py
@@ -85,19 +80,7 @@ Champs (15):
 
 Modèle: hr.attendance
 Fichier: odoo-backend/addons/quelyos_api/models/hr_attendance.py
-Champs (13):
-  - overtime → x_overtime
-  - check_in_mode → x_check_in_mode
-  - check_out_mode → x_check_out_mode
-  - check_in_latitude → x_check_in_latitude
-  - check_in_longitude → x_check_in_longitude
-  - check_out_latitude → x_check_out_latitude
-  - check_out_longitude → x_check_out_longitude
-  - attendance_state → x_attendance_state
-  - anomaly_reason → x_anomaly_reason
-  - validated_by → x_validated_by
-  - validated_date → x_validated_date
-  - notes → x_notes
+Champs (1):
   - today_start → x_today_start
 
 Modèle: mail.thread
@@ -123,53 +106,23 @@ Champs (19):
   - advantages → x_advantages
   - today → x_today
 
-Modèle: hr.department
-Fichier: odoo-backend/addons/quelyos_api/models/hr_department.py
-Champs (1):
-  - code → x_code
-
 Modèle: hr.employee
 Fichier: odoo-backend/addons/quelyos_api/models/hr_employee.py
-Champs (11):
-  - employee_number → x_employee_number
-  - first_name → x_first_name
-  - last_name → x_last_name
-  - cnss_number → x_cnss_number
-  - cin_number → x_cin_number
-  - employee_state → x_employee_state
-  - bank_name → x_bank_name
-  - bank_account_number → x_bank_account_number
-  - seniority → x_seniority
-  - hire_date → x_hire_date
-  - today → x_today
-
-Modèle: hr.job
-Fichier: odoo-backend/addons/quelyos_api/models/hr_job.py
 Champs (1):
-  - code → x_code
+  - today → x_today
 
 Modèle: hr.leave.allocation
 Fichier: odoo-backend/addons/quelyos_api/models/hr_leave_allocation.py
-Champs (6):
-  - reference → x_reference
+Champs (5):
   - year → x_year
   - date_from → x_date_from
   - date_to → x_date_to
   - today → x_today
   - today → x_today
 
-Modèle: hr.leave.type
-Fichier: odoo-backend/addons/quelyos_api/models/hr_leave_type.py
-Champs (2):
-  - code → x_code
-  - min_notice_days → x_min_notice_days
-
 Modèle: hr.leave
 Fichier: odoo-backend/addons/quelyos_api/models/hr_leave.py
-Champs (4):
-  - reference → x_reference
-  - refuse_reason → x_refuse_reason
-  - refused_date → x_refused_date
+Champs (1):
   - min_date → x_min_date
 
 Modèle: hr.employee.skill
@@ -185,25 +138,9 @@ Champs (9):
   - skill_type_id → x_skill_type_id
   - active → x_active
 
-Modèle: payment.provider
-Fichier: odoo-backend/addons/quelyos_api/models/payment_provider.py
-Champs (9):
-  - code → x_code
-  - flouci_app_token → x_flouci_app_token
-  - flouci_app_secret → x_flouci_app_secret
-  - flouci_timeout → x_flouci_timeout
-  - flouci_accept_cards → x_flouci_accept_cards
-  - konnect_api_key → x_konnect_api_key
-  - konnect_wallet_id → x_konnect_wallet_id
-  - konnect_lifespan → x_konnect_lifespan
-  - konnect_theme → x_konnect_theme
-
 Modèle: payment.transaction
 Fichier: odoo-backend/addons/quelyos_api/models/payment_transaction.py
-Champs (6):
-  - provider_payment_id → x_provider_payment_id
-  - provider_request_payload → x_provider_request_payload
-  - provider_response_payload → x_provider_response_payload
+Champs (3):
   - webhook_calls_count → x_webhook_calls_count
   - last_webhook_date → x_last_webhook_date
   - customer_phone → x_customer_phone
@@ -370,18 +307,13 @@ Champs (6):
 
 Modèle: stock.location
 Fichier: odoo-backend/addons/quelyos_api/models/stock_location.py
-Champs (4):
-  - is_locked → x_is_locked
-  - lock_reason → x_lock_reason
-  - locked_by_id → x_locked_by_id
+Champs (1):
   - locked_date → x_locked_date
 
 Modèle: stock.quant
 Fichier: odoo-backend/addons/quelyos_api/models/stock_quant.py
-Champs (3):
+Champs (1):
   - currency_id → x_currency_id
-  - adjustment_cost → x_adjustment_cost
-  - low_stock_threshold → x_low_stock_threshold
 
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/stock_reservation.py
@@ -605,12 +537,6 @@ Champs (36):
   - is_staff → x_is_staff
   - attachment_ids → x_attachment_ids
 
-Modèle: product.wishlist
-Fichier: odoo-backend/addons/quelyos_api/models/wishlist.py
-Champs (2):
-  - share_token → x_share_token
-  - is_public → x_is_public
-
 Modèle: maintenance.equipment
 Fichier: odoo-backend/addons/quelyos_maintenance/models/maintenance_equipment_extended.py
 Champs (8):
@@ -717,5 +643,5 @@ Champs (2):
   - reserved_quantity_detail → x_reserved_quantity_detail
 
 =========================================================
-TOTAL: 551 champs dans 41 modèles
+TOTAL: 501 champs dans 35 modèles
 

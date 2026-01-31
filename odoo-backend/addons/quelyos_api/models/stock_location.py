@@ -35,7 +35,7 @@ class StockLocation(models.Model):
         readonly=True,
     )
 
-    locked_date = fields.Datetime(
+    x_locked_date = fields.Datetime(
         string='Date Verrouillage',
         readonly=True,
     )
@@ -47,7 +47,7 @@ class StockLocation(models.Model):
                 'x_is_locked': True,
                 'lock_reason': reason or 'Inventaire en cours',
                 'locked_by_id': self.env.user.id,
-                'locked_date': fields.Datetime.now(),
+                'x_locked_date': fields.Datetime.now(),
             })
 
     def action_unlock(self):
@@ -57,7 +57,7 @@ class StockLocation(models.Model):
                 'x_is_locked': False,
                 'lock_reason': False,
                 'locked_by_id': False,
-                'locked_date': False,
+                'x_locked_date': False,
             })
 
 

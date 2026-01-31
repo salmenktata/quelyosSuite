@@ -33,17 +33,17 @@ class PaymentTransaction(models.Model):
         help='JSON response received from payment provider for audit',
         readonly=True
     )
-    webhook_calls_count = fields.Integer(
+    x_webhook_calls_count = fields.Integer(
         string='Webhook Calls',
         default=0,
         help='Number of times webhook was called (for idempotence tracking)',
         readonly=True
     )
-    last_webhook_date = fields.Datetime(
+    x_last_webhook_date = fields.Datetime(
         string='Last Webhook Date',
         readonly=True
     )
-    customer_phone = fields.Char(
+    x_customer_phone = fields.Char(
         string='Customer Phone',
         help='Customer phone number for payment notifications'
     )
@@ -66,8 +66,8 @@ class PaymentTransaction(models.Model):
         """Increment webhook calls counter for idempotence tracking"""
         self.ensure_one()
         self.sudo().write({
-            'webhook_calls_count': self.webhook_calls_count + 1,
-            'last_webhook_date': fields.Datetime.now()
+            'x_webhook_calls_count': self.x_webhook_calls_count + 1,
+            'x_last_webhook_date': fields.Datetime.now()
         })
 
     def _set_pending(self):
@@ -196,8 +196,8 @@ class PaymentTransaction(models.Model):
             'providerCode': self.provider_code,
             'providerName': self.provider_id.name,
             'providerPaymentId': self.x_provider_payment_id,
-            'webhookCallsCount': self.webhook_calls_count,
-            'lastWebhookDate': self.last_webhook_date.isoformat() if self.last_webhook_date else None,
+            'webhookCallsCount': self.x_webhook_calls_count,
+            'lastWebhookDate': self.x_last_webhook_date.isoformat() if self.x_last_webhook_date else None,
             'createdAt': self.create_date.isoformat() if self.create_date else None,
             'updatedAt': self.write_date.isoformat() if self.write_date else None,
             'stateMessage': self.state_message,

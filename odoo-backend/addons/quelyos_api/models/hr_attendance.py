@@ -215,7 +215,7 @@ class HRAttendance(models.Model):
     @api.model
     def get_today_summary(self, tenant_id):
         """Résumé des présences du jour."""
-        today_start = fields.Datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        x_today_start = fields.Datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_end = today_start + timedelta(days=1)
 
         attendances = self.search([
