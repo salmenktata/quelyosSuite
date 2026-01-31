@@ -1,4 +1,4 @@
-📋 Inventaire Champs à Migrer - 2026-01-31 20:38
+📋 Inventaire Champs à Migrer - 2026-01-31 20:56
 =========================================================
 
 Modèle: mail.thread
@@ -78,11 +78,6 @@ Champs (15):
   - is_template → x_is_template
   - company_id → x_company_id
 
-Modèle: hr.attendance
-Fichier: odoo-backend/addons/quelyos_api/models/hr_attendance.py
-Champs (1):
-  - today_start → x_today_start
-
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/hr_contract.py
 Champs (19):
@@ -120,11 +115,6 @@ Champs (5):
   - today → x_today
   - today → x_today
 
-Modèle: hr.leave
-Fichier: odoo-backend/addons/quelyos_api/models/hr_leave.py
-Champs (1):
-  - min_date → x_min_date
-
 Modèle: hr.employee.skill
 Fichier: odoo-backend/addons/quelyos_api/models/hr_skill.py
 Champs (9):
@@ -137,13 +127,6 @@ Champs (9):
   - description → x_description
   - skill_type_id → x_skill_type_id
   - active → x_active
-
-Modèle: payment.transaction
-Fichier: odoo-backend/addons/quelyos_api/models/payment_transaction.py
-Champs (3):
-  - webhook_calls_count → x_webhook_calls_count
-  - last_webhook_date → x_last_webhook_date
-  - customer_phone → x_customer_phone
 
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/pos_config.py
@@ -178,53 +161,15 @@ Champs (27):
 
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/pos_order.py
-Champs (46):
+Champs (8):
   - name → x_name
-  - session_id → x_session_id
-  - config_id → x_config_id
   - company_id → x_company_id
   - currency_id → x_currency_id
-  - pricelist_id → x_pricelist_id
-  - partner_id → x_partner_id
   - user_id → x_user_id
   - state → x_state
   - line_ids → x_line_ids
-  - amount_untaxed → x_amount_untaxed
-  - amount_tax → x_amount_tax
-  - amount_total → x_amount_total
-  - discount_type → x_discount_type
-  - discount_value → x_discount_value
-  - discount_amount → x_discount_amount
-  - payment_ids → x_payment_ids
-  - amount_paid → x_amount_paid
-  - amount_return → x_amount_return
-  - note → x_note
-  - offline_id → x_offline_id
-  - synced_at → x_synced_at
-  - is_offline_order → x_is_offline_order
-  - paid_at → x_paid_at
-  - sale_order_id → x_sale_order_id
-  - invoice_id → x_invoice_id
-  - picking_ids → x_picking_ids
-  - order_id → x_order_id
   - sequence → x_sequence
   - product_id → x_product_id
-  - product_name → x_product_name
-  - product_sku → x_product_sku
-  - quantity → x_quantity
-  - price_unit → x_price_unit
-  - discount → x_discount
-  - price_subtotal_untaxed → x_price_subtotal_untaxed
-  - price_tax → x_price_tax
-  - price_subtotal → x_price_subtotal
-  - note → x_note
-  - offline_line_id → x_offline_line_id
-  - order_id → x_order_id
-  - payment_method_id → x_payment_method_id
-  - amount → x_amount
-  - transaction_id → x_transaction_id
-  - payment_transaction_id → x_payment_transaction_id
-  - pos_order_id → x_pos_order_id
 
 Modèle: mail.thread
 Fichier: odoo-backend/addons/quelyos_api/models/pos_session.py
@@ -251,11 +196,6 @@ Champs (22):
   - order_ids → x_order_ids
   - opening_notes → x_opening_notes
   - closing_notes → x_closing_notes
-
-Modèle: product.image
-Fichier: odoo-backend/addons/quelyos_api/models/product_image.py
-Champs (1):
-  - product_template_attribute_value_id → x_product_template_attribute_value_id
 
 Modèle: product.product
 Fichier: odoo-backend/addons/quelyos_api/models/product_product.py
@@ -304,11 +244,6 @@ Champs (6):
   - expected_fulfillment_date → x_expected_fulfillment_date
   - missing_stock_details → x_missing_stock_details
   - fulfillment_priority → x_fulfillment_priority
-
-Modèle: stock.location
-Fichier: odoo-backend/addons/quelyos_api/models/stock_location.py
-Champs (1):
-  - locked_date → x_locked_date
 
 Modèle: stock.quant
 Fichier: odoo-backend/addons/quelyos_api/models/stock_quant.py
@@ -643,5 +578,5 @@ Champs (2):
   - reserved_quantity_detail → x_reserved_quantity_detail
 
 =========================================================
-TOTAL: 501 champs dans 35 modèles
+TOTAL: 456 champs dans 30 modèles
 
