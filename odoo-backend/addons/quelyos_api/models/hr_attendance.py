@@ -29,7 +29,7 @@ class HRAttendance(models.Model):
     # HEURES SUPPLÉMENTAIRES (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    overtime = fields.Float(
+    x_overtime = fields.Float(
         string='Heures supplémentaires',
         compute='_compute_overtime',
         store=True,
@@ -41,7 +41,7 @@ class HRAttendance(models.Model):
     # MODE DE POINTAGE (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    check_in_mode = fields.Selection([
+    x_check_in_mode = fields.Selection([
         ('manual', 'Manuel'),
         ('kiosk', 'Kiosque'),
         ('badge', 'Badge/NFC'),
@@ -49,7 +49,7 @@ class HRAttendance(models.Model):
         ('qr', 'QR Code'),
     ], string='Mode entrée', default='manual')
 
-    check_out_mode = fields.Selection([
+    x_check_out_mode = fields.Selection([
         ('manual', 'Manuel'),
         ('kiosk', 'Kiosque'),
         ('badge', 'Badge/NFC'),
@@ -61,19 +61,19 @@ class HRAttendance(models.Model):
     # GÉOLOCALISATION (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    check_in_latitude = fields.Float(
+    x_check_in_latitude = fields.Float(
         string='Latitude entrée',
         digits=(10, 7)
     )
-    check_in_longitude = fields.Float(
+    x_check_in_longitude = fields.Float(
         string='Longitude entrée',
         digits=(10, 7)
     )
-    check_out_latitude = fields.Float(
+    x_check_out_latitude = fields.Float(
         string='Latitude sortie',
         digits=(10, 7)
     )
-    check_out_longitude = fields.Float(
+    x_check_out_longitude = fields.Float(
         string='Longitude sortie',
         digits=(10, 7)
     )
@@ -82,21 +82,21 @@ class HRAttendance(models.Model):
     # VALIDATION (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    attendance_state = fields.Selection([
+    x_attendance_state = fields.Selection([
         ('draft', 'Brouillon'),
         ('confirmed', 'Confirmé'),
         ('validated', 'Validé'),
         ('anomaly', 'Anomalie'),
     ], string='État validation', default='confirmed')
 
-    anomaly_reason = fields.Char(
+    x_anomaly_reason = fields.Char(
         string='Raison anomalie'
     )
-    validated_by = fields.Many2one(
+    x_validated_by = fields.Many2one(
         'res.users',
         string='Validé par'
     )
-    validated_date = fields.Datetime(
+    x_validated_date = fields.Datetime(
         string='Date validation'
     )
 
@@ -104,7 +104,7 @@ class HRAttendance(models.Model):
     # NOTES (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    notes = fields.Text(
+    x_notes = fields.Text(
         string='Notes'
     )
 
@@ -128,16 +128,16 @@ class HRAttendance(models.Model):
     def action_validate(self):
         """Valider le pointage."""
         self.write({
-            'attendance_state': 'validated',
-            'validated_by': self.env.user.id,
-            'validated_date': fields.Datetime.now(),
+            'x_attendance_state': 'validated',
+            'x_validated_by': self.env.user.id,
+            'x_validated_date': fields.Datetime.now(),
         })
 
     def action_mark_anomaly(self, reason=None):
         """Marquer comme anomalie."""
         self.write({
-            'attendance_state': 'anomaly',
-            'anomaly_reason': reason or _("Anomalie détectée"),
+            'x_attendance_state': 'anomaly',
+            'x_anomaly_reason': reason or _("Anomalie détectée"),
         })
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -158,9 +158,9 @@ class HRAttendance(models.Model):
             'employee_id': employee_id,
             'tenant_id': tenant_id,
             'check_in': fields.Datetime.now(),
-            'check_in_mode': mode,
-            'check_in_latitude': latitude,
-            'check_in_longitude': longitude,
+            'x_check_in_mode': mode,
+            'x_check_in_latitude': latitude,
+            'x_check_in_longitude': longitude,
         })
         return attendance.get_attendance_data()
 
@@ -177,9 +177,9 @@ class HRAttendance(models.Model):
 
         attendance.write({
             'check_out': fields.Datetime.now(),
-            'check_out_mode': mode,
-            'check_out_latitude': latitude,
-            'check_out_longitude': longitude,
+            'x_check_out_mode': mode,
+            'x_check_out_latitude': latitude,
+            'x_check_out_longitude': longitude,
         })
         return attendance.get_attendance_data()
 
@@ -195,21 +195,21 @@ class HRAttendance(models.Model):
             'check_in': self.check_in.isoformat() if self.check_in else None,
             'check_out': self.check_out.isoformat() if self.check_out else None,
             'worked_hours': round(self.worked_hours, 2),
-            'overtime': round(self.overtime, 2),
-            'check_in_mode': self.check_in_mode,
-            'check_out_mode': self.check_out_mode,
-            'state': self.attendance_state,
+            'x_overtime': round(self.x_overtime, 2),
+            'x_check_in_mode': self.x_check_in_mode,
+            'x_check_out_mode': self.x_check_out_mode,
+            'state': self.x_attendance_state,
             'location': {
                 'check_in': {
-                    'latitude': self.check_in_latitude,
-                    'longitude': self.check_in_longitude,
-                } if self.check_in_latitude else None,
+                    'latitude': self.x_check_in_latitude,
+                    'longitude': self.x_check_in_longitude,
+                } if self.x_check_in_latitude else None,
                 'check_out': {
-                    'latitude': self.check_out_latitude,
-                    'longitude': self.check_out_longitude,
-                } if self.check_out_latitude else None,
+                    'latitude': self.x_check_out_latitude,
+                    'longitude': self.x_check_out_longitude,
+                } if self.x_check_out_latitude else None,
             },
-            'notes': self.notes or '',
+            'x_notes': self.x_notes or '',
         }
 
     @api.model

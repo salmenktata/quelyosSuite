@@ -29,16 +29,16 @@ class HRLeaveType(models.Model):
     # CHAMPS ADDITIONNELS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    code = fields.Char(
+    x_code = fields.Char(
         string='Code',
         required=True,
         help="Code unique (ex: CP, MAL, SS)"
     )
-    max_consecutive_days = fields.Float(
+    x_max_consecutive_days = fields.Float(
         string='Jours consécutifs max',
         help="Nombre maximum de jours consécutifs (0 = illimité)"
     )
-    min_notice_days = fields.Integer(
+    x_min_notice_days = fields.Integer(
         string='Préavis minimum (jours)',
         default=0,
         help="Délai minimum avant la date de début"
@@ -57,7 +57,7 @@ class HRLeaveType(models.Model):
         for record in self:
             # Chercher un doublon
             duplicate = self.search([
-                ('code', '=', record.code),
+                ('code', '=', record.x_code),
                 ('tenant_id', '=', record.tenant_id),
                 ('id', '!=', record.id)
             ], limit=1)
@@ -73,14 +73,14 @@ class HRLeaveType(models.Model):
         default_types = [
             {
                 'name': 'Congés Payés',
-                'code': 'CP',
+                'x_code': 'CP',
                 'color': 4,
                 'requires_allocation': 'yes',
                 'leave_validation_type': 'manager',
             },
             {
                 'name': 'Congé Maladie',
-                'code': 'MAL',
+                'x_code': 'MAL',
                 'color': 1,
                 'requires_allocation': 'no',
                 'leave_validation_type': 'hr',
@@ -88,7 +88,7 @@ class HRLeaveType(models.Model):
             },
             {
                 'name': 'Congé Sans Solde',
-                'code': 'CSS',
+                'x_code': 'CSS',
                 'color': 2,
                 'requires_allocation': 'no',
                 'leave_validation_type': 'both',
@@ -96,7 +96,7 @@ class HRLeaveType(models.Model):
             },
             {
                 'name': 'Congé Maternité',
-                'code': 'MAT',
+                'x_code': 'MAT',
                 'color': 6,
                 'requires_allocation': 'no',
                 'leave_validation_type': 'hr',
@@ -104,7 +104,7 @@ class HRLeaveType(models.Model):
             },
             {
                 'name': 'Congé Paternité',
-                'code': 'PAT',
+                'x_code': 'PAT',
                 'color': 5,
                 'requires_allocation': 'no',
                 'leave_validation_type': 'hr',
@@ -127,13 +127,13 @@ class HRLeaveType(models.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'code': self.code,
+            'x_code': self.x_code,
             'color': self.color,
             'requires_allocation': self.requires_allocation,
             'request_unit': self.request_unit,
             'leave_validation_type': self.leave_validation_type,
-            'max_consecutive_days': self.max_consecutive_days,
-            'min_notice_days': self.min_notice_days,
+            'x_max_consecutive_days': self.x_max_consecutive_days,
+            'x_min_notice_days': self.x_min_notice_days,
             'unpaid': self.unpaid,
             'support_document': self.support_document,
             'active': self.active,

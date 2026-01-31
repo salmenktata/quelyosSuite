@@ -31,7 +31,7 @@ class HREmployee(models.Model):
     # IDENTIFICATION QUELYOS
     # ═══════════════════════════════════════════════════════════════════════════
 
-    employee_number = fields.Char(
+    x_employee_number = fields.Char(
         string='Matricule',
         required=True,
         copy=False,
@@ -41,11 +41,11 @@ class HREmployee(models.Model):
         tracking=True,
         help="Matricule unique de l'employé"
     )
-    first_name = fields.Char(
+    x_first_name = fields.Char(
         string='Prénom',
         tracking=True
     )
-    last_name = fields.Char(
+    x_last_name = fields.Char(
         string='Nom de famille',
         tracking=True
     )
@@ -54,12 +54,12 @@ class HREmployee(models.Model):
     # CHAMPS TUNISIE (Spécifique localisation)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    cnss_number = fields.Char(
+    x_cnss_number = fields.Char(
         string='N° CNSS',
         tracking=True,
         help="Numéro de sécurité sociale CNSS"
     )
-    cin_number = fields.Char(
+    x_cin_number = fields.Char(
         string='N° CIN',
         tracking=True,
         help="Numéro de Carte d'Identité Nationale"
@@ -69,7 +69,7 @@ class HREmployee(models.Model):
     # STATUT EMPLOYÉ (Extension)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    employee_state = fields.Selection([
+    x_employee_state = fields.Selection([
         ('active', 'Actif'),
         ('suspended', 'Suspendu'),
         ('departed', 'Parti'),
@@ -79,11 +79,11 @@ class HREmployee(models.Model):
     # CHAMPS BANCAIRES (Override pour Tunisie)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    bank_name = fields.Char(
+    x_bank_name = fields.Char(
         string='Banque',
         help="Nom de la banque"
     )
-    bank_account_number = fields.Char(
+    x_bank_account_number = fields.Char(
         string='RIB',
         help="Relevé d'Identité Bancaire (20 chiffres en Tunisie)"
     )
@@ -92,12 +92,12 @@ class HREmployee(models.Model):
     # ANCIENNETÉ (Computed)
     # ═══════════════════════════════════════════════════════════════════════════
 
-    seniority = fields.Char(
+    x_seniority = fields.Char(
         string='Ancienneté',
         compute='_compute_seniority',
         help="Ancienneté dans l'entreprise"
     )
-    hire_date = fields.Date(
+    x_hire_date = fields.Date(
         string="Date d'embauche",
         tracking=True,
         help="Date de début dans l'entreprise"
@@ -118,7 +118,7 @@ class HREmployee(models.Model):
         for record in self:
             # Chercher un doublon
             duplicate = self.search([
-                ('employee_number', '=', record.employee_number),
+                ('employee_number', '=', record.x_employee_number),
                 ('tenant_id', '=', record.tenant_id),
                 ('id', '!=', record.id)
             ], limit=1)
@@ -148,7 +148,7 @@ class HREmployee(models.Model):
         for record in self:
             # Chercher un doublon
             duplicate = self.search([
-                ('cnss_number', '=', record.cnss_number),
+                ('cnss_number', '=', record.x_cnss_number),
                 ('tenant_id', '=', record.tenant_id),
                 ('id', '!=', record.id)
             ], limit=1)
@@ -163,7 +163,7 @@ class HREmployee(models.Model):
         for record in self:
             # Chercher un doublon
             duplicate = self.search([
-                ('cin_number', '=', record.cin_number),
+                ('cin_number', '=', record.x_cin_number),
                 ('tenant_id', '=', record.tenant_id),
                 ('id', '!=', record.id)
             ], limit=1)
@@ -175,8 +175,8 @@ class HREmployee(models.Model):
     def _compute_name_from_parts(self):
         """Calcule le nom complet à partir du prénom et nom."""
         for employee in self:
-            if employee.first_name or employee.last_name:
-                parts = [employee.first_name or '', employee.last_name or '']
+            if employee.x_first_name or employee.x_last_name:
+                parts = [employee.x_first_name or '', employee.x_last_name or '']
                 employee.name = ' '.join(filter(None, parts))
 
     @api.depends('hire_date')
@@ -185,16 +185,16 @@ class HREmployee(models.Model):
         from dateutil.relativedelta import relativedelta
         today = fields.Date.today()
         for employee in self:
-            if employee.hire_date:
-                delta = relativedelta(today, employee.hire_date)
+            if employee.x_hire_date:
+                delta = relativedelta(today, employee.x_hire_date)
                 parts = []
                 if delta.years:
                     parts.append(f"{delta.years} an{'s' if delta.years > 1 else ''}")
                 if delta.months:
                     parts.append(f"{delta.months} mois")
-                employee.seniority = ' '.join(parts) if parts else "Moins d'un mois"
+                employee.x_seniority = ' '.join(parts) if parts else "Moins d'un mois"
             else:
-                employee.seniority = ''
+                employee.x_seniority = ''
 
     # ═══════════════════════════════════════════════════════════════════════════
     # ONCHANGE
@@ -203,8 +203,8 @@ class HREmployee(models.Model):
     @api.onchange('first_name', 'last_name')
     def _onchange_name_parts(self):
         """Met à jour le nom complet quand prénom/nom changent."""
-        if self.first_name or self.last_name:
-            parts = [self.first_name or '', self.last_name or '']
+        if self.x_first_name or self.x_last_name:
+            parts = [self.x_first_name or '', self.x_last_name or '']
             self.name = ' '.join(filter(None, parts))
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -239,8 +239,8 @@ class HREmployee(models.Model):
         # Recalculer le nom complet si prénom/nom changent
         if 'first_name' in vals or 'last_name' in vals:
             for employee in self:
-                first = vals.get('first_name', employee.first_name) or ''
-                last = vals.get('last_name', employee.last_name) or ''
+                first = vals.get('first_name', employee.x_first_name) or ''
+                last = vals.get('last_name', employee.x_last_name) or ''
                 vals['name'] = ' '.join(filter(None, [first, last]))
         return super().write(vals)
 
@@ -253,10 +253,10 @@ class HREmployee(models.Model):
         self.ensure_one()
         data = {
             'id': self.id,
-            'employee_number': self.employee_number,
+            'x_employee_number': self.x_employee_number,
             'name': self.name,
-            'first_name': self.first_name or '',
-            'last_name': self.last_name or '',
+            'x_first_name': self.x_first_name or '',
+            'x_last_name': self.x_last_name or '',
             'work_email': self.work_email or '',
             'work_phone': self.work_phone or '',
             'mobile_phone': self.mobile_phone or '',
@@ -266,9 +266,9 @@ class HREmployee(models.Model):
             'job_title': self.job_title or (self.job_id.name if self.job_id else ''),
             'parent_id': self.parent_id.id if self.parent_id else None,
             'parent_name': self.parent_id.name if self.parent_id else None,
-            'state': self.employee_state,
-            'hire_date': self.hire_date.isoformat() if self.hire_date else None,
-            'seniority': self.seniority,
+            'state': self.x_employee_state,
+            'x_hire_date': self.x_hire_date.isoformat() if self.x_hire_date else None,
+            'x_seniority': self.x_seniority,
             'attendance_state': self.attendance_state,
             'image_url': f"/web/image/hr.employee/{self.id}/image_128" if self.image_128 else None,
         }
@@ -281,8 +281,8 @@ class HREmployee(models.Model):
                 'country_id': self.country_id.id if self.country_id else None,
                 'country_name': self.country_id.name if self.country_id else None,
                 'identification_id': self.identification_id or '',
-                'cin_number': self.cin_number or '',
-                'cnss_number': self.cnss_number or '',
+                'x_cin_number': self.x_cin_number or '',
+                'x_cnss_number': self.x_cnss_number or '',
                 'marital': self.marital,
                 'spouse_name': self.spouse_complete_name or '',
                 'children': self.children,
@@ -297,8 +297,8 @@ class HREmployee(models.Model):
                 'private_email': self.private_email or '',
                 'emergency_contact': self.emergency_contact or '',
                 'emergency_phone': self.emergency_phone or '',
-                'bank_name': self.bank_name or '',
-                'bank_account_number': self.bank_account_number or '',
+                'x_bank_name': self.x_bank_name or '',
+                'x_bank_account_number': self.x_bank_account_number or '',
                 'contract': self.contract_id.get_contract_data() if self.contract_id else None,
                 'remaining_leaves': self.remaining_leaves,
                 'coach_id': self.coach_id.id if self.coach_id else None,
