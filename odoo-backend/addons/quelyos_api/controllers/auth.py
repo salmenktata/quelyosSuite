@@ -703,7 +703,7 @@ class AuthController(http.Controller):
             _logger.error(f"Token refresh error: {e}")
             return {'success': False, 'error': 'Erreur lors du rafraîchissement du token'}
 
-    @http.route('/api/auth/logout', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/logout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
     def logout_session(self, **kwargs):
         """
         Déconnexion - révoque le refresh token et clear les cookies
@@ -711,6 +711,15 @@ class AuthController(http.Controller):
         Returns:
             dict: {success: bool}
         """
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        # Handle preflight OPTIONS
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
         try:
             # Récupérer le refresh token pour le révoquer
             refresh_token_plain = request.httprequest.cookies.get(COOKIE_NAME_REFRESH)
@@ -727,7 +736,7 @@ class AuthController(http.Controller):
 
             # Préparer la réponse
             response_data = {'success': True}
-            response = request.make_json_response(response_data)
+            response = request.make_json_response(response_data, headers=cors_headers)
 
             # Clear les cookies
             response.set_cookie(
@@ -762,7 +771,9 @@ class AuthController(http.Controller):
 
         except Exception as e:
             _logger.error(f"Logout error: {e}")
-            return {'success': False, 'error': 'Erreur lors de la déconnexion'}
+            origin = request.httprequest.headers.get('Origin', '')
+            cors_headers = get_cors_headers(origin)
+            return request.make_json_response({'success': False, 'error': 'Erreur lors de la déconnexion'}, headers=cors_headers)
 
     @http.route('/api/auth/sso-redirect', type='http', auth='none', methods=['GET', 'POST'], csrf=False)
     def sso_redirect(self, **kwargs):

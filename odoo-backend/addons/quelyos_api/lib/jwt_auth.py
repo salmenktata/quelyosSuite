@@ -329,11 +329,18 @@ def require_jwt_auth(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        from ..config import get_cors_headers
+        
+        # Récupérer headers CORS
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+        
         token = get_jwt_from_request(request.httprequest)
 
         if not token:
             return request.make_json_response(
                 {'success': False, 'error': 'Authorization required'},
+                headers=cors_headers,
                 status=401
             )
 
@@ -346,12 +353,14 @@ def require_jwt_auth(func):
         except TokenExpiredError:
             return request.make_json_response(
                 {'success': False, 'error': 'Token expired', 'code': 'TOKEN_EXPIRED'},
+                headers=cors_headers,
                 status=401
             )
 
         except InvalidTokenError as e:
             return request.make_json_response(
                 {'success': False, 'error': str(e)},
+                headers=cors_headers,
                 status=401
             )
 
