@@ -40,7 +40,7 @@ migration: {
 compare: {
   keywords: ['comparer', 'comparaison', 'vs', 'différence', 'concurrent', 'alternative', 'mieux'],
   responses: [{
-    text: "Quelyos Suite vs les alternatives :\n\n✅ **Notre différence** :\n• 8 modules vs 1-2 chez la concurrence\n• IA prévision 90j (85-90% précision) vs prévisions basiques\n• Hébergement France 🇫🇷 vs US/UE\n• Prix tout inclus vs modules additionnels payants\n• Support français réactif vs tickets en anglais\n\n💡 **Tableau comparatif détaillé** :\nVoir notre page : quelyos.com/compare\n\n🎯 **Clients qui ont switché** témoignent d'un gain de temps de 40% en moyenne.",
+    text: "Quelyos Suite vs les alternatives :\n\n✅ **Notre différence** :\n• 9 modules vs 1-2 chez la concurrence\n• IA prévision 90j (85-90% précision) vs prévisions basiques\n• Hébergement France 🇫🇷 vs US/UE\n• Prix tout inclus vs modules additionnels payants\n• Support français réactif vs tickets en anglais\n\n💡 **Tableau comparatif détaillé** :\nVoir notre page : quelyos.com/compare\n\n🎯 **Clients qui ont switché** témoignent d'un gain de temps de 40% en moyenne.",
     confidence: 0.87,
     suggestions: ['Voir le tableau comparatif', 'Lire les témoignages', 'Essai gratuit']
   }]
@@ -86,7 +86,7 @@ const openai = new OpenAI({
 const systemPrompt = `Tu es l'assistant virtuel de Quelyos Suite, une plateforme ERP française pour TPE/PME.
 
 CONTEXTE ENTREPRISE :
-- 8 modules intégrés : Finance, Boutique, CRM, Stock, RH, POS, Marketing, Dashboard
+- 9 modules intégrés : Finance, Store, CRM, Stock, RH, POS, Marketing, Support, Home
 - IA de prévision trésorerie 90 jours (précision 85-90%)
 - Hébergement en France, 100% RGPD
 - Tarifs : Starter 19€/mois, Business 49€/mois, Enterprise sur devis

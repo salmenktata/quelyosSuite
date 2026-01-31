@@ -39,7 +39,7 @@ POST /api/chat
 | Intent | Mots-clés | Description |
 |--------|-----------|-------------|
 | `pricing` | prix, tarif, coût, abonnement | Informations sur les tarifs |
-| `modules` | module, fonctionnalité, finance, crm | Détails sur les 8 modules |
+| `modules` | module, fonctionnalité, finance, crm | Détails sur les 9 modules |
 | `signup` | inscription, créer, compte, commencer | Guide d'inscription |
 | `support` | aide, support, problème, bug | Support technique |
 | `security` | sécurité, rgpd, données, confidentiel | Sécurité et conformité |
