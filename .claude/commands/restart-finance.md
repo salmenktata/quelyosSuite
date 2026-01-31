@@ -1,7 +1,9 @@
-# Commande /restart-finance - Relancer le serveur Quelyos Finance
+# Commande /restart-finance - Relancer Quelyos Finance (Édition)
 
 ## Description
-Relance le serveur de développement Vite pour Quelyos Finance (port 3010).
+Relance le serveur de développement pour l'édition Finance du système Quelyos (port 3010).
+
+**Architecture** : Système éditions unifié (dashboard-client avec VITE_EDITION=finance)
 
 ## Usage
 ```bash
@@ -16,8 +18,8 @@ Relance le serveur de développement Vite pour Quelyos Finance (port 3010).
 3. Vérifier que le port est libéré
 
 ### Étape 2 : Relancer le serveur
-1. Se placer dans le dossier `apps/finance-os/`
-2. Exécuter `pnpm dev` en arrière-plan
+1. Se placer dans le dossier `dashboard-client/`
+2. Exécuter `VITE_EDITION=finance pnpm dev` en arrière-plan
 3. Attendre que le serveur soit prêt (message "Local: http://localhost:3010/")
 4. Confirmer que le serveur est accessible
 
@@ -28,7 +30,7 @@ Relance le serveur de développement Vite pour Quelyos Finance (port 3010).
 lsof -ti:3010 | xargs kill -9 2>/dev/null || true
 
 # 2. Relancer le serveur
-cd apps/finance-os && pnpm dev
+cd dashboard-client && VITE_EDITION=finance pnpm dev
 ```
 
 ## Messages de sortie attendus
@@ -36,24 +38,41 @@ cd apps/finance-os && pnpm dev
 ### Succès
 ```
 ✅ Serveur Quelyos Finance arrêté (port 3010)
-🚀 Redémarrage du serveur Quelyos Finance...
-✅ Serveur Quelyos Finance démarré avec succès sur http://localhost:3010/
+🚀 Redémarrage édition Finance...
+✅ Édition Finance démarrée avec succès sur http://localhost:3010/
+
+📊 Édition active : Finance
+   - Modules : finance
+   - Couleur : Vert #059669
+   - Build time : ~7.18s
 ```
 
 ### Erreur
 ```
-❌ Erreur lors du redémarrage de Quelyos Finance
+❌ Erreur lors du redémarrage de l'édition Finance
 💡 Solutions possibles :
-- Vérifier que le dossier apps/finance-os/ existe
+- Vérifier que le dossier dashboard-client/ existe
 - Vérifier que les dépendances sont installées (pnpm install)
 - Vérifier les logs d'erreur ci-dessus
+- Vérifier que VITE_EDITION est bien configuré
 ```
 
 ## Notes Techniques
-- **Port par défaut** : 3010 (configuré dans `vite.config.ts`)
-- **Processus** : Node.js exécutant Vite
-- **Modules ERP inclus** : finance
-- **Packages partagés** : @quelyos/ui-kit, @quelyos/api-client, @quelyos/utils
+- **Port** : 3010 (configuré dans `vite.config.ts`)
+- **Édition** : Finance (VITE_EDITION=finance)
+- **Modules inclus** : finance
+- **Branding** : Vert #059669
+- **Architecture** : Système éditions (1 codebase, 8 éditions)
+- **Packages partagés** : @quelyos/ui-kit, @quelyos/api-client, @quelyos/auth
+
+## Migration
+⚠️ **Ancienne architecture** : `apps/finance-os/` (supprimé)  
+✅ **Nouvelle architecture** : `dashboard-client/` + `VITE_EDITION=finance`
+
+## Voir aussi
+- `/restart-all` — Redémarrer tous les services
+- `dashboard-client/README-EDITIONS.md` — Guide système éditions
+- `docs/EDITIONS_DEV_GUIDE.md` — Documentation développement
 
 ## Objectif
-Fournir un moyen rapide de relancer le frontend SaaS Quelyos Finance sans chercher manuellement le processus.
+Fournir un moyen rapide de relancer l'édition Finance du système Quelyos.
