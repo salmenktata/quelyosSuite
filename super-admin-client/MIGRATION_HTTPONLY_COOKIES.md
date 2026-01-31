@@ -205,7 +205,7 @@ pnpm dev
 
 ### 4. Test End-to-End
 
-1. Ouvrir http://localhost:5176
+1. Ouvrir http://localhost:9000
 2. Login avec super admin
 3. Vérifier cookies dans DevTools (Application → Cookies)
    - `session_token` présent (HttpOnly ✓)

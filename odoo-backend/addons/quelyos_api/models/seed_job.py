@@ -89,7 +89,7 @@ class SeedJob(models.Model):
         tenant = self.env['quelyos.tenant'].browse(tenant_id)
         if not tenant.exists():
             raise ValidationError("Tenant introuvable")
-        if tenant.state != 'active':
+        if tenant.status != 'active':
             raise ValidationError("Tenant non actif")
 
         # Vérifier job en cours

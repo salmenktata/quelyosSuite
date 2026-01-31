@@ -238,7 +238,7 @@ export function SeedData() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <ToastContainer />
+      <ToastContainer toasts={toast.toasts} onRemove={toast.removeToast} />
 
       {/* Header */}
       <div className="mb-8">

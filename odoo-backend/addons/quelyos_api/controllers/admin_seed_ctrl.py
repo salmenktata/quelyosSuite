@@ -94,7 +94,7 @@ class AdminSeedController(SuperAdminController):
                     status=404
                 )
 
-            if tenant.state != 'active':
+            if tenant.status != 'active':
                 return request.make_json_response(
                     {'success': False, 'error': 'Tenant non actif'},
                     headers=cors_headers,
