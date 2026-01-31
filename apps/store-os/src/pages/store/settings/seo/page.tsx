@@ -1,0 +1,738 @@
+import { useState, useEffect } from "react";
+import { Breadcrumbs, SkeletonTable } from "@/components/common";
+import { Button } from "@/components/common/Button";
+import { useToast } from "@/contexts/ToastContext";
+import {
+  Search,
+  Save,
+  Loader2,
+  Globe,
+  FileText,
+  Image,
+  Info,
+  Plus,
+  Trash2,
+  X,
+  Settings,
+  List,
+} from "lucide-react";
+import { useSiteConfig, useUpdateSiteConfig } from "@/hooks/useSiteConfig";
+import {
+  useSeoMetadataList,
+  useCreateSeoMetadata,
+  useUpdateSeoMetadata,
+  useDeleteSeoMetadata,
+  SeoMetadata,
+} from "@/hooks/useSeoMetadata";
+
+type MainTab = "global" | "pages";
+type FormTab = "meta" | "og" | "advanced";
+
+export default function SeoSettingsPage() {
+  const toast = useToast();
+  const { data: config, isLoading: configLoading } = useSiteConfig();
+  const updateConfigMutation = useUpdateSiteConfig();
+
+  // SEO Metadata (par page)
+  const { data: metadataList, isLoading: metadataLoading } = useSeoMetadataList();
+  const createMutation = useCreateSeoMetadata();
+  const updateMutation = useUpdateSeoMetadata();
+  const deleteMutation = useDeleteSeoMetadata();
+
+  const [mainTab, setMainTab] = useState<MainTab>("global");
+  const [formTab, setFormTab] = useState<FormTab>("meta");
+  const [editingMetadata, setEditingMetadata] = useState<SeoMetadata | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+
+  // Config globale
+  const [seoConfig, setSeoConfig] = useState({
+    site_title: "",
+    meta_description: "",
+    meta_keywords: "",
+    og_image_url: "",
+  });
+
+  // Formulaire metadata par page
+  const defaultFormData = {
+    name: "",
+    page_type: "static" as SeoMetadata["page_type"],
+    slug: "",
+    meta_title: "",
+    meta_description: "",
+    og_type: "website" as SeoMetadata["og_type"],
+    og_image_url: "",
+    twitter_card: "summary_large_image" as SeoMetadata["twitter_card"],
+    schema_type: "WebPage" as SeoMetadata["schema_type"],
+    focus_keyword: "",
+    noindex: false,
+    nofollow: false,
+    active: true,
+  };
+  const [formData, setFormData] = useState(defaultFormData);
+
+  useEffect(() => {
+    if (config) {
+      setSeoConfig({
+        site_title: (config as any).site_title || "",
+        meta_description: (config as any).meta_description || "",
+        meta_keywords: (config as any).meta_keywords || "",
+        og_image_url: (config as any).og_image_url || "",
+      });
+    }
+  }, [config]);
+
+  const handleSaveGlobal = async () => {
+    try {
+      await updateConfigMutation.mutateAsync(seoConfig as any);
+      toast.success("Paramètres SEO globaux mis à jour");
+    } catch {
+      toast.error("Erreur lors de la mise à jour");
+    }
+  };
+
+  // Handlers metadata par page
+  const handleNew = () => {
+    setIsCreating(true);
+    setEditingMetadata(null);
+    setFormData(defaultFormData);
+    setFormTab("meta");
+  };
+
+  const handleEdit = (metadata: SeoMetadata) => {
+    setEditingMetadata(metadata);
+    setIsCreating(false);
+    setFormData({
+      name: metadata.name || "",
+      page_type: metadata.page_type || "static",
+      slug: metadata.slug || "",
+      meta_title: metadata.meta_title || "",
+      meta_description: metadata.meta_description || "",
+      og_type: metadata.og_type || "website",
+      og_image_url: metadata.og_image_url || "",
+      twitter_card: metadata.twitter_card || "summary_large_image",
+      schema_type: metadata.schema_type || "WebPage",
+      focus_keyword: metadata.focus_keyword || "",
+      noindex: metadata.noindex || false,
+      nofollow: metadata.nofollow || false,
+      active: metadata.active,
+    });
+    setFormTab("meta");
+  };
+
+  const handleCancel = () => {
+    setIsCreating(false);
+    setEditingMetadata(null);
+  };
+
+  const handleSaveMetadata = async () => {
+    try {
+      if (isCreating) {
+        await createMutation.mutateAsync(formData);
+        toast.success("Metadata SEO créée");
+      } else if (editingMetadata) {
+        await updateMutation.mutateAsync({ id: editingMetadata.id, ...formData });
+        toast.success("Metadata SEO mise à jour");
+      }
+      handleCancel();
+    } catch {
+      toast.error("Erreur lors de la sauvegarde");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Supprimer cette metadata ?")) return;
+    try {
+      await deleteMutation.mutateAsync(id);
+      toast.success("Metadata supprimée");
+      if (editingMetadata?.id === id) handleCancel();
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  const getScoreColor = (score?: number) => {
+    if (!score) return "text-gray-400 dark:text-gray-500";
+    if (score >= 80) return "text-green-600 dark:text-green-400";
+    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
+    return "text-red-600 dark:text-red-400";
+  };
+
+  const showForm = isCreating || editingMetadata;
+  const isLoading = configLoading || metadataLoading;
+
+  if (isLoading && mainTab === "global") {
+    return (
+      <div className="space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Boutique", href: "/store" },
+            { label: "Paramètres", href: "/store/settings" },
+            { label: "SEO", href: "/store/settings/seo" },
+          ]}
+        />
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: "Boutique", href: "/store" },
+          { label: "Paramètres", href: "/store/settings" },
+          { label: "SEO", href: "/store/settings/seo" },
+        ]}
+      />
+
+      {/* Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-start gap-4">
+          <div className="rounded-lg bg-indigo-100 dark:bg-indigo-900/30 p-3">
+            <Search className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SEO</h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Optimisation pour les moteurs de recherche
+            </p>
+          </div>
+        </div>
+        {mainTab === "global" && (
+          <Button
+            onClick={handleSaveGlobal}
+            disabled={updateConfigMutation.isPending}
+            icon={
+              updateConfigMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )
+            }
+          >
+            Enregistrer
+          </Button>
+        )}
+        {mainTab === "pages" && !showForm && (
+          <Button onClick={handleNew} icon={<Plus className="h-4 w-4" />}>
+            Nouvelle page
+          </Button>
+        )}
+      </div>
+
+      {/* Main Tabs */}
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex gap-4 -mb-px">
+          <button
+            onClick={() => setMainTab("global")}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition ${
+              mainTab === "global"
+                ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white dark:hover:text-gray-300"
+            }`}
+          >
+            <Settings className="h-4 w-4" />
+            Configuration globale
+          </button>
+          <button
+            onClick={() => setMainTab("pages")}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition ${
+              mainTab === "pages"
+                ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white dark:hover:text-gray-300"
+            }`}
+          >
+            <List className="h-4 w-4" />
+            Métadonnées par page
+          </button>
+        </nav>
+      </div>
+
+      {/* Global Config Tab */}
+      {mainTab === "global" && (
+        <>
+          <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4">
+            <div className="flex gap-3">
+              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                Ces métadonnées s'appliquent par défaut à toutes les pages de votre boutique.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="space-y-6">
+              {/* Titre du site */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
+                  <Globe className="h-4 w-4" />
+                  Titre du site
+                </label>
+                <input
+                  type="text"
+                  value={seoConfig.site_title}
+                  onChange={(e) => setSeoConfig({ ...seoConfig, site_title: e.target.value })}
+                  placeholder="Ma Boutique - Vente en ligne de produits"
+                  maxLength={70}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <div className="mt-1 flex justify-between">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Apparaît dans l'onglet du navigateur et les résultats de recherche.
+                  </p>
+                  <span
+                    className={`text-xs ${seoConfig.site_title.length > 60 ? "text-amber-600" : "text-gray-400"}`}
+                  >
+                    {seoConfig.site_title.length}/70
+                  </span>
+                </div>
+              </div>
+
+              {/* Meta description */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
+                  <FileText className="h-4 w-4" />
+                  Meta description
+                </label>
+                <textarea
+                  value={seoConfig.meta_description}
+                  onChange={(e) =>
+                    setSeoConfig({ ...seoConfig, meta_description: e.target.value })
+                  }
+                  placeholder="Découvrez notre sélection de produits de qualité. Livraison rapide et service client réactif."
+                  maxLength={160}
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 resize-none"
+                />
+                <div className="mt-1 flex justify-between">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Description affichée dans les résultats de recherche Google.
+                  </p>
+                  <span
+                    className={`text-xs ${seoConfig.meta_description.length > 150 ? "text-amber-600" : "text-gray-400"}`}
+                  >
+                    {seoConfig.meta_description.length}/160
+                  </span>
+                </div>
+              </div>
+
+              {/* Mots-clés */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
+                  <Search className="h-4 w-4" />
+                  Mots-clés
+                </label>
+                <input
+                  type="text"
+                  value={seoConfig.meta_keywords}
+                  onChange={(e) => setSeoConfig({ ...seoConfig, meta_keywords: e.target.value })}
+                  placeholder="boutique en ligne, e-commerce, produits, vente"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Séparez les mots-clés par des virgules. Usage limité par les moteurs modernes.
+                </p>
+              </div>
+
+              {/* Image Open Graph */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-2">
+                  <Image className="h-4 w-4" />
+                  Image de partage (Open Graph)
+                </label>
+                <input
+                  type="url"
+                  value={seoConfig.og_image_url}
+                  onChange={(e) => setSeoConfig({ ...seoConfig, og_image_url: e.target.value })}
+                  placeholder="https://example.com/og-image.jpg"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Image affichée lors du partage sur les réseaux sociaux. Format recommandé :
+                  1200x630 pixels.
+                </p>
+              </div>
+
+              {/* Preview */}
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4">
+                <p className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-3">
+                  Aperçu Google
+                </p>
+                <div className="space-y-1">
+                  <p className="text-lg text-blue-700 dark:text-blue-400 hover:underline cursor-pointer truncate">
+                    {seoConfig.site_title || "Titre de votre site"}
+                  </p>
+                  <p className="text-sm text-green-700 dark:text-green-500 truncate">
+                    https://votreboutique.com
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {seoConfig.meta_description ||
+                      "La description de votre site apparaîtra ici dans les résultats de recherche."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Pages Metadata Tab */}
+      {mainTab === "pages" && (
+        <div className={`grid gap-6 ${showForm ? "lg:grid-cols-2" : "grid-cols-1"}`}>
+          {/* Liste */}
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {metadataLoading ? (
+              <div className="p-4">
+                <SkeletonTable rows={5} columns={5} />
+              </div>
+            ) : (
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-900">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Slug
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Score
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Actif
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {metadataList?.map((m) => (
+                    <tr
+                      key={m.id}
+                      className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        editingMetadata?.id === m.id ? "bg-indigo-50 dark:bg-indigo-900/20" : ""
+                      }`}
+                      onClick={() => handleEdit(m)}
+                    >
+                      <td className="px-4 py-3 text-sm font-mono text-gray-900 dark:text-white dark:text-gray-100">
+                        {m.slug}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                        {m.page_type}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`font-bold text-sm ${getScoreColor(m.seo_score)}`}>
+                          {m.seo_score || 0}/100
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            m.active
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                          }`}
+                        >
+                          {m.active ? "Oui" : "Non"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(m.id);
+                          }}
+                          size="sm"
+                          variant="danger"
+                          icon={<Trash2 className="h-3.5 w-3.5" />}
+                        >
+                          Supprimer
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!metadataList || metadataList.length === 0) && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
+                      >
+                        Aucune metadata. Cliquez sur "Nouvelle page" pour en créer.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* Formulaire inline */}
+          {showForm && (
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {isCreating ? "Nouvelle Metadata" : "Modifier la Metadata"}
+                </h2>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex border-b border-gray-200 dark:border-gray-700">
+                {(["meta", "og", "advanced"] as FormTab[]).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setFormTab(tab)}
+                    className={`px-4 py-2 text-sm font-medium transition ${
+                      formTab === tab
+                        ? "border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400"
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-white dark:hover:text-gray-200"
+                    }`}
+                  >
+                    {tab === "meta" ? "Balises Meta" : tab === "og" ? "Open Graph" : "Avancé"}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                {formTab === "meta" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          Nom interne
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="Homepage"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          Type de page
+                        </label>
+                        <select
+                          value={formData.page_type}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              page_type: e.target.value as typeof formData.page_type,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        >
+                          <option value="home">Homepage</option>
+                          <option value="product">Page Produit</option>
+                          <option value="category">Page Catégorie</option>
+                          <option value="static">Page Statique</option>
+                          <option value="collection">Collection</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                        Slug (URL)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.slug}
+                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm font-mono"
+                        placeholder="/about-us"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                        Meta Title{" "}
+                        <span className="text-xs text-gray-500">
+                          ({formData.meta_title.length}/60)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={60}
+                        value={formData.meta_title}
+                        onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                        Meta Description{" "}
+                        <span className="text-xs text-gray-500">
+                          ({formData.meta_description.length}/160)
+                        </span>
+                      </label>
+                      <textarea
+                        maxLength={160}
+                        rows={3}
+                        value={formData.meta_description}
+                        onChange={(e) =>
+                          setFormData({ ...formData, meta_description: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm resize-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {formTab === "og" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                        OG Image URL
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.og_image_url}
+                        onChange={(e) => setFormData({ ...formData, og_image_url: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        placeholder="https://..."
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Recommandé : 1200x630px
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          OG Type
+                        </label>
+                        <select
+                          value={formData.og_type}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              og_type: e.target.value as typeof formData.og_type,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        >
+                          <option value="website">Website</option>
+                          <option value="article">Article</option>
+                          <option value="product">Product</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          Twitter Card
+                        </label>
+                        <select
+                          value={formData.twitter_card}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              twitter_card: e.target.value as typeof formData.twitter_card,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        >
+                          <option value="summary">Summary</option>
+                          <option value="summary_large_image">Summary Large Image</option>
+                          <option value="product">Product</option>
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {formTab === "advanced" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          Schema.org Type
+                        </label>
+                        <select
+                          value={formData.schema_type}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              schema_type: e.target.value as typeof formData.schema_type,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        >
+                          <option value="WebPage">WebPage</option>
+                          <option value="Product">Product</option>
+                          <option value="Article">Article</option>
+                          <option value="Organization">Organization</option>
+                          <option value="FAQPage">FAQPage</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                          Focus Keyword
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.focus_keyword}
+                          onChange={(e) =>
+                            setFormData({ ...formData, focus_keyword: e.target.value })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="mot-clé principal"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.noindex}
+                          onChange={(e) => setFormData({ ...formData, noindex: e.target.checked })}
+                          className="w-4 h-4 text-indigo-600 border-gray-300 rounded"
+                        />
+                        <span className="text-sm text-gray-900 dark:text-white">NoIndex</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.nofollow}
+                          onChange={(e) => setFormData({ ...formData, nofollow: e.target.checked })}
+                          className="w-4 h-4 text-indigo-600 border-gray-300 rounded"
+                        />
+                        <span className="text-sm text-gray-900 dark:text-white">NoFollow</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.active}
+                          onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                          className="w-4 h-4 text-indigo-600 border-gray-300 rounded"
+                        />
+                        <span className="text-sm text-gray-900 dark:text-white">Actif</span>
+                      </label>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700">
+                <Button onClick={handleCancel} variant="secondary" icon={<X className="h-4 w-4" />}>
+                  Annuler
+                </Button>
+                <Button
+                  onClick={handleSaveMetadata}
+                  disabled={!formData.slug || createMutation.isPending || updateMutation.isPending}
+                  icon={<Save className="h-4 w-4" />}
+                >
+                  Sauvegarder
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
