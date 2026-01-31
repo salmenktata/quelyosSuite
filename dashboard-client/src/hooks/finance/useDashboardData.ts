@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { reportingClient } from "@/lib/finance/reporting";
 import { AuthenticationError } from "@/lib/finance/api";
-import { isAuthenticated } from "@/lib/session";
+import { tokenService } from "@/lib/tokenService";
 import type { DashboardOverviewResponse, ReportingFilters } from "@/lib/finance/reporting";
 
 interface UseDashboardDataOptions extends ReportingFilters {
@@ -43,7 +43,7 @@ export function useDashboardData(options: UseDashboardDataOptions = {}) {
     queryFn: () => reportingClient.dashboardOverview({ days, ...filters }),
 
     // Only run query if user is authenticated
-    enabled: isAuthenticated(),
+    enabled: tokenService.isAuthenticated(),
 
     // Auto-refetch every 5 minutes (or custom interval) - disabled by default
     refetchInterval: enableAutoRefetch ? refetchInterval : false,
