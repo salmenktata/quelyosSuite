@@ -19,6 +19,7 @@ import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { Button } from "@/components/ui/button";
 import { Tag, Plus } from "lucide-react";
 import { financeNotices } from "@/lib/notices/finance-notices";
+import { logger } from '@quelyos/logger';
 
 type Category = {
   id: number;
@@ -43,6 +44,7 @@ export default function CategoriesPage() {
       const data = await api<Category[]>("/finance/categories");
       setCategories(data);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(
         err instanceof Error ? err.message : "Erreur de chargement des catégories."
       );
@@ -67,6 +69,7 @@ export default function CategoriesPage() {
       setShowForm(false);
       await fetchCategories();
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(
         err instanceof Error ? err.message : "Impossible de créer la catégorie."
       );

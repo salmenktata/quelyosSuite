@@ -9,6 +9,7 @@ import { ModularLayout } from "@/components/ModularLayout";
 import { GlassCard, GlassBadge, GlassListItem } from "@/components/ui/glass";
 import { Briefcase, Plus, Trash2, Edit } from "lucide-react";
 import type { CreatePortfolioRequest, UpdatePortfolioRequest } from "@/types/api";
+import { logger } from '@quelyos/logger';
 
 type Account = {
   id: number;
@@ -117,6 +118,7 @@ export default function PortfoliosPage() {
       await api(`/portfolios/${id}`, { method: "DELETE" });
       await refetchPortfolios();
     } catch (err) {
+      logger.error("Erreur:", err);
       // Error will be handled by useApiData
     }
   };
@@ -173,6 +175,7 @@ export default function PortfoliosPage() {
       setSelectedPortfolio(null);
       await refetchPortfolios();
     } catch (err) {
+      logger.error("Erreur:", err);
       // Error will be handled by useApiData
     }
   };

@@ -5,6 +5,7 @@ import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { GlassCard, GlassPanel, GlassBadge, GlassListItem } from "@/components/ui/glass";
 import type { CreateBudgetRequest } from "@/types/api";
+import { logger } from '@quelyos/logger';
 
 type Budget = {
   id: number;
@@ -26,6 +27,7 @@ export default function BudgetsPage() {
       const data = await api<Budget[]>("/budgets");
       setBudgets(data);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement des budgets.");
     } finally {
       setLoading(false);
@@ -52,6 +54,7 @@ export default function BudgetsPage() {
       setNewBudgetName("");
       fetchBudgets();
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(
         err instanceof Error ? err.message : "Impossible de créer le budget."
       );

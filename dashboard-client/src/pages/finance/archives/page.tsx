@@ -20,6 +20,7 @@ import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { ArrowUpRight, Trash2, Undo2, Archive as ArchiveIcon } from "lucide-react";
 import type { BulkDeleteRequest } from "@/types/api";
+import { logger } from '@quelyos/logger';
 
 const statusLabels: Record<string, string> = {
   PLANNED: "Prévu",
@@ -68,6 +69,7 @@ export default function ArchivesPage() {
       setTransactions(Array.isArray(data) ? data : []);
       setSelectedIds([]);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement des archives.");
     } finally {
       setLoading(false);
@@ -111,6 +113,7 @@ export default function ArchivesPage() {
       setSelectedIds([]);
       fetchArchives();
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de désarchiver");
     }
   }
@@ -126,6 +129,7 @@ export default function ArchivesPage() {
       setSelectedIds([]);
       fetchArchives();
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de supprimer");
     }
   }

@@ -9,6 +9,7 @@ import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { GlassCard, GlassPanel } from "@/components/ui/glass";
 import { ArrowLeft, Save, Loader2, AlertCircle } from "lucide-react";
 import type { CreateBudgetRequest, UpdateBudgetRequest } from "@/types/api";
+import { logger } from '@quelyos/logger';
 
 type Category = {
   id: number;
@@ -54,6 +55,7 @@ export default function NewBudgetPage() {
       if (data.period) setPeriod(data.period as "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY" | "CUSTOM");
       if (data.startDate) setStartDate(data.startDate.split("T")[0]);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement du budget");
     } finally {
       setLoading(false);
@@ -96,6 +98,7 @@ export default function NewBudgetPage() {
 
       navigate(ROUTES.FINANCE.DASHBOARD.BUDGETS.HOME);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur lors de l'enregistrement");
     } finally {
       setSaving(false);

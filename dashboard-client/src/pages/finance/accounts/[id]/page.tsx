@@ -18,6 +18,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { logger } from '@quelyos/logger';
 
 type Account = {
   id: number;
@@ -54,6 +55,7 @@ export default function AccountDetailPage() {
         const data = await api<Account>(`/accounts/${accountId}`);
         setAccount(data);
       } catch (err) {
+      logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur de chargement");
       } finally {
         setLoading(false);

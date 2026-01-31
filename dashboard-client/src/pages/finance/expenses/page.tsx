@@ -17,6 +17,7 @@ import { financeNotices } from '@/lib/notices'
 import { ArrowDownCircle, Plus, Search, X } from 'lucide-react'
 import { api } from '@/lib/finance/api'
 import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { logger } from '@quelyos/logger';
 
 type Transaction = {
   id: number
@@ -54,6 +55,7 @@ export default function ExpensesPage() {
       setTransactions(txData)
       setCategories(catData)
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {
       setIsLoading(false)

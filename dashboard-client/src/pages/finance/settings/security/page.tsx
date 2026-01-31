@@ -17,6 +17,7 @@ import {
   Clock
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { logger } from '@quelyos/logger';
 
 type Session = {
   id: number;
@@ -105,6 +106,7 @@ export default function SecurityPage() {
       setConfirmPassword("");
       setTimeout(() => setPasswordSuccess(false), 5000);
     } catch (err) {
+      logger.error("Erreur:", err);
       setPasswordError(err instanceof Error ? err.message : "Erreur lors du changement de mot de passe");
     } finally {
       setPasswordLoading(false);
@@ -123,6 +125,7 @@ export default function SecurityPage() {
       setTwoFAQRCode(data.qrCode);
       setTwoFASetupMode(true);
     } catch (err) {
+      logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la configuration 2FA");
     } finally {
       setTwoFALoading(false);
@@ -147,6 +150,7 @@ export default function SecurityPage() {
       setTwoFASetupMode(false);
       setTwoFACode("");
     } catch (err) {
+      logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Code invalide");
     } finally {
       setTwoFALoading(false);
@@ -161,6 +165,7 @@ export default function SecurityPage() {
       await api("/user/2fa/disable", { method: "POST" });
       setTwoFAEnabled(false);
     } catch (err) {
+      logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la désactivation");
     } finally {
       setTwoFALoading(false);

@@ -37,6 +37,7 @@ import {
   Download,
   GitBranch,
 } from "lucide-react"
+import { logger } from '@quelyos/logger';
 
 // Types
 type DailyRow = {
@@ -133,6 +134,7 @@ export default function ScenariosPage() {
       const data = (await api(`/dashboard/forecast?days=${horizon}`)) as ForecastResponse
       setBaseData(data)
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement")
     } finally {
       setLoading(false)

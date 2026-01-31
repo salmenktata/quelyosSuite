@@ -34,6 +34,7 @@ import { AccountModal, type AccountFormData } from '@/components/finance/account
 import { DeleteConflictModal } from '@/components/finance/accounts/DeleteConflictModal'
 import { useFilteredData } from '@/hooks/finance/useFilteredData'
 import { useApiData } from '@/hooks/finance/useApiData'
+import { logger } from '@quelyos/logger';
 
 type AccountType =
   | 'banque'
@@ -218,6 +219,7 @@ export default function AccountsPage() {
       }
       await refetchAccounts()
     } catch (err) {
+      logger.error("Erreur:", err);
       const message = err instanceof Error ? err.message : 'Impossible de supprimer le compte.'
       if (message.includes('ACCOUNT_HAS_TRANSACTIONS')) {
         setDeleteConflictId(id)
@@ -269,6 +271,7 @@ export default function AccountsPage() {
       closeDeleteConflict()
       await refetchAccounts()
     } catch (err) {
+      logger.error("Erreur:", err);
       setConflictError(
         err instanceof Error
           ? err.message

@@ -8,6 +8,7 @@ import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { TrendingUp, Brain } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { logger } from '@quelyos/logger';
 
 export default function ForecastingPage() {
   const [predictions, setPredictions] = useState<any[]>([])
@@ -26,6 +27,7 @@ export default function ForecastingPage() {
         setSummary(response.data.data.summary)
       }
     } catch (_error) {
+      logger.error("Erreur:", _error);
       // Error handled
     } finally {
       setLoading(false)

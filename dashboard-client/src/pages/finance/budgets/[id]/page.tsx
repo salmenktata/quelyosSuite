@@ -7,6 +7,7 @@ import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { GlassCard, GlassPanel, GlassBadge } from "@/components/ui/glass";
 import { ArrowLeft, TrendingDown, Calendar, DollarSign, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
+import { logger } from '@quelyos/logger';
 
 type BudgetDetail = {
   id: number;
@@ -47,6 +48,7 @@ export default function BudgetDetailPage() {
         const data = await api<BudgetDetail>(`/budgets/${params.id}/detail`);
         setBudget(data);
       } catch (err) {
+      logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur lors du chargement du budget");
       } finally {
         setLoading(false);

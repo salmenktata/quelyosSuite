@@ -17,6 +17,7 @@ import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/com
 import { financeNotices } from '@/lib/notices'
 import { Users, Plus, Search, CreditCard, Building2, FileText } from 'lucide-react'
 import SupplierCard from '@/components/finance/suppliers/SupplierCard'
+import { logger } from '@quelyos/logger';
 
 type Supplier = {
   id: string
@@ -87,6 +88,7 @@ export default function SuppliersPage() {
         totalInvoices,
       })
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {
       setIsLoading(false)

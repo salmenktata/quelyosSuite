@@ -14,6 +14,7 @@ import { api } from "@/lib/finance/api";
 import { Loader2, Plus, Trash2, Edit2, Tag, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
 import { Breadcrumbs, PageNotice, Button } from '@/components/common';
 import { financeNotices } from '@/lib/notices/finance-notices';
+import { logger } from '@quelyos/logger';
 
 type CategoryKind = "INCOME" | "EXPENSE";
 
@@ -76,6 +77,7 @@ export default function CategoriesPage() {
       const cats = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setCategories(cats);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de charger les catégories");
     } finally {
       setLoading(false);
@@ -99,6 +101,7 @@ export default function CategoriesPage() {
       setNewCategoryName("");
       setNewCategoryColor(DEFAULT_COLORS[0]);
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de créer la catégorie");
     } finally {
       setCreating(false);
@@ -112,6 +115,7 @@ export default function CategoriesPage() {
       await api(`/finance/categories/${id}`, { method: "DELETE" });
       setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de supprimer la catégorie");
     } finally {
       setDeleting(null);
@@ -144,6 +148,7 @@ export default function CategoriesPage() {
         setCategories((prev) => [...prev, ...created]);
       }
     } catch (err) {
+      logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur lors de la création des catégories");
     } finally {
       setSeedingDefaults(false);

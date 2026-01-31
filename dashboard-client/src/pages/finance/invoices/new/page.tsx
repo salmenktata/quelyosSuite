@@ -15,6 +15,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button } from '@/components/common'
 import { Plus, Trash2, Save, Send } from 'lucide-react'
 import { apiClient } from '@/lib/api'
+import { logger } from '@quelyos/logger';
 
 interface InvoiceLine {
   productId: number | null
@@ -103,6 +104,7 @@ export default function NewInvoicePage() {
         alert(`Erreur: ${response.data.error}`)
       }
     } catch (err: unknown) {
+      logger.error("Erreur:", err);
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
       alert(`Erreur: ${errorMessage}`)
     } finally {
