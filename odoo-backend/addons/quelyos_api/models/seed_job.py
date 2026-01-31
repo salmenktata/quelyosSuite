@@ -85,12 +85,18 @@ class SeedJob(models.Model):
         Returns:
             quelyos.seed.job: Job créé
         """
+        _logger.info(f"[SEED JOB] Creating job for tenant_id={tenant_id}")
+
         # Valider tenant
         tenant = self.env['quelyos.tenant'].browse(tenant_id)
         if not tenant.exists():
+            _logger.error(f"[SEED JOB] Tenant {tenant_id} not found")
             raise ValidationError("Tenant introuvable")
         if tenant.status != 'active':
+            _logger.error(f"[SEED JOB] Tenant {tenant.name} is not active (status={tenant.status})")
             raise ValidationError("Tenant non actif")
+
+        _logger.info(f"[SEED JOB] Tenant {tenant.name} validated (status={tenant.status})")
 
         # Vérifier job en cours
         running_job = self.search([
@@ -98,7 +104,10 @@ class SeedJob(models.Model):
             ('status', 'in', ['pending', 'running'])
         ], limit=1)
         if running_job:
+            _logger.warning(f"[SEED JOB] Job already running for tenant {tenant.name}: {running_job.job_id} (status={running_job.status})")
             raise ValidationError(f"Job seed déjà en cours : {running_job.job_id}")
+
+        _logger.info(f"[SEED JOB] No running job found for tenant {tenant.name}, proceeding with creation")
 
         # Générer job_id unique
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

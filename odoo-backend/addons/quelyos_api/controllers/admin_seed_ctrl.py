@@ -3,9 +3,10 @@ import logging
 import json
 import threading
 from datetime import datetime, timedelta
-from odoo import http
+from odoo import http, api
 from odoo.http import request
 from odoo.exceptions import ValidationError, AccessDenied
+from odoo.modules.registry import Registry
 from .super_admin import SuperAdminController, get_cors_headers
 
 _logger = logging.getLogger(__name__)
@@ -150,12 +151,20 @@ class AdminSeedController(SuperAdminController):
             }
 
             # Créer job
+            _logger.info(f"[SEED] Creating job for tenant {tenant.name} (ID: {tenant_id})")
             job = SeedJob.create_job(tenant_id, config)
+            _logger.info(f"[SEED] Job created: {job.job_id} (DB ID: {job.id})")
+
+            # CRITICAL: Commit avant le thread pour que le nouveau cursor puisse voir le job
+            request.env.cr.commit()
+            _logger.info(f"[SEED] Job committed to database")
 
             # Lancer génération en arrière-plan
+            db_name = request.env.cr.dbname
+            _logger.info(f"[SEED] Launching background thread for job {job.job_id} on database {db_name}")
             threading.Thread(
                 target=self._execute_seed_generation,
-                args=(job.id,),
+                args=(db_name, job.id, job.job_id),
                 daemon=True
             ).start()
 
@@ -164,15 +173,17 @@ class AdminSeedController(SuperAdminController):
                 _SEED_RATE_LIMIT[tenant_id] = datetime.now()
 
             # Audit log
+            _logger.info(f"[SEED] Creating audit log for job {job.job_id}")
             request.env['quelyos.audit.log'].sudo().create({
                 'action': 'seed_data_generated',
                 'tenant_id': tenant_id,
                 'user_id': request.session.uid,
-                'details_json': json.dumps({
+                'details': json.dumps({
                     'job_id': job.job_id,
                     'config': config,
                 }),
             })
+            _logger.info(f"[SEED] Job {job.job_id} created successfully, launching background thread")
 
             return request.make_json_response(
                 {
@@ -360,33 +371,50 @@ class AdminSeedController(SuperAdminController):
                 status=500
             )
 
-    def _execute_seed_generation(self, job_id):
+    def _execute_seed_generation(self, db_name, job_id, job_public_id):
         """Exécuter la génération seed en arrière-plan (thread séparé)
 
         Args:
+            db_name (str): Nom de la base de données
             job_id (int): ID du job à exécuter
+            job_public_id (str): ID public du job (pour logs)
         """
-        # Créer nouveau cursor pour thread séparé
-        with request.registry.cursor() as cr:
-            env = request.env(cr=cr)
+        _logger.info(f"[SEED THREAD] Starting generation for job {job_public_id} (DB ID: {job_id})")
 
-            try:
-                job = env['quelyos.seed.job'].sudo().browse(job_id)
-                if not job.exists():
-                    _logger.error(f"Seed job {job_id} not found")
-                    return
+        # Créer nouveau cursor pour thread séparé (pattern Odoo correct)
+        try:
+            reg = Registry(db_name)
+            with reg.cursor() as cr:
+                env = api.Environment(cr, 1, {})  # SUPERUSER_ID = 1
+                _logger.info(f"[SEED THREAD] Environment created for job {job_public_id}")
 
-                job.mark_running()
+                try:
+                    job = env['quelyos.seed.job'].browse(job_id)
+                    if not job.exists():
+                        _logger.error(f"[SEED THREAD] Job {job_id} not found in database")
+                        return
 
-                # Importer et exécuter générateur
-                from ..models.seed_generator import SeedGenerator
+                    _logger.info(f"[SEED THREAD] Job {job_public_id} found, marking as running")
+                    job.mark_running()
 
-                config = json.loads(job.config_json)
-                generator = SeedGenerator(env, job.tenant_id.id, config, job)
-                generator.generate_all()
+                    # Importer et exécuter générateur
+                    from ..models.seed_generator import SeedGenerator
 
-            except Exception as e:
-                _logger.error(f"Seed generation execution failed for job {job_id}: {e}", exc_info=True)
-                job = env['quelyos.seed.job'].sudo().browse(job_id)
-                if job.exists():
-                    job.mark_error(str(e))
+                    config = json.loads(job.config_json)
+                    _logger.info(f"[SEED THREAD] Config loaded for job {job_public_id}: {config}")
+
+                    generator = SeedGenerator(env, job.tenant_id.id, config, job)
+                    _logger.info(f"[SEED THREAD] Generator created, starting generation for tenant {job.tenant_id.name}")
+
+                    generator.generate_all()
+
+                    _logger.info(f"[SEED THREAD] Generation completed successfully for job {job_public_id}")
+
+                except Exception as e:
+                    _logger.error(f"[SEED THREAD] Generation failed for job {job_public_id}: {e}", exc_info=True)
+                    job = env['quelyos.seed.job'].browse(job_id)
+                    if job.exists():
+                        job.mark_error(str(e))
+
+        except Exception as e:
+            _logger.error(f"[SEED THREAD] Critical error in thread for job {job_public_id}: {e}", exc_info=True)

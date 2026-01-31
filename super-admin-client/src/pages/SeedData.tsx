@@ -118,7 +118,10 @@ export function SeedData() {
       return response.data.data
     },
     enabled: !!currentJobId,
-    refetchInterval: currentJobId && jobStatus?.status === 'running' ? 3000 : false,
+    refetchInterval: (query) => {
+      const data = query.state.data
+      return currentJobId && data?.status === 'running' ? 3000 : false
+    },
   })
 
   // Timer elapsed

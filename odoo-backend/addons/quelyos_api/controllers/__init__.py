@@ -23,6 +23,10 @@ from . import ml_forecasting_ctrl
 from . import open_banking_ctrl
 from . import sepa_direct_debit_ctrl
 from . import cfo_dashboards_ctrl
+from . import consolidation_ctrl
+from . import analytics_accounting_ctrl
+from . import cost_centers_ctrl
+from . import budgets_ctrl
 from . import cart_ctrl
 from . import analytics_ctrl
 from . import delivery_payment_ctrl

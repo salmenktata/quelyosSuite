@@ -230,27 +230,33 @@ class SeedGenerator:
         """Supprimer toutes les données seed du tenant (DANGER)"""
         self.job.update_progress(0, None, "⚠️ Suppression données existantes...")
 
-        models_to_clean = [
+        # Modèles avec tenant_id (Quelyos custom)
+        tenant_models = [
             'quelyos.pos.order',
             'quelyos.pos.session',
             'quelyos.pos.config',
             'quelyos.ticket',
             'quelyos.marketing.campaign',
             'quelyos.contact.list',
-            'account.payment',
-            'account.move',
-            'sale.order',
             'crm.lead',
-            'res.partner',
-            'stock.quant',
-            'stock.location',
-            'product.image',
-            'product.product',
-            'product.template',
-            'product.category',
         ]
 
-        for model_name in models_to_clean:
+        # Modèles Odoo core avec company_id (sans tenant_id)
+        # ORDRE CRITIQUE : Supprimer les ENFANTS avant les PARENTS (contraintes FK)
+        company_models = [
+            'account.payment',          # Enfant de account.move
+            'account.move',             # Enfant de sale.order, res.partner
+            'sale.order',               # Enfant de res.partner, product.product
+            'delivery.carrier',         # ⚠️ Référence product.product
+            'stock.quant',              # Référence product.product
+            'product.image',            # Enfant de product.template
+            'product.product',          # Enfant de product.template
+            'product.template',         # Parent de product.product, product.image
+            'res.partner',              # Parent de sale.order, account.move (supprimés avant)
+        ]
+
+        # Nettoyer modèles Quelyos (par tenant_id)
+        for model_name in tenant_models:
             try:
                 Model = self.env[model_name].with_context(self.ctx).sudo()
                 records = Model.search([('tenant_id', '=', self.tenant.id)])
@@ -261,6 +267,31 @@ class SeedGenerator:
             except Exception as e:
                 _logger.warning(f"Could not clean {model_name}: {e}")
 
+        # Nettoyer modèles Odoo core (par company_id)
+        for model_name in company_models:
+            try:
+                Model = self.env[model_name].with_context(self.ctx).sudo()
+
+                # Vérifier si le modèle a company_id
+                if 'company_id' not in Model._fields:
+                    _logger.info(f"[RESET] Skipping {model_name}: no company_id field")
+                    continue
+
+                records = Model.search([('company_id', '=', self.tenant.company_id.id)])
+                if records:
+                    count = len(records)
+                    _logger.info(f"[RESET] Deleting {count} {model_name} records...")
+                    records.unlink()
+                    _logger.info(f"[RESET] ✓ {count} {model_name} deleted")
+                    self.job.update_progress(0, None, f"  ✓ {count} {model_name} supprimés (company)")
+                else:
+                    _logger.info(f"[RESET] No {model_name} to delete")
+            except Exception as e:
+                _logger.warning(f"[RESET] Could not clean {model_name}: {e}")
+                # NE PAS rollback - continuer avec les autres modèles
+                # Le commit final validera les suppressions réussies
+
+        # Commit final après tous les nettoyages
         self.env.cr.commit()
         self.job.update_progress(0, None, "✓ Nettoyage terminé")
 
@@ -268,38 +299,55 @@ class SeedGenerator:
         """Phase 1 : Configuration de base (catégories, taxes, pricelists, etc.)"""
         self.job.update_progress(1, 'configuration', "Création configuration de base...")
 
-        # Créer catégories produits
+        # Créer catégories produits (NOTE: product.category est un modèle core sans tenant_id)
         categories = []
         for cat_data in PRODUCT_CATEGORIES:
             cat = self.env['product.category'].with_context(self.ctx).sudo().create({
                 'name': cat_data['name'],
-                'tenant_id': self.tenant.id,
+                # NOTE: product.category n'a pas de tenant_id (modèle Odoo core)
             })
             categories.append(cat)
             self.cache['categories'].append(cat)
 
-        # Créer taxes TVA Tunisie
-        tax_19 = self.env['account.tax'].with_context(self.ctx).sudo().create({
-            'name': 'TVA 19%',
-            'amount': 19.0,
-            'type_tax_use': 'sale',
-            'tenant_id': self.tenant.id,
-            'company_id': self.tenant.company_id.id,
-        })
-        tax_7 = self.env['account.tax'].with_context(self.ctx).sudo().create({
-            'name': 'TVA 7%',
-            'amount': 7.0,
-            'type_tax_use': 'sale',
-            'tenant_id': self.tenant.id,
-            'company_id': self.tenant.company_id.id,
-        })
+        # Créer ou réutiliser taxes TVA Tunisie (NOTE: account.tax est un modèle core sans tenant_id)
+        tunisia = self.env.ref('base.tn')  # Pays Tunisie
+        TaxModel = self.env['account.tax'].with_context(self.ctx).sudo()
+
+        # Chercher ou créer TVA 19%
+        tax_19 = TaxModel.search([
+            ('name', '=', 'TVA 19%'),
+            ('company_id', '=', self.tenant.company_id.id)
+        ], limit=1)
+        if not tax_19:
+            tax_19 = TaxModel.create({
+                'name': 'TVA 19%',
+                'amount': 19.0,
+                'type_tax_use': 'sale',
+                'country_id': tunisia.id,  # REQUIRED en Odoo 19
+                'company_id': self.tenant.company_id.id,
+            })
+
+        # Chercher ou créer TVA 7%
+        tax_7 = TaxModel.search([
+            ('name', '=', 'TVA 7%'),
+            ('company_id', '=', self.tenant.company_id.id)
+        ], limit=1)
+        if not tax_7:
+            tax_7 = TaxModel.create({
+                'name': 'TVA 7%',
+                'amount': 7.0,
+                'type_tax_use': 'sale',
+                'country_id': tunisia.id,  # REQUIRED en Odoo 19
+                'company_id': self.tenant.company_id.id,
+            })
+
         self.cache['taxes'] = [tax_19, tax_7]
 
-        # Créer pricelists
+        # Créer pricelists (NOTE: product.pricelist est un modèle core sans tenant_id)
         pricelist = self.env['product.pricelist'].with_context(self.ctx).sudo().create({
             'name': 'TND Public',
             'currency_id': self.env.ref('base.TND').id,
-            'tenant_id': self.tenant.id,
+            # NOTE: product.pricelist n'a pas de tenant_id (modèle Odoo core)
             'company_id': self.tenant.company_id.id,
         })
         self.cache['pricelists'].append(pricelist)
@@ -350,11 +398,16 @@ class SeedGenerator:
                 # Nom produit réaliste
                 product_name = self.faker.catch_phrase()[:50]
 
+                # Odoo 19 : type='consu' + is_storable=True/False
+                # 70% stockables (pour stock.quant), 30% consommables
+                is_stockable = random.random() < 0.7
+
                 batch.append({
                     'name': product_name,
                     'list_price': round(random.uniform(10.0, 500.0), 2),
                     'standard_price': round(random.uniform(5.0, 250.0), 2),
-                    'type': 'product',
+                    'type': 'consu',  # Odoo 19: 'consu' = Goods (biens physiques)
+                    'is_storable': is_stockable,  # True = stockable, False = consommable
                     'categ_id': category.id,
                     'taxes_id': [(6, 0, [tax.id])],
                     'tenant_id': self.tenant.id,
@@ -375,24 +428,26 @@ class SeedGenerator:
                     f"  Créés {i + batch_size}/{products_count} produits"
                 )
 
-        # Générer variants (taille/couleur)
-        colors = ['Rouge', 'Bleu', 'Vert', 'Noir', 'Blanc']
-        sizes = ['S', 'M', 'L', 'XL']
+        # TODO: Générer variants avec système attributs Odoo 19
+        # DÉSACTIVÉ temporairement car conflit contrainte unique product_product_combination_unique
+        # Quand on crée product.template, Odoo crée automatiquement un product.product variant par défaut
+        # avec combination_indices='', donc créer manuellement d'autres variants avec combination_indices=''
+        # provoque une violation de contrainte unique (product_tmpl_id, combination_indices).
+        #
+        # Pour implémenter correctement les variants, il faut :
+        # 1. Créer product.attribute (ex: 'Couleur', 'Taille')
+        # 2. Créer product.attribute.value (ex: 'Rouge', 'Bleu', 'S', 'M')
+        # 3. Ajouter attribute_line_ids sur product.template
+        # 4. Odoo génère automatiquement tous les variants (combinaisons)
+        #
+        # Pour l'instant, chaque product.template a automatiquement 1 variant par défaut.
 
-        variants_created = 0
-        for product in random.sample(self.cache['products'], min(50, len(self.cache['products']))):
-            for _ in range(random.randint(1, 3)):
-                if variants_created >= variants_count:
-                    break
-
-                variant = self.env['product.product'].with_context(self.ctx).sudo().create({
-                    'product_tmpl_id': product.id,
-                    'default_code': f"VAR-{self.faker.bothify('####')}",
-                    'tenant_id': self.tenant.id,
-                    'company_id': self.tenant.company_id.id,
-                })
-                self.cache['variants'].append(variant)
-                variants_created += 1
+        _logger.info("[SEED] Variant creation skipped - using Odoo auto-generated variants")
+        # Les variants auto-créés sont déjà dans product.product
+        existing_variants = self.env['product.product'].sudo().search([
+            ('product_tmpl_id', 'in', [p.id for p in self.cache['products']])
+        ])
+        self.cache['variants'].extend(existing_variants)
 
         self.env.cr.commit()
 
@@ -412,15 +467,23 @@ class SeedGenerator:
             return
 
         location = self.cache['locations'][0]
-        quants_count = self.volumetry.get('products', 100) * 2
+
+        # Filtrer seulement les produits stockables (Odoo 19: is_storable=True)
+        # Les quants ne peuvent pas être créés pour les produits non-stockables
+        stockable_products = [p for p in self.cache['products'] if p.is_storable]
+
+        if not stockable_products:
+            self.job.update_progress(30, 'stock', "⚠️ Pas de produits stockables, skip")
+            self.results['stock'] = {'count': 0, 'duration_seconds': 0}
+            return
 
         batch = []
-        for product in self.cache['products'][:quants_count // 2]:
+        for product in stockable_products:
             batch.append({
                 'product_id': product.product_variant_id.id,
                 'location_id': location.id,
                 'quantity': random.randint(0, 100),
-                'tenant_id': self.tenant.id,
+                # NOTE: stock.quant n'a pas tenant_id (modèle Odoo core)
                 'company_id': self.tenant.company_id.id,
             })
 
@@ -520,7 +583,7 @@ class SeedGenerator:
                 'tenant_id': self.tenant.id,
                 'company_id': self.tenant.company_id.id,
                 'date_order': datetime.now() - timedelta(days=random.randint(0, 90)),
-                'state': random.choice(['draft', 'sent', 'sale', 'done']),
+                'state': random.choice(['draft', 'sent', 'sale']),  # Odoo 19: 'done' n'existe plus
             })
 
         orders = self.env['sale.order'].with_context(self.ctx).sudo().create(batch)
@@ -537,7 +600,7 @@ class SeedGenerator:
                     'product_id': product.product_variant_id.id,
                     'product_uom_qty': random.randint(1, 10),
                     'price_unit': product.list_price,
-                    'tenant_id': self.tenant.id,
+                    # NOTE: sale.order.line n'a pas tenant_id (modèle Odoo core)
                 })
 
         self.env.cr.commit()
@@ -553,12 +616,53 @@ class SeedGenerator:
         start_time = datetime.now()
         self.job.update_progress(55, 'finance', "Génération factures...")
 
-        # Simplification : skip pour éviter complexité account.move
-        self.job.update_progress(60, 'finance', "⚠️ Finance skip (complexité account.move)")
+        if not self.cache['orders']:
+            self.job.update_progress(60, 'finance', "⚠️ Pas de commandes, skip finance")
+            self.results['finance'] = {'count': 0, 'duration_seconds': 0}
+            return
+
+        invoices_count = min(self.volumetry['invoices'], len(self.cache['orders']))
+        payments_count = self.volumetry['payments']
+
+        # Créer factures depuis commandes
+        invoices_created = 0
+        for order in random.sample(self.cache['orders'], invoices_count):
+            if order.state != 'sale':  # Seulement les commandes confirmées
+                continue
+
+            # Créer facture via l'action Odoo standard
+            try:
+                # Méthode Odoo pour créer facture depuis sale.order
+                invoice = order._create_invoices()
+                if invoice:
+                    self.cache['invoices'].append(invoice)
+                    invoices_created += 1
+            except Exception as e:
+                _logger.warning(f"Failed to create invoice for order {order.id}: {e}")
+
+        self.env.cr.commit()
+
+        # Créer paiements pour certaines factures
+        payments_created = 0
+        for invoice in random.sample(self.cache['invoices'], min(payments_count, len(self.cache['invoices']))):
+            try:
+                # Enregistrer paiement via wizard Odoo
+                payment_wizard = self.env['account.payment.register'].with_context({
+                    'active_model': 'account.move',
+                    'active_ids': invoice.ids,
+                }).sudo().create({
+                    'amount': invoice.amount_total,
+                })
+                payment = payment_wizard.action_create_payments()
+                payments_created += 1
+            except Exception as e:
+                _logger.warning(f"Failed to create payment for invoice {invoice.id}: {e}")
+
+        self.env.cr.commit()
 
         duration = (datetime.now() - start_time).total_seconds()
         self.results['finance'] = {
-            'count': 0,
+            'count': invoices_created + payments_created,
             'duration_seconds': duration,
         }
 
@@ -588,11 +692,12 @@ class SeedGenerator:
 
             batch.append({
                 'name': f"Campagne {self.faker.catch_phrase()}",
+                'channel': random.choice(['email', 'sms']),
                 'subject': self.faker.sentence(),
-                'body_html': f"<p>{self.faker.text()}</p>",
+                'content': f"<p>{self.faker.text()}</p>",  # Champ correct : content (pas body_html)
                 'contact_list_id': contact_list.id if contact_list else None,
                 'tenant_id': self.tenant.id,
-                'state': random.choice(['draft', 'running', 'done']),
+                'status': random.choice(['draft', 'scheduled', 'sent']),  # Champ correct : status (pas state)
             })
 
         campaigns = self.env['quelyos.marketing.campaign'].with_context(self.ctx).sudo().create(batch)
@@ -637,12 +742,15 @@ class SeedGenerator:
             customer = random.choice(self.cache['customers'])
 
             batch.append({
-                'name': f"Ticket {self.faker.sentence()}",
+                # NOTE: 'name' est auto-généré (readonly), ne pas le mettre
+                'subject': self.faker.sentence(),
                 'partner_id': customer.id,
-                'description': self.faker.text(),
+                'description': f"<p>{self.faker.text()}</p>",
                 'tenant_id': self.tenant.id,
-                'priority': random.choice(['0', '1', '2', '3']),
-                'stage_id': 1,  # Nouveau
+                'company_id': self.tenant.company_id.id,
+                'category': random.choice(['order', 'product', 'delivery', 'technical', 'question']),
+                'priority': random.choice(['low', 'medium', 'high', 'urgent']),
+                'state': random.choice(['new', 'open', 'resolved']),  # Champ correct : state (pas stage_id)
             })
 
         tickets = self.env['quelyos.ticket'].with_context(self.ctx).sudo().create(batch)
