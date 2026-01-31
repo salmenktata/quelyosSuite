@@ -1,4 +1,4 @@
-import { Mail, Users, BarChart3, Lightbulb, Send } from 'lucide-react';
+import { Mail, Users, BarChart3, Lightbulb, Send, TrendingUp, Zap } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
 
 export const marketingNotices: Record<string, PageNoticeConfig> = {
@@ -19,6 +19,48 @@ export const marketingNotices: Record<string, PageNoticeConfig> = {
         `Analysez les KPI (taux ouverture, taux clic, bounces) : optimisez objet et contenu selon les performances`,
         `Nettoyez régulièrement les contacts bounced/opt-out : préservez votre réputation expéditeur`,
         `Respectez la fréquence optimale : évitez sur-sollicitation (désabonnements) et sous-sollicitation (oubli de la marque)`,
+      ]
+    }]
+  },
+
+  'campaign-tracking': {
+    pageId: 'campaign-tracking',
+    title: 'Tracking Détaillé Campagne',
+    purpose: "Analysez en profondeur les performances d'une campagne : stats détaillées (ouvertures, clics, engagement), heatmap des liens cliqués, top clickers, timeline chronologique des interactions et contacts inactifs.",
+    icon: TrendingUp,
+    moduleColor: 'pink',
+    sections: [{
+      title: 'Interpréter les métriques',
+      icon: BarChart3,
+      items: [
+        `Taux ouverture : 15-25% = bon, <10% = revoir objet/réputation expéditeur`,
+        `Taux clic : 2-5% = bon, <1% = revoir CTA ou contenu peu engageant`,
+        `Score engagement (0-100) : combine ouvertures + clics + fréquence, >60 = contact chaud`,
+        `Temps moyen ouverture : <2h = excellent engagement, >24h = timing à revoir`,
+        `Top clickers : identifiez prospects chauds pour relance commerciale ciblée`,
+        `Heatmap liens : révèle quels CTA performent, supprimez liens ignorés`,
+        `Contacts inactifs (jamais ouvert) : >30% = problème qualité liste ou délivrabilité`,
+      ]
+    }]
+  },
+
+  'automation-workflows': {
+    pageId: 'automation-workflows',
+    title: 'Workflows Marketing Automation',
+    purpose: "Automatisez vos campagnes marketing avec des workflows événementiels : drip campaigns, nurturing prospects, relances panier abandonné, anniversaires. Activez/désactivez, suivez progression participants.",
+    icon: Zap,
+    moduleColor: 'pink',
+    sections: [{
+      title: 'Créer un workflow efficace',
+      icon: Lightbulb,
+      items: [
+        `Démarrez simple : 2-3 activités max pour premier workflow (email bienvenue → attendre 3j → email suivi)`,
+        `Activités types : email (contenu), wait (pause jours/heures), add_to_list (segmentation), send_sms (multi-canal)`,
+        `Triggers événementiels : nouveau contact, ajout liste, commande passée, panier abandonné, anniversaire, manuel`,
+        `Filtrez participants : appliquez domaine filtrage pour ne cibler que contacts éligibles (ex: clients France, > 1 commande)`,
+        `Suivez progression : surveillez participants actifs/terminés, identifiez étapes de blocage`,
+        `Testez avant activation : créez workflow inactif, ajoutez vous-même comme participant test, vérifiez emails reçus`,
+        `Timing optimal : email bienvenue immédiat, relance panier 1h-24h, nurturing 3-7 jours entre emails`,
       ]
     }]
   },

@@ -181,6 +181,8 @@ const MarketingSettingsLayoutWrapper = lazy(() => import('./pages/marketing/sett
 const MarketingSettings = lazy(() => import('./pages/marketing/settings/page'))
 const MarketingSettingsEmail = lazy(() => import('./pages/marketing/settings/email/page'))
 const MarketingSettingsSMS = lazy(() => import('./pages/marketing/settings/sms/page'))
+const CampaignTrackingDetail = lazy(() => import('./pages/marketing/CampaignTrackingDetail'))
+const AutomationWorkflows = lazy(() => import('./pages/marketing/AutomationWorkflows'))
 
 // Lazy loaded pages - HR
 const HRDashboard = lazy(() => import('./pages/hr/page'))
@@ -1298,6 +1300,22 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <MarketingCampaignDetail />
+              <Route
+                path="/marketing/campaigns/:id/tracking"
+                element={
+                  <ProtectedRoute>
+                    <CampaignTrackingDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/marketing/automation"
+                element={
+                  <ProtectedRoute>
+                    <AutomationWorkflows />
+                  </ProtectedRoute>
+                }
+              />
                   </ProtectedRoute>
                 }
               />
