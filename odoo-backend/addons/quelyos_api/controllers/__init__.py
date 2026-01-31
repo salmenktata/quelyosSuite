@@ -65,4 +65,6 @@ from . import super_admin_ai
 # Sitemap Dynamique V3
 from . import sitemap
 from . import stock_oca
+from . import inventory_groups_ctrl
+from . import warehouse_calendar_ctrl
 from . import hr_oca

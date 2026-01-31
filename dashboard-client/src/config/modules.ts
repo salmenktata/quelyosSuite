@@ -325,6 +325,8 @@ export const MODULES: Module[] = [
           { name: 'Entrepôts', path: '/warehouses', icon: Warehouse },
           { name: 'Emplacements', path: '/stock/locations', icon: MapPin },
           { name: 'Règles Réapprovisionnement', path: '/stock/reordering-rules', icon: RefreshCw },
+          { name: 'Groupes Inventaire OCA', path: '/stock/inventory-groups', icon: ClipboardList },
+          { name: 'Calendriers Entrepôts OCA', path: '/stock/warehouse-calendars', icon: Calendar },
         ],
       },
       {

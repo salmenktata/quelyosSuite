@@ -241,4 +241,42 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
       ]
     }]
   },
+
+  inventoryGroups: {
+    pageId: 'stock-inventory-groups',
+    title: 'Groupes d\'Inventaire OCA',
+    purpose: "Organisez vos inventaires par groupes cohérents (emplacements, catégories) pour un comptage plus structuré. Module OCA permettant de gérer plusieurs inventaires parallèles avec workflow de validation.",
+    icon: ClipboardList,
+    moduleColor: 'teal',
+    sections: [{
+      title: 'Bonnes pratiques',
+      icon: Lightbulb,
+      items: [
+        `Créez un groupe par zone : permet de compter en parallèle sans bloquer tout l'entrepôt`,
+        `Workflow 4 états : Brouillon → En cours → Validé (ou Annulé) pour contrôle strict`,
+        `Sélection produits flexible : tous produits, sélection manuelle, par catégorie ou lot/série`,
+        `Validez uniquement après vérification : les ajustements sont appliqués au stock définitivement`,
+        `Tracez les mouvements : chaque groupe génère des mouvements de stock identifiables dans l'historique`,
+      ]
+    }]
+  },
+
+  warehouseCalendars: {
+    pageId: 'stock-warehouse-calendars',
+    title: 'Calendriers Entrepôts OCA',
+    purpose: "Configurez les jours et horaires de travail de vos entrepôts pour calculer des dates de livraison réalistes. Le système prend en compte les jours ouvrables, heures d'ouverture et congés.",
+    icon: Warehouse,
+    moduleColor: 'teal',
+    sections: [{
+      title: 'Bonnes pratiques',
+      icon: Lightbulb,
+      items: [
+        `Assignez un calendrier par entrepôt : garantit des promesses de livraison réalistes selon capacité`,
+        `Configurez jours ouvrables + horaires : Lun-Ven 8h-17h par défaut, adaptez selon votre activité`,
+        `Utilisez timezones : essentiel pour multi-sites internationaux (délais cohérents)`,
+        `Planifiez livraisons : +5 jours ouvrables = date réelle en excluant weekends/congés`,
+        `Mettez à jour congés : ajoutez jours fériés nationaux pour calculs précis toute l'année`,
+      ]
+    }]
+  },
 };
