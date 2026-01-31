@@ -81,11 +81,11 @@ export function useWarehouses(tenantId?: number) {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         setWarehouses(result.data.data.warehouses || []);
         setTotalCount(result.data.data.total_count || 0);
       } else {
-        setError(result.data.error || 'Erreur lors du chargement des entrepôts');
+        setError(result.data?.error || 'Erreur lors du chargement des entrepôts');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
@@ -126,10 +126,10 @@ export function useSetWarehouseCalendar() {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return result.data.data.warehouse;
       } else {
-        setError(result.data.error || 'Erreur lors de l\'assignation');
+        setError(result.data?.error || 'Erreur lors de l\'assignation');
         return null;
       }
     } catch (err) {
@@ -170,11 +170,11 @@ export function useCalendars(tenantId?: number) {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         setCalendars(result.data.data.calendars || []);
         setTotalCount(result.data.data.total_count || 0);
       } else {
-        setError(result.data.error || 'Erreur lors du chargement des calendriers');
+        setError(result.data?.error || 'Erreur lors du chargement des calendriers');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
@@ -219,10 +219,10 @@ export function useCreateCalendar() {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return result.data.data.calendar;
       } else {
-        setError(result.data.error || 'Erreur lors de la création');
+        setError(result.data?.error || 'Erreur lors de la création');
         return null;
       }
     } catch (err) {
@@ -264,13 +264,13 @@ export function usePlanDeliveryDate() {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return {
           deliveryDate: result.data.data.delivery_date,
           usedCalendar: result.data.data.used_calendar || null,
         };
       } else {
-        setError(result.data.error || 'Erreur lors du calcul');
+        setError(result.data?.error || 'Erreur lors du calcul');
         return null;
       }
     } catch (err) {

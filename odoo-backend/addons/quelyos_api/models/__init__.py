@@ -112,3 +112,4 @@ from . import ai_unanswered
 # Seed Data Generation
 from . import seed_job
 # Note: seed_generator n'est pas un modèle Odoo, pas besoin de l'importer ici
+from . import finance

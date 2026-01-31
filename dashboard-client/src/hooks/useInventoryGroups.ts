@@ -102,11 +102,11 @@ export function useInventoryGroups(params: InventoryGroupsParams = {}) {
         },
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         setInventoryGroups(result.data.data.inventory_groups || []);
         setTotalCount(result.data.data.total_count || 0);
       } else {
-        setError(result.data.error || 'Erreur lors du chargement des groupes d\'inventaire');
+        setError(result.data?.error || 'Erreur lors du chargement des groupes d\'inventaire');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
@@ -152,10 +152,10 @@ export function useInventoryGroupDetail(groupId: number | null) {
         params: {},
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         setInventoryGroup(result.data.data.inventory_group);
       } else {
-        setError(result.data.error || 'Erreur lors du chargement du groupe');
+        setError(result.data?.error || 'Erreur lors du chargement du groupe');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
@@ -193,10 +193,10 @@ export function useCreateInventoryGroup() {
         params: data,
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return result.data.data.inventory_group;
       } else {
-        setError(result.data.error || 'Erreur lors de la création');
+        setError(result.data?.error || 'Erreur lors de la création');
         return null;
       }
     } catch (err) {
@@ -231,10 +231,10 @@ export function useStartInventoryGroup() {
         params: {},
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return true;
       } else {
-        setError(result.data.error || 'Erreur lors du démarrage');
+        setError(result.data?.error || 'Erreur lors du démarrage');
         return false;
       }
     } catch (err) {
@@ -269,10 +269,10 @@ export function useValidateInventoryGroup() {
         params: {},
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return true;
       } else {
-        setError(result.data.error || 'Erreur lors de la validation');
+        setError(result.data?.error || 'Erreur lors de la validation');
         return false;
       }
     } catch (err) {
@@ -307,10 +307,10 @@ export function useCancelInventoryGroup() {
         params: {},
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return true;
       } else {
-        setError(result.data.error || 'Erreur lors de l\'annulation');
+        setError(result.data?.error || 'Erreur lors de l\'annulation');
         return false;
       }
     } catch (err) {
@@ -345,10 +345,10 @@ export function useDeleteInventoryGroup() {
         params: {},
       });
 
-      if (result.data.success) {
+      if (result.data?.success && result.data.data) {
         return true;
       } else {
-        setError(result.data.error || 'Erreur lors de la suppression');
+        setError(result.data?.error || 'Erreur lors de la suppression');
         return false;
       }
     } catch (err) {
