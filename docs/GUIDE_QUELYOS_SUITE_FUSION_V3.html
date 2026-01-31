@@ -242,10 +242,10 @@
           Version detaillee et orientee schemas (production, multi-tenant, deploiement, operations).
         </p>
         <div class="meta">
-          <div><span class="k">Date:</span> 29 janvier 2026</div>
+          <div><span class="k">Date:</span> 31 janvier 2026</div>
           <div><span class="k">Base:</span> documentation du depot (pas de web, pas d'inference hors docs)</div>
           <div><span class="k">Format:</span> HTML imprimable (Ctrl/Cmd+P -> Save as PDF)</div>
-          <div><span class="k">Ports fixes:</span> 3000 / 3001 / 5175 / 5176 / 8069</div>
+          <div><span class="k">Ports fixes:</span> 3000 / 3001 / 5175 / 9000 / 8069</div>
         </div>
         <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px">
           <span class="pill">Architecture</span>
@@ -324,7 +324,7 @@
 
             <rect x="730" y="10" width="200" height="74" rx="14" fill="#e0f2fe" stroke="#111827" />
             <text x="830" y="38" text-anchor="middle" class="t">Super-admin</text>
-            <text x="830" y="58" text-anchor="middle" class="s">super-admin-client :5176</text>
+            <text x="830" y="58" text-anchor="middle" class="s">super-admin-client :9000</text>
 
             <!-- Backend -->
             <rect x="10" y="170" width="920" height="88" rx="16" fill="#ffedd5" stroke="#111827" />
@@ -435,7 +435,7 @@
               <li>3000 — vitrine-quelyos</li>
               <li>3001 — vitrine-client</li>
               <li>5175 — dashboard-client</li>
-              <li>5176 — super-admin-client</li>
+              <li>9000 — super-admin-client</li>
               <li>8069 — odoo-backend</li>
               <li>5432 — PostgreSQL</li>
               <li>6379 — Redis</li>
@@ -788,7 +788,7 @@ Enterprise: illimite (dedicated)</code></pre>
             </defs>
 
             <rect x="10" y="10" width="450" height="52" rx="14" fill="#e0f2fe" stroke="#111827" />
-            <text x="235" y="40" text-anchor="middle" class="t">super-admin-client :5176</text>
+            <text x="235" y="40" text-anchor="middle" class="t">super-admin-client :9000</text>
 
             <rect x="480" y="10" width="450" height="52" rx="14" fill="#ffedd5" stroke="#111827" />
             <text x="705" y="40" text-anchor="middle" class="t">/api/super-admin/* (Odoo)</text>
