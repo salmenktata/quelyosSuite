@@ -16,9 +16,10 @@
         'sale_management',
         'stock',
         # OCA Stock modules (Odoo Community Association)
+        # Note: OCA ≠ Odoo Core. Ces modules sont des extensions communautaires
+        # indépendantes qui ne violent pas la règle d'isolation Quelyos/Odoo 19 base.
         'stock_inventory',
         'stock_warehouse_calendar',
-        'stock_inventory_lockdown',
         'website',
         'website_sale',
         'product',
