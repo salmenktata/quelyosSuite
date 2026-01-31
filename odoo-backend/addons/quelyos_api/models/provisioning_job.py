@@ -126,12 +126,12 @@ class ProvisioningJob(models.Model):
 
     def _run_provisioning_thread(self, job_id, dbname, uid):
         """Exécute le provisioning dans un thread séparé"""
-        import odoo
         from odoo import api, SUPERUSER_ID
+        from odoo.modules.registry import Registry
 
         try:
             # Créer un nouvel environnement pour le thread
-            registry = odoo.registry(dbname)
+            registry = Registry.new(dbname)
             with registry.cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 job = env['quelyos.provisioning.job'].browse(job_id)

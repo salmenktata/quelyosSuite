@@ -439,7 +439,7 @@ class Subscription(models.Model):
                     ])
                     for user in users:
                         user.write({
-                            'groups_id': [(3, group.id) for group in old_plan.group_ids]
+                            'group_ids': [(3, group.id) for group in old_plan.group_ids]
                         })
 
                 # Assigner les groupes du nouveau plan
@@ -572,7 +572,7 @@ class Subscription(models.Model):
             # Assigner les groupes du plan à chaque utilisateur
             for user in users:
                 user.write({
-                    'groups_id': [(4, group.id) for group in subscription.plan_id.group_ids]
+                    'group_ids': [(4, group.id) for group in subscription.plan_id.group_ids]
                 })
 
             _logger.info(
@@ -601,7 +601,7 @@ class Subscription(models.Model):
             # Retirer les groupes du plan de chaque utilisateur
             for user in users:
                 user.write({
-                    'groups_id': [(3, group.id) for group in subscription.plan_id.group_ids]
+                    'group_ids': [(3, group.id) for group in subscription.plan_id.group_ids]
                 })
 
             _logger.info(

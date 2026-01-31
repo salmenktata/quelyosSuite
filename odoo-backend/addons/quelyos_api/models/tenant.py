@@ -790,7 +790,8 @@ class QuelyosTenant(models.Model):
                 tenant._create_admin_user(vals['admin_email'])
 
             # 4. Créer les providers de paiement (Flouci + Konnect)
-            tenant._create_payment_providers()
+            # TODO: Réactiver quand modules payment_flouci/payment_konnect seront installés
+            # tenant._create_payment_providers()
 
             # 5. Créer l'entrepôt par défaut
             tenant._create_default_warehouse()
@@ -1341,7 +1342,7 @@ class QuelyosTenant(models.Model):
             'partner_id': partner.id,
             'company_id': self.company_id.id,
             'company_ids': [(4, self.company_id.id)],
-            'groups_id': [(6, 0, base_groups)],
+            'group_ids': [(6, 0, base_groups)],
         })
 
         # Log le mot de passe temporaire (à remplacer par envoi email)
