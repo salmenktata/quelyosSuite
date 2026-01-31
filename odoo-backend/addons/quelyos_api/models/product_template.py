@@ -18,19 +18,26 @@ class ProductTemplate(models.Model):
         help='Tenant propriétaire de ce produit',
     )
 
-    qty_available_unreserved = fields.Float(
+    x_qty_available_unreserved = fields.Float(
         string='Stock Disponible Non Réservé',
         compute='_compute_qty_available_unreserved',
         help='Quantité totale disponible hors réservations (toutes variantes)'
     )
 
-    @api.depends('product_variant_ids.qty_available_unreserved')
+    # Alias backward-compatible (DEPRECATED)
+    qty_available_unreserved = fields.Float(
+        compute='_compute_qty_available_unreserved',
+        help='[DEPRECATED] Utiliser x_qty_available_unreserved'
+    )
+
+    @api.depends('product_variant_ids.x_qty_available_unreserved')
     def _compute_qty_available_unreserved(self):
         """Pour les templates, sommer le stock non réservé de toutes les variantes"""
         for template in self:
-            template.qty_available_unreserved = sum(
-                template.product_variant_ids.mapped('qty_available_unreserved')
-            )
+            qty_sum = sum(template.product_variant_ids.mapped('x_qty_available_unreserved'))
+            template.x_qty_available_unreserved = qty_sum
+            template.qty_available_unreserved = qty_sum  # Alias DEPRECATED
+
 
     # Champs marketing e-commerce
     x_is_featured = fields.Boolean(

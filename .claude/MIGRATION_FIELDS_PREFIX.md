@@ -267,3 +267,19 @@ docker exec -it postgres psql -U odoo -d quelyos_db -c "\d product_product" | gr
 ## 📖 Voir aussi
 - `.claude/ODOO_ISOLATION_RULES.md`
 - `scripts/check-odoo-isolation.sh`
+
+---
+
+## 📊 Journal Migration (Tracking)
+
+| Date | Modèle | Champs migrés | Version | Commit | Status |
+|------|--------|---------------|---------|--------|--------|
+| 2026-01-31 | product.product | qty_available_unreserved → x_qty_available_unreserved | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.product | qty_reserved_manual → x_qty_reserved_manual | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.product | qty_available_after_manual_reservations → x_qty_available_after_manual_reservations | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.product | qty_sold_365 → x_qty_sold_365 | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.product | stock_turnover_365 → x_stock_turnover_365 | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.product | days_of_stock → x_days_of_stock | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+| 2026-01-31 | product.template | qty_available_unreserved → x_qty_available_unreserved | 19.0.1.42.0 | 2772ee3 | ✅ Terminé |
+
+**Résultat Phase 1** : 7 champs migrés, 551 champs restants

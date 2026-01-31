@@ -18,48 +18,90 @@ class ProductProduct(models.Model):
         index=True,
     )
 
-    qty_available_unreserved = fields.Float(
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CHAMPS STOCK AVANCÉS (avec préfixe x_)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    x_qty_available_unreserved = fields.Float(
         string='Stock Disponible Non Réservé',
         compute='_compute_qty_available_unreserved',
         help='Quantité disponible en stock excluant les réservations (commandes confirmées non livrées)'
     )
 
-    qty_reserved_manual = fields.Float(
+    x_qty_reserved_manual = fields.Float(
         string='Quantité Réservée Manuellement',
         compute='_compute_qty_reserved_manual',
         help='Quantité bloquée par réservations manuelles actives'
     )
 
-    qty_available_after_manual_reservations = fields.Float(
+    x_qty_available_after_manual_reservations = fields.Float(
         string='Stock Disponible Après Réservations Manuelles',
         compute='_compute_qty_reserved_manual',
         help='Stock disponible après déduction des réservations manuelles'
     )
 
-    qty_sold_365 = fields.Float(
+    x_qty_sold_365 = fields.Float(
         string='Quantité Vendue (365j)',
         compute='_compute_stock_turnover',
         help='Quantité totale vendue sur les 365 derniers jours'
     )
 
-    stock_turnover_365 = fields.Float(
+    x_stock_turnover_365 = fields.Float(
         string='Rotation Stock (365j)',
         compute='_compute_stock_turnover',
         help='Nombre de fois que le stock a tourné sur les 365 derniers jours (Quantité vendue / Stock moyen)'
     )
 
-    days_of_stock = fields.Float(
+    x_days_of_stock = fields.Float(
         string='Jours de Stock',
         compute='_compute_stock_turnover',
         help='Nombre de jours estimés avant rupture au rythme de vente actuel (365 / Rotation)'
     )
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ALIAS BACKWARD-COMPATIBLE (DEPRECATED - sera supprimé Q4 2026)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    qty_available_unreserved = fields.Float(
+        compute='_compute_qty_available_unreserved',
+        help='[DEPRECATED] Utiliser x_qty_available_unreserved'
+    )
+
+    qty_reserved_manual = fields.Float(
+        compute='_compute_qty_reserved_manual',
+        help='[DEPRECATED] Utiliser x_qty_reserved_manual'
+    )
+
+    qty_available_after_manual_reservations = fields.Float(
+        compute='_compute_qty_reserved_manual',
+        help='[DEPRECATED] Utiliser x_qty_available_after_manual_reservations'
+    )
+
+    qty_sold_365 = fields.Float(
+        compute='_compute_stock_turnover',
+        help='[DEPRECATED] Utiliser x_qty_sold_365'
+    )
+
+    stock_turnover_365 = fields.Float(
+        compute='_compute_stock_turnover',
+        help='[DEPRECATED] Utiliser x_stock_turnover_365'
+    )
+
+    days_of_stock = fields.Float(
+        compute='_compute_stock_turnover',
+        help='[DEPRECATED] Utiliser x_days_of_stock'
+    )
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MÉTHODES COMPUTED
+    # ═══════════════════════════════════════════════════════════════════════════
 
     @api.depends('qty_available')
     def _compute_qty_available_unreserved(self):
         """
         Calcul du stock disponible hors réservations.
 
-        Formule : qty_available_unreserved = qty_available - reserved_qty
+        Formule : x_qty_available_unreserved = qty_available - reserved_qty
 
         reserved_qty = Somme des mouvements stock en état 'assigned' (prêt à livrer)
         pour ce produit depuis locations internes vers locations clients.
@@ -78,15 +120,21 @@ class ProductProduct(models.Model):
             reserved_qty = sum(reserved_moves.mapped('product_uom_qty'))
 
             # Calculer stock disponible hors réservations
-            product.qty_available_unreserved = max(0, product.qty_available - reserved_qty)
+            qty_unreserved = max(0, product.qty_available - reserved_qty)
+            
+            # Nouveau champ avec préfixe
+            product.x_qty_available_unreserved = qty_unreserved
+            
+            # Alias backward-compatible (DEPRECATED)
+            product.qty_available_unreserved = qty_unreserved
 
     @api.depends('qty_available')
     def _compute_qty_reserved_manual(self):
         """
         Calcul des réservations manuelles actives.
 
-        qty_reserved_manual = Somme des réservations actives pour ce produit
-        qty_available_after_manual_reservations = qty_available - qty_reserved_manual
+        x_qty_reserved_manual = Somme des réservations actives pour ce produit
+        x_qty_available_after_manual_reservations = qty_available - x_qty_reserved_manual
         """
         for product in self:
             # Récupérer réservations manuelles actives pour ce produit
@@ -97,9 +145,16 @@ class ProductProduct(models.Model):
 
             # Sommer les quantités réservées
             reserved_manual = sum(reservations.mapped('reserved_qty'))
+            
+            # Nouveaux champs avec préfixe
+            product.x_qty_reserved_manual = reserved_manual
+            product.x_qty_available_after_manual_reservations = max(
+                0,
+                product.qty_available - reserved_manual
+            )
+            
+            # Alias backward-compatible (DEPRECATED)
             product.qty_reserved_manual = reserved_manual
-
-            # Calculer stock disponible après réservations manuelles
             product.qty_available_after_manual_reservations = max(
                 0,
                 product.qty_available - reserved_manual
@@ -130,7 +185,6 @@ class ProductProduct(models.Model):
 
             # Quantité vendue = somme des quantités des mouvements
             qty_sold = sum(sale_moves.mapped('product_uom_qty'))
-            product.qty_sold_365 = qty_sold
 
             # Stock moyen approximé = (stock actuel + stock il y a 365j) / 2
             # Pour simplifier, on utilise le stock actuel comme approximation
@@ -140,13 +194,23 @@ class ProductProduct(models.Model):
             # Rotation = Quantité vendue / Stock moyen
             if avg_stock > 0 and qty_sold > 0:
                 turnover = qty_sold / avg_stock
-                product.stock_turnover_365 = round(turnover, 2)
+                turnover_rounded = round(turnover, 2)
 
                 # Jours de stock = 365 / Rotation
                 if turnover > 0:
-                    product.days_of_stock = round(365 / turnover, 1)
+                    days = round(365 / turnover, 1)
                 else:
-                    product.days_of_stock = 0
+                    days = 0
             else:
-                product.stock_turnover_365 = 0
-                product.days_of_stock = 0
+                turnover_rounded = 0
+                days = 0
+
+            # Nouveaux champs avec préfixe
+            product.x_qty_sold_365 = qty_sold
+            product.x_stock_turnover_365 = turnover_rounded
+            product.x_days_of_stock = days
+            
+            # Alias backward-compatible (DEPRECATED)
+            product.qty_sold_365 = qty_sold
+            product.stock_turnover_365 = turnover_rounded
+            product.days_of_stock = days
