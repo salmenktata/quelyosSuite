@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.47.0',
+    'version': '19.0.1.48.0',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
     'website': 'https://quelyos.com',
     'license': 'LGPL-3',
     'external_dependencies': {
-        'python': ['qrcode', 'Pillow'],
+        'python': ['qrcode', 'Pillow', 'faker'],
     },
     'depends': [
         'base',
@@ -64,6 +64,7 @@
         'data/email_builder_templates.xml',
         # 'data/hr_sequence.xml',  # TEMPORAIREMENT DÉSACTIVÉ
         'data/ticket_sequence.xml',
+        'data/seed_sequence.xml',
         'data/sla_policies.xml',
         # 'data/email_template_satisfaction_request.xml',  # Créé via hooks.py (workaround validation XML)
         # 'data/pos_demo_data.xml',  # TEMPORAIREMENT DÉSACTIVÉ (debug installation)

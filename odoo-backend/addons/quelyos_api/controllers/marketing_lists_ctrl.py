@@ -189,3 +189,80 @@ class MarketingListsController(http.Controller):
 
         except Exception as e:
             return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def add_contacts_to_list(self, list_id, contact_ids, **kwargs):
+        """Ajouter contacts à une liste."""
+        try:
+            mailing_list = request.env['mailing.list'].sudo().browse(list_id)
+
+            if not mailing_list.exists():
+                return {'success': False, 'error': 'Mailing list not found'}
+
+            # Créer contacts mailing pour chaque partner
+            MailingContact = request.env['mailing.contact'].sudo()
+            added_count = 0
+
+            for partner_id in contact_ids:
+                partner = request.env['res.partner'].sudo().browse(partner_id)
+                if partner.exists() and partner.email:
+                    # Vérifier si contact déjà dans la liste
+                    existing = MailingContact.search([
+                        ('email', '=', partner.email),
+                        ('list_ids', 'in', [list_id])
+                    ], limit=1)
+
+                    if not existing:
+                        MailingContact.create({
+                            'name': partner.name,
+                            'email': partner.email,
+                            'list_ids': [(4, list_id)],
+                        })
+                        added_count += 1
+
+            return {
+                'success': True,
+                'added_count': added_count,
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts/<int:contact_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def remove_contact_from_list(self, list_id, contact_id, **kwargs):
+        """Retirer contact d'une liste."""
+        try:
+            contact = request.env['mailing.contact'].sudo().browse(contact_id)
+
+            if not contact.exists():
+                return {'success': False, 'error': 'Contact not found'}
+
+            # Retirer liste du contact
+            contact.write({
+                'list_ids': [(3, list_id)]  # Unlink
+            })
+
+            return {
+                'success': True,
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def delete_mailing_list(self, list_id, **kwargs):
+        """Supprimer une liste de diffusion."""
+        try:
+            mailing_list = request.env['mailing.list'].sudo().browse(list_id)
+
+            if not mailing_list.exists():
+                return {'success': False, 'error': 'Mailing list not found'}
+
+            mailing_list.unlink()
+
+            return {
+                'success': True,
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}

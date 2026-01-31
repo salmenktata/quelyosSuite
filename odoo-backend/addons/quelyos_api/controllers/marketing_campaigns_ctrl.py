@@ -201,3 +201,69 @@ class MarketingCampaignsController(http.Controller):
 
         except Exception as e:
             return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/duplicate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def duplicate_campaign(self, campaign_id, **kwargs):
+        """Dupliquer une campagne."""
+        try:
+            campaign = request.env['mailing.mailing'].sudo().browse(campaign_id)
+
+            if not campaign.exists():
+                return {'success': False, 'error': 'Campaign not found'}
+
+            # Dupliquer la campagne
+            new_campaign = campaign.copy({
+                'subject': f"{campaign.subject} (Copie)",
+                'state': 'draft',
+            })
+
+            return {
+                'success': True,
+                'campaign': {
+                    'id': new_campaign.id,
+                    'subject': new_campaign.subject,
+                    'state': new_campaign.state,
+                },
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/test', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def send_test_campaign(self, campaign_id, test_email, **kwargs):
+        """Envoyer un email de test."""
+        try:
+            campaign = request.env['mailing.mailing'].sudo().browse(campaign_id)
+
+            if not campaign.exists():
+                return {'success': False, 'error': 'Campaign not found'}
+
+            # Envoyer email de test
+            campaign.action_test()
+
+            return {
+                'success': True,
+                'message': f'Email de test envoyé à {test_email}',
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    def delete_campaign(self, campaign_id, **kwargs):
+        """Supprimer une campagne."""
+        try:
+            campaign = request.env['mailing.mailing'].sudo().browse(campaign_id)
+
+            if not campaign.exists():
+                return {'success': False, 'error': 'Campaign not found'}
+
+            campaign.unlink()
+
+            return {
+                'success': True,
+                'message': 'Campaign deleted successfully',
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}

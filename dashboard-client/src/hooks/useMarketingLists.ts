@@ -1,23 +1,17 @@
 /**
  * Hook React pour gérer les listes de diffusion marketing (mailing.list natif)
- * 
+ *
  * Endpoints :
- * - list_mailing_lists() : Liste listes de diffusion
- * - get_mailing_list(id) : Détail liste avec contacts
+ * - list_mailing_lists() : Liste listes avec filtres
+ * - get_mailing_list(id) : Détail liste + contacts
  * - create_mailing_list() : Créer liste
- * - add_contacts_to_list() : Ajouter contacts à liste
+ * - add_contacts() : Ajouter contacts à liste
+ * - remove_contact() : Retirer contact de liste
  * - delete_mailing_list(id) : Supprimer liste
  */
 
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-
-export interface MailingContact {
-  id: number;
-  email: string;
-  name: string;
-  subscription_list_ids: number[];
-}
 
 export interface MailingList {
   id: number;
@@ -25,147 +19,162 @@ export interface MailingList {
   active: boolean;
   contact_count: number;
   create_date: string | null;
-  contacts?: MailingContact[];
 }
 
-export function useMarketingLists() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface MailingContact {
+  id: number;
+  name: string;
+  email: string;
+  company_name?: string;
+  list_ids: number[];
+}
 
-  const listMailingLists = async (params: {
-    tenant_id?: number;
-    limit?: number;
-    offset?: number;
-  } = {}) => {
-    setLoading(true);
-    setError(null);
-    try {
+export interface ListsQueryParams {
+  tenant_id?: number;
+  limit?: number;
+  offset?: number;
+}
+
+export function useMarketingLists(params?: ListsQueryParams) {
+  return useQuery({
+    queryKey: ['marketing-lists', params],
+    queryFn: async () => {
       const result = await api.post<{
         success: boolean;
         mailing_lists: MailingList[];
         total_count: number;
         error?: string;
-      }>('/api/ecommerce/marketing/lists', params);
-      
+      }>('/api/ecommerce/marketing/lists', params || {});
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors du chargement des listes');
       }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const getMailingList = async (listId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data;
+    },
+  });
+}
+
+export function useMarketingList(listId: number) {
+  return useQuery({
+    queryKey: ['marketing-list', listId],
+    queryFn: async () => {
       const result = await api.post<{
         success: boolean;
         mailing_list: MailingList;
+        contacts: MailingContact[];
         error?: string;
       }>(`/api/ecommerce/marketing/lists/${listId}`, {});
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Liste non trouvée');
       }
-      
-      return result.data.mailing_list;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const createMailingList = async (data: {
-    name: string;
-    tenant_id?: number;
-  }) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data;
+    },
+    enabled: !!listId,
+  });
+}
+
+export function useCreateMailingList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      tenant_id?: number;
+    }) => {
       const result = await api.post<{
         success: boolean;
         mailing_list: MailingList;
         error?: string;
       }>('/api/ecommerce/marketing/lists/create', data);
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors de la création');
       }
-      
-      return result.data.mailing_list;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const addContactsToList = async (listId: number, contacts: Array<{ email: string; name?: string }>) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data.mailing_list;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-lists'] });
+    },
+  });
+}
+
+export function useAddContactsToList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      list_id: number;
+      contact_ids: number[];
+    }) => {
       const result = await api.post<{
         success: boolean;
         added_count: number;
         error?: string;
-      }>(`/api/ecommerce/marketing/lists/${listId}/contacts`, { contacts });
-      
-      if (!result.data.success) {
-        throw new Error(result.data.error || 'Erreur lors de l ajout des contacts');
-      }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+      }>(`/api/ecommerce/marketing/lists/${data.list_id}/contacts`, {
+        contact_ids: data.contact_ids,
+      });
 
-  const deleteMailingList = async (listId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de l\'ajout');
+      }
+
+      return result.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-list', variables.list_id] });
+    },
+  });
+}
+
+export function useRemoveContactFromList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      list_id: number;
+      contact_id: number;
+    }) => {
+      const result = await api.post<{
+        success: boolean;
+        error?: string;
+      }>(`/api/ecommerce/marketing/lists/${data.list_id}/contacts/${data.contact_id}`, {
+        action: 'remove',
+      });
+
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la suppression');
+      }
+
+      return result.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-list', variables.list_id] });
+    },
+  });
+}
+
+export function useDeleteMailingList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (listId: number) => {
       const result = await api.post<{
         success: boolean;
         error?: string;
       }>(`/api/ecommerce/marketing/lists/${listId}/delete`, {});
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors de la suppression');
       }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  return {
-    listMailingLists,
-    getMailingList,
-    createMailingList,
-    addContactsToList,
-    deleteMailingList,
-    loading,
-    error,
-  };
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-lists'] });
+    },
+  });
 }

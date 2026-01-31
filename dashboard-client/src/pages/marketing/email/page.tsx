@@ -14,33 +14,31 @@ import {
 const getStatusBadge = (status: string) => {
   const config: Record<string, { label: string; variant: 'neutral' | 'warning' | 'success' | 'error' | 'info' }> = {
     draft: { label: 'Brouillon', variant: 'neutral' },
-    scheduled: { label: 'Planifiée', variant: 'info' },
+    in_queue: { label: 'En file', variant: 'info' },
     sending: { label: 'En cours', variant: 'warning' },
-    sent: { label: 'Envoyée', variant: 'success' },
-    cancelled: { label: 'Annulée', variant: 'error' },
+    done: { label: 'Envoyée', variant: 'success' },
   };
   const c = config[status] || { label: status, variant: 'neutral' };
   return <Badge variant={c.variant} size="sm">{c.label}</Badge>;
 };
 
 export default function EmailCampaignsPage() {
-  const { data, isLoading } = useMarketingCampaigns({ channel: 'email' });
+  const { data, isLoading } = useMarketingCampaigns();
 
   const campaigns = data?.campaigns || [];
-  const sentCampaigns = campaigns.filter((c) => c.status === 'sent');
-  const totalEmails = sentCampaigns.reduce((sum, c) => sum + c.stats.sent, 0);
-  const avgOpenRate = sentCampaigns.length > 0
-    ? sentCampaigns.reduce((sum, c) => sum + c.rates.open, 0) / sentCampaigns.length
-    : 0;
-  const avgClickRate = sentCampaigns.length > 0
-    ? sentCampaigns.reduce((sum, c) => sum + c.rates.click, 0) / sentCampaigns.length
-    : 0;
+  const sentCampaigns = campaigns.filter((c) => c.state === 'done');
+  const totalEmails = sentCampaigns.reduce((sum, c) => sum + c.sent, 0);
+  const totalOpened = sentCampaigns.reduce((sum, c) => sum + c.opened, 0);
+  const totalClicked = sentCampaigns.reduce((sum, c) => sum + c.clicked, 0);
+  const avgOpenRate = totalEmails > 0 ? (totalOpened / totalEmails * 100) : 0;
+  const avgClickRate = totalEmails > 0 ? (totalClicked / totalEmails * 100) : 0;
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'short',
+      year: 'numeric',
     });
   };
 
@@ -69,7 +67,7 @@ export default function EmailCampaignsPage() {
             </p>
           </div>
           <Link
-            to="/marketing/campaigns/new"
+            to="/marketing/email/new"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
           >
             <Plus className="w-4 h-4" />
@@ -96,7 +94,7 @@ export default function EmailCampaignsPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <Eye className="w-5 h-5 text-violet-500" />
-              <span className="text-sm text-gray-500 dark:text-gray-400">Taux d'ouverture moyen</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Taux d&apos;ouverture moyen</span>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgOpenRate.toFixed(1)}%</p>
           </div>
@@ -126,7 +124,7 @@ export default function EmailCampaignsPage() {
                 <Mail className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
                 <p className="text-gray-500 dark:text-gray-400 mb-4">Aucune campagne email</p>
                 <Link
-                  to="/marketing/campaigns/new"
+                  to="/marketing/email/new"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
                 >
                   <Plus className="w-4 h-4" />
@@ -137,36 +135,34 @@ export default function EmailCampaignsPage() {
               campaigns.map((campaign) => (
                 <Link
                   key={campaign.id}
-                  to={`/marketing/campaigns/${campaign.id}`}
+                  to={`/marketing/email/${campaign.id}`}
                   className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3">
                         <span className="font-medium text-gray-900 dark:text-white truncate">
-                          {campaign.name}
-                        </span>
-                        {getStatusBadge(campaign.status)}
-                      </div>
-                      {campaign.subject && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
                           {campaign.subject}
-                        </p>
-                      )}
+                        </span>
+                        {getStatusBadge(campaign.state)}
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {campaign.mailing_model_real}
+                      </p>
                     </div>
                     <div className="flex items-center gap-6 ml-4">
-                      {campaign.status === 'sent' && (
+                      {campaign.state === 'done' && (
                         <div className="text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {campaign.stats.sent.toLocaleString('fr-FR')} envoyés
+                            {campaign.sent.toLocaleString('fr-FR')} envoyés
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {campaign.rates.open}% ouvert · {campaign.rates.click}% clics
+                            {((campaign.opened / campaign.sent) * 100).toFixed(1)}% ouvert · {((campaign.clicked / campaign.sent) * 100).toFixed(1)}% clics
                           </div>
                         </div>
                       )}
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(campaign.sent_date || campaign.created_at)}
+                        {formatDate(campaign.create_date)}
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-400" />
                     </div>

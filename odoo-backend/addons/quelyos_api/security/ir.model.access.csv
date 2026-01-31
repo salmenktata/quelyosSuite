@@ -179,3 +179,4 @@ access_quelyos_sitemap_alert_public,quelyos.sitemap.alert public,model_quelyos_s
 access_quelyos_sitemap_alert_system,quelyos.sitemap.alert system,model_quelyos_sitemap_alert,base.group_system,1,1,1,1
 access_quelyos_job_queue_public,quelyos.job.queue public,model_quelyos_job_queue,,1,0,0,0
 access_quelyos_job_queue_system,quelyos.job.queue system,model_quelyos_job_queue,base.group_system,1,1,1,1
+access_seed_job_superadmin,quelyos.seed.job superadmin,model_quelyos_seed_job,base.group_system,1,1,1,1

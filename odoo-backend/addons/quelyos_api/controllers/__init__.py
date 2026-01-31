@@ -55,6 +55,7 @@ from . import admin_security_ctrl
 from . import admin_backup_ctrl
 from . import admin_tickets_ctrl
 from . import admin_settings_ctrl
+from . import admin_seed_ctrl
 # 2FA/TOTP
 from . import totp
 # Tickets Support

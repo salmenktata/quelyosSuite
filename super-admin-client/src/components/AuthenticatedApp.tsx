@@ -22,6 +22,7 @@ import { AuditLogs } from '@/pages/AuditLogs'
 import { Settings } from '@/pages/Settings'
 import { EmailSettings } from '@/pages/EmailSettings'
 import { Sitemap } from '@/pages/Sitemap'
+import { SeedData } from '@/pages/SeedData'
 import { InactivityWarning } from './InactivityWarning'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
 import { useAuth } from '@/hooks/useAuth'
@@ -53,6 +54,7 @@ function PageViewTracker() {
       '/settings': 'Settings',
       '/email-settings': 'Email Settings',
       '/sitemap': 'Sitemap',
+      '/seed-data': 'Seed Data',
     }
 
     // Gérer les routes dynamiques (ex: /customers/:id/tickets)
@@ -114,6 +116,7 @@ export function AuthenticatedApp() {
           <Route path="settings" element={<Settings />} />
           <Route path="email-settings" element={<EmailSettings />} />
           <Route path="sitemap" element={<Sitemap />} />
+          <Route path="seed-data" element={<SeedData />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

@@ -1,6 +1,6 @@
 /**
  * Hook React pour gérer les campagnes marketing (mass_mailing natif)
- * 
+ *
  * Endpoints :
  * - list_campaigns() : Liste campagnes avec filtres
  * - get_campaign(id) : Détail campagne
@@ -10,7 +10,7 @@
  * - delete_campaign(id) : Supprimer campagne
  */
 
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 export interface MarketingCampaign {
@@ -41,247 +41,170 @@ export interface CampaignStats {
   click_rate: number;
 }
 
-export function useMarketingCampaigns() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface CampaignsQueryParams {
+  tenant_id?: number;
+  state?: string;
+  limit?: number;
+  offset?: number;
+}
 
-  const listCampaigns = async (params: {
-    tenant_id?: number;
-    state?: string;
-    limit?: number;
-    offset?: number;
-  } = {}) => {
-    setLoading(true);
-    setError(null);
-    try {
+export function useMarketingCampaigns(params?: CampaignsQueryParams) {
+  return useQuery({
+    queryKey: ['marketing-campaigns', params],
+    queryFn: async () => {
       const result = await api.post<{
         success: boolean;
         campaigns: MarketingCampaign[];
         total_count: number;
         error?: string;
-      }>('/api/ecommerce/marketing/campaigns', params);
-      
+      }>('/api/ecommerce/marketing/campaigns', params || {});
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors du chargement des campagnes');
       }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const getCampaign = async (campaignId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data;
+    },
+  });
+}
+
+export function useMarketingCampaign(campaignId: number) {
+  return useQuery({
+    queryKey: ['marketing-campaign', campaignId],
+    queryFn: async () => {
       const result = await api.post<{
         success: boolean;
         campaign: MarketingCampaign;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}`, {});
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Campagne non trouvée');
       }
-      
-      return result.data.campaign;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const createCampaign = async (data: {
-    subject: string;
-    body_html: string;
-    mailing_model?: string;
-    mailing_domain?: string;
-    tenant_id?: number;
-  }) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data.campaign;
+    },
+    enabled: !!campaignId,
+  });
+}
+
+export function useCreateCampaign() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      subject: string;
+      body_html: string;
+      mailing_model?: string;
+      mailing_domain?: string;
+      tenant_id?: number;
+    }) => {
       const result = await api.post<{
         success: boolean;
         campaign: MarketingCampaign;
         error?: string;
       }>('/api/ecommerce/marketing/campaigns/create', data);
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors de la création');
       }
-      
-      return result.data.campaign;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const sendCampaign = async (campaignId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data.campaign;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+    },
+  });
+}
+
+export function useSendCampaign() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (campaignId: number) => {
       const result = await api.post<{
         success: boolean;
         state: string;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}/send`, {});
-      
-      if (!result.data.success) {
-        throw new Error(result.data.error || 'Erreur lors de l envoi');
-      }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const getCampaignStats = async (campaignId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de l\'envoi');
+      }
+
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['marketing-campaign'] });
+    },
+  });
+}
+
+export function useDeleteCampaign() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (campaignId: number) => {
+      const result = await api.post<{
+        success: boolean;
+        error?: string;
+      }>(`/api/ecommerce/marketing/campaigns/${campaignId}/delete`, {});
+
+      if (!result.data.success) {
+        throw new Error(result.data.error || 'Erreur lors de la suppression');
+      }
+
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+    },
+  });
+}
+
+export function useCampaignStats(campaignId: number) {
+  return useQuery({
+    queryKey: ['marketing-campaign-stats', campaignId],
+    queryFn: async () => {
       const result = await api.post<{
         success: boolean;
         stats: CampaignStats;
         error?: string;
       }>(`/api/ecommerce/marketing/campaigns/${campaignId}/stats`, {});
-      
+
       if (!result.data.success) {
         throw new Error(result.data.error || 'Erreur lors du chargement des stats');
       }
-      
-      return result.data.stats;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const deleteCampaign = async (campaignId: number) => {
-    setLoading(true);
-    setError(null);
-    try {
+      return result.data.stats;
+    },
+    enabled: !!campaignId,
+  });
+}
+
+export function useDuplicateCampaign() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (campaignId: number) => {
       const result = await api.post<{
         success: boolean;
+        campaign: MarketingCampaign;
         error?: string;
-      }>(`/api/ecommerce/marketing/campaigns/${campaignId}/delete`, {});
-      
+      }>(`/api/ecommerce/marketing/campaigns/${campaignId}/duplicate`, {});
+
       if (!result.data.success) {
-        throw new Error(result.data.error || 'Erreur lors de la suppression');
+        throw new Error(result.data.error || 'Erreur lors de la duplication');
       }
-      
-      return result.data;
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(errorMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  return {
-    listCampaigns,
-    getCampaign,
-    createCampaign,
-    sendCampaign,
-    getCampaignStats,
-    deleteCampaign,
-    loading,
-    error,
-  };
+      return result.data.campaign;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+    },
+  });
 }
 
-/**
- * Hook standalone pour supprimer une campagne
- */
-export function useDeleteCampaign() {
-  const { deleteCampaign, loading, error } = useMarketingCampaigns()
-  return { deleteCampaign, loading, error }
-}
-
-/**
- * Hook standalone pour dupliquer une campagne
- */
-export function useDuplicateCampaign() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const duplicateCampaign = async (campaignId: number) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await api.post<{
-        success: boolean
-        campaign: MarketingCampaign
-        error?: string
-      }>(`/api/ecommerce/marketing/campaigns/${campaignId}/duplicate`, {})
-      
-      if (!result.data.success) {
-        throw new Error(result.data.error || 'Erreur lors de la duplication')
-      }
-      
-      return result.data.campaign
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue'
-      setError(errorMsg)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return { duplicateCampaign, loading, error }
-}
-
-/**
- * Hook standalone pour créer une campagne
- */
-export function useCreateCampaign() {
-  const { createCampaign, loading, error } = useMarketingCampaigns()
-  return { createCampaign, loading, error }
-}
-
-/**
- * Hook standalone pour envoyer une campagne
- */
-export function useSendCampaign() {
-  const { sendCampaign, loading, error } = useMarketingCampaigns()
-  return { sendCampaign, loading, error }
-}
-
-/**
- * Hook standalone pour récupérer les stats d'une campagne
- */
-export function useGetCampaignStats() {
-  const { getCampaignStats, loading, error } = useMarketingCampaigns()
-  return { getCampaignStats, loading, error }
-}
-
-/**
- * Hook standalone pour récupérer une campagne
- */
-export function useCampaign(campaignId: number) {
-  const { getCampaign, loading, error } = useMarketingCampaigns()
-  return { getCampaign: () => getCampaign(campaignId), loading, error }
-}
+// Alias pour compatibilité avec code existant
+export const useCampaign = useMarketingCampaign;

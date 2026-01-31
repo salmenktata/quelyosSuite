@@ -16,6 +16,7 @@ const navigation = [
   { name: 'Templates', path: '/support-templates', icon: FilePlus },
   { name: 'Audit Logs', path: '/audit-logs', icon: FileText },
   { name: 'Backups', path: '/backups', icon: Database },
+  { name: 'Données Seed', path: '/seed-data', icon: Database },
   { name: 'Sitemap', path: '/sitemap', icon: Map },
   { name: 'Paramètres', path: '/settings', icon: Settings },
   { name: 'Email (SMTP)', path: '/email-settings', icon: Mail },
