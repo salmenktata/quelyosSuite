@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Configuration tracking marketing -->
+    
+    <!-- Paramètre système : durée conservation tracking (RGPD) -->
+    <record id="tracking_retention_days" model="ir.config_parameter">
+        <field name="key">quelyos_marketing_tracking.retention_days</field>
+        <field name="value">365</field>
+    </record>
+    
+    <!-- Cron : Nettoyage tracking ancien (RGPD) -->
+    <record id="cron_cleanup_old_tracking" model="ir.cron">
+        <field name="name">Marketing Tracking: Cleanup Old Data</field>
+        <field name="model_id" ref="model_quelyos_link_tracker_click"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_cleanup_old_data()</field>
+        <field name="interval_number">7</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+    
+</odoo>
