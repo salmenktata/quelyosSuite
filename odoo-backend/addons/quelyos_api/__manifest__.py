@@ -45,7 +45,7 @@
         'data/payment_sequence.xml',
         'data/subscription_plan_data.xml',
         'data/default_admin_tenant.xml',
-        'data/demo_tenants_data.xml',
+        # 'data/demo_tenants_data.xml',  # TEMPORAIREMENT DÉSACTIVÉ (conflit domaine localhost)
         'data/menu_data.xml',
         'data/payment_providers.xml',
         'data/ir_cron_stock_alerts.xml',
