@@ -12,12 +12,12 @@
 
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Breadcrumbs, PageNotice, SkeletonTable } from "@/components/common";
+import { Breadcrumbs, PageNotice, SkeletonTable, Button } from "@/components/common";
 import { api } from "@/lib/finance/api";
 import type { CreateCategoryRequest } from "@/types/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { Button } from "@/components/ui/button";
-import { Tag, Plus } from "lucide-react";
+
+import { Tag, Plus, AlertCircle, RefreshCw } from "lucide-react";
 import { financeNotices } from "@/lib/notices/finance-notices";
 import { logger } from '@quelyos/logger';
 
@@ -33,7 +33,7 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [kind, setKind] = useState<"INCOME" | "EXPENSE">("EXPENSE");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -91,7 +91,7 @@ export default function CategoriesPage() {
         <Breadcrumbs
           items={[
             { label: "Finance", href: "/finance" },
-            { label: "Catégories", href: "/finance/categories" },
+            { label: "Catégories" },
           ]}
         />
 
@@ -113,23 +113,19 @@ export default function CategoriesPage() {
           <div className="flex gap-3">
             <Button
               variant="primary"
-              className="gap-2"
+              icon={<Plus className="h-4 w-4" />}
               onClick={() => setShowForm(!showForm)}
             >
-              <Plus className="h-4 w-4" />
               {showForm ? "Annuler" : "Nouvelle catégorie"}
             </Button>
           </div>
         </div>
 
-        <PageNotice
-          config={financeNotices['categories']}
-          className="mb-6"
-        />
+        <PageNotice config={financeNotices["categories"]} />
 
         {/* Formulaire de création */}
         {showForm && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <form onSubmit={createCategory} className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Créer une catégorie
@@ -138,7 +134,7 @@ export default function CategoriesPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-gray-900 dark:text-white"
+                    className="block text-sm font-medium text-gray-900 dark:text-white"
                     htmlFor="category-name"
                   >
                     Nom de la catégorie <span className="text-rose-600 dark:text-rose-400">*</span>
@@ -149,21 +145,21 @@ export default function CategoriesPage() {
                     placeholder="Ex: Charges fixes"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
-                    className="text-sm font-medium text-gray-900 dark:text-white"
+                    className="block text-sm font-medium text-gray-900 dark:text-white"
                     htmlFor="category-kind"
                   >
                     Type <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <select
                     id="category-kind"
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     value={kind}
                     onChange={(e) => setKind(e.target.value as "INCOME" | "EXPENSE")}
                   >
@@ -183,7 +179,7 @@ export default function CategoriesPage() {
                 <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
                   <div className="flex items-center justify-between gap-4">
                     <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-                    <Button variant="outline" size="sm" onClick={fetchCategories}>
+                    <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchCategories}>
                       Réessayer
                     </Button>
                   </div>
@@ -202,7 +198,7 @@ export default function CategoriesPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
           {/* Catégories de revenus */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -236,7 +232,7 @@ export default function CategoriesPage() {
           </div>
 
           {/* Catégories de dépenses */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">

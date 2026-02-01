@@ -297,8 +297,11 @@ export default function NewAccountPage() {
         </div>
 
         {error && (
-          <div className="rounded-xl border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100" role="alert">
-            {error}
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
           </div>
         )}
 

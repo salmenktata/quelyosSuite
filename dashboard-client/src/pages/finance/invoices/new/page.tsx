@@ -114,13 +114,14 @@ export default function NewInvoicePage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Finance', path: '/finance' },
-          { label: 'Factures Clients', path: '/finance/invoices' },
-          { label: 'Nouvelle Facture', path: '/finance/invoices/new' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Factures', href: '/finance/invoices' },
+            { label: 'Nouvelle' },
+          ]}
+        />
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -196,7 +197,7 @@ export default function NewInvoicePage() {
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">
               Lignes de Facture
             </h3>
-            <Button variant="secondary" size="sm" icon={Plus} onClick={addLine}>
+            <Button variant="secondary" size="sm" icon={<Plus />} onClick={addLine}>
               Ajouter Ligne
             </Button>
           </div>
@@ -310,7 +311,7 @@ export default function NewInvoicePage() {
           </Button>
           <Button
             variant="secondary"
-            icon={Save}
+            icon={<Save />}
             onClick={() => handleSubmit(false)}
             disabled={loading}
           >
@@ -318,13 +319,14 @@ export default function NewInvoicePage() {
           </Button>
           <Button
             variant="primary"
-            icon={Send}
+            icon={<Send />}
             onClick={() => handleSubmit(true)}
             disabled={loading}
           >
             {loading ? 'Création...' : 'Créer et Valider'}
           </Button>
         </div>
+      </div>
       </div>
     </Layout>
   )
