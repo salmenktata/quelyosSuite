@@ -1,24 +1,10 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { MapPin, Sparkles, Zap, ArrowRight } from "./Icons";
 import { Compass } from "lucide-react";
 import Footer from "./Footer";
 import Container from "./Container";
 import Header from "./Header";
 import { getAllSolutions } from "../lib/solutions-data";
-
-// Lazy load composants below-the-fold pour optimiser bundle initial
-const DifferentiatorSection = dynamic(() => import("./DifferentiatorSection"), {
-  loading: () => <div className="relative py-20" />, // Placeholder pour éviter CLS
-});
-
-const StatsSection = dynamic(() => import("./StatsSection"), {
-  loading: () => <div className="relative border-y border-white/10 py-16" />,
-});
-
-const CTASection = dynamic(() => import("./CTASection"), {
-  loading: () => <div className="relative py-20" />,
-});
 
 const _modules = [
   {
@@ -244,13 +230,6 @@ export default function HomePageContentServer() {
           </div>
         </Container>
       </section>
-
-      {/* Différenciateurs - Lazy loaded */}
-      <DifferentiatorSection />
-
-      {/* CTA + Stats + CTA Final - Lazy loaded */}
-      <CTASection />
-      <StatsSection />
 
       <Footer />
     </div>

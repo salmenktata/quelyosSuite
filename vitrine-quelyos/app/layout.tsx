@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import dynamic from "next/dynamic";
-
-// Lazy load ChatBot (non-critique, below-the-fold)
-const ConditionalChatBot = dynamic(() => import("./components/ConditionalChatBot"), {
-  ssr: false,
-  loading: () => null,
-});
+import dynamicImport from "next/dynamic";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,6 +10,12 @@ const inter = Inter({
 
 // Force SSG (Static Site Generation) pour performance optimale
 export const dynamic = 'force-static';
+
+// Lazy load ChatBot (non-critique, below-the-fold)
+const ConditionalChatBot = dynamicImport(() => import("./components/ConditionalChatBot"), {
+  ssr: false,
+  loading: () => null,
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://quelyos.com"),
