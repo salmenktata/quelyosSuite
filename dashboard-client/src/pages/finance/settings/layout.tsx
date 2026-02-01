@@ -11,8 +11,6 @@ const navItems = [
   { href: "/finance/settings/tva", label: "TVA & fiscalité" },
   { href: "/finance/settings/categories", label: "Catégories" },
   { href: "/finance/settings/flux", label: "Flux de paiement" },
-  { href: "/finance/settings/billing", label: "Abonnement" },
-  { href: "/finance/settings/security", label: "Sécurité" },
   { href: "/finance/settings/notifications", label: "Notifications & exports" },
   { href: "/finance/settings/integrations", label: "Intégrations" },
 ];

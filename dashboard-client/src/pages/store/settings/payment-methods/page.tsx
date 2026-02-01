@@ -454,7 +454,6 @@ function ConfigModal({
           </div>
         </form>
       </div>
-      </div>
-    </Layout>
+    </div>
   );
 }

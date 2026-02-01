@@ -7,6 +7,7 @@ import {
   Settings,
   ChevronRight,
   Bell,
+  Shield,
 } from "lucide-react";
 
 const SETTINGS_SECTIONS = [
@@ -25,6 +26,18 @@ const SETTINGS_SECTIONS = [
         icon: MessageSquare,
         label: "SMS",
         description: "Tunisie SMS - API et quotas",
+      },
+    ],
+  },
+  {
+    title: "Sécurité",
+    description: "Paramètres de sécurité et authentification",
+    items: [
+      {
+        to: "/settings/security",
+        icon: Shield,
+        label: "Sécurité",
+        description: "Mot de passe, 2FA et sessions actives",
       },
     ],
   },

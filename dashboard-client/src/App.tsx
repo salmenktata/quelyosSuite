@@ -1282,7 +1282,6 @@ export default function App() {
                 <Route path="tva" element={<FinanceSettingsTva />} />
                 <Route path="categories" element={<FinanceSettingsCategories />} />
                 <Route path="flux" element={<FinanceSettingsFlux />} />
-                <Route path="billing" element={<FinanceSettingsBilling />} />
                 <Route path="security" element={<FinanceSettingsSecurity />} />
                 <Route path="notifications" element={<FinanceSettingsNotifications />} />
                 <Route path="integrations" element={<FinanceSettingsIntegrations />} />
@@ -1693,6 +1692,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <GlobalSettingsSMS />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/security"
+                element={
+                  <ProtectedRoute>
+                    <GlobalSettingsSecurity />
                   </ProtectedRoute>
                 }
               />
