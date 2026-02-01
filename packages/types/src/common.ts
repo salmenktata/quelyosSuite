@@ -297,6 +297,7 @@ export interface OrderLine {
   product_name: string
   product_sku?: string
   product_image?: string
+  image_url?: string // Alias for product_image
   quantity: number
   price_unit: number
   price_subtotal: number
