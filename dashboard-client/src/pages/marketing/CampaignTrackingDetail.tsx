@@ -14,7 +14,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
-import { useMarketingCampaigns } from '@/hooks/useMarketingCampaigns';
+import { useMarketingCampaign } from '@/hooks/useMarketingCampaigns';
 import type { TrackingStats, HeatmapLink, TimelineEvent } from '@/hooks/useMarketingTracking';
 import type { MarketingCampaign } from '@quelyos/types';
 import { ArrowLeft, TrendingUp, Users, MousePointerClick, Clock } from 'lucide-react';
@@ -25,28 +25,27 @@ export function CampaignTrackingDetail() {
   const navigate = useNavigate();
   const campaignId = id ? parseInt(id) : 0;
 
-  const { getCampaign, loading: campaignLoading } = useMarketingCampaigns();
+  const { data: campaign, isLoading: campaignLoading } = useMarketingCampaign(campaignId);
   const { getCampaignTracking, getCampaignHeatmap, getCampaignTimeline, loading: trackingLoading } = useMarketingTracking();
 
-  const [campaign, setCampaign] = useState<MarketingCampaign | null>(null);
   const [tracking, setTracking] = useState<TrackingStats | null>(null);
   const [heatmap, setHeatmap] = useState<HeatmapLink[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
 
   useEffect(() => {
-    loadData();
+    if (campaignId) {
+      loadData();
+    }
   }, [campaignId]);
 
   const loadData = async () => {
     try {
-      const [campaignData, trackingData, heatmapData, timelineData] = await Promise.all([
-        getCampaign(campaignId),
+      const [trackingData, heatmapData, timelineData] = await Promise.all([
         getCampaignTracking(campaignId),
         getCampaignHeatmap(campaignId),
         getCampaignTimeline(campaignId, 50),
       ]);
 
-      setCampaign(campaignData);
       setTracking(trackingData);
       setHeatmap(heatmapData);
       setTimeline(timelineData.timeline);
@@ -103,7 +102,7 @@ export function CampaignTrackingDetail() {
           <Button
             variant="outline"
             size="sm"
-            icon={ArrowLeft}
+            icon={<ArrowLeft />}
             onClick={() => navigate('/marketing/campaigns')}
           >
             Retour

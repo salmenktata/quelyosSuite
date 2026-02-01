@@ -70,27 +70,37 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
     // En développement, afficher le vrai message
     if (typeof error === 'string') return error;
     if (error instanceof Error) return error.message;
-    return error?.response?.data?.error || error?.message || 'Une erreur est survenue';
+
+    // Type narrowing pour accès propriétés
+    if (error && typeof error === 'object') {
+      const err = error as Record<string, any>;
+      return err.response?.data?.error || err.message || 'Une erreur est survenue';
+    }
+    return 'Une erreur est survenue';
   }
 
   // En production, messages génériques basés sur le type d'erreur
-  if (error?.response?.status === 404) {
-    return 'Ressource non trouvée';
-  }
-  if (error?.response?.status === 401 || error?.response?.status === 403) {
-    return 'Accès non autorisé. Veuillez vous reconnecter.';
-  }
-  if (error?.response?.status >= 500) {
-    return 'Erreur du serveur. Veuillez réessayer ultérieurement.';
-  }
+  if (error && typeof error === 'object') {
+    const err = error as Record<string, any>;
 
-  // Détection par message d'erreur
-  const message = error?.message?.toLowerCase() || '';
-  if (message.includes('network') || message.includes('fetch')) {
-    return 'Erreur de connexion au serveur';
-  }
-  if (message.includes('timeout')) {
-    return "Délai d'attente dépassé";
+    if (err.response?.status === 404) {
+      return 'Ressource non trouvée';
+    }
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      return 'Accès non autorisé. Veuillez vous reconnecter.';
+    }
+    if (err.response?.status >= 500) {
+      return 'Erreur du serveur. Veuillez réessayer ultérieurement.';
+    }
+
+    // Détection par message d'erreur
+    const message = err.message?.toLowerCase?.() || '';
+    if (message.includes('network') || message.includes('fetch')) {
+      return 'Erreur de connexion au serveur';
+    }
+    if (message.includes('timeout')) {
+      return "Délai d'attente dépassé";
+    }
   }
 
   return 'Une erreur est survenue. Veuillez réessayer.';

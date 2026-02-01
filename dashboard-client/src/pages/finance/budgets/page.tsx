@@ -17,9 +17,17 @@ import { formatCurrency } from '@/lib/utils'
 import { financeNotices } from '@/lib/notices/finance-notices'
 import { Plus, AlertCircle, RefreshCw, Target } from 'lucide-react'
 
+interface Budget {
+  id: number
+  name: string
+  period: string
+  totalBudget: number
+  totalActual: number
+}
+
 export default function BudgetsPage() {
   const navigate = useNavigate()
-  const [budgets, setBudgets] = useState([])
+  const [budgets, setBudgets] = useState<Budget[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -149,7 +157,7 @@ export default function BudgetsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {budgets.map((budget: any) => (
+                {budgets.map((budget) => (
                   <tr
                     key={budget.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"

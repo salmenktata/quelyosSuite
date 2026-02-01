@@ -32,18 +32,18 @@ interface SessionResponse {
 // ============================================================================
 
 async function openSession(params: OpenSessionParams): Promise<SessionResponse> {
-  const response = await api.post('/api/pos/session/open', {
+  const response = await api.post<{ success: boolean; error?: string; data: SessionResponse }>('/api/pos/session/open', {
     config_id: params.configId,
     opening_cash: params.openingCash,
   })
   if (!response.data.success) {
     throw new Error(response.data.error || 'Impossible d\'ouvrir la session')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function closeSession(params: CloseSessionParams): Promise<POSZReport> {
-  const response = await api.post('/api/pos/session/close', {
+  const response = await api.post<{ success: boolean; error?: string; data: POSZReport }>('/api/pos/session/close', {
     session_id: params.sessionId,
     closing_cash: params.closingCash,
     note: params.note,
@@ -51,7 +51,7 @@ async function closeSession(params: CloseSessionParams): Promise<POSZReport> {
   if (!response.data.success) {
     throw new Error(response.data.error || 'Impossible de fermer la session')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 // ============================================================================

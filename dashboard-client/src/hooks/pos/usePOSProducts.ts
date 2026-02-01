@@ -40,7 +40,7 @@ interface ProductsResponse {
 // ============================================================================
 
 async function fetchPOSProducts(params: ProductParams): Promise<ProductsResponse> {
-  const response = await api.post('/api/pos/products', {
+  const response = await api.post<{ success: boolean; error?: string; data: ProductsResponse }>('/api/pos/products', {
     config_id: params.configId,
     category_id: params.categoryId,
     search: params.search,
@@ -50,11 +50,11 @@ async function fetchPOSProducts(params: ProductParams): Promise<ProductsResponse
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des produits')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function fetchPOSCategories(configId: number): Promise<POSCategory[]> {
-  const response = await api.post('/api/pos/categories', { config_id: configId })
+  const response = await api.post<{ success: boolean; error?: string; data: POSCategory[] }>('/api/pos/categories', { config_id: configId })
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des catégories')
   }
@@ -62,14 +62,14 @@ async function fetchPOSCategories(configId: number): Promise<POSCategory[]> {
 }
 
 async function fetchProductByBarcode(configId: number, barcode: string): Promise<POSProduct | null> {
-  const response = await api.post('/api/pos/product/barcode', {
+  const response = await api.post<{ success: boolean; error?: string; data: POSProduct | null }>('/api/pos/product/barcode', {
     config_id: configId,
     barcode,
   })
   if (!response.data.success) {
     return null
   }
-  return response.data.data
+  return response.data.data ?? null
 }
 
 // ============================================================================

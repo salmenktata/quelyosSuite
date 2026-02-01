@@ -9,8 +9,16 @@ import { Plus } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
+interface Bill {
+  id: number
+  name: string
+  vendor: { name: string }
+  invoiceDate: string
+  amountTotal: number
+}
+
 export default function BillsPage() {
-  const [bills, setBills] = useState([])
+  const [bills, setBills] = useState<Bill[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -55,7 +63,7 @@ export default function BillsPage() {
               </tr>
             </thead>
             <tbody>
-              {bills.map((bill: any) => (
+              {bills.map((bill) => (
                 <tr key={bill.id} className="border-b border-gray-200 dark:border-gray-700">
                   <td className="px-6 py-4 text-gray-900 dark:text-white">{bill.name}</td>
                   <td className="px-6 py-4 text-gray-900 dark:text-white">{bill.vendor.name}</td>

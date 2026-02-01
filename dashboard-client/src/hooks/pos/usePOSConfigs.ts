@@ -21,7 +21,7 @@ export const posConfigKeys = {
 // ============================================================================
 
 async function fetchPOSConfigs(): Promise<POSConfig[]> {
-  const response = await api.post('/api/pos/configs', {})
+  const response = await api.post<{ success: boolean; error?: string; data: POSConfig[] }>('/api/pos/configs', {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des terminaux')
   }
@@ -29,11 +29,11 @@ async function fetchPOSConfigs(): Promise<POSConfig[]> {
 }
 
 async function fetchPOSConfig(id: number): Promise<POSConfig> {
-  const response = await api.post(`/api/pos/config/${id}`, {})
+  const response = await api.post<{ success: boolean; error?: string; data: POSConfig }>(`/api/pos/config/${id}`, {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Terminal non trouvé')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 // ============================================================================

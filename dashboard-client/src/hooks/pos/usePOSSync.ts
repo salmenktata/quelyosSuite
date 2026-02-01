@@ -70,7 +70,7 @@ export function usePOSSync(options: UsePOSSyncOptions = {}) {
   // Sync function
   const syncOrder = useCallback(async (order: OfflineOrder) => {
     try {
-      const response = await api.post('/api/pos/sync', {
+      const response = await api.post<{ success: boolean; error?: string; data: { synced: { server_id: number }[] } }>('/api/pos/sync', {
         orders: [{
           offline_id: order.id,
           session_id: order.sessionId,

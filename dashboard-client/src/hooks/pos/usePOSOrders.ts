@@ -63,7 +63,7 @@ interface OrdersResponse {
 // ============================================================================
 
 async function fetchOrders(params: OrdersParams): Promise<OrdersResponse> {
-  const response = await api.post('/api/pos/orders', {
+  const response = await api.post<{ success: boolean; error?: string; data: OrdersResponse }>('/api/pos/orders', {
     session_id: params.sessionId,
     limit: params.limit || 50,
     offset: params.offset || 0,
@@ -71,19 +71,19 @@ async function fetchOrders(params: OrdersParams): Promise<OrdersResponse> {
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des commandes')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function fetchOrder(id: number): Promise<POSOrder> {
-  const response = await api.post(`/api/pos/order/${id}`, {})
+  const response = await api.post<{ success: boolean; error?: string; data: POSOrder }>(`/api/pos/order/${id}`, {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Commande non trouvée')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function createOrder(params: CreateOrderParams): Promise<POSOrder> {
-  const response = await api.post('/api/pos/order/create', {
+  const response = await api.post<{ success: boolean; error?: string; data: POSOrder }>('/api/pos/order/create', {
     session_id: params.sessionId,
     lines: params.lines,
     partner_id: params.partnerId,
@@ -95,17 +95,17 @@ async function createOrder(params: CreateOrderParams): Promise<POSOrder> {
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors de la création de la commande')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function payOrder(params: PayOrderParams): Promise<POSOrder> {
-  const response = await api.post(`/api/pos/order/${params.orderId}/pay`, {
+  const response = await api.post<{ success: boolean; error?: string; data: POSOrder }>(`/api/pos/order/${params.orderId}/pay`, {
     payments: params.payments,
   })
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du paiement')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function cancelOrder(orderId: number): Promise<void> {

@@ -4,8 +4,17 @@ import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
+interface AnalyticDistribution {
+  accountId: number
+  accountName: string
+  debit: number
+  credit: number
+  balance: number
+  percentage: number
+}
+
 export default function AnalyticsReportsPage() {
-  const [distribution, setDistribution] = useState([])
+  const [distribution, setDistribution] = useState<AnalyticDistribution[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,7 +48,7 @@ export default function AnalyticsReportsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {distribution.map((item: any) => (
+            {distribution.map((item) => (
               <tr key={item.accountId}>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{item.accountName}</td>
                 <td className="px-6 py-4 text-sm text-right text-gray-900 dark:text-white">{formatCurrency(item.debit, '€')}</td>

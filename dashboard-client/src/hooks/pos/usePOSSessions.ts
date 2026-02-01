@@ -22,7 +22,7 @@ export interface POSSessionItem {
 }
 
 async function fetchSessions(): Promise<POSSessionItem[]> {
-  const response = await api.post('/api/pos/sessions', {})
+  const response = await api.post<{ success: boolean; error?: string; data: { sessions: POSSessionItem[] } }>('/api/pos/sessions', {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des sessions')
   }

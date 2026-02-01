@@ -31,18 +31,18 @@ interface DashboardParams {
 // ============================================================================
 
 async function fetchDashboard(params: DashboardParams = {}): Promise<POSDashboard> {
-  const response = await api.post('/api/pos/dashboard', {
+  const response = await api.post<{ success: boolean; error?: string; data: POSDashboard }>('/api/pos/dashboard', {
     date_from: params.dateFrom,
     date_to: params.dateTo,
   })
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement du dashboard')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 async function fetchActiveSessions(): Promise<POSSessionSummary[]> {
-  const response = await api.post('/api/pos/sessions/active', {})
+  const response = await api.post<{ success: boolean; error?: string; data: POSSessionSummary[] }>('/api/pos/sessions/active', {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors du chargement des sessions')
   }
@@ -50,11 +50,11 @@ async function fetchActiveSessions(): Promise<POSSessionSummary[]> {
 }
 
 async function fetchZReport(sessionId: number): Promise<POSZReport> {
-  const response = await api.post(`/api/pos/session/${sessionId}/report`, {})
+  const response = await api.post<{ success: boolean; error?: string; data: POSZReport }>(`/api/pos/session/${sessionId}/report`, {})
   if (!response.data.success) {
     throw new Error(response.data.error || 'Erreur lors de la génération du rapport')
   }
-  return response.data.data
+  return response.data.data!
 }
 
 // ============================================================================

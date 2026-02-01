@@ -5,8 +5,20 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { Check, X } from 'lucide-react'
 
+interface BankTransaction {
+  label: string
+  date: string
+  amount: number
+}
+
+interface ReconciliationSuggestion {
+  id: number
+  bankTransaction: BankTransaction
+  confidence: number
+}
+
 export default function BankReconciliationPage() {
-  const [suggestions, setSuggestions] = useState([])
+  const [suggestions, setSuggestions] = useState<ReconciliationSuggestion[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -18,7 +30,7 @@ export default function BankReconciliationPage() {
 
   const handleValidate = async (suggestionId: number) => {
     // TODO: Appel API validation
-    setSuggestions(suggestions.filter((s: any) => s.id !== suggestionId))
+    setSuggestions(suggestions.filter((s) => s.id !== suggestionId))
   }
 
   if (loading) return <Layout><div>Chargement...</div></Layout>
@@ -35,7 +47,7 @@ export default function BankReconciliationPage() {
       </h1>
 
       <div className="space-y-4">
-        {suggestions.map((suggestion: any) => (
+        {suggestions.map((suggestion) => (
           <div key={suggestion.id} className="bg-white dark:bg-gray-800 rounded-lg border p-6">
             <div className="grid grid-cols-2 gap-6">
               <div>

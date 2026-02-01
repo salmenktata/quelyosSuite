@@ -10,11 +10,11 @@
  * - Export contacts pour analyses externes
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
-import { useMarketingLists, type MailingList } from '@/hooks/useMarketingLists';
+import { useMarketingLists, useCreateMailingList, useDeleteMailingList, type MailingList } from '@/hooks/useMarketingLists';
 import { Users, Plus, Trash2, UserPlus, RefreshCw, Mail } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
@@ -25,32 +25,18 @@ const breadcrumbItems = [
 ];
 
 export default function MailingLists() {
-  const { listMailingLists, createMailingList, deleteMailingList, loading, error } = useMarketingLists();
-  const [lists, setLists] = useState<MailingList[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data, isLoading, error, refetch } = useMarketingLists({ limit: 100 });
+  const createMailingListMutation = useCreateMailingList();
+  const deleteMailingListMutation = useDeleteMailingList();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newListName, setNewListName] = useState('');
 
-  useEffect(() => {
-    loadLists();
-  }, []);
-
-  const loadLists = async () => {
-    try {
-      const result = await listMailingLists({ limit: 100 });
-      setLists(result.mailing_lists);
-      setTotalCount(result.total_count);
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
-    }
-  };
+  const lists = data?.mailing_lists || [];
+  const totalCount = data?.total_count || 0;
 
   const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await loadLists();
-    setIsRefreshing(false);
+    await refetch();
   };
 
   const handleCreate = async () => {
@@ -60,25 +46,21 @@ export default function MailingLists() {
     }
 
     try {
-      await createMailingList({ name: newListName });
+      await createMailingListMutation.mutateAsync({ name: newListName });
       setNewListName('');
       setShowCreateModal(false);
-      await loadLists();
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
+    } catch (err) {
+      logger.error("Erreur lors de la création de la liste:", err);
     }
   };
 
   const handleDelete = async (id: number, name: string) => {
     if (!confirm('Supprimer la liste "' + name + '" ?')) return;
-    
+
     try {
-      await deleteMailingList(id);
-      await loadLists();
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
+      await deleteMailingListMutation.mutateAsync(id);
+    } catch (err) {
+      logger.error("Erreur lors de la suppression de la liste:", err);
     }
   };
 
@@ -98,9 +80,9 @@ export default function MailingLists() {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            icon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
+            icon={<RefreshCw className={isLoading ? 'animate-spin' : ''} />}
             onClick={handleRefresh}
-            disabled={isRefreshing}
+            disabled={isLoading}
           >
             Actualiser
           </Button>
@@ -146,7 +128,7 @@ export default function MailingLists() {
               >
                 Annuler
               </Button>
-              <Button variant="primary" onClick={handleCreate} disabled={loading}>
+              <Button variant="primary" onClick={handleCreate} disabled={isLoading}>
                 Créer
               </Button>
             </div>
@@ -154,9 +136,9 @@ export default function MailingLists() {
         </div>
       )}
 
-      {loading && <SkeletonTable rows={5} />}
+      {isLoading && <SkeletonTable rows={5} />}
 
-      {!loading && lists.length === 0 && (
+      {!isLoading && lists.length === 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <Users className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
@@ -168,7 +150,7 @@ export default function MailingLists() {
         </div>
       )}
 
-      {!loading && lists.length > 0 && (
+      {!isLoading && lists.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {lists.map((list) => (
             <div
