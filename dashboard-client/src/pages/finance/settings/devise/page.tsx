@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { Layout } from '@/components/Layout';
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Check, Loader2, Moon, Sun, Globe, Building2 } from "lucide-react";
@@ -65,8 +66,9 @@ export default function DeviseFormatsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
             { label: 'Finance', href: '/finance' },
@@ -193,6 +195,7 @@ export default function DeviseFormatsPage() {
             </div>
           )}
         </div>
-    </div>
+      </div>
+    </Layout>
   );
 }

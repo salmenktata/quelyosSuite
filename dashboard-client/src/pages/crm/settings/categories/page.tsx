@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Layout } from '@/components/Layout';
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -40,8 +41,9 @@ export default function CategoriesSettingsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "CRM", href: "/crm" },
           { label: "Paramètres", href: "/crm/settings" },
@@ -137,6 +139,7 @@ export default function CategoriesSettingsPage() {
           Ajouter une catégorie
         </span>
       </button>
-    </div>
+      </div>
+    </Layout>
   );
 }

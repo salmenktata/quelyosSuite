@@ -76,6 +76,10 @@ export default function ExpensesPage() {
   }, [transactions, searchQuery, selectedCategory])
 
 
+  const totalExpenses = useMemo(() => {
+    return filteredTransactions.reduce((sum, tx) => sum + tx.amount, 0)
+  }, [filteredTransactions])
+
   // Loading state
   if (isLoading) {
     return (
@@ -88,10 +92,6 @@ export default function ExpensesPage() {
       </Layout>
     );
   }
-
-  const totalExpenses = useMemo(() => {
-    return filteredTransactions.reduce((sum, tx) => sum + tx.amount, 0)
-  }, [filteredTransactions])
 
   return (
     <Layout>

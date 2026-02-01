@@ -1,9 +1,9 @@
 
 
 import { useEffect, useState } from "react";
-import { Layout } from '@/components/Layout';
 import { Loader2, Zap, Check, AlertCircle } from "lucide-react";
 import { logger } from '@quelyos/logger';
+import { Layout } from '@/components/Layout';
 
 type Integration = {
   id: string;
@@ -142,10 +142,12 @@ export default function IntegrationsPage() {
     <Layout>
       <div className="space-y-6">
 
-        <div className="space-y-1">
-          <p className="text-xs uppercase tracking-[0.25em] text-indigo-200">Écosystème</p>
-          <h1 className="bg-gradient-to-r from-white via-indigo-100 to-purple-200 bg-clip-text text-3xl font-semibold text-transparent">Intégrations</h1>
-          <p className="text-sm text-indigo-100/80">Connectez vos outils préférés pour amplifier vos capacités.</p>
+        <div className="relative">
+          <div className="space-y-1">
+            <p className="text-xs uppercase tracking-[0.25em] text-indigo-200">Écosystème</p>
+            <h1 className="bg-gradient-to-r from-white via-indigo-100 to-purple-200 bg-clip-text text-3xl font-semibold text-transparent">Intégrations</h1>
+            <p className="text-sm text-indigo-100/80">Connectez vos outils préférés pour amplifier vos capacités.</p>
+        </div>
         </div>
 
       {loading ? (

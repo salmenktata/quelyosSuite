@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Layout } from '@/components/Layout';
 import { Breadcrumbs } from "@/components/common";
 import {
   Settings,
@@ -54,8 +55,9 @@ const settingsGroups = [
 
 export default function CrmSettingsOverviewPage() {
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "CRM", href: "/crm" },
           { label: "Paramètres", href: "/crm/settings" },
@@ -123,6 +125,7 @@ export default function CrmSettingsOverviewPage() {
           </div>
         ))}
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }

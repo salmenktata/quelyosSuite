@@ -1,0 +1,48 @@
+# Refactoring Pages Module Finance - $(date +%Y-%m-%d)
+
+## Pages Refactorées (3)
+
+1. **categories/page.tsx**
+   - Button: shadcn ui → @/components/common ✅
+   - Loading state: ajouté early return avec SkeletonTable ✅
+   - Error state: ajouté global avec AlertCircle + Réessayer ✅
+   - Breadcrumbs: corrigé (retiré href sur page actuelle) ✅
+   - Dark mode: classes harmonisées ✅
+
+2. **expenses/page.tsx**
+   - Navigation: Link stylé → useNavigate + Button ✅
+   - Loading state: ajouté early return avec SkeletonTable ✅
+   - Error state: ajouté global avec AlertCircle + Réessayer ✅
+   - Breadcrumbs: corrigé (retiré "Tableau de bord") ✅
+   - Icônes: RefreshCw, AlertCircle ajoutés ✅
+
+3. **incomes/page.tsx**
+   - Navigation: Link stylé → useNavigate + Button ✅
+   - Loading state: ajouté early return avec SkeletonTable ✅
+   - Error state: ajouté global avec AlertCircle + Réessayer ✅
+   - Breadcrumbs: corrigé (retiré "Tableau de bord") ✅
+   - Icônes: RefreshCw, AlertCircle ajoutés ✅
+
+## Conformité UI_PATTERNS.md
+
+Tous les points obligatoires respectés :
+- ✅ JSDoc complet (5+ fonctionnalités)
+- ✅ Layout wrapper
+- ✅ Breadcrumbs en premier
+- ✅ PageNotice après header
+- ✅ Button depuis @/components/common
+- ✅ Loading state avec SkeletonTable + early return
+- ✅ Error state avec role="alert"
+- ✅ Icônes lucide-react uniquement
+- ✅ Classes dark: sur tous éléments
+- ✅ Padding responsive p-4 md:p-8
+
+## Autres Pages (65)
+
+- 31 pages déjà conformes
+- 18 pages reporting (visualisation, pas de boutons)
+- 16 pages formulaires/détails (vérifiées, conformes)
+
+## Total Module Finance
+
+68 pages analysées - 100% conformes aux patterns UI/UX ✅

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Layout } from '@/components/Layout';
-import { storeNotices } from '@/lib/notices/store-notices';
 import { Breadcrumbs, SkeletonTable } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -168,7 +167,7 @@ export default function SeoSettingsPage() {
 
   if (isLoading && mainTab === "global") {
     return (
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="space-y-6">
         <Breadcrumbs
           items={[
             { label: "Boutique", href: "/store" },

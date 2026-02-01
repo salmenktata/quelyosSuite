@@ -1,11 +1,11 @@
 
 
 import { useEffect, useState, useCallback } from "react";
-import { Layout } from '@/components/Layout';
 import { Switch } from "@/components/ui/Switch";
 import { Plus, Trash2, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, AlertCircle, MoreHorizontal, Check, X } from "lucide-react";
 import type { FlowType } from "@/types/paymentFlow";
 import { logger } from '@quelyos/logger';
+import { Layout } from '@/components/Layout';
 
 // Types de flux avec labels et icônes (FlowType inclut PaymentMethod + TransactionCategory)
 const FLOW_TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode; description: string }> = {
@@ -210,10 +210,10 @@ export default function FluxSettingsPage() {
     <Layout>
       <div className="space-y-6">
         {/* Messages */}
-      {error && (
-        <div className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {error}
-        </div>
+        {error && (
+          <div className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            {error}
+          </div>
       )}
       {success && (
         <div className="rounded-lg border border-emerald-300/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
