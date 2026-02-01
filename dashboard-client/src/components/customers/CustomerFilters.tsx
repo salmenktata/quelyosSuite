@@ -33,7 +33,7 @@ export function CustomerFilters({
       onSearch(debouncedSearch)
       setHasSearched(true)
     }
-  }, [debouncedSearch])
+  }, [debouncedSearch, hasSearched, onSearch])
 
   const handleReset = () => {
     onSearchInputChange('')

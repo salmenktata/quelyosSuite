@@ -184,7 +184,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
         const historicalDays = Math.min(Math.floor(days / 2), 180);
         const data = (await api(
           `/reporting/forecast-enhanced?horizonDays=${days}&historicalDays=${historicalDays}`
-        ));
+        )) as ForecastResponse;
 
         setForecast({
           days,
