@@ -229,11 +229,11 @@ function RegisterForm() {
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Zap className="h-4 w-4 text-indigo-300" />
-                <span>Hébergé en France</span>
+                <span>Infrastructure Sécurisée</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Building2 className="h-4 w-4 text-indigo-300" />
-                <span>Made in France</span>
+                <span>Solution Complète</span>
               </div>
             </div>
             <p className="text-xs text-slate-500">

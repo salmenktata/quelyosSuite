@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      ...(mode === 'analyze' ? [visualizer({ open: false, filename: 'perf-reports/bundle-stats.html', gzipSize: true, brotliSize: true })] : []),
     ],
     appType: 'spa',
     define: {

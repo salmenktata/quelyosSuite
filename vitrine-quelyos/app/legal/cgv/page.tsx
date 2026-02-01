@@ -284,7 +284,7 @@ export default function CGVPage() {
               <p className="m-0">
                 <strong className="text-white">Sécurité :</strong> Vos données sont protégées par un 
                 chiffrement de niveau bancaire (AES-256) et stockées dans des datacenters certifiés 
-                ISO 27001 situés en France.
+                ISO 27001.
               </p>
               <p className="m-0">
                 <strong className="text-white">Sauvegardes :</strong> Des sauvegardes quotidiennes sont 
@@ -342,12 +342,12 @@ export default function CGVPage() {
                 possibilité de recourir gratuitement à un médiateur de la consommation.
               </p>
               <p className="m-0">
-                <strong className="text-white">Médiateur :</strong> CM2C - 14 rue Saint Jean, 75017 Paris
+                <strong className="text-white">Médiateur :</strong> Disponible sur demande
                 <br />
-                <strong className="text-white">Site :</strong> www.cm2c.net
+                <strong className="text-white">Contact :</strong> legal@quelyos.com
               </p>
               <p className="m-0">
-                À défaut de résolution amiable, les tribunaux de Paris seront seuls compétents.
+                À défaut de résolution amiable, la compétence sera déterminée selon les conventions internationales.
               </p>
             </div>
           </section>

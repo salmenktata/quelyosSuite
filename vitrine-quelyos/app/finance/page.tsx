@@ -229,7 +229,7 @@ export default function FinancePage() {
                     icon: Zap,
                     text: "Prise en main immédiate, sans formation",
                   },
-                  { icon: Globe, text: "France → Tunisie → Maghreb → Golf" },
+                  { icon: Globe, text: "Expansion internationale" },
                 ].map((item, i) => (
                   <li
                     key={i}

@@ -164,8 +164,8 @@ const featureComparison: Record<string, FeatureRow[]> = {
   "Ventes & Paiements": [
     { name: "Stripe", starter: true, pro: true, business: true, enterprise: true },
     { name: "PayPal", starter: true, pro: true, business: true, enterprise: true },
-    { name: "Flouci (Tunisie)", starter: true, pro: true, business: true, enterprise: true },
-    { name: "Konnect (Tunisie)", starter: true, pro: true, business: true, enterprise: true },
+    { name: "Flouci", starter: true, pro: true, business: true, enterprise: true },
+    { name: "Konnect", starter: true, pro: true, business: true, enterprise: true },
     { name: "Paiement à la livraison", starter: true, pro: true, business: true, enterprise: true },
     { name: "Codes promo", starter: false, pro: true, business: true, enterprise: true },
     { name: "Abandon de panier", starter: false, pro: true, business: true, enterprise: true },
@@ -240,7 +240,7 @@ const faqs = [
   },
   {
     question: "Mes données sont-elles sécurisées ?",
-    answer: "Absolument. Hébergement en France (RGPD), chiffrement AES-256, backups automatiques, et accès restreint par rôles. Nous ne revendons jamais vos données.",
+    answer: "Absolument. Infrastructure sécurisée (RGPD), chiffrement AES-256, backups automatiques, et accès restreint par rôles. Nous ne revendons jamais vos données.",
   },
   {
     question: "Comment fonctionne le plan Enterprise ?",
@@ -574,7 +574,7 @@ export default function EcommercePricingPage() {
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
               { icon: Clock, text: "14 jours d'essai gratuit" },
-              { icon: Shield, text: "Hébergement France, RGPD" },
+              { icon: Shield, text: "Infrastructure sécurisée, RGPD" },
               { icon: Headphones, text: "Support réactif inclus" },
               { icon: Zap, text: "0% commission sur vos ventes" },
             ].map(({ icon: Icon, text }) => (

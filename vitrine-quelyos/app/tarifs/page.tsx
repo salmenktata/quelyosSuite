@@ -236,7 +236,7 @@ const faqs = [
     questions: [
       {
         q: "Pourquoi ces prix sont-ils si bas ?",
-        a: "Offre de lancement : nous voulons conquérir le marché français. Profitez de -50% maintenant, ce tarif sera verrouillé à vie pour vous.",
+        a: "Offre de lancement : nous voulons conquérir de nouveaux marchés. Profitez de -50% maintenant, ce tarif sera verrouillé à vie pour vous.",
       },
       {
         q: "Le Freemium est-il vraiment gratuit à vie ?",
@@ -270,7 +270,7 @@ const faqs = [
     questions: [
       {
         q: "Où sont hébergées mes données ?",
-        a: "France uniquement, datacenters certifiés ISO 27001. Conformité RGPD garantie.",
+        a: "Infrastructure sécurisée, datacenters certifiés ISO 27001. Conformité RGPD garantie.",
       },
       {
         q: "L'export FEC est-il compatible ?",
@@ -1179,7 +1179,7 @@ export default function TarifsPage() {
             <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2">
               <Shield size={16} className="text-emerald-400" />
               <span className="text-sm text-emerald-400">
-                Données hébergées en France (RGPD)
+                Données hébergées de manière sécurisée (RGPD)
               </span>
             </div>
           </div>

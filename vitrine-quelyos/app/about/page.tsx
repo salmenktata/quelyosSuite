@@ -58,7 +58,7 @@ export default function AboutPage() {
     {
       icon: Heart,
       title: "Proximité",
-      description: "Une équipe française à votre écoute, qui comprend vos enjeux et vous accompagne dans votre croissance.",
+      description: "Une équipe à votre écoute, qui comprend vos enjeux et vous accompagne dans votre croissance.",
       color: "rose"
     },
     {
@@ -73,14 +73,14 @@ export default function AboutPage() {
     {
       name: "Marie Leblanc",
       role: "CEO & Co-fondatrice",
-      bio: "15 ans d'expérience en finance d'entreprise. Ex-DAF chez TechCorp. Diplômée HEC Paris.",
+      bio: "15 ans d'expérience en finance d'entreprise et transformation digitale. Ex-DAF chez TechCorp.",
       linkedin: "#",
       twitter: "#"
     },
     {
       name: "Thomas Durand",
       role: "CTO & Co-fondateur",
-      bio: "Expert en architecture logicielle et sécurité. Ex-Lead Engineer chez FinTech Pro. Polytechnique.",
+      bio: "Expert en architecture logicielle et systèmes distribués. Ex-Lead Engineer chez FinTech Pro.",
       linkedin: "#",
       twitter: "#"
     },
@@ -119,13 +119,13 @@ export default function AboutPage() {
     { year: "2023", event: "Lancement public", description: "Ouverture de la plateforme aux premiers clients" },
     { year: "2023", event: "1000 clients", description: "Franchissement du cap symbolique" },
     { year: "2024", event: "Levée de fonds", description: "Série A de 5M€ pour accélérer la croissance" },
-    { year: "2025", event: "Expansion internationale", description: "Ouverture vers la Tunisie et le Maghreb" },
+    { year: "2025", event: "Expansion internationale", description: "Ouverture vers la nouveaux marchés" },
   ];
 
   const investors = [
     { name: "Venture Capital Partners", type: "Lead Investor" },
     { name: "Tech Growth Fund", type: "Series A" },
-    { name: "BPI France", type: "Innovation" },
+    { name: "Investisseurs privés", type: "Innovation" },
   ];
 
   return (
@@ -137,7 +137,7 @@ export default function AboutPage() {
         <Container className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-sm text-indigo-300 mb-8">
             <Rocket className="h-4 w-4" />
-            <span>Une équipe française, une ambition mondiale</span>
+            <span>Une équipe passionnée, une ambition mondiale</span>
           </div>
           
           <h1 className="text-5xl lg:text-7xl font-bold leading-tight mb-8">
@@ -218,7 +218,7 @@ export default function AboutPage() {
                   L&apos;avenir de la finance d&apos;entreprise
                 </h2>
                 <p className="text-slate-300 text-lg">
-                  D&apos;ici 2030, nous voulons être la plateforme de référence en Europe et au Maghreb 
+                  D&apos;ici 2030, nous voulons être la plateforme de référence sur de nouveaux marchés 
                   pour la gestion de trésorerie des PME. Une plateforme où l&apos;IA anticipe vos besoins, 
                   automatise les tâches répétitives et vous permet de vous concentrer sur ce qui compte : 
                   faire grandir votre entreprise.
@@ -235,31 +235,31 @@ export default function AboutPage() {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-800/50">
-                    <span className="text-2xl">🇫🇷</span>
+                    <span className="text-2xl">🌍</span>
                     <div>
-                      <div className="font-medium">France</div>
-                      <div className="text-xs text-slate-400">Marché principal • 2025-2026</div>
+                      <div className="font-medium">Marchés principaux</div>
+                      <div className="text-xs text-slate-400">Phase 1 • 2025-2026</div>
                     </div>
                     <CheckCircle2 className="h-5 w-5 text-emerald-400 ml-auto" />
                   </div>
                   <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-800/50">
-                    <span className="text-2xl">🇹🇳</span>
+                    <span className="text-2xl">🌍</span>
                     <div>
-                      <div className="font-medium">Tunisie</div>
+                      <div className="font-medium">Nouveaux marchés</div>
                       <div className="text-xs text-slate-400">Phase 2 • Q3 2026</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-800/50">
-                    <span className="text-2xl">🇩🇿🇲🇦</span>
+                    <span className="text-2xl">🌏</span>
                     <div>
-                      <div className="font-medium">Algérie & Maroc</div>
+                      <div className="font-medium">Expansion régionale</div>
                       <div className="text-xs text-slate-400">Phase 3 • 2027</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-800/50">
-                    <span className="text-2xl">🇦🇪🇸🇦🇶🇦</span>
+                    <span className="text-2xl">🌎</span>
                     <div>
-                      <div className="font-medium">Golf (UAE, Arabie, Qatar)</div>
+                      <div className="font-medium">Marchés internationaux</div>
                       <div className="text-xs text-slate-400">Phase 4 • 2027-2028</div>
                     </div>
                   </div>
@@ -429,8 +429,8 @@ export default function AboutPage() {
                     <MapPin className="h-5 w-5 text-violet-400" />
                   </div>
                   <div>
-                    <div className="text-sm text-slate-400">Adresse</div>
-                    <span className="text-white">42 rue de la Finance, 75008 Paris</span>
+                    <div className="text-sm text-slate-400">Email</div>
+                    <span className="text-white">contact@quelyos.com</span>
                   </div>
                 </div>
               </div>

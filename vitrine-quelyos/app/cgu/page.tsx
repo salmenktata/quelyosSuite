@@ -227,10 +227,10 @@ export default function CGUPage() {
               <h2 className="text-2xl font-bold m-0">Article 7 – Litiges</h2>
             </div>
             <div className="space-y-4 text-slate-300">
-              <p className="m-0">Les présentes CGU sont soumises au droit français.</p>
+              <p className="m-0">Les présentes CGU sont régies par le droit international applicable.</p>
               <p className="m-0">
                 En cas de litige, les parties s&apos;engagent à rechercher une solution amiable.
-                À défaut d&apos;accord, les tribunaux de Paris seront seuls compétents.
+                À défaut d&apos;accord, la compétence sera déterminée selon les conventions internationales.
               </p>
               <p className="m-0">
                 <strong className="text-white">Contact :</strong> legal@quelyos.com

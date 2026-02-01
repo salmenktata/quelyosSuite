@@ -178,9 +178,9 @@ const featureComparison: FeatureCategory[] = [
       { name: "Version gratuite", quelyos: true, pennylane: false, agicap: false, qonto: false, highlight: true },
       { name: "Essai gratuit 14j", quelyos: true, pennylane: true, agicap: false, qonto: true },
       { name: "Sans engagement", quelyos: true, pennylane: false, agicap: false, qonto: true, highlight: true },
-      { name: "Support français", quelyos: true, pennylane: true, agicap: true, qonto: true },
+      { name: "Support dédié", quelyos: true, pennylane: true, agicap: true, qonto: true },
       { name: "Onboarding inclus", quelyos: true, pennylane: "partial", agicap: true, qonto: false },
-      { name: "Hébergement France", quelyos: true, pennylane: true, agicap: true, qonto: true },
+      { name: "Infrastructure sécurisée", quelyos: true, pennylane: true, agicap: true, qonto: true },
     ],
   },
 ];
@@ -219,8 +219,8 @@ const differentiators = [
   },
   {
     icon: Heart,
-    title: "Support humain français",
-    description: "Une vraie équipe à Bordeaux, réponse sous 24h. Pas de chatbot, pas de call center offshore.",
+    title: "Support humain dédié",
+    description: "Une vraie équipe dédiée, réponse sous 24h. Pas de chatbot, pas de call center offshore.",
     color: "rose",
   },
 ];

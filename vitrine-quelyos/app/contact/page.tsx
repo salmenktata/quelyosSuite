@@ -102,7 +102,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-medium text-white">Localisation</h3>
-                    <p className="text-slate-400">France 🇫🇷 / Tunisie 🇹🇳</p>
+                    <p className="text-slate-400">Disponible / Nouveaux marchés</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

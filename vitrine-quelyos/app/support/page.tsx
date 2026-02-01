@@ -10,8 +10,6 @@ import { createComponentLogger } from "@/lib/logger";
 const log = createComponentLogger('SupportPage');
 import {
   Mail,
-  Phone,
-  MapPin,
   Send,
   CheckCircle2,
   HelpCircle,
@@ -141,7 +139,7 @@ const faqs = [
     category: "getting-started",
     question: "Quelyos est-il adapté aux auto-entrepreneurs ?",
     answer:
-      "Oui ! Quelyos est conçu pour tous les types d'entreprises françaises : auto-entrepreneurs, TPE, PME. Nos templates métiers (agence web, consultant, bureau d'études) s'adaptent à votre activité.",
+      "Oui ! Quelyos est conçu pour tous les types d'entreprises : auto-entrepreneurs, TPE, PME. Nos templates métiers (agence digitale, cabinet conseil, bureau études) s'adaptent à votre activité.",
   },
   // Compte
   {
@@ -210,7 +208,7 @@ const faqs = [
     category: "features",
     question: "Puis-je exporter mes données ?",
     answer:
-      "Oui, vous pouvez exporter vos transactions, rapports et factures au format CSV, Excel ou PDF. Les exports sont compatibles avec les logiciels comptables français (format FEC disponible en Pro).",
+      "Oui, vous pouvez exporter vos transactions, rapports et factures au format CSV, Excel ou PDF. Les exports sont compatibles avec les logiciels comptables (format FEC disponible en Pro).",
   },
   // Sécurité
   {
@@ -223,7 +221,7 @@ const faqs = [
     category: "security",
     question: "Où sont hébergées mes données ?",
     answer:
-      "Toutes vos données sont hébergées en France, sur des serveurs certifiés ISO 27001. Nous sommes 100% conformes au RGPD avec droit d'accès, de rectification et de suppression.",
+      "Toutes vos données sont hébergées de manière sécurisée, sur des serveurs certifiés ISO 27001. Nous sommes 100% conformes au RGPD avec droit d'accès, de rectification et de suppression.",
   },
   {
     category: "security",
@@ -299,7 +297,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Sécurité / RGPD
   if (msg.includes("sécurit") || msg.includes("rgpd") || msg.includes("donné") || msg.includes("confidentiel")) {
     return {
-      response: "Vos données sont hébergées en France, chiffrées (AES-256) et 100% conformes RGPD. Nous ne vendons jamais vos données et vous pouvez les exporter/supprimer à tout moment.",
+      response: "Vos données sont hébergées de manière sécurisée, chiffrées (AES-256) et 100% conformes RGPD. Nous ne vendons jamais vos données et vous pouvez les exporter/supprimer à tout moment.",
       suggestions: ["En savoir plus", "Politique de confidentialité", "Sécurité"]
     };
   }
@@ -962,7 +960,7 @@ export default function SupportPage() {
                   </div>
                 </div>
                 <p className="mt-4 text-xs text-slate-500">
-                  * Fuseau horaire : Europe/Paris (CET)
+                  * Horaires en UTC+1
                 </p>
               </div>
 
@@ -992,15 +990,9 @@ export default function SupportPage() {
 
               <div className="rounded-xl border border-white/10 bg-slate-900/50 p-6">
                 <h3 className="mb-4 font-semibold text-white">
-                  Nous retrouver
+                  Nous contacter
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-sm">
-                    <MapPin className="text-indigo-400" size={18} />
-                    <span className="text-slate-400">
-                      12 Rue de la Finance, 75008 Paris
-                    </span>
-                  </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Mail className="text-indigo-400" size={18} />
                     <a
@@ -1011,14 +1003,17 @@ export default function SupportPage() {
                     </a>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <Phone className="text-indigo-400" size={18} />
+                    <Mail className="text-indigo-400" size={18} />
                     <a
-                      href="tel:+33123456789"
+                      href="mailto:support@quelyos.com"
                       className="text-slate-400 hover:text-white"
                     >
-                      01 23 45 67 89
+                      support@quelyos.com
                     </a>
                   </div>
+                  <p className="text-xs text-slate-500 mt-4">
+                    Réponse sous 24h ouvrées
+                  </p>
                 </div>
               </div>
             </motion.div>

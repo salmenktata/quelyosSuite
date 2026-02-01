@@ -96,7 +96,7 @@ const knowledgeBase = {
     keywords: ['sécurit', 'sûr', 'rgpd', 'donné', 'données', 'confidentiel', 'privé', 'protection', 'pirate', 'hack'],
     responses: [
       {
-        text: "La sécurité de vos données est notre priorité absolue :\n\n🔒 **Chiffrement AES-256** de bout en bout\n🇫🇷 **Hébergement en France** (certifié ISO 27001)\n✅ **100% conforme RGPD** avec droit d'accès, rectification, suppression\n🛡️ **Audits de sécurité** trimestriels par des experts indépendants\n🚫 **Zéro vente de données** à des tiers\n📊 **Sauvegarde quotidienne** avec rétention 30 jours\n\nVous gardez le contrôle total de vos données à tout moment.",
+        text: "La sécurité de vos données est notre priorité absolue :\n\n🔒 **Chiffrement AES-256** de bout en bout\n🇫🇷 **Infrastructure sécurisée** (certifié ISO 27001)\n✅ **100% conforme RGPD** avec droit d'accès, rectification, suppression\n🛡️ **Audits de sécurité** trimestriels par des experts indépendants\n🚫 **Zéro vente de données** à des tiers\n📊 **Sauvegarde quotidienne** avec rétention 30 jours\n\nVous gardez le contrôle total de vos données à tout moment.",
         confidence: 0.94,
         suggestions: ['Voir notre politique de sécurité', 'Certificats et conformité', 'Contacter le DPO']
       }

@@ -286,7 +286,7 @@ function RegisterForm() {
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <Globe className="h-4 w-4 text-indigo-400" />
-              <span>France - Tunisie - Maghreb</span>
+              <span>Marchés internationaux</span>
             </div>
           </div>
         </div>

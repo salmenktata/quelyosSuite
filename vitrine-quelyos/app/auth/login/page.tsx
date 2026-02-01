@@ -231,7 +231,7 @@ function LoginForm() {
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-indigo-200 backdrop-blur-sm">
                 <Globe className="h-3.5 w-3.5" />
-                <span>Disponible en France - Tunisie - Maghreb</span>
+                <span>Disponible en Marchés internationaux</span>
               </div>
               <h2 className="text-4xl font-bold leading-tight xl:text-5xl">
                 La finance d&apos;entreprise,

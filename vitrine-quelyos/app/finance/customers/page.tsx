@@ -97,7 +97,7 @@ export default function CustomersPage() {
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
-              Des milliers d&apos;entreprises françaises utilisent Quelyos pour 
+              Des milliers d&apos;entreprises utilisent Quelyos pour 
               gérer leurs finances. Découvrez leurs témoignages.
             </p>
           </motion.div>

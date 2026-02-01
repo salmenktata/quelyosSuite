@@ -93,7 +93,7 @@ export default function ConfidentialitePage() {
             </div>
             <div className="space-y-3 text-slate-300">
               <p className="m-0"><strong className="text-white">Société :</strong> Quelyos SAS</p>
-              <p className="m-0"><strong className="text-white">Adresse :</strong> 42 rue de la Finance, 75008 Paris, France</p>
+              <p className="m-0"><strong className="text-white">Adresse :</strong> Email : contact@quelyos.com</p>
               <p className="m-0"><strong className="text-white">Email :</strong> dpo@quelyos.com</p>
               <p className="m-0"><strong className="text-white">DPO (Délégué à la Protection des Données) :</strong> M. Pierre Martin</p>
             </div>
@@ -119,7 +119,7 @@ export default function ConfidentialitePage() {
                     <li>• Nom, prénom</li>
                     <li>• Adresse email professionnelle</li>
                     <li>• Nom de l&apos;entreprise</li>
-                    <li>• Numéro SIRET (optionnel)</li>
+                    <li>• Informations entreprise (optionnel)</li>
                   </ul>
                 </div>
                 
@@ -294,7 +294,7 @@ export default function ConfidentialitePage() {
                 </p>
               </div>
               <p className="m-0 mt-4">
-                <strong className="text-white">Transferts hors UE :</strong> Nos données sont hébergées en France (OVH). 
+                <strong className="text-white">Transferts hors UE :</strong> Nos données sont hébergées de manière sécurisée . 
                 En cas de transfert hors UE (ex : outils analytics), nous nous assurons de l&apos;existence de 
                 garanties appropriées (clauses contractuelles types, Privacy Shield, etc.).
               </p>
@@ -448,7 +448,7 @@ export default function ConfidentialitePage() {
                 Pour toute question relative à cette politique de confidentialité ou à vos données personnelles :
               </p>
               <p className="m-0"><strong className="text-white">Email DPO :</strong> dpo@quelyos.com</p>
-              <p className="m-0"><strong className="text-white">Adresse :</strong> Quelyos SAS - DPO, 42 rue de la Finance, 75008 Paris</p>
+              <p className="m-0"><strong className="text-white">Adresse :</strong> Quelyos SAS - DPO - Email : dpo@quelyos.com</p>
               <p className="m-0 text-sm mt-4">
                 Nous nous engageons à répondre à vos demandes dans un délai maximum de 30 jours.
               </p>

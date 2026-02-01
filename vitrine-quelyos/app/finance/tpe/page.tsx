@@ -207,7 +207,7 @@ const temoignagesCEO = [
   {
     name: "Sophie Martin",
     role: "CEO, Agence Web Créative",
-    company: "12 employés • Lyon",
+    company: "12 employés",
     avatar: "SM",
     quote: "Avant Quelyos, je passais mes dimanches à refaire mes tableurs Excel. Maintenant je dors tranquille : je vois ma tréso 90 jours à l'avance.",
     metric: "6h/mois gagnées",
@@ -334,7 +334,7 @@ export default function LandingTPE() {
                   <div className="flex items-center gap-1 text-amber-400">
                     {[1,2,3,4,5].map(i => <Star key={i} size={14} fill="currentColor" />)}
                   </div>
-                  <span>Adopté par <strong className="text-white">127 TPE françaises</strong></span>
+                  <span>Adopté par <strong className="text-white">127 TPE</strong></span>
                 </div>
               </div>
             </div>

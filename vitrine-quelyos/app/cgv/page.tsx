@@ -231,7 +231,7 @@ export default function CGVPage() {
             </div>
             <div className="space-y-4 text-slate-300">
               <p className="m-0"><strong className="text-white">Disponibilité :</strong> 99.9% (hors maintenance programmée)</p>
-              <p className="m-0"><strong className="text-white">Sécurité :</strong> Chiffrement AES-256, datacenters ISO 27001 en France</p>
+              <p className="m-0"><strong className="text-white">Sécurité :</strong> Chiffrement AES-256, datacenters certifiés</p>
               <p className="m-0"><strong className="text-white">Sauvegardes :</strong> Quotidiennes, rétention 30 jours</p>
             </div>
           </section>
@@ -269,10 +269,12 @@ export default function CGVPage() {
                 En cas de litige, contactez notre service client pour trouver une solution amiable.
               </p>
               <p className="m-0">
-                <strong className="text-white">Médiateur :</strong> CM2C - 14 rue Saint Jean, 75017 Paris (www.cm2c.net)
+                <strong className="text-white">Médiateur :</strong> Disponible sur demande
+                <br />
+                <strong className="text-white">Contact :</strong> legal@quelyos.com
               </p>
               <p className="m-0">
-                À défaut de résolution amiable, les tribunaux de Paris seront seuls compétents.
+                À défaut de résolution amiable, la compétence sera déterminée selon les conventions internationales.
               </p>
             </div>
           </section>

@@ -57,7 +57,7 @@ export default function CommerceSolutionPage() {
               <Link href="/contact?utm_source=solution&utm_package=commerce" className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">Demander une démonstration</Link>
               <Link href="/tarifs" className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800">Voir les tarifs</Link>
             </div>
-            <p className="mt-6 text-sm text-slate-500 dark:text-slate-500">Essai gratuit 30 jours • Sans engagement • Support français</p>
+            <p className="mt-6 text-sm text-slate-500 dark:text-slate-500">Essai gratuit 30 jours • Sans engagement • Support dédié</p>
           </div>
         </div>
       </section>

@@ -74,10 +74,7 @@ export default function MentionsLegalesPage() {
               <p className="m-0"><strong className="text-white">Raison sociale :</strong> Quelyos SAS</p>
               <p className="m-0"><strong className="text-white">Forme juridique :</strong> Société par Actions Simplifiée</p>
               <p className="m-0"><strong className="text-white">Capital social :</strong> 10 000 €</p>
-              <p className="m-0"><strong className="text-white">RCS :</strong> Paris B 123 456 789</p>
-              <p className="m-0"><strong className="text-white">SIRET :</strong> 123 456 789 00012</p>
-              <p className="m-0"><strong className="text-white">TVA Intracommunautaire :</strong> FR 12 123456789</p>
-              <p className="m-0"><strong className="text-white">Siège social :</strong> 42 rue de la Finance, 75008 Paris, France</p>
+              <p className="m-0"><strong className="text-white">Email :</strong> contact@quelyos.com</p>
             </div>
           </section>
           
@@ -93,7 +90,6 @@ export default function MentionsLegalesPage() {
             <div className="space-y-3 text-slate-300">
               <p className="m-0"><strong className="text-white">Directeur de publication :</strong> M. Jean Dupont, Président</p>
               <p className="m-0"><strong className="text-white">Contact :</strong> direction@quelyos.com</p>
-              <p className="m-0"><strong className="text-white">Téléphone :</strong> +33 1 23 45 67 89</p>
             </div>
           </section>
           
@@ -107,10 +103,8 @@ export default function MentionsLegalesPage() {
             </div>
             
             <div className="space-y-3 text-slate-300">
-              <p className="m-0"><strong className="text-white">Hébergeur :</strong> OVH SAS</p>
-              <p className="m-0"><strong className="text-white">Adresse :</strong> 2 rue Kellermann, 59100 Roubaix, France</p>
-              <p className="m-0"><strong className="text-white">Téléphone :</strong> +33 9 72 10 10 07</p>
-              <p className="m-0"><strong className="text-white">Site web :</strong> www.ovhcloud.com</p>
+              <p className="m-0"><strong className="text-white">Hébergeur :</strong> Infrastructure cloud européenne certifiée</p>
+              <p className="m-0"><strong className="text-white">Contact hébergeur :</strong> Disponible sur demande</p>
             </div>
           </section>
           
@@ -195,8 +189,8 @@ export default function MentionsLegalesPage() {
             <h2 className="text-2xl font-bold mb-4">Droit applicable</h2>
             <div className="space-y-4 text-slate-300">
               <p className="m-0">
-                Les présentes mentions légales sont régies par le droit français. En cas de litige, 
-                les tribunaux français seront seuls compétents.
+                Les présentes mentions légales sont régies par le droit international applicable. En cas de litige,
+                la compétence sera déterminée selon les conventions internationales.
               </p>
             </div>
           </section>

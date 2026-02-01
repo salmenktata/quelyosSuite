@@ -92,7 +92,7 @@ export default function PrivacyPage() {
             </div>
             <div className="space-y-3 text-slate-300">
               <p><strong className="text-white">Company:</strong> Quelyos SAS</p>
-              <p><strong className="text-white">Address:</strong> 42 rue de la Finance, 75008 Paris, France</p>
+              <p><strong className="text-white">Address:</strong> Email : contact@quelyos.com</p>
               <p><strong className="text-white">Email:</strong> privacy@quelyos.com</p>
               <p><strong className="text-white">DPO (Data Protection Officer):</strong> M. Pierre Martin</p>
             </div>
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
                 </h3>
                 <ul className="space-y-1 list-disc list-inside ml-6">
                   <li>Full name, email address, phone number</li>
-                  <li>Company information (name, SIRET, address)</li>
+                  <li>Company information (name, address)</li>
                   <li>Password (encrypted with bcrypt)</li>
                 </ul>
               </div>
@@ -293,7 +293,7 @@ export default function PrivacyPage() {
                 </a>
               </p>
               <p>
-                <strong className="text-white">Mail:</strong> Quelyos SAS - DPO, 42 rue de la Finance, 75008 Paris, France
+                <strong className="text-white">Mail:</strong> Quelyos SAS - DPO, Email : contact@quelyos.com
               </p>
               <p className="text-sm pt-2 border-t border-slate-700">
                 <AlertCircle className="h-4 w-4 inline text-yellow-400" />{" "}

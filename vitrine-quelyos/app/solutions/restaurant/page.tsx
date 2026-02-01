@@ -105,7 +105,7 @@ export default function RestaurantSolutionPage() {
             </div>
 
             <p className="mt-6 text-sm text-slate-500 dark:text-slate-500">
-              Essai gratuit 30 jours • Sans engagement • Support français
+              Essai gratuit 30 jours • Sans engagement • Support dédié
             </p>
           </div>
         </div>

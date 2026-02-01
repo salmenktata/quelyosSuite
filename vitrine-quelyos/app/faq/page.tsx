@@ -135,13 +135,13 @@ const faqs = [
     category: "integration",
     question: "Puis-je gérer plusieurs devises ?",
     answer:
-      "Oui, Quelyos supporte l'Euro, le Dinar tunisien, le Dirham marocain, le Dollar américain et d'autres devises. Les conversions se font automatiquement avec les taux du jour.",
+      "Oui, Quelyos supporte l'Euro, le devises internationales, le Dollar américain et d'autres devises. Les conversions se font automatiquement avec les taux du jour.",
   },
   {
     category: "integration",
     question: "Quelyos est-il disponible en plusieurs langues ?",
     answer:
-      "Actuellement, Quelyos est disponible en français. L'interface en arabe et en anglais est prévue pour 2026.",
+      "Actuellement, Quelyos est disponible en plusieurs langues. L'interface en arabe et en anglais est prévue pour 2026.",
   },
 ];
 

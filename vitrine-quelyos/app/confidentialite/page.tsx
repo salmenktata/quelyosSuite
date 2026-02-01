@@ -87,7 +87,7 @@ export default function ConfidentialitePage() {
             </div>
             <div className="space-y-3 text-slate-300">
               <p className="m-0"><strong className="text-white">Société :</strong> Quelyos SAS</p>
-              <p className="m-0"><strong className="text-white">Adresse :</strong> 42 rue de la Finance, 75008 Paris, France</p>
+              <p className="m-0"><strong className="text-white">Adresse :</strong> Email : contact@quelyos.com</p>
               <p className="m-0"><strong className="text-white">Email :</strong> dpo@quelyos.com</p>
             </div>
           </section>
@@ -256,7 +256,7 @@ export default function ConfidentialitePage() {
             </div>
             <div className="space-y-3 text-slate-300">
               <p className="m-0"><strong className="text-white">Email DPO :</strong> dpo@quelyos.com</p>
-              <p className="m-0"><strong className="text-white">Adresse :</strong> Quelyos SAS, 42 rue de la Finance, 75008 Paris</p>
+              <p className="m-0"><strong className="text-white">Adresse :</strong> Quelyos SAS - Email : contact@quelyos.com</p>
             </div>
           </section>
         </div>

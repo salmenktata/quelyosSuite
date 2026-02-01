@@ -24,7 +24,7 @@ const features = [
   {
     icon: Brain,
     title: "Intelligence artificielle",
-    description: "Algorithmes ML entraînés sur des milliers de TPE françaises.",
+    description: "Algorithmes ML entraînés sur des milliers de TPE.",
   },
   {
     icon: Calendar,

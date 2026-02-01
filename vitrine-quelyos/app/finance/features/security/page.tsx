@@ -23,8 +23,8 @@ const features = [
   },
   {
     icon: Server,
-    title: "Hébergement France",
-    description: "Serveurs localisés en France, conformes RGPD.",
+    title: "Infrastructure sécurisée",
+    description: "Serveurs sécurisés, conformes RGPD.",
   },
   {
     icon: Key,

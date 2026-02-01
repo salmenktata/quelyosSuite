@@ -12,7 +12,7 @@ export default function StatsSection() {
             { label: "Solutions intégrées", value: "8", icon: Layers },
             { label: "Fonctionnalités", value: "+250", icon: Sparkles },
             { label: "Prévisions IA", value: "90j", icon: RefreshCw },
-            { label: "Hébergement", value: "France", icon: MapPin },
+            { label: "Hébergement", value: "Sécurisé", icon: MapPin },
           ].map((stat, i) => (
             <div
               key={i}

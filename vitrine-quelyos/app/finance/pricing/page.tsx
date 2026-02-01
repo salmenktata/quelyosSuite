@@ -149,7 +149,7 @@ const featureComparison: Record<string, FeatureRow[]> = {
     { name: "Onboarding dédié", free: false, pro: false, expert: true },
     { name: "SSO (SAML/OAuth)", free: false, pro: false, expert: true },
     { name: "Chiffrement AES-256", free: true, pro: true, expert: true },
-    { name: "Hébergement France", free: true, pro: true, expert: true },
+    { name: "Infrastructure sécurisée", free: true, pro: true, expert: true },
   ],
 };
 
@@ -188,7 +188,7 @@ const faqs = [
       },
       {
         question: "Puis-je connecter plusieurs banques ?",
-        answer: "Oui, avec les plans Pro et Expert. Nous supportons plus de 350 banques françaises via notre partenaire agréé ACPR. La synchronisation est automatique et sécurisée.",
+        answer: "Oui, avec les plans Pro et Expert. Nous supportons plus de 350 banques européennes et internationales. La synchronisation est automatique et sécurisée.",
       },
       {
         question: "L'export FEC est-il compatible avec mon comptable ?",
@@ -201,7 +201,7 @@ const faqs = [
     questions: [
       {
         question: "Où sont hébergées mes données ?",
-        answer: "Toutes vos données sont hébergées en France, dans des datacenters certifiés ISO 27001, SOC 2 et HDS. Nous n'utilisons jamais vos données à des fins commerciales.",
+        answer: "Toutes vos données sont hébergées de manière sécurisée, dans des datacenters certifiés ISO 27001, SOC 2 et HDS. Nous n'utilisons jamais vos données à des fins commerciales.",
       },
       {
         question: "Puis-je exporter et supprimer mes données ?",
@@ -743,7 +743,7 @@ export default function PricingPage() {
                 </div>
               </div>
               <p className="text-sm font-medium text-white">100% Français</p>
-              <p className="text-xs text-slate-500">Données hébergées en France</p>
+              <p className="text-xs text-slate-500">Données hébergées de manière sécurisée</p>
             </div>
           </div>
         </Container>
@@ -787,7 +787,7 @@ export default function PricingPage() {
               Prêt à reprendre le contrôle ?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-slate-400">
-              Rejoignez des centaines de TPE françaises qui gèrent leurs finances 
+              Rejoignez des centaines de TPE qui gèrent leurs finances 
               avec Quelyos. Essai gratuit, sans engagement.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">

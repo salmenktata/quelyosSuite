@@ -151,7 +151,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Marc Dubois',
         role: 'Gérant',
         company: 'Restaurant Le Bistrot',
-        location: 'Paris 11e',
+        location: 'Ville',
         metric: '15h gagnées/semaine'
       },
       {
@@ -159,7 +159,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Sophie Durand',
         role: 'Propriétaire',
         company: 'La Table du Marché',
-        location: 'Lyon 6e',
+        location: 'Ville',
         metric: 'Zéro rupture depuis 8 mois'
       },
       {
@@ -289,7 +289,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Sophie Martin',
         role: 'Propriétaire',
         company: 'ModaShop',
-        location: 'Lyon',
+        location: 'Ville',
         metric: '12h gagnées/semaine'
       },
       {
@@ -435,7 +435,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Alexandre Petit',
         role: 'CEO',
         company: 'TechGadgets',
-        location: 'Paris',
+        location: 'Ville',
         metric: '+30% de panier moyen'
       },
       {
@@ -565,7 +565,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Thomas Laurent',
         role: 'Fondateur',
         company: 'Agence WebFlow',
-        location: 'Paris',
+        location: 'Ville',
         metric: '70% de temps gagné'
       },
       {
@@ -573,7 +573,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Caroline Dupont',
         role: 'Directrice',
         company: 'Conseil & Stratégie',
-        location: 'Lyon',
+        location: 'Ville',
         metric: '+40% de conversion'
       },
       {
@@ -1133,7 +1133,7 @@ export const solutionsData: Record<string, SolutionData> = {
         author: 'Jean Moreau',
         role: 'Trésorier',
         company: 'Association caritative',
-        location: 'Lyon',
+        location: 'Ville',
         metric: '+50% d\'adhérents actifs'
       }
     ],

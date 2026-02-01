@@ -43,8 +43,8 @@ const features = [
   },
   {
     icon: FileText,
-    title: "Conformité française",
-    description: "Formats compatibles avec les normes comptables françaises.",
+    title: "Conformité comptable",
+    description: "Formats compatibles avec les normes comptables standards.",
   },
 ];
 

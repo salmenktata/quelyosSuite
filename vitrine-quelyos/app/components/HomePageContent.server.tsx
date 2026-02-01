@@ -124,7 +124,7 @@ export default function HomePageContentServer() {
           <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
               <MapPin className="h-4 w-4" />
-              Suite ERP française • Solutions métier intégrées
+              Suite ERP Complète • Solutions Métier Intégrées
             </div>
             <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
               Des solutions métier{" "}

@@ -150,7 +150,7 @@ export default function HomePageContent() {
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
                 <MapPin className="h-4 w-4" />
-                Suite ERP française • 9 modules intégrés
+                Suite ERP Complète • 9 Modules Intégrés
               </div>
               <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
                 Pilotez toute votre entreprise{" "}
@@ -282,7 +282,7 @@ export default function HomePageContent() {
                 Ce qui nous différencie
               </h2>
               <p className="mt-4 text-lg text-slate-400">
-                Une suite pensée pour les TPE/PME françaises
+                Une suite pensée pour les TPE/PME
               </p>
             </m.div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -290,7 +290,7 @@ export default function HomePageContent() {
                 { icon: Layers, title: "9 modules = 1 abonnement", desc: "Finance, Store, Stock, CRM, RH, POS, Marketing, Support — tout inclus sans frais cachés.", color: "text-indigo-400" },
                 { icon: Sparkles, title: "IA intégrée", desc: "Prévisions trésorerie 90j, détection anomalies, scoring leads. Machine Learning natif.", color: "text-purple-400" },
                 { icon: RefreshCw, title: "Données synchronisées", desc: "Une vente = stock mis à jour + revenu en Finance + fiche client enrichie. Automatique.", color: "text-emerald-400" },
-                { icon: Shield, title: "Made in France", desc: "Hébergement France, RGPD natif, support francophone. Pas de transfert US.", color: "text-blue-400" },
+                { icon: Shield, title: "Sécurité & Conformité", desc: "Infrastructure sécurisée, RGPD natif, support dédié. Données protégées.", color: "text-blue-400" },
                 { icon: Code, title: "API REST complète", desc: "Intégrez Quelyos à vos outils. Export illimité, vos données vous appartiennent.", color: "text-cyan-400" },
                 { icon: Server, title: "SaaS multi-tenant", desc: "Zéro maintenance, mises à jour auto, accessible partout. Instance dédiée isolée.", color: "text-orange-400" },
               ].map((item, i) => (
@@ -364,7 +364,7 @@ export default function HomePageContent() {
                 { label: "Modules intégrés", value: "8", icon: Layers },
                 { label: "Fonctionnalités", value: "+250", icon: Sparkles },
                 { label: "Prévisions IA", value: "90j", icon: RefreshCw },
-                { label: "Hébergement", value: "France", icon: MapPin },
+                { label: "Hébergement", value: "Sécurisé", icon: MapPin },
               ].map((stat, i) => (
                 <m.div
                   key={i}
