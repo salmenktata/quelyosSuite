@@ -48,7 +48,7 @@ export function usePOSSync(options: UsePOSSyncOptions = {}) {
   const isOnline = useNetworkStatus()
   const { setConnectionStatus } = usePOSSessionStore()
   const {
-    orders,
+    orders: _orders,
     isSyncing,
     lastSyncAt,
     syncErrors,

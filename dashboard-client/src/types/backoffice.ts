@@ -432,8 +432,8 @@ export type SortOrder = 'asc' | 'desc' | null;
 import type { User } from '@quelyos/types';
 
 export type Customer = User;
-export type ProductCreateData = Record<string, any>;
-export type ProductUpdateData = Record<string, any>;
+export type ProductCreateData = Record<string, unknown>;
+export type ProductUpdateData = Record<string, unknown>;
 
 // ==================== CRM ====================
 

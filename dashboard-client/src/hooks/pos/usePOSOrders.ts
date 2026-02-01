@@ -136,7 +136,7 @@ export function usePOSOrder(id: number | null) {
 
 export function useCreatePOSOrder() {
   const queryClient = useQueryClient()
-  const { clearCart } = usePOSCartStore()
+  const { clearCart: _clearCart } = usePOSCartStore()
   const { session, updateSessionTotals } = usePOSSessionStore()
 
   return useMutation({

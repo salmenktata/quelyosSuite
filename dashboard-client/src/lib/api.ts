@@ -212,7 +212,7 @@ class ApiClient {
 
   // Méthode publique pour permettre aux hooks d'appeler l'API
   // Retourne { data: <réponse endpoint> } où <réponse endpoint> = { success, error?, data? }
-  public async post<T = { success: boolean; error?: string; data?: any }>(
+  public async post<T = { success: boolean; error?: string; data?: unknown }>(
     endpoint: string,
     data?: unknown
   ): Promise<{ data: T }> {
@@ -1176,7 +1176,7 @@ class ApiClient {
   }
 
   async exportStockCSV(filters: { date_from?: string; date_to?: string }) {
-    return this.request<APIResponse<{ data: any[]; total: number; filters: { date_from?: string; date_to?: string } }>>(
+    return this.request<APIResponse<{ data: unknown[]; total: number; filters: { date_from?: string; date_to?: string } }>>(
       '/api/ecommerce/stock/export',
       filters
     )

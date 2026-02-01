@@ -21,7 +21,7 @@ export function useExportCustomers() {
 
       const { customers, columns } = response.data
       const headers = columns.map((col: { label: string }) => col.label).join(',')
-      const rows = customers.map((customer: Record<string, any>) =>
+      const rows = customers.map((customer: Record<string, unknown>) =>
         columns
           .map((col: { key: string }) => {
             const value = customer[col.key as keyof typeof customer]

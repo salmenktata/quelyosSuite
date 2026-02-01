@@ -137,6 +137,38 @@ export function useVoiceOrdering(options: UseVoiceOrderingOptions = {}): UseVoic
   const isSupported = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
 
+  // Feedback vocal
+  const speakFeedback = useCallback((command: VoiceCommand) => {
+    if (!('speechSynthesis' in window)) return
+
+    let message = ''
+
+    switch (command.type) {
+      case 'add_product':
+        message = (command.quantity ?? 1) > 1
+          ? `${command.quantity} ${command.product} ajoutés`
+          : `${command.product} ajouté`
+        break
+      case 'remove_product':
+        message = `${command.product} retiré`
+        break
+      case 'clear_cart':
+        message = 'Panier vidé'
+        break
+      case 'pay':
+        message = 'Ouverture du paiement'
+        break
+    }
+
+    if (message) {
+      const utterance = new SpeechSynthesisUtterance(message)
+      utterance.lang = 'fr-FR'
+      utterance.rate = 1.2
+      utterance.volume = 0.8
+      speechSynthesis.speak(utterance)
+    }
+  }, [])
+
   // Initialiser la reconnaissance
   useEffect(() => {
     if (!isSupported) return
@@ -197,39 +229,7 @@ export function useVoiceOrdering(options: UseVoiceOrderingOptions = {}): UseVoic
     return () => {
       recognition.abort()
     }
-  }, [isSupported, language, continuous, products, onCommand, onError])
-
-  // Feedback vocal
-  const speakFeedback = useCallback((command: VoiceCommand) => {
-    if (!('speechSynthesis' in window)) return
-
-    let message = ''
-
-    switch (command.type) {
-      case 'add_product':
-        message = (command.quantity ?? 1) > 1
-          ? `${command.quantity} ${command.product} ajoutés`
-          : `${command.product} ajouté`
-        break
-      case 'remove_product':
-        message = `${command.product} retiré`
-        break
-      case 'clear_cart':
-        message = 'Panier vidé'
-        break
-      case 'pay':
-        message = 'Ouverture du paiement'
-        break
-    }
-
-    if (message) {
-      const utterance = new SpeechSynthesisUtterance(message)
-      utterance.lang = 'fr-FR'
-      utterance.rate = 1.2
-      utterance.volume = 0.8
-      speechSynthesis.speak(utterance)
-    }
-  }, [])
+  }, [isSupported, language, continuous, products, onCommand, onError, speakFeedback])
 
   // Contrôles
   const startListening = useCallback(() => {

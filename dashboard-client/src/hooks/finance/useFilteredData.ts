@@ -36,7 +36,7 @@ interface UseFilteredDataOptions<T> {
  *   sortConfig: { key: 'name', direction: 'asc' }
  * });
  */
-export function useFilteredData<T extends Record<string, any>>({
+export function useFilteredData<T extends Record<string, unknown>>({
   data,
   filterConfig,
   sortConfig,

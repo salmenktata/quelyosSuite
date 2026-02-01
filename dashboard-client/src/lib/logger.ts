@@ -65,7 +65,7 @@ export const logger = {
  * Formatte un message d'erreur pour l'utilisateur final
  * Retourne un message générique sans détails techniques en production
  */
-export function getUserFriendlyErrorMessage(error: any): string {
+export function getUserFriendlyErrorMessage(error: unknown): string {
   if (isDevelopment) {
     // En développement, afficher le vrai message
     if (typeof error === 'string') return error;
