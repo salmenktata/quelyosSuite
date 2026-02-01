@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069'
+import { BACKEND_URL } from '@/lib/backend-config'
 
 export async function GET(
   request: NextRequest,
@@ -33,7 +32,7 @@ export async function GET(
     return NextResponse.json(data.result, {
       headers: { 'Cache-Control': 'public, max-age=600' },
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ success: true, menu: null }, { status: 200 })
   }
 }
