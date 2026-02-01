@@ -25,7 +25,7 @@ const breadcrumbItems = [
 ];
 
 export default function MailingLists() {
-  const { listMailingLists, createMailingList, deleteMailingList, loading, error } = useMarketingLists() as any;
+  const { listMailingLists, createMailingList, deleteMailingList, loading, error } = useMarketingLists();
   const [lists, setLists] = useState<MailingList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);

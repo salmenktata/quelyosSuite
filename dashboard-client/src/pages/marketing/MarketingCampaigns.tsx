@@ -40,7 +40,7 @@ const stateColors: Record<string, string> = {
 };
 
 export default function MarketingCampaigns() {
-  const { listCampaigns, sendCampaign, deleteCampaign, loading, error } = useMarketingCampaigns() as any;
+  const { listCampaigns, sendCampaign, deleteCampaign, loading, error } = useMarketingCampaigns();
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [stateFilter, setStateFilter] = useState<string>('');

@@ -11,10 +11,10 @@
 
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
+import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { useMarketingAutomation } from '@/hooks/useMarketingAutomation';
 import type { AutomationWorkflow, AutomationDetail } from '@/hooks/useMarketingAutomation';
-import { Play, Square, Trash2, Users, Activity, AlertCircle } from 'lucide-react';
+import { Play, Square, Trash2, Activity, AlertCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
 export function AutomationWorkflows() {
@@ -207,7 +207,7 @@ export function AutomationWorkflows() {
                     <Button
                       variant="outline"
                       size="sm"
-                      icon={(workflow.active ? Square : Play) as any}
+                      icon={(workflow.active ? Square : Play)}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleToggleWorkflow(workflow.id, workflow.active);
@@ -218,7 +218,7 @@ export function AutomationWorkflows() {
                     <Button
                       variant="outline"
                       size="sm"
-                      icon={Trash2 as any}
+                      icon={Trash2}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteWorkflow(workflow.id);

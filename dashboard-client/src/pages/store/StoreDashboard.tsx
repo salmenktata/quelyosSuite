@@ -362,9 +362,9 @@ export default function StoreDashboard() {
                           <p className="text-sm text-gray-500 dark:text-gray-400">{formatCurrency(product.list_price || 0)}</p>
                         </div>
                       </div>
-                      {(product as any).sales_count !== undefined && (
+                      {(product).sales_count !== undefined && (
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {(product as any).sales_count} ventes
+                          {(product).sales_count} ventes
                         </span>
                       )}
                     </Link>

@@ -1,4 +1,4 @@
-import { Mail, Users, BarChart3, Lightbulb, Send, TrendingUp, Zap } from 'lucide-react';
+import { Mail, Users, BarChart3, Lightbulb, TrendingUp, Zap } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
 
 export const marketingNotices: Record<string, PageNoticeConfig> = {

@@ -28,7 +28,7 @@ export function useZodForm<TOutput extends FieldValues>(
 ) {
   return useForm({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(schema as any),
+    resolver: zodResolver(schema),
     mode: 'onBlur',
     ...options,
   })

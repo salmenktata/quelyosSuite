@@ -11,7 +11,7 @@
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { maintenanceNotices } from '@/lib/notices/maintenance-notices'
-import { Settings as SettingsIcon, Save, Bell, Workflow, Clock, Zap } from 'lucide-react'
+import { Settings as SettingsIcon, Save, Bell, Workflow, Clock } from 'lucide-react'
 import { useState } from 'react'
 
 export default function MaintenanceSettings() {
@@ -65,7 +65,7 @@ export default function MaintenanceSettings() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       activeTab === tab.id
                         ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'

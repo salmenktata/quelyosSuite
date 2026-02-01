@@ -1,5 +1,4 @@
-import { Breadcrumbs, PageNotice } from "@/components/common";
-import { storeNotices } from '@/lib/notices/store-notices';
+import { Breadcrumbs } from "@/components/common";
 import { useToast } from "@/contexts/ToastContext";
 import {
   Mail,

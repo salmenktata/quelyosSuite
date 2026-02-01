@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { storeNotices } from '@/lib/notices/store-notices';
-import { Breadcrumbs, PageNotice } from "@/components/common";
+import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { MapPin, Save, Loader2, Gift, Info, Truck } from "lucide-react";

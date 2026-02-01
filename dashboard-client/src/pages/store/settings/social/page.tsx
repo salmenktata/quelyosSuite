@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { storeNotices } from '@/lib/notices/store-notices';
-import { Breadcrumbs, PageNotice } from "@/components/common";
+import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Share2, Save, Loader2, Facebook, Instagram, Twitter, Youtube, Linkedin, Info } from "lucide-react";
@@ -40,19 +39,19 @@ export default function SocialSettingsPage() {
   useEffect(() => {
     if (config) {
       setSocialConfig({
-        facebook_url: (config as any).facebook_url || "",
-        instagram_url: (config as any).instagram_url || "",
-        twitter_url: (config as any).twitter_url || "",
-        youtube_url: (config as any).youtube_url || "",
-        linkedin_url: (config as any).linkedin_url || "",
-        tiktok_url: (config as any).tiktok_url || "",
+        facebook_url: (config).facebook_url || "",
+        instagram_url: (config).instagram_url || "",
+        twitter_url: (config).twitter_url || "",
+        youtube_url: (config).youtube_url || "",
+        linkedin_url: (config).linkedin_url || "",
+        tiktok_url: (config).tiktok_url || "",
       });
     }
   }, [config]);
 
   const handleSave = async () => {
     try {
-      await updateMutation.mutateAsync(socialConfig as any);
+      await updateMutation.mutateAsync(socialConfig);
       toast.success("Réseaux sociaux mis à jour");
     } catch (error) {
       logger.error("Erreur:", error);

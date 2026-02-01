@@ -2,13 +2,7 @@
 
 import { CheckCircle, AlertTriangle, XCircle, ArrowRight } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass";
-import type { ImportSummaryProps } from "@/types/import";
-
-interface ImportErrorDetail {
-  severity: 'error' | 'warning';
-  line: number;
-  message: string;
-}
+import type { ImportSummaryProps, ImportErrorDetail } from "@/types/import";
 
 export function ImportSummary({
   results,

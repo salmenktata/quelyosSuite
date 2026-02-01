@@ -5,7 +5,7 @@ import type { Module } from '@/config/modules'
 
 // Mock modules pour les tests
 const createMockModule = (id: string, name: string, color: string): Module => ({
-  id: id as any,
+  id: id,
   name,
   shortName: name,
   icon: () => <div data-testid={`icon-${id}`}>Icon</div>,

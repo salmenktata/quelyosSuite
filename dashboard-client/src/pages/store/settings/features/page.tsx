@@ -89,7 +89,7 @@ export default function FeaturesSettingsPage() {
         reviews_enabled: config.reviews_enabled ?? true,
         compare_enabled: config.compare_enabled ?? true,
         newsletter_enabled: config.newsletter_enabled ?? true,
-        guest_checkout_enabled: (config as any).guest_checkout_enabled ?? true,
+        guest_checkout_enabled: (config).guest_checkout_enabled ?? true,
       });
     }
   }, [config]);

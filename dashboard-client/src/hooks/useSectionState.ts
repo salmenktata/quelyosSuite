@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 interface UseSectionStateReturn {

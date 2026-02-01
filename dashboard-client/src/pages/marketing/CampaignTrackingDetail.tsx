@@ -12,7 +12,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
+import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { useMarketingCampaigns } from '@/hooks/useMarketingCampaigns';
 import type { TrackingStats, HeatmapLink, TimelineEvent } from '@/hooks/useMarketingTracking';
@@ -25,8 +25,8 @@ export function CampaignTrackingDetail() {
   const navigate = useNavigate();
   const campaignId = id ? parseInt(id) : 0;
 
-  const { getCampaign, loading: campaignLoading } = useMarketingCampaigns() as any;
-  const { getCampaignTracking, getCampaignHeatmap, getCampaignTimeline, loading: trackingLoading } = useMarketingTracking() as any;
+  const { getCampaign, loading: campaignLoading } = useMarketingCampaigns();
+  const { getCampaignTracking, getCampaignHeatmap, getCampaignTimeline, loading: trackingLoading } = useMarketingTracking();
 
   const [campaign, setCampaign] = useState<MarketingCampaign | null>(null);
   const [tracking, setTracking] = useState<TrackingStats | null>(null);
@@ -103,7 +103,7 @@ export function CampaignTrackingDetail() {
           <Button
             variant="outline"
             size="sm"
-            icon={ArrowLeft as any}
+            icon={ArrowLeft}
             onClick={() => navigate('/marketing/campaigns')}
           >
             Retour

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { storeNotices } from '@/lib/notices/store-notices';
 import { Breadcrumbs, SkeletonTable } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -75,17 +74,17 @@ export default function SeoSettingsPage() {
   useEffect(() => {
     if (config) {
       setSeoConfig({
-        site_title: (config as any).site_title || "",
-        meta_description: (config as any).meta_description || "",
-        meta_keywords: (config as any).meta_keywords || "",
-        og_image_url: (config as any).og_image_url || "",
+        site_title: (config).site_title || "",
+        meta_description: (config).meta_description || "",
+        meta_keywords: (config).meta_keywords || "",
+        og_image_url: (config).og_image_url || "",
       });
     }
   }, [config]);
 
   const handleSaveGlobal = async () => {
     try {
-      await updateConfigMutation.mutateAsync(seoConfig as any);
+      await updateConfigMutation.mutateAsync(seoConfig);
       toast.success("Paramètres SEO globaux mis à jour");
     } catch {
       logger.error("Erreur attrapée");

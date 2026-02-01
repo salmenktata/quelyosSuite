@@ -39,10 +39,16 @@ export interface PreviewResponse {
   error?: string
 }
 
+export interface ImportErrorDetail {
+  severity: 'error' | 'warning'
+  line: number
+  message: string
+}
+
 export interface ConfirmImportResponse {
   success: boolean
   imported: number
-  errors: string[]
+  errors: ImportErrorDetail[] | string[]
   error?: string
   failed?: number
   duplicates?: number
@@ -148,7 +154,7 @@ export interface FileUploadZoneProps {
 }
 
 export interface ImportSummaryProps {
-  results: ConfirmImportResponse | Record<string, unknown>
+  results: ConfirmImportResponse
   onViewTransactions?: () => void | Promise<void>
   onImportAnother?: () => void
   totalRows?: number
