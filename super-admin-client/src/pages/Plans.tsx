@@ -611,6 +611,7 @@ function PlanModal({
     max_products: plan?.max_products || 100,
     max_orders_per_year: plan?.max_orders_per_year || 1000,
     trial_days: plan?.trial_days || 14,
+    enabled_modules: plan?.enabled_modules || ['home'],
     is_default: plan?.is_default || false,
     features: plan?.features || DEFAULT_FEATURES,
     group_ids: plan?.group_ids?.map((g) => g.id) || [],

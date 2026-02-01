@@ -10,6 +10,7 @@ import time
 from odoo import http
 from odoo.http import request
 
+from ..config import get_cors_headers
 from ..lib.ai_security import (
     sanitize_user_message,
     sanitize_ai_response,
@@ -29,11 +30,17 @@ class AiPublicController(http.Controller):
     """
 
     def _add_cors_headers(self, response):
-        """Ajoute les headers CORS pour permettre les requêtes cross-origin."""
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        response.headers['Access-Control-Max-Age'] = '86400'
+        """
+        Ajoute les headers CORS sécurisés pour permettre les requêtes cross-origin.
+        Utilise la whitelist d'origines autorisées définie dans config.py.
+        """
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        # Ajouter les headers CORS uniquement si l'origine est autorisée
+        for header, value in cors_headers.items():
+            response.headers[header] = value
+
         return response
 
     def _make_json_response_with_cors(self, data, status=200):
@@ -191,12 +198,21 @@ class AiPublicController(http.Controller):
         """
         # Gérer OPTIONS pour CORS preflight
         if request.httprequest.method == 'OPTIONS':
-            response = request.make_response('', headers=[
-                ('Access-Control-Allow-Origin', '*'),
+            origin = request.httprequest.headers.get('Origin', '')
+            cors_headers_dict = get_cors_headers(origin)
+
+            # Convertir dict en liste de tuples pour make_response
+            headers_list = [
                 ('Access-Control-Allow-Methods', 'POST, OPTIONS'),
                 ('Access-Control-Allow-Headers', 'Content-Type'),
-                ('Access-Control-Max-Age', '86400')
-            ])
+                ('Access-Control-Max-Age', '3600')
+            ]
+
+            # Ajouter headers CORS uniquement si origine autorisée
+            for header, value in cors_headers_dict.items():
+                headers_list.append((header, value))
+
+            response = request.make_response('', headers=headers_list)
             return response
 
         start_time = time.time()
