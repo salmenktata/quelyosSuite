@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class QuelyFinanceApi(BaseController):
     """Finance & Accounting API Controller"""
 
-    @http.route('/api/finance/categories', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/categories', type='http', auth='user', methods=['GET'], csrf=False)
     def get_finance_categories(self):
         """Get financial account categories (INCOME/EXPENSE)"""
         try:
@@ -53,7 +53,7 @@ class QuelyFinanceApi(BaseController):
                 'error': 'Erreur serveur'
             }, status=500)
 
-    @http.route('/api/finance/categories', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/finance/categories', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_finance_category(self):
         """Create a new financial account category"""
         try:
@@ -121,7 +121,7 @@ class QuelyFinanceApi(BaseController):
     # FACTURES FOURNISSEURS - Utilisation account.move natif
     # ===================================================================
 
-    @http.route('/api/finance/supplier-invoices', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/supplier-invoices', type='http', auth='user', methods=['GET'], csrf=False)
     def get_supplier_invoices(self, **kwargs):
         """Liste des factures fournisseurs (account.move in_invoice/in_refund)"""
         try:
@@ -176,7 +176,7 @@ class QuelyFinanceApi(BaseController):
             _logger.error(f"Get supplier invoices error: {e}")
             return request.make_json_response({'success': False, 'error': 'Erreur serveur'}, status=500)
 
-    @http.route('/api/finance/supplier-invoices/upcoming', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/supplier-invoices/upcoming', type='http', auth='user', methods=['GET'], csrf=False)
     def get_upcoming_supplier_invoices(self, **kwargs):
         """Factures fournisseurs à échéance dans les X prochains jours"""
         try:
@@ -227,7 +227,7 @@ class QuelyFinanceApi(BaseController):
             _logger.error(f"Get upcoming supplier invoices error: {e}")
             return request.make_json_response({'invoices': [], 'totalAmount': 0.0, 'currency': 'EUR'})
 
-    @http.route('/api/finance/supplier-invoices/overdue', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/supplier-invoices/overdue', type='http', auth='user', methods=['GET'], csrf=False)
     def get_overdue_supplier_invoices(self, **kwargs):
         """Factures fournisseurs en retard de paiement"""
         try:
@@ -279,7 +279,7 @@ class QuelyFinanceApi(BaseController):
     # TAXES - Utilisation account.tax natif
     # ===================================================================
 
-    @http.route('/api/finance/taxes', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/taxes', type='http', auth='user', methods=['GET'], csrf=False)
     def get_taxes(self, **kwargs):
         """Liste des taxes (vente et achat)"""
         try:
@@ -315,7 +315,7 @@ class QuelyFinanceApi(BaseController):
             _logger.error(f"Get taxes error: {e}")
             return request.make_json_response({'success': False, 'error': 'Erreur serveur'}, status=500)
 
-    @http.route('/api/finance/taxes/purchase', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/taxes/purchase', type='http', auth='user', methods=['GET'], csrf=False)
     def get_purchase_taxes(self, **kwargs):
         """Liste des taxes d'achat uniquement"""
         try:
@@ -345,7 +345,7 @@ class QuelyFinanceApi(BaseController):
     # JOURNAUX COMPTABLES - Utilisation account.journal natif
     # ===================================================================
 
-    @http.route('/api/finance/journals', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/journals', type='http', auth='user', methods=['GET'], csrf=False)
     def get_journals(self, **kwargs):
         """Liste des journaux comptables"""
         try:
@@ -385,7 +385,7 @@ class QuelyFinanceApi(BaseController):
     # BUDGETS - Utilisation account.budget natif (si module installé)
     # ===================================================================
 
-    @http.route('/api/finance/budgets', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/finance/budgets', type='http', auth='user', methods=['GET'], csrf=False)
     def get_budgets(self, **kwargs):
         """Liste des budgets (nécessite module account_budget)"""
         try:
@@ -440,7 +440,7 @@ class QuelyFinanceApi(BaseController):
             _logger.error(f"Get budgets error: {e}")
             return request.make_json_response({'success': False, 'error': 'Erreur serveur'}, status=500)
 
-    @http.route('/api/finance/budgets', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/finance/budgets', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_budget(self):
         """Créer un nouveau budget"""
         try:

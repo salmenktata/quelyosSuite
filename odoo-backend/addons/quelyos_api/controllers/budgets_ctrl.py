@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class BudgetsController(BaseController):
     """API Gestion Budgets vs Réalisé"""
 
-    @http.route('/api/finance/budgets', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/budgets', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_budgets(self, **params):
         """
         Liste budgets
@@ -60,7 +60,7 @@ class BudgetsController(BaseController):
             _logger.error(f"Erreur get_budgets: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/budgets/<int:budget_id>', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/budgets/<int:budget_id>', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_budget(self, budget_id, **params):
         """Détail budget avec lignes"""
         try:
@@ -109,7 +109,7 @@ class BudgetsController(BaseController):
             _logger.error(f"Erreur get_budget: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/budgets/<int:budget_id>/comparison', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/budgets/<int:budget_id>/comparison', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def compare_budget(self, budget_id, **params):
         """
         Comparaison Budget vs Réalisé avec évolution mensuelle
@@ -140,7 +140,7 @@ class BudgetsController(BaseController):
             _logger.error(f"Erreur compare_budget: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/budgets/alerts', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/budgets/alerts', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_budget_alerts(self, **params):
         """
         Alertes dépassements budgétaires
@@ -185,7 +185,7 @@ class BudgetsController(BaseController):
             _logger.error(f"Erreur get_budget_alerts: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/budgets/forecast', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/budgets/forecast', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_budget_forecast(self, **params):
         """
         Prévisions atterrissage budgétaire (forecast année complète)

@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosPricelistsAPI(BaseController):
     """API controller for pricelists management"""
 
-    @http.route('/api/ecommerce/pricelists', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_pricelists(self, **kwargs):
         """
         Récupérer la liste des pricelists (listes de prix) avec pagination.
@@ -65,7 +65,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_pricelist_detail(self, pricelist_id, **params):
         """
         Récupérer le détail d'une pricelist avec ses items (règles de prix).
@@ -127,7 +127,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/pricelists/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_pricelist(self, **params):
         """
         Créer une nouvelle pricelist.
@@ -170,7 +170,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_pricelist(self, pricelist_id, **params):
         """
         Mettre à jour une pricelist.
@@ -219,7 +219,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_pricelist(self, pricelist_id, **params):
         """
         Supprimer une pricelist.
@@ -251,7 +251,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_pricelist_item(self, pricelist_id, **params):
         """
         Créer un item (règle de prix) dans une pricelist.
@@ -311,7 +311,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_pricelist_item(self, pricelist_id, item_id, **params):
         """
         Mettre à jour un item de pricelist.
@@ -363,7 +363,7 @@ class QuelyosPricelistsAPI(BaseController):
                 'error': str(e)
             }
 
-    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pricelists/<int:pricelist_id>/items/<int:item_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_pricelist_item(self, pricelist_id, item_id, **params):
         """
         Supprimer un item de pricelist.

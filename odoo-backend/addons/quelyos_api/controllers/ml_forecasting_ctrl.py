@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class MLForecastingController(BaseController):
     """API ML Cash Flow Forecasting avec Prophet"""
 
-    @http.route('/api/finance/forecasting/train', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/forecasting/train', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def train_model(self, **params):
         """
         Entraîner modèle Prophet sur historique trésorerie
@@ -64,7 +64,7 @@ class MLForecastingController(BaseController):
             _logger.error(f"Erreur train_model: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/forecasting/predict', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/forecasting/predict', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def predict_cashflow(self, **params):
         """
         Prédictions trésorerie 30/60/90 jours
@@ -139,7 +139,7 @@ class MLForecastingController(BaseController):
             _logger.error(f"Erreur predict_cashflow: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/forecasting/accuracy', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/forecasting/accuracy', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_model_accuracy(self, **params):
         """
         Métriques précision du modèle (MAE, RMSE, MAPE)

@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 class SitemapController(http.Controller):
     """Controller pour sitemap dynamique et healthcheck"""
 
-    @http.route('/api/v1/sitemap', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/v1/sitemap', auth='public', methods=['GET'], csrf=False)
     def get_sitemap(self, **kwargs):
         """
         GET /api/v1/sitemap
@@ -92,7 +92,7 @@ class SitemapController(http.Controller):
                 status=500
             )
 
-    @http.route('/api/v1/sitemap/healthcheck', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/v1/sitemap/healthcheck', auth='public', methods=['POST'], csrf=False)
     def trigger_healthcheck(self, **kwargs):
         """
         POST /api/v1/sitemap/healthcheck
@@ -144,7 +144,7 @@ class SitemapController(http.Controller):
                 status=500
             )
 
-    @http.route('/api/v1/sitemap/health-history', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/v1/sitemap/health-history', auth='public', methods=['GET'], csrf=False)
     def get_health_history(self, **kwargs):
         """
         GET /api/v1/sitemap/health-history?app_id=vitrine-quelyos&limit=50

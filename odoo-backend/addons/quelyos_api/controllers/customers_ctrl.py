@@ -88,7 +88,7 @@ class QuelyosCustomersAPI(BaseController):
 
         return None  # OK : guest_email valide
 
-    @http.route('/api/ecommerce/customers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_customers_list(self, **kwargs):
         """Liste de tous les clients (admin uniquement) avec filtrage multi-tenant"""
         try:
@@ -179,7 +179,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_customer_detail(self, customer_id, **kwargs):
         """Detail d'un client avec historique commandes (admin uniquement)"""
         try:
@@ -249,7 +249,7 @@ class QuelyosCustomersAPI(BaseController):
             _logger.error(f"Get customer detail error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_customer(self, customer_id, **kwargs):
         """Modifier un client (ownership validation)"""
         # SECURITE : Vérifier ownership (utilisateur modifie ses données OU admin)
@@ -286,7 +286,7 @@ class QuelyosCustomersAPI(BaseController):
             _logger.error(f"Update customer error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/customers/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def export_customers_csv(self, **kwargs):
         """Exporter les clients en CSV (admin uniquement)"""
         try:
@@ -367,7 +367,7 @@ class QuelyosCustomersAPI(BaseController):
             _logger.error(f"Export customers CSV error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/customer/profile', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/profile', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_customer_profile(self, **kwargs):
         """Récupérer le profil du client connecté"""
         try:
@@ -400,7 +400,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/profile/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/profile/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_customer_profile(self, **kwargs):
         """Modifier le profil du client connecté (AUTHENTIFICATION REQUISE)"""
         try:
@@ -447,7 +447,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_customer_addresses(self, **kwargs):
         """Liste des adresses du client connecté"""
         try:
@@ -484,7 +484,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_customer_address(self, **kwargs):
         """Créer une nouvelle adresse pour le client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -534,7 +534,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_customer_address(self, address_id, **kwargs):
         """Modifier une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -592,7 +592,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/addresses/<int:address_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_customer_address(self, address_id, **kwargs):
         """Supprimer une adresse du client (AUTHENTIFICATION REQUISE)"""
         try:
@@ -623,7 +623,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False)
     def get_customer_categories(self, **params):
         """
         Récupérer la liste des catégories/tags clients (pour segmentation).
@@ -660,7 +660,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_customer_category(self, **params):
         """
         Créer une nouvelle catégorie/tag client.
@@ -718,7 +718,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_customer_category(self, category_id, **params):
         """
         Modifier une catégorie/tag client existante.
@@ -779,7 +779,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer-categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_customer_category(self, category_id, **params):
         """
         Supprimer une catégorie/tag client.
@@ -829,7 +829,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-pricelist', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def assign_pricelist_to_customer(self, customer_id, **params):
         """
         Assigner une pricelist à un client.
@@ -892,7 +892,7 @@ class QuelyosCustomersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customers/<int:customer_id>/assign-categories', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def assign_categories_to_customer(self, customer_id, **params):
         """
         Assigner des catégories/tags à un client.

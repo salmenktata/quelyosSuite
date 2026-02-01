@@ -15,7 +15,7 @@ class QuelyCMS(BaseController):
 
     # ==================== MENUS ====================
 
-    @http.route('/api/ecommerce/menus/<string:code>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/<string:code>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_menu(self, code, **kwargs):
         """
         Récupérer un menu par son code
@@ -196,7 +196,7 @@ class QuelyCMS(BaseController):
 
         return {'success': True, 'menu': menu}
 
-    @http.route('/api/ecommerce/menus/list', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/list', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def list_menus(self, **kwargs):
         """Liste tous les menus (backoffice)"""
         try:
@@ -227,7 +227,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"List menus error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/menus/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_menu(self, **kwargs):
         """Créer menu ou item"""
         try:
@@ -258,7 +258,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create menu error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/menus/<int:menu_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/<int:menu_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_menu(self, menu_id, **kwargs):
         """Modifier menu"""
         try:
@@ -282,7 +282,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update menu error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/menus/<int:menu_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/<int:menu_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_menu(self, menu_id, **kwargs):
         """Supprimer menu (cascade enfants)"""
         try:
@@ -301,7 +301,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete menu error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/menus/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_menus(self, **kwargs):
         """Réordonner menus/items"""
         try:
@@ -324,7 +324,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Reorder menus error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/menus/<int:menu_id>/tree', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/menus/<int:menu_id>/tree', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_menu_tree(self, menu_id, **kwargs):
         """Récupérer arbre complet d'un menu"""
         try:
@@ -343,7 +343,7 @@ class QuelyCMS(BaseController):
 
     # ==================== RECHERCHES POPULAIRES ====================
 
-    @http.route('/api/ecommerce/search/popular', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/search/popular', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_popular_searches(self, **kwargs):
         """
         Récupérer les recherches populaires
@@ -434,7 +434,7 @@ class QuelyCMS(BaseController):
 
     # ==================== CONFIGURATION DU SITE ====================
 
-    @http.route('/api/ecommerce/site-config', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/site-config', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_site_config(self, **kwargs):
         """
         Récupérer la configuration globale du site
@@ -557,7 +557,7 @@ class QuelyCMS(BaseController):
                 }
             })
 
-    @http.route('/api/ecommerce/site-config/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/site-config/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_site_config(self, **kwargs):
         """
         Mettre à jour la configuration du site (ADMIN UNIQUEMENT)
@@ -683,7 +683,7 @@ class QuelyCMS(BaseController):
 
     # ==================== HERO SLIDES ====================
 
-    @http.route('/api/ecommerce/hero-slides', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_hero_slides(self, **kwargs):
         """Liste slides actifs pour homepage (cache 5min côté client)"""
         try:
@@ -713,7 +713,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get hero slides error: {e}")
             return {'success': True, 'slides': []}  # Fallback gracieux
 
-    @http.route('/api/ecommerce/hero-slides/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_hero_slide(self, **kwargs):
         """Créer slide (ADMIN)"""
         try:
@@ -755,7 +755,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create hero slide error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_hero_slide(self, slide_id, **kwargs):
         """Modifier slide (ADMIN)"""
         try:
@@ -796,7 +796,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update hero slide error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_hero_slide(self, slide_id, **kwargs):
         """Supprimer slide (ADMIN)"""
         try:
@@ -816,7 +816,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete hero slide error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/hero-slides/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_hero_slides(self, **kwargs):
         """Réordonner slides (drag & drop)"""
         try:
@@ -842,7 +842,7 @@ class QuelyCMS(BaseController):
 
     # ==================== PROMO BANNERS ====================
 
-    @http.route('/api/ecommerce/promo-banners', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-banners', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_promo_banners(self, **kwargs):
         """Liste bannières actives pour homepage"""
         try:
@@ -873,7 +873,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get promo banners error: {e}")
             return {'success': True, 'banners': []}
 
-    @http.route('/api/ecommerce/promo-banners/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-banners/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_promo_banner(self, **kwargs):
         """Créer bannière (ADMIN)"""
         try:
@@ -905,7 +905,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create promo banner error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_promo_banner(self, banner_id, **kwargs):
         """Modifier bannière (ADMIN)"""
         try:
@@ -931,7 +931,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update promo banner error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-banners/<int:banner_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_promo_banner(self, banner_id, **kwargs):
         """Supprimer bannière (ADMIN)"""
         try:
@@ -951,7 +951,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete promo banner error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-banners/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-banners/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_promo_banners(self, **kwargs):
         """Réordonner bannières"""
         try:
@@ -977,7 +977,7 @@ class QuelyCMS(BaseController):
 
     # ==================== PROMO MESSAGES ====================
 
-    @http.route('/api/ecommerce/promo-messages', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-messages', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_promo_messages(self, **kwargs):
         """Liste messages actifs pour PromoBar"""
         try:
@@ -1001,7 +1001,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get promo messages error: {e}")
             return {'success': True, 'messages': []}
 
-    @http.route('/api/ecommerce/promo-messages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-messages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_promo_message(self, **kwargs):
         """Créer message (ADMIN)"""
         try:
@@ -1027,7 +1027,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create promo message error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-messages/<int:message_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-messages/<int:message_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_promo_message(self, message_id, **kwargs):
         """Modifier message (ADMIN)"""
         try:
@@ -1051,7 +1051,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update promo message error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-messages/<int:message_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-messages/<int:message_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_promo_message(self, message_id, **kwargs):
         """Supprimer message (ADMIN)"""
         try:
@@ -1071,7 +1071,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete promo message error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/promo-messages/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/promo-messages/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_promo_messages(self, **kwargs):
         """Réordonner messages"""
         try:
@@ -1096,7 +1096,7 @@ class QuelyCMS(BaseController):
 
     # ==================== TRUST BADGES ====================
 
-    @http.route('/api/ecommerce/trust-badges', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trust-badges', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_trust_badges(self, **kwargs):
         """Liste badges actifs pour footer"""
         try:
@@ -1118,7 +1118,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get trust badges error: {e}")
             return {'success': True, 'badges': []}
 
-    @http.route('/api/ecommerce/trust-badges/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trust-badges/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_trust_badge(self, **kwargs):
         """Créer badge (ADMIN)"""
         try:
@@ -1143,7 +1143,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create trust badge error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_trust_badge(self, badge_id, **kwargs):
         """Modifier badge (ADMIN)"""
         try:
@@ -1167,7 +1167,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update trust badge error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trust-badges/<int:badge_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_trust_badge(self, badge_id, **kwargs):
         """Supprimer badge (ADMIN)"""
         try:
@@ -1187,7 +1187,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete trust badge error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/trust-badges/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trust-badges/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_trust_badges(self, **kwargs):
         """Réordonner badges"""
         try:
@@ -1212,7 +1212,7 @@ class QuelyCMS(BaseController):
 
     # ==================== IMAGE UPLOADS ====================
 
-    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/upload-image', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/hero-slides/<int:slide_id>/upload-image', type='http', auth='user', methods=['POST'], csrf=False)
     def upload_hero_slide_image(self, slide_id, **kwargs):
         """Upload image pour hero slide"""
         try:
@@ -1246,7 +1246,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Upload hero slide image error: {e}")
             return request.make_json_response({'success': False, 'error': 'Une erreur est survenue'})
 
-    @http.route('/api/ecommerce/tenants/<int:tenant_id>/upload-logo', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tenants/<int:tenant_id>/upload-logo', type='http', auth='user', methods=['POST'], csrf=False)
     def upload_tenant_logo(self, tenant_id, **kwargs):
         """Upload logo tenant"""
         try:
@@ -1280,7 +1280,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Upload tenant logo error: {e}")
             return request.make_json_response({'success': False, 'error': 'Une erreur est survenue'})
 
-    @http.route('/api/ecommerce/tenants/<int:tenant_id>/upload-favicon', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tenants/<int:tenant_id>/upload-favicon', type='http', auth='user', methods=['POST'], csrf=False)
     def upload_tenant_favicon(self, tenant_id, **kwargs):
         """Upload favicon tenant"""
         try:
@@ -1318,7 +1318,7 @@ class QuelyCMS(BaseController):
     # SEO METADATA
     # ============================================
 
-    @http.route('/api/ecommerce/seo-metadata', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo-metadata', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_seo_metadata_list(self, **kwargs):
         """Liste toutes les metadata SEO (admin)"""
         try:
@@ -1347,7 +1347,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get SEO metadata list error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/seo-metadata/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo-metadata/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_seo_metadata_by_slug(self, slug, **kwargs):
         """Récupérer metadata SEO par slug (public, pour frontend)"""
         try:
@@ -1363,7 +1363,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get SEO metadata by slug error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/seo-metadata/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo-metadata/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_seo_metadata(self, **kwargs):
         """Créer metadata SEO (admin)"""
         try:
@@ -1402,7 +1402,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create SEO metadata error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/seo-metadata/<int:metadata_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo-metadata/<int:metadata_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_seo_metadata(self, metadata_id, **kwargs):
         """Modifier metadata SEO (admin)"""
         try:
@@ -1438,7 +1438,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update SEO metadata error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/seo-metadata/<int:metadata_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo-metadata/<int:metadata_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_seo_metadata(self, metadata_id, **kwargs):
         """Supprimer metadata SEO (admin)"""
         try:
@@ -1463,7 +1463,7 @@ class QuelyCMS(BaseController):
     # MARKETING POPUPS
     # ============================================
 
-    @http.route('/api/ecommerce/popups/active', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/active', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_active_popups(self, page_path='/', **kwargs):
         """Récupérer popups actives pour une page (public, frontend)"""
         try:
@@ -1476,7 +1476,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get active popups error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_popups_list(self, **kwargs):
         """Liste toutes les popups (admin)"""
         try:
@@ -1507,7 +1507,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get popups list error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_popup(self, **kwargs):
         """Créer popup (admin)"""
         try:
@@ -1554,7 +1554,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create popup error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups/<int:popup_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/<int:popup_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_popup(self, popup_id, **kwargs):
         """Modifier popup (admin)"""
         try:
@@ -1592,7 +1592,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update popup error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups/<int:popup_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/<int:popup_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_popup(self, popup_id, **kwargs):
         """Supprimer popup (admin)"""
         try:
@@ -1613,7 +1613,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Delete popup error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups/<int:popup_id>/track-view', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/<int:popup_id>/track-view', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def track_popup_view(self, popup_id, **kwargs):
         """Enregistrer vue popup (analytics)"""
         try:
@@ -1627,7 +1627,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Track popup view error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/popups/<int:popup_id>/track-click', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/popups/<int:popup_id>/track-click', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def track_popup_click(self, popup_id, **kwargs):
         """Enregistrer clic CTA popup (analytics)"""
         try:
@@ -1645,7 +1645,7 @@ class QuelyCMS(BaseController):
     # STATIC PAGES
     # ============================================
 
-    @http.route('/api/ecommerce/pages/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_static_page_by_slug(self, slug, **kwargs):
         """Récupérer page statique par slug (public, frontend)"""
         try:
@@ -1661,7 +1661,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get static page by slug error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/pages', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_static_pages_list(self, **kwargs):
         """Liste toutes les pages statiques (admin)"""
         try:
@@ -1692,7 +1692,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get static pages list error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/pages/footer-links', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages/footer-links', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_footer_links(self, **kwargs):
         """Récupérer liens footer (public, frontend)"""
         try:
@@ -1705,7 +1705,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get footer links error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/pages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_static_page(self, **kwargs):
         """Créer page statique (admin)"""
         try:
@@ -1741,7 +1741,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Create static page error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/pages/<int:page_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages/<int:page_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_static_page(self, page_id, **kwargs):
         """Modifier page statique (admin)"""
         try:
@@ -1776,7 +1776,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Update static page error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/pages/<int:page_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/pages/<int:page_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_static_page(self, page_id, **kwargs):
         """Supprimer page statique (admin)"""
         try:
@@ -1799,7 +1799,7 @@ class QuelyCMS(BaseController):
 
     # ==================== BLOG PUBLIC ====================
 
-    @http.route('/api/ecommerce/blog/posts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/blog/posts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_blog_posts(self, **kwargs):
         """Liste des articles blog publiés (public)"""
         try:
@@ -1848,7 +1848,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get public blog posts error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/blog/posts/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/blog/posts/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_blog_post(self, slug, **kwargs):
         """Détail d'un article par slug (public)"""
         try:
@@ -1881,7 +1881,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get public blog post error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/blog/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/blog/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_blog_categories(self, **kwargs):
         """Liste des catégories blog (public)"""
         try:
@@ -1900,7 +1900,7 @@ class QuelyCMS(BaseController):
 
     # ==================== TESTIMONIALS PUBLIC ====================
 
-    @http.route('/api/ecommerce/testimonials', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/testimonials', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_testimonials(self, **kwargs):
         """Liste des témoignages publiés (public)"""
         try:
@@ -1928,7 +1928,7 @@ class QuelyCMS(BaseController):
 
     # ==================== COLLECTIONS PUBLIC ====================
 
-    @http.route('/api/ecommerce/collections', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/collections', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_collections(self, **kwargs):
         """Liste des collections publiées (public)"""
         try:
@@ -1946,7 +1946,7 @@ class QuelyCMS(BaseController):
             _logger.error(f"Get public collections error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/collections/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/collections/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_collection(self, slug, **kwargs):
         """Détail d'une collection par slug (public)"""
         try:
@@ -1974,7 +1974,7 @@ class QuelyCMS(BaseController):
 
     # ==================== FLASH SALES PUBLIC ====================
 
-    @http.route('/api/ecommerce/flash-sales', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/flash-sales', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_public_flash_sales(self, **kwargs):
         """Liste des ventes flash actives (public)"""
         try:

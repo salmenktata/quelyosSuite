@@ -161,7 +161,7 @@ class QuelyosAPI(BaseController):
         """Crée une session pour l'utilisateur et retourne le session_id"""
         return request.session.sid
 
-    @http.route('/api/ecommerce/auth/login', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/login', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def auth_login(self, **kwargs):
         """Authentification utilisateur avec vérification du mot de passe"""
         # Rate limiting - protection brute force
@@ -316,7 +316,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Authentication failed'
             }
 
-    @http.route('/api/ecommerce/auth/logout', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/logout', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def auth_logout(self, **kwargs):
         """Déconnexion utilisateur"""
         try:
@@ -326,7 +326,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Logout error: {e}")
             return {'success': True}  # Toujours retourner success
 
-    @http.route('/api/ecommerce/auth/session', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/session', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def auth_session(self, **kwargs):
         """Vérifier la session courante"""
         try:
@@ -350,7 +350,7 @@ class QuelyosAPI(BaseController):
             _logger.error(f"Session check error: {e}")
             return {'authenticated': False}
 
-    @http.route('/api/ecommerce/auth/register', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/auth/register', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def auth_register(self, **kwargs):
         """Inscription nouvel utilisateur"""
         # Rate limiting - protection contre spam/abuse
@@ -437,7 +437,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/company/settings', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/company/settings', type='http', auth='public', methods=['GET'], csrf=False)
     def get_company_settings(self, **kwargs):
         """Récupérer les paramètres de l'entreprise (devise, mode démo, etc.)"""
         try:
@@ -466,7 +466,7 @@ class QuelyosAPI(BaseController):
                 'error': 'Erreur serveur'
             }, status=500)
 
-    @http.route('/api/ecommerce/admin/demo-mode', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/admin/demo-mode', type='http', auth='public', methods=['POST'], csrf=False)
     def toggle_demo_mode(self, **kwargs):
         """Activer ou désactiver le mode démo Finance"""
         try:

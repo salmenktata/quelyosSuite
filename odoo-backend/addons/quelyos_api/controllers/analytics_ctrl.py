@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosAnalyticsAPI(BaseController):
     """API contrôleur pour les statistiques e-commerce"""
 
-    @http.route('/api/ecommerce/analytics/stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_analytics_stats(self, **kwargs):
         """Statistiques globales (admin uniquement)"""
         try:
@@ -155,7 +155,7 @@ class QuelyosAnalyticsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/analytics/revenue-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/revenue-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_revenue_chart(self, **kwargs):
         """Graphique évolution du chiffre d'affaires par période"""
         try:
@@ -234,7 +234,7 @@ class QuelyosAnalyticsAPI(BaseController):
             _logger.error(f"Get revenue chart error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/orders-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/orders-chart', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_orders_chart(self, **kwargs):
         """Graphique évolution du nombre de commandes par période et par état"""
         try:
@@ -318,7 +318,7 @@ class QuelyosAnalyticsAPI(BaseController):
             _logger.error(f"Get orders chart error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/conversion-funnel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/conversion-funnel', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_conversion_funnel(self, **kwargs):
         """Funnel de conversion : visiteurs → panier → commande → paiement"""
         try:
@@ -411,7 +411,7 @@ class QuelyosAnalyticsAPI(BaseController):
             _logger.error(f"Get conversion funnel error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/analytics/top-categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/analytics/top-categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_top_categories(self, **kwargs):
         """Top catégories les plus vendues avec graphique"""
         try:

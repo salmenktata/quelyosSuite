@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class FiscalYearsController(BaseController):
     """API Exercices Fiscaux"""
 
-    @http.route('/api/finance/fiscal-years', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/fiscal-years', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_fiscal_years(self, **params):
         """Liste des exercices fiscaux"""
         try:

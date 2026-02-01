@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class PaymentController(BaseController):
     """Controller for payment provider management and webhooks"""
 
-    @http.route('/api/admin/payment/providers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/admin/payment/providers', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_payment_providers(self):
         """
         Get list of all payment providers (admin only)
@@ -41,7 +41,7 @@ class PaymentController(BaseController):
             _logger.error(f'Error fetching payment providers: {str(e)}', exc_info=True)
             return self._error_response('Erreur lors de la récupération des providers')
 
-    @http.route('/api/admin/payment/provider/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/admin/payment/provider/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_payment_provider(self, provider_id, **kwargs):
         """
         Update payment provider configuration (admin only)
@@ -86,7 +86,7 @@ class PaymentController(BaseController):
             _logger.error(f'Error updating payment provider: {str(e)}', exc_info=True)
             return self._error_response('Erreur lors de la mise à jour du provider')
 
-    @http.route('/api/admin/payment/provider/test', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/admin/payment/provider/test', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def test_payment_provider(self, provider_id):
         """
         Test payment provider API connection (admin only)

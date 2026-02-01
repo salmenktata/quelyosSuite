@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class FinancialReportsController(BaseController):
     """API Rapports Financiers"""
 
-    @http.route('/api/finance/reports/balance-sheet', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/balance-sheet', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_balance_sheet(self, **params):
         """Bilan comptable"""
         try:
@@ -41,7 +41,7 @@ class FinancialReportsController(BaseController):
             _logger.error(f"Erreur get_balance_sheet: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/reports/profit-loss', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/profit-loss', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_profit_loss(self, **params):
         """Compte de résultat"""
         try:

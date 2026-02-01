@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Container from "./Container";
 import Header from "./Header";
 import { getAllSolutions } from "../lib/solutions-data";
+import { WebSiteSchema } from "./StructuredData";
 
 const _modules = [
   {
@@ -114,6 +115,7 @@ const _moduleHrefs: Record<string, string> = {
 export default function HomePageContentServer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+      <WebSiteSchema />
       <Header />
 
       {/* Hero */}

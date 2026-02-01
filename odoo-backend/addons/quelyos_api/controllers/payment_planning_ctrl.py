@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class PaymentPlanningController(http.Controller):
     """Optimisation et planification paiements fournisseurs"""
 
-    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='user', methods=['GET'], csrf=False)
     def list_scenarios(self, **params):
         """
         Liste scénarios de paiement sauvegardés
@@ -42,7 +42,7 @@ class PaymentPlanningController(http.Controller):
             }, status=500)
 
 
-    @http.route('/api/ecommerce/payment-planning/optimize', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/optimize', type='http', auth='user', methods=['POST'], csrf=False)
     def optimize_payment_plan(self, **params):
         """
         Optimise plan de paiement selon stratégie
@@ -244,7 +244,7 @@ class PaymentPlanningController(http.Controller):
         }
 
 
-    @http.route('/api/ecommerce/payment-planning/export-excel', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/export-excel', type='http', auth='user', methods=['POST'], csrf=False)
     def export_excel(self, **params):
         """
         Exporte plan paiement en Excel

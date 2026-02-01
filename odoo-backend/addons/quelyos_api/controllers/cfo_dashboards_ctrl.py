@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class CFODashboardsController(BaseController):
     """API Dashboards CFO Executive avec KPIs financiers"""
 
-    @http.route('/api/finance/cfo/kpis', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cfo/kpis', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_kpis(self, **params):
         """
         KPIs financiers clés pour CFO
@@ -113,7 +113,7 @@ class CFODashboardsController(BaseController):
             _logger.error(f"Erreur get_kpis: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/cfo/trends', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cfo/trends', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_trends(self, **params):
         """
         Évolution KPIs sur 12 mois
@@ -152,7 +152,7 @@ class CFODashboardsController(BaseController):
             _logger.error(f"Erreur get_trends: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/cfo/cashflow-summary', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cfo/cashflow-summary', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_cashflow_summary(self, **params):
         """
         Résumé trésorerie : entrées, sorties, solde
@@ -194,7 +194,7 @@ class CFODashboardsController(BaseController):
             _logger.error(f"Erreur get_cashflow_summary: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/cfo/alerts', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cfo/alerts', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_financial_alerts(self, **params):
         """Alertes financières CFO (seuils dépassés, anomalies)"""
         try:

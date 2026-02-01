@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class ConsolidationController(BaseController):
     """API Consolidation Financière Multi-Entités"""
 
-    @http.route('/api/finance/consolidation/entities', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/consolidation/entities', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_entities(self, **params):
         """
         Liste sociétés du groupe consolidé
@@ -64,7 +64,7 @@ class ConsolidationController(BaseController):
             _logger.error(f"Erreur get_entities: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/consolidation/balance-sheet', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/consolidation/balance-sheet', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_consolidated_balance_sheet(self, **params):
         """
         Bilan consolidé groupe
@@ -134,7 +134,7 @@ class ConsolidationController(BaseController):
             _logger.error(f"Erreur get_consolidated_balance_sheet: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/consolidation/profit-loss', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/consolidation/profit-loss', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_consolidated_profit_loss(self, **params):
         """
         Compte de résultat consolidé
@@ -183,7 +183,7 @@ class ConsolidationController(BaseController):
             _logger.error(f"Erreur get_consolidated_profit_loss: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/consolidation/eliminations', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/consolidation/eliminations', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_eliminations(self, **params):
         """
         Écritures d'élimination inter-sociétés

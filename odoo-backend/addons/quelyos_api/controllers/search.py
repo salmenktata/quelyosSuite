@@ -18,7 +18,7 @@ class QuelyosSearch(http.Controller):
 
     # ==================== RECHERCHE ====================
 
-    @http.route('/api/ecommerce/search/autocomplete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/search/autocomplete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def search_autocomplete(self, **kwargs):
         """
         Recherche autocomplete avec suggestions
@@ -240,7 +240,7 @@ class QuelyosSearch(http.Controller):
 
         return score
 
-    @http.route('/api/ecommerce/search/semantic', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/search/semantic', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def search_semantic(self, **kwargs):
         """
         Recherche sémantique intelligente avec synonymes et fuzzy matching
@@ -328,7 +328,7 @@ class QuelyosSearch(http.Controller):
             _logger.error(f"Semantic search error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/products/facets', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/facets', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_products_facets(self, **kwargs):
         """
         Récupérer les filtres dynamiques (facets) pour les produits

@@ -28,7 +28,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "@quelyos/ui"],
     scrollRestoration: true,
+    // optimizeCss: true, // Nécessite package 'critters' - désactivé pour l'instant
   },
+  productionBrowserSourceMaps: false, // Désactiver sourcemaps en prod
 
   async rewrites() {
     const financeTarget =

@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class UserSettingsController(BaseController):
     """API pour les paramètres et préférences utilisateur"""
 
-    @http.route('/api/ecommerce/user/security/status', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/user/security/status', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_security_status(self):
         """
         Retourne le statut de sécurité de l'utilisateur (2FA, etc.)
@@ -89,7 +89,7 @@ class UserSettingsController(BaseController):
                 status=500
             )
 
-    @http.route('/api/ecommerce/user/sessions', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/user/sessions', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_user_sessions(self):
         """
         Retourne la liste des sessions actives de l'utilisateur
@@ -163,7 +163,7 @@ class UserSettingsController(BaseController):
                 status=500
             )
 
-    @http.route('/api/ecommerce/user/change-password', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/user/change-password', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def change_password(self):
         """
         Permet à l'utilisateur de changer son mot de passe
@@ -261,7 +261,7 @@ class UserSettingsController(BaseController):
                 status=500
             )
 
-    @http.route('/api/ecommerce/user/preferences', type='http', auth='public', methods=['GET', 'PUT', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/user/preferences', type='http', auth='public', methods=['GET', 'PUT', 'OPTIONS'], csrf=False)
     def manage_preferences(self):
         """
         GET: Récupère les préférences utilisateur

@@ -19,7 +19,7 @@ from odoo.http import request
 class MarketingListsController(http.Controller):
     """API REST pour Listes de Diffusion Marketing."""
 
-    @http.route('/api/ecommerce/marketing/lists', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_mailing_lists(self, tenant_id=None, limit=100, offset=0, **kwargs):
         """
         Liste des listes de diffusion.
@@ -63,7 +63,7 @@ class MarketingListsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/marketing/lists/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_mailing_list(self, name, tenant_id=None, **kwargs):
         """Créer une liste de diffusion."""
         try:
@@ -88,7 +88,7 @@ class MarketingListsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_mailing_list(self, list_id, **kwargs):
         """Détail d'une liste avec ses contacts."""
         try:
@@ -121,7 +121,7 @@ class MarketingListsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def add_contacts_to_list(self, list_id, contacts, **kwargs):
         """
         Ajouter contacts à une liste.
@@ -174,7 +174,7 @@ class MarketingListsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_mailing_list(self, list_id, **kwargs):
         """Supprimer une liste de diffusion."""
         try:
@@ -190,7 +190,7 @@ class MarketingListsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def add_contacts_to_list(self, list_id, contact_ids, **kwargs):
         """Ajouter contacts à une liste."""
         try:
@@ -228,7 +228,7 @@ class MarketingListsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts/<int:contact_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/contacts/<int:contact_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def remove_contact_from_list(self, list_id, contact_id, **kwargs):
         """Retirer contact d'une liste."""
         try:
@@ -249,7 +249,7 @@ class MarketingListsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/lists/<int:list_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_mailing_list(self, list_id, **kwargs):
         """Supprimer une liste de diffusion."""
         try:

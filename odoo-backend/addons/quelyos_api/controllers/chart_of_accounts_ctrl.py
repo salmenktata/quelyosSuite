@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class ChartOfAccountsController(BaseController):
     """API Plan Comptable"""
 
-    @http.route('/api/finance/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_accounts(self, **params):
         """Liste des comptes comptables"""
         try:
@@ -35,7 +35,7 @@ class ChartOfAccountsController(BaseController):
             _logger.error(f"Erreur get_accounts: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/accounts/create', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/accounts/create', type='json', auth='user', methods=['POST', 'OPTIONS'], csrf=False)
     def create_account(self, **params):
         """Créer compte comptable"""
         try:

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import { ArrowRight, ChevronDown, HelpCircle, Search } from "lucide-react";
+import { FAQPageSchema } from "@/app/components/StructuredData";
 
 const categories = [
   { id: "general", label: "Général" },
@@ -160,6 +161,7 @@ export default function FaqPage() {
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <FAQPageSchema faqs={faqs} />
       <Header />
 
       <section className="relative overflow-hidden pb-16 pt-16">

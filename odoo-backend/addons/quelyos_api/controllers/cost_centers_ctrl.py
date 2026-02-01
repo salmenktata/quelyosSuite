@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class CostCentersController(BaseController):
     """API Gestion Centres de Coûts"""
 
-    @http.route('/api/finance/cost-centers', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cost-centers', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_cost_centers(self, **params):
         """
         Liste centres de coûts
@@ -66,7 +66,7 @@ class CostCentersController(BaseController):
             _logger.error(f"Erreur get_cost_centers: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/cost-centers/<int:center_id>/report', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cost-centers/<int:center_id>/report', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_cost_center_report(self, center_id, **params):
         """
         Rapport détaillé par centre de coûts
@@ -120,7 +120,7 @@ class CostCentersController(BaseController):
             _logger.error(f"Erreur get_cost_center_report: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/cost-centers/comparison', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/cost-centers/comparison', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def compare_cost_centers(self, **params):
         """
         Comparaison entre centres de coûts

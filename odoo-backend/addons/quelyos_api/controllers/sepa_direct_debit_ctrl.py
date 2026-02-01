@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class SEPADirectDebitController(BaseController):
     """API SEPA Direct Debit (pain.008.001.02)"""
 
-    @http.route('/api/finance/sepa/mandates', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/sepa/mandates', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_mandates(self, **params):
         """
         Liste mandats SEPA Direct Debit
@@ -72,7 +72,7 @@ class SEPADirectDebitController(BaseController):
             _logger.error(f"Erreur get_mandates: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/sepa/mandates/create', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/sepa/mandates/create', type='json', auth='user', methods=['POST', 'OPTIONS'], csrf=False)
     def create_mandate(self, **params):
         """
         Créer nouveau mandat SEPA
@@ -122,7 +122,7 @@ class SEPADirectDebitController(BaseController):
             _logger.error(f"Erreur create_mandate: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/sepa/direct-debits', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/sepa/direct-debits', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_direct_debits(self, **params):
         """
         Liste prélèvements SEPA à effectuer
@@ -175,7 +175,7 @@ class SEPADirectDebitController(BaseController):
             _logger.error(f"Erreur get_direct_debits: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/sepa/direct-debits/export', type='http', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/sepa/direct-debits/export', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def export_pain008(self, **params):
         """
         Export fichier XML pain.008.001.02 (SEPA Direct Debit)

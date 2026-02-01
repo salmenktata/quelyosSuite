@@ -238,7 +238,7 @@ class QuelyosProductsAPI(BaseController):
             _logger.warning(f"Error getting total review count: {e}")
             return 0
 
-    @http.route('/api/ecommerce/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_products_list(self, **kwargs):
         """Liste des produits avec recherche, filtres et tri (GET via JSON-RPC)"""
         # Rate limiting: 60 req/min par IP (anti-scraping)
@@ -478,7 +478,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_detail(self, product_id, **kwargs):
         """Détail d'un produit (GET via JSON-RPC)"""
         try:
@@ -507,7 +507,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/slug/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/slug/<string:slug>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_by_slug(self, slug, **kwargs):
         """Détail d'un produit par slug (GET via JSON-RPC)"""
         try:
@@ -556,7 +556,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Erreur lors du chargement du produit'
             }
 
-    @http.route('/api/ecommerce/products/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_product(self, **kwargs):
         """Créer un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -681,7 +681,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_product(self, product_id, **kwargs):
         """Modifier un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -802,7 +802,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_product(self, product_id, **kwargs):
         """Supprimer un produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -832,7 +832,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def archive_product(self, product_id, **kwargs):
         """Archiver ou désarchiver un produit (admin)
         PROTECTION: Store User minimum requis
@@ -877,7 +877,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/taxes', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/taxes', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_taxes(self, **kwargs):
         """Récupérer la liste des taxes disponibles"""
         try:
@@ -912,7 +912,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_uom(self, **kwargs):
         """Récupérer la liste des unités de mesure disponibles"""
         try:
@@ -946,7 +946,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-tags', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-tags', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_tags(self, **kwargs):
         """Récupérer la liste des tags produits disponibles"""
         try:
@@ -976,7 +976,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-tags/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-tags/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_product_tag(self, **kwargs):
         """Créer un nouveau tag produit (admin)
         PROTECTION: Store User minimum requis
@@ -1021,7 +1021,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/product-types', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/product-types', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_types(self, **kwargs):
         """Récupérer la liste des types de produits disponibles"""
         try:
@@ -1046,7 +1046,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/duplicate', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def duplicate_product(self, product_id, **kwargs):
         """Dupliquer un produit (admin)
         PROTECTION: Store User minimum requis
@@ -1100,7 +1100,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/export', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def export_products(self, **kwargs):
         """Exporter les produits en CSV (admin)"""
         try:
@@ -1179,7 +1179,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/import', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/import', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def import_products(self, **kwargs):
         """Importer des produits depuis CSV (admin)"""
         try:
@@ -1291,7 +1291,7 @@ class QuelyosProductsAPI(BaseController):
 
     # ==================== PRODUCT IMAGES ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_images(self, product_id, **kwargs):
         """Liste toutes les images d'un produit"""
         try:
@@ -1328,7 +1328,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/upload', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def upload_product_images(self, product_id, **kwargs):
         """Upload images produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1398,7 +1398,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_product_image(self, product_id, image_id, **kwargs):
         """Supprimer image produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1448,7 +1448,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/images/reorder', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def reorder_product_images(self, product_id, **kwargs):
         """Réorganiser images produit (ADMIN UNIQUEMENT)
         PROTECTION: Store User minimum requis
@@ -1502,7 +1502,7 @@ class QuelyosProductsAPI(BaseController):
     # Images associées aux valeurs d'attributs (ex: images pour la couleur "Rouge")
     # Approche optimisée : une seule copie des images par valeur, partagée par toutes les variantes
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-images', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_attribute_images(self, product_id, **kwargs):
         """
         Récupère les lignes d'attributs du produit avec le compteur d'images par valeur.
@@ -1562,7 +1562,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Récupère les images associées à une valeur d'attribut spécifique"""
         try:
@@ -1614,7 +1614,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def upload_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Upload des images pour une valeur d'attribut (admin)"""
         try:
@@ -1711,7 +1711,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_attribute_value_image(self, product_id, ptav_id, image_id, **kwargs):
         """Supprimer une image d'une valeur d'attribut (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -1766,7 +1766,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attribute-values/<int:ptav_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reorder_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Réorganiser l'ordre des images d'une valeur d'attribut (admin)"""
         try:
@@ -1829,7 +1829,7 @@ class QuelyosProductsAPI(BaseController):
 
     # ==================== PRODUCT VARIANTS ====================
 
-    @http.route('/api/ecommerce/attributes', type='jsonrpc', auth='public', csrf=False, cors='*')
+    @http.route('/api/ecommerce/attributes', type='jsonrpc', auth='public', csrf=False)
     def get_all_attributes(self, **kwargs):
         """Liste tous les attributs disponibles (couleur, taille, etc.)"""
         try:
@@ -1865,7 +1865,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_variants(self, product_id, **kwargs):
         """Obtenir les variantes et attributs d'un produit"""
         try:
@@ -1975,7 +1975,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def add_product_attribute(self, product_id, **kwargs):
         """Ajouter un attribut à un produit (admin)"""
         try:
@@ -2052,7 +2052,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_product_attribute(self, product_id, line_id, **kwargs):
         """Modifier les valeurs d'un attribut sur un produit (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2114,7 +2114,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/attributes/<int:line_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_product_attribute(self, product_id, line_id, **kwargs):
         """Supprimer un attribut d'un produit (admin)"""
         try:
@@ -2158,7 +2158,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/regenerate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/regenerate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def regenerate_product_variants(self, product_id, **kwargs):
         """Régénérer toutes les variantes d'un produit basées sur ses attributs (admin)
 
@@ -2250,7 +2250,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_product_variant(self, product_id, variant_id, **kwargs):
         """Modifier une variante spécifique (prix, code, etc.) (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2317,7 +2317,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_variant_stock(self, product_id, variant_id, **kwargs):
         """Modifier le stock d'une variante spécifique (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2414,7 +2414,7 @@ class QuelyosProductsAPI(BaseController):
 
     # ==================== VARIANT IMAGES ====================
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_variant_images(self, product_id, variant_id, **kwargs):
         """Récupérer les images d'une variante spécifique"""
         try:
@@ -2458,7 +2458,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/upload', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def upload_variant_images(self, product_id, variant_id, **kwargs):
         """Uploader des images pour une variante"""
         try:
@@ -2529,7 +2529,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/<int:image_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_variant_image(self, product_id, variant_id, image_id, **kwargs):
         """Supprimer une image de variante (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2562,7 +2562,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/images/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reorder_variant_images(self, product_id, variant_id, **kwargs):
         """Réordonner les images d'une variante"""
         try:
@@ -2604,7 +2604,7 @@ class QuelyosProductsAPI(BaseController):
 
     # ==================== CATEGORIES ====================
 
-    @http.route('/api/ecommerce/categories', type='jsonrpc', auth='public', csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories', type='jsonrpc', auth='public', csrf=False)
     def get_categories_list(self, **kwargs):
         """Liste des catégories avec compteur produits, sous-catégories et recherche"""
         try:
@@ -2687,7 +2687,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_category_detail(self, category_id, **kwargs):
         """Détail d'une catégorie (GET via JSON-RPC)"""
         try:
@@ -2716,7 +2716,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_category(self, **kwargs):
         """Créer une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2758,7 +2758,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_category(self, category_id, **kwargs):
         """Modifier une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2802,7 +2802,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_category(self, category_id, **kwargs):
         """Supprimer une catégorie (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -2830,7 +2830,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/categories/<int:category_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/categories/<int:category_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def move_category(self, category_id, **kwargs):
         """Déplacer une catégorie vers un nouveau parent (admin)"""
         try:
@@ -2902,7 +2902,7 @@ class QuelyosProductsAPI(BaseController):
 
     # ==================== SITE CONFIGURATION ====================
 
-    @http.route('/api/ecommerce/site-config', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/site-config', type='http', auth='public', methods=['GET'], csrf=False)
     def get_site_config(self, **kwargs):
         """
         Récupérer la configuration du site (fonctionnalités activées/désactivées)
@@ -2955,7 +2955,7 @@ class QuelyosProductsAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/site-config/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/site-config/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_site_config(self, **kwargs):
         """
         Mettre à jour la configuration du site (ADMIN UNIQUEMENT)
@@ -3090,7 +3090,7 @@ class QuelyosProductsAPI(BaseController):
             }
 
 
-    @http.route('/api/ecommerce/user/purchased-products', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/user/purchased-products', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_user_purchased_products(self, **kwargs):
         """
         Récupérer la liste des IDs produits déjà achetés par l'utilisateur connecté

@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class OpenBankingController(BaseController):
     """API Open Banking PSD2 (Berlin Group NextGenPSD2)"""
 
-    @http.route('/api/finance/open-banking/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/open-banking/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_bank_accounts(self, **params):
         """
         Liste comptes bancaires connectés via PSD2
@@ -72,7 +72,7 @@ class OpenBankingController(BaseController):
             _logger.error(f"Erreur get_bank_accounts: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/open-banking/transactions', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/open-banking/transactions', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_bank_transactions(self, **params):
         """
         Import transactions bancaires temps réel via PSD2
@@ -131,7 +131,7 @@ class OpenBankingController(BaseController):
             _logger.error(f"Erreur get_bank_transactions: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/open-banking/consent', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/open-banking/consent', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def create_consent(self, **params):
         """
         Créer consentement PSD2 pour accès données bancaires
@@ -174,7 +174,7 @@ class OpenBankingController(BaseController):
             _logger.error(f"Erreur create_consent: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/open-banking/banks', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/open-banking/banks', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_supported_banks(self, **params):
         """Liste banques supportées pour Open Banking"""
         try:

@@ -20,7 +20,7 @@ from odoo.http import request
 class MarketingCampaignsController(http.Controller):
     """API REST pour Campagnes Marketing (mass_mailing natif)."""
 
-    @http.route('/api/ecommerce/marketing/campaigns', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_campaigns(self, tenant_id=None, state=None, limit=100, offset=0, **kwargs):
         """
         Liste des campagnes marketing.
@@ -82,7 +82,7 @@ class MarketingCampaignsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/marketing/campaigns/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_campaign(self, subject, body_html, mailing_model='res.partner', mailing_domain='[]', 
                        tenant_id=None, **kwargs):
         """
@@ -126,7 +126,7 @@ class MarketingCampaignsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_campaign(self, campaign_id, **kwargs):
         """Détail d'une campagne."""
         try:
@@ -157,7 +157,7 @@ class MarketingCampaignsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/send', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/send', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def send_campaign(self, campaign_id, **kwargs):
         """Envoyer une campagne."""
         try:
@@ -176,7 +176,7 @@ class MarketingCampaignsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_campaign_stats(self, campaign_id, **kwargs):
         """Statistiques d'une campagne."""
         try:
@@ -202,7 +202,7 @@ class MarketingCampaignsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/duplicate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/duplicate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def duplicate_campaign(self, campaign_id, **kwargs):
         """Dupliquer une campagne."""
         try:
@@ -229,7 +229,7 @@ class MarketingCampaignsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/test', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/test', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def send_test_campaign(self, campaign_id, test_email, **kwargs):
         """Envoyer un email de test."""
         try:
@@ -249,7 +249,7 @@ class MarketingCampaignsController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
-    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/marketing/campaigns/<int:campaign_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_campaign(self, campaign_id, **kwargs):
         """Supprimer une campagne."""
         try:

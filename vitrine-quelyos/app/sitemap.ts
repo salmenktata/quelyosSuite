@@ -98,6 +98,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/marketing/cgu", changeFrequency: "yearly", priority: 0.3 },
     { path: "/marketing/confidentialite", changeFrequency: "yearly", priority: 0.3 },
     { path: "/marketing/mentions-legales", changeFrequency: "yearly", priority: 0.3 },
+
+    // Solutions par secteur
+    { path: "/solutions", changeFrequency: "monthly", priority: 0.9 },
+    { path: "/solutions/restaurant", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/solutions/commerce", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/solutions/ecommerce", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/solutions/services", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/solutions/sante", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/btp", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/hotellerie", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/associations", changeFrequency: "monthly", priority: 0.7 },
+
+    // E-commerce
+    { path: "/ecommerce/pricing", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/ecommerce/signup", changeFrequency: "monthly", priority: 0.7 },
   ];
 
   return addBase(pages, now);

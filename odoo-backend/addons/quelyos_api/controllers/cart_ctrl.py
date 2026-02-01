@@ -34,7 +34,7 @@ class QuelyosCartAPI(BaseController):
 
         return cart
 
-    @http.route('/api/ecommerce/cart/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/add', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def add_to_cart(self, **kwargs):
         """Ajouter un produit au panier"""
         try:
@@ -116,7 +116,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def update_cart_line(self, **kwargs):
         """Modifier la quantité d'une ligne du panier"""
         try:
@@ -185,7 +185,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/remove/<int:line_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/remove/<int:line_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def remove_from_cart(self, line_id, **kwargs):
         """Supprimer une ligne du panier"""
         try:
@@ -245,7 +245,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/clear', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/clear', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def clear_cart(self, **kwargs):
         """Vider le panier"""
         try:
@@ -292,7 +292,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/save', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def save_cart_for_guest(self, **kwargs):
         """
         Sauvegarder le panier pour un invité (non connecté)
@@ -396,7 +396,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/abandoned', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/abandoned', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_abandoned_carts(self, **kwargs):
         """Liste des paniers abandonnés (admin only)"""
         try:
@@ -473,7 +473,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/<int:cart_id>/send-reminder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/<int:cart_id>/send-reminder', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def send_cart_reminder(self, cart_id, **kwargs):
         """Envoyer un email de relance pour panier abandonné"""
         try:
@@ -525,7 +525,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/recovery-stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/recovery-stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_cart_recovery_stats(self, **kwargs):
         """Statistiques de récupération des paniers abandonnés"""
         try:
@@ -598,7 +598,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_coupons_list(self, **kwargs):
         """Liste des coupons (admin uniquement)"""
         try:
@@ -673,7 +673,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_coupon(self, **kwargs):
         """Créer coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -754,7 +754,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_coupon_detail(self, coupon_id, **kwargs):
         """Détail coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -802,7 +802,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_coupon(self, coupon_id, **kwargs):
         """Mettre à jour coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -871,7 +871,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/coupons/<int:coupon_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_coupon(self, coupon_id, **kwargs):
         """Supprimer coupon (ADMIN UNIQUEMENT)
         PROTECTION: Marketing User minimum requis
@@ -904,7 +904,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/coupon/apply', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/coupon/apply', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def apply_coupon_to_cart(self, **kwargs):
         """Appliquer un code promo au panier"""
         try:
@@ -1007,7 +1007,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/cart/coupon/remove', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/coupon/remove', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def remove_coupon_from_cart(self, **kwargs):
         """Retirer un code promo du panier"""
         try:
@@ -1060,7 +1060,7 @@ class QuelyosCartAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/referral/info', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/referral/info', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_referral_info(self, **kwargs):
         """
         Récupérer les informations de parrainage de l'utilisateur connecté
@@ -1122,7 +1122,7 @@ class QuelyosCartAPI(BaseController):
         partner.sudo().write({'ref': code})
         return code
 
-    @http.route('/api/ecommerce/referral/apply', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/referral/apply', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def apply_referral_code(self, **kwargs):
         """
         Appliquer un code de parrainage lors de l'inscription
@@ -1154,7 +1154,7 @@ class QuelyosCartAPI(BaseController):
             _logger.error(f"Apply referral code error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/referral/register-with-code', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/referral/register-with-code', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def register_with_referral(self, **kwargs):
         """
         Enregistrer un lien de parrainage lors de l'inscription
@@ -1191,7 +1191,7 @@ class QuelyosCartAPI(BaseController):
             _logger.error(f"Register with referral error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/cart/recover', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart/recover', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def recover_abandoned_cart(self, token, **kwargs):
         """
         Récupérer un panier abandonné via le token sécurisé envoyé par email
@@ -1287,7 +1287,7 @@ class QuelyosCartAPI(BaseController):
             _logger.error(f"Cart recovery error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/cart', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/cart', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_cart(self, **kwargs):
         """Récupérer le panier du client"""
         try:

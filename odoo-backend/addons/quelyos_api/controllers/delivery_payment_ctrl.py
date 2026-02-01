@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosDeliveryPaymentAPI(BaseController):
     """API contrôleur pour livraison et paiement"""
 
-    @http.route('/api/ecommerce/delivery/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_delivery_methods(self, **kwargs):
         """Liste des méthodes de livraison disponibles"""
         try:
@@ -46,7 +46,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_delivery_method(self, **kwargs):
         """Creer une methode de livraison (admin uniquement)"""
         try:
@@ -100,7 +100,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_delivery_method_detail(self, method_id, **kwargs):
         """Detail d'une methode de livraison (admin uniquement)"""
         try:
@@ -138,7 +138,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_delivery_method(self, method_id, **kwargs):
         """Mettre a jour une methode de livraison (admin uniquement)"""
         try:
@@ -190,7 +190,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/methods/<int:method_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_delivery_method(self, method_id, **kwargs):
         """Supprimer une methode de livraison (admin uniquement)"""
         try:
@@ -224,7 +224,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/calculate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/calculate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def calculate_delivery_cost(self, **kwargs):
         """Calculer les frais de livraison"""
         try:
@@ -281,7 +281,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/delivery/zones', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/delivery/zones', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_delivery_zones(self, **kwargs):
         """Liste des zones de livraison disponibles"""
         try:
@@ -308,7 +308,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/methods', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_payment_methods(self, **kwargs):
         """Liste des moyens de paiement disponibles"""
         try:
@@ -342,7 +342,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/init', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/init', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def init_payment(self, **kwargs):
         """Initialiser un paiement (créer une transaction Stripe PaymentIntent)"""
         try:
@@ -419,7 +419,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def confirm_payment(self, **kwargs):
         """Confirmer un paiement après validation par Stripe"""
         try:
@@ -480,7 +480,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/webhook', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/webhook', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def payment_webhook(self, **kwargs):
         """Webhook pour recevoir les notifications de Stripe"""
         try:
@@ -530,7 +530,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_payment_transactions(self, **kwargs):
         """Liste des transactions de paiement (admin uniquement)"""
         try:
@@ -628,7 +628,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_payment_transaction_detail(self, transaction_id, **kwargs):
         """Détail d'une transaction de paiement (admin uniquement)"""
         try:
@@ -688,7 +688,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>/refund', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/transactions/<int:transaction_id>/refund', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def refund_payment_transaction(self, transaction_id, **kwargs):
         """Rembourser une transaction de paiement (admin uniquement)"""
         try:
@@ -759,7 +759,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/currencies', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies', type='http', auth='public', methods=['GET', 'POST'], csrf=False)
     def get_currencies(self, **kwargs):
         """
         Récupérer la liste de toutes les devises disponibles - avec cache HTTP.
@@ -813,7 +813,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/<int:currency_id>/activate', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def activate_currency(self, currency_id, **params):
         """
         Activer ou désactiver une devise.
@@ -863,7 +863,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/currencies/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def convert_currency(self, **params):
         """
         Convertir un montant d'une devise à une autre.
@@ -944,7 +944,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/currencies/user/currency-preference', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/user/currency-preference', type='http', auth='public', methods=['GET'], csrf=False)
     def get_user_currency_preference(self, **kwargs):
         """
         Récupérer la préférence de devise de l'utilisateur.
@@ -986,7 +986,7 @@ class QuelyosDeliveryPaymentAPI(BaseController):
                 'isCustom': False
             })
 
-    @http.route('/api/ecommerce/currencies/exchange-rates', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/currencies/exchange-rates', type='http', auth='public', methods=['GET'], csrf=False)
     def get_exchange_rates(self, **kwargs):
         """
         Récupérer les taux de change actuels pour toutes les devises actives.

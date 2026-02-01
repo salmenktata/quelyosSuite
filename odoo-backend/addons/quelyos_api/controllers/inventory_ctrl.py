@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosInventoryAPI(BaseController):
     """API contrôleur pour le stock, entrepôts, emplacements et inventaires"""
 
-    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/variants/<int:variant_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_variant_stock(self, product_id, variant_id, **kwargs):
         """Modifier le stock d'une variante spécifique (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -111,7 +111,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/export', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/export', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def export_stock_csv(self, **params):
         """
         Export CSV du stock avec filtres dates (ADMIN UNIQUEMENT).
@@ -185,7 +185,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_stock(self, product_id, **kwargs):
         """Récupérer le stock disponible d'un produit"""
         try:
@@ -223,7 +223,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock/history', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/history', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_product_stock_history(self, product_id, **kwargs):
         """
         Récupérer l'historique des mouvements de stock d'un produit (admin uniquement).
@@ -373,7 +373,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_product_stock(self, product_id, **kwargs):
         """Modifier le stock d'un produit (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -630,7 +630,7 @@ class QuelyosInventoryAPI(BaseController):
                 headers=[('Content-Type', 'application/json')] + list(cors_headers.items())
             )
 
-    @http.route('/api/ecommerce/stock/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_stock_availability(self, **kwargs):
         """Vérifier la disponibilité du stock pour plusieurs produits"""
         try:
@@ -687,7 +687,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/products', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_products(self, **kwargs):
         """Liste de tous les produits avec leur stock (admin uniquement)"""
         try:
@@ -760,7 +760,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/inventory/prepare', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory/prepare', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def prepare_inventory(self, **kwargs):
         """Préparer un inventaire physique - Récupérer liste produits avec stock actuel"""
         try:
@@ -828,7 +828,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/inventory/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_inventory(self, **kwargs):
         """Valider un inventaire physique - Appliquer les ajustements de stock en masse"""
         try:
@@ -954,7 +954,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/pickings', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_pickings(self, **kwargs):
         """
         Lister les bons de transfert (stock.picking) avec filtres
@@ -1053,7 +1053,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la récupération des transferts'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_picking_details(self, picking_id, **kwargs):
         """
         Récupérer les détails d'un bon de transfert
@@ -1129,7 +1129,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la récupération des détails'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_stock_picking(self, picking_id, **kwargs):
         """
         Valider un bon de transfert (action_done)
@@ -1188,7 +1188,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la validation du transfert'
             }
 
-    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/pickings/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def cancel_stock_picking(self, picking_id, **kwargs):
         """
         Annuler un bon de transfert
@@ -1246,7 +1246,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de l\'annulation du transfert'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_cycle_counts(self, **kwargs):
         """
         Lister les comptages cycliques
@@ -1313,7 +1313,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la récupération des comptages'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_cycle_count_detail(self, count_id, **kwargs):
         """
         Détails d'un comptage cyclique avec lignes
@@ -1378,7 +1378,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la récupération des détails'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_cycle_count(self, **kwargs):
         """
         Créer un comptage cyclique
@@ -1433,7 +1433,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la création du comptage'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/start', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/start', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def start_cycle_count(self, count_id, **kwargs):
         """
         Démarrer un comptage cyclique
@@ -1468,7 +1468,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors du démarrage'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/validate', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/validate', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def validate_cycle_count(self, count_id, **kwargs):
         """
         Valider un comptage cyclique et appliquer ajustements
@@ -1505,7 +1505,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la validation'
             }
 
-    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/update-line', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/cycle-counts/<int:count_id>/update-line', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_cycle_count_line(self, count_id, **kwargs):
         """
         Mettre à jour quantité comptée d'une ligne
@@ -1555,7 +1555,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors de la mise à jour'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/lock', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/lock', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def lock_stock_location(self, location_id, **kwargs):
         """
         Verrouiller une location (bloquer mouvements)
@@ -1608,7 +1608,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors du verrouillage'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/unlock', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/unlock', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def unlock_stock_location(self, location_id, **kwargs):
         """
         Déverrouiller une location
@@ -1655,7 +1655,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur lors du déverrouillage'
             }
 
-    @http.route('/api/ecommerce/stock/turnover', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/turnover', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_stock_turnover(self, **kwargs):
         """
         Récupérer les statistiques de rotation stock pour tous les produits (admin uniquement).
@@ -1750,7 +1750,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/abc-analysis', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/abc-analysis', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_abc_analysis(self, **kwargs):
         """
         Analyse ABC des produits selon la règle de Pareto 80-20 (admin uniquement).
@@ -1904,7 +1904,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/forecast', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/forecast', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_forecast(self, **kwargs):
         """
         Calcul des prévisions de besoins stock basées sur historique ventes (admin uniquement).
@@ -2107,7 +2107,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_uom_list(self, **kwargs):
         """Liste toutes les unités de mesure disponibles (Odoo 19 - catégories UoM supprimées)"""
         try:
@@ -2139,7 +2139,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/uom/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom/categories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_uom_categories(self, **kwargs):
         """
         Note: Les catégories UoM ont été supprimées dans Odoo 19.
@@ -2163,7 +2163,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/uom/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/uom/convert', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def convert_uom(self, **kwargs):
         """Convertit une quantité d'une UoM vers une autre"""
         try:
@@ -2221,7 +2221,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/uom-config', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/uom-config', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_product_uom_config(self, product_id, **kwargs):
         """Configuration UoM d'un produit"""
         try:
@@ -2266,7 +2266,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots/<int:lot_id>/traceability', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>/traceability', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_lot_traceability(self, lot_id, **kwargs):
         """Traçabilité complète amont/aval d'un lot"""
         try:
@@ -2354,7 +2354,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reports/advanced', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reports/advanced', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_advanced_stock_reports(self, **kwargs):
         """Rapports stock avancés : ruptures, dead stock, anomalies"""
         try:
@@ -2465,7 +2465,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/valuation/by-category', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/valuation/by-category', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_valuation_by_category(self, **kwargs):
         """Rapport de valorisation du stock par catégorie produit (coût standard)"""
         try:
@@ -2593,7 +2593,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/low-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/low-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_low_stock_alerts(self, **kwargs):
         """Récupérer les produits en stock bas (admin uniquement)"""
         try:
@@ -2670,7 +2670,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/high-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/high-stock-alerts', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_high_stock_alerts(self, **kwargs):
         """Récupérer les produits en surstock (admin uniquement)"""
         try:
@@ -2751,7 +2751,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/warehouses', type='http', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses', type='http', auth='public', methods=['GET', 'POST'], csrf=False)
     def get_warehouses(self, **kwargs):
         """
         Récupérer la liste des entrepôts - avec cache HTTP.
@@ -2806,7 +2806,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             })
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False)
     def get_warehouse_detail(self, warehouse_id, **params):
         """
         Récupérer le détail d'un entrepôt avec ses locations.
@@ -2862,7 +2862,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/stock', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_warehouse_stock(self, warehouse_id, **params):
         """
         Récupérer le stock de tous les produits dans un entrepôt.
@@ -2999,7 +2999,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-by-location', type='jsonrpc', auth='public', methods=['GET', 'POST'], csrf=False)
     def get_product_stock_by_location(self, product_id, **params):
         """
         Récupérer le stock d'un produit par location/entrepôt.
@@ -3072,7 +3072,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfer', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfer', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_stock_transfer(self, **params):
         """
         Créer un transfert de stock entre deux locations/entrepôts.
@@ -3194,7 +3194,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_stock_transfers(self, **params):
         """
         Lister les transferts internes (pickings).
@@ -3299,7 +3299,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/locations', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_stock_locations(self, **params):
         """
         Lister les locations de stock (pour sélection transfert).
@@ -3365,7 +3365,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_stock_transfer(self, picking_id, **params):
         """
         Valider un transfert (marquer quantités faites + confirmer).
@@ -3431,7 +3431,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Erreur serveur' if 'pas assez de stock' in str(e).lower() else 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/transfers/<int:picking_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def cancel_stock_transfer(self, picking_id, **params):
         """
         Annuler un transfert.
@@ -3491,7 +3491,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/stock-alert-status', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/stock-alert-status', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_alert_status(self, product_id, **kwargs):
         """
         Vérifier si l'utilisateur est abonné aux alertes de réapprovisionnement
@@ -3565,7 +3565,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/notify-restock', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def notify_restock(self, product_id, **kwargs):
         """
         S'abonner aux alertes de réapprovisionnement
@@ -3644,7 +3644,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/warehouses/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_warehouse(self, **kwargs):
         """
         Créer un nouvel entrepôt avec validation du code et création automatique des locations
@@ -3798,7 +3798,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_warehouse(self, warehouse_id, **kwargs):
         """
         Modifier un entrepôt existant
@@ -3872,7 +3872,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def archive_warehouse(self, warehouse_id, **kwargs):
         """
         Archiver un entrepôt (ne pas supprimer, juste désactiver)
@@ -3952,7 +3952,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_stock_routes(self, **kwargs):
         """
         Liste toutes les routes stock disponibles (admin uniquement).
@@ -4019,7 +4019,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/routes/<int:route_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/routes/<int:route_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_stock_route_detail(self, route_id, **kwargs):
         """
         Détails d'une route avec ses règles push et pull (admin uniquement).
@@ -4108,7 +4108,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_warehouse_routes(self, warehouse_id, **kwargs):
         """
         Récupérer les routes configurées pour un entrepôt (admin uniquement).
@@ -4191,7 +4191,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes/configure', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/routes/configure', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def configure_warehouse_routes(self, warehouse_id, **kwargs):
         """
         Configurer les étapes de réception et livraison d'un entrepôt (admin uniquement).
@@ -4281,7 +4281,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_lots(self, **kwargs):
         """
         Liste tous les lots/numéros de série avec dates d'expiration (admin uniquement).
@@ -4379,7 +4379,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots/<int:lot_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/<int:lot_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_lot_detail(self, lot_id, **kwargs):
         """
         Détails complets d'un lot/numéro de série (admin uniquement).
@@ -4484,7 +4484,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/lots/expiry-alerts', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/lots/expiry-alerts', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_expiry_alerts(self, **kwargs):
         """
         Récupérer les lots avec alertes d'expiration (admin uniquement).
@@ -4601,7 +4601,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_product_expiry_config(self, product_id, **kwargs):
         """
         Récupérer la configuration des délais d'expiration d'un produit (admin uniquement).
@@ -4655,7 +4655,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/products/<int:product_id>/expiry-config/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_product_expiry_config(self, product_id, **kwargs):
         """
         Configurer les délais d'expiration d'un produit (admin uniquement).
@@ -4792,7 +4792,7 @@ class QuelyosInventoryAPI(BaseController):
 
         return False
 
-    @http.route('/api/ecommerce/stock/locations/tree', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/tree', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_locations_tree(self, **kwargs):
         """
         Récupérer toutes les locations avec structure hiérarchique (admin uniquement).
@@ -4888,7 +4888,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def get_location_detail(self, location_id, **kwargs):
         """
         Obtenir les détails complets d'une location (admin uniquement).
@@ -5004,7 +5004,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_location(self, **kwargs):
         """Créer une nouvelle location (admin uniquement)"""
         try:
@@ -5103,7 +5103,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_location(self, location_id, **kwargs):
         """Modifier une location existante (admin uniquement)"""
         try:
@@ -5188,7 +5188,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/archive', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def archive_location(self, location_id, **kwargs):
         """Archiver une location"""
         try:
@@ -5244,7 +5244,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/locations/<int:location_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/locations/<int:location_id>/move', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def move_location(self, location_id, **kwargs):
         """Déplacer une location dans l'arbre"""
         try:
@@ -5309,7 +5309,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_reordering_rules(self, **kwargs):
         """Liste les règles de réapprovisionnement avec état actuel"""
         try:
@@ -5388,7 +5388,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_reordering_rule(self, **kwargs):
         """Créer une nouvelle règle de réapprovisionnement"""
         try:
@@ -5519,7 +5519,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_reordering_rule(self, rule_id, **kwargs):
         """Modifier une règle de réapprovisionnement"""
         try:
@@ -5636,7 +5636,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/reordering-rules/<int:rule_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_reordering_rule(self, rule_id, **kwargs):
         """Supprimer (archiver) une règle de réapprovisionnement"""
         try:
@@ -5671,7 +5671,7 @@ class QuelyosInventoryAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/change-reasons', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/change-reasons', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_change_reasons(self, **kwargs):
         """
         Récupérer les raisons de changement de stock (OCA).
@@ -5791,7 +5791,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error_code': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/inventories', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventories', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_inventories_oca(self, **kwargs):
         """
         Récupérer les inventaires de stock (OCA).
@@ -5830,7 +5830,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error_code': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/adjust-with-reason', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/adjust-with-reason', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def adjust_stock_with_reason(self, **kwargs):
         """
         Ajuster le stock d'un produit avec une raison (OCA).
@@ -5886,7 +5886,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error_code': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock/location-locks', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/location-locks', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_location_locks(self, **kwargs):
         """
         Récupérer les emplacements verrouillés (OCA).
@@ -5921,7 +5921,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error_code': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock-alerts/unsubscribe/<int:alert_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def unsubscribe_stock_alert(self, alert_id, **kwargs):
         """
         Se désabonner d'une alerte de réapprovisionnement
@@ -5991,7 +5991,7 @@ class QuelyosInventoryAPI(BaseController):
     # STOCK SCRAP (Mise au rebut)
     # =========================================================================
 
-    @http.route('/api/stock/scraps', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/scraps', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_scraps(self, **kwargs):
         """Liste des mises au rebut avec filtres"""
         try:
@@ -6030,7 +6030,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/scraps/<int:scrap_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/scraps/<int:scrap_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_scrap_detail(self, scrap_id, **kwargs):
         """Détails d'une mise au rebut"""
         try:
@@ -6059,7 +6059,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/scraps/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/scraps/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_stock_scrap(self, **kwargs):
         """Créer une nouvelle mise au rebut"""
         try:
@@ -6109,7 +6109,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': str(e) if str(e) else 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/scraps/<int:scrap_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/scraps/<int:scrap_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_stock_scrap(self, scrap_id, **kwargs):
         """Valider une mise au rebut (génère mouvement stock)"""
         try:
@@ -6142,7 +6142,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': str(e) if str(e) else 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/scraps/<int:scrap_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/scraps/<int:scrap_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_stock_scrap(self, scrap_id, **kwargs):
         """Supprimer une mise au rebut (brouillon uniquement)"""
         try:
@@ -6183,7 +6183,7 @@ class QuelyosInventoryAPI(BaseController):
     # STOCK RESERVATIONS (Réservations manuelles)
     # =========================================================================
 
-    @http.route('/api/stock/reservations', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_reservations(self, **kwargs):
         """Liste des réservations avec filtres"""
         try:
@@ -6225,7 +6225,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/reservations/<int:reservation_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations/<int:reservation_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_stock_reservation_detail(self, reservation_id, **kwargs):
         """Détails d'une réservation"""
         try:
@@ -6254,7 +6254,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/reservations/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_stock_reservation(self, **kwargs):
         """Créer une nouvelle réservation"""
         try:
@@ -6305,7 +6305,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': str(e) if str(e) else 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/reservations/<int:reservation_id>/activate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations/<int:reservation_id>/activate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def activate_stock_reservation(self, reservation_id, **kwargs):
         """Activer une réservation (vérifie stock disponible)"""
         try:
@@ -6338,7 +6338,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': str(e) if str(e) else 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/reservations/<int:reservation_id>/release', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations/<int:reservation_id>/release', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def release_stock_reservation(self, reservation_id, **kwargs):
         """Libérer une réservation manuellement"""
         try:
@@ -6371,7 +6371,7 @@ class QuelyosInventoryAPI(BaseController):
                 'error': str(e) if str(e) else 'Une erreur est survenue'
             }
 
-    @http.route('/api/stock/reservations/<int:reservation_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/stock/reservations/<int:reservation_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_stock_reservation(self, reservation_id, **kwargs):
         """Supprimer une réservation (brouillon uniquement)"""
         try:

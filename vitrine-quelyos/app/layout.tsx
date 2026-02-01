@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ChatBotWrapper from "./components/ChatBotWrapper";
+import { WebVitals } from "./components/WebVitals";
+import { OrganizationSchema } from "./components/StructuredData";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,11 +29,11 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://quelyos.com"),
   title: {
-    default: "Quelyos — Suite ERP française | Solutions métier intégrées",
+    default: "Quelyos — Suite ERP Complète | Solutions Métier Intégrées",
     template: "%s | Quelyos",
   },
-  description: "Suite ERP française pour TPE/PME : solutions métier complètes (Finance, CRM, Stock, RH, POS, Marketing, E-commerce). IA intégrée, données synchronisées, hébergement France.",
-  keywords: ["ERP", "ERP français", "logiciel gestion", "trésorerie IA", "CRM", "gestion stock", "RH", "point de vente", "marketing automation", "TPE", "PME", "SaaS", "Made in France", "RGPD", "solutions métier", "restaurant", "commerce", "e-commerce"],
+  description: "Suite ERP complète pour entreprises : solutions métier intégrées (Finance, CRM, Stock, RH, POS, Marketing, E-commerce). IA native, données synchronisées, infrastructure sécurisée.",
+  keywords: ["ERP complet", "logiciel gestion", "trésorerie IA", "CRM", "gestion stock", "RH", "point de vente", "marketing automation", "TPE", "PME", "SaaS", "RGPD", "solutions métier", "restaurant", "commerce", "e-commerce"],
   authors: [{ name: "Quelyos" }],
   creator: "Quelyos",
   publisher: "Quelyos",
@@ -41,25 +43,25 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   openGraph: {
-    title: "Quelyos — Suite ERP française | Solutions métier intégrées",
-    description: "Pilotez toute votre entreprise depuis une seule plateforme. Solutions Finance, CRM, Stock, RH, POS, Marketing — tout inclus. IA intégrée, hébergement France.",
+    title: "Quelyos — Suite ERP Complète | Solutions Métier Intégrées",
+    description: "Pilotez toute votre entreprise depuis une seule plateforme. Solutions Finance, CRM, Stock, RH, POS, Marketing — tout inclus. IA intégrée, infrastructure sécurisée.",
     url: "https://quelyos.com",
     siteName: "Quelyos",
-    locale: "fr_FR",
+    locale: "fr",
     type: "website",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Quelyos - Suite ERP française pour TPE/PME",
+        alt: "Quelyos - Suite ERP Complète pour Entreprises",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quelyos — Suite ERP française | Solutions métier intégrées",
-    description: "Solutions métier intégrées, IA native, hébergement France. L'ERP pensé pour les TPE/PME françaises.",
+    title: "Quelyos — Suite ERP Complète | Solutions Métier Intégrées",
+    description: "Solutions métier intégrées, IA native, infrastructure sécurisée. Suite ERP pensée pour les TPE/PME.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -89,11 +91,13 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
+        <OrganizationSchema />
       </head>
       <body
         className={`${inter.variable} antialiased bg-slate-950`}
         suppressHydrationWarning
       >
+        <WebVitals />
         {children}
         <ChatBotWrapper />
       </body>

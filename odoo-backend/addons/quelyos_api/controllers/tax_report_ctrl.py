@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class TaxReportController(BaseController):
     """API Déclarations TVA"""
 
-    @http.route('/api/finance/tax-reports', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/tax-reports', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_tax_reports(self, **params):
         """Liste des déclarations TVA"""
         try:
@@ -52,7 +52,7 @@ class TaxReportController(BaseController):
             _logger.error(f"Erreur get_tax_reports: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/tax-reports/generate', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/tax-reports/generate', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def generate_tax_report(self, **params):
         """Générer déclaration TVA pour une période"""
         try:
@@ -114,7 +114,7 @@ class TaxReportController(BaseController):
             _logger.error(f"Erreur generate_tax_report: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/tax-reports/<int:report_id>/export-edi-tva', type='http', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/tax-reports/<int:report_id>/export-edi-tva', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def export_edi_tva(self, report_id, **params):
         """Export EDI-TVA XML (France)"""
         try:

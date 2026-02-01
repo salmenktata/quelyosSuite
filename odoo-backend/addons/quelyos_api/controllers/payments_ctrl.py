@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class PaymentsController(BaseController):
     """API Paiements"""
 
-    @http.route('/api/finance/payments', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/payments', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def get_payments(self, **params):
         """Liste des paiements"""
         try:

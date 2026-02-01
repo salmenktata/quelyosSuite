@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class BillsController(BaseController):
     """API Factures Fournisseurs"""
 
-    @http.route('/api/finance/bills', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/bills', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_bills(self, **params):
         """Liste des factures fournisseurs"""
         try:
@@ -41,7 +41,7 @@ class BillsController(BaseController):
             _logger.error(f"Erreur get_bills: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/bills/create', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/bills/create', type='json', auth='user', methods=['POST', 'OPTIONS'], csrf=False)
     def create_bill(self, **params):
         """Créer facture fournisseur"""
         try:

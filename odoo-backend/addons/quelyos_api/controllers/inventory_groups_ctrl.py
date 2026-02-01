@@ -20,7 +20,7 @@ from odoo.http import request
 class InventoryGroupsController(http.Controller):
     """API REST pour Groupes d'Inventaire OCA."""
 
-    @http.route('/api/ecommerce/stock/inventory-groups', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_inventory_groups(self, tenant_id=None, state=None, location_ids=None, limit=100, offset=0, **kwargs):
         """
         Liste des groupes d'inventaire.
@@ -86,7 +86,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_inventory_group(self, name, location_ids, product_selection='all', product_ids=None,
                                category_id=None, lot_ids=None, tenant_id=None, **kwargs):
         """
@@ -149,7 +149,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_inventory_group(self, group_id, **kwargs):
         """
         Détail d'un groupe d'inventaire avec ses ajustements.
@@ -219,7 +219,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/start', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/start', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def start_inventory_group(self, group_id, **kwargs):
         """
         Démarrer un inventaire (draft → in_progress).
@@ -252,7 +252,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def validate_inventory_group(self, group_id, **kwargs):
         """
         Valider un inventaire (in_progress → done).
@@ -289,7 +289,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/cancel', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def cancel_inventory_group(self, group_id, **kwargs):
         """
         Annuler un inventaire.
@@ -319,7 +319,7 @@ class InventoryGroupsController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/stock/inventory-groups/<int:group_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_inventory_group(self, group_id, **kwargs):
         """
         Supprimer un groupe d'inventaire (uniquement si draft ou cancel).

@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class SupplierInvoicesController(http.Controller):
     """Gestion factures fournisseurs pour planification paiements"""
 
-    @http.route('/api/ecommerce/supplier-invoices/upcoming', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/supplier-invoices/upcoming', type='http', auth='user', methods=['GET'], csrf=False)
     def get_upcoming_invoices(self, **params):
         """
         Liste factures fournisseurs à venir
@@ -84,7 +84,7 @@ class SupplierInvoicesController(http.Controller):
             }, status=500)
 
 
-    @http.route('/api/ecommerce/supplier-invoices/overdue', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/supplier-invoices/overdue', type='http', auth='user', methods=['GET'], csrf=False)
     def get_overdue_invoices(self, **params):
         """
         Liste factures fournisseurs en retard
@@ -147,7 +147,7 @@ class SupplierInvoicesController(http.Controller):
             }, status=500)
 
 
-    @http.route('/api/ecommerce/accounts', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts', type='http', auth='user', methods=['GET'], csrf=False)
     def get_accounts(self, **params):
         """
         Liste comptes bancaires/caisses

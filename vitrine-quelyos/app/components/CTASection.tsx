@@ -33,7 +33,7 @@ export default function CTASection() {
               </Link>
             </div>
             <p className="mt-6 text-sm text-slate-400">
-              Essai gratuit 30 jours • Sans carte bancaire • Support français
+              Essai gratuit 30 jours • Sans carte bancaire • Support dédié
             </p>
           </div>
         </Container>

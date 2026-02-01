@@ -19,7 +19,7 @@ from odoo.http import request
 class WarehouseCalendarController(http.Controller):
     """API REST pour Calendriers Entrepôts OCA."""
 
-    @http.route('/api/ecommerce/warehouses', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_warehouses(self, tenant_id=None, limit=100, offset=0, **kwargs):
         """
         Liste des entrepôts avec leurs calendriers.
@@ -71,7 +71,7 @@ class WarehouseCalendarController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/set-calendar', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/set-calendar', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def set_warehouse_calendar(self, warehouse_id, calendar_id, **kwargs):
         """
         Assigner un calendrier à un entrepôt.
@@ -110,7 +110,7 @@ class WarehouseCalendarController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/calendars', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/calendars', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def list_calendars(self, tenant_id=None, limit=100, offset=0, **kwargs):
         """
         Liste des calendriers ressources disponibles.
@@ -167,7 +167,7 @@ class WarehouseCalendarController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/calendars/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/calendars/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_calendar(self, name, tz='UTC', hours_per_day=8.0, attendances=None, tenant_id=None, **kwargs):
         """
         Créer un nouveau calendrier ressource.
@@ -225,7 +225,7 @@ class WarehouseCalendarController(http.Controller):
                 'error': str(e),
             }
 
-    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/plan-delivery', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/warehouses/<int:warehouse_id>/plan-delivery', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def plan_delivery_date(self, warehouse_id, date_from, delta_days, **kwargs):
         """
         Calculer une date de livraison selon le calendrier de l'entrepôt.

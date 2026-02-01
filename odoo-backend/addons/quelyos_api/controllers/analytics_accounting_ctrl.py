@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class AnalyticsAccountingController(BaseController):
     """API Comptabilité Analytique Multi-Axes"""
 
-    @http.route('/api/finance/analytics/axes', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/analytics/axes', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_axes(self, **params):
         """
         Liste axes analytiques configurés
@@ -38,7 +38,7 @@ class AnalyticsAccountingController(BaseController):
             _logger.error(f"Erreur get_axes: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/analytics/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/analytics/accounts', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_analytic_accounts(self, **params):
         """
         Liste comptes analytiques par axe
@@ -88,7 +88,7 @@ class AnalyticsAccountingController(BaseController):
             _logger.error(f"Erreur get_analytic_accounts: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/analytics/distribution', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/analytics/distribution', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_distribution(self, **params):
         """
         Répartition montants par axe analytique
@@ -130,7 +130,7 @@ class AnalyticsAccountingController(BaseController):
             _logger.error(f"Erreur get_distribution: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/analytics/cross-analysis', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/analytics/cross-analysis', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_cross_analysis(self, **params):
         """
         Analyse croisée multi-axes (ex: Projet x Département)

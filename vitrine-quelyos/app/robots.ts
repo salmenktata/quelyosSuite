@@ -8,15 +8,21 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/"],
+        allow: [
+          "/",
+          "/_next/static/", // Autoriser assets statiques (CSS, JS, fonts)
+          "/logos/", // Autoriser logos pour rich snippets
+        ],
         disallow: [
-          "/_next/",
-          "/api/",
-          "/static/",
-          "/*?*",
-          "/superadmin/",
-          "/finance/dashboard/",
-          "/marketing/dashboard/",
+          "/_next/data/", // Bloquer données JSON Next.js
+          "/api/", // Bloquer toutes les routes API
+          "/auth/", // Bloquer pages authentification
+          "/register", // Bloquer inscription
+          "/superadmin/", // Bloquer panel admin
+          "/finance/dashboard/", // Bloquer dashboard finance
+          "/marketing/dashboard/", // Bloquer dashboard marketing
+          "/*?*utm_*", // Bloquer URLs avec paramètres UTM (tracking)
+          "/*/forgot-password", // Bloquer reset password
         ],
       },
       {
@@ -25,6 +31,14 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "anthropic-ai",
+        disallow: ["/"],
+      },
+      {
+        userAgent: "CCBot",
+        disallow: ["/"],
+      },
+      {
+        userAgent: "ChatGPT-User",
         disallow: ["/"],
       },
     ],

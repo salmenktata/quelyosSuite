@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosCrmAPI(BaseController):
     """API contrôleur pour le CRM (leads et opportunités)"""
 
-    @http.route('/api/ecommerce/crm/stages', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/stages', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_crm_stages(self, **kwargs):
         """Récupérer les stages (colonnes) du pipeline CRM pour un tenant"""
         try:
@@ -58,7 +58,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_crm_leads(self, **kwargs):
         """Récupérer les leads (opportunités) avec pagination et filtrage par tenant"""
         try:
@@ -130,7 +130,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_crm_lead_detail(self, lead_id, **kwargs):
         """Récupérer le détail d'un lead avec vérification tenant"""
         try:
@@ -187,7 +187,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_crm_lead(self, **kwargs):
         """Créer un nouveau lead avec tenant obligatoire"""
         try:
@@ -275,7 +275,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_crm_lead(self, lead_id, **kwargs):
         """Mettre à jour un lead avec vérification tenant"""
         try:
@@ -351,7 +351,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/leads/<int:lead_id>/stage', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_lead_stage(self, lead_id, **kwargs):
         """Mettre à jour le stage d'un lead (drag & drop) avec vérification tenant"""
         try:
@@ -429,7 +429,7 @@ class QuelyosCrmAPI(BaseController):
                 'errorCode': 'SERVER_ERROR'
             }
 
-    @http.route('/api/ecommerce/crm/stages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/crm/stages/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_crm_stage(self, **kwargs):
         """Créer un nouveau stage CRM pour un tenant"""
         try:

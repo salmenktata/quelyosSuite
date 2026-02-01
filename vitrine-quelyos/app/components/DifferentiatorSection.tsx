@@ -22,7 +22,7 @@ export default function DifferentiatorSection() {
             { icon: Zap, title: "Opérationnel en 1 heure", desc: "Import automatique, configuration guidée. Vous êtes productif dès le premier jour.", color: "text-purple-400" },
             { icon: Sparkles, title: "IA qui anticipe vos besoins", desc: "Prévisions trésorerie à 90%, suggestions de commandes, alertes proactives.", color: "text-emerald-400" },
             { icon: TrendingUp, title: "ROI mesurable", desc: "Nos clients gagnent en moyenne 10h/semaine et augmentent leur CA de 30%.", color: "text-blue-400" },
-            { icon: Shield, title: "Made in France, RGPD natif", desc: "Hébergement France, support francophone, conformité garantie.", color: "text-cyan-400" },
+            { icon: Shield, title: "Sécurité & Conformité", desc: "Infrastructure sécurisée, support dédié, conformité RGPD garantie.", color: "text-cyan-400" },
             { icon: DollarSign, title: "Tarifs transparents", desc: "Un prix fixe par solution. Pas de surprise, pas de frais cachés.", color: "text-orange-400" },
           ].map((item, i) => (
             <div

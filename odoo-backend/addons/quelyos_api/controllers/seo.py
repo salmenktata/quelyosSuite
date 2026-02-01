@@ -19,7 +19,7 @@ class QuelyosSEO(http.Controller):
 
     # ==================== SITEMAP ====================
 
-    @http.route('/api/ecommerce/seo/sitemap.xml', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo/sitemap.xml', type='http', auth='public', methods=['GET'], csrf=False)
     def get_sitemap(self, **kwargs):
         """
         Générer le sitemap XML pour le SEO
@@ -105,7 +105,7 @@ class QuelyosSEO(http.Controller):
                 headers=[('Content-Type', 'application/xml; charset=utf-8')]
             )
 
-    @http.route('/api/ecommerce/seo/robots.txt', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo/robots.txt', type='http', auth='public', methods=['GET'], csrf=False)
     def get_robots_txt(self, **kwargs):
         """
         Générer le fichier robots.txt pour le SEO
@@ -162,7 +162,7 @@ class QuelyosSEO(http.Controller):
                 headers=[('Content-Type', 'text/plain; charset=utf-8')]
             )
 
-    @http.route('/api/ecommerce/seo/metadata', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/seo/metadata', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_metadata(self, **kwargs):
         """
         Récupérer les métadonnées SEO pour une page

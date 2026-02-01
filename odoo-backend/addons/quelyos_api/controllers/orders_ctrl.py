@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosOrdersAPI(BaseController):
     """API contrôleur pour les commandes, factures et livraisons"""
 
-    @http.route('/api/ecommerce/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_orders_list(self, **kwargs):
         """Liste des commandes (admin uniquement)"""
         try:
@@ -89,7 +89,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_detail(self, order_id, **kwargs):
         """Détail d'une commande"""
         try:
@@ -162,7 +162,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def create_order(self, **kwargs):
         """Créer une commande depuis le panier"""
         # Rate limiting: 20 créations de commandes/min par IP
@@ -212,7 +212,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/status', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/status', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def update_order_status(self, order_id, **kwargs):
         """Changer le statut d'une commande (admin uniquement)"""
         try:
@@ -263,7 +263,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_tracking(self, order_id, **kwargs):
         """Récupérer les informations de suivi d'une commande"""
         try:
@@ -329,7 +329,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get order tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_order_tracking(self, order_id, **kwargs):
         """Mettre à jour le numéro de tracking d'une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -396,7 +396,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_history(self, order_id, **kwargs):
         """Obtenir l'historique des modifications d'une commande (admin uniquement)"""
         try:
@@ -459,7 +459,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip/pdf', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip/pdf', type='http', auth='public', methods=['GET'], csrf=False)
     def get_delivery_slip_pdf(self, order_id, **kwargs):
         """Télécharger le bon de livraison PDF d'une commande (admin uniquement)"""
         try:
@@ -513,7 +513,7 @@ class QuelyosOrdersAPI(BaseController):
                 headers=[('Content-Type', 'application/json')]
             )
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/send-quotation', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/send-quotation', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def send_quotation_email(self, order_id, **kwargs):
         """Envoyer le devis par email au client"""
         try:
@@ -564,7 +564,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_invoice_from_order(self, order_id, **kwargs):
         """Creer une facture depuis une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -594,7 +594,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Create invoice error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/unlock', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/unlock', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def unlock_order(self, order_id, **kwargs):
         """Remettre la commande en brouillon"""
         try:
@@ -657,7 +657,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/customer/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/customer/orders', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_customer_orders(self, **kwargs):
         """Liste des commandes du client connecté"""
         try:
@@ -702,7 +702,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/reorder', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def reorder(self, order_id, **kwargs):
         """
         One-Click Reorder : Ajoute tous les produits d'une commande passée au panier actuel.
@@ -819,7 +819,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue lors du réapprovisionnement'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip/pdf', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/delivery-slip/pdf', type='http', auth='public', methods=['GET'], csrf=False)
     def get_delivery_slip_pdf(self, order_id, **kwargs):
         """Télécharger le bon de livraison PDF d'une commande (admin uniquement)"""
         try:
@@ -873,7 +873,7 @@ class QuelyosOrdersAPI(BaseController):
                 headers=[('Content-Type', 'application/json')]
             )
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_tracking(self, order_id, **kwargs):
         """Récupérer les informations de suivi d'une commande"""
         try:
@@ -939,7 +939,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get order tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_order_tracking(self, order_id, **kwargs):
         """Mettre à jour le numéro de tracking d'une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -1006,7 +1006,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/history', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_history(self, order_id, **kwargs):
         """Obtenir l'historique des modifications d'une commande (admin uniquement)"""
         try:
@@ -1069,7 +1069,7 @@ class QuelyosOrdersAPI(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/invoices', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_invoices_list(self, **kwargs):
         """Liste des factures (admin uniquement)"""
         try:
@@ -1127,7 +1127,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get invoices list error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_invoice_detail(self, invoice_id, **kwargs):
         """Detail d'une facture"""
         try:
@@ -1173,7 +1173,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get invoice detail error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/create-invoice', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def create_invoice_from_order(self, order_id, **kwargs):
         """Creer une facture depuis une commande (ADMIN UNIQUEMENT)"""
         # SECURITE : Vérifier droits admin
@@ -1203,7 +1203,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Create invoice error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/invoices/<int:invoice_id>/post', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def post_invoice(self, invoice_id, **kwargs):
         """Valider une facture brouillon"""
         try:
@@ -1226,7 +1226,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Post invoice error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/orders/<int:order_id>/tracking', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_tracking(self, order_id, **kwargs):
         """Récupérer les informations de suivi d'une commande"""
         try:
@@ -1292,7 +1292,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get order tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/tracking/colissimo/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tracking/colissimo/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_colissimo_tracking(self, tracking_number, **kwargs):
         """Récupérer le détail du suivi Colissimo via leur API"""
         try:
@@ -1310,7 +1310,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Colissimo tracking error: {e}")
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/ecommerce/tracking/mondialrelay/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/tracking/mondialrelay/<string:tracking_number>', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_mondialrelay_tracking(self, tracking_number, **kwargs):
         """Récupérer le détail du suivi Mondial Relay via leur API"""
         try:
@@ -1332,7 +1332,7 @@ class QuelyosOrdersAPI(BaseController):
     # LATE AVAILABILITY (Stock Future)
     # =========================================================================
 
-    @http.route('/api/orders/fulfillment-status', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/orders/fulfillment-status', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_orders_by_fulfillment(self, **kwargs):
         """
         Liste des commandes filtrées par disponibilité future du stock.
@@ -1411,7 +1411,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get fulfillment status error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/orders/<int:order_id>/fulfillment-detail', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/orders/<int:order_id>/fulfillment-detail', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_order_fulfillment_detail(self, order_id, **kwargs):
         """
         Détails complets de disponibilité pour une commande spécifique.
@@ -1480,7 +1480,7 @@ class QuelyosOrdersAPI(BaseController):
             _logger.error(f"Get fulfillment detail error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
 
-    @http.route('/api/orders/fulfillment-stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/orders/fulfillment-stats', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_fulfillment_statistics(self, **kwargs):
         """
         Statistiques globales de disponibilité des commandes.

@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class OCAReportsController(BaseController):
     """API Rapports Financiers OCA"""
 
-    @http.route('/api/finance/reports/partner-ledger', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/partner-ledger', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_partner_ledger(self, **params):
         """
         Grand Livre Auxiliaire par Partenaire
@@ -66,7 +66,7 @@ class OCAReportsController(BaseController):
             _logger.error(f"Erreur get_partner_ledger: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/reports/aged-receivables', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/aged-receivables', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_aged_receivables(self, **params):
         """
         Balance Âgée des Créances (30/60/90 jours)
@@ -119,7 +119,7 @@ class OCAReportsController(BaseController):
             _logger.error(f"Erreur get_aged_receivables: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/reports/trial-balance', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/trial-balance', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_trial_balance(self, **params):
         """
         Balance Générale
@@ -166,7 +166,7 @@ class OCAReportsController(BaseController):
             _logger.error(f"Erreur get_trial_balance: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/reports/fec-export', type='http', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/reports/fec-export', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def export_fec(self, **params):
         """
         Export FEC (Fichier des Écritures Comptables) conforme DGFiP

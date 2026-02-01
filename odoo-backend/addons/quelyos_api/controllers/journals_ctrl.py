@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class JournalsController(BaseController):
     """API Journaux Comptables"""
 
-    @http.route('/api/finance/journals', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/journals', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_journals(self, **params):
         """Liste des journaux comptables"""
         try:

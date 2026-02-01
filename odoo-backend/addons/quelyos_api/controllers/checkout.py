@@ -21,7 +21,7 @@ class QuelyosCheckout(BaseController):
 
     # ==================== STATES / GOVERNORATES ====================
 
-    @http.route('/api/ecommerce/states', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/states', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_states(self, **kwargs):
         """
         Récupérer les états/gouvernorats d'un pays avec leurs zones de livraison
@@ -123,7 +123,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/admin/shipping/zones', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/admin/shipping/zones', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_shipping_zones(self, **kwargs):
         """
         Récupérer les zones de livraison et leurs tarifs (Admin)
@@ -189,7 +189,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/admin/shipping/zones/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/admin/shipping/zones/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_shipping_zones(self, **kwargs):
         """
         Mettre à jour les tarifs des zones de livraison (Admin)
@@ -236,7 +236,7 @@ class QuelyosCheckout(BaseController):
 
     # ==================== CHECKOUT ====================
 
-    @http.route('/api/ecommerce/checkout/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/validate', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def checkout_validate(self, **kwargs):
         """
         Valider le panier avant checkout
@@ -383,7 +383,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/shipping', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/shipping', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def checkout_calculate_shipping(self, **kwargs):
         """
         Calculer les frais de livraison
@@ -524,7 +524,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/complete', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/complete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def checkout_complete(self, **kwargs):
         """
         Finaliser la commande (créer sale.order confirmée)
@@ -657,7 +657,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/checkout/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/checkout/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def checkout_confirm(self, **kwargs):
         """
         Confirmer la commande (après paiement validé)
@@ -762,7 +762,7 @@ class QuelyosCheckout(BaseController):
 
     # ==================== PAYMENT ====================
 
-    @http.route('/api/ecommerce/payment/paypal/create-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/paypal/create-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def paypal_create_order(self, **kwargs):
         """
         Créer un ordre PayPal
@@ -820,7 +820,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/paypal/capture-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/paypal/capture-order', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def paypal_capture_order(self, **kwargs):
         """
         Capturer un paiement PayPal
@@ -867,7 +867,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/wallet/create', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/wallet/create', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def wallet_create_payment(self, **kwargs):
         """
         Créer un paiement Wallet (Apple Pay / Google Pay)
@@ -919,7 +919,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/stripe/create-intent', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/stripe/create-intent', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def stripe_create_payment_intent(self, **kwargs):
         """
         Créer un Payment Intent Stripe pour un paiement par carte bancaire
@@ -1026,7 +1026,7 @@ class QuelyosCheckout(BaseController):
                 'error': 'Une erreur est survenue'
             }
 
-    @http.route('/api/ecommerce/payment/stripe/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment/stripe/confirm', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def stripe_confirm_payment(self, **kwargs):
         """
         Confirmer un paiement Stripe et finaliser la commande

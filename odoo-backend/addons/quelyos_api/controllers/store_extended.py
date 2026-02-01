@@ -319,7 +319,7 @@ class StoreExtendedController(BaseController):
         except Exception as e:
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/admin/faq/<int:faq_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/admin/faq/<int:faq_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_faq(self, faq_id):
         """Supprimer une FAQ"""
         auth_error = self._require_backoffice_auth()
@@ -1216,7 +1216,7 @@ class StoreExtendedController(BaseController):
     # TRENDING PRODUCTS (Produits Tendance)
     # =========================================================================
 
-    @http.route('/api/ecommerce/trending-products', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/trending-products', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_trending_products_public(self, **kwargs):
         """
         Liste des produits tendance (API publique pour frontend)
@@ -1331,7 +1331,7 @@ class StoreExtendedController(BaseController):
             _logger.error(f'Error toggling trending: {e}')
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/admin/trending-products/<int:product_id>/update', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/admin/trending-products/<int:product_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def update_trending_data(self, product_id, **kwargs):
         """Mettre à jour les données de tendance d'un produit"""
         auth_error = self._require_backoffice_auth()
@@ -1371,7 +1371,7 @@ class StoreExtendedController(BaseController):
     # LIVE EVENTS (Live Shopping)
     # =========================================================================
 
-    @http.route('/api/ecommerce/live-events', type='jsonrpc', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/live-events', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def get_live_events_public(self, **kwargs):
         """
         Liste des événements live à venir ou en cours (API publique pour frontend)
@@ -1473,7 +1473,7 @@ class StoreExtendedController(BaseController):
             _logger.error(f'Error saving live event: {e}')
             return {'success': False, 'error': 'Erreur serveur'}
 
-    @http.route('/api/admin/live-events/<int:event_id>/delete', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/admin/live-events/<int:event_id>/delete', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def delete_live_event(self, event_id):
         """Supprimer un événement live"""
         auth_error = self._require_backoffice_auth()

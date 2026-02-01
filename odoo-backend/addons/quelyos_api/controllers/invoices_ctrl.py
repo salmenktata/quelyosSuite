@@ -17,7 +17,7 @@ _logger = logging.getLogger(__name__)
 class InvoicesController(BaseController):
     """API Factures Clients"""
 
-    @http.route('/api/finance/invoices', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_invoices(self, **params):
         """
         Liste des factures clients avec filtres et pagination
@@ -97,7 +97,7 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur get_invoices: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/invoices/<int:invoice_id>', type='json', auth='public', methods=['GET', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices/<int:invoice_id>', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_invoice(self, invoice_id, **params):
         """Détail d'une facture client"""
         try:
@@ -128,7 +128,7 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur get_invoice {invoice_id}: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/invoices/create', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices/create', type='json', auth='user', methods=['POST', 'OPTIONS'], csrf=False)
     def create_invoice(self, **params):
         """
         Créer une nouvelle facture client
@@ -186,7 +186,7 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur create_invoice: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/invoices/<int:invoice_id>/update', type='json', auth='public', methods=['PUT', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices/<int:invoice_id>/update', type='json', auth='user', methods=['PUT', 'OPTIONS'], csrf=False)
     def update_invoice(self, invoice_id, **params):
         """Modifier une facture client (état brouillon uniquement)"""
         try:
@@ -233,7 +233,7 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur update_invoice {invoice_id}: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/invoices/<int:invoice_id>/validate', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices/<int:invoice_id>/validate', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def validate_invoice(self, invoice_id, **params):
         """Valider (poster) une facture client"""
         try:
@@ -272,7 +272,7 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur validate_invoice {invoice_id}: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
-    @http.route('/api/finance/invoices/<int:invoice_id>/duplicate', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/invoices/<int:invoice_id>/duplicate', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def duplicate_invoice(self, invoice_id, **params):
         """Dupliquer une facture client"""
         try:

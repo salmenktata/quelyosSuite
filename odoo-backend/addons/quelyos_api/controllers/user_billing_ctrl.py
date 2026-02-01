@@ -15,7 +15,7 @@ _logger = logging.getLogger(__name__)
 class UserBillingController(BaseController):
     """API pour la facturation et subscription utilisateur"""
 
-    @http.route('/api/ecommerce/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_billing_plans(self):
         """
         Retourne la liste des plans disponibles
@@ -145,7 +145,7 @@ class UserBillingController(BaseController):
                 status=500
             )
 
-    @http.route('/api/ecommerce/billing/subscription', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/billing/subscription', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_user_subscription(self):
         """
         Retourne la subscription actuelle de l'utilisateur
@@ -254,7 +254,7 @@ class UserBillingController(BaseController):
                 status=500
             )
 
-    @http.route('/api/ecommerce/billing/create-checkout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/billing/create-checkout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def create_checkout_session(self):
         """
         Crée une session de checkout Stripe pour upgrade de plan
@@ -337,17 +337,17 @@ class UserBillingController(BaseController):
             )
 
     # Routes alias pour compatibilité (sans préfixe /api/ecommerce)
-    @http.route('/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_billing_plans_compat(self):
         """Alias pour /api/ecommerce/billing/plans"""
         return self.get_billing_plans()
 
-    @http.route('/billing/subscription', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/billing/subscription', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_user_subscription_compat(self):
         """Alias pour /api/ecommerce/billing/subscription"""
         return self.get_user_subscription()
 
-    @http.route('/billing/create-checkout-session', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/billing/create-checkout-session', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def create_checkout_session_compat(self):
         """Alias pour /api/ecommerce/billing/create-checkout"""
         return self.create_checkout_session()

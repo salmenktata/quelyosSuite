@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class BankReconciliationController(BaseController):
     """API Rapprochement Bancaire avec AI"""
 
-    @http.route('/api/finance/bank-reconciliation/suggest', type='json', auth='public', methods=['POST', 'OPTIONS'], cors='*', csrf=False)
+    @http.route('/api/finance/bank-reconciliation/suggest', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def suggest_reconciliation(self, **params):
         """Suggérer réconciliations avec score ML"""
         try:

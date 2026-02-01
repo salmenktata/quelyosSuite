@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class QuelyosFinanceAPI(BaseController):
     """API contrôleur pour la finance, reporting et planification paiements"""
 
-    @http.route('/api/ecommerce/dashboard/overview', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/dashboard/overview', type='http', auth='public', methods=['GET'], csrf=False)
     def get_dashboard_overview(self, **kwargs):
         """
         Récupérer les données du tableau de bord financier.
@@ -99,7 +99,7 @@ class QuelyosFinanceAPI(BaseController):
                 'metadata': {'days': 30, 'accountCount': 0, 'hasData': False}
             }, status=200)
 
-    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_accounts(self, **kwargs):
         """
         Récupérer la liste des comptes bancaires/financiers.
@@ -118,7 +118,7 @@ class QuelyosFinanceAPI(BaseController):
             _logger.error(f"Get finance accounts error: {e}")
             return request.make_json_response([], status=200)
 
-    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_account(self, account_id, **kwargs):
         """
         Récupérer un compte spécifique.
@@ -148,7 +148,7 @@ class QuelyosFinanceAPI(BaseController):
                 'balance': 0.0
             }, status=200)
 
-    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts', type='http', auth='public', methods=['POST'], csrf=False)
     def create_finance_account(self, **kwargs):
         """
         Créer un nouveau compte financier.
@@ -176,7 +176,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la création du compte'
             }, status=500)
 
-    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False)
     def update_finance_account(self, account_id, **kwargs):
         """
         Mettre à jour un compte financier.
@@ -204,7 +204,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la mise à jour du compte'
             }, status=500)
 
-    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/accounts/<int:account_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
     def delete_finance_account(self, account_id, **kwargs):
         """
         Supprimer un compte financier.
@@ -221,7 +221,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la suppression du compte'
             }, status=500)
 
-    @http.route('/api/ecommerce/portfolios', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/portfolios', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_portfolios(self, **kwargs):
         """
         Récupérer la liste des portefeuilles.
@@ -240,7 +240,7 @@ class QuelyosFinanceAPI(BaseController):
             _logger.error(f"Get finance portfolios error: {e}")
             return request.make_json_response([], status=200)
 
-    @http.route('/api/ecommerce/portfolios/<int:portfolio_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/portfolios/<int:portfolio_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_portfolio(self, portfolio_id, **kwargs):
         """
         Récupérer un portefeuille spécifique.
@@ -270,93 +270,93 @@ class QuelyosFinanceAPI(BaseController):
                 'totalBalance': 0.0
             }, status=200)
 
-    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_transactions(self, **kwargs):
         """Liste des transactions"""
         return request.make_json_response([])
 
-    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_transaction(self, transaction_id, **kwargs):
         """Détail d'une transaction"""
         return request.make_json_response({'id': transaction_id, 'description': 'Transaction', 'amount': 0.0})
 
-    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/transactions', type='http', auth='public', methods=['POST'], csrf=False)
     def create_finance_transaction(self, **kwargs):
         """Créer transaction"""
         params = self._get_http_params()
         return request.make_json_response({'id': 1, 'amount': params.get('amount', 0.0)}, status=201)
 
-    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False)
     def update_finance_transaction(self, transaction_id, **kwargs):
         """Mettre à jour transaction"""
         params = self._get_http_params()
         return request.make_json_response({'id': transaction_id, 'amount': params.get('amount', 0.0)})
 
-    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/transactions/<int:transaction_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
     def delete_finance_transaction(self, transaction_id, **kwargs):
         """Supprimer transaction"""
         return request.make_json_response({'success': True})
 
-    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_budgets(self, **kwargs):
         """Liste des budgets"""
         return request.make_json_response([])
 
-    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_budget(self, budget_id, **kwargs):
         """Détail d'un budget"""
         return request.make_json_response({'id': budget_id, 'name': 'Budget', 'amount': 0.0, 'spent': 0.0})
 
-    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/budgets', type='http', auth='public', methods=['POST'], csrf=False)
     def create_finance_budget(self, **kwargs):
         """Créer budget"""
         params = self._get_http_params()
         return request.make_json_response({'id': 1, 'name': params.get('name', 'Budget'), 'amount': params.get('amount', 0.0)}, status=201)
 
-    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False)
     def update_finance_budget(self, budget_id, **kwargs):
         """Mettre à jour budget"""
         params = self._get_http_params()
         return request.make_json_response({'id': budget_id, 'name': params.get('name', 'Budget'), 'amount': params.get('amount', 0.0)})
 
-    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/budgets/<int:budget_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
     def delete_finance_budget(self, budget_id, **kwargs):
         """Supprimer budget"""
         return request.make_json_response({'success': True})
 
-    @http.route('/api/ecommerce/dashboard/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/dashboard/forecast', type='http', auth='public', methods=['GET'], csrf=False)
     def get_dashboard_forecast(self, **kwargs):
         """Prévisions pour le dashboard"""
         return request.make_json_response({'forecast': [], 'trend': 'stable'})
 
-    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_suppliers(self, **kwargs):
         """Liste des fournisseurs"""
         return request.make_json_response([])
 
-    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_supplier(self, supplier_id, **kwargs):
         """Détail fournisseur"""
         return request.make_json_response({'id': supplier_id, 'name': 'Fournisseur'})
 
-    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/suppliers', type='http', auth='public', methods=['POST'], csrf=False)
     def create_finance_supplier(self, **kwargs):
         """Créer fournisseur"""
         params = self._get_http_params()
         return request.make_json_response({'id': 1, 'name': params.get('name', 'Fournisseur')}, status=201)
 
-    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['PUT', 'PATCH'], csrf=False)
     def update_finance_supplier(self, supplier_id, **kwargs):
         """Mettre à jour fournisseur"""
         params = self._get_http_params()
         return request.make_json_response({'id': supplier_id, 'name': params.get('name', 'Fournisseur')})
 
-    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/suppliers/<int:supplier_id>', type='http', auth='public', methods=['DELETE'], csrf=False)
     def delete_finance_supplier(self, supplier_id, **kwargs):
         """Supprimer fournisseur"""
         return request.make_json_response({'success': True})
 
-    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['GET'], csrf=False)
     def get_finance_alerts(self, **kwargs):
         """
         Récupérer toutes les alertes financières avec leurs déclenchements récents.
@@ -382,7 +382,7 @@ class QuelyosFinanceAPI(BaseController):
                 'alerts': []
             }, status=200)
 
-    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/alerts', type='http', auth='public', methods=['POST'], csrf=False)
     def create_finance_alert(self, **kwargs):
         """
         Créer une nouvelle alerte financière.
@@ -418,7 +418,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la création de l\'alerte'
             }, status=500)
 
-    @http.route('/api/ecommerce/alerts/<int:alert_id>', type='http', auth='public', methods=['PATCH'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/alerts/<int:alert_id>', type='http', auth='public', methods=['PATCH'], csrf=False)
     def update_finance_alert(self, alert_id, **kwargs):
         """
         Mettre à jour une alerte financière.
@@ -448,7 +448,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la mise à jour de l\'alerte'
             }, status=500)
 
-    @http.route('/api/ecommerce/supplier-invoices/upcoming', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/supplier-invoices/upcoming', type='http', auth='public', methods=['GET'], csrf=False)
     def get_upcoming_supplier_invoices(self, **kwargs):
         """
         Récupérer les factures fournisseurs à venir.
@@ -508,7 +508,7 @@ class QuelyosFinanceAPI(BaseController):
                 'currency': 'EUR'
             }, status=200)
 
-    @http.route('/api/ecommerce/supplier-invoices/overdue', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/supplier-invoices/overdue', type='http', auth='public', methods=['GET'], csrf=False)
     def get_overdue_supplier_invoices(self, **kwargs):
         """
         Récupérer les factures fournisseurs en retard.
@@ -562,7 +562,7 @@ class QuelyosFinanceAPI(BaseController):
                 'currency': 'EUR'
             }, status=200)
 
-    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['GET'], csrf=False)
     def get_payment_scenarios(self, **kwargs):
         """
         Récupérer tous les scénarios de paiement.
@@ -585,7 +585,7 @@ class QuelyosFinanceAPI(BaseController):
                 'scenarios': []
             }, status=200)
 
-    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/scenarios', type='http', auth='public', methods=['POST'], csrf=False)
     def create_payment_scenario(self, **kwargs):
         """
         Créer un nouveau scénario de paiement.
@@ -614,7 +614,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de la création du scénario'
             }, status=500)
 
-    @http.route('/api/ecommerce/payment-planning/optimize', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/optimize', type='http', auth='public', methods=['POST'], csrf=False)
     def optimize_payment_planning(self, **kwargs):
         """
         Optimiser la planification des paiements.
@@ -645,7 +645,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de l\'optimisation'
             }, status=500)
 
-    @http.route('/api/ecommerce/payment-planning/export-excel', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/export-excel', type='http', auth='public', methods=['POST'], csrf=False)
     def export_payment_planning_excel(self, **kwargs):
         """
         Exporter le plan de paiement en Excel.
@@ -667,7 +667,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de l\'export'
             }, status=500)
 
-    @http.route('/api/ecommerce/payment-planning/export-pdf', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/export-pdf', type='http', auth='public', methods=['POST'], csrf=False)
     def export_payment_planning_pdf(self, **kwargs):
         """
         Exporter le plan de paiement en PDF.
@@ -689,7 +689,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de l\'export'
             }, status=500)
 
-    @http.route('/api/ecommerce/payment-planning/execute-batch', type='http', auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/payment-planning/execute-batch', type='http', auth='public', methods=['POST'], csrf=False)
     def execute_payment_batch(self, **kwargs):
         """
         Exécuter un lot de paiements.
@@ -720,7 +720,7 @@ class QuelyosFinanceAPI(BaseController):
                 'error': 'Erreur lors de l\'exécution des paiements'
             }, status=500)
 
-    @http.route('/api/ecommerce/reporting/overview', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/overview', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_overview(self, **kwargs):
         """Vue d'ensemble - Dashboard overview"""
         return request.make_json_response({
@@ -748,7 +748,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/cashflow', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/cashflow', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_cashflow(self, **kwargs):
         """Trésorerie - Cash flow analysis"""
         return request.make_json_response({
@@ -761,7 +761,7 @@ class QuelyosFinanceAPI(BaseController):
             'perAccount': []
         })
 
-    @http.route('/api/ecommerce/reporting/forecast-enhanced', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/forecast-enhanced', type='http', auth='public', methods=['GET'], csrf=False)
     def get_forecast_enhanced(self, **kwargs):
         """
         Récupérer les prévisions de trésorerie avancées avec ML.
@@ -812,7 +812,7 @@ class QuelyosFinanceAPI(BaseController):
                 'metadata': {'horizonDays': 90, 'historicalDays': 45, 'model': 'arima'}
             }, status=200)
 
-    @http.route('/api/ecommerce/reporting/forecast-backtest', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/forecast-backtest', type='http', auth='public', methods=['GET'], csrf=False)
     def get_forecast_backtest(self, **kwargs):
         """Métriques de backtest des prévisions"""
         try:
@@ -824,7 +824,7 @@ class QuelyosFinanceAPI(BaseController):
             _logger.error(f"Forecast backtest error: {e}")
             return request.make_json_response({'accuracy': {}, 'tests': []}, status=200)
 
-    @http.route('/api/ecommerce/reporting/actuals', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/actuals', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_actuals(self, **kwargs):
         """Données réelles"""
         return request.make_json_response({
@@ -842,7 +842,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/forecast', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_forecast(self, **kwargs):
         """Prévisions simples"""
         return request.make_json_response({
@@ -855,7 +855,7 @@ class QuelyosFinanceAPI(BaseController):
             'perAccount': []
         })
 
-    @http.route('/api/ecommerce/reporting/combined', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/combined', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_combined(self, **kwargs):
         """Données combinées"""
         return request.make_json_response({
@@ -868,7 +868,7 @@ class QuelyosFinanceAPI(BaseController):
             'perAccount': []
         })
 
-    @http.route('/api/ecommerce/reporting/top-categories', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/top-categories', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_top_categories(self, **kwargs):
         """Top catégories"""
         return request.make_json_response({
@@ -876,7 +876,7 @@ class QuelyosFinanceAPI(BaseController):
             'expense': []
         })
 
-    @http.route('/api/ecommerce/reporting/budgets', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/budgets', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_budgets(self, **kwargs):
         """Budgets"""
         return request.make_json_response({
@@ -888,7 +888,7 @@ class QuelyosFinanceAPI(BaseController):
             'byCategory': []
         })
 
-    @http.route('/api/ecommerce/reporting/by-category', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/by-category', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_by_category(self, **kwargs):
         """Par catégorie - Ventilation des revenus et dépenses par catégorie"""
         return request.make_json_response({
@@ -897,7 +897,7 @@ class QuelyosFinanceAPI(BaseController):
             'total': 0
         })
 
-    @http.route('/api/ecommerce/reporting/by-flow', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/by-flow', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_by_flow(self, **kwargs):
         """Par flux"""
         return request.make_json_response({
@@ -915,7 +915,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/by-account', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/by-account', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_by_account(self, **kwargs):
         """Par compte"""
         return request.make_json_response({
@@ -923,7 +923,7 @@ class QuelyosFinanceAPI(BaseController):
             'accounts': []
         })
 
-    @http.route('/api/ecommerce/reporting/by-portfolio', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/by-portfolio', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_by_portfolio(self, **kwargs):
         """Par portfolio"""
         return request.make_json_response({
@@ -931,7 +931,7 @@ class QuelyosFinanceAPI(BaseController):
             'portfolios': []
         })
 
-    @http.route('/api/ecommerce/reporting/profitability', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/profitability', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_profitability(self, **kwargs):
         """Profitabilité"""
         return request.make_json_response({
@@ -953,7 +953,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/dso', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/dso', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_dso(self, **kwargs):
         """DSO (Days Sales Outstanding)"""
         return request.make_json_response({
@@ -976,7 +976,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/ebitda', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/ebitda', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_ebitda(self, **kwargs):
         """EBITDA"""
         return request.make_json_response({
@@ -1007,7 +1007,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/bfr', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/bfr', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_bfr(self, **kwargs):
         """BFR (Besoin en Fonds de Roulement)"""
         return request.make_json_response({
@@ -1029,7 +1029,7 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/breakeven', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/breakeven', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_breakeven(self, **kwargs):
         """Point mort"""
         return request.make_json_response({
@@ -1056,37 +1056,37 @@ class QuelyosFinanceAPI(BaseController):
             }
         })
 
-    @http.route('/api/ecommerce/reporting/dso/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/dso/history', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_dso_history(self, **kwargs):
         """Historique DSO"""
         return request.make_json_response({'data': [], 'period': 'monthly'})
 
-    @http.route('/api/ecommerce/reporting/ebitda/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/ebitda/history', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_ebitda_history(self, **kwargs):
         """Historique EBITDA"""
         return request.make_json_response({'data': [], 'period': 'monthly'})
 
-    @http.route('/api/ecommerce/reporting/bfr/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/bfr/history', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_bfr_history(self, **kwargs):
         """Historique BFR"""
         return request.make_json_response({'data': [], 'period': 'monthly'})
 
-    @http.route('/api/ecommerce/reporting/breakeven/history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/breakeven/history', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_breakeven_history(self, **kwargs):
         """Historique point mort"""
         return request.make_json_response({'data': [], 'period': 'monthly'})
 
-    @http.route('/api/ecommerce/reporting/dso/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/dso/forecast', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_dso_forecast(self, **kwargs):
         """Prévision DSO"""
         return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
 
-    @http.route('/api/ecommerce/reporting/ebitda/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/ebitda/forecast', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_ebitda_forecast(self, **kwargs):
         """Prévision EBITDA"""
         return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
 
-    @http.route('/api/ecommerce/reporting/bfr/forecast', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/ecommerce/reporting/bfr/forecast', type='http', auth='public', methods=['GET'], csrf=False)
     def get_reporting_bfr_forecast(self, **kwargs):
         """Prévision BFR"""
         return request.make_json_response({'forecast': [], 'confidence': {'lower': [], 'upper': []}})
