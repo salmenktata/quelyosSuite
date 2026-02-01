@@ -86,6 +86,7 @@ export const SubscriptionSchema = z.object({
   price: z.number().nonnegative(),
   start_date: z.string().nullable().optional(),
   trial_end_date: z.string().nullable().optional(),
+  trial_days: z.number().nonnegative().optional(),
   next_billing_date: z.string().nullable().optional(),
   end_date: z.string().nullable().optional(),
   stripe_subscription_id: z.union([z.string(), z.literal(false)]).nullable().optional(),
@@ -159,6 +160,7 @@ export const PlanSchema = z.object({
   max_users: z.number().nonnegative(),
   max_products: z.number().nonnegative(),
   max_orders_per_year: z.number().nonnegative(),
+  trial_days: z.number().nonnegative(),
   features: z.object({
     wishlist_enabled: z.boolean().optional(),
     reviews_enabled: z.boolean().optional(),

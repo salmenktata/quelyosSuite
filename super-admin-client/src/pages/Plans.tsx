@@ -10,7 +10,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Package, Plus, Edit2, Archive, Check, X, Loader2, Users, ShoppingBag, Receipt, Shield } from 'lucide-react'
+import { Package, Plus, Edit2, Archive, Check, X, Loader2, Users, ShoppingBag, Receipt, Shield, Clock } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { ModuleGroupSelector } from '@/components/common'
 import { useToast } from '@/hooks/useToast'
@@ -83,6 +83,7 @@ interface PlanFormData {
   max_users: number
   max_products: number
   max_orders_per_year: number
+  trial_days: number
   features: Plan['features']
   group_ids: number[]
 }
@@ -325,6 +326,15 @@ function PlanCard({
             {plan.max_orders_per_year === 0 ? 'Commandes illimitées' : `${plan.max_orders_per_year} commandes/an`}
           </span>
         </div>
+
+        {/* Trial Period */}
+        <div className="flex items-center gap-3">
+          <Clock className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">
+            {plan.trial_days} jour{plan.trial_days > 1 ? 's' : ''} d&apos;essai
+          </span>
+        </div>
+
         {plan.group_ids && plan.group_ids.length > 0 && (
           <div className="flex items-center gap-3">
             <Shield className="w-4 h-4 text-gray-400" />
@@ -408,6 +418,7 @@ function PlanModal({
     max_users: plan?.max_users || 5,
     max_products: plan?.max_products || 100,
     max_orders_per_year: plan?.max_orders_per_year || 1000,
+    trial_days: plan?.trial_days || 14,
     features: plan?.features || DEFAULT_FEATURES,
     group_ids: plan?.group_ids?.map((g) => g.id) || [],
   })
@@ -548,6 +559,28 @@ function PlanModal({
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
+            </div>
+
+            {/* Trial Period */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Période d&apos;essai (jours)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={365}
+                value={form.trial_days}
+                onChange={(e) => setForm((prev) => ({
+                  ...prev,
+                  trial_days: parseInt(e.target.value) || 14
+                }))}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500"
+                placeholder="14"
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Nombre de jours d&apos;essai gratuit avant facturation (par défaut : 14)
+              </p>
             </div>
           </div>
 

@@ -11,6 +11,7 @@
             <field name="max_users">1</field>
             <field name="max_products">1000</field>
             <field name="max_orders_per_year">5000</field>
+            <field name="trial_days">7</field>
             <field name="support_level">email_48h</field>
             <field name="description">Parfait pour démarrer votre activité e-commerce</field>
             <field name="is_popular" eval="False"/>
@@ -44,6 +45,7 @@
             <field name="max_users">5</field>
             <field name="max_products">10000</field>
             <field name="max_orders_per_year">50000</field>
+            <field name="trial_days">14</field>
             <field name="support_level">email_chat_24h</field>
             <field name="description">Pour les e-commerçants en croissance</field>
             <field name="is_popular" eval="True"/>
@@ -84,6 +86,7 @@
             <field name="max_users">0</field> <!-- 0 = illimité -->
             <field name="max_products">0</field> <!-- 0 = illimité -->
             <field name="max_orders_per_year">0</field> <!-- 0 = illimité -->
+            <field name="trial_days">30</field>
             <field name="support_level">dedicated_2h</field>
             <field name="description">Solutions sur-mesure pour grandes entreprises</field>
             <field name="is_popular" eval="False"/>
@@ -105,7 +108,7 @@
                 "Audit sécurité",
                 "Backup quotidien dédié"
             ]</field>
-            <!-- Droits d'accès Enterprise : Tous les modules (Manager) + HR + POS -->
+            <!-- Droits d'accès Enterprise : Tous les modules (Manager) + HR + POS + Maintenance -->
             <field name="group_ids" eval="[(6, 0, [
                 ref('group_quelyos_home_manager'),
                 ref('group_quelyos_store_manager'),
@@ -114,7 +117,8 @@
                 ref('group_quelyos_marketing_manager'),
                 ref('group_quelyos_finance_manager'),
                 ref('group_quelyos_hr_manager'),
-                ref('group_quelyos_pos_manager')
+                ref('group_quelyos_pos_manager'),
+                ref('group_quelyos_maintenance_manager')
             ])]"/>
         </record>
 

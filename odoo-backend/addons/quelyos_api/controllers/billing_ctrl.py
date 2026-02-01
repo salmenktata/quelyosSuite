@@ -573,6 +573,7 @@ class BillingController(SuperAdminController):
             'price': subscription.price,
             'start_date': subscription.start_date.isoformat() if subscription.start_date else None,
             'trial_end_date': subscription.trial_end_date.isoformat() if subscription.trial_end_date else None,
+            'trial_days': subscription.plan_id.trial_days if subscription.plan_id else 14,
             'next_billing_date': subscription.next_billing_date.isoformat() if subscription.next_billing_date else None,
             'end_date': subscription.end_date.isoformat() if subscription.end_date else None,
             'stripe_subscription_id': subscription.stripe_subscription_id,

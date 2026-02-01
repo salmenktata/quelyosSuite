@@ -63,8 +63,12 @@
                         </group>
                         <group>
                             <field name="max_orders_per_year"/>
-                            <field name="support_level"/>
+                            <field name="trial_days"/>
                         </group>
+                    </group>
+
+                    <group string="Support">
+                        <field name="support_level"/>
                     </group>
 
                     <group string="Marketing">

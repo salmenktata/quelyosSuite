@@ -142,6 +142,13 @@ class Subscription(models.Model):
         store=True
     )
 
+    trial_days = fields.Integer(
+        related='plan_id.trial_days',
+        string='Trial Days',
+        readonly=True,
+        store=False
+    )
+
     # Champs calculés pour les indicateurs
     users_usage_percentage = fields.Float(
         string='% Utilisation Utilisateurs',
@@ -397,12 +404,14 @@ class Subscription(models.Model):
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('subscription') or _('New')
 
-            # Si période d'essai et pas de date de fin définie, calculer 14 jours
+            # Si période d'essai et pas de date de fin définie, utiliser trial_days du plan
             if vals.get('state') == 'trial' and not vals.get('trial_end_date'):
                 start = vals.get('start_date', fields.Date.today())
                 if isinstance(start, str):
                     start = fields.Date.from_string(start)
-                vals['trial_end_date'] = start + timedelta(days=14)
+                plan = self.env['quelyos.subscription.plan'].browse(vals.get('plan_id'))
+                trial_days = plan.trial_days if plan else 14  # Fallback 14
+                vals['trial_end_date'] = start + timedelta(days=trial_days)
 
         subscriptions = super().create(vals_list)
 

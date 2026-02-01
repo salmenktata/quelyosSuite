@@ -69,6 +69,13 @@ class SubscriptionPlan(models.Model):
         help='Nombre maximum de commandes par année civile (0 = illimité)'
     )
 
+    trial_days = fields.Integer(
+        string='Trial Period (Days)',
+        default=14,
+        help='Number of days for free trial period. Default: 14 days',
+        required=True,
+    )
+
     # Fonctionnalités
     features = fields.Text(
         string='Fonctionnalités (JSON)',
@@ -168,6 +175,15 @@ class SubscriptionPlan(models.Model):
                 raise ValidationError(_('Le nombre max de produits ne peut pas être négatif.'))
             if plan.max_orders_per_year < 0:
                 raise ValidationError(_('Le nombre max de commandes ne peut pas être négatif.'))
+
+    @api.constrains('trial_days')
+    def _check_trial_days(self):
+        """Vérifie que la période d'essai est valide."""
+        for record in self:
+            if record.trial_days < 0:
+                raise ValidationError(_("Trial period must be non-negative."))
+            if record.trial_days > 365:
+                raise ValidationError(_("Trial period cannot exceed 365 days."))
 
     def get_features_list(self):
         """

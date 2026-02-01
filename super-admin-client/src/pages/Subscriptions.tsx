@@ -141,19 +141,31 @@ export function Subscriptions() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          sub.state === 'active'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                            : sub.state === 'trial'
-                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                              : sub.state === 'past_due'
-                                ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        {sub.state}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            sub.state === 'active'
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                              : sub.state === 'trial'
+                                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                : sub.state === 'past_due'
+                                  ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                          }`}
+                        >
+                          {sub.state}
+                        </span>
+                        {sub.state === 'trial' && sub.trial_end_date && (() => {
+                          const daysRemaining = Math.ceil(
+                            (new Date(sub.trial_end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                          )
+                          return daysRemaining > 0 ? (
+                            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                              {daysRemaining} jour{daysRemaining > 1 ? 's' : ''} restant{daysRemaining > 1 ? 's' : ''}
+                            </span>
+                          ) : null
+                        })()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{sub.billing_cycle}</td>
                     <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
