@@ -162,6 +162,7 @@ const FinanceReportingDataQuality = lazy(() => import('./pages/finance/reporting
 
 // Lazy loaded pages - Finance Settings
 const SettingsLayoutWrapper = lazy(() => import('./pages/finance/settings/SettingsLayoutWrapper'))
+const FinanceSettings = lazy(() => import('./pages/finance/settings/page'))
 const FinanceSettingsCategories = lazy(() => import('./pages/finance/settings/categories/page'))
 const FinanceSettingsFlux = lazy(() => import('./pages/finance/settings/flux/page'))
 const FinanceSettingsNotifications = lazy(() => import('./pages/finance/settings/notifications/page'))

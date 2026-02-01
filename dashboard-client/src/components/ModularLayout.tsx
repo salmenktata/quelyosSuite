@@ -27,6 +27,7 @@ import { useMenuState } from '../hooks/useMenuState'
 import { useAutoOpenMenus } from '../hooks/useAutoOpenMenus'
 import { useSectionState } from '../hooks/useSectionState'
 import { useNavigationHistory } from '../hooks/useNavigationHistory'
+import { useFinanceTabs } from '../hooks/useFinanceTabs'
 
 // Components
 import { Button } from './common/Button'
@@ -35,6 +36,7 @@ import { AppLauncher } from './navigation/AppLauncher'
 import { TopNavbar } from './navigation/TopNavbar'
 import { QuickAccess } from './navigation/QuickAccess'
 import { CommandPalette } from './navigation/CommandPalette'
+import { SectionTabs } from './navigation/SectionTabs'
 
 // Config & Types
 import { MODULES, type Module, type ModuleId } from '@/config/modules'
@@ -110,6 +112,12 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const { openSections: _openSections, toggleSection: _toggleSection, isOpenSection: _isOpenSection } = useSectionState(
     currentModule.id,
     currentModule.sections
+  )
+
+  // Finance tabs logic
+  const { activeTab, setActiveTab, visibleSections } = useFinanceTabs(
+    currentModule.sections,
+    location.pathname
   )
 
   // Navigation history & favorites
@@ -215,7 +223,21 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 isActive={isActive}
               />
 
-              {currentModule.sections.map((section) => (
+              {/* Finance Tabs (seulement pour le module Finance) */}
+              {currentModule.id === 'finance' && (
+                <SectionTabs
+                  moduleId="finance"
+                  tabs={[
+                    { id: 'gestion', label: 'Gestion', count: 5 },
+                    { id: 'analyse', label: 'Analyse', count: 9 },
+                    { id: 'parametres', label: 'Paramètres', count: 7 }
+                  ]}
+                  activeTab={activeTab}
+                  onTabChange={setActiveTab}
+                />
+              )}
+
+              {(currentModule.id === 'finance' ? visibleSections : currentModule.sections).map((section) => (
                 <div key={section.title}>
                   {/* Header (masqué en mode collapsed) */}
                   {!isSidebarCollapsed && (

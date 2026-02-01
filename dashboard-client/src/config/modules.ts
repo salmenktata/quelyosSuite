@@ -98,6 +98,7 @@ export interface MenuItem {
 export interface MenuSection {
   title: string
   items: MenuItem[]
+  tabGroup?: string
 }
 
 export interface Module {
@@ -154,12 +155,14 @@ export const MODULES: Module[] = [
     sections: [
       {
         title: 'Tableau de bord',
+        tabGroup: 'gestion',
         items: [
           { name: 'Vue d\'ensemble', path: '/finance', icon: LayoutDashboard },
         ],
       },
       {
         title: 'Comptes',
+        tabGroup: 'gestion',
         items: [
           { name: 'Tous les comptes', path: '/finance/accounts', icon: Wallet },
           { name: 'Portefeuilles', path: '/finance/portfolios', icon: Briefcase },
@@ -167,6 +170,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Transactions',
+        tabGroup: 'gestion',
         items: [
           { name: 'Dépenses', path: '/finance/expenses', icon: ArrowDownCircle },
           { name: 'Revenus', path: '/finance/incomes', icon: ArrowUpCircle },
@@ -174,6 +178,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Planification',
+        tabGroup: 'analyse',
         items: [
           { name: 'Budgets', path: '/finance/budgets', icon: PieChart },
           { name: 'Trésorerie', path: '/finance/forecast', icon: TrendingUp },
@@ -183,6 +188,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Rapports',
+        tabGroup: 'analyse',
         items: [
           { name: 'Hub Rapports', path: '/finance/reporting', icon: BarChart3 },
           { name: 'Trésorerie', path: '/finance/reporting/cashflow', icon: Waves },
@@ -193,6 +199,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Configuration',
+        tabGroup: 'parametres',
         items: [
           { name: 'Catégories', path: '/finance/categories', icon: Tag },
           { name: 'Fournisseurs', path: '/finance/suppliers', icon: Users },
