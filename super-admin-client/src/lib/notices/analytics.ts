@@ -3,7 +3,7 @@
  * Système léger de tracking utilisation notices (localStorage + API optionnelle)
  */
 
-import { logger } from '@quelyos/logger';
+import { logger } from '@/lib/logger';
 
 export interface NoticeAnalytics {
   pageId: string;

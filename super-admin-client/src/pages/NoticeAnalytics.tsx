@@ -15,7 +15,7 @@ import {
 import { DownloadIcon, TrendingUpIcon, TrendingDownIcon, MinusIcon } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
-export default function NoticeAnalyticsPage() {
+export function NoticeAnalytics() {
   const [analytics, setAnalytics] = useState<Record<string, NoticeAnalytics>>({});
   const [sortBy, setSortBy] = useState<'views' | 'feedback' | 'helpfulness'>('views');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');

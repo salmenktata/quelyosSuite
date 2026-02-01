@@ -5,6 +5,8 @@ export type { ButtonProps } from './Button'
 export { Badge } from './Badge'
 export type { BadgeProps } from './Badge'
 
+export { Breadcrumbs } from './Breadcrumbs'
+
 export { Input } from './Input'
 export type { InputProps } from './Input'
 
