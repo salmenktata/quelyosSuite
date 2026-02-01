@@ -314,7 +314,7 @@ export default function AccountWishlistPage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {wishlist.map((item) => {
-                const mainImage = item.product.images?.find(img => img.is_main)?.url || item.product.images?.[0]?.url || '/placeholder-product.svg';
+                const mainImage = item.product?.images?.find(img => img.is_main)?.url || item.product?.images?.[0]?.url || '/placeholder-product.svg';
                 return (
                 <div key={item.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
                   {/* Image */}
