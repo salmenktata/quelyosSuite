@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -69,8 +70,9 @@ export default function UnitsSettingsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "Stock", href: "/stock" },
           { label: "Paramètres", href: "/stock/settings" },
@@ -167,6 +169,6 @@ export default function UnitsSettingsPage() {
       <Button variant="secondary" icon={<Plus className="h-4 w-4" />} className="w-full">
         Ajouter une catégorie d'unités
       </Button>
-    </div>
+    </Layout>
   );
 }

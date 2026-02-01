@@ -1,7 +1,6 @@
-
-
 import { useEffect, useState, useCallback } from "react";
 import { Loader2, Bell, FileJson, Download, AlertCircle, CheckCircle2, Gauge } from "lucide-react";
+import { Layout } from '@/components/Layout'
 import { Switch } from "@/components/ui/Switch";
 import { API_BASE_URL } from "@/lib/api-base";
 import { logger } from '@quelyos/logger';
@@ -127,14 +126,17 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 text-indigo-400 animate-spin" />
-      </div>
+      <Layout>
+        <div className="min-h-[400px] flex items-center justify-center">
+          <Loader2 className="h-8 w-8 text-indigo-400 animate-spin" />
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-3 mt-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Email notifications */}
@@ -290,6 +292,6 @@ export default function NotificationsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

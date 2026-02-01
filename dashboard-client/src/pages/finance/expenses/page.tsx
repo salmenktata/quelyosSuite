@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
 import { financeNotices } from '@/lib/notices'

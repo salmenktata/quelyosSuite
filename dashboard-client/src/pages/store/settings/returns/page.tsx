@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -39,24 +40,27 @@ export default function ReturnsSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Breadcrumbs
-          items={[
-            { label: "Boutique", href: "/store" },
-            { label: "Paramètres", href: "/store/settings" },
-            { label: "Retours & Garantie", href: "/store/settings/returns" },
-          ]}
-        />
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      <Layout>
+        <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Boutique", href: "/store" },
+              { label: "Paramètres", href: "/store/settings" },
+              { label: "Retours & Garantie", href: "/store/settings/returns" },
+            ]}
+          />
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "Boutique", href: "/store" },
           { label: "Paramètres", href: "/store/settings" },
@@ -179,6 +183,6 @@ export default function ReturnsSettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

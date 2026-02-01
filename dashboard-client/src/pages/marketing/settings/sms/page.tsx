@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Badge } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";

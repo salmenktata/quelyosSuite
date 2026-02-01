@@ -8,8 +8,13 @@
  * - Tags personnalisés pour classification
  * - Validation et enregistrement
  */
+import { Layout } from '@/components/Layout'
 import { TransactionFormPage } from '@/components/finance/transactions/TransactionFormPage'
 
 export default function ExpensesNewPage() {
-  return <TransactionFormPage transactionType="expense" />
+  return (
+    <Layout>
+      <TransactionFormPage transactionType="expense" />
+    </Layout>
+  )
 }

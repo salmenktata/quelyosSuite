@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -92,14 +93,17 @@ export default function PaymentMethodsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600 dark:text-indigo-400" />
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="w-8 h-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="space-y-6">
       <Breadcrumbs
         items={[
           { label: "Store", href: "/store" },
@@ -449,6 +453,6 @@ function ConfigModal({
           </div>
         </form>
       </div>
-    </div>
+    </Layout>
   );
 }

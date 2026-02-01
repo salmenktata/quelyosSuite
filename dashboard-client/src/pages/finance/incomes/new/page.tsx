@@ -8,8 +8,13 @@
  * - Tags personnalisés pour classification
  * - Validation et enregistrement
  */
+import { Layout } from '@/components/Layout'
 import { TransactionFormPage } from '@/components/finance/transactions/TransactionFormPage'
 
 export default function IncomesNewPage() {
-  return <TransactionFormPage transactionType="income" />
+  return (
+    <Layout>
+      <TransactionFormPage transactionType="income" />
+    </Layout>
+  )
 }

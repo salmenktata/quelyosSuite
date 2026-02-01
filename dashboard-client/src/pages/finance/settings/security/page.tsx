@@ -1,6 +1,5 @@
-
-
 import { useState, useEffect } from "react";
+import { Layout } from '@/components/Layout'
 import { useAuth } from "@/lib/finance/compat/auth";
 import { api } from "@/lib/finance/api";
 import {
@@ -204,7 +203,8 @@ export default function SecurityPage() {
   const strengthLabels = ["Très faible", "Faible", "Moyen", "Bon", "Fort", "Excellent"];
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Password Change */}
         <section className="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl shadow-xl space-y-6">
@@ -571,6 +571,6 @@ export default function SecurityPage() {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }

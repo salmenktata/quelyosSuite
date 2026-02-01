@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import {
   Settings,
@@ -60,8 +61,9 @@ const settingsGroups = [
 
 export default function StockSettingsOverviewPage() {
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "Stock", href: "/stock" },
           { label: "Paramètres", href: "/stock/settings" },
@@ -129,6 +131,6 @@ export default function StockSettingsOverviewPage() {
           </div>
         ))}
       </div>
-    </div>
+    </Layout>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -72,24 +73,27 @@ export default function ContactSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Breadcrumbs
-          items={[
-            { label: "Boutique", href: "/store" },
-            { label: "Paramètres", href: "/store/settings" },
-            { label: "Contact & Support", href: "/store/settings/contact" },
-          ]}
-        />
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      <Layout>
+        <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Boutique", href: "/store" },
+              { label: "Paramètres", href: "/store/settings" },
+              { label: "Contact & Support", href: "/store/settings/contact" },
+            ]}
+          />
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <Breadcrumbs
+    <Layout>
+      <div className="space-y-6">
+        <Breadcrumbs
         items={[
           { label: "Boutique", href: "/store" },
           { label: "Paramètres", href: "/store/settings" },
@@ -202,6 +206,6 @@ export default function ContactSettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

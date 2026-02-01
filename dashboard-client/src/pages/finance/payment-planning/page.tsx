@@ -1,3 +1,4 @@
+import { Layout } from '@/components/Layout'
 import PaymentPlanningPage from "@/components/finance/suppliers/PaymentPlanningPage";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function PaymentPlanningRoute() {
-  return <PaymentPlanningPage />;
+  return (
+    <Layout>
+      <PaymentPlanningPage />
+    </Layout>
+  );
 }

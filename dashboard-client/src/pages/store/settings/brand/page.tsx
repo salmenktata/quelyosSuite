@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
@@ -256,23 +257,26 @@ export default function BrandSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Breadcrumbs
-          items={[
-            { label: "Boutique", href: "/store" },
-            { label: "Paramètres", href: "/store/settings" },
-            { label: "Marque & Identité", href: "/store/settings/brand" },
-          ]}
-        />
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      <Layout>
+        <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Boutique", href: "/store" },
+              { label: "Paramètres", href: "/store/settings" },
+              { label: "Marque & Identité", href: "/store/settings/brand" },
+            ]}
+          />
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="space-y-6">
       <Breadcrumbs
         items={[
           { label: "Boutique", href: "/store" },
@@ -727,6 +731,6 @@ export default function BrandSettingsPage() {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }

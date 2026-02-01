@@ -8,6 +8,7 @@
  * - Contacts et notes
  * - Validation formulaire
  */
+import { Layout } from '@/components/Layout'
 import SupplierForm from '@/components/finance/suppliers/SupplierForm'
 
 export const metadata = {
@@ -16,5 +17,9 @@ export const metadata = {
 }
 
 export default function NewSupplierPage() {
-  return <SupplierForm mode="create" />
+  return (
+    <Layout>
+      <SupplierForm mode="create" />
+    </Layout>
+  )
 }
