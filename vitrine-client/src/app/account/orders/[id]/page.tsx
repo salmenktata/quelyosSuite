@@ -13,7 +13,7 @@ import { LoadingPage } from '@/components/common/Loading';
 import { Button } from '@/components/common/Button';
 import { formatPrice } from '@/lib/utils/formatting';
 import { backendClient } from '@/lib/backend/client';
-import type { Order } from '@quelyos/types';
+import type { OrderDetail } from '@quelyos/types';
 import { logger } from '@/lib/logger';
 
 const orderStates = {
@@ -29,7 +29,7 @@ export default function OrderDetailPage() {
   const params = useParams();
   const orderId = params.id as string;
   const { isAuthenticated } = useAuthStore();
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

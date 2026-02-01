@@ -263,6 +263,12 @@ export interface Order {
   write_date?: string | null
   invoice_status?: string
   delivery_status?: string
+  line_count?: number
+  total?: number // Alias for amount_total
+  currency?: {
+    symbol: string
+    name?: string
+  }
 }
 
 /**
