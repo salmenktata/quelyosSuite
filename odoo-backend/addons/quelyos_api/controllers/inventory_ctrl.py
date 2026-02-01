@@ -765,10 +765,13 @@ class QuelyosInventoryAPI(BaseController):
         """Préparer un inventaire physique - Récupérer liste produits avec stock actuel"""
         try:
             # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             category_id = params.get('category_id')  # Filtrer par catégorie (optionnel)
@@ -830,10 +833,13 @@ class QuelyosInventoryAPI(BaseController):
         """Valider un inventaire physique - Appliquer les ajustements de stock en masse"""
         try:
             # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             adjustments = params.get('adjustments', [])  # Liste des ajustements : [{'product_id': int, 'new_qty': float}, ...]
@@ -2463,11 +2469,10 @@ class QuelyosInventoryAPI(BaseController):
     def get_stock_valuation_by_category(self, **kwargs):
         """Rapport de valorisation du stock par catégorie produit (coût standard)"""
         try:
-            # TODO PRODUCTION: Réactiver auth admin
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             params = self._get_params()
             warehouse_id = params.get('warehouse_id')
@@ -2593,10 +2598,13 @@ class QuelyosInventoryAPI(BaseController):
         """Récupérer les produits en stock bas (admin uniquement)"""
         try:
             # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             limit = params.get('limit', 20)
@@ -2667,10 +2675,13 @@ class QuelyosInventoryAPI(BaseController):
         """Récupérer les produits en surstock (admin uniquement)"""
         try:
             # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             limit = params.get('limit', 20)
@@ -2868,9 +2879,13 @@ class QuelyosInventoryAPI(BaseController):
             total: Nombre total
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {'success': False, 'error': 'Accès refusé.'}
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {'success': False, 'error': 'Accès refusé.'}
 
             limit = params.get('limit', 50)
             offset = params.get('offset', 0)
@@ -3073,9 +3088,13 @@ class QuelyosInventoryAPI(BaseController):
             Picking (transfert) créé
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {'success': False, 'error': 'Accès refusé.'}
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {'success': False, 'error': 'Accès refusé.'}
 
             product_id = params.get('product_id')
             quantity = params.get('quantity')
@@ -3290,9 +3309,13 @@ class QuelyosInventoryAPI(BaseController):
             locations: Liste des locations
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {'success': False, 'error': 'Accès refusé.'}
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {'success': False, 'error': 'Accès refusé.'}
 
             warehouse_id = params.get('warehouse_id')
             usage = params.get('usage')
@@ -3351,9 +3374,13 @@ class QuelyosInventoryAPI(BaseController):
             Picking validé
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {'success': False, 'error': 'Accès refusé.'}
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {'success': False, 'error': 'Accès refusé.'}
 
             Picking = request.env['stock.picking'].sudo()
             picking = Picking.browse(picking_id)
@@ -3412,9 +3439,13 @@ class QuelyosInventoryAPI(BaseController):
             Picking annulé
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {'success': False, 'error': 'Accès refusé.'}
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {'success': False, 'error': 'Accès refusé.'}
 
             Picking = request.env['stock.picking'].sudo()
             picking = Picking.browse(picking_id)
