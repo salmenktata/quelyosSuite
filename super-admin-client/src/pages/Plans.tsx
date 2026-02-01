@@ -17,21 +17,6 @@ import { useToast } from '@/hooks/useToast'
 import { z } from 'zod'
 import { validateApiResponse } from '@/lib/validators'
 
-// Définition des 9 modules Quelyos (même liste que ModuleGroupSelector)
-const QUELYOS_MODULES = [
-  { key: 'home', label: 'Accueil' },
-  { key: 'finance', label: 'Finance' },
-  { key: 'store', label: 'Boutique' },
-  { key: 'stock', label: 'Stock' },
-  { key: 'crm', label: 'CRM' },
-  { key: 'marketing', label: 'Marketing' },
-  { key: 'hr', label: 'RH' },
-  { key: 'support', label: 'Support' },
-  { key: 'pos', label: 'Caisse' },
-] as const
-
-type ModuleKey = (typeof QUELYOS_MODULES)[number]['key']
-
 // Schémas Zod pour les groupes de sécurité
 const SecurityGroupSchema = z.object({
   id: z.number(),
@@ -103,7 +88,6 @@ interface PlanFormData {
   max_products: number
   max_orders_per_year: number
   trial_days: number
-  enabled_modules: string[]
   is_default: boolean
   features: Plan['features']
   group_ids: number[]
@@ -461,28 +445,6 @@ function PlanCard({
         )}
       </div>
 
-      {/* Modules activés */}
-      {plan.enabled_modules && plan.enabled_modules.length > 0 && (
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">
-            Modules activés ({plan.enabled_modules.length})
-          </h4>
-          <div className="flex flex-wrap gap-2">
-            {plan.enabled_modules.map((moduleKey) => {
-              const module = QUELYOS_MODULES.find((m) => m.key === moduleKey)
-              return module ? (
-                <span
-                  key={moduleKey}
-                  className="px-2 py-1 text-xs font-medium bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full"
-                >
-                  {module.label}
-                </span>
-              ) : null
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Features */}
       <div className="p-4 space-y-2 border-b border-gray-200 dark:border-gray-700">
         {Object.entries(plan.features).map(([key, enabled]) => (
@@ -611,7 +573,6 @@ function PlanModal({
     max_products: plan?.max_products || 100,
     max_orders_per_year: plan?.max_orders_per_year || 1000,
     trial_days: plan?.trial_days || 14,
-    enabled_modules: plan?.enabled_modules || ['home'],
     is_default: plan?.is_default || false,
     features: plan?.features || DEFAULT_FEATURES,
     group_ids: plan?.group_ids?.map((g) => g.id) || [],
@@ -795,39 +756,6 @@ function PlanModal({
               </label>
               <p className="mt-1 ml-7 text-xs text-gray-500 dark:text-gray-400">
                 Ce plan sera automatiquement assigné aux nouveaux tenants (un seul plan peut être par défaut)
-              </p>
-            </div>
-
-            {/* Modules activés */}
-            <div className="mt-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Modules activés
-              </h4>
-              <div className="grid grid-cols-3 gap-3">
-                {QUELYOS_MODULES.map((module) => (
-                  <label
-                    key={module.key}
-                    className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={form.enabled_modules.includes(module.key)}
-                      onChange={(e) => {
-                        const newModules = e.target.checked
-                          ? [...form.enabled_modules, module.key]
-                          : form.enabled_modules.filter((m) => m !== module.key)
-                        setForm((prev) => ({ ...prev, enabled_modules: newModules }))
-                      }}
-                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {module.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Sélectionnez les modules accessibles dans ce plan
               </p>
             </div>
           </div>

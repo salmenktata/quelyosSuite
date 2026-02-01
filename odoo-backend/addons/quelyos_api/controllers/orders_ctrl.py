@@ -20,11 +20,13 @@ class QuelyosOrdersAPI(BaseController):
     def get_orders_list(self, **kwargs):
         """Liste des commandes (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             limit = int(params.get('limit', 20))
@@ -214,11 +216,13 @@ class QuelyosOrdersAPI(BaseController):
     def update_order_status(self, order_id, **kwargs):
         """Changer le statut d'une commande (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             order = request.env['sale.order'].sudo().browse(order_id)
 
@@ -396,11 +400,13 @@ class QuelyosOrdersAPI(BaseController):
     def get_order_history(self, order_id, **kwargs):
         """Obtenir l'historique des modifications d'une commande (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             order = request.env['sale.order'].sudo().browse(order_id)
 
@@ -511,11 +517,13 @@ class QuelyosOrdersAPI(BaseController):
     def send_quotation_email(self, order_id, **kwargs):
         """Envoyer le devis par email au client"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             order = request.env['sale.order'].sudo().browse(order_id)
 
@@ -590,11 +598,13 @@ class QuelyosOrdersAPI(BaseController):
     def unlock_order(self, order_id, **kwargs):
         """Remettre la commande en brouillon"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             order = request.env['sale.order'].sudo().browse(order_id)
 
@@ -1000,11 +1010,13 @@ class QuelyosOrdersAPI(BaseController):
     def get_order_history(self, order_id, **kwargs):
         """Obtenir l'historique des modifications d'une commande (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             order = request.env['sale.order'].sudo().browse(order_id)
 

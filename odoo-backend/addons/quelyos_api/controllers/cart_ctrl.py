@@ -602,11 +602,13 @@ class QuelyosCartAPI(BaseController):
     def get_coupons_list(self, **kwargs):
         """Liste des coupons (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             limit = int(params.get('limit', 20))

@@ -93,10 +93,13 @@ class QuelyosCustomersAPI(BaseController):
         """Liste de tous les clients (admin uniquement) avec filtrage multi-tenant"""
         try:
             # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             tenant_id = params.get('tenant_id')

@@ -236,12 +236,10 @@ class QuelyosInventoryAPI(BaseController):
         - offset (int): Décalage pour pagination (défaut: 0)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Product = request.env['product.product'].sudo()
             Move = request.env['stock.move'].sudo()
@@ -479,12 +477,10 @@ class QuelyosInventoryAPI(BaseController):
                     headers=[('Content-Type', 'application/json')] + list(cors_headers.items())
                 )
 
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Move = request.env['stock.move'].sudo()
             params = self._get_http_params()
@@ -1666,12 +1662,10 @@ class QuelyosInventoryAPI(BaseController):
         - max_turnover (float): Filtrer par rotation maximale
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -1772,12 +1766,10 @@ class QuelyosInventoryAPI(BaseController):
             - cumulative: Données pour courbe de Pareto
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -1929,12 +1921,10 @@ class QuelyosInventoryAPI(BaseController):
             - recommendations: Suggestions réapprovisionnement
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             from datetime import datetime, timedelta
 
@@ -3939,12 +3929,10 @@ class QuelyosInventoryAPI(BaseController):
             - Routes d'entrepôt (Reception, Delivery, Cross-Dock, etc.)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Route = request.env['stock.route'].sudo()
 
@@ -4010,12 +3998,10 @@ class QuelyosInventoryAPI(BaseController):
             - Liste des règles pull
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Route = request.env['stock.route'].sudo()
             route = Route.browse(route_id)
@@ -4100,12 +4086,10 @@ class QuelyosInventoryAPI(BaseController):
             - Configuration (reception_steps, delivery_steps)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Warehouse = request.env['stock.warehouse'].sudo()
             warehouse = Warehouse.browse(warehouse_id)
@@ -4188,12 +4172,10 @@ class QuelyosInventoryAPI(BaseController):
             dict: Nouvelle configuration appliquée
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Warehouse = request.env['stock.warehouse'].sudo()
             params = self._get_params()
@@ -4277,12 +4259,10 @@ class QuelyosInventoryAPI(BaseController):
         - offset (int): Décalage pour pagination (défaut: 0)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -4379,12 +4359,10 @@ class QuelyosInventoryAPI(BaseController):
             - Historique des mouvements
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -4487,12 +4465,10 @@ class QuelyosInventoryAPI(BaseController):
             - Statistiques (nombre par statut)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Lot = request.env['stock.lot'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -4603,12 +4579,10 @@ class QuelyosInventoryAPI(BaseController):
             - Activation du tracking par lot
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Product = request.env['product.product'].sudo()
             product = Product.browse(product_id)
@@ -4663,12 +4637,10 @@ class QuelyosInventoryAPI(BaseController):
             Configuration mise à jour
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Product = request.env['product.product'].sudo()
             params = self._get_params()
@@ -4804,12 +4776,10 @@ class QuelyosInventoryAPI(BaseController):
             }
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Location = request.env['stock.location'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -4898,12 +4868,10 @@ class QuelyosInventoryAPI(BaseController):
             - Sous-emplacements (enfants directs)
         """
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Location = request.env['stock.location'].sudo()
             StockQuant = request.env['stock.quant'].sudo()
@@ -5005,12 +4973,10 @@ class QuelyosInventoryAPI(BaseController):
     def create_location(self, **kwargs):
         """Créer une nouvelle location (admin uniquement)"""
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Location = request.env['stock.location'].sudo()
             Warehouse = request.env['stock.warehouse'].sudo()
@@ -5106,12 +5072,10 @@ class QuelyosInventoryAPI(BaseController):
     def update_location(self, location_id, **kwargs):
         """Modifier une location existante (admin uniquement)"""
         try:
-            # SECURITE : Vérifier droits admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # error = self._require_admin()
-            # if error:
-            #     return error
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._require_admin()
+            if error:
+                return error
 
             Location = request.env['stock.location'].sudo()
             params = self._get_params()

@@ -1618,13 +1618,16 @@ class QuelyosProductsAPI(BaseController):
     def upload_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Upload des images pour une valeur d'attribut (admin)"""
         try:
-            # TODO PRODUCTION: Réactiver les permissions avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {
-            #         'success': False,
-            #         'error': 'Insufficient permissions'
-            #     }
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
 
             product = request.env['product.template'].sudo().browse(product_id)
             if not product.exists():
@@ -1767,13 +1770,16 @@ class QuelyosProductsAPI(BaseController):
     def reorder_attribute_value_images(self, product_id, ptav_id, **kwargs):
         """Réorganiser l'ordre des images d'une valeur d'attribut (admin)"""
         try:
-            # TODO PRODUCTION: Réactiver les permissions avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {
-            #         'success': False,
-            #         'error': 'Insufficient permissions'
-            #     }
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {
+                    'success': False,
+                    'error': 'Insufficient permissions'
+                }
 
             product = request.env['product.template'].sudo().browse(product_id)
             if not product.exists():
@@ -1973,11 +1979,13 @@ class QuelyosProductsAPI(BaseController):
     def add_product_attribute(self, product_id, **kwargs):
         """Ajouter un attribut à un produit (admin)"""
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -2110,11 +2118,13 @@ class QuelyosProductsAPI(BaseController):
     def delete_product_attribute(self, product_id, line_id, **kwargs):
         """Supprimer un attribut d'un produit (admin)"""
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -2156,11 +2166,13 @@ class QuelyosProductsAPI(BaseController):
         Odoo ne génère pas automatiquement les variantes lors de l'ajout d'attributs.
         """
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             product = request.env['product.template'].sudo().browse(product_id)
 
@@ -2450,10 +2462,13 @@ class QuelyosProductsAPI(BaseController):
     def upload_variant_images(self, product_id, variant_id, **kwargs):
         """Uploader des images pour une variante"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             variant = request.env['product.product'].sudo().browse(variant_id)
 
@@ -2551,10 +2566,13 @@ class QuelyosProductsAPI(BaseController):
     def reorder_variant_images(self, product_id, variant_id, **kwargs):
         """Réordonner les images d'une variante"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             image_ids = params.get('image_ids', [])
@@ -2816,11 +2834,13 @@ class QuelyosProductsAPI(BaseController):
     def move_category(self, category_id, **kwargs):
         """Déplacer une catégorie vers un nouveau parent (admin)"""
         try:
-            # Vérifier les permissions
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             category = request.env['product.category'].sudo().browse(category_id)
 

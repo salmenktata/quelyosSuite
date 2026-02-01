@@ -50,10 +50,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def create_delivery_method(self, **kwargs):
         """Creer une methode de livraison (admin uniquement)"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             name = params.get('name')
@@ -101,10 +104,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def get_delivery_method_detail(self, method_id, **kwargs):
         """Detail d'une methode de livraison (admin uniquement)"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             carrier = request.env['delivery.carrier'].sudo().browse(method_id)
             if not carrier.exists():
@@ -136,10 +142,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def update_delivery_method(self, method_id, **kwargs):
         """Mettre a jour une methode de livraison (admin uniquement)"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             carrier = request.env['delivery.carrier'].sudo().browse(method_id)
             if not carrier.exists():
@@ -185,10 +194,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def delete_delivery_method(self, method_id, **kwargs):
         """Supprimer une methode de livraison (admin uniquement)"""
         try:
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             carrier = request.env['delivery.carrier'].sudo().browse(method_id)
             if not carrier.exists():
@@ -522,11 +534,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def get_payment_transactions(self, **kwargs):
         """Liste des transactions de paiement (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             params = self._get_params()
             limit = int(params.get('limit', 20))
@@ -618,11 +632,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def get_payment_transaction_detail(self, transaction_id, **kwargs):
         """Détail d'une transaction de paiement (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             transaction = request.env['payment.transaction'].sudo().browse(transaction_id)
 
@@ -676,11 +692,13 @@ class QuelyosDeliveryPaymentAPI(BaseController):
     def refund_payment_transaction(self, transaction_id, **kwargs):
         """Rembourser une transaction de paiement (admin uniquement)"""
         try:
-            # Vérifier les permissions admin
-            # TODO PRODUCTION: Réactiver avec JWT (voir TODO_AUTH.md)
-            # if not request.env.user.has_group('base.group_system'):
-            #     return {'success': False, 'error': 'Insufficient permissions'}
-            pass
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('base.group_system'):
+                return {'success': False, 'error': 'Insufficient permissions'}
 
             transaction = request.env['payment.transaction'].sudo().browse(transaction_id)
 

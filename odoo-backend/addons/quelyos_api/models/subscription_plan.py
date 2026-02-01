@@ -76,11 +76,12 @@ class SubscriptionPlan(models.Model):
         required=True,
     )
 
-    # Modules activés
+    # Modules activés (computed depuis group_ids)
     enabled_modules = fields.Text(
         string='Modules activés (JSON)',
-        help='Liste des modules Quelyos activés pour ce plan (ex: ["home", "store", "crm"])',
-        default='["home"]'
+        help='Liste des modules Quelyos activés, calculée automatiquement depuis les groupes de sécurité',
+        compute='_compute_enabled_modules',
+        store=True
     )
 
     # Fonctionnalités
@@ -159,6 +160,40 @@ class SubscriptionPlan(models.Model):
         compute='_compute_subscription_count',
         store=False
     )
+
+    @api.depends('group_ids')
+    def _compute_enabled_modules(self):
+        """
+        Calcule automatiquement les modules activés depuis les groupes de sécurité.
+        Un module est activé si au moins un groupe (User ou Manager) est assigné.
+        """
+        # Mapping des modules Quelyos
+        MODULE_KEYS = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'support', 'pos']
+
+        for plan in self:
+            enabled = set()
+
+            # Parser les noms de groupes pour extraire les modules
+            for group in plan.group_ids:
+                name_lower = group.name.lower()
+                full_name_lower = (group.full_name or '').lower()
+
+                # Chercher quel module correspond à ce groupe
+                for module in MODULE_KEYS:
+                    # Pattern: "quelyos [module] user" ou "quelyos [module] manager"
+                    if f'quelyos {module} user' in name_lower or f'quelyos {module} user' in full_name_lower:
+                        enabled.add(module)
+                        break
+                    if f'quelyos {module} manager' in name_lower or f'quelyos {module} manager' in full_name_lower:
+                        enabled.add(module)
+                        break
+
+            # Si aucun module détecté, ajouter 'home' par défaut
+            if not enabled:
+                enabled.add('home')
+
+            # Stocker en JSON
+            plan.enabled_modules = json.dumps(sorted(list(enabled)))
 
     @api.depends('code')
     def _compute_subscription_count(self):
@@ -245,19 +280,13 @@ class SubscriptionPlan(models.Model):
     def get_enabled_modules_list(self):
         """
         Retourne la liste des modules activés sous forme de liste Python.
+        Le champ enabled_modules est calculé automatiquement depuis group_ids.
         """
         self.ensure_one()
         try:
             return json.loads(self.enabled_modules) if self.enabled_modules else ['home']
         except (json.JSONDecodeError, TypeError):
             return ['home']
-
-    def set_enabled_modules_list(self, modules_list):
-        """
-        Définit la liste des modules activés à partir d'une liste Python.
-        """
-        self.ensure_one()
-        self.enabled_modules = json.dumps(modules_list)
 
     def name_get(self):
         """Affichage personnalisé du plan."""
