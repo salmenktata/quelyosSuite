@@ -51,7 +51,7 @@ export default function Loyalty() {
   const [members, setMembers] = useState<LoyaltyMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editing, setEditing] = useState(false);
+  const [_editing, setEditing] = useState(false);
 
   useEffect(() => {
     fetchProgram();

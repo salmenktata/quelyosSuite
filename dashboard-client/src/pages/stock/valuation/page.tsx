@@ -41,8 +41,8 @@ const TIME_RANGES: TimeRange[] = [
 export default function StockValuationPage() {
   const { formatAmount } = useCurrency()
   const [selectedDate, setSelectedDate] = useState<string>(TIME_RANGES[0].value)
-  const [selectedWarehouse, setSelectedWarehouse] = useState<number | undefined>()
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>()
+  const [selectedWarehouse, _setSelectedWarehouse] = useState<number | undefined>()
+  const [selectedCategory, _setSelectedCategory] = useState<number | undefined>()
 
   const { data, isLoading, error } = useStockValuation({
     warehouse_id: selectedWarehouse,

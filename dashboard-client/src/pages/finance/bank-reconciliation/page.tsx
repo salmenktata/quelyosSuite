@@ -11,10 +11,19 @@ interface BankTransaction {
   amount: number
 }
 
+interface AccountMove {
+  name: string
+  date: string
+  amount: number
+}
+
 interface ReconciliationSuggestion {
   id: number
   bankTransaction: BankTransaction
-  confidence: number
+  accountMove: AccountMove
+  confidence?: number
+  score: number
+  reason: string
 }
 
 export default function BankReconciliationPage() {
@@ -22,8 +31,13 @@ export default function BankReconciliationPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/bank-reconciliation/suggest').then(res => {
-      if (res.data.success) setSuggestions(res.data.data.suggestions)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        suggestions: ReconciliationSuggestion[];
+      };
+    }>('/finance/bank-reconciliation/suggest').then(res => {
+      if (res.data.success && res.data.data) setSuggestions(res.data.data.suggestions)
       setLoading(false)
     })
   }, [])

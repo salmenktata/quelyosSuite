@@ -26,8 +26,13 @@ export default function BillsPage() {
   }, [])
 
   const fetchBills = async () => {
-    const response = await apiClient.post('/finance/bills')
-    if (response.data.success) setBills(response.data.data.bills)
+    const response = await apiClient.post<{
+      success: boolean;
+      data: {
+        bills: Bill[];
+      };
+    }>('/finance/bills')
+    if (response.data.success && response.data.data) setBills(response.data.data.bills)
     setLoading(false)
   }
 

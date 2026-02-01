@@ -26,21 +26,22 @@ export function useInvoices(params: UseInvoicesParams = {}) {
     try {
       setLoading(true)
       setError(null)
-      
-      const response = await apiClient.post('/finance/invoices', params)
-      
-      if (response.data.success) {
-        setInvoices(response.data.data.invoices)
-        
+
+      const response = await apiClient.post<{ success: boolean; error?: string; data: { invoices: Invoice[] } }>('/finance/invoices', params)
+
+      if (response.data.success && response.data.data) {
+        const invoicesList = response.data.data.invoices
+        setInvoices(invoicesList)
+
         // Calculer stats
-        const totalInvoiced = response.data.data.invoices.reduce(
+        const totalInvoiced = invoicesList.reduce(
           (sum: number, inv: Invoice) => sum + inv.amount_total,
           0
         )
-        const totalPaid = response.data.data.invoices
+        const totalPaid = invoicesList
           .filter((inv: Invoice) => inv.payment_state === 'paid')
           .reduce((sum: number, inv: Invoice) => sum + inv.amount_total, 0)
-        const totalPending = response.data.data.invoices
+        const totalPending = invoicesList
           .filter((inv: Invoice) => inv.payment_state === 'not_paid')
           .reduce((sum: number, inv: Invoice) => sum + inv.amount_residual, 0)
         

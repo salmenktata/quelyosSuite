@@ -38,7 +38,7 @@ export default function StockTurnoverPage() {
     end_date: new Date().toISOString().split('T')[0]
   })
   const [statusFilter, setStatusFilter] = useState<TurnoverStatus | 'all'>('all')
-  const [categoryFilter, setCategoryFilter] = useState<number | undefined>()
+  const [categoryFilter, _setCategoryFilter] = useState<number | undefined>()
   const [page, setPage] = useState(0)
   const limit = 50
 

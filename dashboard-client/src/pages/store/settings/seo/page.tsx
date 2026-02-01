@@ -73,18 +73,19 @@ export default function SeoSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      const configData = config as unknown as Record<string, string>;
       setSeoConfig({
-        site_title: (config).site_title || "",
-        meta_description: (config).meta_description || "",
-        meta_keywords: (config).meta_keywords || "",
-        og_image_url: (config).og_image_url || "",
+        site_title: configData.site_title || "",
+        meta_description: configData.meta_description || "",
+        meta_keywords: configData.meta_keywords || "",
+        og_image_url: configData.og_image_url || "",
       });
     }
   }, [config]);
 
   const handleSaveGlobal = async () => {
     try {
-      await updateConfigMutation.mutateAsync(seoConfig);
+      await updateConfigMutation.mutateAsync(seoConfig as unknown as Record<string, unknown>);
       toast.success("Paramètres SEO globaux mis à jour");
     } catch {
       logger.error("Erreur attrapée");

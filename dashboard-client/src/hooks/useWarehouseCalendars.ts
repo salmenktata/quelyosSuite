@@ -175,7 +175,14 @@ export function useCalendars(tenantId?: number) {
       setLoading(true);
       setError(null);
 
-      const result = await apiClient.post('/api/ecommerce/calendars', {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          calendars: ResourceCalendar[];
+          total_count: number;
+        };
+        error?: string;
+      }>('/api/ecommerce/calendars', {
         params: {
           tenant_id: tenantId,
           limit: 100,
@@ -222,7 +229,13 @@ export function useCreateCalendar() {
       setCreating(true);
       setError(null);
 
-      const result = await apiClient.post('/api/ecommerce/calendars/create', {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          calendar: ResourceCalendar;
+        };
+        error?: string;
+      }>('/api/ecommerce/calendars/create', {
         params: {
           name: data.name,
           tz: data.tz || 'UTC',

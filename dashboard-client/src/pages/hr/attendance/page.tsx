@@ -24,7 +24,7 @@ import {
 export default function AttendancePage() {
   const { tenant } = useMyTenant()
   const { data: todayData, isLoading, isError, refetch } = useTodayAttendance(tenant?.id || null)
-  const { mutate: checkIn } = useCheckIn()
+  const { mutate: _checkIn } = useCheckIn()
   const { mutate: checkOut } = useCheckOut()
 
   if (isLoading) {

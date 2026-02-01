@@ -28,8 +28,14 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
   const fetchReports = async () => {
     try {
       setLoading(true)
-      const response = await apiClient.post('/finance/tax-reports', params)
-      if (response.data.success) setReports(response.data.data.reports)
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          reports: TaxReport[];
+        };
+        error?: string;
+      }>('/finance/tax-reports', params)
+      if (response.data.success && response.data.data) setReports(response.data.data.reports)
       else setError(response.data.error || null)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erreur réseau')

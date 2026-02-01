@@ -28,8 +28,8 @@ import { logger } from '@quelyos/logger'
 
 export default function InventoryGroups() {
   const [stateFilter, setStateFilter] = useState<'all' | 'draft' | 'in_progress' | 'done' | 'cancel'>('all')
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null)
+  const [_isCreateModalOpen, _setIsCreateModalOpen] = useState(false)
+  const [_selectedGroupId, _setSelectedGroupId] = useState<number | null>(null)
 
   const { inventoryGroups, totalCount, loading, error, refetch } = useInventoryGroups({
     state: stateFilter === 'all' ? undefined : stateFilter,

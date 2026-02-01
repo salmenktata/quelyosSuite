@@ -92,7 +92,14 @@ export function useInventoryGroups(params: InventoryGroupsParams = {}) {
       setLoading(true);
       setError(null);
 
-      const result = await apiClient.post('/api/ecommerce/stock/inventory-groups', {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          inventory_groups: InventoryGroup[];
+          total_count: number;
+        };
+        error?: string;
+      }>('/api/ecommerce/stock/inventory-groups', {
         params: {
           tenant_id: params.tenant_id,
           state: params.state,
@@ -148,7 +155,13 @@ export function useInventoryGroupDetail(groupId: number | null) {
       setLoading(true);
       setError(null);
 
-      const result = await apiClient.post(`/api/ecommerce/stock/inventory-groups/${groupId}`, {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          inventory_group: InventoryGroupDetail;
+        };
+        error?: string;
+      }>(`/api/ecommerce/stock/inventory-groups/${groupId}`, {
         params: {},
       });
 
@@ -189,7 +202,13 @@ export function useCreateInventoryGroup() {
       setCreating(true);
       setError(null);
 
-      const result = await apiClient.post('/api/ecommerce/stock/inventory-groups/create', {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          inventory_group: InventoryGroup;
+        };
+        error?: string;
+      }>('/api/ecommerce/stock/inventory-groups/create', {
         params: data,
       });
 

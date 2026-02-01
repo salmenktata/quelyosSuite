@@ -26,8 +26,8 @@ import { Plus, Calendar, Clock, MapPin } from 'lucide-react'
 import { logger } from '@quelyos/logger'
 
 export default function WarehouseCalendars() {
-  const [showCreateCalendar, setShowCreateCalendar] = useState(false)
-  const [showDeliverySimulator, setShowDeliverySimulator] = useState(false)
+  const [_showCreateCalendar, _setShowCreateCalendar] = useState(false)
+  const [_showDeliverySimulator, _setShowDeliverySimulator] = useState(false)
 
   const { warehouses, loading: loadingWarehouses, error: errorWarehouses, refetch: refetchWarehouses } = useWarehouses()
   const { calendars, loading: loadingCalendars, error: errorCalendars, refetch: refetchCalendars } = useCalendars()
@@ -36,7 +36,7 @@ export default function WarehouseCalendars() {
   const { planDelivery, planning } = usePlanDeliveryDate()
 
   const warehousesWithCalendar = warehouses.filter((w) => w.calendar_id !== null)
-  const warehousesWithoutCalendar = warehouses.filter((w) => w.calendar_id === null)
+  const _warehousesWithoutCalendar = warehouses.filter((w) => w.calendar_id === null)
 
   const handleAssignCalendar = async (warehouseId: number, warehouseName: string) => {
     const calendarIdStr = prompt(

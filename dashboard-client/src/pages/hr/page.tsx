@@ -33,7 +33,7 @@ export default function HRDashboard() {
     data: dashboardData,
     isLoading,
     isError,
-    todayAttendance,
+    todayAttendance: _todayAttendance,
     pendingLeaves,
     expiringContracts,
   } = useHRDashboard(tenant?.id || null)

@@ -103,7 +103,7 @@ export default function ByAccountReportPage() {
     ? accounts.find((a) => a.id === selectedAccount)
     : null;
 
-  const typeLabels: Record<string, string> = {
+  const _typeLabels: Record<string, string> = {
     checking: "Compte courant",
     savings: "Épargne",
     business: "Professionnel",

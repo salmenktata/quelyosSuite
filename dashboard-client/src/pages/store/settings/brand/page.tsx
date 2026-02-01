@@ -76,7 +76,7 @@ export default function BrandSettingsPage() {
   const toast = useToast();
   const { data: tenant, isLoading: tenantLoading, refetch } = useMyTenant();
   const updateTenantMutation = useUpdateMyTenant();
-  const { data: config, isLoading: configLoading } = useSiteConfig();
+  const { data: _config, isLoading: configLoading } = useSiteConfig();
   const updateConfigMutation = useUpdateSiteConfig();
 
   const [activeTab, setActiveTab] = useState<"themes" | "colors" | "branding" | "typography">("themes");

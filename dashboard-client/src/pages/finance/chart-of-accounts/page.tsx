@@ -18,8 +18,13 @@ export default function ChartOfAccountsPage() {
   }, [])
 
   const fetchAccounts = async () => {
-    const response = await apiClient.post('/finance/accounts')
-    if (response.data.success) setAccounts(response.data.data.accounts)
+    const response = await apiClient.post<{
+      success: boolean;
+      data: {
+        accounts: any[];
+      };
+    }>('/finance/accounts')
+    if (response.data.success && response.data.data) setAccounts(response.data.data.accounts)
     setLoading(false)
   }
 

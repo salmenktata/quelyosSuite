@@ -148,7 +148,7 @@ export function filterTree(
   }
 
   const query = searchQuery.toLowerCase()
-  const filtered: LocationTreeNode[] = []
+  const _filtered: LocationTreeNode[] = []
 
   const traverse = (nodes: LocationTreeNode[]): LocationTreeNode[] => {
     const result: LocationTreeNode[] = []

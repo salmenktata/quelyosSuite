@@ -8,8 +8,13 @@ export default function CFODashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/cfo/kpis').then(res => {
-      if (res.data.success) setKpis(res.data.data.kpis)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        kpis: any;
+      };
+    }>('/finance/cfo/kpis').then(res => {
+      if (res.data.success && res.data.data) setKpis(res.data.data.kpis)
       setLoading(false)
     })
   }, [])

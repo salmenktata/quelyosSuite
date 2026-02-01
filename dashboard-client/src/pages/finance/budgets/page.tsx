@@ -23,6 +23,8 @@ interface Budget {
   period: string
   totalBudget: number
   totalActual: number
+  completionRate?: number
+  status?: string
 }
 
 export default function BudgetsPage() {
@@ -35,9 +37,14 @@ export default function BudgetsPage() {
     setLoading(true)
     setError(false)
     apiClient
-      .post('/finance/budgets')
+      .post<{
+        success: boolean;
+        data: {
+          budgets: Budget[];
+        };
+      }>('/finance/budgets')
       .then(res => {
-        if (res.data.success) setBudgets(res.data.data.budgets)
+        if (res.data.success && res.data.data) setBudgets(res.data.data.budgets)
         setLoading(false)
       })
       .catch(_err => {
