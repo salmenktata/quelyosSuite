@@ -94,7 +94,7 @@ const FINANCE_ROUTES = {
   IMPORT: '/finance/import',
   ARCHIVES: '/finance/archives',
   SETTINGS: '/finance/settings',
-  SETTINGS_SECURITY: '/finance/settings/security',
+  SETTINGS_SECURITY: '/settings/security',
   SETTINGS_FLUX: '/finance/settings/flux',
 }
 

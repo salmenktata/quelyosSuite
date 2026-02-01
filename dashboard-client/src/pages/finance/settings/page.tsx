@@ -3,7 +3,7 @@
  *
  * Fonctionnalités :
  * - Vue d'ensemble organisée par groupes de paramètres (Configuration, Données, Abonnement, Préférences)
- * - Navigation vers sous-pages de configuration (Devise, TVA, Catégories, Flux, Sécurité, etc.)
+ * - Navigation vers sous-pages de configuration (Devise, TVA, Flux, Sécurité, etc.)
  * - Mode Démo : activation/désactivation avec 110 transactions, 5 comptes, 3 portefeuilles fictifs
  * - Protection contre activation démo si données réelles existent
  * - Confirmation avant activation/désactivation du mode démo
@@ -23,7 +23,6 @@ import {
   StopCircle,
   AlertTriangle,
   Receipt,
-  Tag,
   CreditCard
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/finance/ConfirmDialog";
@@ -39,14 +38,8 @@ const settingsGroups = [
       {
         title: "TVA & fiscalité",
         desc: "Activer la TVA, mode HT/TTC, taux disponibles.",
-        href: "/finance/settings/tva",
+        href: "/settings/tva",
         icon: Receipt,
-      },
-      {
-        title: "Catégories",
-        desc: "Gérer les catégories de revenus et dépenses.",
-        href: "/finance/settings/categories",
-        icon: Tag,
       },
       {
         title: "Flux de paiement",

@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/finance/settings", label: "Vue d'ensemble" },
-  { href: "/finance/settings/categories", label: "Catégories" },
   { href: "/finance/settings/flux", label: "Flux de paiement" },
   { href: "/finance/settings/notifications", label: "Notifications & exports" },
   { href: "/finance/settings/integrations", label: "Intégrations" },

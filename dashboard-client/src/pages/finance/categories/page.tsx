@@ -3,51 +3,78 @@
  *
  * Fonctionnalités :
  * - Affichage des catégories de revenus et dépenses séparées
- * - Création de nouvelles catégories (nom + type)
+ * - Création de nouvelles catégories (nom + type + couleur)
+ * - Suppression de catégories existantes
+ * - Import automatique de catégories par défaut
  * - Distinction visuelle revenus (vert) vs dépenses (rouge)
  * - Compteur de catégories par type
- * - Formulaire inline de création avec validation
- * - États empty adaptés pour chaque section
  */
 
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Breadcrumbs, PageNotice, SkeletonTable, Button } from "@/components/common";
+import { Breadcrumbs, PageNotice, Button } from "@/components/common";
 import { api } from "@/lib/finance/api";
-import type { CreateCategoryRequest } from "@/types/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 
-import { Tag, Plus, AlertCircle, RefreshCw } from "lucide-react";
+import { Tag, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, Loader2 } from "lucide-react";
 import { financeNotices } from "@/lib/notices/finance-notices";
 import { logger } from '@quelyos/logger';
 
+type CategoryKind = "INCOME" | "EXPENSE";
+
 type Category = {
-  id: number;
+  id: string;
   name: string;
-  companyId: number;
-  kind: "INCOME" | "EXPENSE";
+  kind: CategoryKind;
+  color?: string;
+  transactionCount?: number;
+  createdAt?: string;
 };
+
+const DEFAULT_COLORS = [
+  "#ef4444", "#f97316", "#eab308", "#22c55e",
+  "#0ea5e9", "#8b5cf6", "#ec4899",
+];
+
+const DEFAULT_CATEGORIES: Array<{ name: string; kind: CategoryKind; color: string }> = [
+  { name: "Alimentation", kind: "EXPENSE", color: "#f97316" },
+  { name: "Transport", kind: "EXPENSE", color: "#0ea5e9" },
+  { name: "Logement", kind: "EXPENSE", color: "#8b5cf6" },
+  { name: "Santé", kind: "EXPENSE", color: "#ef4444" },
+  { name: "Loisirs", kind: "EXPENSE", color: "#ec4899" },
+  { name: "Shopping", kind: "EXPENSE", color: "#eab308" },
+  { name: "Factures", kind: "EXPENSE", color: "#64748b" },
+  { name: "Autres dépenses", kind: "EXPENSE", color: "#6b7280" },
+  { name: "Salaire", kind: "INCOME", color: "#22c55e" },
+  { name: "Freelance", kind: "INCOME", color: "#10b981" },
+  { name: "Investissements", kind: "INCOME", color: "#14b8a6" },
+  { name: "Remboursements", kind: "INCOME", color: "#06b6d4" },
+  { name: "Autres revenus", kind: "INCOME", color: "#84cc16" },
+];
 
 export default function CategoriesPage() {
   useRequireAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
-  const [kind, setKind] = useState<"INCOME" | "EXPENSE">("EXPENSE");
+  const [kind, setKind] = useState<CategoryKind>("EXPENSE");
+  const [color, setColor] = useState(DEFAULT_COLORS[0]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [seedingDefaults, setSeedingDefaults] = useState(false);
 
   async function fetchCategories() {
     try {
       setError(null);
       setLoading(true);
-      const data = await api<Category[]>("/finance/categories");
-      setCategories(data);
+      const data = await api<any>("/finance/categories");
+      const cats = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+      setCategories(cats);
     } catch (err) {
-      logger.error("Erreur:", err);
-      setError(
-        err instanceof Error ? err.message : "Erreur de chargement des catégories."
-      );
+      logger.error("Erreur chargement catégories:", err);
+      setError(err instanceof Error ? err.message : "Erreur de chargement des catégories.");
     } finally {
       setLoading(false);
     }
@@ -55,26 +82,76 @@ export default function CategoriesPage() {
 
   async function createCategory(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
+    if (!name.trim()) return;
+
+    setCreating(true);
     setError(null);
 
     try {
-      await api("/finance/categories", {
+      const newCategory = await api<Category>("/finance/categories", {
         method: "POST",
-        body: { name, kind } as CreateCategoryRequest,
+        body: { name, kind, color },
       });
 
+      setCategories([...categories, newCategory]);
       setName("");
+      setColor(DEFAULT_COLORS[0]);
       setKind("EXPENSE");
       setShowForm(false);
-      await fetchCategories();
     } catch (err) {
-      logger.error("Erreur:", err);
-      setError(
-        err instanceof Error ? err.message : "Impossible de créer la catégorie."
-      );
+      logger.error("Erreur création catégorie:", err);
+      setError(err instanceof Error ? err.message : "Impossible de créer la catégorie.");
     } finally {
-      setLoading(false);
+      setCreating(false);
+    }
+  }
+
+  async function deleteCategory(id: string) {
+    if (!confirm("Êtes-vous sûr de supprimer cette catégorie ?")) return;
+
+    setDeleting(id);
+    try {
+      await api(`/finance/categories/${id}`, { method: "DELETE" });
+      setCategories(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      logger.error("Erreur suppression catégorie:", err);
+      setError(err instanceof Error ? err.message : "Impossible de supprimer la catégorie.");
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  async function seedDefaultCategories() {
+    setSeedingDefaults(true);
+    setError(null);
+
+    try {
+      const existingNames = categories.map(c => c.name.toLowerCase());
+      const toCreate = DEFAULT_CATEGORIES.filter(
+        dc => !existingNames.includes(dc.name.toLowerCase())
+      );
+
+      const created: Category[] = [];
+      for (const cat of toCreate) {
+        try {
+          const newCat = await api<Category>("/finance/categories", {
+            method: "POST",
+            body: cat,
+          });
+          created.push(newCat);
+        } catch {
+          // Ignorer erreurs individuelles
+        }
+      }
+
+      if (created.length > 0) {
+        setCategories(prev => [...prev, ...created]);
+      }
+    } catch (err) {
+      logger.error("Erreur seed catégories:", err);
+      setError(err instanceof Error ? err.message : "Erreur lors de la création des catégories.");
+    } finally {
+      setSeedingDefaults(false);
     }
   }
 
@@ -82,8 +159,8 @@ export default function CategoriesPage() {
     fetchCategories();
   }, []);
 
-  const incomeCategories = categories.filter((c) => c.kind === "INCOME");
-  const expenseCategories = categories.filter((c) => c.kind === "EXPENSE");
+  const incomeCategories = categories.filter(c => c.kind === "INCOME");
+  const expenseCategories = categories.filter(c => c.kind === "EXPENSE");
 
   return (
     <Layout>
@@ -111,6 +188,16 @@ export default function CategoriesPage() {
             </div>
           </div>
           <div className="flex gap-3">
+            {categories.length === 0 && !loading && (
+              <Button
+                variant="secondary"
+                icon={<RefreshCw className="h-4 w-4" />}
+                onClick={seedDefaultCategories}
+                loading={seedingDefaults}
+              >
+                Catégories par défaut
+              </Button>
+            )}
             <Button
               variant="primary"
               icon={<Plus className="h-4 w-4" />}
@@ -131,140 +218,197 @@ export default function CategoriesPage() {
                 Créer une catégorie
               </h2>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-900 dark:text-white"
-                    htmlFor="category-name"
-                  >
-                    Nom de la catégorie <span className="text-rose-600 dark:text-rose-400">*</span>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
+                    Nom <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <input
-                    id="category-name"
                     type="text"
                     placeholder="Ex: Charges fixes"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label
-                    className="block text-sm font-medium text-gray-900 dark:text-white"
-                    htmlFor="category-kind"
-                  >
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Type <span className="text-rose-600 dark:text-rose-400">*</span>
                   </label>
-                  <select
-                    id="category-kind"
-                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    value={kind}
-                    onChange={(e) => setKind(e.target.value as "INCOME" | "EXPENSE")}
-                  >
-                    <option value="EXPENSE">Dépense</option>
-                    <option value="INCOME">Revenu</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Button type="submit" variant="primary" disabled={loading}>
-                  {loading ? "Création..." : "Créer la catégorie"}
-                </Button>
-              </div>
-
-              {error && (
-                <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-                    <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchCategories}>
-                      Réessayer
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      type="button"
+                      variant={kind === "EXPENSE" ? "danger" : "secondary"}
+                      size="sm"
+                      onClick={() => setKind("EXPENSE")}
+                      icon={<TrendingDown className="h-4 w-4" />}
+                    >
+                      Dépense
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={kind === "INCOME" ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setKind("INCOME")}
+                      icon={<TrendingUp className="h-4 w-4" />}
+                      className={kind === "INCOME" ? "bg-emerald-600 hover:bg-emerald-500" : ""}
+                    >
+                      Revenu
                     </Button>
                   </div>
                 </div>
-              )}
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
+                    Couleur
+                  </label>
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {DEFAULT_COLORS.map(c => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setColor(c)}
+                        className={`h-8 rounded-md border-2 transition ${
+                          color === c
+                            ? "border-gray-900 dark:border-white scale-110"
+                            : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                        }`}
+                        style={{ backgroundColor: c }}
+                        aria-label={`Couleur ${c}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Button type="submit" variant="primary" loading={creating}>
+                  Créer la catégorie
+                </Button>
+              </div>
             </form>
+          </div>
+        )}
+
+        {/* Messages d'erreur */}
+        {error && (
+          <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchCategories}>
+                Réessayer
+              </Button>
+            </div>
           </div>
         )}
 
         {/* Liste des catégories */}
         {loading ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            <SkeletonTable rows={5} columns={2} />
-            <SkeletonTable rows={5} columns={2} />
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <Tag className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-600 dark:text-gray-400 mb-2">Aucune catégorie pour le moment</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mb-4">
+              Cliquez sur &quot;Catégories par défaut&quot; pour commencer rapidement
+            </p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
-          {/* Catégories de revenus */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Revenus
-                </h2>
-                <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                  {incomeCategories.length} catégorie{incomeCategories.length > 1 ? "s" : ""}
-                </span>
+            {/* Catégories de dépenses */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <TrendingDown className="h-5 w-5 text-red-500" />
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Dépenses</h2>
+                  <span className="ml-auto rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-300">
+                    {expenseCategories.length}
+                  </span>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {expenseCategories.length === 0 ? (
+                  <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    Aucune catégorie de dépenses
+                  </div>
+                ) : (
+                  expenseCategories.map(cat => (
+                    <div
+                      key={cat.id}
+                      className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-4 w-4 rounded-full shrink-0"
+                          style={{ backgroundColor: cat.color || "#ef4444" }}
+                        />
+                        <span className="font-medium text-gray-900 dark:text-white">{cat.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteCategory(cat.id)}
+                        loading={deleting === cat.id}
+                        icon={deleting !== cat.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        {''}
+                      </Button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {incomeCategories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
-                >
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {cat.name}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ID: {cat.id}
-                  </span>
-                </div>
-              ))}
-              {incomeCategories.length === 0 && (
-                <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                  Aucune catégorie de revenus
-                </div>
-              )}
-            </div>
-          </div>
 
-          {/* Catégories de dépenses */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Dépenses
-                </h2>
-                <span className="rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-300">
-                  {expenseCategories.length} catégorie{expenseCategories.length > 1 ? "s" : ""}
-                </span>
+            {/* Catégories de revenus */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-emerald-500" />
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Revenus</h2>
+                  <span className="ml-auto rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                    {incomeCategories.length}
+                  </span>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {incomeCategories.length === 0 ? (
+                  <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    Aucune catégorie de revenus
+                  </div>
+                ) : (
+                  incomeCategories.map(cat => (
+                    <div
+                      key={cat.id}
+                      className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-4 w-4 rounded-full shrink-0"
+                          style={{ backgroundColor: cat.color || "#22c55e" }}
+                        />
+                        <span className="font-medium text-gray-900 dark:text-white">{cat.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteCategory(cat.id)}
+                        loading={deleting === cat.id}
+                        icon={deleting !== cat.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        {''}
+                      </Button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {expenseCategories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
-                >
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {cat.name}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ID: {cat.id}
-                  </span>
-                </div>
-              ))}
-              {expenseCategories.length === 0 && (
-                <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                  Aucune catégorie de dépenses
-                </div>
-              )}
-            </div>
           </div>
-        </div>
         )}
       </div>
     </Layout>

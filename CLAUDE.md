@@ -280,6 +280,7 @@ Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour détails complets.
 ## Guides détaillés
 Voir `.claude/reference/` pour conventions TS/Python, anti-patterns, UX/UI, parité Odoo.
 **Conventions API** : `.claude/API_CONVENTIONS.md` (format données, endpoints, authentification)
+**Système Navigation** : `.claude/NAVIGATION_SYSTEM.md` (navigation modulaire avec tabs, sidebar, hooks)
 
 ## Workflow Odoo CRITIQUE
 **Consultation doc Odoo 19 Community obligatoire**

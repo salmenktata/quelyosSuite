@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Star } from 'lucide-react'
 import { createPortal } from 'react-dom'
@@ -25,9 +25,9 @@ interface SidebarMenuItemProps {
   openMenus: Set<string>
   onToggleMenu: (name: string) => void // Non utilisé mais gardé pour compatibilité
   isCollapsed?: boolean
-  isCompact?: boolean
   isFavorite?: boolean
   onToggleFavorite?: () => void
+  onNavigate?: (path: string) => void // Callback appelé avant navigation
 }
 
 interface TooltipPosition {
@@ -35,16 +35,16 @@ interface TooltipPosition {
   left: number
 }
 
-export function SidebarMenuItem({
+export const SidebarMenuItem = memo(function SidebarMenuItem({
   item,
   isActive,
   moduleColor,
   openMenus: _openMenus,
   onToggleMenu: _onToggleMenu,
   isCollapsed = false,
-  isCompact = false,
   isFavorite = false,
-  onToggleFavorite
+  onToggleFavorite,
+  onNavigate
 }: SidebarMenuItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [tooltipPos, setTooltipPos] = useState<TooltipPosition>({ top: 0, left: 0 })
@@ -58,6 +58,13 @@ export function SidebarMenuItem({
   const isCurrentlyActive = item.path
     ? (hasSubItems ? isActive(item.path) : window.location.pathname === item.path)
     : item.subItems?.some(sub => sub.path && isActive(sub.path))
+
+  // Handler de navigation optimisé (appelé AVANT React Router)
+  const handleNavigate = (path: string) => {
+    if (onNavigate) {
+      onNavigate(path)
+    }
+  }
 
   const handleMouseEnter = () => {
     if (itemRef.current) {
@@ -80,6 +87,7 @@ export function SidebarMenuItem({
       <div ref={itemRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <Link
           to={item.path}
+          onClick={() => handleNavigate(item.path!)}
           className={`flex items-center justify-center rounded-lg p-2 transition-all ${
             isCurrentlyActive
               ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
@@ -129,7 +137,7 @@ export function SidebarMenuItem({
                 return (
                   <div
                     key={`separator-${idx}`}
-                    className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 mt-1"
+                    className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 mt-1"
                   >
                     {subItem.name}
                   </div>
@@ -141,6 +149,7 @@ export function SidebarMenuItem({
                 <Link
                   key={subItem.path}
                   to={subItem.path}
+                  onClick={() => handleNavigate(subItem.path!)}
                   className={`flex items-center gap-2 px-3 py-1.5 text-xs transition-all ${
                     isSubActive
                       ? `${moduleColor} font-medium bg-gray-50 dark:bg-gray-700/50`
@@ -168,15 +177,16 @@ export function SidebarMenuItem({
     return (
       <Link
         to={item.path}
+        onClick={() => handleNavigate(item.path!)}
         className={cn(
           'group flex items-center rounded-lg font-medium transition-all relative',
-          isCompact ? 'gap-2 px-2 py-1 text-xs' : 'gap-3 px-3 py-2 text-sm',
+          'gap-3 px-3 py-2 text-sm',
           isCurrentlyActive
             ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
             : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
         )}
       >
-        <ItemIcon className={cn(isCompact ? 'h-4 w-4' : 'h-5 w-5')} />
+        <ItemIcon className={cn('h-5 w-5')} />
         <span className="flex-1">{item.name}</span>
         {onToggleFavorite && (
           <button
@@ -206,26 +216,26 @@ export function SidebarMenuItem({
       <div
         className={cn(
           'group flex w-full items-center rounded-lg font-medium transition-all',
-          isCompact ? 'gap-2 px-2 py-1 text-xs' : 'gap-3 px-3 py-2 text-sm',
+          'gap-3 px-3 py-2 text-sm',
           isCurrentlyActive
             ? `bg-gray-100 dark:bg-gray-700 ${moduleColor}`
             : 'text-gray-600 dark:text-gray-400'
         )}
       >
-        <ItemIcon className={cn(isCompact ? 'h-4 w-4' : 'h-5 w-5')} />
+        <ItemIcon className={cn('h-5 w-5')} />
         <span className="flex-1 text-left">{item.name}</span>
       </div>
 
       {item.subItems && (
-        <div className={cn('border-l-2 border-gray-200 dark:border-gray-600', isCompact ? 'ml-3 mt-0.5 pl-2' : 'ml-4 mt-1 pl-3')}>
+        <div className={cn('border-l-2 border-gray-200 dark:border-gray-600', 'ml-4 mt-1 pl-3')}>
           {item.subItems.map((subItem, idx) => {
             if (subItem.separator) {
               return (
                 <div
                   key={`separator-${idx}`}
                   className={cn(
-                    'text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700',
-                    isCompact ? 'px-2 pt-2 pb-0.5 mt-1' : 'px-3 pt-3 pb-1 mt-2'
+                    'text-[9px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700',
+                    'px-3 pt-3 pb-1 mt-2'
                   )}
                 >
                   {subItem.name}
@@ -241,9 +251,10 @@ export function SidebarMenuItem({
               <Link
                 key={subItem.path}
                 to={subItem.path}
+                onClick={() => handleNavigate(subItem.path!)}
                 className={cn(
                   'flex items-center gap-2 rounded-md text-xs transition-all',
-                  isCompact ? 'px-2 py-1' : 'px-3 py-2',
+                  'px-3 py-2',
                   isSubActive
                     ? `bg-gray-100 dark:bg-gray-700 ${moduleColor} font-medium`
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -262,4 +273,4 @@ export function SidebarMenuItem({
       )}
     </div>
   )
-}
+})

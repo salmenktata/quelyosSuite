@@ -17,7 +17,7 @@
  */
 // React & Router
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect, createContext, useContext, useMemo } from 'react'
+import { useState, useEffect, createContext, useContext, useMemo, useCallback } from 'react'
 
 // Hooks
 import { usePermissions } from '../hooks/usePermissions'
@@ -27,7 +27,7 @@ import { useMenuState } from '../hooks/useMenuState'
 import { useAutoOpenMenus } from '../hooks/useAutoOpenMenus'
 import { useSectionState } from '../hooks/useSectionState'
 import { useNavigationHistory } from '../hooks/useNavigationHistory'
-import { useFinanceTabs } from '../hooks/useFinanceTabs'
+import { useFinanceTabs, detectFinanceTab } from '../hooks/useFinanceTabs'
 
 // Components
 import { Button } from './common/Button'
@@ -40,13 +40,13 @@ import { SectionTabs } from './navigation/SectionTabs'
 
 // Config & Types
 import { MODULES, type Module, type ModuleId } from '@/config/modules'
+import { MODULE_HEADER_CLASSES } from '@/config/layout'
 
 // Icons
-import { X, LogOut, ChevronsLeft, ChevronsRight, Minimize2, Maximize2 } from 'lucide-react'
+import { X, LogOut, ChevronsLeft, ChevronsRight, Minimize2, Maximize2, PanelTop, PanelTopClose, ChevronDown } from 'lucide-react'
 
 // Constants
 const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed'
-const SIDEBAR_COMPACT_MODE_KEY = 'sidebar_compact_mode'
 
 // ============================================================================
 // CONTEXT
@@ -80,10 +80,16 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
   })
-  const [isCompactMode, setIsCompactMode] = useState(() => {
-    return localStorage.getItem(SIDEBAR_COMPACT_MODE_KEY) === 'true'
-  })
   const { canAccessModule } = usePermissions()
+  const [isNavbarVisible, setIsNavbarVisible] = useState(() => {
+    return localStorage.getItem('navbar_visible') !== 'false'
+  })
+
+  const toggleNavbar = () => {
+    const newValue = !isNavbarVisible
+    setIsNavbarVisible(newValue)
+    localStorage.setItem('navbar_visible', String(newValue))
+  }
 
   const toggleSidebarCollapse = () => {
     const newValue = !isSidebarCollapsed
@@ -91,11 +97,6 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newValue))
   }
 
-  const toggleCompactMode = () => {
-    const newValue = !isCompactMode
-    setIsCompactMode(newValue)
-    localStorage.setItem(SIDEBAR_COMPACT_MODE_KEY, String(newValue))
-  }
   const { isActive } = useActiveRoute()
   const { openMenus, toggleMenu, openMenu } = useMenuState()
 
@@ -120,6 +121,21 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     location.pathname
   )
 
+  // Handler pour changement de tab (filtre sidebar uniquement, sans navigation auto)
+  const handleFinanceTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId)
+    // Pas de navigation automatique : l'utilisateur choisit la page dans le sidebar filtré
+  }, [setActiveTab])
+
+  // Handler pour navigation sidebar Finance (change tab AVANT navigation React Router)
+  const handleFinanceSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'finance') {
+      // Détecte et change le tab immédiatement (synchrone)
+      const targetTab = detectFinanceTab(path)
+      setActiveTab(targetTab)
+    }
+  }, [currentModule.id, setActiveTab])
+
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
 
@@ -127,21 +143,21 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     setCurrentModule(detectedModule)
   }, [detectedModule])
 
-  const handleModuleChange = async (moduleId: ModuleId) => {
+  const handleModuleChange = useCallback(async (moduleId: ModuleId) => {
     setIsModuleChanging(true)
     const module = MODULES.find(m => m.id === moduleId)!
     setCurrentModule(module)
     navigate(module.basePath)
     // Délai minimal pour feedback visuel
     setTimeout(() => setIsModuleChanging(false), 300)
-  }
+  }, [navigate])
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('session_id')
     localStorage.removeItem('user')
     localStorage.removeItem('auth_source')
     window.location.href = '/login'
-  }
+  }, [])
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
@@ -165,6 +181,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           isAppLauncherOpen={isAppLauncherOpen}
           isModuleChanging={isModuleChanging}
           modules={accessibleModules}
+          isVisible={isNavbarVisible}
+          onToggleNavbar={toggleNavbar}
         />
 
         {/* App Launcher Popup */}
@@ -184,29 +202,36 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
 
           {/* Sidebar */}
           <aside
-            className={`${isSidebarCollapsed ? 'w-16' : 'w-60'} flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed lg:sticky top-14 h-[calc(100vh-3.5rem)] z-50 transition-all duration-300 flex flex-col ${
+            className={`${isSidebarCollapsed ? 'w-16' : 'w-60'} flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed lg:sticky ${
+              isNavbarVisible
+                ? (currentModule.id === 'finance' ? 'top-[7rem] h-[calc(100vh-7rem)]' : 'top-14 h-[calc(100vh-3.5rem)]')
+                : (currentModule.id === 'finance' ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen')
+            } z-30 transition-all duration-200 ease-out flex flex-col ${
               isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
             }`}
           >
-            {/* Module header in sidebar */}
-            <div className={`border-b border-gray-200 dark:border-gray-700 flex items-center ${isSidebarCollapsed ? 'px-2 py-3 justify-center' : 'px-4 py-3 gap-3'}`}>
-              <div className={`p-2 rounded-lg ${currentModule.bgColor}`}>
-                {(() => {
-                  const Icon = currentModule.icon
-                  return <Icon className={`h-5 w-5 ${currentModule.color}`} />
-                })()}
-              </div>
-              {!isSidebarCollapsed && (
-                <div className="flex-1 min-w-0">
+            {/* Mobile header - Bouton pour fermer le menu */}
+            <div className={`lg:hidden ${MODULE_HEADER_CLASSES} sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4`}>
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${currentModule.bgColor}`}>
+                  {(() => {
+                    const Icon = currentModule.icon
+                    return <Icon className={`h-5 w-5 ${currentModule.color}`} />
+                  })()}
+                </div>
+                <div className="flex-1 min-w-0 text-left">
                   <h2 className={`font-semibold ${currentModule.color} truncate`}>{currentModule.name}</h2>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{currentModule.description}</p>
                 </div>
-              )}
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`lg:hidden text-gray-400 ${isSidebarCollapsed ? '' : 'ml-auto'}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsMobileMenuOpen(false)
+                }}
+                className="text-gray-400"
                 icon={<X className="w-5 h-5" />}
               >
                 <span className="sr-only">Fermer le menu</span>
@@ -214,35 +239,26 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Navigation */}
-            <nav className={`flex-1 overflow-y-auto ${isCompactMode ? 'py-2 space-y-2 px-2' : 'py-4 space-y-4 px-3'}`}>
+            <nav className="flex-1 overflow-y-auto py-4 space-y-4 px-3">
               {/* Quick Access (favoris/récents) */}
               <QuickAccess
                 favorites={favorites}
                 recentPages={recentPages}
                 moduleColor={currentModule.color}
                 isActive={isActive}
+                isCollapsed={isSidebarCollapsed}
               />
 
-              {/* Finance Tabs (seulement pour le module Finance) */}
-              {currentModule.id === 'finance' && (
-                <SectionTabs
-                  moduleId="finance"
-                  tabs={[
-                    { id: 'gestion', label: 'Gestion', count: 5 },
-                    { id: 'analyse', label: 'Analyse', count: 9 },
-                    { id: 'parametres', label: 'Paramètres', count: 7 }
-                  ]}
-                  activeTab={activeTab}
-                  onTabChange={setActiveTab}
-                />
-              )}
-
-              {(currentModule.id === 'finance' ? visibleSections : currentModule.sections).map((section) => (
-                <div key={section.title}>
+              {(currentModule.id === 'finance' ? visibleSections : currentModule.sections).map((section, index) => (
+                <div
+                  key={section.title}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 30}ms` }}
+                >
                   {/* Header (masqué en mode collapsed) */}
                   {!isSidebarCollapsed && (
                     <div
-                      className={`w-full flex items-center px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 sticky top-0 z-10 bg-white dark:bg-gray-800 ${isCompactMode ? 'mb-1' : 'mb-2'}`}
+                      className="w-full flex items-center px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 sticky top-0 z-10 bg-white dark:bg-gray-800 mb-2"
                     >
                       <span>{section.title}</span>
                     </div>
@@ -259,9 +275,9 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                         openMenus={openMenus}
                         onToggleMenu={toggleMenu}
                         isCollapsed={isSidebarCollapsed}
-                        isCompact={isCompactMode}
                         isFavorite={item.path ? isFavorite(item.path) : false}
                         onToggleFavorite={item.path ? () => toggleFavorite(item.path!) : undefined}
+                        onNavigate={currentModule.id === 'finance' ? handleFinanceSidebarNavigate : undefined}
                       />
                     ))}
                   </div>
@@ -287,18 +303,6 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 )}
               </button>
 
-              {/* Toggle Compact mode - visible uniquement en mode normal */}
-              {!isSidebarCollapsed && (
-                <button
-                  onClick={toggleCompactMode}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                  title={isCompactMode ? 'Mode normal' : 'Mode compact'}
-                >
-                  {isCompactMode ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-                  <span>{isCompactMode ? 'Mode normal' : 'Mode compact'}</span>
-                </button>
-              )}
-
               {/* Logout button */}
               <Button
                 variant="ghost"
@@ -314,7 +318,49 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           </aside>
 
           {/* Main content */}
-          <main className="flex-1 lg:ml-0">{children}</main>
+          <main className={`flex-1 lg:ml-0 overflow-auto ${isNavbarVisible ? 'pt-14' : 'pt-0'}`}>
+            {/* Finance Tabs - Navigation par sections */}
+            {currentModule.id === 'finance' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm backdrop-blur-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="finance"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={[
+                      { id: 'Tableau de bord', label: 'Tableau de bord', count: 1 },
+                      { id: 'Comptes', label: 'Comptes', count: 2 },
+                      { id: 'Transactions', label: 'Transactions', count: 2 },
+                      { id: 'Planification', label: 'Planification', count: 4 },
+                      { id: 'Rapports', label: 'Rapports', count: 5 },
+                      { id: 'Configuration', label: 'Configuration', count: 9 }
+                    ]}
+                    activeTab={activeTab}
+                    onTabChange={handleFinanceTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' ? 'pt-16' : ''}`}>
+              {children}
+            </div>
+          </main>
         </div>
       </div>
     </ModuleContext.Provider>

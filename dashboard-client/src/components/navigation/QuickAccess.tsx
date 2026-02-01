@@ -8,12 +8,13 @@ interface QuickAccessProps {
   recentPages: string[]
   moduleColor: string
   isActive: (path: string) => boolean
+  isCollapsed?: boolean
 }
 
 /**
  * Section sticky d'accès rapide affichant favoris et pages récentes
  */
-export function QuickAccess({ favorites, recentPages: _recentPages, moduleColor: _moduleColor, isActive }: QuickAccessProps) {
+export function QuickAccess({ favorites, recentPages: _recentPages, moduleColor: _moduleColor, isActive, isCollapsed = false }: QuickAccessProps) {
   // Trouver les items correspondants dans la config
   const findMenuItem = (path: string) => {
     for (const module of MODULES) {
@@ -34,11 +35,14 @@ export function QuickAccess({ favorites, recentPages: _recentPages, moduleColor:
     <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 z-20">
       {/* Favoris */}
       {favorites.length > 0 && (
-        <div className="px-3 py-2">
-          <p className="flex items-center gap-1.5 text-[9px] font-bold uppercase text-gray-400 mb-1.5">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            Favoris
-          </p>
+        <div className={isCollapsed ? 'px-2 py-2' : 'px-3 py-2'}>
+          {/* Titre "Favoris" masqué en mode collapsed */}
+          {!isCollapsed && (
+            <p className="flex items-center gap-1.5 text-[9px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1.5">
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              Favoris
+            </p>
+          )}
           <div className="space-y-0.5">
             {favorites.slice(0, 3).map((path) => {
               const found = findMenuItem(path)
@@ -50,15 +54,18 @@ export function QuickAccess({ favorites, recentPages: _recentPages, moduleColor:
                 <Link
                   key={path}
                   to={path}
+                  title={isCollapsed ? item.name : undefined}
                   className={cn(
-                    'flex items-center gap-2 px-2 py-1.5 text-xs rounded-lg transition-colors',
+                    'flex items-center gap-2 rounded-lg transition-colors',
+                    isCollapsed ? 'px-2 py-2 justify-center' : 'px-2 py-1.5 text-xs',
                     isActive(path)
                       ? `bg-gray-100 dark:bg-gray-700 ${module.color} font-medium`
                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                   )}
                 >
                   {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}
-                  <span className="truncate">{item.name}</span>
+                  {/* Nom masqué en mode collapsed */}
+                  {!isCollapsed && <span className="truncate">{item.name}</span>}
                 </Link>
               )
             })}

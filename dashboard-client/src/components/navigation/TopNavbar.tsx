@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/common/Button'
@@ -10,6 +11,7 @@ import {
   ExternalLink,
   Settings,
   Home,
+  ChevronUp,
 } from 'lucide-react'
 
 interface TopNavbarProps {
@@ -17,9 +19,11 @@ interface TopNavbarProps {
   modules: Module[]
   isModuleChanging: boolean
   isAppLauncherOpen: boolean
+  isVisible?: boolean
   onModuleChange: (id: ModuleId) => void
   onMenuClick: () => void
   onAppLauncherClick: () => void
+  onToggleNavbar?: () => void
 }
 
 /**
@@ -34,23 +38,27 @@ interface TopNavbarProps {
  * - Toggle dark/light mode
  * - Bouton menu mobile
  */
-export function TopNavbar({
+export const TopNavbar = memo(function TopNavbar({
   currentModule,
   onModuleChange,
   onMenuClick,
   onAppLauncherClick,
   isAppLauncherOpen,
   isModuleChanging,
-  modules
+  modules,
+  isVisible = true,
+  onToggleNavbar
 }: TopNavbarProps) {
   const { theme, toggleTheme } = useTheme()
   const Icon = currentModule.icon
 
-  // Show most used modules in quick access (filtered by permissions)
-  const quickModules = modules.filter(m => ['home', 'finance', 'store', 'crm', 'stock', 'pos'].includes(m.id))
+  // Show primary modules in quick access, others accessible via App Launcher
+  // Priorité: modules les plus utilisés (max 6 pour éviter surcharge)
+  const primaryModuleIds = ['home', 'finance', 'store', 'crm', 'stock', 'pos']
+  const quickModules = modules.filter(m => primaryModuleIds.includes(m.id))
 
   return (
-    <header className="h-14 bg-gray-900 dark:bg-gray-950 border-b border-gray-800 flex items-center px-4 sticky top-0 z-30">
+    <header className={`h-14 bg-gray-900 border-b border-gray-800 flex items-center px-4 fixed top-0 left-0 right-0 z-50 transition-transform duration-100 ease-out ${isVisible ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>
       {/* App launcher button */}
       <Button
         variant="ghost"
@@ -59,7 +67,7 @@ export function TopNavbar({
         className={`mr-3 ${
           isAppLauncherOpen
             ? 'bg-gray-700 text-white'
-            : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+            : 'text-gray-100 hover:bg-gray-800 hover:text-white'
         }`}
         icon={<Grid3X3 className="h-5 w-5" />}
       >
@@ -89,7 +97,7 @@ export function TopNavbar({
               className={`${
                 isActive
                   ? 'bg-gray-700 text-white'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  : 'text-gray-100 hover:bg-gray-800 hover:text-white'
               }`}
               icon={<ModuleIcon className="h-4 w-4" />}
             >
@@ -109,34 +117,10 @@ export function TopNavbar({
 
       {/* Right side */}
       <div className="flex items-center gap-2 ml-auto">
-        {/* View vitrine button */}
-        <a
-          href="http://localhost:3000"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
-          title="Retour au site vitrine"
-        >
-          <Home className="h-4 w-4" />
-          <span className="hidden md:inline">Site vitrine</span>
-        </a>
-
-        {/* View site button */}
-        <a
-          href={import.meta.env.VITE_SHOP_URL || 'http://localhost:3001'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
-          title="Voir mon site e-commerce"
-        >
-          <ExternalLink className="h-4 w-4" />
-          <span className="hidden md:inline">Voir mon site</span>
-        </a>
-
         {/* Global Settings */}
         <Link
           to="/settings"
-          className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+          className="p-2 rounded-lg text-gray-100 hover:bg-gray-800 hover:text-white transition-all"
           title="Paramètres Généraux"
         >
           <Settings className="h-5 w-5" />
@@ -146,19 +130,33 @@ export function TopNavbar({
           variant="ghost"
           size="sm"
           onClick={toggleTheme}
-          className="text-gray-400 hover:bg-gray-800 hover:text-white"
+          className="text-gray-100 hover:bg-gray-800 hover:text-white"
           title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
           icon={theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         >
           <span className="sr-only">{theme === 'light' ? 'Mode sombre' : 'Mode clair'}</span>
         </Button>
 
+        {/* Hide navbar button */}
+        {onToggleNavbar && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleNavbar}
+            className="text-gray-100 hover:bg-gray-800 hover:text-white"
+            title="Masquer la barre de navigation (disponible dans le menu latéral)"
+            icon={<ChevronUp className="h-5 w-5" />}
+          >
+            <span className="sr-only">Masquer la navbar</span>
+          </Button>
+        )}
+
         {/* Mobile menu button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={onMenuClick}
-          className="lg:hidden text-gray-400 hover:bg-gray-800 hover:text-white"
+          className="lg:hidden text-gray-100 hover:bg-gray-800 hover:text-white"
           icon={<Menu className="h-5 w-5" />}
         >
           <span className="sr-only">Menu</span>
@@ -166,4 +164,4 @@ export function TopNavbar({
       </div>
     </header>
   )
-}
+})

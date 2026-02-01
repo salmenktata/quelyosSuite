@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { useInvoices, useSendInvoiceEmail, useDownloadInvoicePDF } from '../hooks/useInvoices'
+import { useInvoices } from '../hooks/useInvoices'
 import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../components/common'
 import { crmNotices } from '@/lib/notices'
 import { FileTextIcon, DownloadIcon, MailIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react'
@@ -16,16 +16,13 @@ export default function Invoices() {
   const [searchInput, setSearchInput] = useState('')
   const limit = 20
 
-  const { data, isLoading, error } = useInvoices({
-    limit,
-    offset: page * limit,
-    state: stateFilter || undefined,
-    payment_state: paymentStateFilter || undefined,
-    search: search || undefined,
+  const { invoices, loading, error, stats, sendEmail, downloadPDF } = useInvoices({
+    status: stateFilter || undefined,
+    paymentState: paymentStateFilter || undefined,
   })
 
-  const sendEmailMutation = useSendInvoiceEmail()
-  const downloadPDFMutation = useDownloadInvoicePDF()
+  const [sendingEmail, setSendingEmail] = useState(false)
+  const [downloadingPDF, setDownloadingPDF] = useState(false)
 
   const getStateVariant = (
     state: string
@@ -121,29 +118,35 @@ export default function Invoices() {
 
   const handleSendEmail = async (invoiceId: number, invoiceName: string) => {
     try {
-      await sendEmailMutation.mutateAsync(invoiceId)
+      setSendingEmail(true)
+      await sendEmail(invoiceId)
       toast.success(`Facture ${invoiceName} envoyée par email`)
     } catch (err) {
       logger.error("Erreur:", err);
       toast.error(`Erreur lors de l'envoi de la facture: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
+    } finally {
+      setSendingEmail(false)
     }
   }
 
-  const handleDownloadPDF = async (invoiceId: number, invoiceName: string) => {
+  const handleDownloadPDF = async (invoiceId: number, _invoiceName: string) => {
     try {
-      await downloadPDFMutation.mutateAsync({ invoiceId, invoiceName })
-      toast.success(`Facture ${invoiceName} téléchargée`)
+      setDownloadingPDF(true)
+      await downloadPDF(invoiceId)
     } catch (err) {
       logger.error("Erreur:", err);
       toast.error(`Erreur lors du téléchargement: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
+    } finally {
+      setDownloadingPDF(false)
     }
   }
 
   const hasActiveFilters = stateFilter || paymentStateFilter || search
 
-  const invoices = data?.data?.invoices || []
-  const total = data?.data?.total || 0
-  const stats = data?.data?.stats
+  const total = invoices.length
+  const paidCount = invoices.filter(inv => inv.paymentState === 'paid').length
+  const draftCount = invoices.filter(inv => inv.state === 'draft').length
+  const totalAmount = stats?.totalInvoiced || 0
 
   return (
     <Layout>
@@ -174,7 +177,7 @@ export default function Invoices() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total factures</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{total}</p>
                 </div>
               </div>
             </div>
@@ -187,7 +190,7 @@ export default function Invoices() {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Payées</p>
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {stats.paid}
+                    {paidCount}
                   </p>
                 </div>
               </div>
@@ -201,7 +204,7 @@ export default function Invoices() {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Brouillon</p>
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                    {stats.draft}
+                    {draftCount}
                   </p>
                 </div>
               </div>
@@ -215,7 +218,7 @@ export default function Invoices() {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Chiffre d'affaires</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {formatPrice(stats.total_amount)}
+                    {formatPrice(totalAmount)}
                   </p>
                 </div>
               </div>
@@ -306,9 +309,9 @@ export default function Invoices() {
             </div>
           )}
 
-          {isLoading && <SkeletonTable rows={10} columns={7} />}
+          {loading && <SkeletonTable rows={10} columns={7} />}
 
-          {!isLoading && !error && (
+          {!loading && !error && (
             <>
               {invoices.length === 0 ? (
                 <div className="p-12 text-center">
@@ -402,7 +405,7 @@ export default function Invoices() {
                               <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => handleDownloadPDF(invoice.id, invoice.name)}
-                                  disabled={downloadPDFMutation.isPending}
+                                  disabled={downloadingPDF}
                                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors disabled:opacity-50"
                                   title="Télécharger PDF"
                                 >
@@ -410,7 +413,7 @@ export default function Invoices() {
                                 </button>
                                 <button
                                   onClick={() => handleSendEmail(invoice.id, invoice.name)}
-                                  disabled={sendEmailMutation.isPending}
+                                  disabled={sendingEmail}
                                   className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors disabled:opacity-50"
                                   title="Envoyer par email"
                                 >

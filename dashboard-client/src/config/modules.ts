@@ -155,14 +155,14 @@ export const MODULES: Module[] = [
     sections: [
       {
         title: 'Tableau de bord',
-        tabGroup: 'gestion',
+        tabGroup: 'Tableau de bord',
         items: [
           { name: 'Vue d\'ensemble', path: '/finance', icon: LayoutDashboard },
         ],
       },
       {
         title: 'Comptes',
-        tabGroup: 'gestion',
+        tabGroup: 'Comptes',
         items: [
           { name: 'Tous les comptes', path: '/finance/accounts', icon: Wallet },
           { name: 'Portefeuilles', path: '/finance/portfolios', icon: Briefcase },
@@ -170,15 +170,16 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Transactions',
-        tabGroup: 'gestion',
+        tabGroup: 'Transactions',
         items: [
           { name: 'Dépenses', path: '/finance/expenses', icon: ArrowDownCircle },
           { name: 'Revenus', path: '/finance/incomes', icon: ArrowUpCircle },
+          { name: 'Import', path: '/finance/import', icon: Upload },
         ],
       },
       {
         title: 'Planification',
-        tabGroup: 'analyse',
+        tabGroup: 'Planification',
         items: [
           { name: 'Budgets', path: '/finance/budgets', icon: PieChart },
           { name: 'Trésorerie', path: '/finance/forecast', icon: TrendingUp },
@@ -188,7 +189,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Rapports',
-        tabGroup: 'analyse',
+        tabGroup: 'Rapports',
         items: [
           { name: 'Hub Rapports', path: '/finance/reporting', icon: BarChart3 },
           { name: 'Trésorerie', path: '/finance/reporting/cashflow', icon: Waves },
@@ -199,13 +200,15 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Configuration',
-        tabGroup: 'parametres',
+        tabGroup: 'Configuration',
         items: [
           { name: 'Catégories', path: '/finance/categories', icon: Tag },
           { name: 'Fournisseurs', path: '/finance/suppliers', icon: Users },
           { name: 'Plan Comptable', path: '/finance/charts', icon: Coins },
+          { name: 'TVA & fiscalité', path: '/settings/tva', icon: Receipt },
+          { name: 'Flux de paiement', path: '/finance/settings/flux', icon: CreditCard },
+          { name: 'Notifications', path: '/finance/settings/notifications', icon: Mail },
           { name: 'Alertes', path: '/finance/alerts', icon: Bell },
-          { name: 'Import', path: '/finance/import', icon: Upload },
           { name: 'Archives', path: '/finance/archives', icon: Archive },
           { name: 'Paramètres', path: '/finance/settings', icon: Settings },
         ],
