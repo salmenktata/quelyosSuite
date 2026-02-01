@@ -6,10 +6,23 @@ import ChatBotWrapper from "./components/ChatBotWrapper";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  weight: ["400", "500", "600", "700"],
 });
 
 // Force SSG (Static Site Generation) pour performance optimale
 export const dynamic = 'force-static';
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://quelyos.com"),
@@ -26,6 +39,7 @@ export const metadata: Metadata = {
     email: false,
     telephone: false,
   },
+  manifest: "/manifest.json",
   openGraph: {
     title: "Quelyos — Suite ERP française | Solutions métier intégrées",
     description: "Pilotez toute votre entreprise depuis une seule plateforme. Solutions Finance, CRM, Stock, RH, POS, Marketing — tout inclus. IA intégrée, hébergement France.",
@@ -72,6 +86,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
+      </head>
       <body
         className={`${inter.variable} antialiased bg-slate-950`}
         suppressHydrationWarning

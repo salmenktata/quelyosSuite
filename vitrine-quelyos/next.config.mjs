@@ -17,6 +17,9 @@ const nextConfig = {
   turbopack: {},
   compiler: {
     styledComponents: false,
+    removeConsole: process.env.NODE_ENV === "production" ? {
+      exclude: ["error", "warn"],
+    } : false,
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -124,6 +127,24 @@ const nextConfig = {
       },
       {
         source: "/logos/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/:path*.(jpg|jpeg|png|gif|webp|avif|svg|ico)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/:path*.(woff|woff2|eot|ttf|otf)",
         headers: [
           {
             key: "Cache-Control",
