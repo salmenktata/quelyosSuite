@@ -264,7 +264,10 @@ export interface Order {
   invoice_status?: string
   delivery_status?: string
   line_count?: number
+  // Aliases for backend compatibility
   total?: number // Alias for amount_total
+  subtotal?: number // Alias for amount_untaxed
+  tax_total?: number // Alias for amount_tax
   currency?: {
     symbol: string
     name?: string
