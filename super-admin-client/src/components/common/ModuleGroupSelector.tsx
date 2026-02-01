@@ -77,6 +77,7 @@ export function ModuleGroupSelector({
       crm: {},
       marketing: {},
       hr: {},
+      support: {},
       pos: {},
     }
 
@@ -105,12 +106,16 @@ export function ModuleGroupSelector({
       crm: 'none',
       marketing: 'none',
       hr: 'none',
+      support: 'none',
       pos: 'none',
     }
 
     for (const mod of QUELYOS_MODULES) {
-      const managerId = groupMap[mod.key].manager
-      const userId = groupMap[mod.key].user
+      const moduleGroups = groupMap[mod.key]
+      if (!moduleGroups) continue // Skip si module non trouvé dans groupMap
+
+      const managerId = moduleGroups.manager
+      const userId = moduleGroups.user
 
       if (managerId && selectedGroupIds.includes(managerId)) {
         levels[mod.key] = 'manager'
@@ -211,8 +216,9 @@ export function ModuleGroupSelector({
         {/* Lignes modules */}
         {QUELYOS_MODULES.map((mod) => {
           const level = moduleLevels[mod.key]
-          const hasUser = !!groupMap[mod.key].user
-          const hasManager = !!groupMap[mod.key].manager
+          const moduleGroups = groupMap[mod.key] || {}
+          const hasUser = !!moduleGroups.user
+          const hasManager = !!moduleGroups.manager
 
           return (
             <div
