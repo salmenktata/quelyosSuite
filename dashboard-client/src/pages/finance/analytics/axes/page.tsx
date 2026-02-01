@@ -20,6 +20,7 @@ export default function AnalyticsAxesPage() {
       data: {
         axes: AnalyticAxis[];
       };
+      error?: string;
     }>('/finance/analytics/axes').then(res => {
       if (res.data.success && res.data.data) setAxes(res.data.data.axes)
       setLoading(false)

@@ -27,8 +27,8 @@ export function useZodForm<TOutput extends FieldValues>(
   options?: Omit<UseFormProps<TOutput>, 'resolver'>
 ) {
   return useForm<TOutput>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(schema as any),
+    // @ts-expect-error - Type incompatibility between Zod and React Hook Form resolver types
+    resolver: zodResolver(schema),
     mode: 'onBlur',
     ...options,
   })

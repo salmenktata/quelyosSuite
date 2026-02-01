@@ -38,7 +38,7 @@ export default function ConsolidationPage() {
       }>('/finance/consolidation/balance-sheet'),
     ])
       .then(([entitiesRes, balanceRes]) => {
-        if (entitiesRes.data.success && entitiesRes.data.data) setEntities(entitiesRes.data.data.entities)
+        if (entitiesRes.data.success && entitiesRes.data.data) setEntities(entitiesRes.data.data.entities as any[])
         if (balanceRes.data.success && balanceRes.data.data) setBalanceSheet(balanceRes.data.data)
         setLoading(false)
       })

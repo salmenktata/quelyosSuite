@@ -61,7 +61,7 @@ const CACHE_DURATION = 30000; // 30 secondes
  * });
  * ```
  */
-export function useTableData<T = any>(
+export function useTableData<T = unknown>(
   options: TableDataOptions<T>
 ): TableDataState<T> {
   const {

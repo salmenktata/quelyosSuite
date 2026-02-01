@@ -175,7 +175,7 @@ export default function OrderDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Colonne gauche : Infos, tracking, articles */}
           <div className="lg:col-span-2 space-y-6">
-            <OrderCustomerInfo customer={order.customer as unknown as { id: number; name: string; email?: string } | null} />
+            <OrderCustomerInfo customer={(order.customer || null) as unknown as { id: number; name: string; email?: string } | null} />
 
             <OrderTracking
               trackingInfo={trackingData?.data?.tracking_info || []}
@@ -184,7 +184,7 @@ export default function OrderDetail() {
               isUpdating={updateTracking.isPending}
             />
 
-            <OrderLineItems lines={(order.lines || []) as unknown as Array<{ id: number; product?: { id?: number; name: string; image?: string | null }; quantity: number; price_unit: number; price_total: number }>} />
+            <OrderLineItems lines={((order.lines || []) as unknown as Array<{ id: number; product?: { id?: number; name: string; image?: string | null }; quantity: number; price_unit: number; price_total: number }>)} />
           </div>
 
           {/* Colonne droite : Résumé, historique, actions */}
@@ -195,7 +195,7 @@ export default function OrderDetail() {
               amountTotal={order.amount_total ?? 0}
             />
 
-            <OrderHistory history={(historyData?.data?.history || []) as unknown as Array<{ date: string; user: string; action: string; }>} isLoading={historyLoading} />
+            <OrderHistory history={((historyData?.data?.history || []) as unknown as Array<{ date: string; user: string; action: string; }>)} isLoading={historyLoading} />
 
             <OrderActions
               orderState={order.state}

@@ -23,6 +23,7 @@ export default function AnalyticsReportsPage() {
       data: {
         distribution: AnalyticDistribution[];
       };
+      error?: string;
     }>('/finance/analytics/distribution', { axis_id: 1 }).then(res => {
       if (res.data.success && res.data.data) setDistribution(res.data.data.distribution)
       setLoading(false)

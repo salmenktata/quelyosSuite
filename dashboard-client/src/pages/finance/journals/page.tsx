@@ -12,8 +12,9 @@ export default function JournalsPage() {
       data: {
         journals: any[];
       };
+      error?: string;
     }>('/finance/journals').then(res => {
-      if (res.data.success && res.data.data) setJournals(res.data.data.journals)
+      if (res.data.success && res.data.data) setJournals(res.data.data.journals as any[])
     })
   }, [])
 

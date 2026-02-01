@@ -4,11 +4,15 @@ import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { Upload } from 'lucide-react'
 
+interface ImportResult {
+  imported: number
+}
+
 export default function BankImportPage() {
   const [file, setFile] = useState<File | null>(null)
   const [format, setFormat] = useState('csv')
   const [importing, setImporting] = useState(false)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<ImportResult | null>(null)
 
   const handleImport = async () => {
     if (!file) return

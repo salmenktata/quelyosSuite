@@ -10,7 +10,7 @@ export interface SortConfig<T> {
 export interface FilterConfig<T> {
   searchQuery?: string;
   searchFields?: (keyof T)[];
-  filters?: Partial<Record<keyof T, any>>;
+  filters?: Partial<Record<keyof T, unknown>>;
 }
 
 interface UseFilteredDataOptions<T> {

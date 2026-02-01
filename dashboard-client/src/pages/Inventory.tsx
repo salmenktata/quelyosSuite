@@ -35,13 +35,19 @@ interface InventoryLine {
   counted_qty: number | null
 }
 
+interface ValidationResult {
+  total_adjusted: number
+  error_count: number
+  errors: Array<{ product_id?: number; error: string }>
+}
+
 export default function Inventory() {
   const [step, setStep] = useState<Step>(1)
   const [categoryId, setCategoryId] = useState<string>('')
   const [search, setSearch] = useState<string>('')
   const [inventoryLines, setInventoryLines] = useState<InventoryLine[]>([])
   const [adjustments, setAdjustments] = useState<Array<{ product_id: number; new_qty: number }>>([])
-  const [validationResult, setValidationResult] = useState<any>(null)
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
 
   const toast = useToast()
   const prepareInventoryMutation = usePrepareInventory()
@@ -477,7 +483,7 @@ export default function Inventory() {
                   Erreurs détectées :
                 </h3>
                 <ul className="list-disc list-inside text-sm text-red-800 dark:text-red-200 space-y-1">
-                  {validationResult.errors.map((error: { product_id?: number; error: string }, idx: number) => (
+                  {validationResult.errors.map((error, idx) => (
                     <li key={idx}>
                       Produit #{error.product_id || '?'} : {error.error}
                     </li>

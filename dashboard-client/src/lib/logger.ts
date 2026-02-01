@@ -73,7 +73,7 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
 
     // Type narrowing pour accès propriétés
     if (error && typeof error === 'object') {
-      const err = error as Record<string, any>;
+      const err = error as Record<string, unknown>;
       return err.response?.data?.error || err.message || 'Une erreur est survenue';
     }
     return 'Une erreur est survenue';
@@ -81,7 +81,7 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
 
   // En production, messages génériques basés sur le type d'erreur
   if (error && typeof error === 'object') {
-    const err = error as Record<string, any>;
+    const err = error as Record<string, unknown>;
 
     if (err.response?.status === 404) {
       return 'Ressource non trouvée';

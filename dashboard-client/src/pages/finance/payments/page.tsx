@@ -32,9 +32,10 @@ export default function PaymentsPage() {
         data: {
           payments: any[];
         };
+        error?: string;
       }>('/finance/payments')
       .then(res => {
-        if (res.data.success && res.data.data) setPayments(res.data.data.payments)
+        if (res.data.success && res.data.data) setPayments(res.data.data.payments as any[])
         setLoading(false)
       })
       .catch(_err => {

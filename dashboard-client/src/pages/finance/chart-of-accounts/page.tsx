@@ -9,8 +9,16 @@ import { Plus } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
+interface Account {
+  id: number
+  code: string
+  name: string
+  accountType: string
+  balance: number
+}
+
 export default function ChartOfAccountsPage() {
-  const [accounts, setAccounts] = useState<any[]>([])
+  const [accounts, setAccounts] = useState<Account[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -24,7 +32,7 @@ export default function ChartOfAccountsPage() {
         accounts: any[];
       };
     }>('/finance/accounts')
-    if (response.data.success && response.data.data) setAccounts(response.data.data.accounts)
+    if (response.data.success && response.data.data) setAccounts(response.data.data.accounts as any[])
     setLoading(false)
   }
 
@@ -60,7 +68,7 @@ export default function ChartOfAccountsPage() {
               </tr>
             </thead>
             <tbody>
-              {accounts.map((account: any) => (
+              {accounts.map((account) => (
                 <tr key={account.id} className="border-b border-gray-200 dark:border-gray-700">
                   <td className="px-6 py-4 font-mono text-gray-900 dark:text-white">{account.code}</td>
                   <td className="px-6 py-4 text-gray-900 dark:text-white">{account.name}</td>

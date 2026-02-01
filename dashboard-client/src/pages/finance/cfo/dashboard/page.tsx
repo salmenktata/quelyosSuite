@@ -4,14 +4,14 @@ import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
 
 export default function CFODashboardPage() {
-  const [kpis, setKpis] = useState<any>(null)
+  const [kpis, setKpis] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     apiClient.post<{
       success: boolean;
       data: {
-        kpis: any;
+        kpis: Record<string, unknown>;
       };
     }>('/finance/cfo/kpis').then(res => {
       if (res.data.success && res.data.data) setKpis(res.data.data.kpis)

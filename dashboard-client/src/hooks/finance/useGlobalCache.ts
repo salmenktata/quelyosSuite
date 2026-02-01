@@ -10,7 +10,7 @@ type CacheEntry<T> = {
   error: string | null;
 };
 
-const cache = new Map<string, CacheEntry<any>>();
+const cache = new Map<string, CacheEntry<unknown>>();
 const CACHE_DURATION = 30000; // 30 secondes
 
 /**
