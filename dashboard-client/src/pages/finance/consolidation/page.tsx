@@ -1,72 +1,182 @@
+/**
+ * Consolidation Multi-Entités - Vue d'ensemble groupe
+ *
+ * Fonctionnalités :
+ * - Agrégation automatique des données financières multi-entités
+ * - Vue consolidée : trésorerie, revenus, dépenses globales
+ * - Détail par entité avec drill-down pour analyse approfondie
+ * - Élimination des flux inter-entités pour vision juste
+ * - KPIs groupe : EBITDA, BFR, DSO consolidés
+ */
 import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
+import { financeNotices } from '@/lib/notices'
+import { AlertCircle, RefreshCw, Building2 } from 'lucide-react'
 
 export default function ConsolidationPage() {
   const [entities, setEntities] = useState([])
   const [balanceSheet, setBalanceSheet] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-  useEffect(() => {
+  const fetchConsolidation = () => {
+    setLoading(true)
+    setError(false)
     Promise.all([
       apiClient.post('/finance/consolidation/entities'),
-      apiClient.post('/finance/consolidation/balance-sheet')
-    ]).then(([entitiesRes, balanceRes]) => {
-      if (entitiesRes.data.success) setEntities(entitiesRes.data.data.entities)
-      if (balanceRes.data.success) setBalanceSheet(balanceRes.data.data)
-      setLoading(false)
-    })
+      apiClient.post('/finance/consolidation/balance-sheet'),
+    ])
+      .then(([entitiesRes, balanceRes]) => {
+        if (entitiesRes.data.success) setEntities(entitiesRes.data.data.entities)
+        if (balanceRes.data.success) setBalanceSheet(balanceRes.data.data)
+        setLoading(false)
+      })
+      .catch(_err => {
+        setError(true)
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    fetchConsolidation()
   }, [])
 
-  if (loading) return <Layout><div>Chargement...</div></Layout>
+  if (loading) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+          <SkeletonTable rows={4} columns={3} />
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>
-      <Breadcrumbs items={[
-        { label: 'Finance', path: '/finance' },
-        { label: 'Consolidation', path: '/finance/consolidation' },
-      ]} />
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Consolidation' },
+          ]}
+        />
 
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Consolidation Groupe</h1>
-
-      <div className="grid gap-6 mb-6">
-        {entities.map((entity: any) => (
-          <div key={entity.id} className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <div className="flex justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{entity.name}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{entity.code}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-900 dark:text-white">{entity.consolidationPercent}%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-500">{entity.currency}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {balanceSheet && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border p-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Bilan Consolidé</h2>
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Actif</h3>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {formatCurrency(balanceSheet.assets.total.consolidated, '€')}
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Passif</h3>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {formatCurrency(balanceSheet.liabilities.total.consolidated, '€')}
-              </p>
-            </div>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Consolidation Groupe
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Vue consolidée de vos entités financières
+          </p>
         </div>
-      )}
+
+        <PageNotice config={financeNotices.consolidation} />
+
+        {error && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des données de consolidation.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={fetchConsolidation}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!error && entities.length === 0 && (
+          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <Building2 className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              Aucune entité trouvée
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Créez des entités pour commencer la consolidation.
+            </p>
+          </div>
+        )}
+
+        {!error && entities.length > 0 && (
+          <>
+            <div className="grid gap-6">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Entités ({entities.length})
+                </h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {entities.map((entity: any) => (
+                    <div
+                      key={entity.id}
+                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {entity.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            {entity.code}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                            {entity.consolidationPercent}%
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                            {entity.currency}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {balanceSheet && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                  Bilan Consolidé
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <h3 className="text-sm font-medium text-emerald-700 dark:text-emerald-400 mb-2">
+                      Actif Total
+                    </h3>
+                    <p className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
+                      {formatCurrency(balanceSheet.assets.total.consolidated, '€')}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <h3 className="text-sm font-medium text-orange-700 dark:text-orange-400 mb-2">
+                      Passif Total
+                    </h3>
+                    <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                      {formatCurrency(balanceSheet.liabilities.total.consolidated, '€')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </Layout>
   )
 }

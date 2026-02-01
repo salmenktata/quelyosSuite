@@ -19,6 +19,7 @@ import {
   Archive,
   FolderOpen,
   Settings,
+  AlertCircle,
   type LucideIcon,
 } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
@@ -641,6 +642,160 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
           'Comparaison visuelle : graphiques côte-à-côte pour analyser les différentes trajectoires',
           'Sauvegarde des scénarios : conservez vos hypothèses pour les réutiliser ou les partager',
           'Export et partage : générez des rapports PDF pour vos présentations ou votre board',
+        ],
+      },
+    ],
+  },
+
+  portfolios: {
+    pageId: 'finance-portfolios',
+    title: 'Portefeuilles',
+    purpose:
+      "Organisez vos comptes en portefeuilles thématiques pour une vue consolidée de vos actifs. Groupez vos comptes par projet, entité ou objectif pour un pilotage financier structuré.",
+    icon: Building2 as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Création portefeuilles personnalisés avec nom et description',
+          'Association multi-comptes par portefeuille pour consolidation',
+          'Calcul solde total automatique en temps réel',
+          'Filtrage comptes disponibles (non assignés à d\'autres portefeuilles)',
+          'Vue détaillée avec liste des comptes associés et leurs soldes',
+        ],
+      },
+    ],
+  },
+
+  invoices: {
+    pageId: 'finance-invoices',
+    title: 'Factures Clients',
+    purpose:
+      "Gérez vos factures clients avec suivi des paiements et relances automatiques. Créez, envoyez et suivez vos factures pour optimiser votre cycle d\'encaissement.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Liste filtrable par statut (brouillon, envoyée, payée) et état paiement',
+          'Actions : créer, valider, envoyer par email, télécharger PDF',
+          'Indicateurs : total facturé, payé, en attente, nombre factures',
+          'Suivi échéances et retards avec alertes automatiques',
+          'Historique des paiements et relances par facture',
+        ],
+      },
+    ],
+  },
+
+  payments: {
+    pageId: 'finance-payments',
+    title: 'Paiements',
+    purpose:
+      "Suivez tous vos paiements clients et fournisseurs. Enregistrez les encaissements et décaissements pour un suivi précis de votre trésorerie.",
+    icon: CreditCard as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Liste complète des paiements avec filtres (type, date, statut)',
+          'Enregistrement manuel ou automatique depuis factures',
+          'Rapprochement bancaire pour vérifier la concordance',
+          'Indicateurs : total encaissé, décaissé, en attente',
+          'Export pour comptabilité et analyse',
+        ],
+      },
+    ],
+  },
+
+  consolidation: {
+    pageId: 'finance-consolidation',
+    title: 'Consolidation',
+    purpose:
+      "Consolidez vos données financières multi-entités pour une vue d\'ensemble groupe. Agrégez les comptes, transactions et KPIs de toutes vos entités.",
+    icon: Building2 as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Agrégation automatique des données multi-entités',
+          'Vue consolidée : trésorerie, revenus, dépenses globales',
+          'Détail par entité avec drill-down pour analyse approfondie',
+          'Élimination des flux inter-entités pour vision juste',
+          'KPIs groupe : EBITDA, BFR, DSO consolidés',
+        ],
+      },
+    ],
+  },
+
+  dataQuality: {
+    pageId: 'finance-data-quality',
+    title: 'Qualité des Données',
+    purpose:
+      "Vérifiez l\'intégrité et la qualité de vos données financières. Identifiez les anomalies, doublons et incohérences pour garantir la fiabilité de vos rapports.",
+    icon: AlertCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Contrôles automatiques',
+        icon: Lightbulb,
+        items: [
+          'Détection doublons : transactions similaires (montant, date, compte)',
+          'Transactions non catégorisées : opérations sans catégorie assignée',
+          'Incohérences montants : factures vs paiements, écarts budgétaires',
+          'Comptes orphelins : comptes sans portefeuille ou sans transactions',
+          'Rapprochement bancaire : écarts entre soldes système et relevés',
+        ],
+      },
+    ],
+  },
+
+  reporting: {
+    pageId: 'finance-reporting',
+    title: 'Reporting Financier',
+    purpose:
+      "Accédez à tous vos rapports financiers en un seul endroit. Consultez vos KPIs, analyses et prévisions pour piloter efficacement votre activité.",
+    icon: BarChart3 as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Rapports disponibles',
+        icon: Lightbulb,
+        items: [
+          'KPIs essentiels : DSO, EBITDA, BFR, point mort, trésorerie',
+          'Analyses détaillées : par catégorie, flux, compte, portefeuille',
+          'Rentabilité : marges, ratios, profitabilité par segment',
+          'Prévisions : projections trésorerie et résultats futurs',
+          'Qualité données : détection anomalies et rapprochements',
+        ],
+      },
+    ],
+  },
+
+  forecasting: {
+    pageId: 'finance-forecasting',
+    title: 'Prévisions Avancées',
+    purpose:
+      "Créez et gérez des prévisions financières détaillées avec modèles de projection. Anticipez votre trésorerie, revenus et dépenses pour sécuriser votre activité.",
+    icon: TrendingUp as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Modèles de prévision : linéaire, saisonnier, croissance exponentielle',
+          'Projection multi-horizon : 3, 6, 12 mois avec scénarios multiples',
+          'Analyse tendances historiques pour calibrer les prévisions',
+          'Comparaison prévisions vs réalisé pour affiner les modèles',
+          'Alertes écarts : notification si déviation significative',
         ],
       },
     ],

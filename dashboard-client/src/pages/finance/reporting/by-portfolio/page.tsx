@@ -1,28 +1,32 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
+/**
+ * Analyse par Portefeuille - Vue Consolidée par Groupes
+ *
+ * Fonctionnalités :
+ * - Consolidation comptes en portefeuilles (entité, projet, filiale)
+ * - Comparaison performance relative de chaque portefeuille
+ * - Identification portefeuilles rentables vs déficitaires
+ * - Suivi flux inter-portefeuilles (prêts, transferts, refacturations)
+ * - Vue consolidée groupe avec détail par entité
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
   Briefcase,
-  ChevronLeft,
   TrendingUp,
   TrendingDown,
   DollarSign,
   Percent,
   Loader2,
   AlertTriangle,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { PageNotice } from "@/components/common";
-import { reportingClient, type ByPortfolioResponse } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { financeNotices } from "@/lib/notices";
+} from 'lucide-react'
+import { GlassPanel, GlassCard } from '@/components/ui/glass'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { reportingClient, type ByPortfolioResponse } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type TimeRange = "7" | "30" | "60" | "90";
 
@@ -109,34 +113,30 @@ export default function ByPortfolioReportPage() {
     : null;
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Navigation rapide entre rapports */}
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Par Portefeuille' },
+          ]}
+        />
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
         >
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 p-3 shadow-lg shadow-violet-500/30">
-              <Briefcase className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 p-3 shadow-lg shadow-violet-500/30 dark:shadow-violet-500/20">
+              <Briefcase className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Analyse par portefeuille
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Vue consolidée par groupes de comptes et performance globale
               </p>
             </div>
@@ -394,7 +394,6 @@ export default function ByPortfolioReportPage() {
         </>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

@@ -1,12 +1,20 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
+/**
+ * Analyse par Catégorie - Breakdown Revenus et Dépenses
+ *
+ * Fonctionnalités :
+ * - Détail revenus et dépenses par catégorie (salaires, marketing, etc.)
+ * - Drill-down dans les transactions par catégorie avec détail
+ * - Identification postes en hausse anormale ou non budgétés
+ * - Comparaison dépenses réelles vs budgets prévisionnels
+ * - Établissement benchmarks internes (% CA) par catégorie clé
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
   PieChart,
-  ChevronLeft,
   ChevronDown,
   ChevronUp,
   TrendingUp,
@@ -14,18 +22,14 @@ import {
   DollarSign,
   Loader2,
   AlertTriangle,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { PageNotice } from "@/components/common";
-import { financeNotices } from "@/lib/notices";
-import { reportingClient, type TopCategoriesResponse } from "@/lib/finance/reporting";
-import { api } from "@/lib/finance/api";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { logger } from '@quelyos/logger';
+} from 'lucide-react'
+import { GlassPanel, GlassCard } from '@/components/ui/glass'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { financeNotices } from '@/lib/notices/finance-notices'
+import { reportingClient, type TopCategoriesResponse } from '@/lib/finance/reporting'
+import { api } from '@/lib/finance/api'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { logger } from '@quelyos/logger'
 
 type TimeRange = "7" | "30" | "60" | "90";
 
@@ -182,32 +186,28 @@ export default function ByCategoryReportPage() {
   };
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Navigation rapide entre rapports */}
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Par Catégorie' },
+          ]}
+        />
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
         >
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-amber-500 to-orange-600 p-3 shadow-lg shadow-amber-500/30">
-              <PieChart className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-amber-500 to-orange-600 p-3 shadow-lg shadow-amber-500/30 dark:shadow-amber-500/20">
+              <PieChart className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analyse par catégorie</h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Répartition détaillée des revenus et dépenses par catégorie
               </p>
             </div>
@@ -215,7 +215,7 @@ export default function ByCategoryReportPage() {
         </motion.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.byCategory} className="mb-6" />
+        <PageNotice config={financeNotices.byCategory} />
 
         {/* Controls */}
         <motion.div
@@ -628,7 +628,6 @@ export default function ByCategoryReportPage() {
         </>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

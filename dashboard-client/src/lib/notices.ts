@@ -2,6 +2,10 @@
  * Notices contextuelles pour les pages
  */
 
+// Re-export types from notices/types
+export type { PageNoticeConfig, NoticeSection } from './notices/types'
+
+
 export interface Notice {
   type: 'info' | 'warning' | 'success' | 'error'
   title?: string
@@ -91,5 +95,29 @@ financeNotices.portfolios = [
     type: 'info' as const,
     title: 'Portefeuilles',
     message: 'Organisez vos comptes en portefeuilles thématiques pour une gestion optimisée.',
+  },
+]
+
+financeNotices.cashflow = [
+  {
+    type: 'info' as const,
+    title: 'Trésorerie',
+    message: 'Analysez vos flux de trésorerie et anticipez votre solde avec les prévisions à 30 jours.',
+  },
+]
+
+financeNotices.bfr = [
+  {
+    type: 'info' as const,
+    title: 'BFR',
+    message: 'Besoin en Fonds de Roulement : optimisez votre cycle d\'exploitation.',
+  },
+]
+
+financeNotices.forecasts = [
+  {
+    type: 'info' as const,
+    title: 'Prédictions ML',
+    message: 'Prévisions intelligentes des KPIs via algorithme Prophet (Machine Learning).',
   },
 ]

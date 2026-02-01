@@ -1,18 +1,25 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
-import { ShieldCheck, ChevronLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel } from "@/components/ui/glass";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { ReliabilityBadge } from "@/components/kpis/ReliabilityBadge";
-import { reportingClient } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import type { DSOResponse, EBITDAResponse, BFRResponse, BreakEvenResponse } from "@/lib/finance/reporting";
+/**
+ * Qualité des Données KPIs - Fiabilité et Recommandations
+ *
+ * Fonctionnalités :
+ * - Vérification intégrité et qualité données financières
+ * - Détection anomalies, doublons et incohérences
+ * - Transactions non catégorisées et comptes orphelins
+ * - Rapprochement bancaire : écarts soldes système vs relevés
+ * - Recommandations d'amélioration qualité données pour KPIs fiables
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
+import { ShieldCheck } from 'lucide-react'
+import { GlassPanel } from '@/components/ui/glass'
+import { ReliabilityBadge } from '@/components/kpis/ReliabilityBadge'
+import { reportingClient } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { financeNotices } from '@/lib/notices/finance-notices'
+import type { DSOResponse, EBITDAResponse, BFRResponse, BreakEvenResponse } from '@/lib/finance/reporting'
 
 export default function DataQualityPage() {
   useRequireAuth();
@@ -56,29 +63,29 @@ export default function DataQualityPage() {
     : 0;
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Qualité Données' },
+          ]}
+        />
 
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200"
-          >
-            <ChevronLeft className="h-4 w-4" />Retour au hub
-          </Link>
-
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg">
-              <ShieldCheck className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
+              <ShieldCheck className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Qualité des Données KPIs</h1>
-              <p className="text-sm text-slate-400">Fiabilité et prérequis des indicateurs financiers</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Fiabilité et prérequis des indicateurs financiers</p>
             </div>
           </div>
         </motion.div>
+
+        <PageNotice config={financeNotices.dataQuality} />
 
         {/* Global Score */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
@@ -160,7 +167,6 @@ export default function DataQualityPage() {
           </div>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

@@ -1,20 +1,25 @@
-
-
-import React, { useMemo, useState } from "react";
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { ModularLayout } from "@/components/ModularLayout";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { reportingClient, type ByFlowResponse } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { GlassCard, GlassStatCard, GlassPanel, GlassListItem } from "@/components/ui/glass";
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { TrendingUp, TrendingDown, Filter, Loader2, AlertCircle, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, MoreHorizontal, ChevronLeft, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import type { FlowType } from "@/types/paymentFlow";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { PageNotice } from "@/components/common";
-import { financeNotices } from "@/lib/notices";
+/**
+ * Analyse par Flux - Récurrent vs One-shot, Fixes vs Variables
+ *
+ * Fonctionnalités :
+ * - Segmentation flux : récurrent vs one-shot, fixes vs variables
+ * - Analyse prévisibilité de l'activité (poids des revenus récurrents)
+ * - Suivi ratio charges fixes/variables pour maintenir flexibilité
+ * - Identification opportunités transformation one-shot en récurrent
+ * - Recommandations d'optimisation structure de coûts
+ */
+import React, { useMemo, useState } from 'react'
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { reportingClient, type ByFlowResponse } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { GlassCard, GlassStatCard, GlassPanel, GlassListItem } from '@/components/ui/glass'
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { TrendingUp, TrendingDown, Filter, Loader2, AlertCircle, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, MoreHorizontal, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import type { FlowType } from '@/types/paymentFlow'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 // Icônes par type de flux (FlowType inclut PaymentMethod + TransactionCategory)
 const FLOW_ICONS: Record<string, React.ReactNode> = {
@@ -131,34 +136,31 @@ export default function ReportingByFlowPage() {
   }, [data]);
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Navigation rapide entre rapports */}
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Par Flux' },
+          ]}
+        />
 
         {/* Header */}
-        <div className="mb-8">
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
+        <div>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30">
-              <TrendingUp className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
+              <TrendingUp className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analyse par flux de paiement</h1>
-              <p className="text-sm text-slate-400">Répartition par type de flux (CB, virement, chèque, etc.)</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Répartition par type de flux (CB, virement, chèque, etc.)</p>
             </div>
           </div>
         </div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.byFlow} className="mb-6" />
+        <PageNotice config={financeNotices.byFlow} />
 
         <div className="space-y-6">
           {error && (
@@ -399,7 +401,6 @@ export default function ReportingByFlowPage() {
           )}
         </div>
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

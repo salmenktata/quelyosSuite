@@ -1,15 +1,25 @@
-
-
-import { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { api } from "@/lib/finance/api";
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { GlassCard, GlassPanel } from "@/components/ui/glass";
-import { ArrowLeft, Save, Loader2, AlertCircle } from "lucide-react";
-import type { CreateBudgetRequest, UpdateBudgetRequest } from "@/types/api";
-import { logger } from '@quelyos/logger';
+/**
+ * Création/Édition Budget - Formulaire de gestion budgétaire
+ *
+ * Fonctionnalités :
+ * - Création nouveau budget avec nom, montant et période
+ * - Édition budget existant (mode query param ?id=X)
+ * - Association optionnelle à une catégorie de dépense
+ * - Choix période : hebdo, mensuel, trimestriel, annuel, personnalisé
+ * - Validation formulaire et gestion erreurs
+ */
+import { useEffect, useState, useCallback } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs } from '@/components/common'
+import { ROUTES } from '@/lib/finance/compat/routes'
+import { api } from '@/lib/finance/api'
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { GlassCard, GlassPanel } from '@/components/ui/glass'
+import { Save, Loader2, AlertCircle } from 'lucide-react'
+import type { CreateBudgetRequest, UpdateBudgetRequest } from '@/types/api'
+import { logger } from '@quelyos/logger'
 
 type Category = {
   id: number;
@@ -109,36 +119,39 @@ export default function NewBudgetPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center text-white">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
-      </div>
-    );
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+          <div className="space-y-4">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          </div>
+        </div>
+      </Layout>
+    )
   }
 
   return (
-    <div className="relative min-h-screen text-white">
-      {/* Background */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-amber-500/20 blur-[120px]" />
-        <div className="absolute -right-40 top-40 h-[400px] w-[400px] rounded-full bg-orange-500/20 blur-[120px]" />
-      </div>
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Budgets', href: '/finance/budgets' },
+            { label: editId ? 'Modifier' : 'Nouveau' },
+          ]}
+        />
 
-      <div className="relative space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <Link
-              to={ROUTES.FINANCE.DASHBOARD.BUDGETS.HOME}
-              className="mb-2 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200"
-            >
-              <ArrowLeft size={16} />
-              Retour aux budgets
-            </Link>
-            <p className="text-xs uppercase tracking-[0.25em] text-amber-200">Budgets</p>
-            <h1 className="bg-gradient-to-r from-white to-amber-200 bg-clip-text text-3xl font-semibold text-transparent">
-              {editId ? "Modifier le budget" : "Nouveau budget"}
-            </h1>
-          </div>
+        <div>
+          <p className="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+            Budgets
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            {editId ? 'Modifier le budget' : 'Nouveau budget'}
+          </h1>
         </div>
 
         {/* Formulaire */}
@@ -272,7 +285,7 @@ export default function NewBudgetPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition hover:shadow-amber-500/40 disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {saving ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -281,12 +294,13 @@ export default function NewBudgetPage() {
                     )}
                     {editId ? "Mettre à jour" : "Créer le budget"}
                   </button>
-                  <Link
-                    to={ROUTES.FINANCE.DASHBOARD.BUDGETS.HOME}
-                    className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10"
+                  <button
+                    type="button"
+                    onClick={() => navigate(ROUTES.FINANCE.DASHBOARD.BUDGETS.HOME)}
+                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     Annuler
-                  </Link>
+                  </button>
                 </div>
               </form>
             </GlassPanel>
@@ -318,6 +332,6 @@ export default function NewBudgetPage() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </Layout>
+  )
 }

@@ -10,11 +10,11 @@
  */
 
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
 import { financeNotices } from '@/lib/notices'
-import { ArrowUpCircle, Plus, Search, X } from 'lucide-react'
+import { ArrowUpCircle, Plus, Search, X, RefreshCw, AlertCircle } from 'lucide-react'
 import { api } from '@/lib/finance/api'
 import { useCurrency } from '@/lib/finance/CurrencyContext'
 import { logger } from '@quelyos/logger';
@@ -36,6 +36,7 @@ type Category = {
 }
 
 export default function IncomesPage() {
+  const navigate = useNavigate();
   const { formatAmount } = useCurrency()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -74,6 +75,20 @@ export default function IncomesPage() {
     })
   }, [transactions, searchQuery, selectedCategory])
 
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+          <SkeletonTable rows={8} columns={5} />
+        </div>
+      </Layout>
+    );
+  }
+
   const totalIncomes = useMemo(() => {
     return filteredTransactions.reduce((sum, tx) => sum + tx.amount, 0)
   }, [filteredTransactions])
@@ -83,7 +98,6 @@ export default function IncomesPage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Tableau de bord', href: '/dashboard' },
             { label: 'Finance', href: '/finance' },
             { label: 'Revenus' },
           ]}
@@ -99,17 +113,43 @@ export default function IncomesPage() {
               Suivez et gérez tous vos revenus d'entreprise
             </p>
           </div>
-          <Link to="/finance/incomes/new">
-            <Button variant="primary" icon={<Plus className="h-5 w-5" />}>
-              Nouveau Revenu
-            </Button>
-          </Link>
+          <Button
+            variant="primary"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => navigate('/finance/incomes/new')}
+          >
+            Nouveau Revenu
+          </Button>
         </div>
 
-        <PageNotice config={financeNotices.incomes} className="mb-6" />
+        <PageNotice config={financeNotices.incomes} />
+
+        {/* Error state */}
+        {error && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                {error}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={fetchData}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
+
 
         {/* Stats */}
-        {!isLoading && !error && (
+        {
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
@@ -123,7 +163,7 @@ export default function IncomesPage() {
               </div>
             </div>
           </div>
-        )}
+        }
 
         {/* Filters */}
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
@@ -183,7 +223,7 @@ export default function IncomesPage() {
               Commencez par enregistrer votre premier revenu
             </p>
             <Link to="/finance/incomes/new">
-              <Button variant="primary" icon={<Plus className="h-5 w-5" />}>
+              <Button variant="primary" icon={<Plus className="w-4 h-4" />}>
                 Nouveau Revenu
               </Button>
             </Link>

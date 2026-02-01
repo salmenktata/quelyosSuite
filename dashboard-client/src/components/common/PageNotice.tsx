@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Info, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import type { PageNoticeConfig, Notice } from "@/lib/notices";
-import type { PageNoticeConfig as PageNoticeConfigType } from "@/lib/notices/types";
+import type { PageNoticeConfig as PageNoticeConfigType, NoticeSection } from "@/lib/notices/types";
 import { MODULE_COLOR_CONFIGS } from "@/lib/notices/types";
 import {
   trackNoticeView,
@@ -16,7 +16,7 @@ import {
 } from "@/lib/notices/analytics";
 
 interface PageNoticeProps {
-  config?: PageNoticeConfig | any;
+  config?: PageNoticeConfig;
   className?: string;
   enableFeedback?: boolean; // Activer le système de feedback (default: true)
 }
@@ -34,7 +34,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
   }
 
   const Icon = config.icon || Info;
-  const colorConfig = MODULE_COLOR_CONFIGS[config.moduleColor || 'gray'];
+  const colorConfig = MODULE_COLOR_CONFIGS[config.moduleColor || 'gray' as keyof typeof MODULE_COLOR_CONFIGS];
   const storageKey = `quelyos_page_notice_collapsed_${config.pageId}`;
 
   // Hydration-safe initialization
@@ -167,7 +167,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                   </div>
 
                   {/* Sections */}
-                  {config.sections?.map((section, sectionIndex) => {
+                  {config.sections?.map((section: NoticeSection, sectionIndex: number) => {
                     const SectionIcon = section.icon;
                     return (
                       <div key={sectionIndex} className={sectionIndex > 0 ? "mt-3" : ""}>
@@ -179,7 +179,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                             </span>
                           </div>
                           <ul className="space-y-1.5">
-                            {section.items.map((item, itemIndex) => (
+                            {section.items.map((item: string, itemIndex: number) => (
                               <li
                                 key={itemIndex}
                                 className={`text-xs ${colorConfig.textSecondary} flex items-start gap-2`}
@@ -266,7 +266,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                     {config.purpose}
                   </p>
                 </div>
-                {config.sections?.map((section, sectionIndex) => {
+                {config.sections?.map((section: NoticeSection, sectionIndex: number) => {
                   const SectionIcon = section.icon;
                   return (
                     <div key={sectionIndex} className={sectionIndex > 0 ? "mt-3" : ""}>
@@ -278,7 +278,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                           </span>
                         </div>
                         <ul className="space-y-1.5">
-                          {section.items.map((item, itemIndex) => (
+                          {section.items.map((item: string, itemIndex: number) => (
                             <li
                               key={itemIndex}
                               className={`text-xs ${colorConfig.textSecondary} flex items-start gap-2`}

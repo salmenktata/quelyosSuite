@@ -1,27 +1,31 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
+/**
+ * Rentabilité - Marges, Ratios et Coûts par Catégorie
+ *
+ * Fonctionnalités :
+ * - Calcul et suivi marges brutes, opérationnelles et nettes
+ * - Identification catégories revenus avec meilleures marges
+ * - Analyse coûts par catégorie pour repérer dérapages
+ * - Comparaison ratios de rentabilité aux benchmarks sectoriels
+ * - Priorisation actions sur leviers à fort impact (prix, mix, productivité)
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
   Target,
-  ChevronLeft,
   TrendingUp,
   DollarSign,
   Percent,
   AlertCircle,
   Loader2,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { PageNotice } from "@/components/common";
-import { reportingClient, type ProfitabilityResponse } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { financeNotices } from "@/lib/notices";
+} from 'lucide-react'
+import { GlassPanel, GlassCard } from '@/components/ui/glass'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { reportingClient, type ProfitabilityResponse } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type TimeRange = "7" | "30" | "60" | "90";
 
@@ -58,34 +62,30 @@ export default function ProfitabilityReportPage() {
   };
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Navigation rapide entre rapports */}
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Rentabilité' },
+          ]}
+        />
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
         >
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-rose-500 to-pink-600 p-3 shadow-lg shadow-rose-500/30">
-              <Target className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-rose-500 to-pink-600 p-3 shadow-lg shadow-rose-500/30 dark:shadow-rose-500/20">
+              <Target className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Analyse de rentabilité
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Marges brutes et nettes, ratios clés et structure des coûts
               </p>
             </div>
@@ -473,7 +473,6 @@ export default function ProfitabilityReportPage() {
         </>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

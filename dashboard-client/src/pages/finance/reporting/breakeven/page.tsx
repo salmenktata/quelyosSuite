@@ -1,12 +1,20 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
+/**
+ * Point Mort (Break-even) - Seuil de Rentabilité
+ *
+ * Fonctionnalités :
+ * - Calcul du point mort (CA minimum pour couvrir charges fixes + variables)
+ * - Classification des dépenses en coûts fixes vs variables
+ * - Marge de sécurité et taux de couverture
+ * - Simulation de scénarios pour optimiser la rentabilité
+ * - Recommandations pour réduire le seuil de rentabilité
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
   Target,
-  ChevronLeft,
   TrendingUp,
   AlertCircle,
   Loader2,
@@ -14,20 +22,16 @@ import {
   DollarSign,
   Percent,
   PieChart,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { Card } from "@/components/ui/card";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { ExportDropdown } from "@/components/finance/reporting/ExportDropdown";
-import { PageNotice } from "@/components/common";
-import { ReliabilityBadge } from "@/components/kpis/ReliabilityBadge";
-import { reportingClient, type BreakEvenResponse, type BreakEvenHistoryPoint } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { formatDateForExport } from "@/lib/utils/export";
-import { TrendChart } from "@/components/finance/charts/TrendChart";
-import { financeNotices } from "@/lib/notices";
+} from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { ExportDropdown } from '@/components/finance/reporting/ExportDropdown'
+import { ReliabilityBadge } from '@/components/kpis/ReliabilityBadge'
+import { reportingClient, type BreakEvenResponse, type BreakEvenHistoryPoint } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { formatDateForExport } from '@/lib/utils/export'
+import { TrendChart } from '@/components/finance/charts/TrendChart'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type TimeRange = "7" | "30" | "60" | "90";
 
@@ -68,33 +72,30 @@ export default function BreakEvenReportPage() {
   });
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Point Mort' },
+          ]}
+        />
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
         >
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-3 shadow-lg shadow-purple-500/30">
-              <Target className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-3 shadow-lg shadow-purple-500/30 dark:shadow-purple-500/20">
+              <Target className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Point Mort - Seuil de Rentabilité
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Break-even Analysis - Analyse des coûts fixes et variables
               </p>
             </div>
@@ -102,7 +103,7 @@ export default function BreakEvenReportPage() {
         </motion.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.breakeven} className="mb-6" />
+        <PageNotice config={financeNotices.breakeven} />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
@@ -605,7 +606,6 @@ export default function BreakEvenReportPage() {
         </>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }

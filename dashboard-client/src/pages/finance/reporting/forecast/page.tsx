@@ -1,29 +1,33 @@
-
-
-import { useRequireAuth } from "@/lib/finance/compat/auth";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ModularLayout } from "@/components/ModularLayout";
+/**
+ * Prévisions de Trésorerie - Projection Future
+ *
+ * Fonctionnalités :
+ * - Projection trésorerie future basée sur tendances historiques
+ * - Scénarios multiples (optimiste, pessimiste, réaliste)
+ * - Anticipation besoins de financement sur 30-60-90-180 jours
+ * - Comparaison prévisions vs réalisé pour affiner modèles
+ * - Alertes écarts significatifs entre prévisions et réalisé
+ */
+import { useRequireAuth } from '@/lib/finance/compat/auth'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Layout } from '@/components/Layout'
+import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
   TrendingUp,
   TrendingDown,
-  ChevronLeft,
   AlertTriangle,
   DollarSign,
   Calendar,
   Loader2,
   AlertCircle,
   Clock,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/lib/finance/compat/routes";
-import { GlassPanel, GlassCard } from "@/components/ui/glass";
-import { useCurrency } from "@/lib/finance/CurrencyContext";
-import { ReportingNav } from "@/components/finance/reporting/ReportingNav";
-import { PageNotice } from "@/components/common";
-import { reportingClient, type ForecastEnhancedResponse } from "@/lib/finance/reporting";
-import { useApiData } from "@/hooks/finance/useApiData";
-import { financeNotices } from "@/lib/notices";
+} from 'lucide-react'
+import { GlassPanel, GlassCard } from '@/components/ui/glass'
+import { useCurrency } from '@/lib/finance/CurrencyContext'
+import { reportingClient, type ForecastEnhancedResponse } from '@/lib/finance/reporting'
+import { useApiData } from '@/hooks/finance/useApiData'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type TimeHorizon = "30" | "60" | "90" | "180";
 
@@ -55,34 +59,30 @@ export default function ForecastReportPage() {
   const error = apiError?.message || null;
 
   return (
-    <ModularLayout>
-    <div className="p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Navigation rapide entre rapports */}
-        <ReportingNav />
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Finance', href: '/finance' },
+            { label: 'Reporting', href: '/finance/reporting' },
+            { label: 'Prévisions' },
+          ]}
+        />
 
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
         >
-          <Link
-            to={ROUTES.FINANCE.DASHBOARD.REPORTING}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-indigo-200 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour au hub
-          </Link>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30">
-              <TrendingUp className="h-6 w-6 text-gray-900 dark:text-white" />
+            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
+              <TrendingUp className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Prévisions de trésorerie
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Projection basée sur les tendances historiques et transactions planifiées
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function ForecastReportPage() {
         </motion.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.forecast} className="mb-6" />
+        <PageNotice config={financeNotices.forecast} />
 
         {/* Controls */}
         <motion.div
@@ -353,7 +353,6 @@ export default function ForecastReportPage() {
         </>
         )}
       </div>
-    </div>
-    </ModularLayout>
+    </Layout>
     );
 }
