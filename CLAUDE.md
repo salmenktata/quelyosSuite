@@ -499,22 +499,22 @@ class ProductTemplate(models.Model):
 
 ### Conteneurs Backend/Infrastructure
 - **quelyos-odoo** : Serveur Odoo 19 (port 8069)
-- **quelyos-postgres** : Base de données PostgreSQL (port 5432)
+- **quelyos-db** : Base de données PostgreSQL (port 5432)
 - **quelyos-redis** : Cache Redis (port 6379)
 
 ### Utilisateurs/DB PostgreSQL
-- **User** : `quelyos` (PAS "odoo")
+- **User** : `odoo` (utilisateur PostgreSQL réel)
 - **Database** : `quelyos`
 - **Password** : Voir `.env` ou docker-compose.yml
 
 ### Commandes Courantes
 ```bash
 # Upgrade module Odoo
-docker exec quelyos-postgres psql -U quelyos -d quelyos -c "UPDATE ir_module_module SET state = 'to upgrade' WHERE name = 'quelyos_api';"
+docker exec quelyos-db psql -U odoo -d quelyos -c "UPDATE ir_module_module SET state = 'to upgrade' WHERE name = 'quelyos_api';"
 docker restart quelyos-odoo
 
 # Vérifier version module
-docker exec quelyos-postgres psql -U quelyos -d quelyos -c "SELECT name, latest_version FROM ir_module_module WHERE name = 'quelyos_api';"
+docker exec quelyos-db psql -U odoo -d quelyos -c "SELECT name, latest_version FROM ir_module_module WHERE name = 'quelyos_api';"
 
 # Logs Odoo
 docker logs quelyos-odoo --tail 100 -f

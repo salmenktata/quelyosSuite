@@ -52,17 +52,9 @@ class AdminSeedController(SuperAdminController):
             response.status_code = 204
             return response
 
-        # Vérification authentification
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
-        # Vérification super admin
+        # Vérification super admin (gère JWT Bearer + session)
         try:
-            self._check_super_admin()
+            user_id = self._check_super_admin()
         except AccessDenied as e:
             return request.make_json_response(
                 {'success': False, 'error': str(e)},
@@ -178,7 +170,7 @@ class AdminSeedController(SuperAdminController):
             request.env['quelyos.audit.log'].sudo().create({
                 'action': 'seed_data_generated',
                 'tenant_id': tenant_id,
-                'user_id': request.session.uid,
+                'user_id': user_id,
                 'details': json.dumps({
                     'job_id': job.job_id,
                     'config': config,
@@ -237,17 +229,9 @@ class AdminSeedController(SuperAdminController):
             response.status_code = 204
             return response
 
-        # Vérification authentification
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
-        # Vérification super admin
+        # Vérification super admin (gère JWT Bearer + session)
         try:
-            self._check_super_admin()
+            user_id = self._check_super_admin()
         except AccessDenied as e:
             return request.make_json_response(
                 {'success': False, 'error': str(e)},
@@ -300,17 +284,9 @@ class AdminSeedController(SuperAdminController):
             response.status_code = 204
             return response
 
-        # Vérification authentification
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
-        # Vérification super admin
+        # Vérification super admin (gère JWT Bearer + session)
         try:
-            self._check_super_admin()
+            user_id = self._check_super_admin()
         except AccessDenied as e:
             return request.make_json_response(
                 {'success': False, 'error': str(e)},

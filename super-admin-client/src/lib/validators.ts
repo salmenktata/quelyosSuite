@@ -323,7 +323,10 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
   } catch (error) {
     if (error instanceof z.ZodError) {
       const details = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
-      console.error('Validation API failed:', details, '\nData received:', JSON.stringify(data, null, 2).slice(0, 500))
+      // SÉCURITÉ : Masquer détails données en production (éviter exposition structure API)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Validation API failed:', details, '\nData received:', JSON.stringify(data, null, 2).slice(0, 500))
+      }
       throw new Error(`Invalid API response: ${details}`)
     }
     throw error
@@ -336,7 +339,10 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
 export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T | null {
   const result = schema.safeParse(data)
   if (!result.success) {
-    console.error('Validation API failed (safe):', result.error.issues)
+    // SÉCURITÉ : Masquer détails erreurs en production
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Validation API failed (safe):', result.error.issues)
+    }
     return null
   }
   return result.data

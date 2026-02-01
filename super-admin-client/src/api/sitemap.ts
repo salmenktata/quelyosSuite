@@ -114,7 +114,10 @@ export async function healthcheckApp(
   app: AppSectionDynamic,
   maxConcurrent = 5
 ): Promise<AppSectionDynamic> {
-  console.log(`🏥 Healthchecking ${app.name}...`)
+  // SÉCURITÉ : Log healthcheck uniquement en dev
+  if (import.meta.env.DEV) {
+    console.log(`🏥 Healthchecking ${app.name}...`)
+  }
 
   const chunks: AppRouteDynamic[][] = []
   for (let i = 0; i < app.routes.length; i += maxConcurrent) {
@@ -146,7 +149,10 @@ export async function healthcheckApp(
     lastChecked: new Date().toISOString(),
   }
 
-  console.log(`  ✅ ${healthStats.ok}/${healthStats.total} routes OK`)
+  // SÉCURITÉ : Log résultats uniquement en dev
+  if (import.meta.env.DEV) {
+    console.log(`  ✅ ${healthStats.ok}/${healthStats.total} routes OK`)
+  }
 
   return {
     ...app,

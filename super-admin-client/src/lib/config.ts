@@ -73,9 +73,9 @@ function loadConfig(): AppConfig {
   const result = configSchema.safeParse(rawConfig)
 
   if (!result.success) {
-    console.error('Configuration validation failed:', result.error.flatten())
-
+    // SÉCURITÉ : Masquer détails validation config en production
     if (import.meta.env.DEV) {
+      console.error('Configuration validation failed:', result.error.flatten())
       console.warn('Using default values for invalid config fields')
       return configSchema.parse({
         ...rawConfig,

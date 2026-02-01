@@ -24,26 +24,75 @@ class SuperAdminController(http.Controller):
     """Contrôleur de base super-admin avec helpers d'authentification"""
 
     def _check_super_admin(self):
-        """Vérifie que l'utilisateur est super admin (base.group_system)"""
-        user = request.env.user
+        """
+        Vérifie que l'utilisateur est super admin (base.group_system).
+        Supporte JWT Bearer token ou session Odoo classique.
+
+        Returns:
+            int: User ID si authentifié
+
+        Raises:
+            AccessDenied: Si l'utilisateur n'a pas les droits
+        """
+        from ..lib.jwt_auth import validate_access_token, extract_bearer_token, InvalidTokenError, TokenExpiredError
+
         endpoint = request.httprequest.path
         ip_address = request.httprequest.remote_addr
+
+        # 1. Essayer JWT Bearer token d'abord
+        auth_header = request.httprequest.headers.get('Authorization')
+        token = extract_bearer_token(auth_header)
+
+        user_id = None
+        auth_method = None
+
+        if token:
+            try:
+                # Valider le token JWT
+                payload = validate_access_token(token)
+                user_id = payload.get('uid')
+
+                if not user_id:
+                    raise AccessDenied("Token invalide: uid manquant")
+
+                auth_method = 'JWT'
+
+            except (TokenExpiredError, InvalidTokenError) as e:
+                _logger.warning(f"[AUDIT] JWT validation failed: {e}")
+                raise AccessDenied(f"Token invalide: {e}")
+
+        # 2. Fallback: session Odoo classique
+        elif request.session.uid:
+            user_id = request.session.uid
+            auth_method = 'Session'
+
+        # 3. Aucune authentification
+        else:
+            _logger.warning(f"[AUDIT] No authentication - IP: {ip_address} | Endpoint: {endpoint}")
+            raise AccessDenied("Authentification requise (JWT Bearer ou Session)")
+
+        # Vérifier que l'utilisateur a les droits super admin
+        user = request.env['res.users'].sudo().browse(user_id)
+        if not user.exists():
+            raise AccessDenied("Utilisateur introuvable")
 
         if not user.has_group('base.group_system'):
             _logger.warning(
                 f"[AUDIT] Super admin access DENIED - User: {user.login} (ID: {user.id}) | "
-                f"IP: {ip_address} | Endpoint: {endpoint}"
+                f"IP: {ip_address} | Endpoint: {endpoint} | Auth: {auth_method}"
             )
             raise AccessDenied("Super admin access required")
 
         # Log audit de l'accès super admin
         _logger.info(
             f"[AUDIT] Super admin access granted - User: {user.login} (ID: {user.id}) | "
-            f"IP: {ip_address} | Endpoint: {endpoint}"
+            f"IP: {ip_address} | Endpoint: {endpoint} | Auth: {auth_method}"
         )
 
         # Rate limiting automatique
         self._check_rate_limit()
+
+        return user_id
 
     def _check_rate_limit(self, max_requests=100, window_seconds=60):
         """

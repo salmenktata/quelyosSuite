@@ -89,11 +89,13 @@ export async function fetchWithRequestId(
   } catch (error) {
     const duration = performance.now() - startTime
 
-    // Log l'erreur avec le request ID
-    console.error(
-      `[${requestId.slice(0, 8)}] ${init?.method || 'GET'} ${input} - FAILED (${duration.toFixed(0)}ms)`,
-      error
-    )
+    // SÉCURITÉ : Log erreur uniquement en dev (éviter exposition URLs/timings production)
+    if (import.meta.env.DEV) {
+      console.error(
+        `[${requestId.slice(0, 8)}] ${init?.method || 'GET'} ${input} - FAILED (${duration.toFixed(0)}ms)`,
+        error
+      )
+    }
 
     throw error
   }
@@ -121,14 +123,20 @@ export function createRequestContext(): {
     correlationId,
     startTime,
     log: (message: string, ...args: unknown[]) => {
-      console.log(`${prefix} ${message}`, ...args)
+      if (import.meta.env.DEV) {
+        console.log(`${prefix} ${message}`, ...args)
+      }
     },
     error: (message: string, ...args: unknown[]) => {
-      console.error(`${prefix} ${message}`, ...args)
+      if (import.meta.env.DEV) {
+        console.error(`${prefix} ${message}`, ...args)
+      }
     },
     end: () => {
       const duration = performance.now() - startTime
-      console.log(`${prefix} Completed in ${duration.toFixed(0)}ms`)
+      if (import.meta.env.DEV) {
+        console.log(`${prefix} Completed in ${duration.toFixed(0)}ms`)
+      }
       return { duration }
     },
   }

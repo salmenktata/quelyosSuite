@@ -154,7 +154,11 @@ export function AuditLogs() {
       link.click()
       link.remove()
     } catch (error) {
-      console.error('Export error:', error)
+      // SÉCURITÉ : Log erreur uniquement en dev
+      if (import.meta.env.DEV) {
+        console.error('Export error:', error)
+      }
+      // TODO : Afficher notification utilisateur en cas d'erreur export
     }
   }
 

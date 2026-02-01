@@ -32,18 +32,11 @@ export async function POST(request: NextRequest) {
     //   })
     // });
 
-    // Pour l'instant, juste logger en développement
-    if (process.env.NODE_ENV === "development") {
-      console.log("[Analytics] Web Vital received:", {
-        name: metric.name,
-        value: metric.value,
-        rating: metric.rating,
-      });
-    }
+    // Métrique reçue et validée (logs retirés pour production)
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error("[Analytics] Error processing metric:", error);
+  } catch (_error) {
+    // Erreur capturée silencieusement (pas de logs en production)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

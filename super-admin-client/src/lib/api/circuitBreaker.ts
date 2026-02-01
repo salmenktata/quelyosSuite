@@ -156,11 +156,13 @@ export class CircuitBreaker {
 
     this.config.onStateChange?.(newState, previousState)
 
-    // Log pour debugging
-    console.log(
-      `[CircuitBreaker] ${previousState} -> ${newState}`,
-      `(failures: ${this.failureCount}, successes: ${this.successCount})`
-    )
+    // SÉCURITÉ : Log debugging uniquement en dev
+    if (import.meta.env.DEV) {
+      console.log(
+        `[CircuitBreaker] ${previousState} -> ${newState}`,
+        `(failures: ${this.failureCount}, successes: ${this.successCount})`
+      )
+    }
   }
 
   /**
@@ -237,9 +239,12 @@ export function getCircuitBreaker(
       new CircuitBreaker({
         ...config,
         onStateChange: (state, prev) => {
-          console.warn(
-            `[${serviceName}] Circuit breaker: ${prev} -> ${state}`
-          )
+          // SÉCURITÉ : Log uniquement en dev (éviter exposition nom services)
+          if (import.meta.env.DEV) {
+            console.warn(
+              `[${serviceName}] Circuit breaker: ${prev} -> ${state}`
+            )
+          }
           // Notification utilisateur si ouvert
           if (state === 'OPEN') {
             window.dispatchEvent(
