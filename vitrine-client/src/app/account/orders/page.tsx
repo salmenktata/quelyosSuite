@@ -190,7 +190,7 @@ export default function AccountOrdersPage() {
                         </div>
                         <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                           <span>
-                            📅 {new Date(order.date_order).toLocaleDateString('fr-FR', {
+                            📅 {new Date(order.date_order || new Date()).toLocaleDateString('fr-FR', {
                               day: 'numeric',
                               month: 'long',
                               year: 'numeric',

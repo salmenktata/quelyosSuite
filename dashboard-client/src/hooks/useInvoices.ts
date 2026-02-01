@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { apiClient } from '@/lib/api'
 import type { Invoice } from '@quelyos/types'
 
@@ -22,11 +22,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
 
-  useEffect(() => {
-    fetchInvoices()
-  }, [params.status, params.paymentState, params.dateFrom, params.dateTo])
-
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -63,7 +59,11 @@ export function useInvoices(params: UseInvoicesParams = {}) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params])
+
+  useEffect(() => {
+    fetchInvoices()
+  }, [fetchInvoices])
 
   const validate = async (invoiceId: number) => {
     try {

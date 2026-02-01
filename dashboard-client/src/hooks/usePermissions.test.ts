@@ -21,14 +21,14 @@ describe('usePermissions', () => {
           groups: ['Quelyos Finance User', 'Quelyos Store User'],
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       // Mock édition Finance (seul module finance whitelisté)
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'finance',
         name: 'Quelyos Finance',
         modules: ['finance'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 
@@ -109,7 +109,7 @@ describe('usePermissions', () => {
         id: 'finance',
         name: 'Quelyos Finance',
         modules: ['finance'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 

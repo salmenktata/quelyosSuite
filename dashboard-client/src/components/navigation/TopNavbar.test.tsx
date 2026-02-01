@@ -15,7 +15,7 @@ vi.mock('@/contexts/ThemeContext', () => ({
 
 // Mock modules pour les tests
 const createMockModule = (id: string, name: string): Module => ({
-  id: id,
+  id: id as any,
   name,
   shortName: name,
   icon: () => <div data-testid={`icon-${id}`}>Icon</div>,

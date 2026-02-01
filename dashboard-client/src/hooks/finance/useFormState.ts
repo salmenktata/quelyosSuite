@@ -47,7 +47,7 @@ export interface UseFormStateReturn<T> {
  * />
  * {form.touched.name && form.errors.name && <span>{form.errors.name}</span>}
  */
-export function useFormState<T extends Record<string, unknown>>({
+export function useFormState<T extends Record<string, any>>({
   initialValues,
   onSubmit,
   validate,

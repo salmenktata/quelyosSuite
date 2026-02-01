@@ -73,7 +73,14 @@ export function useWarehouses(tenantId?: number) {
       setLoading(true);
       setError(null);
 
-      const result = await apiClient.post('/api/ecommerce/warehouses', {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          warehouses: Warehouse[];
+          total_count: number;
+        };
+        error?: string;
+      }>('/api/ecommerce/warehouses', {
         params: {
           tenant_id: tenantId,
           limit: 100,
@@ -120,7 +127,13 @@ export function useSetWarehouseCalendar() {
       setSetting(true);
       setError(null);
 
-      const result = await apiClient.post(`/api/ecommerce/warehouses/${warehouseId}/set-calendar`, {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          warehouse: Warehouse;
+        };
+        error?: string;
+      }>(`/api/ecommerce/warehouses/${warehouseId}/set-calendar`, {
         params: {
           calendar_id: calendarId,
         },
