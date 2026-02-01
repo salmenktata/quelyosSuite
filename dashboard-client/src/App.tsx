@@ -228,6 +228,7 @@ const POSSettingsReceipts = lazy(() => import('./pages/pos/settings/receipts/pag
 const GlobalSettings = lazy(() => import('./pages/settings/page'))
 const GlobalSettingsEmail = lazy(() => import('./pages/settings/email/page'))
 const GlobalSettingsSMS = lazy(() => import('./pages/settings/sms/page'))
+const GlobalSettingsSecurity = lazy(() => import('./pages/settings/security/page'))
 
 // Lazy loaded pages - Others
 const Analytics = lazy(() => import('./pages/Analytics'))
