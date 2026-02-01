@@ -38,6 +38,8 @@ export function ThemeRenderer({ config, children }: ThemeRendererProps) {
     <ThemeProvider config={config}>
       <div className="theme-root" style={cssVariables}>
         {config.customCSS && (
+          // SÉCURITÉ : customCSS provient d'admin de confiance uniquement
+          // TODO : Ajouter sanitizeCss() si thèmes peuvent être créés par utilisateurs
           <style dangerouslySetInnerHTML={{ __html: config.customCSS }} />
         )}
         {children}

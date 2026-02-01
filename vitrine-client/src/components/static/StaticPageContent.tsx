@@ -3,6 +3,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { backendClient } from '@/lib/backend/client';
 import { logger } from '@/lib/logger';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 interface StaticPage {
   id: number;
@@ -92,7 +93,7 @@ export function StaticPageContent({ slug, fallback, title, subtitle }: StaticPag
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           <div
             className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300"
-            dangerouslySetInnerHTML={{ __html: page?.content || '' }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page?.content || '') }}
           />
         </div>
       </div>
