@@ -9,7 +9,7 @@
  */
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
-import { maintenanceNotices } from '@/lib/notices'
+import { maintenanceNotices } from '@/lib/notices/maintenance-notices'
 import { BarChart2, AlertCircle, RefreshCw, TrendingUp, TrendingDown, Package, Clock, Bell, CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useMaintenanceDashboard } from '@/hooks/useMaintenanceDashboard'
