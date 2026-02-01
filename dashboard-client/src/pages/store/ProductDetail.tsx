@@ -346,11 +346,11 @@ export default function ProductDetail() {
                       {product.qty_available}
                     </dd>
                   </div>
-                  {(product).virtual_available !== undefined && (
+                  {(product as unknown as { virtual_available?: number }).virtual_available !== undefined && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Stock prévisionnel</dt>
                       <dd className="mt-1 text-lg font-semibold text-gray-900 dark:text-white dark:text-gray-100">
-                        {(product).virtual_available}
+                        {(product as unknown as { virtual_available?: number }).virtual_available}
                       </dd>
                     </div>
                   )}

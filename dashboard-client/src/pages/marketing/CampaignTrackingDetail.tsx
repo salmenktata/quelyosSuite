@@ -16,7 +16,6 @@ import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { useMarketingCampaign } from '@/hooks/useMarketingCampaigns';
 import type { TrackingStats, HeatmapLink, TimelineEvent } from '@/hooks/useMarketingTracking';
-import type { MarketingCampaign } from '@quelyos/types';
 import { ArrowLeft, TrendingUp, Users, MousePointerClick, Clock } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 

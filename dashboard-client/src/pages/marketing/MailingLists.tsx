@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
-import { useMarketingLists, useCreateMailingList, useDeleteMailingList, type MailingList } from '@/hooks/useMarketingLists';
+import { useMarketingLists, useCreateMailingList, useDeleteMailingList } from '@/hooks/useMarketingLists';
 import { Users, Plus, Trash2, UserPlus, RefreshCw, Mail } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 

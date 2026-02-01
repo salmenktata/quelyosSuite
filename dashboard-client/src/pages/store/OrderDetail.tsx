@@ -184,7 +184,7 @@ export default function OrderDetail() {
               isUpdating={updateTracking.isPending}
             />
 
-            <OrderLineItems lines={order.lines || []} />
+            <OrderLineItems lines={(order.lines || []) as unknown as Array<{ id: number; product?: { id?: number; name: string; image?: string | null }; quantity: number; price_unit: number; price_total: number }>} />
           </div>
 
           {/* Colonne droite : Résumé, historique, actions */}

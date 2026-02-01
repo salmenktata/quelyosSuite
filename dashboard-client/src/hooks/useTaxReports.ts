@@ -60,7 +60,7 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
     a.click()
   }
 
-  const submit = async (reportId: number) => {
+  const submit = async (_reportId: number) => {
     if (confirm('Confirmer la soumission ?')) {
       // TODO: Implémenter endpoint submit
       fetchReports()

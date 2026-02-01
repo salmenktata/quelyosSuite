@@ -362,7 +362,7 @@ function TextareaCard({ label, value, onChange, placeholder, rows = 5 }: { label
   )
 }
 
-function GoalsTab({ appraisal, goals, onAction, onAddGoal }: { appraisal: Appraisal; goals: Goal[]; onAction: (params: { id: number; action: string }) => void; onAddGoal: () => void }) {
+function GoalsTab({ appraisal: _appraisal, goals, onAction, onAddGoal }: { appraisal: Appraisal; goals: Goal[]; onAction: (params: { id: number; action: string }) => void; onAddGoal: () => void }) {
   const getStateColor = (state: string) => {
     switch (state) {
       case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'

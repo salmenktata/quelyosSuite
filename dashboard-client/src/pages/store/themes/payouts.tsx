@@ -53,7 +53,7 @@ export default function PayoutsPage() {
   const [connectStatus, setConnectStatus] = useState<StripeConnectStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [onboardingUrl, setOnboardingUrl] = useState<string | null>(null);
+  const [_onboardingUrl, setOnboardingUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDesignerData();

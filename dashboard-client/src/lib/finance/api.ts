@@ -16,7 +16,7 @@ interface ApiOptions {
   headers?: Record<string, string>
 }
 
-interface ApiResponse<T = unknown> {
+interface _ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string

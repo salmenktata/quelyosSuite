@@ -15,7 +15,6 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
 import { useMarketingCampaigns, useSendCampaign, useDeleteCampaign } from '@/hooks/useMarketingCampaigns';
-import type { MarketingCampaign } from '@quelyos/types';
 import { Mail, Plus, Send, Trash2, BarChart3, RefreshCw } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 

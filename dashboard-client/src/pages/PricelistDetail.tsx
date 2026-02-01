@@ -423,7 +423,7 @@ interface PricelistItemRowProps {
 
 function PricelistItemRow({
   item,
-  pricelistId,
+  pricelistId: _pricelistId,
   currencySymbol,
   getAppliedOnLabel,
   getAppliedOnIcon,

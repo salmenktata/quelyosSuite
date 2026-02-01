@@ -74,7 +74,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
               <tr key={line.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
-                    {line.product.image ? (
+                    {line.product?.image ? (
                       <img
                         src={line.product.image}
                         alt={line.product.name}
@@ -85,7 +85,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
                         <ShoppingBag className="w-6 h-6 text-gray-400" aria-hidden="true" />
                       </div>
                     )}
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">{line.product.name}</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">{line.product?.name || 'Produit'}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -114,7 +114,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700"
           >
             <div className="flex items-start gap-4">
-              {line.product.image ? (
+              {line.product?.image ? (
                 <img
                   src={line.product.image}
                   alt={line.product.name}
@@ -126,7 +126,7 @@ export function OrderLineItems({ lines }: OrderLineItemsProps) {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">{line.product.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">{line.product?.name || 'Produit'}</p>
                 <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex justify-between">
                     <span>Prix unitaire :</span>

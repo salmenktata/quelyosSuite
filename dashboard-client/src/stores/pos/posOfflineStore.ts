@@ -62,7 +62,7 @@ async function getOrdersFromIDB(): Promise<OfflineOrder[]> {
   })
 }
 
-async function getPendingOrdersFromIDB(): Promise<OfflineOrder[]> {
+async function _getPendingOrdersFromIDB(): Promise<OfflineOrder[]> {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
