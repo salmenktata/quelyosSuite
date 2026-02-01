@@ -139,6 +139,10 @@ export interface Product {
   product_width?: number
   product_height?: number
   ribbon?: Ribbon | { id: number; name: string } | null
+  currency?: {
+    symbol: string
+    name?: string
+  }
 }
 
 /**
