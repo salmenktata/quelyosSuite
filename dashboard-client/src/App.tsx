@@ -60,6 +60,17 @@ const NewTicket = lazy(() => import('./pages/support/NewTicket'))
 const TicketDetail = lazy(() => import('./pages/support/TicketDetail'))
 const SatisfactionPublic = lazy(() => import('./pages/SatisfactionPublic'))
 
+// Lazy loaded pages - Maintenance (GMAO)
+const MaintenanceDashboard = lazy(() => import('./pages/maintenance/Dashboard'))
+const EquipmentList = lazy(() => import('./pages/maintenance/EquipmentList'))
+const EquipmentDetail = lazy(() => import('./pages/maintenance/EquipmentDetail'))
+const EquipmentForm = lazy(() => import('./pages/maintenance/EquipmentForm'))
+const RequestsList = lazy(() => import('./pages/maintenance/RequestsList'))
+const RequestForm = lazy(() => import('./pages/maintenance/RequestForm'))
+const RequestsEmergency = lazy(() => import('./pages/maintenance/RequestsEmergency'))
+const MaintenanceCalendar = lazy(() => import('./pages/maintenance/Calendar'))
+const MaintenanceReports = lazy(() => import('./pages/maintenance/Reports'))
+
 // Lazy loaded pages - Store Themes
 const ThemesMarketplace = lazy(() => import('./pages/store/themes/marketplace'))
 const ThemesMySubmissions = lazy(() => import('./pages/store/themes/my-submissions'))
@@ -729,6 +740,79 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <TicketDetail />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Maintenance (GMAO) routes */}
+              <Route
+                path="/maintenance"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/equipment"
+                element={
+                  <ProtectedRoute>
+                    <EquipmentList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/equipment/new"
+                element={
+                  <ProtectedRoute>
+                    <EquipmentForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/equipment/:id"
+                element={
+                  <ProtectedRoute>
+                    <EquipmentDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/requests"
+                element={
+                  <ProtectedRoute>
+                    <RequestsList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/requests/new"
+                element={
+                  <ProtectedRoute>
+                    <RequestForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/requests/emergency"
+                element={
+                  <ProtectedRoute>
+                    <RequestsEmergency />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/calendar"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceCalendar />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/reports"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceReports />
                   </ProtectedRoute>
                 }
               />

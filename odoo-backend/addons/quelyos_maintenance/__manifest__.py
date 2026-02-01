@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos Maintenance (GMAO)',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Maintenance',
     'summary': 'Gestion Maintenance Assistée par Ordinateur',
     'author': 'Quelyos',
@@ -12,6 +12,7 @@
         'mail',
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/maintenance_sequence.xml',
         # 'views/maintenance_equipment_views.xml',  # TEMPORAIREMENT DÉSACTIVÉ (fichier manquant)

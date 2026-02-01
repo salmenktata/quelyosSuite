@@ -104,11 +104,11 @@ export default function ProductDetail() {
                   <span
                     className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full"
                     style={{
-                      backgroundColor: product.ribbon.bg_color,
-                      color: product.ribbon.text_color,
+                      backgroundColor: typeof product.ribbon === 'object' && 'bg_color' in product.ribbon ? product.ribbon.bg_color : '#6366f1',
+                      color: typeof product.ribbon === 'object' && 'text_color' in product.ribbon ? product.ribbon.text_color : '#ffffff',
                     }}
                   >
-                    {product.ribbon.name}
+                    {typeof product.ribbon === 'string' ? product.ribbon : product.ribbon.name}
                   </span>
                 )}
                 {!product.active && (
@@ -209,7 +209,7 @@ export default function ProductDetail() {
                     <div>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Catégorie</dt>
                       <dd className="mt-1 text-sm text-gray-900 dark:text-white dark:text-gray-100">
-                        {product.category.name}
+                        {typeof product.category === 'string' ? product.category : product.category?.name}
                       </dd>
                     </div>
                   )}
@@ -346,11 +346,11 @@ export default function ProductDetail() {
                       {product.qty_available}
                     </dd>
                   </div>
-                  {product.virtual_available !== undefined && (
+                  {(product as any).virtual_available !== undefined && (
                     <div>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Stock prévisionnel</dt>
                       <dd className="mt-1 text-lg font-semibold text-gray-900 dark:text-white dark:text-gray-100">
-                        {product.virtual_available}
+                        {(product as any).virtual_available}
                       </dd>
                     </div>
                   )}

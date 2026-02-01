@@ -36,6 +36,7 @@ import { useMarketingTabs, detectMarketingTab } from '../hooks/useMarketingTabs'
 import { useHrTabs, detectHrTab } from '../hooks/useHrTabs'
 import { useSupportTabs, detectSupportTab } from '../hooks/useSupportTabs'
 import { usePosTabs, detectPosTab } from '../hooks/usePosTabs'
+import { useMaintenanceTabs, detectMaintenanceTab } from '../hooks/useMaintenanceTabs'
 
 // Components
 import { Button } from './common/Button'
@@ -316,6 +317,24 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     }
   }, [currentModule.id, setPosActiveTab])
 
+  // Maintenance tabs logic
+  const {
+    activeTab: maintenanceActiveTab,
+    setActiveTab: setMaintenanceActiveTab,
+    visibleSections: maintenanceVisibleSections
+  } = useMaintenanceTabs(currentModule.sections, location.pathname)
+
+  const handleMaintenanceTabChange = useCallback((tabId: string) => {
+    setMaintenanceActiveTab(tabId)
+  }, [setMaintenanceActiveTab])
+
+  const handleMaintenanceSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'maintenance') {
+      const targetTab = detectMaintenanceTab(path)
+      setMaintenanceActiveTab(targetTab)
+    }
+  }, [currentModule.id, setMaintenanceActiveTab])
+
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
 
@@ -384,7 +403,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           <aside
             className={`${isSidebarCollapsed ? 'w-16' : 'w-60'} flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed lg:sticky ${
               isNavbarVisible
-                ? (currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' ? 'top-[7rem] h-[calc(100vh-7rem)]' : 'top-14 h-[calc(100vh-3.5rem)]')
+                ? (currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' || currentModule.id === 'maintenance' ? 'top-[7rem] h-[calc(100vh-7rem)]' : 'top-14 h-[calc(100vh-3.5rem)]')
                 : (currentModule.id === 'finance' || currentModule.id === 'home' ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen')
             } z-30 transition-all duration-200 ease-out flex flex-col ${
               isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
@@ -751,6 +770,36 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     tabs={generateTabsFromSections(currentModule.sections)}
                     activeTab={posActiveTab}
                     onTabChange={handlePosTabChange}
+                  />
+                </div>
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Maintenance Tabs - Navigation par sections */}
+            {currentModule.id === 'maintenance' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="maintenance"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={maintenanceActiveTab}
+                    onTabChange={handleMaintenanceTabChange}
                   />
                 </div>
                 {!isNavbarVisible && (

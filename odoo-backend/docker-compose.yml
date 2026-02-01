@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: quelyos-odoo:19.0
+    image: quelyos/odoo:19
     container_name: quelyos-odoo
     restart: unless-stopped
     depends_on:

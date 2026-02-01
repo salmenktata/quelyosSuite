@@ -1,0 +1,43 @@
+# Image Odoo 19 personnalisée pour Quelyos Suite
+# Inclut toutes les dépendances Python nécessaires pour quelyos_api
+
+FROM odoo:19
+
+LABEL maintainer="Quelyos <dev@quelyos.com>"
+LABEL description="Odoo 19 avec dépendances Quelyos pré-installées"
+LABEL version="19.0.1"
+
+USER root
+
+# Installer dépendances système
+RUN apt-get update && apt-get install -y \
+    # Build tools
+    python3-pip \
+    python3-dev \
+    build-essential \
+    # Image processing
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    # QR Code generation
+    libzbar0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer dépendances Python pour quelyos_api
+# Versions fixées pour reproductibilité
+RUN pip install --no-cache-dir --break-system-packages \
+    faker==30.8.2 \
+    qrcode==8.0 \
+    Pillow==10.4.0 \
+    PyJWT==2.10.1 \
+    stripe==14.3.0 \
+    redis==5.2.1
+
+# Vérifier l'installation
+RUN python3 -c "import faker, qrcode, PIL, jwt, stripe, redis; print('✅ Dépendances Quelyos installées')"
+
+# Retourner à l'utilisateur odoo comme dans l'image de base
+USER odoo
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8069/web/health || exit 1

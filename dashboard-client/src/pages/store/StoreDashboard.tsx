@@ -3,6 +3,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Badge, Skeleton } from '@/components/common'
 import { useDashboardStats, useDashboardRecentOrders } from '@/hooks/useDashboard'
 import { useProducts } from '@/hooks/useProducts'
+import type { Product } from '@/types'
 import {
   TrendingUp,
   TrendingDown,
@@ -107,7 +108,7 @@ export default function StoreDashboard() {
   const { data: recentOrders, isLoading: isLoadingOrders } = useDashboardRecentOrders(5)
   const { data: productsData, isLoading: isLoadingProducts } = useProducts({ limit: 5 })
 
-  const popularProducts = Array.isArray(productsData?.data?.products) ? productsData.data.products : []
+  const popularProducts = (productsData?.items || productsData?.data || []) as Product[]
 
   // Calculate alerts
   const alerts = {

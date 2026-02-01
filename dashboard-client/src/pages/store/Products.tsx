@@ -514,7 +514,7 @@ export default function Products() {
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
                           {getStockBadge(product.stock_status ?? "out_of_stock", product.qty_available ?? 0)}
-                          {product.category && <Badge variant="info">{product.category.name}</Badge>}
+                          {product.category && <Badge variant="info">{typeof product.category === 'string' ? product.category : product.category.name}</Badge>}
                           {product.variant_count && product.variant_count > 1 && <Badge variant="neutral">{product.variant_count} variantes</Badge>}
                         </div>
                       </div>

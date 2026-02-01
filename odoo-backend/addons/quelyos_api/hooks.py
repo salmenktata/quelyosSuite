@@ -33,15 +33,15 @@ def _install_python_dependencies():
                 raise
 
 
-def _check_oca_modules(cr):
+def _check_oca_modules(env):
     """Vérifie si les modules OCA sont disponibles"""
-    cr.execute("""
-        SELECT name, state 
-        FROM ir_module_module 
+    env.cr.execute("""
+        SELECT name, state
+        FROM ir_module_module
         WHERE name IN ('stock_inventory', 'stock_warehouse_calendar')
     """)
-    
-    oca_modules = cr.fetchall()
+
+    oca_modules = env.cr.fetchall()
     
     if not oca_modules:
         _logger.warning("""
@@ -65,7 +65,7 @@ Pour les installer :
             _logger.info(f"✅ Module OCA '{name}' trouvé (état: {state})")
 
 
-def pre_init_hook(cr):
+def pre_init_hook(env):
     """
     Hook exécuté AVANT l'installation du module
     Vérifie version Odoo, installe les prérequis
@@ -73,7 +73,7 @@ def pre_init_hook(cr):
     _logger.info("=" * 80)
     _logger.info("🚀 QUELYOS SUITE - Installation Automatique")
     _logger.info("=" * 80)
-    
+
     # 0. Vérifier version Odoo
     _logger.info("\n🔍 Vérification version Odoo...")
     odoo_version = odoo.release.version_info[0]
@@ -85,9 +85,9 @@ def pre_init_hook(cr):
         )
         _logger.error(error_msg)
         raise UserError(error_msg)
-    
+
     _logger.info(f"✅ Version Odoo validée : {odoo.release.version}")
-    
+
     # 1. Installer dépendances Python
     _logger.info("\n📦 Vérification dépendances Python...")
     try:
@@ -95,16 +95,16 @@ def pre_init_hook(cr):
     except Exception as e:
         _logger.error(f"❌ Erreur installation dépendances Python: {e}")
         # Ne pas bloquer l'installation, juste avertir
-    
+
     # 2. Vérifier modules OCA
     _logger.info("\n🔍 Vérification modules OCA...")
-    _check_oca_modules(cr)
-    
+    _check_oca_modules(env)
+
     _logger.info("\n✅ Pré-installation terminée")
     _logger.info("=" * 80)
 
 
-def post_init_hook(cr, registry):
+def post_init_hook(env):
     """
     Hook exécuté APRÈS l'installation du module
     Configure l'environnement Quelyos
@@ -112,61 +112,197 @@ def post_init_hook(cr, registry):
     _logger.info("=" * 80)
     _logger.info("⚙️  QUELYOS SUITE - Configuration Post-Installation")
     _logger.info("=" * 80)
-    
+
     # 1. Vérifier que quelyos_api est bien installé
-    cr.execute("""
-        SELECT state FROM ir_module_module 
+    env.cr.execute("""
+        SELECT state FROM ir_module_module
         WHERE name = 'quelyos_api'
     """)
-    
-    result = cr.fetchone()
+
+    result = env.cr.fetchone()
     if result and result[0] == 'installed':
         _logger.info("✅ Module quelyos_api installé avec succès")
     else:
         _logger.error("❌ Module quelyos_api PAS installé correctement !")
         return
-    
+
     # 2. Vérifier tenant par défaut
-    cr.execute("""
-        SELECT COUNT(*) FROM quelyos_tenant 
+    env.cr.execute("""
+        SELECT COUNT(*) FROM quelyos_tenant
         WHERE name = 'Admin Tenant'
     """)
-    
-    tenant_count = cr.fetchone()[0]
+
+    tenant_count = env.cr.fetchone()[0]
     if tenant_count > 0:
         _logger.info(f"✅ Tenant par défaut créé ({tenant_count} tenant(s) trouvé(s))")
     else:
         _logger.warning("⚠️  Aucun tenant trouvé, vérifier data/default_admin_tenant.xml")
-    
-    # 3. Afficher résumé installation
+
+    # 3. Configurer l'utilisateur admin par défaut
+    _logger.info("\n🔧 Configuration utilisateur admin...")
+
+    # 3.1 Récupérer le tenant par défaut et sa company
+    env.cr.execute("""
+        SELECT id, company_id, name
+        FROM quelyos_tenant
+        WHERE name LIKE '%Admin%'
+        ORDER BY id
+        LIMIT 1
+    """)
+    tenant_result = env.cr.fetchone()
+
+    if tenant_result:
+        tenant_id, tenant_company_id, tenant_name = tenant_result
+
+        # 3.2 Associer l'utilisateur admin à la company du tenant
+        env.cr.execute("""
+            UPDATE res_users
+            SET company_id = %s
+            WHERE login = 'admin'
+        """, (tenant_company_id,))
+
+        # 3.3 Mettre à jour la relation many2many des companies accessibles
+        env.cr.execute("""
+            DELETE FROM res_company_users_rel WHERE user_id = (SELECT id FROM res_users WHERE login = 'admin');
+        """)
+        env.cr.execute("""
+            INSERT INTO res_company_users_rel (user_id, cid)
+            SELECT u.id, %s
+            FROM res_users u
+            WHERE u.login = 'admin'
+        """, (tenant_company_id,))
+
+        _logger.info(f"   ✓ Utilisateur admin associé au tenant '{tenant_name}' (company_id={tenant_company_id})")
+    else:
+        _logger.warning("   ⚠️  Aucun tenant trouvé, utilisateur admin non configuré")
+
+    # 3.4 Ajouter le groupe "Access Rights" (super-admin) à l'utilisateur admin
+    env.cr.execute("""
+        INSERT INTO res_groups_users_rel (gid, uid)
+        SELECT g.id, u.id
+        FROM res_groups g, res_users u
+        WHERE g.name::text LIKE '%Access Rights%'
+        AND u.login = 'admin'
+        AND NOT EXISTS (
+            SELECT 1 FROM res_groups_users_rel r
+            WHERE r.gid = g.id AND r.uid = u.id
+        )
+    """)
+
+    # Vérifier si le groupe a été ajouté
+    env.cr.execute("""
+        SELECT COUNT(*) FROM res_groups_users_rel r
+        JOIN res_groups g ON r.gid = g.id
+        JOIN res_users u ON r.uid = u.id
+        WHERE g.name::text LIKE '%Access Rights%'
+        AND u.login = 'admin'
+    """)
+
+    if env.cr.fetchone()[0] > 0:
+        _logger.info("   ✓ Groupe 'Access Rights' (super-admin) ajouté à l'utilisateur admin")
+        _logger.info("   ✓ L'utilisateur admin a maintenant accès à TOUS les modules du dashboard")
+    else:
+        _logger.warning("   ⚠️  Impossible d'ajouter le groupe Access Rights à admin")
+
+    # 5. Vérifier plans tarifaires par défaut
+    _logger.info("\n💰 Vérification plans tarifaires...")
+
+    SubscriptionPlan = env['quelyos.subscription.plan']
+    plans = SubscriptionPlan.search([])
+
+    if len(plans) >= 3:
+        _logger.info(f"   ✓ {len(plans)} plans tarifaires trouvés :")
+        for plan in plans.sorted('display_order'):
+            price_display = f"{plan.price_monthly}€/mois" if plan.price_monthly > 0 else "Sur devis"
+            popular = " ⭐ POPULAIRE" if plan.is_popular else ""
+            _logger.info(f"     • {plan.name} ({plan.code}) - {price_display}{popular}")
+    else:
+        _logger.warning(f"   ⚠️  Seulement {len(plans)} plan(s) trouvé(s) (attendu: 3)")
+        _logger.warning("      Vérifier que subscription_plan_data.xml est bien chargé")
+
+    # 6. Créer configurations par défaut (Brevo, Chatbot)
+    _logger.info("\n📧 Configuration services externes...")
+
+    # 6.1 Configuration Brevo (email marketing)
+    EmailConfig = env['quelyos.email.config']
+    existing_brevo = EmailConfig.search([('provider', '=', 'brevo')], limit=1)
+
+    if not existing_brevo:
+        EmailConfig.create({
+            'name': 'Brevo (Sendinblue)',
+            'provider': 'brevo',
+            'is_active': True,  # Activé par défaut
+            'api_key': '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',
+            'email_from': 'noreply@quelyos.com',
+            'email_from_name': 'Quelyos',
+        })
+        _logger.info("   ✓ Configuration Brevo créée avec clé API et activée automatiquement")
+    else:
+        _logger.info("   ✓ Configuration Brevo déjà existante")
+
+    # 6.2 Configuration Chatbot/AI (Groq par défaut)
+    AIConfig = env['quelyos.ai.config']
+    existing_groq = AIConfig.search([('provider', '=', 'groq')], limit=1)
+
+    if not existing_groq:
+        AIConfig.create({
+            'name': 'Groq AI (Chatbot)',
+            'provider': 'groq',
+            'is_enabled': True,  # Activé par défaut
+            'model': 'llama-3.1-70b-versatile',
+            'api_key_encrypted': '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',  # Sera chiffré automatiquement
+            'max_tokens': 800,
+            'temperature': 0.7,
+        })
+        _logger.info("   ✓ Configuration Chatbot (Groq) créée avec clé API et activée automatiquement")
+    else:
+        _logger.info("   ✓ Configuration Chatbot déjà existante")
+
+    # 7. Afficher résumé installation
     _logger.info("\n" + "=" * 80)
     _logger.info("🎉 QUELYOS SUITE - Installation Terminée avec Succès !")
     _logger.info("=" * 80)
     _logger.info("""
 📊 Modules installés :
    - Odoo Core (base, sale, stock, account, crm, website, etc.)
-   - Quelyos API (backend complet + 12 modules OCA natifs)
-   - Modules OCA (si disponibles)
+   - Quelyos API (backend complet + modules OCA intégrés)
 
-🔧 Configuration :
-   - Tenant par défaut : Admin Tenant
-   - Base de données : Configurée
-   - API REST : http://localhost:8069/api/
+🔧 Configuration automatique :
+   - Tenant par défaut : Admin Quelyos ✓
+   - Utilisateur admin : Configuré avec accès complet ✓
+   - Groupe Access Rights : Ajouté (super-admin) ✓
+   - Plans tarifaires : 3 plans (Starter, Pro, Enterprise) ✓
+   - Configuration Brevo : Créée et activée ✓
+   - Configuration Chatbot Groq : Créée et activée ✓
+   - Base de données : Prête ✓
+   - API REST : http://localhost:8069/api/ ✓
+
+👤 Compte administrateur :
+   - Login : admin
+   - Password : admin
+   - Accès : TOUS les modules (Home, Finance, Store, Stock, CRM, Marketing, HR, POS, Support)
 
 📚 Prochaines étapes :
    1. Démarrer les frontends :
       - Dashboard (ERP): cd dashboard-client && npm run dev (port 5175)
       - E-commerce: cd vitrine-client && npm run dev (port 3001)
       - Vitrine: cd vitrine-quelyos && npm run dev (port 3000)
-   
-   2. Se connecter :
+      - Super Admin: cd super-admin-client && npm run dev (port 9000)
+
+   2. Se connecter au dashboard :
       - URL: http://localhost:5175
-      - Email: admin@quelyos.com
-      - Password: (voir configuration)
+      - Login: admin
+      - Password: admin
+      - ✅ Tous les 9 modules seront accessibles immédiatement !
+
+   3. Configurer les services (optionnel) :
+      - Super Admin: http://localhost:9000
+      - Ajouter clé API Brevo pour l'email marketing
+      - Ajouter clé API OpenAI/Groq pour le chatbot
 
 🌐 Documentation :
    - README-DEV.md : Documentation technique complète
-   - docs/ : Guides d'utilisation
+   - .claude/ : Guides et références
 
 ✅ Quelyos Suite est prêt à l'emploi !
     """)

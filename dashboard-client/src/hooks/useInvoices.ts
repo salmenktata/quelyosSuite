@@ -8,7 +8,7 @@ interface UseInvoicesParams {
   dateTo?: string
 }
 
-interface Invoice {
+interface InvoiceLocal {
   id: number
   name: string
   state: 'draft' | 'posted' | 'cancel'
@@ -35,7 +35,7 @@ interface Stats {
 }
 
 export function useInvoices(params: UseInvoicesParams = {}) {
-  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [invoices, setInvoices] = useState<InvoiceLocal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
@@ -56,15 +56,15 @@ export function useInvoices(params: UseInvoicesParams = {}) {
         
         // Calculer stats
         const totalInvoiced = response.data.data.invoices.reduce(
-          (sum: number, inv: Invoice) => sum + inv.amountTotal,
+          (sum: number, inv: InvoiceLocal) => sum + inv.amountTotal,
           0
         )
         const totalPaid = response.data.data.invoices
-          .filter((inv: Invoice) => inv.paymentState === 'paid')
-          .reduce((sum: number, inv: Invoice) => sum + inv.amountTotal, 0)
+          .filter((inv: InvoiceLocal) => inv.paymentState === 'paid')
+          .reduce((sum: number, inv: InvoiceLocal) => sum + inv.amountTotal, 0)
         const totalPending = response.data.data.invoices
-          .filter((inv: Invoice) => inv.paymentState === 'not_paid')
-          .reduce((sum: number, inv: Invoice) => sum + inv.amountResidual, 0)
+          .filter((inv: InvoiceLocal) => inv.paymentState === 'not_paid')
+          .reduce((sum: number, inv: InvoiceLocal) => sum + inv.amountResidual, 0)
         
         setStats({
           totalInvoiced,

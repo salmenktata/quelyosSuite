@@ -177,21 +177,23 @@ export interface InvoiceLine {
   tax_ids: number[]
 }
 
-export interface Invoice {
-  id: number
-  name: string
-  partner_id: number
-  partner_name: string
-  invoice_date: string | null
-  invoice_date_due: string | null
-  amount_untaxed: number
-  amount_tax: number
-  amount_total: number
-  amount_residual: number
-  state: 'draft' | 'posted' | 'cancel'
-  payment_state: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
-  invoice_line_ids?: InvoiceLine[]
-}
+// NOTE: Invoice est déjà exporté par @quelyos/types/common
+// On ne le redéfinit pas ici pour éviter les duplications
+// export interface Invoice {
+//   id: number
+//   name: string
+//   partner_id: number
+//   partner_name: string
+//   invoice_date: string | null
+//   invoice_date_due: string | null
+//   amount_untaxed: number
+//   amount_tax: number
+//   amount_total: number
+//   amount_residual: number
+//   state: 'draft' | 'posted' | 'cancel'
+//   payment_state: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
+//   invoice_line_ids?: InvoiceLine[]
+// }
 
 export interface InvoicesQueryParams {
   limit?: number
@@ -268,15 +270,17 @@ export interface OrderHistoryTrackingValue {
   newvalue: string
 }
 
-export interface OrderHistoryItem {
-  id: number
-  date: string | null
-  author: string
-  body: string
-  message_type: string
-  subtype: string | null
-  trackingvalues: OrderHistoryTrackingValue[]
-}
+// NOTE: OrderHistoryItem est déjà exporté par @quelyos/types/common
+// On ne le redéfinit pas ici pour éviter les duplications
+// export interface OrderHistoryItem {
+//   id: number
+//   date: string | null
+//   author: string
+//   body: string
+//   message_type: string
+//   subtype: string | null
+//   trackingvalues: OrderHistoryTrackingValue[]
+// }
 
 // ==================== PAGINATION ====================
 
@@ -287,11 +291,13 @@ export interface PaginatedData<T> {
   [key: string]: T[] | number
 }
 
-export interface PaginatedResponse<T> {
-  success: boolean
-  data: PaginatedData<T>
-  error?: string
-}
+// NOTE: PaginatedResponse est déjà exporté par @quelyos/types/common
+// On ne le redéfinit pas ici pour éviter les duplications
+// export interface PaginatedResponse<T> {
+//   success: boolean
+//   data: PaginatedData<T>
+//   error?: string
+// }
 
 export interface ShippingTrackingInfo {
   status: 'tracked' | 'no_tracking'

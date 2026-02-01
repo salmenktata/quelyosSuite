@@ -121,7 +121,7 @@ export default function ProductForm() {
         description: product.description || '',
         description_purchase: product.description_purchase || '',
         technical_description: product.technical_description || '',
-        category_id: product.category?.id?.toString() || '',
+        category_id: typeof product.category === 'string' ? '' : (product.category?.id?.toString() || ''),
         detailed_type: product.detailed_type || 'consu',
         uom_id: product.uom_id?.toString() || '',
         // Champs marketing e-commerce

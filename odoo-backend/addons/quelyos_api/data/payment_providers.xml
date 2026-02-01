@@ -7,8 +7,8 @@
             <field name="code">flouci</field>
             <field name="state">disabled</field>
             <field name="sequence">10</field>
-            <field name="flouci_timeout">60</field>
-            <field name="flouci_accept_cards" eval="True"/>
+            <field name="x_flouci_timeout">60</field>
+            <field name="x_flouci_accept_cards" eval="True"/>
         </record>
 
         <!-- Konnect Payment Provider -->
@@ -17,8 +17,8 @@
             <field name="code">konnect</field>
             <field name="state">disabled</field>
             <field name="sequence">20</field>
-            <field name="konnect_lifespan">10</field>
-            <field name="konnect_theme">light</field>
+            <field name="x_konnect_lifespan">10</field>
+            <field name="x_konnect_theme">light</field>
         </record>
     </data>
 </odoo>

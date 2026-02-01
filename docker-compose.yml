@@ -41,7 +41,7 @@ services:
   # BACKEND ODOO
   # ============================================
   odoo:
-    image: odoo:19
+    image: quelyos/odoo:19
     container_name: quelyos-odoo
     restart: always
     depends_on:

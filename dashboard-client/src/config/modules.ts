@@ -73,13 +73,17 @@ import {
   Palette,
   Paintbrush,
   FolderKanban,
+  // Maintenance Icons
+  Wrench,
+  Construction,
+  BarChart2,
 } from 'lucide-react'
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support'
+export type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support' | 'maintenance'
 
 export interface SubMenuItem {
   name: string
@@ -565,6 +569,58 @@ export const MODULES: Module[] = [
           { name: 'Paiements', path: '/pos/settings/payments', icon: Banknote },
           { name: 'Tickets', path: '/pos/settings/receipts', icon: Printer },
           { name: 'Paramètres', path: '/pos/settings', icon: Settings },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'maintenance',
+    name: 'GMAO',
+    shortName: 'GMAO',
+    icon: Wrench,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-100 dark:bg-amber-900/30',
+    description: 'Gestion Maintenance',
+    basePath: '/maintenance',
+    sections: [
+      {
+        title: 'Tableau de bord',
+        tabGroup: 'Tableau de bord',
+        items: [
+          { name: 'Vue d\'ensemble', path: '/maintenance', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Équipements',
+        tabGroup: 'Équipements',
+        items: [
+          { name: 'Liste Équipements', path: '/maintenance/equipment', icon: Wrench },
+          { name: 'Équipements Critiques', path: '/maintenance/equipment/critical', icon: AlertTriangle },
+        ],
+      },
+      {
+        title: 'Interventions',
+        tabGroup: 'Interventions',
+        items: [
+          { name: 'Demandes', path: '/maintenance/requests', icon: ClipboardList },
+          { name: 'Urgences', path: '/maintenance/requests/emergency', icon: Bell },
+          { name: 'Planning', path: '/maintenance/calendar', icon: Calendar },
+        ],
+      },
+      {
+        title: 'Analyse',
+        tabGroup: 'Analyse',
+        items: [
+          { name: 'KPI & Rapports', path: '/maintenance/reports', icon: BarChart2 },
+          { name: 'Coûts Maintenance', path: '/maintenance/costs', icon: Coins },
+        ],
+      },
+      {
+        title: 'Configuration',
+        tabGroup: 'Configuration',
+        items: [
+          { name: 'Catégories', path: '/maintenance/categories', icon: Tag },
+          { name: 'Paramètres', path: '/maintenance/settings', icon: Settings },
         ],
       },
     ],
