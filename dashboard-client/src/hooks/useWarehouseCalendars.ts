@@ -270,7 +270,14 @@ export function usePlanDeliveryDate() {
       setPlanning(true);
       setError(null);
 
-      const result = await apiClient.post(`/api/ecommerce/warehouses/${warehouseId}/plan-delivery`, {
+      const result = await apiClient.post<{
+        success: boolean;
+        data: {
+          delivery_date: string;
+          used_calendar: string | null;
+        };
+        error?: string;
+      }>(`/api/ecommerce/warehouses/${warehouseId}/plan-delivery`, {
         params: {
           date_from: dateFrom,
           delta_days: deltaDays,

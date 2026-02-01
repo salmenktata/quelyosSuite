@@ -48,13 +48,13 @@ describe('usePermissions', () => {
           groups: ['Quelyos Store Manager', 'Quelyos Marketing User'],
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'store',
         name: 'Quelyos Store',
         modules: ['store', 'marketing'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 
@@ -74,13 +74,13 @@ describe('usePermissions', () => {
           groups: ['Quelyos POS User', 'Quelyos Store User', 'Quelyos Stock User'],
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'retail',
         name: 'Quelyos Retail',
         modules: ['pos', 'store', 'stock'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 
@@ -103,7 +103,7 @@ describe('usePermissions', () => {
           groups: ['Access Rights'], // Super-admin
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'finance',
@@ -130,13 +130,13 @@ describe('usePermissions', () => {
           groups: ['Access Rights'],
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'full',
         name: 'Quelyos Suite',
         modules: ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 
@@ -159,13 +159,13 @@ describe('usePermissions', () => {
           groups: ['Quelyos CRM User'], // Permission CRM uniquement
         },
         isAuthenticated: true,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'sales',
         name: 'Quelyos Sales',
         modules: ['crm', 'marketing'], // Édition whiteliste crm + marketing
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 
@@ -183,12 +183,12 @@ describe('usePermissions', () => {
       vi.spyOn(auth, 'useAuth').mockReturnValue({
         user: null,
         isAuthenticated: false,
-      })
+      } as any)
 
       vi.spyOn(editionDetector, 'getCurrentEdition').mockReturnValue({
         id: 'finance',
         modules: ['finance'],
-      })
+      } as any)
 
       const { result } = renderHook(() => usePermissions())
 

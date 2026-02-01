@@ -198,7 +198,7 @@ export default function AccountOrdersPage() {
                           </span>
                           <span>{order.line_count || 0} article(s)</span>
                           <span className="font-semibold text-primary">
-                            {formatPrice(order.amount_total || order.total, order.currency?.symbol || '€')}
+                            {formatPrice(order.amount_total || order.total || 0, order.currency?.symbol || '€')}
                           </span>
                         </div>
                       </div>
