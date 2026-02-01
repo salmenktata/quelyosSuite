@@ -11,3 +11,4 @@ export * from './admin-notices';
 export * from './analytics';
 export * from './support-notices';
 export * from './maintenance-notices';
+export { maintenanceNotices } from './maintenance-notices';

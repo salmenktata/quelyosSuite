@@ -3,7 +3,9 @@
  * Système léger de tracking utilisation notices (localStorage + API optionnelle)
  */
 
-import { logger } from '@quelyos/logger';
+// TEMP: Désactivé pour debug TypeScript
+// import { logger } from '@quelyos/logger';
+const logger = { error: console.error, info: console.info };
 
 export interface NoticeAnalytics {
   pageId: string;
