@@ -19,11 +19,11 @@ export interface MaintenanceDashboardData {
 }
 
 export function useMaintenanceDashboard() {
-  return useQuery<{ success: boolean; data: MaintenanceDashboardData }>({
+  return useQuery({
     queryKey: ['maintenance', 'dashboard'],
     queryFn: async () => {
       const response = await api.post('/api/maintenance/reports/dashboard')
-      return response.data
+      return response.data as { success: boolean; data: MaintenanceDashboardData }
     },
   })
 }

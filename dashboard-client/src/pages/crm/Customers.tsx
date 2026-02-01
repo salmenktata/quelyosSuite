@@ -49,7 +49,10 @@ export default function Customers() {
 
   // Tri côté client des données
   const sortedCustomers = useMemo(() => {
-    const customers = (data?.items || data?.data || []) as CustomerListItem[]
+    if (!data) return []
+
+    const customersRaw = data.items || data.data
+    const customers = Array.isArray(customersRaw) ? customersRaw : []
     if (customers.length === 0) return []
 
     return [...customers].sort((a, b) => {
@@ -72,7 +75,10 @@ export default function Customers() {
 
   // Calcul des statistiques
   const stats = useMemo(() => {
-    const customers = (data?.items || data?.data || []) as CustomerListItem[]
+    if (!data) return { totalCustomers: 0, totalRevenue: 0, avgBasket: 0 }
+
+    const customersRaw = data.items || data.data
+    const customers = Array.isArray(customersRaw) ? customersRaw : []
     if (customers.length === 0) return { totalCustomers: 0, totalRevenue: 0, avgBasket: 0 }
 
     const totalRevenue = customers.reduce((sum, c) => sum + (c.total_spent ?? 0), 0)
@@ -198,7 +204,7 @@ export default function Customers() {
               />
 
               {/* Pagination */}
-              {data?.data && data?.total || 0 > limit && (
+              {data?.data && (data?.total || 0) > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-4 md:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-700 dark:text-gray-300">
                     Affichage {page * limit + 1} à {Math.min((page + 1) * limit, data?.total || 0)} sur{' '}
@@ -218,7 +224,7 @@ export default function Customers() {
                       variant="secondary"
                       size="sm"
                       onClick={() => setPage(page + 1)}
-                      disabled={(page + 1) * limit >= data?.total || 0}
+                      disabled={(page + 1) * limit >= (data?.total || 0)}
                       aria-label="Page suivante"
                     >
                       Suivant

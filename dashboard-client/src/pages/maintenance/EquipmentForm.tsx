@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/useToast'
 
 export default function EquipmentForm() {
   const navigate = useNavigate()
-  const { showToast } = useToast()
+  const { success: showSuccess, error: showError } = useToast()
   const createEquipment = useCreateMaintenanceEquipment()
 
   const [formData, setFormData] = useState({
@@ -49,22 +49,13 @@ export default function EquipmentForm() {
       const result = await createEquipment.mutateAsync(formData)
 
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: `Équipement "${formData.name}" créé avec succès`,
-        })
+        showSuccess(`Équipement "${formData.name}" créé avec succès`)
         navigate('/maintenance/equipment')
       } else {
-        showToast({
-          type: 'error',
-          message: result.error || 'Erreur lors de la création',
-        })
+        showError(result.error || 'Erreur lors de la création')
       }
-    } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Erreur lors de la création de l\'équipement',
-      })
+    } catch (_error) {
+      showError('Erreur lors de la création de l\'équipement')
     }
   }
 

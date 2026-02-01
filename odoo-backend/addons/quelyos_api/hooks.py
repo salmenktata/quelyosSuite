@@ -228,8 +228,8 @@ def post_init_hook(env):
     existing_brevo = EmailConfig.search([('provider', '=', 'brevo')], limit=1)
 
     if not existing_brevo:
+        # Note: quelyos.email.config n'a pas de champ 'name'
         EmailConfig.create({
-            'name': 'Brevo (Sendinblue)',
             'provider': 'brevo',
             'is_active': True,  # Activé par défaut
             'api_key': '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',

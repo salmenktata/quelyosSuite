@@ -35,11 +35,11 @@ export interface RequestCreateData {
 }
 
 export function useMaintenanceRequests(filters?: RequestFilters) {
-  return useQuery<{ success: boolean; data: MaintenanceRequest[] }>({
+  return useQuery({
     queryKey: ['maintenance', 'requests', filters],
     queryFn: async () => {
       const response = await api.post('/api/maintenance/requests', filters || {})
-      return response.data
+      return response.data as { success: boolean; data: MaintenanceRequest[] }
     },
   })
 }

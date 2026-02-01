@@ -39,7 +39,7 @@ Toutes les erreurs rencontrées lors de la session précédente ont été corrig
 - **Plans tarifaires** → 3 plans vérifiés (Starter, Pro, Enterprise)
 - **Config Brevo** → Créée avec clé API pré-configurée et **ACTIVÉE**
 - **Config Chatbot Groq** → Créée avec clé API chiffrée et **ACTIVÉE**
-- **Version** : 19.0.1.67.0
+- **Version** : 19.0.1.68.0 (hook corrigé - champ 'name' retiré)
 
 ### 6. Documentation mise à jour ✅
 - `.claude/FRESH_INSTALL_FIXES.md` - Détails de toutes les corrections

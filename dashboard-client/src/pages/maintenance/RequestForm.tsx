@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/useToast'
 
 export default function RequestForm() {
   const navigate = useNavigate()
-  const { showToast } = useToast()
+  const { success: showSuccess, error: showError } = useToast()
   const [searchParams] = useSearchParams()
   const equipmentIdParam = searchParams.get('equipment')
 
@@ -68,22 +68,13 @@ export default function RequestForm() {
       const result = await createRequest.mutateAsync(formData)
 
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: `Demande "${formData.name}" créée avec succès`,
-        })
+        showSuccess(`Demande "${formData.name}" créée avec succès`)
         navigate('/maintenance/requests')
       } else {
-        showToast({
-          type: 'error',
-          message: result.error || 'Erreur lors de la création',
-        })
+        showError(result.error || 'Erreur lors de la création')
       }
-    } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Erreur lors de la création de la demande',
-      })
+    } catch (_error) {
+      showError('Erreur lors de la création de la demande')
     }
   }
 

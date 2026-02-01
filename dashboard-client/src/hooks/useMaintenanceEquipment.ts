@@ -46,21 +46,21 @@ export interface EquipmentCreateData {
 }
 
 export function useMaintenanceEquipment(filters?: EquipmentFilters) {
-  return useQuery<{ success: boolean; data: MaintenanceEquipment[] }>({
+  return useQuery({
     queryKey: ['maintenance', 'equipment', filters],
     queryFn: async () => {
       const response = await api.post('/api/maintenance/equipment', filters || {})
-      return response.data
+      return response.data as { success: boolean; data: MaintenanceEquipment[] }
     },
   })
 }
 
 export function useMaintenanceEquipmentDetail(id: number) {
-  return useQuery<{ success: boolean; data: MaintenanceEquipmentDetail }>({
+  return useQuery({
     queryKey: ['maintenance', 'equipment', id],
     queryFn: async () => {
       const response = await api.post(`/api/maintenance/equipment/${id}`)
-      return response.data
+      return response.data as { success: boolean; data: MaintenanceEquipmentDetail }
     },
     enabled: !!id,
   })
