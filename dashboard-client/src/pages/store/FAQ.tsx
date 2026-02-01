@@ -50,29 +50,7 @@ export default function FAQPage() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    fetchFaqs();
-  }, [selectedCategory]);
-
-  const fetchCategories = async () => {
-    try {
-      const data = await apiFetchJson<{ result?: { success: boolean; categories: FAQCategory[] } }>(
-        '/api/admin/faq/categories',
-        {
-          method: 'POST',
-          body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {} }),
-        }
-      );
-      if (data.result?.success) {
-        setCategories(data.result.categories || []);
-      }
-    } catch {
-      logger.error("Erreur attrapée");
-      // Categories fetch error silenced
-    }
-  };
-
-  const fetchFaqs = async () => {
+  const fetchFaqs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -96,6 +74,28 @@ export default function FAQPage() {
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchFaqs();
+  }, [fetchFaqs]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await apiFetchJson<{ result?: { success: boolean; categories: FAQCategory[] } }>(
+        '/api/admin/faq/categories',
+        {
+          method: 'POST',
+          body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {} }),
+        }
+      );
+      if (data.result?.success) {
+        setCategories(data.result.categories || []);
+      }
+    } catch {
+      logger.error("Erreur attrapée");
+      // Categories fetch error silenced
     }
   };
 
