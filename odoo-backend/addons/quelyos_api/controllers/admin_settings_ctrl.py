@@ -114,6 +114,7 @@ class AdminSettingsController(SuperAdminController):
                 'feature_priority_support': features.get('priority_support', False),
                 'feature_custom_domain': features.get('custom_domain', False),
                 'active': True,
+                'is_default': data.get('is_default', False),
             }
 
             # Gérer les groupes de sécurité
@@ -199,6 +200,7 @@ class AdminSettingsController(SuperAdminController):
                 'feature_api_access': features.get('api_access', plan.feature_api_access),
                 'feature_priority_support': features.get('priority_support', plan.feature_priority_support),
                 'feature_custom_domain': features.get('custom_domain', plan.feature_custom_domain),
+                'is_default': data.get('is_default', plan.is_default),
             }
 
             # Gérer les groupes de sécurité
@@ -311,6 +313,8 @@ class AdminSettingsController(SuperAdminController):
             },
             'group_ids': [{'id': g.id, 'name': g.name, 'full_name': g.full_name or g.name} for g in plan.group_ids],
             'is_active': plan.active,
+            'is_popular': plan.is_popular,
+            'is_default': plan.is_default,
             'subscribers_count': subscribers_count,
             'created_at': plan.create_date.isoformat() if plan.create_date else None,
         }

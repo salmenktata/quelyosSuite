@@ -172,6 +172,8 @@ export const PlanSchema = z.object({
     custom_domain: z.boolean().optional(),
   }).optional(),
   is_active: z.boolean().optional(),
+  is_popular: z.boolean().optional(),
+  is_default: z.boolean().optional(),
   subscribers_count: z.number().nonnegative().optional(),
   created_at: z.string().optional(),
 })

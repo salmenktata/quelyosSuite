@@ -84,6 +84,7 @@ interface PlanFormData {
   max_products: number
   max_orders_per_year: number
   trial_days: number
+  is_default: boolean
   features: Plan['features']
   group_ids: number[]
 }
@@ -284,11 +285,23 @@ function PlanCard({
       <div className={`bg-gradient-to-r ${gradient} p-4`}>
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold text-white">{plan.name}</h3>
-          {!plan.is_active && (
-            <span className="px-2 py-1 text-xs font-medium bg-white/20 text-white rounded-full">
-              Archivé
-            </span>
-          )}
+          <div className="flex gap-2">
+            {plan.is_default && (
+              <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-full">
+                Par défaut
+              </span>
+            )}
+            {plan.is_popular && (
+              <span className="px-2 py-1 text-xs font-medium bg-yellow-400/90 text-gray-900 rounded-full">
+                Populaire
+              </span>
+            )}
+            {!plan.is_active && (
+              <span className="px-2 py-1 text-xs font-medium bg-white/20 text-white rounded-full">
+                Archivé
+              </span>
+            )}
+          </div>
         </div>
         <p className="text-white/80 text-sm mt-1">{plan.code.toUpperCase()}</p>
       </div>
@@ -419,6 +432,7 @@ function PlanModal({
     max_products: plan?.max_products || 100,
     max_orders_per_year: plan?.max_orders_per_year || 1000,
     trial_days: plan?.trial_days || 14,
+    is_default: plan?.is_default || false,
     features: plan?.features || DEFAULT_FEATURES,
     group_ids: plan?.group_ids?.map((g) => g.id) || [],
   })
@@ -580,6 +594,27 @@ function PlanModal({
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Nombre de jours d&apos;essai gratuit avant facturation (par défaut : 14)
+              </p>
+            </div>
+
+            {/* Plan par défaut */}
+            <div className="mt-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.is_default}
+                  onChange={(e) => setForm((prev) => ({
+                    ...prev,
+                    is_default: e.target.checked
+                  }))}
+                  className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Marquer comme plan par défaut
+                </span>
+              </label>
+              <p className="mt-1 ml-7 text-xs text-gray-500 dark:text-gray-400">
+                Ce plan sera automatiquement assigné aux nouveaux tenants (un seul plan peut être par défaut)
               </p>
             </div>
           </div>

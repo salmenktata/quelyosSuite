@@ -47,6 +47,7 @@
                             <field name="display_order"/>
                             <field name="active"/>
                             <field name="is_popular"/>
+                            <field name="is_default"/>
                         </group>
                         <group name="pricing">
                             <field name="price_monthly" widget="monetary"/>

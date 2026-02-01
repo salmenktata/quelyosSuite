@@ -15,6 +15,7 @@
             <field name="support_level">email_48h</field>
             <field name="description">Parfait pour démarrer votre activité e-commerce</field>
             <field name="is_popular" eval="False"/>
+            <field name="is_default" eval="True"/>
             <field name="display_order">10</field>
             <field name="active" eval="True"/>
             <field name="features">[
@@ -49,6 +50,7 @@
             <field name="support_level">email_chat_24h</field>
             <field name="description">Pour les e-commerçants en croissance</field>
             <field name="is_popular" eval="True"/>
+            <field name="is_default" eval="False"/>
             <field name="display_order">20</field>
             <field name="active" eval="True"/>
             <field name="features">[
@@ -90,6 +92,7 @@
             <field name="support_level">dedicated_2h</field>
             <field name="description">Solutions sur-mesure pour grandes entreprises</field>
             <field name="is_popular" eval="False"/>
+            <field name="is_default" eval="False"/>
             <field name="display_order">30</field>
             <field name="active" eval="True"/>
             <field name="features">[

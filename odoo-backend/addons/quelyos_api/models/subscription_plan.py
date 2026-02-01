@@ -112,6 +112,12 @@ class SubscriptionPlan(models.Model):
         help='Afficher badge "Le plus populaire" sur ce plan'
     )
 
+    is_default = fields.Boolean(
+        string='Plan par défaut',
+        default=False,
+        help='Plan assigné automatiquement aux nouveaux tenants (un seul plan peut être par défaut)'
+    )
+
     display_order = fields.Integer(
         string='Ordre d\'affichage',
         default=10,
@@ -184,6 +190,33 @@ class SubscriptionPlan(models.Model):
                 raise ValidationError(_("Trial period must be non-negative."))
             if record.trial_days > 365:
                 raise ValidationError(_("Trial period cannot exceed 365 days."))
+
+    @api.constrains('is_default')
+    def _check_unique_default(self):
+        """Vérifie qu'un seul plan peut être marqué comme par défaut."""
+        for record in self:
+            if record.is_default:
+                other_defaults = self.search([
+                    ('is_default', '=', True),
+                    ('id', '!=', record.id)
+                ])
+                if other_defaults:
+                    raise ValidationError(_(
+                        'Un seul plan peut être marqué comme plan par défaut. '
+                        'Le plan "%s" est déjà défini comme plan par défaut.'
+                    ) % other_defaults[0].name)
+
+    @api.model
+    def get_default_plan(self):
+        """
+        Retourne le plan par défaut pour les nouveaux tenants.
+        Si aucun plan n'est marqué comme défaut, retourne le plan Starter.
+        """
+        default_plan = self.search([('is_default', '=', True)], limit=1)
+        if not default_plan:
+            # Fallback sur Starter si pas de plan par défaut
+            default_plan = self.search([('code', '=', 'starter')], limit=1)
+        return default_plan
 
     def get_features_list(self):
         """
