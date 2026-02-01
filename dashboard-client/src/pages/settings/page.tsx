@@ -10,9 +10,23 @@ import {
   Shield,
   DollarSign,
   Percent,
+  User,
+  Home,
 } from "lucide-react";
 
 const SETTINGS_SECTIONS = [
+  {
+    title: "Préférences",
+    description: "Personnalisation de votre expérience utilisateur",
+    items: [
+      {
+        to: "/settings/preferences",
+        icon: Home,
+        label: "Module par défaut",
+        description: "Choisir le module affiché après connexion",
+      },
+    ],
+  },
   {
     title: "Formats & Localisation",
     description: "Configuration des formats de données et paramètres régionaux",

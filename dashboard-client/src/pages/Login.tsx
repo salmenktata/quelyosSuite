@@ -2,6 +2,7 @@ import { FormEvent, useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { logger } from '@quelyos/logger'
+import { getDefaultModulePath } from '../lib/defaultModule'
 
 // Icônes inline
 const Shield = ({ className }: { className?: string }) => (
@@ -92,7 +93,8 @@ export default function Login() {
     const user = localStorage.getItem('user')
 
     if (sessionId && user) {
-      navigate('/dashboard', { replace: true })
+      const defaultPath = getDefaultModulePath()
+      navigate(defaultPath, { replace: true })
     }
   }, [navigate])
 
@@ -105,7 +107,8 @@ export default function Login() {
       const result = await api.login(email, password)
 
       if (result.success) {
-        navigate('/dashboard')
+        const defaultPath = getDefaultModulePath()
+        navigate(defaultPath)
       } else {
         setError(result.error || 'Échec de la connexion')
       }

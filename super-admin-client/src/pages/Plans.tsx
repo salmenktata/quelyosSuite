@@ -16,6 +16,7 @@ import { ModuleGroupSelector } from '@/components/common'
 import { useToast } from '@/hooks/useToast'
 import { z } from 'zod'
 import { validateApiResponse } from '@/lib/validators'
+import { QUELYOS_MODULES, type ModuleKey } from '@/config/modules'
 
 // Schémas Zod pour les groupes de sécurité
 const SecurityGroupSchema = z.object({

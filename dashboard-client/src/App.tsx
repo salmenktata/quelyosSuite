@@ -240,6 +240,7 @@ const POSSettingsReceipts = lazy(() => import('./pages/pos/settings/receipts/pag
 
 // Lazy loaded pages - Global Settings
 const GlobalSettings = lazy(() => import('./pages/settings/page'))
+const GlobalSettingsPreferences = lazy(() => import('./pages/settings/preferences/page'))
 const GlobalSettingsEmail = lazy(() => import('./pages/settings/email/page'))
 const GlobalSettingsSMS = lazy(() => import('./pages/settings/sms/page'))
 const GlobalSettingsSecurity = lazy(() => import('./pages/settings/security/page'))
@@ -1801,6 +1802,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <GlobalSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/preferences"
+                element={
+                  <ProtectedRoute>
+                    <GlobalSettingsPreferences />
                   </ProtectedRoute>
                 }
               />

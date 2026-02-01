@@ -11,7 +11,20 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, Users, CreditCard, AlertTriangle } from 'lucide-react'
-import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import {
+  ChartWrapper,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from '@/components/charts/ChartComponents'
 import { api } from '@/lib/api/gateway'
 import { DashboardMetricsSchema, validateApiResponse } from '@/lib/validators'
 import type { DashboardMetrics } from '@/lib/validators'
@@ -97,49 +110,51 @@ export function Dashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* MRR History */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Évolution MRR (12 mois)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={metrics.mrr_history}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="month" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1f2937',
-                  border: '1px solid #374151',
-                  borderRadius: '8px',
-                }}
-                labelStyle={{ color: '#f3f4f6' }}
-              />
-              <Legend />
-              <Line type="monotone" dataKey="mrr" stroke="#14b8a6" strokeWidth={2} name="MRR (€)" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <ChartWrapper>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Évolution MRR (12 mois)</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={metrics.mrr_history}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="month" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1f2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                  }}
+                  labelStyle={{ color: '#f3f4f6' }}
+                />
+                <Legend />
+                <Line type="monotone" dataKey="mrr" stroke="#14b8a6" strokeWidth={2} name="MRR (€)" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
-        {/* Revenue by Plan */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue par Plan</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={metrics.revenue_by_plan}
-                dataKey="revenue"
-                nameKey="plan"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label={(entry) => `${entry.plan}: ${entry.revenue}€`}
-              >
-                {metrics.revenue_by_plan.map((entry) => (
-                  <Cell key={entry.plan} fill={COLORS[entry.plan as keyof typeof COLORS] || '#6b7280'} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+          {/* Revenue by Plan */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue par Plan</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={metrics.revenue_by_plan}
+                  dataKey="revenue"
+                  nameKey="plan"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={(entry) => `${entry.plan}: ${entry.revenue}€`}
+                >
+                  {metrics.revenue_by_plan.map((entry) => (
+                    <Cell key={entry.plan} fill={COLORS[entry.plan as keyof typeof COLORS] || '#6b7280'} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartWrapper>
       </div>
 
       {/* Tables */}

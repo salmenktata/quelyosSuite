@@ -640,15 +640,16 @@ export function EmailSettings() {
       {/* Confirm Delete */}
       {deleteTarget && (
         <ConfirmModal
+          isOpen={true}
+          onClose={() => setDeleteTarget(null)}
           title="Supprimer le serveur SMTP ?"
           message={`Êtes-vous sûr de vouloir supprimer "${deleteTarget.name}" ? Les emails ne pourront plus être envoyés jusqu'à ce qu'un autre serveur soit configuré.`}
-          confirmLabel="Supprimer"
+          confirmText="Supprimer"
           onConfirm={() => {
             if (deleteTarget.id) {
               deleteServer.mutate(deleteTarget.id)
             }
           }}
-          onCancel={() => setDeleteTarget(null)}
           variant="danger"
         />
       )}

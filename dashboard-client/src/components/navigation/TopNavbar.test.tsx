@@ -47,23 +47,6 @@ describe('TopNavbar', () => {
   })
 
   describe('Affichage de base', () => {
-    it('devrait afficher le logo Quelyos', () => {
-      renderWithRouter(
-        <TopNavbar
-          currentModule={mockModules[0]}
-          modules={mockModules}
-          isModuleChanging={false}
-          isAppLauncherOpen={false}
-          onModuleChange={vi.fn()}
-          onMenuClick={vi.fn()}
-          onAppLauncherClick={vi.fn()}
-        />
-      )
-
-      expect(screen.getByText('Q')).toBeInTheDocument()
-      expect(screen.getByText('Quelyos')).toBeInTheDocument()
-    })
-
     it('devrait afficher le bouton App Launcher', () => {
       renderWithRouter(
         <TopNavbar
@@ -96,25 +79,6 @@ describe('TopNavbar', () => {
 
       const themeButton = screen.getByTitle('Mode sombre')
       expect(themeButton).toBeInTheDocument()
-    })
-
-    it('devrait afficher le lien "Voir mon site"', () => {
-      renderWithRouter(
-        <TopNavbar
-          currentModule={mockModules[0]}
-          modules={mockModules}
-          isModuleChanging={false}
-          isAppLauncherOpen={false}
-          onModuleChange={vi.fn()}
-          onMenuClick={vi.fn()}
-          onAppLauncherClick={vi.fn()}
-        />
-      )
-
-      const siteLink = screen.getByText('Voir mon site')
-      expect(siteLink).toBeInTheDocument()
-      expect(siteLink.closest('a')).toHaveAttribute('target', '_blank')
-      expect(siteLink.closest('a')).toHaveAttribute('rel', 'noopener noreferrer')
     })
   })
 
@@ -428,44 +392,6 @@ describe('TopNavbar', () => {
       const header = container.querySelector('header')
       expect(header).toHaveClass('bg-gray-900')
       expect(header).toHaveClass('dark:bg-gray-950')
-    })
-  })
-
-  describe('Lien e-commerce', () => {
-    it('devrait pointer vers VITE_SHOP_URL ou fallback localhost:3001', () => {
-      renderWithRouter(
-        <TopNavbar
-          currentModule={mockModules[0]}
-          modules={mockModules}
-          isModuleChanging={false}
-          isAppLauncherOpen={false}
-          onModuleChange={vi.fn()}
-          onMenuClick={vi.fn()}
-          onAppLauncherClick={vi.fn()}
-        />
-      )
-
-      const siteLink = screen.getByText('Voir mon site').closest('a')
-      // Fallback vers localhost:3001 si VITE_SHOP_URL non défini
-      expect(siteLink).toHaveAttribute('href', expect.stringContaining('3001'))
-    })
-
-    it('devrait avoir les attributs de sécurité', () => {
-      renderWithRouter(
-        <TopNavbar
-          currentModule={mockModules[0]}
-          modules={mockModules}
-          isModuleChanging={false}
-          isAppLauncherOpen={false}
-          onModuleChange={vi.fn()}
-          onMenuClick={vi.fn()}
-          onAppLauncherClick={vi.fn()}
-        />
-      )
-
-      const siteLink = screen.getByText('Voir mon site').closest('a')
-      expect(siteLink).toHaveAttribute('target', '_blank')
-      expect(siteLink).toHaveAttribute('rel', 'noopener noreferrer')
     })
   })
 })

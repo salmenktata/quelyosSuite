@@ -1,20 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Shield, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { QUELYOS_MODULES, type ModuleKey } from '@/config/modules'
 
-// Définition des 9 modules Quelyos
-const QUELYOS_MODULES = [
-  { key: 'home', label: 'Accueil' },
-  { key: 'finance', label: 'Finance' },
-  { key: 'store', label: 'Boutique' },
-  { key: 'stock', label: 'Stock' },
-  { key: 'crm', label: 'CRM' },
-  { key: 'marketing', label: 'Marketing' },
-  { key: 'hr', label: 'RH' },
-  { key: 'support', label: 'Support' },
-  { key: 'pos', label: 'Caisse' },
-] as const
-
-type ModuleKey = (typeof QUELYOS_MODULES)[number]['key']
 type AccessLevel = 'none' | 'user' | 'manager'
 
 interface SecurityGroup {

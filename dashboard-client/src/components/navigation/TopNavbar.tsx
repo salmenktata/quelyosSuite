@@ -12,6 +12,7 @@ import {
   Settings,
   Home,
   ChevronUp,
+  Sparkles,
 } from 'lucide-react'
 
 interface TopNavbarProps {
@@ -20,6 +21,7 @@ interface TopNavbarProps {
   isModuleChanging: boolean
   isAppLauncherOpen: boolean
   isVisible?: boolean
+  isSidebarCollapsed?: boolean
   onModuleChange: (id: ModuleId) => void
   onMenuClick: () => void
   onAppLauncherClick: () => void
@@ -30,11 +32,9 @@ interface TopNavbarProps {
  * TopNavbar - Barre de navigation supérieure
  *
  * Affiche :
- * - Bouton App Launcher
- * - Logo Quelyos
- * - Quick access pour 5 modules (home, finance, store, crm, stock)
- * - Lien vers site vitrine
- * - Lien "Voir mon site" vers e-commerce
+ * - Logo Quelyos (gradient fuchsia → orange avec icône Sparkles)
+ * - Quick access pour tous les modules accessibles
+ * - Lien vers paramètres généraux
  * - Toggle dark/light mode
  * - Bouton menu mobile
  */
@@ -47,6 +47,7 @@ export const TopNavbar = memo(function TopNavbar({
   isModuleChanging,
   modules,
   isVisible = true,
+  isSidebarCollapsed = false,
   onToggleNavbar
 }: TopNavbarProps) {
   const { theme, toggleTheme } = useTheme()
@@ -57,30 +58,25 @@ export const TopNavbar = memo(function TopNavbar({
   const quickModules = modules.slice(0, 10)
 
   return (
-    <header className={`h-14 bg-gray-900 border-b border-gray-800 flex items-center px-4 fixed top-0 left-0 right-0 z-50 transition-transform duration-100 ease-out ${isVisible ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>
-      {/* App launcher button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onAppLauncherClick}
-        className={`mr-3 ${
-          isAppLauncherOpen
-            ? 'bg-gray-700 text-white'
-            : 'text-gray-100 hover:bg-gray-800 hover:text-white'
-        }`}
-        icon={<Grid3X3 className="h-5 w-5" />}
-      >
-        <span className="sr-only">Lanceur d'applications</span>
-      </Button>
+    <header className={`h-14 bg-gray-900 border-b border-gray-800 flex items-center fixed top-0 left-0 right-0 z-50 transition-transform duration-100 ease-out ${isVisible ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>
+      {/* Zone logo - même largeur que le sidebar */}
+      <div className={`${isSidebarCollapsed ? 'w-16' : 'w-60'} flex items-center px-4 border-r border-gray-800 transition-all duration-200 flex-shrink-0`}>
+        {/* Logo */}
+        <Link to="/dashboard" className="flex items-center gap-3 group transition-opacity hover:opacity-80">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-orange-500 shadow-lg shadow-orange-500/20">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          {!isSidebarCollapsed && (
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-white">Quelyos</h1>
+              <p className="text-[10px] uppercase tracking-widest text-fuchsia-200/80">Backoffice</p>
+            </div>
+          )}
+        </Link>
+      </div>
 
-      {/* Logo */}
-      <Link to="/dashboard" className="flex items-center gap-2 mr-6">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-          <span className="text-white font-bold text-sm">Q</span>
-        </div>
-        <span className="text-white font-semibold hidden sm:block">Quelyos</span>
-      </Link>
-
+      {/* Rest of navbar */}
+      <div className="flex items-center flex-1 px-4">
       {/* Quick module access */}
       <nav className="hidden md:flex items-center gap-1">
         {quickModules.map((module) => {
@@ -160,6 +156,7 @@ export const TopNavbar = memo(function TopNavbar({
         >
           <span className="sr-only">Menu</span>
         </Button>
+        </div>
       </div>
     </header>
   )

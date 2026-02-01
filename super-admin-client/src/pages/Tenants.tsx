@@ -295,7 +295,7 @@ export function Tenants() {
                                       : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-white'
                           }`}
                         >
-                          {tenant.subscription_state && tenant.subscription_state !== false
+                          {tenant.subscription_state && typeof tenant.subscription_state === 'string'
                             ? String(tenant.subscription_state).toUpperCase()
                             : 'AUCUN ABONNEMENT'}
                         </span>
@@ -422,7 +422,7 @@ export function Tenants() {
           title="Confirmer la réactivation"
           message={`Êtes-vous sûr de vouloir réactiver le tenant "${activateTarget.name}" ? Les utilisateurs pourront à nouveau accéder à leur boutique.`}
           confirmText="Réactiver"
-          variant="primary"
+          variant="default"
           isLoading={activateTenant.isPending}
         />
       )}
@@ -636,7 +636,7 @@ function TenantDetailModal({
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">État Subscription</p>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {tenant.subscription_state && tenant.subscription_state !== false
+                  {tenant.subscription_state && typeof tenant.subscription_state === 'string'
                     ? String(tenant.subscription_state).toUpperCase()
                     : 'Aucun abonnement'}
                 </p>

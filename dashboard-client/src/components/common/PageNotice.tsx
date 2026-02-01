@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Info, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from "lucide-react";
 import { logger } from '@quelyos/logger';
@@ -27,16 +27,19 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [feedbackValue, setFeedbackValue] = useState<boolean | null>(null);
 
-  // Support ancien format Notice[] : convertir en PageNoticeConfig
-  const normalizedConfig: PageNoticeConfigType | null = !config ? null : Array.isArray(config)
-    ? {
-        pageId: 'legacy-notice',
-        title: config[0]?.title || 'Information',
-        purpose: config[0]?.message || '',
-        sections: [],
-        moduleColor: 'gray',
-      }
-    : config;
+  // Support ancien format Notice[] : convertir en PageNoticeConfig (memoized)
+  const normalizedConfig: PageNoticeConfigType | null = useMemo(() => {
+    if (!config) return null;
+    return Array.isArray(config)
+      ? {
+          pageId: 'legacy-notice',
+          title: config[0]?.title || 'Information',
+          purpose: config[0]?.message || '',
+          sections: [],
+          moduleColor: 'gray',
+        }
+      : config;
+  }, [config]);
 
   const Icon = normalizedConfig?.icon || Info;
   const colorConfig = MODULE_COLOR_CONFIGS[normalizedConfig?.moduleColor || 'gray' as keyof typeof MODULE_COLOR_CONFIGS];
@@ -46,7 +49,6 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
   useEffect(() => {
     // Protection : si config est undefined, ne rien faire
     if (!normalizedConfig) {
-      logger.warn('[PageNotice] config is undefined, skipping initialization');
       return;
     }
     if (typeof window === "undefined") return;
@@ -73,7 +75,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
     }
 
     setMounted(true);
-  }, [storageKey, normalizedConfig?.pageId, enableFeedback]);
+  }, [storageKey, normalizedConfig, enableFeedback]);
 
   // Toggle handler with persistence + analytics
   const handleToggle = () => {

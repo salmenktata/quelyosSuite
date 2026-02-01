@@ -276,7 +276,7 @@ export function SeedData() {
             <option value="">Sélectionnez un tenant</option>
             {tenants.map((tenant) => (
               <option key={tenant.id} value={tenant.id}>
-                {tenant.name} ({tenant.state})
+                {tenant.name} ({tenant.status})
               </option>
             ))}
           </select>

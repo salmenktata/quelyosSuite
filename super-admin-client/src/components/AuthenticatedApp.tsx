@@ -2,33 +2,46 @@
  * Wrapper pour l'application authentifiée avec auto-logout
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router'
+import { Loader2 } from 'lucide-react'
 import { Layout } from './Layout'
-import { Dashboard } from '@/pages/Dashboard'
-import { Tenants } from '@/pages/Tenants'
-import { Plans } from '@/pages/Plans'
-import { Subscriptions } from '@/pages/Subscriptions'
-import { Billing } from '@/pages/Billing'
-import { Monitoring } from '@/pages/Monitoring'
-import { Backups } from '@/pages/Backups'
-import { BackupSchedules } from '@/pages/BackupSchedules'
-import { Security } from '@/pages/Security'
-import { AiConfig } from '@/pages/AiConfig'
-import { SupportTickets } from '@/pages/SupportTickets'
-import { SupportTemplates } from '@/pages/SupportTemplates'
-import { CustomerTicketHistory } from '@/pages/CustomerTicketHistory'
-import { AuditLogs } from '@/pages/AuditLogs'
-import { NoticeAnalytics } from '@/pages/NoticeAnalytics'
-import { Settings } from '@/pages/Settings'
-import { EmailSettings } from '@/pages/EmailSettings'
-import { Sitemap } from '@/pages/Sitemap'
-import { SeedData } from '@/pages/SeedData'
-import { InstallWizardPage } from '@/pages/InstallWizardPage'
 import { InactivityWarning } from './InactivityWarning'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
 import { useAuth } from '@/hooks/useAuth'
 import { useAnalytics } from '@/hooks/useAnalytics'
+
+// Lazy load toutes les pages pour optimiser le bundle initial
+const Dashboard = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.Dashboard })))
+const Tenants = lazy(() => import('@/pages/Tenants').then(m => ({ default: m.Tenants })))
+const Plans = lazy(() => import('@/pages/Plans').then(m => ({ default: m.Plans })))
+const Subscriptions = lazy(() => import('@/pages/Subscriptions').then(m => ({ default: m.Subscriptions })))
+const Billing = lazy(() => import('@/pages/Billing').then(m => ({ default: m.Billing })))
+const Monitoring = lazy(() => import('@/pages/Monitoring').then(m => ({ default: m.Monitoring })))
+const Backups = lazy(() => import('@/pages/Backups').then(m => ({ default: m.Backups })))
+const BackupSchedules = lazy(() => import('@/pages/BackupSchedules').then(m => ({ default: m.BackupSchedules })))
+const Security = lazy(() => import('@/pages/Security').then(m => ({ default: m.Security })))
+const AiConfig = lazy(() => import('@/pages/AiConfig').then(m => ({ default: m.AiConfig })))
+const SupportTickets = lazy(() => import('@/pages/SupportTickets').then(m => ({ default: m.SupportTickets })))
+const SupportTemplates = lazy(() => import('@/pages/SupportTemplates').then(m => ({ default: m.SupportTemplates })))
+const CustomerTicketHistory = lazy(() => import('@/pages/CustomerTicketHistory').then(m => ({ default: m.CustomerTicketHistory })))
+const AuditLogs = lazy(() => import('@/pages/AuditLogs').then(m => ({ default: m.AuditLogs })))
+const NoticeAnalytics = lazy(() => import('@/pages/NoticeAnalytics').then(m => ({ default: m.NoticeAnalytics })))
+const Settings = lazy(() => import('@/pages/Settings').then(m => ({ default: m.Settings })))
+const EmailSettings = lazy(() => import('@/pages/EmailSettings').then(m => ({ default: m.EmailSettings })))
+const Sitemap = lazy(() => import('@/pages/Sitemap').then(m => ({ default: m.Sitemap })))
+const SeedData = lazy(() => import('@/pages/SeedData').then(m => ({ default: m.SeedData })))
+const InstallWizardPage = lazy(() => import('@/pages/InstallWizardPage').then(m => ({ default: m.InstallWizardPage })))
+
+// Composant de chargement pour Suspense
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col items-center gap-4">
+      <Loader2 className="w-8 h-8 animate-spin text-teal-600 dark:text-teal-400" />
+      <p className="text-sm text-gray-600 dark:text-gray-400">Chargement...</p>
+    </div>
+  </div>
+)
 
 /**
  * Component pour tracker les page views automatiquement
@@ -62,11 +75,13 @@ function PageViewTracker() {
     }
 
     // Gérer les routes dynamiques (ex: /customers/:id/tickets)
+    let pageName: string
     if (location.pathname.match(/^\/customers\/\d+\/tickets$/)) {
-      return 'Customer Ticket History'
+      pageName = 'Customer Ticket History'
+    } else {
+      pageName = pageNames[location.pathname] || location.pathname
     }
 
-    const pageName = pageNames[location.pathname] || location.pathname
     trackPageView(pageName, { path: location.pathname })
   }, [location, trackPageView])
 
@@ -100,8 +115,9 @@ export function AuthenticatedApp() {
   return (
     <>
       <PageViewTracker />
-      <Routes>
-        <Route path="/" element={<Layout />}>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="tenants" element={<Tenants />} />
@@ -126,6 +142,7 @@ export function AuthenticatedApp() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
+      </Suspense>
 
       {showWarning && (
         <InactivityWarning

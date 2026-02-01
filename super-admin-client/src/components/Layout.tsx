@@ -38,7 +38,9 @@ export function Layout() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center gap-3 h-16 px-6 border-b border-gray-200 dark:border-gray-700">
-            <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-lg" />
+            <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">✨</span>
+            </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">Quelyos</h1>
               <p className="text-xs text-gray-500 dark:text-gray-400">Super Admin</p>

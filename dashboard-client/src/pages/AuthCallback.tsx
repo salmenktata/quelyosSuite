@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { getDefaultModulePath } from '../lib/defaultModule'
 
 /**
  * Auth callback page for SSO handoff from vitrine (localhost:3000)
@@ -25,8 +26,9 @@ export default function AuthCallback() {
       }))
       localStorage.setItem('auth_source', from || 'unknown')
 
-      // Redirect to dashboard
-      navigate('/dashboard', { replace: true })
+      // Redirect to default module
+      const defaultPath = getDefaultModulePath()
+      navigate(defaultPath, { replace: true })
     } else {
       // No valid session, redirect to login
       navigate('/login', { replace: true })

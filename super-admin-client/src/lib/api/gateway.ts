@@ -27,6 +27,7 @@ export interface GatewayRequest {
   retry?: boolean
   cache?: boolean | number
   signal?: AbortSignal
+  responseType?: 'json' | 'blob' | 'text' | 'arraybuffer'
 }
 
 export interface GatewayResponse<T = unknown> {
@@ -272,7 +273,9 @@ class APIGateway {
   }
 
   private buildUrl(path: string, params?: Record<string, unknown>): string {
-    const url = new URL(path, this.config.baseUrl)
+    // En mode dev avec baseUrl vide, utiliser l'origine courante (pour proxy Vite)
+    const base = this.config.baseUrl || window.location.origin
+    const url = new URL(path, base)
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {

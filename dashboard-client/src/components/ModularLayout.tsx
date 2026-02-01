@@ -386,6 +386,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           isModuleChanging={isModuleChanging}
           modules={accessibleModules}
           isVisible={isNavbarVisible}
+          isSidebarCollapsed={isSidebarCollapsed}
           onToggleNavbar={toggleNavbar}
         />
 

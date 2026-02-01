@@ -4,7 +4,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/Layout';
 import { Breadcrumbs, Button } from '../components/common';
 import {
   getAllNoticeAnalytics,
@@ -101,8 +100,7 @@ export function NoticeAnalytics() {
   };
 
   return (
-    <Layout>
-      <div className="p-8">
+    <div className="p-8">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -256,6 +254,5 @@ export function NoticeAnalytics() {
           </ul>
         </div>
       </div>
-    </Layout>
   );
 }
