@@ -85,3 +85,11 @@ export const hrNotices: Record<string, Notice[]> = {
 }
 
 export { stockNotices } from './notices/stock-notices'
+
+financeNotices.portfolios = [
+  {
+    type: 'info' as const,
+    title: 'Portefeuilles',
+    message: 'Organisez vos comptes en portefeuilles thématiques pour une gestion optimisée.',
+  },
+]
