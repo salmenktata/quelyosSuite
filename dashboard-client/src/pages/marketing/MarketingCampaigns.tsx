@@ -40,54 +40,39 @@ const stateColors: Record<string, string> = {
 };
 
 export default function MarketingCampaigns() {
-  const { listCampaigns, sendCampaign, deleteCampaign, loading, error } = useMarketingCampaigns();
-  const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [stateFilter, setStateFilter] = useState<string>('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadCampaigns();
-  }, [stateFilter]);
+  const { data, isLoading, error, refetch } = useMarketingCampaigns({
+    state: stateFilter || undefined,
+    limit: 100
+  });
+  const sendCampaignMutation = useSendCampaign();
+  const deleteCampaignMutation = useDeleteCampaign();
 
-  const loadCampaigns = async () => {
-    try {
-      const result = await listCampaigns({ state: stateFilter || undefined, limit: 100 });
-      setCampaigns(result.campaigns);
-      setTotalCount(result.total_count);
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
-    }
-  };
+  const campaigns = data?.campaigns || [];
+  const totalCount = data?.total_count || 0;
 
   const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await loadCampaigns();
-    setIsRefreshing(false);
+    await refetch();
   };
 
   const handleSend = async (id: number) => {
     if (!confirm('Confirmer envoi de la campagne ?')) return;
-    
+
     try {
-      await sendCampaign(id);
-      await loadCampaigns();
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
+      await sendCampaignMutation.mutateAsync(id);
+    } catch (err) {
+      logger.error("Erreur lors de l'envoi de la campagne:", err);
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Supprimer cette campagne ?')) return;
-    
+
     try {
-      await deleteCampaign(id);
-      await loadCampaigns();
-    } catch {
-      logger.error("Erreur attrapée");
-      // Error handled by hook
+      await deleteCampaignMutation.mutateAsync(id);
+    } catch (err) {
+      logger.error("Erreur lors de la suppression de la campagne:", err);
     }
   };
 
@@ -107,9 +92,9 @@ export default function MarketingCampaigns() {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            icon={<RefreshCw className={isRefreshing ? 'animate-spin' : ''} />}
+            icon={<RefreshCw className={isLoading ? 'animate-spin' : ''} />}
             onClick={handleRefresh}
-            disabled={isRefreshing}
+            disabled={isLoading}
           >
             Actualiser
           </Button>
@@ -147,9 +132,9 @@ export default function MarketingCampaigns() {
         ))}
       </div>
 
-      {loading && <SkeletonTable rows={5} />}
+      {isLoading && <SkeletonTable rows={5} />}
 
-      {!loading && campaigns.length === 0 && (
+      {!isLoading && campaigns.length === 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <Mail className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
@@ -161,7 +146,7 @@ export default function MarketingCampaigns() {
         </div>
       )}
 
-      {!loading && campaigns.length > 0 && (
+      {!isLoading && campaigns.length > 0 && (
         <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">

@@ -4,8 +4,14 @@ import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { Plus } from 'lucide-react'
 
+interface AnalyticAxis {
+  id: number
+  name: string
+  code: string
+}
+
 export default function AnalyticsAxesPage() {
-  const [axes, setAxes] = useState([])
+  const [axes, setAxes] = useState<AnalyticAxis[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -40,7 +46,7 @@ export default function AnalyticsAxesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {axes.map((axis: any) => (
+            {axes.map((axis) => (
               <tr key={axis.id}>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{axis.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{axis.code}</td>

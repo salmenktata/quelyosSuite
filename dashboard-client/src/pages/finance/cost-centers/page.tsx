@@ -5,8 +5,17 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 
+interface CostCenter {
+  id: number
+  name: string
+  budget: number
+  actual: number
+  variance: number
+  variancePercent: number
+}
+
 export default function CostCentersPage() {
-  const [centers, setCenters] = useState([])
+  const [centers, setCenters] = useState<CostCenter[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -42,7 +51,7 @@ export default function CostCentersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {centers.map((center: any) => (
+            {centers.map((center) => (
               <tr key={center.id}>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{center.name}</td>
                 <td className="px-6 py-4 text-sm text-right text-gray-900 dark:text-white">{formatCurrency(center.budget, '€')}</td>
