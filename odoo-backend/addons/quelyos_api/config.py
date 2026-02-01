@@ -31,8 +31,8 @@ ALLOWED_ORIGINS = [
     'http://127.0.0.1:5175',
 
     # Super Admin Client
-    'http://localhost:5176',
-    'http://127.0.0.1:5176',
+    'http://localhost:9000',
+    'http://127.0.0.1:9000',
 
     # Legacy ports (compatibilité)
     'http://localhost:5173',

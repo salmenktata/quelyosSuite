@@ -12,6 +12,7 @@
             <field name="max_products">1000</field>
             <field name="max_orders_per_year">5000</field>
             <field name="trial_days">7</field>
+            <field name="enabled_modules">["home", "store"]</field>
             <field name="support_level">email_48h</field>
             <field name="description">Parfait pour démarrer votre activité e-commerce</field>
             <field name="is_popular" eval="False"/>
@@ -47,6 +48,7 @@
             <field name="max_products">10000</field>
             <field name="max_orders_per_year">50000</field>
             <field name="trial_days">14</field>
+            <field name="enabled_modules">["home", "finance", "store", "stock", "crm", "marketing"]</field>
             <field name="support_level">email_chat_24h</field>
             <field name="description">Pour les e-commerçants en croissance</field>
             <field name="is_popular" eval="True"/>
@@ -89,6 +91,7 @@
             <field name="max_products">0</field> <!-- 0 = illimité -->
             <field name="max_orders_per_year">0</field> <!-- 0 = illimité -->
             <field name="trial_days">30</field>
+            <field name="enabled_modules">["home", "finance", "store", "stock", "crm", "marketing", "hr", "support", "pos"]</field>
             <field name="support_level">dedicated_2h</field>
             <field name="description">Solutions sur-mesure pour grandes entreprises</field>
             <field name="is_popular" eval="False"/>

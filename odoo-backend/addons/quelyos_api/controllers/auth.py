@@ -345,7 +345,7 @@ class AuthController(http.Controller):
             response.status_code = 500
             return response
 
-    @http.route('/api/auth/login', type='http', auth='none', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/login', type='http', auth='none', methods=['POST'], csrf=False)
     def login(self, **kwargs):
         """
         Authentification standard avec session_id retourné en JSON (pour compatibilité clients existants).
@@ -602,7 +602,7 @@ class AuthController(http.Controller):
                 status=500
             )
 
-    @http.route('/api/auth/refresh', type='http', auth='none', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/refresh', type='http', auth='none', methods=['POST'], csrf=False)
     def refresh_token(self, **kwargs):
         """
         Renouvelle les tokens en utilisant le refresh token (depuis cookie HttpOnly).
@@ -716,7 +716,7 @@ class AuthController(http.Controller):
             _logger.error(f"Token refresh error: {e}")
             return {'success': False, 'error': 'Erreur lors du rafraîchissement du token'}
 
-    @http.route('/api/auth/logout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False, cors='*')
+    @http.route('/api/auth/logout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def logout_session(self, **kwargs):
         """
         Déconnexion - révoque le refresh token et clear les cookies

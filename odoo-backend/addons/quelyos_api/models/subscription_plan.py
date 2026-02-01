@@ -76,6 +76,13 @@ class SubscriptionPlan(models.Model):
         required=True,
     )
 
+    # Modules activés
+    enabled_modules = fields.Text(
+        string='Modules activés (JSON)',
+        help='Liste des modules Quelyos activés pour ce plan (ex: ["home", "store", "crm"])',
+        default='["home"]'
+    )
+
     # Fonctionnalités
     features = fields.Text(
         string='Fonctionnalités (JSON)',
@@ -234,6 +241,23 @@ class SubscriptionPlan(models.Model):
         """
         self.ensure_one()
         self.features = json.dumps(features_list)
+
+    def get_enabled_modules_list(self):
+        """
+        Retourne la liste des modules activés sous forme de liste Python.
+        """
+        self.ensure_one()
+        try:
+            return json.loads(self.enabled_modules) if self.enabled_modules else ['home']
+        except (json.JSONDecodeError, TypeError):
+            return ['home']
+
+    def set_enabled_modules_list(self, modules_list):
+        """
+        Définit la liste des modules activés à partir d'une liste Python.
+        """
+        self.ensure_one()
+        self.enabled_modules = json.dumps(modules_list)
 
     def name_get(self):
         """Affichage personnalisé du plan."""

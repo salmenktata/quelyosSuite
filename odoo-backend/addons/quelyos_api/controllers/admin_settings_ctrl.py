@@ -95,6 +95,7 @@ class AdminSettingsController(SuperAdminController):
                 )
 
             features = data.get('features', {})
+            enabled_modules = data.get('enabled_modules', ['home'])
             create_vals = {
                 'code': data.get('code'),
                 'name': data.get('name'),
@@ -105,6 +106,7 @@ class AdminSettingsController(SuperAdminController):
                 'max_products': data.get('max_products', 100),
                 'max_orders_per_year': data.get('max_orders_per_year', 1000),
                 'trial_days': data.get('trial_days', 14),
+                'enabled_modules': json.dumps(enabled_modules),
                 'feature_wishlist': features.get('wishlist_enabled', False),
                 'feature_reviews': features.get('reviews_enabled', False),
                 'feature_newsletter': features.get('newsletter_enabled', False),
@@ -183,6 +185,7 @@ class AdminSettingsController(SuperAdminController):
                 )
 
             features = data.get('features', {})
+            enabled_modules = data.get('enabled_modules', plan.get_enabled_modules_list())
             update_vals = {
                 'name': data.get('name', plan.name),
                 'description': data.get('description', plan.description),
@@ -192,6 +195,7 @@ class AdminSettingsController(SuperAdminController):
                 'max_products': data.get('max_products', plan.max_products),
                 'max_orders_per_year': data.get('max_orders_per_year', plan.max_orders_per_year),
                 'trial_days': data.get('trial_days', plan.trial_days),
+                'enabled_modules': json.dumps(enabled_modules),
                 'feature_wishlist': features.get('wishlist_enabled', plan.feature_wishlist),
                 'feature_reviews': features.get('reviews_enabled', plan.feature_reviews),
                 'feature_newsletter': features.get('newsletter_enabled', plan.feature_newsletter),
@@ -301,6 +305,7 @@ class AdminSettingsController(SuperAdminController):
             'max_products': plan.max_products,
             'max_orders_per_year': plan.max_orders_per_year,
             'trial_days': plan.trial_days,
+            'enabled_modules': plan.get_enabled_modules_list(),
             'features': {
                 'wishlist_enabled': getattr(plan, 'feature_wishlist', False),
                 'reviews_enabled': getattr(plan, 'feature_reviews', False),

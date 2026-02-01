@@ -161,6 +161,7 @@ export const PlanSchema = z.object({
   max_products: z.number().nonnegative(),
   max_orders_per_year: z.number().nonnegative(),
   trial_days: z.number().nonnegative(),
+  enabled_modules: z.array(z.string()).optional(),
   features: z.object({
     wishlist_enabled: z.boolean().optional(),
     reviews_enabled: z.boolean().optional(),
@@ -171,6 +172,11 @@ export const PlanSchema = z.object({
     priority_support: z.boolean().optional(),
     custom_domain: z.boolean().optional(),
   }).optional(),
+  group_ids: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    full_name: z.string(),
+  })).optional(),
   is_active: z.boolean().optional(),
   is_popular: z.boolean().optional(),
   is_default: z.boolean().optional(),
