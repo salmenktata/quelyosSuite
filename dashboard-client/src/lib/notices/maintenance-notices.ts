@@ -61,6 +61,28 @@ export const maintenanceNotices: Record<string, PageNoticeConfig> = {
     ],
   },
 
+  equipmentCritical: {
+    pageId: 'maintenance-equipment-critical',
+    title: 'Équipements Critiques',
+    purpose:
+      'Surveillez et gérez vos équipements prioritaires nécessitant une attention particulière. Suivez en temps réel les équipements sensibles pour l\'activité.',
+    icon: AlertTriangle as LucideIcon,
+    moduleColor: 'orange',
+    sections: [
+      {
+        title: 'Surveillance prioritaire',
+        icon: Lightbulb,
+        items: [
+          'Liste filtrée des équipements marqués comme critiques uniquement',
+          'Indicateurs de criticité et état en temps réel',
+          'Filtres par catégorie et statut opérationnel',
+          'Actions rapides : maintenance planifiée, inspection, intervention urgente',
+          'Alertes visuelles pour équipements critiques en panne ou nécessitant intervention',
+        ],
+      },
+    ],
+  },
+
   equipmentDetail: {
     pageId: 'maintenance-equipment-detail',
     title: 'Détail Équipement',
