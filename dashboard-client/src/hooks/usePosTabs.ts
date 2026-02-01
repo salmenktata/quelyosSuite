@@ -1,0 +1,45 @@
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import type { MenuSection } from '@/config/modules'
+
+export function detectPosTab(pathname: string): string {
+  if (pathname === '/pos') return 'Tableau de bord'
+  if (pathname.includes('/pos/terminal') || pathname.includes('/pos/rush') || pathname.includes('/pos/kiosk') || pathname.includes('/pos/mobile') || pathname.includes('/pos/kds') || pathname.includes('/pos/customer-display') || pathname.includes('/pos/session')) return 'Caisse'
+  if (pathname.includes('/pos/orders') || pathname.includes('/pos/sessions') || pathname.includes('/pos/click-collect')) return 'Gestion'
+  if (pathname.includes('/pos/reports') || pathname.includes('/pos/analytics')) return 'Rapports'
+  if (pathname.includes('/pos/settings')) return 'Configuration'
+  return 'Tableau de bord'
+}
+
+export function usePosTabs(sections: MenuSection[], pathname: string) {
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('pos_active_tab') || 'Tableau de bord'
+    }
+    return 'Tableau de bord'
+  })
+
+  useEffect(() => {
+    setActiveTab(detectPosTab(pathname))
+  }, [pathname])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pos_active_tab', activeTab)
+    }
+  }, [activeTab])
+
+  const visibleSections = useMemo(() =>
+    sections.filter(section => section.title === activeTab),
+    [sections, activeTab]
+  )
+
+  const handleSetActiveTab = useCallback((tabId: string) => {
+    setActiveTab(tabId)
+  }, [])
+
+  return {
+    activeTab,
+    setActiveTab: handleSetActiveTab,
+    visibleSections
+  }
+}

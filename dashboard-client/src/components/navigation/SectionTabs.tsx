@@ -4,7 +4,23 @@ import {
   ArrowRightLeft,
   PieChart,
   BarChart3,
-  Settings
+  Settings,
+  Package,
+  Megaphone,
+  FileText,
+  Boxes,
+  Truck,
+  Kanban,
+  UserCircle,
+  Receipt,
+  Mail,
+  MessageSquare,
+  Users,
+  UsersRound,
+  Calendar,
+  Award,
+  Monitor,
+  ClipboardList
 } from 'lucide-react'
 
 interface Tab {
@@ -28,12 +44,111 @@ interface SectionTabsProps {
 
 // Map des icônes par section
 const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  // Home
   'Tableau de bord': LayoutDashboard,
+  'Paramètres': Settings,
+
+  // Finance
   'Comptes': Wallet,
   'Transactions': ArrowRightLeft,
   'Planification': PieChart,
   'Rapports': BarChart3,
   'Configuration': Settings,
+
+  // Store
+  'Catalogue': Package,
+  'Marketing': Megaphone,
+  'Contenu': FileText,
+
+  // Stock
+  'Stock': Boxes,
+  'Logistique': Truck,
+  'Analyse': BarChart3,
+
+  // CRM
+  'Pipeline': Kanban,
+  'Clients': UserCircle,
+  'Facturation': Receipt,
+
+  // Marketing
+  'Emails': Mail,
+  'SMS': MessageSquare,
+  'Audiences': Users,
+
+  // HR
+  'Personnel': UsersRound,
+  'Temps & Congés': Calendar,
+  'Évaluations': Award,
+
+  // Support
+  'Assistance': MessageSquare,
+
+  // POS
+  'Caisse': Monitor,
+  'Gestion': ClipboardList,
+}
+
+// Map des variantes de couleurs pour tabs actives (par module)
+const TAB_COLOR_VARIANTS: Record<string, {
+  text: string
+  bg: string
+  badgeBg: string
+  badgeText: string
+}> = {
+  emerald: {
+    text: 'text-emerald-600 dark:text-emerald-400',
+    bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+    badgeBg: 'bg-emerald-100 dark:bg-emerald-900/30',
+    badgeText: 'text-emerald-700 dark:text-emerald-300'
+  },
+  indigo: {
+    text: 'text-indigo-600 dark:text-indigo-400',
+    bg: 'bg-indigo-50 dark:bg-indigo-900/20',
+    badgeBg: 'bg-indigo-100 dark:bg-indigo-900/30',
+    badgeText: 'text-indigo-700 dark:text-indigo-300'
+  },
+  blue: {
+    text: 'text-blue-600 dark:text-blue-400',
+    bg: 'bg-blue-50 dark:bg-blue-900/20',
+    badgeBg: 'bg-blue-100 dark:bg-blue-900/30',
+    badgeText: 'text-blue-700 dark:text-blue-300'
+  },
+  purple: {
+    text: 'text-purple-600 dark:text-purple-400',
+    bg: 'bg-purple-50 dark:bg-purple-900/20',
+    badgeBg: 'bg-purple-100 dark:bg-purple-900/30',
+    badgeText: 'text-purple-700 dark:text-purple-300'
+  },
+  pink: {
+    text: 'text-pink-600 dark:text-pink-400',
+    bg: 'bg-pink-50 dark:bg-pink-900/20',
+    badgeBg: 'bg-pink-100 dark:bg-pink-900/30',
+    badgeText: 'text-pink-700 dark:text-pink-300'
+  },
+  orange: {
+    text: 'text-orange-600 dark:text-orange-400',
+    bg: 'bg-orange-50 dark:bg-orange-900/20',
+    badgeBg: 'bg-orange-100 dark:bg-orange-900/30',
+    badgeText: 'text-orange-700 dark:text-orange-300'
+  },
+  amber: {
+    text: 'text-amber-600 dark:text-amber-400',
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
+    badgeBg: 'bg-amber-100 dark:bg-amber-900/30',
+    badgeText: 'text-amber-700 dark:text-amber-300'
+  },
+  teal: {
+    text: 'text-teal-600 dark:text-teal-400',
+    bg: 'bg-teal-50 dark:bg-teal-900/20',
+    badgeBg: 'bg-teal-100 dark:bg-teal-900/30',
+    badgeText: 'text-teal-700 dark:text-teal-300'
+  },
+  gray: {
+    text: 'text-gray-600 dark:text-gray-400',
+    bg: 'bg-gray-50 dark:bg-gray-900/20',
+    badgeBg: 'bg-gray-100 dark:bg-gray-900/30',
+    badgeText: 'text-gray-700 dark:text-gray-300'
+  }
 }
 
 interface SectionTabsPropsExtended extends SectionTabsProps {
@@ -41,6 +156,11 @@ interface SectionTabsPropsExtended extends SectionTabsProps {
 }
 
 export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDescription, moduleColor, moduleBgColor, moduleIcon: ModuleIcon, isSidebarCollapsed = false, onModuleClick }: SectionTabsPropsExtended) {
+  // Extraire la couleur du module depuis moduleColor (ex: "text-indigo-600" -> "indigo")
+  const colorMatch = moduleColor?.match(/text-(\w+)-/)
+  const colorName = colorMatch?.[1] || 'emerald'
+  const tabColors = TAB_COLOR_VARIANTS[colorName] || TAB_COLOR_VARIANTS.emerald
+
   return (
     <div className="relative flex items-stretch w-full bg-white dark:bg-gray-800">
       {/* Module indicator - même style que sidebar */}
@@ -85,7 +205,7 @@ export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDe
                   text-sm font-medium whitespace-nowrap
                   transition-all duration-150 ease-in-out
                   ${isActive
-                    ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20'
+                    ? `${tabColors.text} ${tabColors.bg}`
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }
                 `}
@@ -108,7 +228,7 @@ export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDe
                   min-w-[1.25rem] h-5 px-1.5 rounded-full
                   text-xs font-medium transition-colors
                   ${isActive
-                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
+                    ? `${tabColors.badgeBg} ${tabColors.badgeText}`
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
                   }
                 `}>

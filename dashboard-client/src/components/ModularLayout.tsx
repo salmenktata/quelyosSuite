@@ -28,6 +28,14 @@ import { useAutoOpenMenus } from '../hooks/useAutoOpenMenus'
 import { useSectionState } from '../hooks/useSectionState'
 import { useNavigationHistory } from '../hooks/useNavigationHistory'
 import { useFinanceTabs, detectFinanceTab } from '../hooks/useFinanceTabs'
+import { useHomeTabs, detectHomeTab } from '../hooks/useHomeTabs'
+import { useStoreTabs, detectStoreTab } from '../hooks/useStoreTabs'
+import { useStockTabs, detectStockTab } from '../hooks/useStockTabs'
+import { useCrmTabs, detectCrmTab } from '../hooks/useCrmTabs'
+import { useMarketingTabs, detectMarketingTab } from '../hooks/useMarketingTabs'
+import { useHrTabs, detectHrTab } from '../hooks/useHrTabs'
+import { useSupportTabs, detectSupportTab } from '../hooks/useSupportTabs'
+import { usePosTabs, detectPosTab } from '../hooks/usePosTabs'
 
 // Components
 import { Button } from './common/Button'
@@ -47,6 +55,24 @@ import { X, LogOut, ChevronsLeft, ChevronsRight, Minimize2, Maximize2, PanelTop,
 
 // Constants
 const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed'
+
+// ============================================================================
+// UTILITIES
+// ============================================================================
+
+/**
+ * Génère automatiquement les tabs à partir des sections d'un module
+ * Les groupes du menu sidebar (section.title) deviennent des tabs
+ * @param sections - Sections du module
+ * @returns Array de tabs avec id, label et count (nombre d'items dans la section)
+ */
+function generateTabsFromSections(sections: Module['sections']) {
+  return sections.map(section => ({
+    id: section.title,
+    label: section.title,
+    count: section.items.length
+  }))
+}
 
 // ============================================================================
 // CONTEXT
@@ -136,6 +162,160 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     }
   }, [currentModule.id, setActiveTab])
 
+  // Home tabs logic
+  const {
+    activeTab: homeActiveTab,
+    setActiveTab: setHomeActiveTab,
+    visibleSections: homeVisibleSections
+  } = useHomeTabs(currentModule.sections, location.pathname)
+
+  // Handler pour changement de tab Home
+  const handleHomeTabChange = useCallback((tabId: string) => {
+    setHomeActiveTab(tabId)
+  }, [setHomeActiveTab])
+
+  // Handler pour navigation sidebar Home
+  const handleHomeSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'home') {
+      const targetTab = detectHomeTab(path)
+      setHomeActiveTab(targetTab)
+    }
+  }, [currentModule.id, setHomeActiveTab])
+
+  // Store tabs logic
+  const {
+    activeTab: storeActiveTab,
+    setActiveTab: setStoreActiveTab,
+    visibleSections: storeVisibleSections
+  } = useStoreTabs(currentModule.sections, location.pathname)
+
+  // Handler pour changement de tab Store
+  const handleStoreTabChange = useCallback((tabId: string) => {
+    setStoreActiveTab(tabId)
+  }, [setStoreActiveTab])
+
+  // Handler pour navigation sidebar Store
+  const handleStoreSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'store') {
+      const targetTab = detectStoreTab(path)
+      setStoreActiveTab(targetTab)
+    }
+  }, [currentModule.id, setStoreActiveTab])
+
+  // Stock tabs logic
+  const {
+    activeTab: stockActiveTab,
+    setActiveTab: setStockActiveTab,
+    visibleSections: stockVisibleSections
+  } = useStockTabs(currentModule.sections, location.pathname)
+
+  // Handler pour changement de tab Stock
+  const handleStockTabChange = useCallback((tabId: string) => {
+    setStockActiveTab(tabId)
+  }, [setStockActiveTab])
+
+  // Handler pour navigation sidebar Stock
+  const handleStockSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'stock') {
+      const targetTab = detectStockTab(path)
+      setStockActiveTab(targetTab)
+    }
+  }, [currentModule.id, setStockActiveTab])
+
+  // CRM tabs logic
+  const {
+    activeTab: crmActiveTab,
+    setActiveTab: setCrmActiveTab,
+    visibleSections: crmVisibleSections
+  } = useCrmTabs(currentModule.sections, location.pathname)
+
+  // Handler pour changement de tab CRM
+  const handleCrmTabChange = useCallback((tabId: string) => {
+    setCrmActiveTab(tabId)
+  }, [setCrmActiveTab])
+
+  // Handler pour navigation sidebar CRM
+  const handleCrmSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'crm') {
+      const targetTab = detectCrmTab(path)
+      setCrmActiveTab(targetTab)
+    }
+  }, [currentModule.id, setCrmActiveTab])
+
+  // Marketing tabs logic
+  const {
+    activeTab: marketingActiveTab,
+    setActiveTab: setMarketingActiveTab,
+    visibleSections: marketingVisibleSections
+  } = useMarketingTabs(currentModule.sections, location.pathname)
+
+  // Handler pour changement de tab Marketing
+  const handleMarketingTabChange = useCallback((tabId: string) => {
+    setMarketingActiveTab(tabId)
+  }, [setMarketingActiveTab])
+
+  // Handler pour navigation sidebar Marketing
+  const handleMarketingSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'marketing') {
+      const targetTab = detectMarketingTab(path)
+      setMarketingActiveTab(targetTab)
+    }
+  }, [currentModule.id, setMarketingActiveTab])
+
+  // HR tabs logic
+  const {
+    activeTab: hrActiveTab,
+    setActiveTab: setHrActiveTab,
+    visibleSections: hrVisibleSections
+  } = useHrTabs(currentModule.sections, location.pathname)
+
+  const handleHrTabChange = useCallback((tabId: string) => {
+    setHrActiveTab(tabId)
+  }, [setHrActiveTab])
+
+  const handleHrSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'hr') {
+      const targetTab = detectHrTab(path)
+      setHrActiveTab(targetTab)
+    }
+  }, [currentModule.id, setHrActiveTab])
+
+  // Support tabs logic
+  const {
+    activeTab: supportActiveTab,
+    setActiveTab: setSupportActiveTab,
+    visibleSections: supportVisibleSections
+  } = useSupportTabs(currentModule.sections, location.pathname)
+
+  const handleSupportTabChange = useCallback((tabId: string) => {
+    setSupportActiveTab(tabId)
+  }, [setSupportActiveTab])
+
+  const handleSupportSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'support') {
+      const targetTab = detectSupportTab(path)
+      setSupportActiveTab(targetTab)
+    }
+  }, [currentModule.id, setSupportActiveTab])
+
+  // POS tabs logic
+  const {
+    activeTab: posActiveTab,
+    setActiveTab: setPosActiveTab,
+    visibleSections: posVisibleSections
+  } = usePosTabs(currentModule.sections, location.pathname)
+
+  const handlePosTabChange = useCallback((tabId: string) => {
+    setPosActiveTab(tabId)
+  }, [setPosActiveTab])
+
+  const handlePosSidebarNavigate = useCallback((path: string) => {
+    if (currentModule.id === 'pos') {
+      const targetTab = detectPosTab(path)
+      setPosActiveTab(targetTab)
+    }
+  }, [currentModule.id, setPosActiveTab])
+
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
 
@@ -204,8 +384,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
           <aside
             className={`${isSidebarCollapsed ? 'w-16' : 'w-60'} flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed lg:sticky ${
               isNavbarVisible
-                ? (currentModule.id === 'finance' ? 'top-[7rem] h-[calc(100vh-7rem)]' : 'top-14 h-[calc(100vh-3.5rem)]')
-                : (currentModule.id === 'finance' ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen')
+                ? (currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' ? 'top-[7rem] h-[calc(100vh-7rem)]' : 'top-14 h-[calc(100vh-3.5rem)]')
+                : (currentModule.id === 'finance' || currentModule.id === 'home' ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen')
             } z-30 transition-all duration-200 ease-out flex flex-col ${
               isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
             }`}
@@ -249,7 +429,17 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 isCollapsed={isSidebarCollapsed}
               />
 
-              {(currentModule.id === 'finance' ? visibleSections : currentModule.sections).map((section, index) => (
+              {(currentModule.id === 'finance' ? visibleSections
+                : currentModule.id === 'home' ? homeVisibleSections
+                : currentModule.id === 'store' ? storeVisibleSections
+                : currentModule.id === 'stock' ? stockVisibleSections
+                : currentModule.id === 'crm' ? crmVisibleSections
+                : currentModule.id === 'marketing' ? marketingVisibleSections
+                : currentModule.id === 'hr' ? hrVisibleSections
+                : currentModule.id === 'support' ? supportVisibleSections
+                : currentModule.id === 'pos' ? posVisibleSections
+                : currentModule.sections
+              ).map((section, index) => (
                 <div
                   key={section.title}
                   className="animate-fade-in"
@@ -277,7 +467,18 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                         isCollapsed={isSidebarCollapsed}
                         isFavorite={item.path ? isFavorite(item.path) : false}
                         onToggleFavorite={item.path ? () => toggleFavorite(item.path!) : undefined}
-                        onNavigate={currentModule.id === 'finance' ? handleFinanceSidebarNavigate : undefined}
+                        onNavigate={
+                          currentModule.id === 'finance' ? handleFinanceSidebarNavigate
+                          : currentModule.id === 'home' ? handleHomeSidebarNavigate
+                          : currentModule.id === 'store' ? handleStoreSidebarNavigate
+                          : currentModule.id === 'stock' ? handleStockSidebarNavigate
+                          : currentModule.id === 'crm' ? handleCrmSidebarNavigate
+                          : currentModule.id === 'marketing' ? handleMarketingSidebarNavigate
+                          : currentModule.id === 'hr' ? handleHrSidebarNavigate
+                          : currentModule.id === 'support' ? handleSupportSidebarNavigate
+                          : currentModule.id === 'pos' ? handlePosSidebarNavigate
+                          : undefined
+                        }
                       />
                     ))}
                   </div>
@@ -319,6 +520,251 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
 
           {/* Main content */}
           <main className={`flex-1 lg:ml-0 overflow-auto ${isNavbarVisible ? 'pt-14' : 'pt-0'}`}>
+            {/* Home Tabs - Navigation par sections */}
+            {currentModule.id === 'home' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="home"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={homeActiveTab}
+                    onTabChange={handleHomeTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Store Tabs - Navigation par sections */}
+            {currentModule.id === 'store' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="store"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={storeActiveTab}
+                    onTabChange={handleStoreTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Stock Tabs - Navigation par sections */}
+            {currentModule.id === 'stock' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="stock"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={stockActiveTab}
+                    onTabChange={handleStockTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* CRM Tabs - Navigation par sections */}
+            {currentModule.id === 'crm' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="crm"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={crmActiveTab}
+                    onTabChange={handleCrmTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Marketing Tabs - Navigation par sections */}
+            {currentModule.id === 'marketing' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="marketing"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={marketingActiveTab}
+                    onTabChange={handleMarketingTabChange}
+                  />
+                </div>
+                {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* HR Tabs - Navigation par sections */}
+            {currentModule.id === 'hr' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="hr"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={hrActiveTab}
+                    onTabChange={handleHrTabChange}
+                  />
+                </div>
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Support Tabs - Navigation par sections */}
+            {currentModule.id === 'support' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="support"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={supportActiveTab}
+                    onTabChange={handleSupportTabChange}
+                  />
+                </div>
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* POS Tabs - Navigation par sections */}
+            {currentModule.id === 'pos' && (
+              <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
+                <div className="flex-1">
+                  <SectionTabs
+                    moduleId="pos"
+                    moduleName={currentModule.name}
+                    moduleDescription={currentModule.description}
+                    moduleColor={currentModule.color}
+                    moduleBgColor={currentModule.bgColor}
+                    moduleIcon={currentModule.icon}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
+                    tabs={generateTabsFromSections(currentModule.sections)}
+                    activeTab={posActiveTab}
+                    onTabChange={handlePosTabChange}
+                  />
+                </div>
+                {!isNavbarVisible && (
+                  <button
+                    onClick={toggleNavbar}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors mr-4"
+                    title="Afficher la barre de navigation"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Finance Tabs - Navigation par sections */}
             {currentModule.id === 'finance' && (
               <div className={`${MODULE_HEADER_CLASSES} fixed ${isNavbarVisible ? 'top-14' : 'top-0'} left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-[transform,opacity] duration-200 ease-out flex items-center shadow-sm`}>
@@ -332,14 +778,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={[
-                      { id: 'Tableau de bord', label: 'Tableau de bord', count: 1 },
-                      { id: 'Comptes', label: 'Comptes', count: 2 },
-                      { id: 'Transactions', label: 'Transactions', count: 2 },
-                      { id: 'Planification', label: 'Planification', count: 4 },
-                      { id: 'Rapports', label: 'Rapports', count: 5 },
-                      { id: 'Configuration', label: 'Configuration', count: 9 }
-                    ]}
+                    tabs={generateTabsFromSections(currentModule.sections)}
                     activeTab={activeTab}
                     onTabChange={handleFinanceTabChange}
                   />
@@ -357,7 +796,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
               </div>
             )}
 
-            <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' ? 'pt-16' : ''}`}>
+            <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' ? 'pt-16' : ''}`}>
               {children}
             </div>
           </main>

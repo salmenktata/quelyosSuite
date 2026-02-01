@@ -72,6 +72,7 @@ import {
   Download,
   Palette,
   Paintbrush,
+  FolderKanban,
 } from 'lucide-react'
 
 // ============================================================================
@@ -130,6 +131,7 @@ export const MODULES: Module[] = [
     sections: [
       {
         title: 'Tableau de bord',
+        tabGroup: 'Tableau de bord',
         items: [
           { name: 'Vue d\'ensemble', path: '/dashboard', icon: LayoutDashboard },
           { name: 'Analytics', path: '/analytics', icon: BarChart3 },
@@ -137,6 +139,7 @@ export const MODULES: Module[] = [
       },
       {
         title: 'Configuration',
+        tabGroup: 'Paramètres',
         items: [
           { name: 'Paramètres Généraux', path: '/settings', icon: Settings },
         ],
@@ -226,16 +229,10 @@ export const MODULES: Module[] = [
     basePath: '/store',
     sections: [
       {
-        title: 'Tableau de bord',
+        title: 'Vue d\'ensemble',
         items: [
-          { name: 'Vue d\'ensemble', path: '/store', icon: LayoutDashboard },
-        ],
-      },
-      {
-        title: 'Ventes',
-        items: [
+          { name: 'Tableau de bord', path: '/store', icon: LayoutDashboard },
           { name: 'Commandes', path: '/store/orders', icon: ShoppingCart },
-          { name: 'Paniers Abandonnés', path: '/store/abandoned-carts', icon: ShoppingCart },
         ],
       },
       {
@@ -250,30 +247,26 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Promotions',
+        title: 'Marketing',
         items: [
           { name: 'Codes Promo', path: '/store/coupons', icon: Ticket },
           { name: 'Ventes Flash', path: '/store/flash-sales', icon: Timer },
           { name: 'Produits Vedette', path: '/store/featured', icon: Sparkles },
-          { name: 'Bannières', path: '/store/promo-banners', icon: Image },
+          { name: 'Bannières Promo', path: '/store/promo-banners', icon: Image },
           { name: 'Hero Slides', path: '/store/hero-slides', icon: Image },
           { name: 'Popups Marketing', path: '/store/marketing-popups', icon: Zap },
           { name: 'Live Shopping', path: '/store/live-events', icon: Video },
           { name: 'Produits Tendance', path: '/store/trending-products', icon: TrendingUp },
-        ],
-      },
-      {
-        title: 'Engagement Client',
-        items: [
-          { name: 'Avis Clients', path: '/store/reviews', icon: Star },
-          { name: 'Témoignages', path: '/store/testimonials', icon: Quote },
-          { name: 'Programme Fidélité', path: '/store/loyalty', icon: Heart },
-          { name: 'FAQ', path: '/store/faq', icon: HelpCircle },
+          { name: 'Paniers Abandonnés', path: '/store/abandoned-carts', icon: ShoppingCart },
         ],
       },
       {
         title: 'Contenu',
         items: [
+          { name: 'Avis Clients', path: '/store/reviews', icon: Star },
+          { name: 'Témoignages', path: '/store/testimonials', icon: Quote },
+          { name: 'Programme Fidélité', path: '/store/loyalty', icon: Heart },
+          { name: 'FAQ', path: '/store/faq', icon: HelpCircle },
           { name: 'Pages Statiques', path: '/store/static-pages', icon: FileText },
           { name: 'Blog / Articles', path: '/store/blog', icon: FileEdit },
           { name: 'Menus Navigation', path: '/store/menus', icon: List },
@@ -282,27 +275,24 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Support',
+        title: 'Thèmes',
         items: [
-          { name: 'Tickets SAV', path: '/store/tickets', icon: HeadphonesIcon },
-        ],
-      },
-      {
-        title: 'Rapports',
-        items: [
-          { name: 'Ventes', path: '/store/sales-reports', icon: BarChart3 },
-          { name: 'Alertes Stock', path: '/store/stock-alerts', icon: AlertTriangle },
+          { name: 'Mes Thèmes', path: '/store/themes', icon: Palette },
+          { name: 'Theme Builder', path: '/store/themes/builder', icon: Paintbrush },
+          { name: 'Import JSON', path: '/store/themes/import', icon: Upload },
+          { name: 'Marketplace', path: '/store/themes/marketplace', icon: Store },
+          { name: 'Soumettre un Thème', path: '/store/themes/submit', icon: Upload },
+          { name: 'Mes Soumissions', path: '/store/themes/my-submissions', icon: FileEdit },
+          { name: 'Analytics', path: '/store/themes/analytics', icon: BarChart3 },
+          { name: 'Mes Revenus', path: '/store/themes/payouts', icon: Coins },
         ],
       },
       {
         title: 'Configuration',
         items: [
-          { name: 'Thèmes', path: '/store/themes', icon: Palette },
-          { name: 'Theme Builder', path: '/store/themes/builder', icon: Paintbrush },
-          { name: 'Import Thèmes JSON', path: '/store/themes/import', icon: Upload },
-          { name: 'Marketplace Thèmes', path: '/store/themes/marketplace', icon: Store },
-          { name: 'Soumettre un Thème', path: '/store/themes/submit', icon: Upload },
-          { name: 'Mes Soumissions', path: '/store/themes/my-submissions', icon: FileEdit },
+          { name: 'Tickets SAV', path: '/store/tickets', icon: HeadphonesIcon },
+          { name: 'Rapports Ventes', path: '/store/sales-reports', icon: BarChart3 },
+          { name: 'Alertes Stock', path: '/store/stock-alerts', icon: AlertTriangle },
           { name: 'Paramètres', path: '/store/settings', icon: Settings },
         ],
       },
@@ -319,17 +309,27 @@ export const MODULES: Module[] = [
     basePath: '/stock',
     sections: [
       {
-        title: 'Inventaire',
+        title: 'Tableau de bord',
         items: [
-          { name: 'Stock', path: '/stock', icon: Boxes },
+          { name: 'Vue d\'ensemble', path: '/stock', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Stock',
+        items: [
+          { name: 'Stock Global', path: '/stock/inventory', icon: Boxes },
           { name: 'Inventaire Physique', path: '/inventory', icon: ClipboardList },
+          { name: 'Règles Réapprovisionnement', path: '/stock/reordering-rules', icon: RefreshCw },
+          { name: 'Groupes Inventaire', path: '/stock/inventory-groups', icon: FolderKanban },
+        ],
+      },
+      {
+        title: 'Logistique',
+        items: [
           { name: 'Mouvements', path: '/stock/moves', icon: ArrowRightLeft },
           { name: 'Transferts', path: '/stock/transfers', icon: Truck },
           { name: 'Entrepôts', path: '/warehouses', icon: Warehouse },
           { name: 'Emplacements', path: '/stock/locations', icon: MapPin },
-          { name: 'Règles Réapprovisionnement', path: '/stock/reordering-rules', icon: RefreshCw },
-          { name: 'Groupes Inventaire OCA', path: '/stock/inventory-groups', icon: ClipboardList },
-          { name: 'Calendriers Entrepôts OCA', path: '/stock/warehouse-calendars', icon: Calendar },
         ],
       },
       {
@@ -342,6 +342,7 @@ export const MODULES: Module[] = [
       {
         title: 'Configuration',
         items: [
+          { name: 'Calendriers Entrepôts', path: '/stock/warehouse-calendars', icon: Calendar },
           { name: 'Paramètres', path: '/stock/settings', icon: Settings },
         ],
       },
@@ -357,6 +358,12 @@ export const MODULES: Module[] = [
     description: 'Clients & Ventes',
     basePath: '/crm',
     sections: [
+      {
+        title: 'Tableau de bord',
+        items: [
+          { name: 'Vue d\'ensemble', path: '/crm', icon: LayoutDashboard },
+        ],
+      },
       {
         title: 'Pipeline',
         items: [
@@ -404,12 +411,17 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Campagnes',
+        title: 'Emails',
         items: [
-          { name: 'Toutes les campagnes', path: '/marketing/campaigns', icon: Megaphone },
-          { name: 'Emails', path: '/marketing/email', icon: FileText },
-          { name: 'SMS', path: '/marketing/sms', icon: MessageSquare },
-          { name: 'Templates', path: '/marketing/email/templates', icon: FileText },
+          { name: 'Campagnes Email', path: '/marketing/email', icon: Mail },
+          { name: 'Templates Email', path: '/marketing/email/templates', icon: FileText },
+        ],
+      },
+      {
+        title: 'SMS',
+        items: [
+          { name: 'Campagnes SMS', path: '/marketing/sms', icon: MessageSquare },
+          { name: 'Templates SMS', path: '/marketing/sms/templates', icon: FileText },
         ],
       },
       {
@@ -452,18 +464,13 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Temps & Présences',
+        title: 'Temps & Congés',
         items: [
           { name: 'Présences', path: '/hr/attendance', icon: ClipboardList },
-        ],
-      },
-      {
-        title: 'Congés & Absences',
-        items: [
-          { name: 'Demandes', path: '/hr/leaves', icon: Calendar },
+          { name: 'Demandes de Congés', path: '/hr/leaves', icon: Calendar },
           { name: 'Calendrier', path: '/hr/leaves/calendar', icon: Calendar },
           { name: 'Allocations', path: '/hr/leaves/allocations', icon: PieChart },
-          { name: 'Types de congés', path: '/hr/leaves/types', icon: Tag },
+          { name: 'Types de Congés', path: '/hr/leaves/types', icon: Tag },
         ],
       },
       {
@@ -492,6 +499,12 @@ export const MODULES: Module[] = [
     basePath: '/support',
     sections: [
       {
+        title: 'Tableau de bord',
+        items: [
+          { name: 'Vue d\'ensemble', path: '/support', icon: LayoutDashboard },
+        ],
+      },
+      {
         title: 'Assistance',
         items: [
           { name: 'Mes Tickets', path: '/support/tickets', icon: MessageSquare },
@@ -512,6 +525,12 @@ export const MODULES: Module[] = [
     basePath: '/pos',
     sections: [
       {
+        title: 'Tableau de bord',
+        items: [
+          { name: 'Vue d\'ensemble', path: '/pos', icon: LayoutDashboard },
+        ],
+      },
+      {
         title: 'Caisse',
         items: [
           { name: 'Terminal', path: '/pos/terminal', icon: Monitor },
@@ -526,7 +545,6 @@ export const MODULES: Module[] = [
       {
         title: 'Gestion',
         items: [
-          { name: 'Tableau de bord', path: '/pos', icon: LayoutDashboard },
           { name: 'Commandes', path: '/pos/orders', icon: ClipboardList },
           { name: 'Sessions', path: '/pos/sessions', icon: Clock },
           { name: 'Click & Collect', path: '/pos/click-collect', icon: Package },

@@ -1,0 +1,45 @@
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import type { MenuSection } from '@/config/modules'
+
+export function detectHrTab(pathname: string): string {
+  if (pathname === '/hr') return 'Tableau de bord'
+  if (pathname.includes('/hr/employees') || pathname.includes('/hr/departments') || pathname.includes('/hr/jobs') || pathname.includes('/hr/contracts')) return 'Personnel'
+  if (pathname.includes('/hr/attendance') || pathname.includes('/hr/leaves')) return 'Temps & Congés'
+  if (pathname.includes('/hr/appraisals') || pathname.includes('/hr/skills')) return 'Évaluations'
+  if (pathname.includes('/hr/settings')) return 'Configuration'
+  return 'Tableau de bord'
+}
+
+export function useHrTabs(sections: MenuSection[], pathname: string) {
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('hr_active_tab') || 'Tableau de bord'
+    }
+    return 'Tableau de bord'
+  })
+
+  useEffect(() => {
+    setActiveTab(detectHrTab(pathname))
+  }, [pathname])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hr_active_tab', activeTab)
+    }
+  }, [activeTab])
+
+  const visibleSections = useMemo(() =>
+    sections.filter(section => section.title === activeTab),
+    [sections, activeTab]
+  )
+
+  const handleSetActiveTab = useCallback((tabId: string) => {
+    setActiveTab(tabId)
+  }, [])
+
+  return {
+    activeTab,
+    setActiveTab: handleSetActiveTab,
+    visibleSections
+  }
+}

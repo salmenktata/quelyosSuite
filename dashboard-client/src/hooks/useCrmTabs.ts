@@ -2,40 +2,62 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 // Fonction utilitaire pour détecter le tab depuis un path
-export function detectFinanceTab(pathname: string): string {
-  if (pathname === '/finance') {
+export function detectCrmTab(pathname: string): string {
+  // Tableau de bord
+  if (pathname === '/crm') {
     return 'Tableau de bord'
-  } else if (pathname.includes('/accounts') || pathname.includes('/portfolios')) {
-    return 'Comptes'
-  } else if (pathname.includes('/expenses') || pathname.includes('/incomes') || pathname.includes('/import')) {
-    return 'Transactions'
-  } else if (pathname.includes('/budgets') || pathname.includes('/forecast') || pathname.includes('/scenarios') || pathname.includes('/payment-planning')) {
-    return 'Planification'
-  } else if (pathname.includes('/reporting')) {
-    return 'Rapports'
-  } else if (pathname.includes('/categories') || pathname.includes('/suppliers') || pathname.includes('/charts') || pathname.includes('/alerts') || pathname.includes('/archives') || pathname.includes('/settings')) {
+  }
+
+  // Pipeline
+  if (
+    pathname.includes('/crm/pipeline') ||
+    pathname.includes('/crm/leads')
+  ) {
+    return 'Pipeline'
+  }
+
+  // Clients
+  if (
+    pathname.includes('/crm/customers') ||
+    pathname.includes('/crm/customer-categories') ||
+    pathname.includes('/pricelists')
+  ) {
+    return 'Clients'
+  }
+
+  // Facturation
+  if (
+    pathname.includes('/invoices') ||
+    pathname.includes('/payments')
+  ) {
+    return 'Facturation'
+  }
+
+  // Configuration
+  if (pathname.includes('/crm/settings')) {
     return 'Configuration'
   }
+
   return 'Tableau de bord' // Default
 }
 
-export function useFinanceTabs(sections: MenuSection[], pathname: string) {
+export function useCrmTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('finance_active_tab') || 'Tableau de bord'
+      return localStorage.getItem('crm_active_tab') || 'Tableau de bord'
     }
     return 'Tableau de bord'
   })
 
   // Auto-détection tab selon URL (synchrone, sans debounce)
   useEffect(() => {
-    setActiveTab(detectFinanceTab(pathname))
+    setActiveTab(detectCrmTab(pathname))
   }, [pathname])
 
   // Persistance localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('finance_active_tab', activeTab)
+      localStorage.setItem('crm_active_tab', activeTab)
     }
   }, [activeTab])
 
