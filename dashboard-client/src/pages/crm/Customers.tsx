@@ -49,10 +49,10 @@ export default function Customers() {
 
   // Tri côté client des données
   const sortedCustomers = useMemo(() => {
-    if (!data?.data?.customers) return []
-    const customers = [...(data.data.customers as CustomerListItem[])]
+    const customers = (data?.items || data?.data || []) as CustomerListItem[]
+    if (customers.length === 0) return []
 
-    return customers.sort((a, b) => {
+    return [...customers].sort((a, b) => {
       let aValue: string | number = a[sortField] ?? ''
       let bValue: string | number = b[sortField] ?? ''
 
@@ -68,13 +68,13 @@ export default function Customers() {
 
       return sortOrder === 'asc' ? Number(aValue) - Number(bValue) : Number(bValue) - Number(aValue)
     })
-  }, [data?.data?.customers, sortField, sortOrder])
+  }, [data?.items, data?.data, sortField, sortOrder])
 
   // Calcul des statistiques
   const stats = useMemo(() => {
-    if (!data?.data?.customers) return { totalCustomers: 0, totalRevenue: 0, avgBasket: 0 }
+    const customers = (data?.items || data?.data || []) as CustomerListItem[]
+    if (customers.length === 0) return { totalCustomers: 0, totalRevenue: 0, avgBasket: 0 }
 
-    const customers = data.data.customers as CustomerListItem[]
     const totalRevenue = customers.reduce((sum, c) => sum + (c.total_spent ?? 0), 0)
     const customersWithOrders = customers.filter((c) => (c.orders_count ?? 0) > 0)
     const avgBasket =
@@ -84,7 +84,7 @@ export default function Customers() {
         : 0
 
     return {
-      totalCustomers: data.data.total,
+      totalCustomers: data?.total || 0,
       totalRevenue,
       avgBasket,
     }
@@ -173,7 +173,7 @@ export default function Customers() {
           onReset={handleReset}
           onExportCSV={handleExportCSV}
           isExporting={isExporting}
-          totalCount={data?.data?.total}
+          totalCount={data?.total}
           currentSearch={search}
         />
 
@@ -198,11 +198,11 @@ export default function Customers() {
               />
 
               {/* Pagination */}
-              {data?.data && data.data.total > limit && (
+              {data?.data && data?.total || 0 > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-4 md:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-700 dark:text-gray-300">
-                    Affichage {page * limit + 1} à {Math.min((page + 1) * limit, data.data.total)} sur{' '}
-                    {data.data.total}
+                    Affichage {page * limit + 1} à {Math.min((page + 1) * limit, data?.total || 0)} sur{' '}
+                    {data?.total || 0}
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -218,7 +218,7 @@ export default function Customers() {
                       variant="secondary"
                       size="sm"
                       onClick={() => setPage(page + 1)}
-                      disabled={(page + 1) * limit >= data.data.total}
+                      disabled={(page + 1) * limit >= data?.total || 0}
                       aria-label="Page suivante"
                     >
                       Suivant

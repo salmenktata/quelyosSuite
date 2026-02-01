@@ -44,6 +44,7 @@ export interface CampaignStats {
 export interface CampaignsQueryParams {
   tenant_id?: number;
   state?: string;
+  channel?: string;
   limit?: number;
   offset?: number;
 }

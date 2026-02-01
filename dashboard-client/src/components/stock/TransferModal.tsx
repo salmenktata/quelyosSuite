@@ -46,7 +46,7 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
     internal_only: true,
   })
 
-  const products = (productsData?.data?.products as StockProduct[]) || []
+  const products = ((productsData?.items || productsData?.data) as StockProduct[]) || []
   const fromLocations = fromLocationsData?.data?.locations || []
   const toLocations = toLocationsData?.data?.locations || []
 

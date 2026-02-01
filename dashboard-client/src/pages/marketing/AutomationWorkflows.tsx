@@ -116,7 +116,7 @@ export function AutomationWorkflows() {
           </div>
         </div>
 
-        <PageNotice pageId="automation-workflows" />
+        {/* PageNotice config={marketingNotices.workflows} */}
 
         {/* Filtres */}
         <div className="flex gap-2">

@@ -6,8 +6,18 @@ interface UseTaxReportsParams {
   country?: string
 }
 
+interface TaxReport {
+  id: number
+  state: string
+  vatCollected: number
+  vatDeductible: number
+  vatNet: number
+  month?: string
+  year?: number
+}
+
 export function useTaxReports(params: UseTaxReportsParams = {}) {
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState<TaxReport[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,7 +30,7 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
       setLoading(true)
       const response = await apiClient.post('/finance/tax-reports', params)
       if (response.data.success) setReports(response.data.data.reports)
-      else setError(response.data.error)
+      else setError(response.data.error || null)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erreur réseau')
     } finally {

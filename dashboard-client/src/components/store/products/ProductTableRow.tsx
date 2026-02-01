@@ -80,7 +80,9 @@ export const ProductTableRow = memo(function ProductTableRow({
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         {product.category ? (
-          <Badge variant="info">{product.category.name}</Badge>
+          <Badge variant="info">
+            {typeof product.category === 'string' ? product.category : product.category.name}
+          </Badge>
         ) : (
           <span className="text-sm text-gray-500 dark:text-gray-400">
             Sans catégorie

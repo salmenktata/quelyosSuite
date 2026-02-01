@@ -156,7 +156,7 @@ export default function InvoicesPage() {
         </Button>
       </div>
 
-      <PageNotice notices={financeNotices.invoices} />
+      <PageNotice config={financeNotices.invoices} />
 
       {/* Statistiques */}
       {stats && (

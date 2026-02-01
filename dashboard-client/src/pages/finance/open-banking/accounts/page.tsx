@@ -4,8 +4,15 @@ import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
+interface BankAccount {
+  id: number
+  bankName: string
+  iban: string
+  balance: number
+}
+
 export default function OpenBankingAccountsPage() {
-  const [accounts, setAccounts] = useState([])
+  const [accounts, setAccounts] = useState<BankAccount[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

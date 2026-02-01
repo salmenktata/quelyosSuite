@@ -5,8 +5,17 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 import { Download } from 'lucide-react'
 
+interface DirectDebit {
+  id: number
+  reference: string
+  customerName: string
+  amount: number
+  requestedDate: string
+  status: string
+}
+
 export default function SEPADirectDebitsPage() {
-  const [debits, setDebits] = useState([])
+  const [debits, setDebits] = useState<DirectDebit[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

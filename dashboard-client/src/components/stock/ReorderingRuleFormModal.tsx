@@ -7,6 +7,7 @@ import { useCreateReorderingRule, useUpdateReorderingRule } from '@/hooks/financ
 import { useWarehouses } from '@/hooks/useWarehouses'
 import { useProducts } from '@/hooks/useProducts'
 import type { ReorderingRule } from '@/types/stock'
+import type { Product } from '@/types'
 import { logger } from '@quelyos/logger'
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -55,7 +56,7 @@ export function ReorderingRuleFormModal({
   const { data: productsData } = useProducts({ include_archived: false })
 
   const warehouses = warehousesData || []
-  const products = (productsData?.data?.products as any[]) || []
+  const products = (productsData?.items || productsData?.data || []) as Product[]
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
+import type { Order } from '@/types'
 
 export interface DashboardStats {
   revenue: {
@@ -87,11 +88,11 @@ export function useDashboardRecentOrders(limit = 5) {
     queryFn: async () => {
       const response = await api.getOrders({ limit, offset: 0 })
 
-      if (!response.data?.orders) {
+      if (!response) {
         return []
       }
 
-      const orders = response.data.orders
+      const orders = (response.items || response.data || []) as Order[]
 
       // Vérifier que c'est bien un tableau
       if (!Array.isArray(orders)) {

@@ -4,8 +4,17 @@ import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { Plus } from 'lucide-react'
 
+interface Mandate {
+  id: number
+  reference: string
+  customerName: string
+  iban: string
+  type: string
+  status: string
+}
+
 export default function SEPAMandatesPage() {
-  const [mandates, setMandates] = useState([])
+  const [mandates, setMandates] = useState<Mandate[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

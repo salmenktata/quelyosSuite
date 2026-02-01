@@ -8,6 +8,9 @@
  * @package @quelyos/types
  */
 
+// Common types (CORE - API, User, Product, Category, Order, Cart, etc.)
+export type * from './common'
+
 // Support module (COMPLET)
 export type * from './support'
 
