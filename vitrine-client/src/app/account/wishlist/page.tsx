@@ -318,15 +318,15 @@ export default function AccountWishlistPage() {
                 return (
                 <div key={item.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
                   {/* Image */}
-                  <Link href={`/products/${item.product.slug}`} className="block relative aspect-square">
+                  <Link href={`/products/${item.product?.slug || ''}`} className="block relative aspect-square">
                     <Image
                       src={mainImage}
-                      alt={item.product.name}
+                      alt={item.product?.name || 'Product'}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
-                    {!item.product.in_stock && (
+                    {!item.product?.in_stock && (
                       <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <span className="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-full">
                           Rupture de stock
@@ -338,14 +338,14 @@ export default function AccountWishlistPage() {
                   {/* Infos */}
                   <div className="p-4">
                     <Link
-                      href={`/products/${item.product.slug}`}
+                      href={`/products/${item.product?.slug || ''}`}
                       className="font-semibold text-gray-900 hover:text-primary line-clamp-2 mb-2 block"
                     >
-                      {item.product.name}
+                      {item.product?.name}
                     </Link>
 
                     <p className="text-lg font-bold text-primary mb-3">
-                      {formatPrice(item.product.price ?? 0, item.product.currency?.symbol ?? 'TND')}
+                      {formatPrice(item.product?.price ?? 0, item.product?.currency?.symbol ?? 'TND')}
                     </p>
 
                     <p className="text-xs text-gray-500 mb-4">
@@ -362,11 +362,11 @@ export default function AccountWishlistPage() {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => handleAddToCart(item.product.id)}
-                        disabled={!item.product.in_stock}
+                        onClick={() => item.product?.id && handleAddToCart(item.product.id)}
+                        disabled={!item.product || !item.product.in_stock}
                         className="flex-1 rounded-full"
                       >
-                        {item.product.in_stock ? 'Ajouter au panier' : 'Indisponible'}
+                        {item.product?.in_stock ? 'Ajouter au panier' : 'Indisponible'}
                       </Button>
                       <button
                         onClick={() => handleRemove(item.id)}
