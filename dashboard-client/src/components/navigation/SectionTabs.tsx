@@ -42,7 +42,7 @@ interface SectionTabsPropsExtended extends SectionTabsProps {
 
 export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDescription, moduleColor, moduleBgColor, moduleIcon: ModuleIcon, isSidebarCollapsed = false, onModuleClick }: SectionTabsPropsExtended) {
   return (
-    <div className="relative flex items-stretch w-full bg-white dark:bg-gray-900">
+    <div className="relative flex items-stretch w-full bg-white dark:bg-gray-800">
       {/* Module indicator - même style que sidebar */}
       {moduleName && ModuleIcon && (
         <button
@@ -70,7 +70,7 @@ export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDe
       )}
 
       {/* Scrollable container pour tabs */}
-      <div className="flex-1 overflow-x-auto scrollbar-hide px-4 py-2 bg-white dark:bg-gray-900">
+      <div className="flex-1 overflow-x-auto scrollbar-hide px-4 py-2 bg-white dark:bg-gray-800">
         <nav className="flex gap-1 min-w-max" aria-label="Sections Finance">
           {tabs.map(tab => {
             const Icon = SECTION_ICONS[tab.id]
