@@ -444,6 +444,7 @@ export interface WishlistItem {
   product_image?: string
   added_date: string
   in_stock?: boolean
+  product?: Partial<Product> // Optional expanded product data
 }
 
 // ============================================================================
