@@ -81,7 +81,7 @@ export default function Coupons() {
     setSelectedCoupon(coupon)
     setEditForm({
       name: coupon.name || '',
-      active: coupon.active,
+      active: coupon.active ?? false,
       date_from: formatDateForInput(coupon.date_from),
       date_to: formatDateForInput(coupon.date_to),
       discount_type: coupon.reward?.discount_mode || 'percent',
@@ -190,9 +190,9 @@ export default function Coupons() {
               </span>
             </label>
 
-            {data?.data && (
+            {data && (
               <span className="text-sm text-gray-600 dark:text-gray-400 ml-auto">
-                {data.data.total} coupon{data.data.total > 1 ? 's' : ''}
+                {data.total} coupon{data.total > 1 ? 's' : ''}
               </span>
             )}
           </div>
@@ -206,7 +206,7 @@ export default function Coupons() {
             <div className="p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des coupons
             </div>
-          ) : data?.data?.coupons && (data.data.coupons as Coupon[]).length > 0 ? (
+          ) : data?.items || data && (data.items || data.data || [] as Coupon[]).length > 0 ? (
             <>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -233,7 +233,7 @@ export default function Coupons() {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {(data.data.coupons as Coupon[]).map((coupon) => (
+                    {(data.items || data.data || [] as Coupon[]).map((coupon) => (
                       <tr
                         key={coupon.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -297,11 +297,11 @@ export default function Coupons() {
               </div>
 
               {/* Pagination */}
-              {data.data.total > limit && (
+              {data.total > limit && (
                 <div className="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                     Affichage {page * limit + 1} a{' '}
-                    {Math.min((page + 1) * limit, data.data.total)} sur {data.data.total}
+                    {Math.min((page + 1) * limit, data.total)} sur {data.total}
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -316,7 +316,7 @@ export default function Coupons() {
                       variant="secondary"
                       size="sm"
                       onClick={() => setPage(page + 1)}
-                      disabled={(page + 1) * limit >= data.data.total}
+                      disabled={(page + 1) * limit >= data.total}
                     >
                       Suivant
                     </Button>

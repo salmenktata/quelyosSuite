@@ -46,7 +46,7 @@ export default function CampaignsPage() {
 
   const { data, isLoading } = useMarketingCampaigns({
     channel: channelFilter === 'all' ? undefined : channelFilter,
-    status: statusFilter || undefined,
+    state: statusFilter || undefined,
   });
   const deleteMutation = useDeleteCampaign();
   const duplicateMutation = useDuplicateCampaign();
@@ -225,21 +225,21 @@ export default function CampaignsPage() {
                         {getStatusBadge(campaign.status)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                        {campaign.stats.sent > 0 ? campaign.stats.sent.toLocaleString('fr-FR') : '-'}
+                        {(campaign.stats?.sent ?? 0) > 0 ? (campaign.stats?.sent ?? 0).toLocaleString('fr-FR') : '-'}
                       </td>
                       <td className="px-6 py-4">
                         {campaign.status === 'sent' && campaign.channel === 'email' ? (
                           <div className="text-sm">
-                            <span className="text-emerald-600 dark:text-emerald-400">{campaign.rates.open_rate}% ouvert</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">{campaign.rates?.open_rate ?? 0}% ouvert</span>
                             <span className="text-gray-400 mx-1">·</span>
-                            <span className="text-blue-600 dark:text-blue-400">{campaign.rates.click_rate}% clics</span>
+                            <span className="text-blue-600 dark:text-blue-400">{campaign.rates?.click_rate ?? 0}% clics</span>
                           </div>
                         ) : (
                           <span className="text-sm text-gray-400">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                        {campaign.sent_date ? formatDate(campaign.sent_date) : formatDate(campaign.created_at)}
+                        {campaign.sent_date ? formatDate(campaign.sent_date) : formatDate(campaign.created_at || campaign.create_date || null)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="relative">

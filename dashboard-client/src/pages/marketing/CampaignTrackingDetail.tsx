@@ -25,8 +25,8 @@ export function CampaignTrackingDetail() {
   const navigate = useNavigate();
   const campaignId = id ? parseInt(id) : 0;
 
-  const { getCampaign, loading: campaignLoading } = useMarketingCampaigns();
-  const { getCampaignTracking, getCampaignHeatmap, getCampaignTimeline, loading: trackingLoading } = useMarketingTracking();
+  const { getCampaign, loading: campaignLoading } = useMarketingCampaigns() as any;
+  const { getCampaignTracking, getCampaignHeatmap, getCampaignTimeline, loading: trackingLoading } = useMarketingTracking() as any;
 
   const [campaign, setCampaign] = useState<MarketingCampaign | null>(null);
   const [tracking, setTracking] = useState<TrackingStats | null>(null);
@@ -89,7 +89,7 @@ export function CampaignTrackingDetail() {
           items={[
             { label: 'Marketing', path: '/marketing' },
             { label: 'Campagnes', path: '/marketing/campaigns' },
-            { label: campaign.subject },
+            { label: campaign.subject || 'Campagne' },
           ]}
         />
 
@@ -103,14 +103,12 @@ export function CampaignTrackingDetail() {
           <Button
             variant="outline"
             size="sm"
-            icon={ArrowLeft}
+            icon={ArrowLeft as any}
             onClick={() => navigate('/marketing/campaigns')}
           >
             Retour
           </Button>
         </div>
-
-        <PageNotice pageId="campaign-tracking" />
 
         {/* Stats KPI */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

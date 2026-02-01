@@ -154,7 +154,7 @@ export default function Stock() {
       toast.info('Génération du fichier CSV en cours...')
 
       const response = await api.getStockProducts({ limit: 10000, offset: 0 })
-      const allProds = (response?.data?.products as StockProduct[]) || []
+      const allProds = (response?.items || response?.data || []) as StockProduct[]
 
       if (allProds.length === 0) {
         toast.warning('Aucune donnée à exporter')
@@ -201,7 +201,7 @@ export default function Stock() {
       toast.info('Génération du rapport de valorisation...')
 
       const response = await api.getStockProducts({ limit: 10000, offset: 0 })
-      const allProds = (response?.data?.products as StockProduct[]) || []
+      const allProds = (response?.items || response?.data || []) as StockProduct[]
 
       if (allProds.length === 0) {
         toast.warning('Aucune donnée à exporter')
@@ -270,8 +270,8 @@ export default function Stock() {
   }
 
   // Computed data
-  const allProducts = useMemo(() => (productsData?.data?.products as StockProduct[]) || [], [productsData?.data?.products])
-  const productsTotal = (productsData?.data?.total as number) || 0
+  const allProducts = useMemo(() => (productsData?.items || productsData?.data || []) as StockProduct[], [productsData])
+  const productsTotal = productsData?.total || 0
 
   const products = useMemo(() => allProducts.filter(p => {
     if (categoryFilter && p.category !== categoryFilter) return false

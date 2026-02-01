@@ -29,9 +29,21 @@ ERP modulaire et moderne avec backend puissant (101 modèles, 764 endpoints API)
 - **Site Vitrine** (port 3000) : Site marketing Quelyos
 - **E-commerce** (port 3001) : Boutique en ligne client
 
-### 🔧 Administration
+### 🔧 Administration SaaS
 
-- **Super Admin** (port 9000) : Gestion multi-tenant et administration SaaS
+**Super Admin** (port 9000) : Console d'administration multi-tenant complète pour gérer la plateforme SaaS.
+
+**Fonctionnalités** :
+- Gestion tenants (création wizard, suspension, changement plan)
+- Plans tarifaires avec quotas configurables
+- Abonnements & facturation (MRR, ARR, churn analysis)
+- Relances automatiques impayés (dunning workflow)
+- Analytics avancés (health score, prédiction churn)
+- Support multi-tenant (tickets, templates)
+- Backups automatisés (S3/local)
+- Audit logs & sécurité (2FA, rate limiting)
+
+**Parité fonctionnelle** : 62% (29/47 fonctionnalités Odoo SaaS Kit + Enterprise)
 
 ## Structure Technique
 
@@ -179,13 +191,21 @@ Parité     Packaging  Légal          Commercial  Lancement
 
 Quelyos Suite inclut **gratuitement** des fonctionnalités typiquement facturées $30-50/user/mois :
 
+**ERP Modules** :
 - ✅ Email Builder Drag-and-Drop
 - ✅ SMS Marketing Intégré
 - 🎯 Marketing Automation (en cours)
 - 🎯 Barcode Mobile App (en cours)
-- 🎯 Subscription Management (roadmap)
 
-**Économie estimée** : ~$3300/user/an vs solutions ERP Enterprise
+**SaaS Management** :
+- ✅ Billing Dunning Automation (Stripe Billing : $100/mois)
+- ✅ Multi-Tenant Management (Odoo SaaS Kit : $299-999)
+- ✅ Health Score Prédictif (custom innovation)
+- 🎯 Usage Analytics (Enterprise feature)
+- 🎯 Trial Periods (en cours)
+- 🎯 Marketing Automation - Onboarding Emails (Enterprise : $200/user/an)
+
+**Économie estimée** : ~$2000-3300/user/an vs solutions ERP/SaaS Enterprise
 
 ## 🔧 Développement
 

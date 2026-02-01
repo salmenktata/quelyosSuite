@@ -65,11 +65,15 @@ const MaintenanceDashboard = lazy(() => import('./pages/maintenance/Dashboard'))
 const EquipmentList = lazy(() => import('./pages/maintenance/EquipmentList'))
 const EquipmentDetail = lazy(() => import('./pages/maintenance/EquipmentDetail'))
 const EquipmentForm = lazy(() => import('./pages/maintenance/EquipmentForm'))
+const EquipmentCritical = lazy(() => import('./pages/maintenance/EquipmentCritical'))
 const RequestsList = lazy(() => import('./pages/maintenance/RequestsList'))
 const RequestForm = lazy(() => import('./pages/maintenance/RequestForm'))
 const RequestsEmergency = lazy(() => import('./pages/maintenance/RequestsEmergency'))
 const MaintenanceCalendar = lazy(() => import('./pages/maintenance/Calendar'))
 const MaintenanceReports = lazy(() => import('./pages/maintenance/Reports'))
+const MaintenanceCosts = lazy(() => import('./pages/maintenance/Costs'))
+const MaintenanceCategories = lazy(() => import('./pages/maintenance/Categories'))
+const MaintenanceSettings = lazy(() => import('./pages/maintenance/Settings'))
 
 // Lazy loaded pages - Store Themes
 const ThemesMarketplace = lazy(() => import('./pages/store/themes/marketplace'))
@@ -813,6 +817,38 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <MaintenanceReports />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/equipment/critical"
+                element={
+                  <ProtectedRoute>
+                    <EquipmentCritical />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/costs"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceCosts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/categories"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceCategories />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance/settings"
+                element={
+                  <ProtectedRoute>
+                    <MaintenanceSettings />
                   </ProtectedRoute>
                 }
               />

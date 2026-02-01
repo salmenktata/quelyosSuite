@@ -671,7 +671,7 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
     pageId: 'finance-invoices',
     title: 'Factures Clients',
     purpose:
-      "Gérez vos factures clients avec suivi des paiements et relances automatiques. Créez, envoyez et suivez vos factures pour optimiser votre cycle d\'encaissement.",
+      "Gérez vos factures clients avec suivi des paiements et relances automatiques. Créez, envoyez et suivez vos factures pour optimiser votre cycle d'encaissement.",
     icon: FileText as LucideIcon,
     moduleColor: 'emerald',
     sections: [
@@ -715,7 +715,7 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
     pageId: 'finance-consolidation',
     title: 'Consolidation',
     purpose:
-      "Consolidez vos données financières multi-entités pour une vue d\'ensemble groupe. Agrégez les comptes, transactions et KPIs de toutes vos entités.",
+      "Consolidez vos données financières multi-entités pour une vue d'ensemble groupe. Agrégez les comptes, transactions et KPIs de toutes vos entités.",
     icon: Building2 as LucideIcon,
     moduleColor: 'emerald',
     sections: [
@@ -737,7 +737,7 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
     pageId: 'finance-data-quality',
     title: 'Qualité des Données',
     purpose:
-      "Vérifiez l\'intégrité et la qualité de vos données financières. Identifiez les anomalies, doublons et incohérences pour garantir la fiabilité de vos rapports.",
+      "Vérifiez l'intégrité et la qualité de vos données financières. Identifiez les anomalies, doublons et incohérences pour garantir la fiabilité de vos rapports.",
     icon: AlertCircle as LucideIcon,
     moduleColor: 'emerald',
     sections: [

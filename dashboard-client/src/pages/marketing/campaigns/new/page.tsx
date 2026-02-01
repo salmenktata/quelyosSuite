@@ -91,13 +91,8 @@ export default function NewCampaignPage() {
   const handleSubmit = async () => {
     try {
       const campaign = await createMutation.mutateAsync({
-        name: formData.name,
-        channel: formData.channel as 'email' | 'sms',
-        subject: formData.subject || undefined,
-        content: formData.content || undefined,
-        sms_message: formData.sms_message || undefined,
-        contact_list_id: formData.contact_list_id || undefined,
-        scheduled_date: formData.sendNow ? undefined : formData.scheduled_date || undefined,
+        subject: formData.subject || '',
+        body_html: formData.content || '',
       });
       toast.success('Campagne créée avec succès');
       navigate(`/marketing/campaigns/${campaign.id}`);

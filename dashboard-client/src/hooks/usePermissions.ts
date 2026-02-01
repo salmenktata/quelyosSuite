@@ -104,7 +104,7 @@ export function usePermissions() {
    */
   const getAccessibleModules = (): ModuleId[] => {
     const edition = getCurrentEdition()
-    const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support']
+    const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support', 'maintenance']
 
     // 1. Filtrer modules par édition
     const editionModules = allModules.filter(module => edition.modules.includes(module))

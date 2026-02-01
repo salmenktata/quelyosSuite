@@ -10,12 +10,27 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Package, Plus, Edit2, Archive, Check, X, Loader2, Users, ShoppingBag, Receipt, Shield, Clock } from 'lucide-react'
+import { Package, Plus, Edit2, Archive, Check, X, Loader2, Users, ShoppingBag, Receipt, Shield, Clock, Blocks } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { ModuleGroupSelector } from '@/components/common'
 import { useToast } from '@/hooks/useToast'
 import { z } from 'zod'
 import { validateApiResponse } from '@/lib/validators'
+
+// Définition des 9 modules Quelyos (même liste que ModuleGroupSelector)
+const QUELYOS_MODULES = [
+  { key: 'home', label: 'Accueil' },
+  { key: 'finance', label: 'Finance' },
+  { key: 'store', label: 'Boutique' },
+  { key: 'stock', label: 'Stock' },
+  { key: 'crm', label: 'CRM' },
+  { key: 'marketing', label: 'Marketing' },
+  { key: 'hr', label: 'RH' },
+  { key: 'support', label: 'Support' },
+  { key: 'pos', label: 'Caisse' },
+] as const
+
+type ModuleKey = (typeof QUELYOS_MODULES)[number]['key']
 
 // Schémas Zod pour les groupes de sécurité
 const SecurityGroupSchema = z.object({
@@ -50,6 +65,9 @@ const PlanSchema = z.object({
   max_users: z.number().nonnegative(),
   max_products: z.number().nonnegative(),
   max_orders_per_year: z.number().nonnegative(),
+  trial_days: z.number().nonnegative().default(14),
+  is_default: z.boolean().optional().default(false),
+  is_popular: z.boolean().optional().default(false),
   features: z.object({
     wishlist_enabled: z.boolean(),
     reviews_enabled: z.boolean(),
@@ -175,6 +193,23 @@ export function Plans() {
     },
   })
 
+  const updatePlanModules = useMutation({
+    mutationFn: async ({ id, groupIds }: { id: number; groupIds: number[] }) => {
+      return api.request({
+        method: 'PUT',
+        path: `/api/super-admin/plans/${id}`,
+        body: { group_ids: groupIds },
+      })
+    },
+    onSuccess: () => {
+      toast.success('Modules mis à jour')
+      queryClient.invalidateQueries({ queryKey: ['super-admin-plans'] })
+    },
+    onError: () => {
+      toast.error('Erreur lors de la mise à jour des modules')
+    },
+  })
+
   const openEdit = (plan: Plan) => {
     setEditingPlan(plan)
     setShowModal(true)
@@ -230,9 +265,12 @@ export function Plans() {
             <PlanCard
               key={plan.id}
               plan={plan}
+              securityGroups={securityGroups}
               onEdit={() => openEdit(plan)}
               onArchive={() => archivePlan.mutate(plan.id)}
+              onUpdateModules={(groupIds) => updatePlanModules.mutate({ id: plan.id, groupIds })}
               isArchiving={archivePlan.isPending}
+              isUpdatingModules={updatePlanModules.isPending}
             />
           ))}
         </div>
@@ -257,23 +295,86 @@ export function Plans() {
   )
 }
 
+// Parse le nom du groupe pour extraire module
+function parseQuelyosGroup(group: { name: string; full_name: string }): ModuleKey | null {
+  const name = group.name.toLowerCase()
+  const fullName = group.full_name.toLowerCase()
+
+  for (const mod of QUELYOS_MODULES) {
+    const pattern = new RegExp(`quelyos\\s+${mod.key}\\s+(user|manager)`, 'i')
+    if (pattern.test(name) || pattern.test(fullName)) {
+      return mod.key
+    }
+  }
+  return null
+}
+
 function PlanCard({
   plan,
+  securityGroups,
   onEdit,
   onArchive,
+  onUpdateModules,
   isArchiving,
+  isUpdatingModules,
 }: {
   plan: Plan
+  securityGroups: SecurityGroup[]
   onEdit: () => void
   onArchive: () => void
+  onUpdateModules: (groupIds: number[]) => void
   isArchiving: boolean
+  isUpdatingModules: boolean
 }) {
+  const [showModules, setShowModules] = useState(false)
   const colorMap: Record<string, string> = {
     starter: 'from-green-500 to-emerald-500',
     pro: 'from-blue-500 to-indigo-500',
     enterprise: 'from-purple-500 to-pink-500',
   }
   const gradient = colorMap[plan.code] || 'from-gray-500 to-gray-600'
+
+  // Créer une map groupe -> id pour chaque module (niveau user uniquement)
+  const moduleGroupMap: Record<ModuleKey, number | undefined> = {
+    home: undefined,
+    finance: undefined,
+    store: undefined,
+    stock: undefined,
+    crm: undefined,
+    marketing: undefined,
+    hr: undefined,
+    support: undefined,
+    pos: undefined,
+  }
+
+  for (const group of securityGroups) {
+    const moduleKey = parseQuelyosGroup(group)
+    if (moduleKey && group.name.toLowerCase().includes('user')) {
+      moduleGroupMap[moduleKey] = group.id
+    }
+  }
+
+  // Modules actuellement activés pour ce plan
+  const activeModuleKeys = new Set<ModuleKey>()
+  for (const group of plan.group_ids || []) {
+    const moduleKey = parseQuelyosGroup(group)
+    if (moduleKey) {
+      activeModuleKeys.add(moduleKey)
+    }
+  }
+
+  // Toggle un module (ajouter/retirer le groupe user)
+  const toggleModule = (moduleKey: ModuleKey) => {
+    const groupId = moduleGroupMap[moduleKey]
+    if (!groupId) return
+
+    const currentGroupIds = plan.group_ids?.map((g) => g.id) || []
+    const newGroupIds = currentGroupIds.includes(groupId)
+      ? currentGroupIds.filter((id) => id !== groupId)
+      : [...currentGroupIds, groupId]
+
+    onUpdateModules(newGroupIds)
+  }
 
   return (
     <div
@@ -374,6 +475,60 @@ function PlanCard({
             </span>
           </div>
         ))}
+      </div>
+
+      {/* Modules */}
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => setShowModules(!showModules)}
+          disabled={isUpdatingModules}
+          className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700/30 transition disabled:opacity-50"
+        >
+          <div className="flex items-center gap-2">
+            <Blocks className="w-4 h-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Modules ({activeModuleKeys.size}/{QUELYOS_MODULES.length})
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {isUpdatingModules && <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
+            {showModules ? (
+              <X className="w-4 h-4 text-gray-400" />
+            ) : (
+              <Plus className="w-4 h-4 text-gray-400" />
+            )}
+          </div>
+        </button>
+
+        {showModules && (
+          <div className="p-4 pt-0 space-y-2">
+            {QUELYOS_MODULES.map((mod) => {
+              const isActive = activeModuleKeys.has(mod.key)
+              const groupId = moduleGroupMap[mod.key]
+              const canToggle = !!groupId
+
+              return (
+                <label
+                  key={mod.key}
+                  className={`flex items-center gap-3 p-2 rounded transition ${
+                    canToggle
+                      ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isActive}
+                    onChange={() => toggleModule(mod.key)}
+                    disabled={!canToggle || isUpdatingModules}
+                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500 disabled:opacity-50"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{mod.label}</span>
+                </label>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Stats & Actions */}

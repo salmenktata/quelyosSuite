@@ -48,7 +48,7 @@ const getStatusBadge = (status: string) => {
 export default function EmailCampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const toast = useToast();
   const campaignId = parseInt(id || '0', 10);
 
   const { data: campaign, isLoading } = useMarketingCampaign(campaignId);
@@ -63,11 +63,11 @@ export default function EmailCampaignDetailPage() {
   const handleSend = () => {
     sendCampaign(campaignId, {
       onSuccess: () => {
-        showToast('Campagne envoyée avec succès', 'success');
+        toast.success('Campagne envoyée avec succès');
         setShowSendConfirm(false);
       },
       onError: (err) => {
-        showToast(err.message, 'error');
+        toast.error(err.message);
       },
     });
   };
@@ -75,11 +75,11 @@ export default function EmailCampaignDetailPage() {
   const handleDelete = () => {
     deleteCampaign(campaignId, {
       onSuccess: () => {
-        showToast('Campagne supprimée', 'success');
+        toast.success('Campagne supprimée');
         navigate('/marketing/email');
       },
       onError: (err) => {
-        showToast(err.message, 'error');
+        toast.error(err.message);
       },
     });
   };
@@ -87,11 +87,11 @@ export default function EmailCampaignDetailPage() {
   const handleDuplicate = () => {
     duplicateCampaign(campaignId, {
       onSuccess: (newCampaign) => {
-        showToast('Campagne dupliquée', 'success');
+        toast.success('Campagne dupliquée');
         navigate(`/marketing/email/${newCampaign.id}`);
       },
       onError: (err) => {
-        showToast(err.message, 'error');
+        toast.error(err.message);
       },
     });
   };
@@ -125,7 +125,7 @@ export default function EmailCampaignDetailPage() {
             { label: 'Accueil', href: '/dashboard' },
             { label: 'Marketing', href: '/marketing' },
             { label: 'Campagnes Email', href: '/marketing/email' },
-            { label: campaign.subject },
+            { label: campaign.subject || 'Campagne' },
           ]}
         />
 
@@ -134,19 +134,19 @@ export default function EmailCampaignDetailPage() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {campaign.subject}
+                {campaign.subject || 'Sans objet'}
               </h1>
-              {getStatusBadge(campaign.state)}
+              {getStatusBadge(campaign.state || 'draft')}
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Campagne créée le {new Date(campaign.create_date || '').toLocaleDateString('fr-FR')}
+              Campagne créée le {new Date(campaign.create_date || Date.now()).toLocaleDateString('fr-FR')}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<ArrowLeft className="w-4 h-4" />}
+              icon={<ArrowLeft className="w-4 h-4" />}
               onClick={() => navigate('/marketing/email')}
             >
               Retour
@@ -155,9 +155,9 @@ export default function EmailCampaignDetailPage() {
               <Button
                 variant="primary"
                 size="sm"
-                leftIcon={<Send className="w-4 h-4" />}
+                icon={<Send className="w-4 h-4" />}
                 onClick={() => setShowSendConfirm(true)}
-                isLoading={isSending}
+                loading={isSending}
               >
                 Envoyer
               </Button>
@@ -165,18 +165,18 @@ export default function EmailCampaignDetailPage() {
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<Copy className="w-4 h-4" />}
+              icon={<Copy className="w-4 h-4" />}
               onClick={handleDuplicate}
-              isLoading={isDuplicating}
+              loading={isDuplicating}
             >
               Dupliquer
             </Button>
             <Button
               variant="danger"
               size="sm"
-              leftIcon={<Trash2 className="w-4 h-4" />}
+              icon={<Trash2 className="w-4 h-4" />}
               onClick={() => setShowDeleteModal(true)}
-              isLoading={isDeleting}
+              loading={isDeleting}
             >
               Supprimer
             </Button>
@@ -192,7 +192,7 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Envoyés</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.sent.toLocaleString('fr-FR')}
+                {(stats?.sent ?? 0).toLocaleString('fr-FR')}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -201,7 +201,7 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Délivrés</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.delivered.toLocaleString('fr-FR')}
+                {(stats?.delivered ?? 0).toLocaleString('fr-FR')}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -210,9 +210,9 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Ouverts</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.opened.toLocaleString('fr-FR')}
+                {(stats?.opened ?? 0).toLocaleString('fr-FR')}
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                  ({stats.open_rate.toFixed(1)}%)
+                  ({stats?.sent ? ((stats.opened || 0) / stats.sent * 100).toFixed(1) : 0}%)
                 </span>
               </p>
             </div>
@@ -222,9 +222,9 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Cliqués</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.clicked.toLocaleString('fr-FR')}
+                {(stats?.clicked ?? 0).toLocaleString('fr-FR')}
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                  ({stats.click_rate.toFixed(1)}%)
+                  ({stats?.sent ? ((stats.clicked || 0) / stats.sent * 100).toFixed(1) : 0}%)
                 </span>
               </p>
             </div>
@@ -234,7 +234,7 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Rebonds</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.bounced.toLocaleString('fr-FR')}
+                {(stats?.bounced ?? 0).toLocaleString('fr-FR')}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -243,7 +243,7 @@ export default function EmailCampaignDetailPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">Échecs</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.failed.toLocaleString('fr-FR')}
+                {(stats?.bounced ?? 0).toLocaleString('fr-FR')}
               </p>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function EmailCampaignDetailPage() {
             Contenu de l&apos;email
           </h3>
           <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-            <div dangerouslySetInnerHTML={{ __html: campaign.body_html }} />
+            <div dangerouslySetInnerHTML={{ __html: campaign.content || '' }} />
           </div>
         </div>
 

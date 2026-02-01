@@ -145,5 +145,30 @@
             <field name="comment">Tous droits sur le CMS et site web</field>
         </record>
 
+        <!-- ========================================== -->
+        <!-- Groupes Maintenance (GMAO) -->
+        <!-- ========================================== -->
+
+        <record id="group_quelyos_maintenance_user" model="res.groups">
+            <field name="name">Quelyos Maintenance User</field>
+            <field name="sequence">90</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Accès lecture/écriture à la GMAO</field>
+        </record>
+
+        <record id="group_quelyos_maintenance_technician" model="res.groups">
+            <field name="name">Quelyos Maintenance Technician</field>
+            <field name="sequence">91</field>
+            <field name="implied_ids" eval="[(4, ref('group_quelyos_maintenance_user'))]"/>
+            <field name="comment">Technicien - Accès avancé aux demandes et équipements</field>
+        </record>
+
+        <record id="group_quelyos_maintenance_manager" model="res.groups">
+            <field name="name">Quelyos Maintenance Manager</field>
+            <field name="sequence">92</field>
+            <field name="implied_ids" eval="[(4, ref('group_quelyos_maintenance_technician'))]"/>
+            <field name="comment">Tous droits sur la GMAO</field>
+        </record>
+
     </data>
 </odoo>

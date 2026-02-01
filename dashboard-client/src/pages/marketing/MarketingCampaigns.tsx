@@ -14,7 +14,8 @@ import { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
-import { useMarketingCampaigns, type MarketingCampaign } from '@/hooks/useMarketingCampaigns';
+import { useMarketingCampaigns } from '@/hooks/useMarketingCampaigns';
+import type { MarketingCampaign } from '@quelyos/types';
 import { Mail, Plus, Send, Trash2, BarChart3, RefreshCw } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
@@ -39,7 +40,7 @@ const stateColors: Record<string, string> = {
 };
 
 export default function MarketingCampaigns() {
-  const { listCampaigns, sendCampaign, deleteCampaign, loading, error } = useMarketingCampaigns();
+  const { listCampaigns, sendCampaign, deleteCampaign, loading, error } = useMarketingCampaigns() as any;
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [stateFilter, setStateFilter] = useState<string>('');
@@ -126,7 +127,7 @@ export default function MarketingCampaigns() {
 
       {error && (
         <div role="alert" className="mb-6 rounded-lg bg-red-50 p-4 dark:bg-red-900/20">
-          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+          <p className="text-sm text-red-800 dark:text-red-200">{error.message || String(error)}</p>
         </div>
       )}
 
@@ -199,15 +200,15 @@ export default function MarketingCampaigns() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    <span className={'inline-flex rounded-full px-2 py-1 text-xs font-semibold ' + stateColors[campaign.state]}>
-                      {stateLabels[campaign.state]}
+                    <span className={'inline-flex rounded-full px-2 py-1 text-xs font-semibold ' + (campaign.state ? stateColors[campaign.state] : '')}>
+                      {campaign.state ? stateLabels[campaign.state] : 'Inconnu'}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 dark:text-white">
-                      <div>Envoyés: {campaign.sent}</div>
-                      <div>Ouverts: {campaign.opened} ({campaign.sent > 0 ? Math.round(campaign.opened / campaign.sent * 100) : 0}%)</div>
-                      <div>Clics: {campaign.clicked} ({campaign.sent > 0 ? Math.round(campaign.clicked / campaign.sent * 100) : 0}%)</div>
+                      <div>Envoyés: {campaign.stats?.sent ?? 0}</div>
+                      <div>Ouverts: {campaign.stats?.opened ?? 0} ({(campaign.stats?.sent ?? 0) > 0 ? Math.round(((campaign.stats?.opened ?? 0) / (campaign.stats?.sent ?? 1)) * 100) : 0}%)</div>
+                      <div>Clics: {campaign.stats?.clicked ?? 0} ({(campaign.stats?.sent ?? 0) > 0 ? Math.round(((campaign.stats?.clicked ?? 0) / (campaign.stats?.sent ?? 1)) * 100) : 0}%)</div>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">

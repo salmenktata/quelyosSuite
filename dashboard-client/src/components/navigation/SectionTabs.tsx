@@ -20,7 +20,8 @@ import {
   Calendar,
   Award,
   Monitor,
-  ClipboardList
+  ClipboardList,
+  Wrench
 } from 'lucide-react'
 
 interface Tab {
@@ -86,6 +87,10 @@ const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>>
   // POS
   'Caisse': Monitor,
   'Gestion': ClipboardList,
+
+  // Maintenance
+  'Équipements': Wrench,
+  'Interventions': ClipboardList,
 }
 
 // Map des variantes de couleurs pour tabs actives (par module)

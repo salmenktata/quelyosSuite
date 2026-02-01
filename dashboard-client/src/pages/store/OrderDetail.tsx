@@ -175,7 +175,7 @@ export default function OrderDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Colonne gauche : Infos, tracking, articles */}
           <div className="lg:col-span-2 space-y-6">
-            <OrderCustomerInfo customer={order.customer} />
+            <OrderCustomerInfo customer={order.customer as any} />
 
             <OrderTracking
               trackingInfo={trackingData?.data?.tracking_info || []}
@@ -195,7 +195,7 @@ export default function OrderDetail() {
               amountTotal={order.amount_total ?? 0}
             />
 
-            <OrderHistory history={historyData?.data?.history || []} isLoading={historyLoading} />
+            <OrderHistory history={(historyData?.data?.history || []) as any} isLoading={historyLoading} />
 
             <OrderActions
               orderState={order.state}

@@ -27,9 +27,9 @@ export default function EmailCampaignsPage() {
 
   const campaigns = data?.campaigns || [];
   const sentCampaigns = campaigns.filter((c) => c.state === 'done');
-  const totalEmails = sentCampaigns.reduce((sum, c) => sum + c.sent, 0);
-  const totalOpened = sentCampaigns.reduce((sum, c) => sum + c.opened, 0);
-  const totalClicked = sentCampaigns.reduce((sum, c) => sum + c.clicked, 0);
+  const totalEmails = sentCampaigns.reduce((sum, c) => sum + (c.stats?.sent || 0), 0);
+  const totalOpened = sentCampaigns.reduce((sum, c) => sum + (c.stats?.opened || 0), 0);
+  const totalClicked = sentCampaigns.reduce((sum, c) => sum + (c.stats?.clicked || 0), 0);
   const avgOpenRate = totalEmails > 0 ? (totalOpened / totalEmails * 100) : 0;
   const avgClickRate = totalEmails > 0 ? (totalClicked / totalEmails * 100) : 0;
 
@@ -144,25 +144,22 @@ export default function EmailCampaignsPage() {
                         <span className="font-medium text-gray-900 dark:text-white truncate">
                           {campaign.subject}
                         </span>
-                        {getStatusBadge(campaign.state)}
+                        {getStatusBadge(campaign.state || 'draft')}
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {campaign.mailing_model_real}
-                      </p>
                     </div>
                     <div className="flex items-center gap-6 ml-4">
                       {campaign.state === 'done' && (
                         <div className="text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {campaign.sent.toLocaleString('fr-FR')} envoyés
+                            {(campaign.stats?.sent || 0).toLocaleString('fr-FR')} envoyés
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {((campaign.opened / campaign.sent) * 100).toFixed(1)}% ouvert · {((campaign.clicked / campaign.sent) * 100).toFixed(1)}% clics
+                            {campaign.stats?.sent ? (((campaign.stats.opened || 0) / campaign.stats.sent) * 100).toFixed(1) : 0}% ouvert · {campaign.stats?.sent ? (((campaign.stats.clicked || 0) / campaign.stats.sent) * 100).toFixed(1) : 0}% clics
                           </div>
                         </div>
                       )}
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(campaign.create_date)}
+                        {formatDate(campaign.create_date || null)}
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-400" />
                     </div>

@@ -237,6 +237,12 @@ class AuthController(http.Controller):
                 ip=ip_address,
             )
 
+            # Extract groups
+            groups_list = [g.name.get('en_US') if isinstance(g.name, dict) else g.name for g in user.group_ids] if user.group_ids else []
+
+            # DEBUG LOG
+            _logger.info(f"[sso-login] User {user.id} ({user.login}) - Groups: {groups_list}")
+
             # Préparer la réponse avec tokens pour clients Bearer
             user_data = {
                 'success': True,
@@ -250,6 +256,7 @@ class AuthController(http.Controller):
                     'login': user.login,
                     'tenant_id': tenant_id,
                     'tenant_domain': tenant_domain,
+                    'groups': groups_list,
                 }
             }
 
@@ -562,6 +569,12 @@ class AuthController(http.Controller):
                     status=404
                 )
 
+            # Extract groups
+            groups_list = [g.name.get('en_US') if isinstance(g.name, dict) else g.name for g in user.group_ids] if user.group_ids else []
+
+            # DEBUG LOG
+            _logger.info(f"[/api/auth/me] User {user.id} ({user.login}) - Groups: {groups_list}")
+
             response_data = {
                 'success': True,
                 'user': {
@@ -569,7 +582,7 @@ class AuthController(http.Controller):
                     'name': user.name,
                     'email': user.email or '',
                     'login': user.login,
-                    'groups': [g.name for g in user.group_ids] if user.group_ids else [],
+                    'groups': groups_list,
                 },
                 'claims': {
                     'tenant_id': claims.get('tenant_id'),

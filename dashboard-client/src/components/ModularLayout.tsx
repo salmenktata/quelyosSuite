@@ -335,6 +335,11 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     }
   }, [currentModule.id, setMaintenanceActiveTab])
 
+  // Mémoriser les tabs pour éviter régénération inutile
+  const currentModuleTabs = useMemo(() => {
+    return generateTabsFromSections(currentModule.sections)
+  }, [currentModule.id, currentModule.sections])
+
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
 
@@ -457,6 +462,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 : currentModule.id === 'hr' ? hrVisibleSections
                 : currentModule.id === 'support' ? supportVisibleSections
                 : currentModule.id === 'pos' ? posVisibleSections
+                : currentModule.id === 'maintenance' ? maintenanceVisibleSections
                 : currentModule.sections
               ).map((section, index) => (
                 <div
@@ -496,6 +502,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                           : currentModule.id === 'hr' ? handleHrSidebarNavigate
                           : currentModule.id === 'support' ? handleSupportSidebarNavigate
                           : currentModule.id === 'pos' ? handlePosSidebarNavigate
+                          : currentModule.id === 'maintenance' ? handleMaintenanceSidebarNavigate
                           : undefined
                         }
                       />
@@ -552,7 +559,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={homeActiveTab}
                     onTabChange={handleHomeTabChange}
                   />
@@ -583,7 +590,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={storeActiveTab}
                     onTabChange={handleStoreTabChange}
                   />
@@ -614,7 +621,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={stockActiveTab}
                     onTabChange={handleStockTabChange}
                   />
@@ -645,7 +652,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={crmActiveTab}
                     onTabChange={handleCrmTabChange}
                   />
@@ -676,7 +683,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={marketingActiveTab}
                     onTabChange={handleMarketingTabChange}
                   />
@@ -707,7 +714,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={hrActiveTab}
                     onTabChange={handleHrTabChange}
                   />
@@ -737,7 +744,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={supportActiveTab}
                     onTabChange={handleSupportTabChange}
                   />
@@ -767,7 +774,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={posActiveTab}
                     onTabChange={handlePosTabChange}
                   />
@@ -797,7 +804,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={maintenanceActiveTab}
                     onTabChange={handleMaintenanceTabChange}
                   />
@@ -827,7 +834,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     moduleIcon={currentModule.icon}
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
-                    tabs={generateTabsFromSections(currentModule.sections)}
+                    tabs={currentModuleTabs}
                     activeTab={activeTab}
                     onTabChange={handleFinanceTabChange}
                   />
@@ -845,7 +852,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
               </div>
             )}
 
-            <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' ? 'pt-16' : ''}`}>
+            <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' || currentModule.id === 'maintenance' ? 'pt-16' : ''}`}>
               {children}
             </div>
           </main>

@@ -95,8 +95,8 @@ export default function Orders() {
 
   const hasActiveFilters = statusFilter || search || dateFrom || dateTo
 
-  const orders = useMemo(() => (data?.data?.orders || []) as Order[], [data?.data?.orders])
-  const total = (data?.data?.total || 0) as number
+  const orders = useMemo(() => (data?.items || data?.data || []) as Order[], [data])
+  const total = data?.total || 0
 
   return (
     <Layout>

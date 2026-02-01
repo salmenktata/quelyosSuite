@@ -58,6 +58,8 @@ from . import store_extended
 # from . import hr_appraisals
 # POS Controller
 from . import pos
+# GMAO (Maintenance)
+from . import maintenance_ctrl
 # Stripe Billing
 from . import stripe_billing
 # Stripe Payments Marketplace

@@ -37,7 +37,7 @@ export default function CampaignDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
 
-  const { data: campaign, isLoading } = useCampaign(id ? parseInt(id) : null);
+  const { data: campaign, isLoading } = useCampaign(id ? parseInt(id) : 0);
   const sendMutation = useSendCampaign();
   const deleteMutation = useDeleteCampaign();
 
@@ -139,7 +139,7 @@ export default function CampaignDetailPage() {
                 )}
                 <span className="capitalize">{campaign.channel}</span>
                 <span>·</span>
-                <span>Créée le {formatDate(campaign.created_at)}</span>
+                <span>Créée le {formatDate(campaign.created_at || null)}</span>
               </div>
             </div>
           </div>
@@ -177,13 +177,13 @@ export default function CampaignDetailPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                     <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {campaign.stats.sent.toLocaleString('fr-FR')}
+                      {(campaign.stats?.sent ?? 0).toLocaleString('fr-FR')}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">Envoyés</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {campaign.stats.delivered.toLocaleString('fr-FR')}
+                      {(campaign.stats?.delivered ?? 0).toLocaleString('fr-FR')}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">Délivrés</div>
                   </div>
@@ -191,13 +191,13 @@ export default function CampaignDetailPage() {
                     <>
                       <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                         <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                          {campaign.rates.open_rate}%
+                          {campaign.rates?.open_rate ?? 0}%
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">Taux d'ouverture</div>
                       </div>
                       <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                         <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                          {campaign.rates.click_rate}%
+                          {campaign.rates?.click_rate ?? 0}%
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">Taux de clic</div>
                       </div>
@@ -253,7 +253,7 @@ export default function CampaignDetailPage() {
                     <div className="text-sm text-gray-500 dark:text-gray-400">Destinataires</div>
                     <div className="font-medium text-gray-900 dark:text-white">
                       {campaign.contact_list_name || 'Aucune liste'}
-                      {campaign.recipient_count > 0 && (
+                      {(campaign.recipient_count ?? 0) > 0 && (
                         <span className="text-gray-500 dark:text-gray-400 font-normal">
                           {' '}({campaign.recipient_count})
                         </span>

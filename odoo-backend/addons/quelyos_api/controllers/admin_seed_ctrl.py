@@ -7,7 +7,8 @@ from odoo import http, api
 from odoo.http import request
 from odoo.exceptions import ValidationError, AccessDenied
 from odoo.modules.registry import Registry
-from .super_admin import SuperAdminController, get_cors_headers
+from .super_admin import SuperAdminController
+from ..config import get_cors_headers
 
 _logger = logging.getLogger(__name__)
 

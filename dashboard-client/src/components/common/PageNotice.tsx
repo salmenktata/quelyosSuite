@@ -27,14 +27,8 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [feedbackValue, setFeedbackValue] = useState<boolean | null>(null);
 
-  // Protection défensive : si config est undefined, ne rien afficher
-  if (!config) {
-    logger.warn('[PageNotice] config is undefined, skipping render');
-    return null;
-  }
-
   // Support ancien format Notice[] : convertir en PageNoticeConfig
-  const normalizedConfig: PageNoticeConfigType = Array.isArray(config)
+  const normalizedConfig: PageNoticeConfigType | null = !config ? null : Array.isArray(config)
     ? {
         pageId: 'legacy-notice',
         title: config[0]?.title || 'Information',
@@ -44,12 +38,17 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
       }
     : config;
 
-  const Icon = normalizedConfig.icon || Info;
-  const colorConfig = MODULE_COLOR_CONFIGS[normalizedConfig.moduleColor || 'gray' as keyof typeof MODULE_COLOR_CONFIGS];
-  const storageKey = `quelyos_page_notice_collapsed_${normalizedConfig.pageId}`;
+  const Icon = normalizedConfig?.icon || Info;
+  const colorConfig = MODULE_COLOR_CONFIGS[normalizedConfig?.moduleColor || 'gray' as keyof typeof MODULE_COLOR_CONFIGS];
+  const storageKey = `quelyos_page_notice_collapsed_${normalizedConfig?.pageId || 'default'}`;
 
   // Hydration-safe initialization
   useEffect(() => {
+    // Protection : si config est undefined, ne rien faire
+    if (!normalizedConfig) {
+      logger.warn('[PageNotice] config is undefined, skipping initialization');
+      return;
+    }
     if (typeof window === "undefined") return;
 
     try {
@@ -74,10 +73,12 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
     }
 
     setMounted(true);
-  }, [storageKey, normalizedConfig.pageId, enableFeedback]);
+  }, [storageKey, normalizedConfig?.pageId, enableFeedback]);
 
   // Toggle handler with persistence + analytics
   const handleToggle = () => {
+    if (!normalizedConfig) return;
+
     const newState = !isCollapsed;
     setIsCollapsed(newState);
 
@@ -97,6 +98,8 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
 
   // Handler feedback utilisateur
   const handleFeedback = (isHelpful: boolean) => {
+    if (!normalizedConfig) return;
+
     try {
       trackNoticeFeedback(normalizedConfig.pageId, isHelpful);
       setFeedbackGiven(true);
@@ -106,6 +109,11 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
       logger.error("Failed to submit feedback:", error);
     }
   };
+
+  // Protection défensive : si config est undefined, ne rien afficher
+  if (!normalizedConfig) {
+    return null;
+  }
 
   return (
     <motion.div

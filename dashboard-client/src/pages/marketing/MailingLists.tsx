@@ -25,7 +25,7 @@ const breadcrumbItems = [
 ];
 
 export default function MailingLists() {
-  const { listMailingLists, createMailingList, deleteMailingList, loading, error } = useMarketingLists();
+  const { listMailingLists, createMailingList, deleteMailingList, loading, error } = useMarketingLists() as any;
   const [lists, setLists] = useState<MailingList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -118,7 +118,7 @@ export default function MailingLists() {
 
       {error && (
         <div role="alert" className="mb-6 rounded-lg bg-red-50 p-4 dark:bg-red-900/20">
-          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+          <p className="text-sm text-red-800 dark:text-red-200">{error.message || String(error)}</p>
         </div>
       )}
 

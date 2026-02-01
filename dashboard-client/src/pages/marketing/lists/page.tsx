@@ -10,32 +10,32 @@ export default function MarketingListsPage() {
   const { data, isLoading } = useMarketingLists();
   const { mutate: createList, isPending: isCreating } = useCreateMailingList();
   const { mutate: deleteList } = useDeleteMailingList();
-  const { showToast } = useToast();
+  const toast = useToast();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newListName, setNewListName] = useState('');
 
   const handleCreate = () => {
     if (!newListName.trim()) {
-      showToast('Le nom est obligatoire', 'error');
+      toast.error('Le nom est obligatoire');
       return;
     }
 
     createList({ name: newListName }, {
       onSuccess: () => {
-        showToast('Liste créée', 'success');
+        toast.success('Liste créée');
         setShowCreateModal(false);
         setNewListName('');
       },
-      onError: (err) => showToast(err.message, 'error'),
+      onError: (err) => toast.error(err.message),
     });
   };
 
   const handleDelete = (listId: number) => {
     if (!confirm('Supprimer cette liste ?')) return;
     deleteList(listId, {
-      onSuccess: () => showToast('Liste supprimée', 'success'),
-      onError: (err) => showToast(err.message, 'error'),
+      onSuccess: () => toast.success('Liste supprimée'),
+      onError: (err) => toast.error(err.message),
     });
   };
 
@@ -62,7 +62,7 @@ export default function MarketingListsPage() {
               Gérez vos segments d&apos;audience
             </p>
           </div>
-          <Button leftIcon={<Plus className="w-4 h-4" />} onClick={() => setShowCreateModal(true)}>
+          <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowCreateModal(true)}>
             Nouvelle liste
           </Button>
         </div>
@@ -116,7 +116,7 @@ export default function MarketingListsPage() {
             />
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setShowCreateModal(false)}>Annuler</Button>
-              <Button onClick={handleCreate} isLoading={isCreating}>Créer</Button>
+              <Button onClick={handleCreate} loading={isCreating}>Créer</Button>
             </div>
           </div>
         </Modal>

@@ -110,7 +110,7 @@ export default function NewEmailCampaignPage() {
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<ArrowLeft className="w-4 h-4" />}
+              icon={<ArrowLeft className="w-4 h-4" />}
               onClick={() => navigate('/marketing/email')}
             >
               Retour
@@ -118,7 +118,7 @@ export default function NewEmailCampaignPage() {
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<Eye className="w-4 h-4" />}
+              icon={<Eye className="w-4 h-4" />}
               onClick={() => setShowPreview(true)}
             >
               Prévisualiser
@@ -126,18 +126,18 @@ export default function NewEmailCampaignPage() {
             <Button
               variant="outline"
               size="sm"
-              leftIcon={<Save className="w-4 h-4" />}
+              icon={<Save className="w-4 h-4" />}
               onClick={handleSaveDraft}
-              isLoading={isCreating}
+              loading={isCreating}
             >
               Sauvegarder
             </Button>
             <Button
               variant="primary"
               size="sm"
-              leftIcon={<Send className="w-4 h-4" />}
+              icon={<Send className="w-4 h-4" />}
               onClick={handleSendNow}
-              isLoading={isSending}
+              loading={isSending}
             >
               Envoyer
             </Button>

@@ -29,8 +29,8 @@ export default function SMSCampaignsPage() {
 
   const campaigns = data?.campaigns || [];
   const sentCampaigns = campaigns.filter((c) => c.status === 'sent');
-  const totalSMS = sentCampaigns.reduce((sum, c) => sum + c.stats.sent, 0);
-  const totalDelivered = sentCampaigns.reduce((sum, c) => sum + c.stats.delivered, 0);
+  const totalSMS = sentCampaigns.reduce((sum, c) => sum + (c.stats?.sent ?? 0), 0);
+  const totalDelivered = sentCampaigns.reduce((sum, c) => sum + (c.stats?.delivered ?? 0), 0);
   const deliveryRate = totalSMS > 0 ? (totalDelivered / totalSMS) * 100 : 0;
 
   const formatDate = (dateStr: string | null) => {
@@ -186,15 +186,15 @@ export default function SMSCampaignsPage() {
                       {campaign.status === 'sent' && (
                         <div className="text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {campaign.stats.sent.toLocaleString('fr-FR')} envoyés
+                            {(campaign.stats?.sent ?? 0).toLocaleString('fr-FR')} envoyés
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {campaign.stats.delivered} délivrés
+                            {campaign.stats?.delivered ?? 0} délivrés
                           </div>
                         </div>
                       )}
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(campaign.sent_date || campaign.created_at)}
+                        {formatDate(campaign.sent_date || campaign.created_at || null)}
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-400" />
                     </div>

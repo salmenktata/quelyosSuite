@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.74.0',
+    'version': '19.0.1.80.0',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -33,6 +33,8 @@
         # 'hr_holidays',
         # 'hr_attendance',
         # 'hr_skills',
+        # GMAO (Maintenance Management) - DÉSACTIVÉ (module non disponible Odoo 19)
+        # 'maintenance',
     ],
     'data': [
         'security/security.xml',
@@ -67,6 +69,7 @@
         'data/ticket_sequence.xml',
         'data/seed_sequence.xml',
         'data/sla_policies.xml',
+        'data/maintenance_stages_data.xml',
         # 'data/email_template_satisfaction_request.xml',  # Créé via hooks.py (workaround validation XML)
         # 'data/pos_demo_data.xml',  # TEMPORAIREMENT DÉSACTIVÉ (debug installation)
         # 'data/store_demo_data.xml',  # TEMPORAIREMENT DÉSACTIVÉ (erreur ligne 196)

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from odoo import http
 from odoo.http import request
 from .super_admin import SuperAdminController
+from ..config import get_cors_headers
 
 _logger = logging.getLogger(__name__)
 
