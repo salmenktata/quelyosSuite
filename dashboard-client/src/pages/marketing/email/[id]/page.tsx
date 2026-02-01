@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Badge, Skeleton, ConfirmModal, Button } from '@/components/common';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 import {
   useMarketingCampaign,
   useSendCampaign,
@@ -255,7 +256,7 @@ export default function EmailCampaignDetailPage() {
             Contenu de l&apos;email
           </h3>
           <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-            <div dangerouslySetInnerHTML={{ __html: campaign.content || '' }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(campaign.content || '') }} />
           </div>
         </div>
 

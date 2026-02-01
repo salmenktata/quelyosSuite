@@ -15,6 +15,7 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, Input, Modal } from '@/components/common';
 import { useCreateCampaign, useSendCampaign } from '@/hooks/useMarketingCampaigns';
 import { Mail, Save, Send, Eye, ArrowLeft, AlertCircle } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 export default function NewEmailCampaignPage() {
   const navigate = useNavigate();
@@ -228,7 +229,7 @@ export default function NewEmailCampaignPage() {
                 <p className="text-gray-900 dark:text-white">{subject || '(Aucun objet)'}</p>
               </div>
               <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800">
-                <div dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(bodyHtml) }} />
               </div>
             </div>
           </Modal>

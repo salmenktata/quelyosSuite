@@ -20,6 +20,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Send, CheckCircle, MessageSquare, Clock, User, Paperclip, Upload, X, Download } from 'lucide-react'
 import type { TicketMessage } from '@quelyos/types'
 import { logger } from '@quelyos/logger';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 export default function TicketDetail() {
   const { id } = useParams<{ id: string }>()
@@ -228,7 +229,7 @@ export default function TicketDetail() {
           <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <div
               className="prose dark:prose-invert max-w-none text-gray-900 dark:text-white dark:text-gray-300"
-              dangerouslySetInnerHTML={{ __html: ticket.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(ticket.description) }}
             />
           </div>
         </div>
@@ -414,7 +415,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
         >
           <div
             className="prose dark:prose-invert max-w-none text-sm"
-            dangerouslySetInnerHTML={{ __html: message.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(message.content) }}
           />
         </div>
       </div>
