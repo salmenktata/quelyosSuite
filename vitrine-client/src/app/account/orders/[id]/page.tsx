@@ -216,7 +216,7 @@ export default function OrderDetailPage() {
                   <span>{formatPrice(order.amount_untaxed || order.subtotal || 0, order.currency?.symbol || '€')}</span>
                 </div>
 
-                {(order.amount_tax || order.tax_total) > 0 && (
+                {((order.amount_tax || order.tax_total || 0) > 0) && (
                   <div className="flex justify-between text-gray-600">
                     <span>TVA</span>
                     <span>{formatPrice(order.amount_tax || order.tax_total || 0, order.currency?.symbol || '€')}</span>
