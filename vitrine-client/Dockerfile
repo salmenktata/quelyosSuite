@@ -38,6 +38,11 @@ COPY vitrine-client/ ./vitrine-client/
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+# Build shared packages first
+WORKDIR /app/packages/types
+RUN pnpm build
+
+# Build application
 WORKDIR /app/vitrine-client
 RUN pnpm build
 
