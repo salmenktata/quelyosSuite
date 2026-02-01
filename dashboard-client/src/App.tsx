@@ -160,13 +160,11 @@ const FinanceReportingDataQuality = lazy(() => import('./pages/finance/reporting
 
 // Lazy loaded pages - Finance Settings
 const SettingsLayoutWrapper = lazy(() => import('./pages/finance/settings/SettingsLayoutWrapper'))
+const FinanceSettings = lazy(() => import('./pages/finance/settings/page'))
 const FinanceSettingsCategories = lazy(() => import('./pages/finance/settings/categories/page'))
-const FinanceSettingsDevise = lazy(() => import('./pages/finance/settings/devise/page'))
 const FinanceSettingsFlux = lazy(() => import('./pages/finance/settings/flux/page'))
-const FinanceSettingsTva = lazy(() => import('./pages/finance/settings/tva/page'))
 const FinanceSettingsNotifications = lazy(() => import('./pages/finance/settings/notifications/page'))
 const FinanceSettingsIntegrations = lazy(() => import('./pages/finance/settings/integrations/page'))
-const FinanceSettingsSecurity = lazy(() => import('./pages/finance/settings/security/page'))
 
 // Lazy loaded pages - Marketing
 const MarketingDashboard = lazy(() => import('./pages/marketing/MarketingDashboard'))
@@ -229,6 +227,8 @@ const GlobalSettings = lazy(() => import('./pages/settings/page'))
 const GlobalSettingsEmail = lazy(() => import('./pages/settings/email/page'))
 const GlobalSettingsSMS = lazy(() => import('./pages/settings/sms/page'))
 const GlobalSettingsSecurity = lazy(() => import('./pages/settings/security/page'))
+const GlobalSettingsDevise = lazy(() => import('./pages/settings/devise/page'))
+const GlobalSettingsTva = lazy(() => import('./pages/settings/tva/page'))
 
 // Lazy loaded pages - Others
 const Analytics = lazy(() => import('./pages/Analytics'))
@@ -237,8 +237,6 @@ const Payments = lazy(() => import('./pages/Payments'))
 const Pricelists = lazy(() => import('./pages/Pricelists'))
 const PricelistDetail = lazy(() => import('./pages/PricelistDetail'))
 const ApiGuide = lazy(() => import('./pages/ApiGuide'))
-const NoticeAnalytics = lazy(() => import('./pages/NoticeAnalytics'))
-const SitemapMonitoring = lazy(() => import('./pages/admin/SitemapMonitoring'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -1279,11 +1277,9 @@ export default function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route path="devise" element={<FinanceSettingsDevise />} />
-                <Route path="tva" element={<FinanceSettingsTva />} />
+                <Route index element={<FinanceSettings />} />
                 <Route path="categories" element={<FinanceSettingsCategories />} />
                 <Route path="flux" element={<FinanceSettingsFlux />} />
-                <Route path="security" element={<FinanceSettingsSecurity />} />
                 <Route path="notifications" element={<FinanceSettingsNotifications />} />
                 <Route path="integrations" element={<FinanceSettingsIntegrations />} />
               </Route>
@@ -1705,6 +1701,22 @@ export default function App() {
                 }
               />
               <Route
+                path="/settings/devise"
+                element={
+                  <ProtectedRoute>
+                    <GlobalSettingsDevise />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/tva"
+                element={
+                  <ProtectedRoute>
+                    <GlobalSettingsTva />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/dashboard/settings"
                 element={<Navigate to="/settings" replace />}
               />
@@ -1754,22 +1766,6 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <ApiGuide />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/notice-analytics"
-                element={
-                  <ProtectedRoute>
-                    <NoticeAnalytics />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/sitemap"
-                element={
-                  <ProtectedRoute>
-                    <SitemapMonitoring />
                   </ProtectedRoute>
                 }
               />

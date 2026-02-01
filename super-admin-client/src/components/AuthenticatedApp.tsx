@@ -19,6 +19,7 @@ import { SupportTickets } from '@/pages/SupportTickets'
 import { SupportTemplates } from '@/pages/SupportTemplates'
 import { CustomerTicketHistory } from '@/pages/CustomerTicketHistory'
 import { AuditLogs } from '@/pages/AuditLogs'
+import { NoticeAnalytics } from '@/pages/NoticeAnalytics'
 import { Settings } from '@/pages/Settings'
 import { EmailSettings } from '@/pages/EmailSettings'
 import { Sitemap } from '@/pages/Sitemap'
@@ -50,6 +51,7 @@ function PageViewTracker() {
       '/support-tickets': 'Support Tickets',
       '/support-templates': 'Support Templates',
       '/audit-logs': 'Audit Logs',
+      '/notice-analytics': 'Notice Analytics',
       '/backups': 'Backups',
       '/backup-schedules': 'Backup Schedules',
       '/settings': 'Settings',
@@ -114,6 +116,7 @@ export function AuthenticatedApp() {
           <Route path="support-templates" element={<SupportTemplates />} />
           <Route path="customers/:customerId/tickets" element={<CustomerTicketHistory />} />
           <Route path="audit-logs" element={<AuditLogs />} />
+          <Route path="notice-analytics" element={<NoticeAnalytics />} />
           <Route path="backups" element={<Backups />} />
           <Route path="backup-schedules" element={<BackupSchedules />} />
           <Route path="settings" element={<Settings />} />

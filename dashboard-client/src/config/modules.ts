@@ -135,14 +135,6 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Administration',
-        items: [
-          { name: 'Suivi Sitemap', path: '/admin/sitemap', icon: Layers },
-          { name: 'Analytics Notices', path: '/admin/notice-analytics', icon: Bell },
-          { name: 'Configuration IA', path: '/admin/ai-config/page', icon: Sparkles },
-        ],
-      },
-      {
         title: 'Configuration',
         items: [
           { name: 'Paramètres Généraux', path: '/settings', icon: Settings },

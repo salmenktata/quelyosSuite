@@ -13,7 +13,7 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button } from '@/components/common';
-import { financeNotices } from '@/lib/notices';
+import { financeNotices } from '@/lib/notices/finance-notices';
 import { useAuth } from '@/lib/finance/compat/auth';
 import { useCurrency } from '@/lib/finance/CurrencyContext';
 import { useDashboardData } from '@/hooks/finance/useDashboardData';

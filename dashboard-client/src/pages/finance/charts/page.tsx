@@ -11,7 +11,7 @@
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import { Button } from '@/components/common/Button'
-import { financeNotices } from '@/lib/notices'
+import { financeNotices } from '@/lib/notices/finance-notices'
 import { Coins, Plus, Search, Filter } from 'lucide-react'
 import { useState } from 'react'
 

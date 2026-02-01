@@ -8,9 +8,29 @@ import {
   ChevronRight,
   Bell,
   Shield,
+  DollarSign,
+  Percent,
 } from "lucide-react";
 
 const SETTINGS_SECTIONS = [
+  {
+    title: "Formats & Localisation",
+    description: "Configuration des formats de données et paramètres régionaux",
+    items: [
+      {
+        to: "/settings/devise",
+        icon: DollarSign,
+        label: "Devise & formats",
+        description: "Devise par défaut et formats numériques",
+      },
+      {
+        to: "/settings/tva",
+        icon: Percent,
+        label: "TVA & fiscalité",
+        description: "Taux de TVA et paramètres fiscaux",
+      },
+    ],
+  },
   {
     title: "Notifications",
     description: "Configuration globale des canaux de communication",

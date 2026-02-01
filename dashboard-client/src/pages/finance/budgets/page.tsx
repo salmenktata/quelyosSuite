@@ -14,7 +14,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
-import { financeNotices } from '@/lib/notices'
+import { financeNotices } from '@/lib/notices/finance-notices'
 import { Plus, AlertCircle, RefreshCw, Target } from 'lucide-react'
 
 export default function BudgetsPage() {

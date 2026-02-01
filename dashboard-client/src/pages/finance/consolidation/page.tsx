@@ -13,7 +13,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
-import { financeNotices } from '@/lib/notices'
+import { financeNotices } from '@/lib/notices/finance-notices'
 import { AlertCircle, RefreshCw, Building2 } from 'lucide-react'
 
 export default function ConsolidationPage() {

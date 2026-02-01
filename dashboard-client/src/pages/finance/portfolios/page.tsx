@@ -14,7 +14,7 @@
 import React, { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from "@/components/common";
-import { financeNotices } from "@/lib/notices";
+import { financeNotices } from "@/lib/notices/finance-notices";
 import { api } from "@/lib/finance/api";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";

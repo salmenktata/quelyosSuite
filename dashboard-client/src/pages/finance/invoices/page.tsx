@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/common'
-import { financeNotices } from '@/lib/notices'
+import { financeNotices } from '@/lib/notices/finance-notices'
 import { 
   FileText, 
   Plus, 

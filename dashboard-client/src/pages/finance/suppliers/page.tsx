@@ -14,7 +14,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
-import { financeNotices } from '@/lib/notices'
+import { financeNotices } from '@/lib/notices/finance-notices'
 import { Users, Plus, Search, CreditCard, Building2, FileText } from 'lucide-react'
 import SupplierCard from '@/components/finance/suppliers/SupplierCard'
 import { logger } from '@quelyos/logger';

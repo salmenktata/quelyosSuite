@@ -15,7 +15,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Breadcrumbs, PageNotice, SkeletonTable, Button } from "@/components/common";
-import { financeNotices } from "@/lib/notices";
+import { financeNotices } from "@/lib/notices/finance-notices";
 import { TrendingUp, TrendingDown, Target, Sparkles, BarChart3 } from "lucide-react";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";

@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/finance/settings", label: "Vue d'ensemble" },
-  { href: "/finance/settings/devise", label: "Devise & formats" },
-  { href: "/finance/settings/tva", label: "TVA & fiscalité" },
   { href: "/finance/settings/categories", label: "Catégories" },
   { href: "/finance/settings/flux", label: "Flux de paiement" },
   { href: "/finance/settings/notifications", label: "Notifications & exports" },
@@ -36,7 +34,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
         <p className="text-xs uppercase tracking-[0.25em] text-indigo-200">Paramètres</p>
         <h1 className="text-3xl font-semibold">Centre de configuration</h1>
         <p className="text-sm text-indigo-100/80">
-          Naviguez par rubrique : devises, TVA, catégories, notifications et intégrations.
+          Naviguez par rubrique : catégories, flux de paiement, notifications et intégrations.
         </p>
       </div>
 
