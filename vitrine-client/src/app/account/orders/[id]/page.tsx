@@ -228,7 +228,7 @@ export default function OrderDetailPage() {
                 <div className="flex justify-between items-baseline">
                   <span className="text-lg font-bold text-gray-900">Total</span>
                   <span className="text-2xl font-bold text-primary">
-                    {formatPrice(order.amount_total || order.total, order.currency?.symbol || '€')}
+                    {formatPrice(order.amount_total || order.total || 0, order.currency?.symbol || '€')}
                   </span>
                 </div>
               </div>
