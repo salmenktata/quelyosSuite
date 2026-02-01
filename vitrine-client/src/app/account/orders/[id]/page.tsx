@@ -116,7 +116,7 @@ export default function OrderDetailPage() {
             <h1 className="text-3xl font-bold mb-2">Commande {order.name}</h1>
             <p className="text-gray-600">
               Passée le{' '}
-              {new Date(order.date_order).toLocaleDateString('fr-FR', {
+              {new Date(order.date_order || new Date()).toLocaleDateString('fr-FR', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
