@@ -18,7 +18,7 @@ import { Plus, Building2, Users, ChevronRight, AlertCircle, RefreshCw } from 'lu
 
 export default function DepartmentsPage() {
   const { tenant } = useMyTenant()
-  const [showModal, setShowModal] = useState(false)
+  const [_showModal, setShowModal] = useState(false)
   const [viewMode, setViewMode] = useState<'list' | 'tree'>('list')
 
   const { data: departmentsData, isLoading, isError } = useDepartments(tenant?.id || null)

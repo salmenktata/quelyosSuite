@@ -92,7 +92,7 @@ export default function SettingsOverviewPage() {
     try {
       const data = await api("/admin/demo-mode", {
         method: "POST",
-        body: { action: confirmAction } as any,
+        body: { action: confirmAction },
       }) as {
         success?: boolean;
         message?: string;

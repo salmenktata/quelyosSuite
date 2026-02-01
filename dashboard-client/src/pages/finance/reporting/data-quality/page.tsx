@@ -23,7 +23,7 @@ import type { DSOResponse, EBITDAResponse, BFRResponse, BreakEvenResponse } from
 
 export default function DataQualityPage() {
   useRequireAuth();
-  const [timeRange, setTimeRange] = useState("30");
+  const [timeRange, _setTimeRange] = useState("30");
 
   const dsoQuery = useApiData<DSOResponse>({
     fetcher: () => reportingClient.dso({ days: parseInt(timeRange) }),

@@ -10,7 +10,7 @@
  * - Planning des paiements
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, SkeletonTable, PageNotice, Button } from '@/components/common'
@@ -53,7 +53,7 @@ export default function SuppliersPage() {
     totalInvoices: 0,
   })
 
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     setIsLoading(true)
     setError(null)
 
@@ -93,11 +93,11 @@ export default function SuppliersPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [filters])
 
   useEffect(() => {
     fetchSuppliers()
-  }, [filters])
+  }, [fetchSuppliers])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }))

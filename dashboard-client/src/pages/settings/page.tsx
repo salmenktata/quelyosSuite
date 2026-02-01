@@ -10,7 +10,6 @@ import {
   Shield,
   DollarSign,
   Percent,
-  User,
   Home,
 } from "lucide-react";
 

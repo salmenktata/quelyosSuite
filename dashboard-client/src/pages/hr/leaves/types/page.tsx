@@ -18,8 +18,8 @@ import { Tag, Plus, Edit } from 'lucide-react'
 
 export default function LeaveTypesPage() {
   const { tenant } = useMyTenant()
-  const [showModal, setShowModal] = useState(false)
-  const [editingType, setEditingType] = useState<LeaveType | null>(null)
+  const [_showModal, setShowModal] = useState(false)
+  const [_editingType, setEditingType] = useState<LeaveType | null>(null)
 
   const { data: leaveTypes, isLoading } = useLeaveTypes(tenant?.id || null)
 

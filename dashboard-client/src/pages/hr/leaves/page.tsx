@@ -30,7 +30,7 @@ export default function LeavesPage() {
   const { tenant } = useMyTenant()
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [typeFilter, setTypeFilter] = useState<number | undefined>()
-  const [showModal, setShowModal] = useState(false)
+  const [_showModal, setShowModal] = useState(false)
   const [selectedLeave, setSelectedLeave] = useState<Leave | null>(null)
 
   const { data: leavesData, isLoading, isError } = useLeaves({

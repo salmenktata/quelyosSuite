@@ -52,7 +52,7 @@ import { MODULES, type Module, type ModuleId } from '@/config/modules'
 import { MODULE_HEADER_CLASSES } from '@/config/layout'
 
 // Icons
-import { X, LogOut, ChevronsLeft, ChevronsRight, Minimize2, Maximize2, PanelTop, PanelTopClose, ChevronDown } from 'lucide-react'
+import { X, LogOut, ChevronsLeft, ChevronsRight, ChevronDown } from 'lucide-react'
 
 // Constants
 const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed'
@@ -338,7 +338,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   // Mémoriser les tabs pour éviter régénération inutile
   const currentModuleTabs = useMemo(() => {
     return generateTabsFromSections(currentModule.sections)
-  }, [currentModule.id, currentModule.sections])
+  }, [currentModule.sections])
 
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()

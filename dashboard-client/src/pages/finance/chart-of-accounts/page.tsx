@@ -36,7 +36,7 @@ export default function ChartOfAccountsPage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Plan Comptable
         </h1>
-        <Button variant="primary" icon={Plus as any}>
+        <Button variant="primary" icon={<Plus />}>
           Nouveau Compte
         </Button>
       </div>

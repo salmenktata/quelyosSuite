@@ -52,8 +52,8 @@ export function Table<T>({
   const sortedData = [...data].sort((a, b) => {
     if (!sortKey || !sortDirection) return 0
 
-    const aValue = (a as any)[sortKey]
-    const bValue = (b as any)[sortKey]
+    const aValue = (a as Record<string, unknown>)[sortKey] as string | number
+    const bValue = (b as Record<string, unknown>)[sortKey] as string | number
 
     if (aValue === bValue) return 0
 
@@ -142,7 +142,7 @@ export function Table<T>({
                 >
                   {columns.map((column) => (
                     <td key={column.key} className="px-6 py-4 whitespace-nowrap">
-                      {column.render ? column.render(item) : (item as any)[column.key]}
+                      {column.render ? column.render(item) : String((item as Record<string, unknown>)[column.key] ?? '')}
                     </td>
                   ))}
                   {hoverActions && (

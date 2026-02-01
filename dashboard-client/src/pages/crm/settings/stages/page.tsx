@@ -26,7 +26,7 @@ const defaultStages: Stage[] = [
 export default function StagesSettingsPage() {
   const toast = useToast();
   const [saving, setSaving] = useState(false);
-  const [stages, setStages] = useState<Stage[]>(defaultStages);
+  const [stages, _setStages] = useState<Stage[]>(defaultStages);
 
   const handleSave = async () => {
     setSaving(true);

@@ -4,13 +4,10 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/common/Button'
 import type { Module, ModuleId } from '@/config/modules'
 import {
-  Grid3X3,
   Sun,
   Moon,
   Menu,
-  ExternalLink,
   Settings,
-  Home,
   ChevronUp,
   Sparkles,
 } from 'lucide-react'
@@ -42,8 +39,8 @@ export const TopNavbar = memo(function TopNavbar({
   currentModule,
   onModuleChange,
   onMenuClick,
-  onAppLauncherClick,
-  isAppLauncherOpen,
+  onAppLauncherClick: _onAppLauncherClick,
+  isAppLauncherOpen: _isAppLauncherOpen,
   isModuleChanging,
   modules,
   isVisible = true,

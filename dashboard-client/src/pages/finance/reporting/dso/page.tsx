@@ -63,7 +63,7 @@ export default function DSOReportPage() {
 
   const {
     data: historyData,
-    loading: historyLoading,
+    loading:_historyLoading,
   } = useApiData<{ months: number; data: DSOHistoryPoint[] }>({
     fetcher: () => reportingClient.dsoHistory({ months: historyMonths }),
     cacheKey: `dso-history-${historyMonths}`,

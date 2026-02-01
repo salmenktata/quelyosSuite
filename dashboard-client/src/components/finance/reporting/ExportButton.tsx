@@ -4,7 +4,7 @@ import { downloadCSV, dateKey } from "@/lib/utils/export";
 import { logger } from '@quelyos/logger';
 
 interface ExportButtonProps {
-  onExport: () => any[][] | Promise<any[][]>;
+  onExport: () => (string | number | boolean | null | undefined)[][] | Promise<(string | number | boolean | null | undefined)[][]>;
   filename: string;
   label?: string;
   className?: string;

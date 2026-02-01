@@ -52,7 +52,7 @@ type Category = {
   name: string;
 };
 
-const FLOW_ICONS: Record<PaymentFlow, any> = {
+const FLOW_ICONS: Record<PaymentFlow, React.ComponentType<{ className?: string }>> = {
   virement: DollarSign,
   carte: CreditCard,
   especes: Wallet,
@@ -62,7 +62,7 @@ const FLOW_ICONS: Record<PaymentFlow, any> = {
   wire_transfer: DollarSign,
 };
 
-const statusConfig: Record<string, { label: string; className: string }> = {
+const _statusConfig: Record<string, { label: string; className: string }> = {
   PENDING: {
     label: "En attente",
     className: "bg-amber-500/20 text-amber-100 border-amber-400/30",
@@ -138,7 +138,7 @@ interface TransactionListPageProps {
 
 export function TransactionListPage({ type }: TransactionListPageProps) {
   useRequireAuth();
-  const { currency, formatAmount } = useCurrency();
+  const { formatAmount } = useCurrency();
   const config = CONFIGS[type];
 
   // State - centralized with useReducer

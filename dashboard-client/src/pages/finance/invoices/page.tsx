@@ -131,7 +131,7 @@ export default function InvoicesPage() {
         </div>
         <Button
           variant="primary"
-          icon={Plus as any}
+          icon={<Plus />}
           onClick={() => navigate('/finance/invoices/new')}
         >
           Nouvelle Facture

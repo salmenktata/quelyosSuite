@@ -94,17 +94,14 @@ function formatDateRange(range: DateRange | undefined): string {
 
 export function DateRangePicker({ value, onChange, placeholder, className = '' }: DateRangePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [tempRange, setTempRange] = useState<DateRange | undefined>(value)
 
   const handlePresetClick = (preset: typeof presets[0]) => {
     const newRange = preset.getValue()
-    setTempRange(newRange)
     onChange(newRange)
     setIsOpen(false)
   }
 
   const handleClear = () => {
-    setTempRange(undefined)
     onChange(undefined)
     setIsOpen(false)
   }

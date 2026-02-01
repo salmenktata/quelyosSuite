@@ -14,6 +14,17 @@ import { logger } from '@quelyos/logger'
 // TYPES
 // =============================================================================
 
+export class HttpError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public response: Response
+  ) {
+    super(message)
+    this.name = 'HttpError'
+  }
+}
+
 export interface RetryConfig {
   /** Nombre maximum de tentatives (incluant la première) */
   maxRetries: number
@@ -288,10 +299,11 @@ export async function fetchWithRetry(
 
       // Traiter les erreurs HTTP comme des erreurs
       if (!response.ok) {
-        const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
-        ;(error as any).status = response.status
-        ;(error as any).response = response
-        throw error
+        throw new HttpError(
+          `HTTP ${response.status}: ${response.statusText}`,
+          response.status,
+          response
+        )
       }
 
       return response

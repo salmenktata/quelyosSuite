@@ -4,7 +4,7 @@ import { exportData, type ExportFormat } from "@/lib/utils/export";
 import { logger } from '@quelyos/logger';
 
 interface ExportDropdownProps {
-  onExport: () => any[][] | Promise<any[][]>;
+  onExport: () => unknown[][] | Promise<unknown[][]>;
   filename: string;
   reportTitle?: string;
   className?: string;

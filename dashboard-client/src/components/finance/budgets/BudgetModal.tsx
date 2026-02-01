@@ -1,6 +1,6 @@
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GlassCard, GlassButton } from "@/components/ui/glass";
 import { X } from "lucide-react";
 import { api } from "@/lib/finance/api";
@@ -45,25 +45,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load budget data if editing
-  useEffect(() => {
-    if (isOpen && editingId) {
-      loadBudget();
-    } else if (isOpen) {
-      // Reset form for new budget
-      setFormData({
-        name: "",
-        amount: "",
-        categoryId: null,
-        period: "MONTHLY",
-        startDate: new Date().toISOString().split("T")[0],
-        endDate: ""
-      });
-      setError(null);
-    }
-  }, [isOpen, editingId]);
-
-  const loadBudget = async () => {
+  const loadBudget = useCallback(async () => {
     try {
       setLoading(true);
       const budget = await api<{
@@ -87,7 +69,25 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
     } finally {
       setLoading(false);
     }
-  };
+  }, [editingId]);
+
+  // Load budget data if editing
+  useEffect(() => {
+    if (isOpen && editingId) {
+      loadBudget();
+    } else if (isOpen) {
+      // Reset form for new budget
+      setFormData({
+        name: "",
+        amount: "",
+        categoryId: null,
+        period: "MONTHLY",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: ""
+      });
+      setError(null);
+    }
+  }, [isOpen, editingId, loadBudget]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

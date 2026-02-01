@@ -38,7 +38,7 @@ type BudgetDetail = {
 export default function BudgetDetailPage() {
   useRequireAuth();
   const params = useParams();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const { currency } = useCurrency();
   const [budget, setBudget] = useState<BudgetDetail | null>(null);
   const [loading, setLoading] = useState(true);

@@ -244,6 +244,9 @@ function KioskBrowse({
   onViewCart,
   cartItemCount,
 }: KioskBrowseProps) {
+  // Variables non utilisées mais requises par l'interface
+  const _onViewCart = onViewCart;
+  const _cartItemCount = cartItemCount;
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Categories sidebar */}

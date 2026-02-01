@@ -57,7 +57,7 @@ export function ForecastHeader({
           <Zap size={14} />
           Scénarios
         </button>
-        {forecast && <ForecastExport data={forecast as any} />}
+        {forecast && <ForecastExport data={forecast as unknown as import("@/lib/finance/reporting").ForecastEnhancedResponse} />}
       </div>
     </div>
   );

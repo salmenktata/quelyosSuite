@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 
 export default function HRSettingsPage() {
-  const { tenant } = useMyTenant()
+  const { tenant: _tenant } = useMyTenant()
   const [activeTab, setActiveTab] = useState('general')
 
   const tabs = [

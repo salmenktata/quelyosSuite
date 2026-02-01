@@ -1,5 +1,3 @@
-import { lazy } from 'react'
-import type { RouteObject } from 'react-router-dom'
 import { getCurrentEdition } from '@/lib/editionDetector'
 import type { ModuleId } from '@/config/modules'
 

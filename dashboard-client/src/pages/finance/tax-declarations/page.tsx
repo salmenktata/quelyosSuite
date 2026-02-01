@@ -9,7 +9,7 @@ export default function TaxDeclarationsPage() {
   const [year, setYear] = useState(new Date().getFullYear())
   const [country, setCountry] = useState('FR')
   
-  const { reports, loading, generate, exportEdiTva, submit } = useTaxReports({ year, country })
+  const { reports, loading: _loading, generate, exportEdiTva, submit } = useTaxReports({ year, country })
 
   const months = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
@@ -95,16 +95,16 @@ export default function TaxDeclarationsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button variant="secondary" size="sm" icon={FileDown as any}
+                    <Button variant="secondary" size="sm" icon={<FileDown />}
                       onClick={() => exportEdiTva(report.id)}>Export</Button>
                     {report.state !== 'submitted' && (
-                      <Button variant="primary" size="sm" icon={Send as any}
+                      <Button variant="primary" size="sm" icon={<Send />}
                         onClick={() => submit(report.id)}>Soumettre</Button>
                     )}
                   </div>
                 </>
               ) : (
-                <Button variant="outline" size="sm" icon={Plus as any}
+                <Button variant="outline" size="sm" icon={<Plus />}
                   onClick={() => generate(year, monthNum, country)}>Générer</Button>
               )}
             </div>

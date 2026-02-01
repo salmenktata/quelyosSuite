@@ -22,9 +22,8 @@ import {
   useValidateInventoryGroup,
   useCancelInventoryGroup,
   useDeleteInventoryGroup,
-  useInventoryGroupDetail,
 } from '../../hooks/useInventoryGroups'
-import { Plus, Filter, MoreVertical, Play, CheckCircle, XCircle, Trash2, Eye } from 'lucide-react'
+import { Plus, Play, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 import { logger } from '@quelyos/logger'
 
 export default function InventoryGroups() {

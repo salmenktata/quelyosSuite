@@ -12,7 +12,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button } from '@/components/common';
-import { Globe, Search, ExternalLink, RefreshCw, FileText, TrendingUp, AlertCircle } from 'lucide-react';
+import { Search, ExternalLink, RefreshCw, FileText, TrendingUp, AlertCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
 interface SitemapEntry {

@@ -18,7 +18,7 @@ export default function POSTerminal() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [showPayment, setShowPayment] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  const [_showSettings, setShowSettings] = useState(false)
 
   // Session and cart state
   const { session, config, isOpen, canMakeSales, connectionStatus } = usePOSActiveSession()

@@ -102,9 +102,9 @@ export default function OptimizationPanel() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<{ id: number; name: string; balance: number; currency: string }[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<any>(null);
+  const [_executionResult, setExecutionResult] = useState<unknown>(null);
 
   const handleOptimize = async () => {
     setIsLoading(true);
@@ -173,7 +173,7 @@ export default function OptimizationPanel() {
   useEffect(() => {
     const loadAccounts = async () => {
       try {
-        const data = await fetchApi<{ accounts: { id: number; name: string }[] }>("/api/ecommerce/accounts", { method: "GET", credentials: "include" });
+        const data = await fetchApi<{ accounts: { id: number; name: string; balance: number; currency: string }[] }>("/api/ecommerce/accounts", { method: "GET", credentials: "include" });
         setAccounts(data.accounts || []);
         if (data.accounts && data.accounts.length > 0) {
           setSelectedAccountId(data.accounts[0].id.toString());

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Target, TrendingUp, AlertCircle, CheckCircle, Activity, Info } from "lucide-react";
 import { api } from "@/lib/finance/api";
@@ -34,7 +34,7 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function loadMetrics() {
+  const loadMetrics = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -46,11 +46,11 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
     } finally {
       setLoading(false);
     }
-  }
+  }, [horizonDays]);
 
   useEffect(() => {
     loadMetrics();
-  }, [horizonDays]);
+  }, [loadMetrics]);
 
   if (loading) {
     return (

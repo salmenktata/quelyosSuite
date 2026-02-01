@@ -36,7 +36,7 @@ export function TreasuryForecast({
   // Determine status
   const isNegative = projectedBalance < 0;
   const isWarning = projectedBalance > 0 && projectedBalance < currentBalance * 0.3;
-  const isPositive = !isNegative && !isWarning;
+  const _isPositive = !isNegative && !isWarning;
 
   // Color variants
   const bgColor = isNegative

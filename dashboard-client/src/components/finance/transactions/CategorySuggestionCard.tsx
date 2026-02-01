@@ -40,7 +40,7 @@ export function CategorySuggestionCard({
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<CategorySuggestion | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {

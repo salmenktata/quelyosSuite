@@ -35,6 +35,16 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { logger } from '@quelyos/logger';
 
+interface AvailableInvoice {
+  id: string | number;
+  supplier: {
+    name: string;
+  };
+  invoiceNumber: string;
+  dueDate: string;
+  amount: number;
+}
+
 interface Scenario {
   id: string;
   name: string;
@@ -87,7 +97,7 @@ export default function ScenariosPanel() {
     invoices: [] as string[],
   });
 
-  const [availableInvoices, setAvailableInvoices] = useState<any[]>([]);
+  const [availableInvoices, setAvailableInvoices] = useState<AvailableInvoice[]>([]);
 
   useEffect(() => {
     fetchScenarios();
@@ -108,7 +118,7 @@ export default function ScenariosPanel() {
 
   const fetchAvailableInvoices = async () => {
     try {
-      const data = await fetchApi<{ invoices: Record<string, unknown>[] }>("/api/finance/supplier-invoices/upcoming?days=90", { method: "GET", credentials: "include" });
+      const data = await fetchApi<{ invoices: AvailableInvoice[] }>("/api/finance/supplier-invoices/upcoming?days=90", { method: "GET", credentials: "include" });
       setAvailableInvoices(data.invoices || []);
     } catch (error) {
       logger.error("Erreur lors du chargement des factures:", error);
@@ -320,8 +330,8 @@ export default function ScenariosPanel() {
                           >
                             <input
                               type="checkbox"
-                              checked={formData.invoices.includes(invoice.id)}
-                              onChange={() => toggleInvoiceSelection(invoice.id)}
+                              checked={formData.invoices.includes(String(invoice.id))}
+                              onChange={() => toggleInvoiceSelection(String(invoice.id))}
                               className="rounded border-gray-300 dark:border-gray-600"
                             />
                             <div className="flex-1">

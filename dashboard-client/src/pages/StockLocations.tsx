@@ -164,7 +164,7 @@ export default function StockLocations() {
               </label>
               <select
                 value={usageFilter}
-                onChange={(e) => setUsageFilter(e.target.value as any)}
+                onChange={(e) => setUsageFilter(e.target.value as 'all' | 'view' | 'internal')}
                 className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               >
                 <option value="all">Tous les types</option>

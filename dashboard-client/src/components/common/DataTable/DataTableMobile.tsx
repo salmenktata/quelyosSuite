@@ -96,7 +96,7 @@ export function DataTableMobile<T>({
                     {column.label} :
                   </span>
                   <span className="text-sm text-gray-900 dark:text-white text-right">
-                    {column.accessor?.(row)}
+                    {column.accessor?.(row) as React.ReactNode}
                   </span>
                 </div>
               ))}

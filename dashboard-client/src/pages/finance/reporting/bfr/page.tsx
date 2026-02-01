@@ -61,7 +61,7 @@ export default function BFRReportPage() {
 
   const error = apiError?.message || null
 
-  const { data: historyData, loading: historyLoading } = useApiData<{
+  const { data: historyData, loading:_historyLoading } = useApiData<{
     months: number
     data: BFRHistoryPoint[]
   }>({

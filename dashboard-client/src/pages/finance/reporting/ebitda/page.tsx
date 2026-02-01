@@ -62,7 +62,7 @@ export default function EBITDAReportPage() {
 
   const {
     data: historyData,
-    loading: historyLoading,
+    loading:_historyLoading,
   } = useApiData<{ months: number; data: EBITDAHistoryPoint[] }>({
     fetcher: () => reportingClient.ebitdaHistory({ months: historyMonths }),
     cacheKey: `ebitda-history-${historyMonths}`,

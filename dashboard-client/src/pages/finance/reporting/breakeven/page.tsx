@@ -63,7 +63,7 @@ export default function BreakEvenReportPage() {
 
   const {
     data: historyData,
-    loading: historyLoading,
+    loading:_historyLoading,
   } = useApiData<{ months: number; data: BreakEvenHistoryPoint[] }>({
     fetcher: () => reportingClient.breakevenHistory({ months: historyMonths }),
     cacheKey: `breakeven-history-${historyMonths}`,

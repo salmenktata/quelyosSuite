@@ -31,7 +31,7 @@ export function useLocationsTree(params?: UseLocationsTreeParams) {
           throw new Error(response.error || 'Échec du chargement des emplacements')
         }
 
-        return ((response.data as any)?.locations as StockLocation[]) || []
+        return ((response.data as Record<string, unknown>)?.locations as StockLocation[]) || []
       } catch (error) {
         logger.error('[useLocationsTree] Fetch error:', error)
         throw error
@@ -133,7 +133,7 @@ export function useUpdateLocation() {
       logger.error('[useUpdateLocation] Error:', error)
     },
     // Refetch on success
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       queryClient.invalidateQueries({ queryKey: ['stock', 'locations'] })
       logger.info('[useUpdateLocation] Location updated successfully')
     },

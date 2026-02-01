@@ -147,7 +147,7 @@ function KDSOrderCard({
   onAccept,
   onReady,
   onDone,
-  onBump,
+  onBump: _onBump,
 }: {
   order: KDSOrder
   onAccept: () => void
@@ -271,7 +271,7 @@ export default function POSKDS() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [filterStatus, setFilterStatus] = useState<KDSOrder['status'] | 'all'>('all')
   const [filterType, setFilterType] = useState<KDSOrder['orderType'] | 'all'>('all')
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [_isFullscreen, setIsFullscreen] = useState(false)
 
   // Son de notification
   const playNotification = () => {

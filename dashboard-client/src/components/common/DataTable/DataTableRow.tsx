@@ -54,7 +54,7 @@ function DataTableRowInner<T>({
               ${column.cellClassName || ''}
             `.trim()}
           >
-            {column.accessor?.(row)}
+            {column.accessor?.(row) as React.ReactNode}
           </td>
         )
       })}

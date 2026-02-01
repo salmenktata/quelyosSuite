@@ -357,12 +357,12 @@ export interface CustomerListItem {
   create_date?: string;
 }
 
-export interface DataTableColumn<T = any> {
+export interface DataTableColumn<T = Record<string, unknown>> {
   key: string;
   id?: string;
   label: string;
   sortable?: boolean;
-  accessor?: (item: T) => any;
+  accessor?: (item: T) => unknown;
   sortFn?: (a: T, b: T) => number;
   render?: (item: T) => React.ReactNode;
   width?: string;
@@ -373,7 +373,7 @@ export interface DataTableColumn<T = any> {
   showOnMobile?: boolean;
 }
 
-export interface MobileCardConfig<T = any> {
+export interface MobileCardConfig<T = Record<string, unknown>> {
   title: (item: T) => React.ReactNode;
   subtitle?: (item: T) => React.ReactNode;
   content: (item: T) => React.ReactNode;
@@ -382,7 +382,7 @@ export interface MobileCardConfig<T = any> {
   renderActions?: (item: T) => React.ReactNode;
 }
 
-export interface BulkAction<T = any> {
+export interface BulkAction<T = Record<string, unknown>> {
   id: string;
   label: string;
   icon?: React.ReactNode;

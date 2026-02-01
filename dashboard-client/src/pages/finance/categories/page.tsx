@@ -69,7 +69,7 @@ export default function CategoriesPage() {
     try {
       setError(null);
       setLoading(true);
-      const data = await api<any>("/finance/categories");
+      const data = await api<Category[] | { data: Category[] }>("/finance/categories");
       const cats = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setCategories(cats);
     } catch (err) {

@@ -53,9 +53,11 @@ export type ForecastTrends = {
 export type ForecastResponse = {
   days: number;
   baseBalance: number;
+  currentBalance?: number; // Alias pour baseBalance
   projectedBalance: number;
   futureImpact: number;
   daily: DailyRow[];
+  forecast?: DailyRow[]; // Alias pour daily
   perAccount: ForecastAccount[];
   events?: EventAnnotation[];
   model?: ForecastModel;

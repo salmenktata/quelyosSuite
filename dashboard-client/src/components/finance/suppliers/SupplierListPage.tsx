@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ModularLayout } from "@/components/ModularLayout";
 import { PageHeader } from "@/components/finance/PageHeader";
@@ -42,11 +42,7 @@ export default function SupplierListPage() {
     totalInvoices: 0,
   });
 
-  useEffect(() => {
-    fetchSuppliers();
-  }, [filters]);
-
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -84,7 +80,11 @@ export default function SupplierListPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, [fetchSuppliers]);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));

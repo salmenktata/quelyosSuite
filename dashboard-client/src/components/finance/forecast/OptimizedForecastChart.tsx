@@ -46,7 +46,7 @@ function OptimizedForecastChartComponent({
   showConfidence,
   showScenarios,
 }: OptimizedForecastChartProps) {
-  const [activePoint, setActivePoint] = useState<number | null>(null);
+  const [_activePoint, setActivePoint] = useState<number | null>(null);
 
   // Protection contre données vides
   if (!zones || zones.length === 0) {

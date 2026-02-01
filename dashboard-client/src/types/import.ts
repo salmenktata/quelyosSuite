@@ -44,6 +44,9 @@ export interface ConfirmImportResponse {
   imported: number
   errors: string[]
   error?: string
+  failed?: number
+  duplicates?: number
+  processingTime?: number
 }
 
 export interface ImportState {
@@ -145,7 +148,7 @@ export interface FileUploadZoneProps {
 }
 
 export interface ImportSummaryProps {
-  results: ConfirmImportResponse | any
+  results: ConfirmImportResponse | Record<string, unknown>
   onViewTransactions?: () => void | Promise<void>
   onImportAnother?: () => void
   totalRows?: number

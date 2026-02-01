@@ -95,7 +95,7 @@ export default function CategoriesPage() {
           name: newCategoryName,
           kind: newCategoryKind,
           color: newCategoryColor
-        } as any,
+        },
       }) as Category;
       setCategories([...categories, newCategory]);
       setNewCategoryName("");
@@ -136,7 +136,7 @@ export default function CategoriesPage() {
         try {
           const newCat = await api("/finance/categories", {
             method: "POST",
-            body: cat as any,
+            body: cat,
           }) as Category;
           created.push(newCat);
         } catch {

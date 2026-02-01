@@ -75,7 +75,6 @@ import {
   FolderKanban,
   // Maintenance Icons
   Wrench,
-  Construction,
   BarChart2,
 } from 'lucide-react'
 
