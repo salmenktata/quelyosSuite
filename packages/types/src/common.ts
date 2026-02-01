@@ -305,6 +305,7 @@ export interface OrderLine {
   discount?: number
   tax_ids?: number[]
   tax_amount?: number
+  product?: Partial<Product> // Optional expanded product data
 }
 
 /**
