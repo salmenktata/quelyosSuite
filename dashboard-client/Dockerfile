@@ -29,6 +29,10 @@ RUN pnpm install --frozen-lockfile
 # Copie du code source
 COPY dashboard-client/ ./dashboard-client/
 
+# Build shared packages first
+WORKDIR /app/packages/logger
+RUN pnpm build
+
 # Build de l'édition spécifique
 WORKDIR /app/dashboard-client
 RUN VITE_EDITION=${EDITION} pnpm run build
