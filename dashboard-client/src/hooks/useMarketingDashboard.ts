@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import type { MarketingCampaign } from './useMarketingCampaigns';
+import type { MarketingCampaign } from '@quelyos/types';
 
 export interface MarketingDashboardStats {
   active_campaigns: number;

@@ -95,17 +95,17 @@ export default function TaxDeclarationsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button variant="secondary" size="sm" icon={FileDown} 
-                      onClick={() => exportEdiTva(report.id)} fullWidth>Export</Button>
+                    <Button variant="secondary" size="sm" icon={FileDown as any}
+                      onClick={() => exportEdiTva(report.id)}>Export</Button>
                     {report.state !== 'submitted' && (
-                      <Button variant="primary" size="sm" icon={Send} 
-                        onClick={() => submit(report.id)} fullWidth>Soumettre</Button>
+                      <Button variant="primary" size="sm" icon={Send as any}
+                        onClick={() => submit(report.id)}>Soumettre</Button>
                     )}
                   </div>
                 </>
               ) : (
-                <Button variant="outline" size="sm" icon={Plus} 
-                  onClick={() => generate(year, monthNum, country)} fullWidth>Générer</Button>
+                <Button variant="outline" size="sm" icon={Plus as any}
+                  onClick={() => generate(year, monthNum, country)}>Générer</Button>
               )}
             </div>
           )

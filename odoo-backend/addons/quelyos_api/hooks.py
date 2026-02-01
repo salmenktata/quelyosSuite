@@ -141,68 +141,39 @@ def post_init_hook(env):
     # 3. Configurer l'utilisateur admin par défaut
     _logger.info("\n🔧 Configuration utilisateur admin...")
 
-    # 3.1 Récupérer le tenant par défaut et sa company
-    env.cr.execute("""
-        SELECT id, company_id, name
-        FROM quelyos_tenant
-        WHERE name LIKE '%Admin%'
-        ORDER BY id
-        LIMIT 1
-    """)
-    tenant_result = env.cr.fetchone()
+    # 3.1 Récupérer le tenant par défaut et sa company via ORM
+    Tenant = env['quelyos.tenant']
+    tenant = Tenant.search([('name', 'like', '%Admin%')], order='id', limit=1)
 
-    if tenant_result:
-        tenant_id, tenant_company_id, tenant_name = tenant_result
+    if tenant:
+        # 3.2 Récupérer l'utilisateur admin via ORM
+        User = env['res.users']
+        admin = User.search([('login', '=', 'admin')], limit=1)
 
-        # 3.2 Associer l'utilisateur admin à la company du tenant
-        env.cr.execute("""
-            UPDATE res_users
-            SET company_id = %s
-            WHERE login = 'admin'
-        """, (tenant_company_id,))
+        if admin:
+            # 3.3 Associer admin au tenant via ORM (commit automatique)
+            admin.write({
+                'company_id': tenant.company_id.id,
+                'company_ids': [(6, 0, [tenant.company_id.id])]
+            })
+            _logger.info(f"   ✓ Utilisateur admin associé au tenant '{tenant.name}' (company_id={tenant.company_id.id})")
 
-        # 3.3 Mettre à jour la relation many2many des companies accessibles
-        env.cr.execute("""
-            DELETE FROM res_company_users_rel WHERE user_id = (SELECT id FROM res_users WHERE login = 'admin');
-        """)
-        env.cr.execute("""
-            INSERT INTO res_company_users_rel (user_id, cid)
-            SELECT u.id, %s
-            FROM res_users u
-            WHERE u.login = 'admin'
-        """, (tenant_company_id,))
+            # 3.4 Ajouter le groupe "Access Rights" via ORM
+            Group = env['res.groups']
+            access_group = Group.search([('name', 'like', '%Access Rights%')], limit=1)
 
-        _logger.info(f"   ✓ Utilisateur admin associé au tenant '{tenant_name}' (company_id={tenant_company_id})")
+            if access_group and access_group not in admin.group_ids:
+                admin.write({'groups_id': [(4, access_group.id)]})
+                _logger.info("   ✓ Groupe 'Access Rights' (super-admin) ajouté à l'utilisateur admin")
+                _logger.info("   ✓ L'utilisateur admin a maintenant accès à TOUS les modules du dashboard")
+            elif access_group:
+                _logger.info("   ✓ Groupe 'Access Rights' déjà présent pour admin")
+            else:
+                _logger.warning("   ⚠️  Groupe 'Access Rights' non trouvé dans le système")
+        else:
+            _logger.warning("   ⚠️  Utilisateur admin non trouvé")
     else:
         _logger.warning("   ⚠️  Aucun tenant trouvé, utilisateur admin non configuré")
-
-    # 3.4 Ajouter le groupe "Access Rights" (super-admin) à l'utilisateur admin
-    env.cr.execute("""
-        INSERT INTO res_groups_users_rel (gid, uid)
-        SELECT g.id, u.id
-        FROM res_groups g, res_users u
-        WHERE g.name::text LIKE '%Access Rights%'
-        AND u.login = 'admin'
-        AND NOT EXISTS (
-            SELECT 1 FROM res_groups_users_rel r
-            WHERE r.gid = g.id AND r.uid = u.id
-        )
-    """)
-
-    # Vérifier si le groupe a été ajouté
-    env.cr.execute("""
-        SELECT COUNT(*) FROM res_groups_users_rel r
-        JOIN res_groups g ON r.gid = g.id
-        JOIN res_users u ON r.uid = u.id
-        WHERE g.name::text LIKE '%Access Rights%'
-        AND u.login = 'admin'
-    """)
-
-    if env.cr.fetchone()[0] > 0:
-        _logger.info("   ✓ Groupe 'Access Rights' (super-admin) ajouté à l'utilisateur admin")
-        _logger.info("   ✓ L'utilisateur admin a maintenant accès à TOUS les modules du dashboard")
-    else:
-        _logger.warning("   ⚠️  Impossible d'ajouter le groupe Access Rights à admin")
 
     # 5. Vérifier plans tarifaires par défaut
     _logger.info("\n💰 Vérification plans tarifaires...")
@@ -227,7 +198,7 @@ def post_init_hook(env):
     EmailConfig = env['quelyos.email.config']
     existing_brevo = EmailConfig.search([('provider', '=', 'brevo')], limit=1)
 
-    if not existing_brevo:
+    if not existing_brevo and tenant:
         # Note: quelyos.email.config n'a pas de champ 'name'
         EmailConfig.create({
             'provider': 'brevo',
@@ -235,16 +206,20 @@ def post_init_hook(env):
             'api_key': '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',
             'email_from': 'noreply@quelyos.com',
             'email_from_name': 'Quelyos',
+            'company_id': tenant.company_id.id,  # CRITIQUE : company_id requis (NOT NULL)
         })
         _logger.info("   ✓ Configuration Brevo créée avec clé API et activée automatiquement")
-    else:
+    elif existing_brevo:
         _logger.info("   ✓ Configuration Brevo déjà existante")
+    else:
+        _logger.warning("   ⚠️  Tenant non trouvé, configuration Brevo non créée")
 
     # 6.2 Configuration Chatbot/AI (Groq par défaut)
     AIConfig = env['quelyos.ai.config']
     existing_groq = AIConfig.search([('provider', '=', 'groq')], limit=1)
 
     if not existing_groq:
+        # Note: quelyos.ai.config n'a PAS de champ company_id (contrairement à email.config)
         AIConfig.create({
             'name': 'Groq AI (Chatbot)',
             'provider': 'groq',

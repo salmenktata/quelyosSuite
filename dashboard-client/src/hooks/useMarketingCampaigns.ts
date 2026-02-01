@@ -12,34 +12,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-
-export interface MarketingCampaign {
-  id: number;
-  subject: string;
-  state: 'draft' | 'in_queue' | 'sending' | 'done';
-  body_html: string;
-  mailing_model_real: string;
-  mailing_domain: string;
-  sent: number;
-  delivered: number;
-  opened: number;
-  clicked: number;
-  bounced: number;
-  failed: number;
-  create_date: string | null;
-  schedule_date: string | null;
-}
-
-export interface CampaignStats {
-  sent: number;
-  delivered: number;
-  opened: number;
-  clicked: number;
-  bounced: number;
-  failed: number;
-  open_rate: number;
-  click_rate: number;
-}
+import type { MarketingCampaign, CampaignStats } from '@quelyos/types';
 
 export interface CampaignsQueryParams {
   tenant_id?: number;

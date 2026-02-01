@@ -13,40 +13,22 @@ import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/common'
 import { financeNotices } from '@/lib/notices/finance-notices'
-import { 
-  FileText, 
-  Plus, 
-  Download, 
-  Mail, 
-  CheckCircle, 
+import {
+  FileText,
+  Plus,
+  Download,
+  Mail,
+  CheckCircle,
   Clock,
   AlertCircle,
   Filter
 } from 'lucide-react'
 import { useInvoices } from '@/hooks/useInvoices'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import type { Invoice } from '@quelyos/types'
 
 type InvoiceStatus = 'draft' | 'posted' | 'cancel' | 'all'
 type PaymentState = 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'all'
-
-interface Invoice {
-  id: number
-  name: string
-  state: 'draft' | 'posted' | 'cancel'
-  paymentState: PaymentState
-  customer: {
-    id: number
-    name: string
-    email: string
-  }
-  invoiceDate: string
-  dueDate: string
-  amountTotal: number
-  amountResidual: number
-  currency: {
-    symbol: string
-  }
-}
 
 export default function InvoicesPage() {
   const navigate = useNavigate()
@@ -77,7 +59,7 @@ export default function InvoicesPage() {
         </span>
       )
     }
-    
+
     if (invoice.state === 'cancel') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">
@@ -86,9 +68,9 @@ export default function InvoicesPage() {
         </span>
       )
     }
-    
+
     // État paiement pour factures validées
-    if (invoice.paymentState === 'paid') {
+    if (invoice.payment_state === 'paid') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
           <CheckCircle className="w-3 h-3 mr-1" />
@@ -96,15 +78,15 @@ export default function InvoicesPage() {
         </span>
       )
     }
-    
-    if (invoice.paymentState === 'partial') {
+
+    if (invoice.payment_state === 'partial') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">
           Paiement partiel
         </span>
       )
     }
-    
+
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200">
         En attente
@@ -149,7 +131,7 @@ export default function InvoicesPage() {
         </div>
         <Button
           variant="primary"
-          icon={Plus}
+          icon={Plus as any}
           onClick={() => navigate('/finance/invoices/new')}
         >
           Nouvelle Facture
@@ -302,25 +284,22 @@ export default function InvoicesPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 dark:text-white">
-                      {invoice.customer.name}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {invoice.customer.email}
+                      {invoice.partner_name}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(invoice.invoiceDate)}
+                    {formatDate(invoice.invoice_date || '')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(invoice.dueDate)}
+                    {formatDate(invoice.invoice_date_due || '')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(invoice.amountTotal, invoice.currency.symbol)}
+                      {formatCurrency(invoice.amount_total, '€')}
                     </div>
-                    {invoice.amountResidual > 0 && (
+                    {invoice.amount_residual > 0 && (
                       <div className="text-xs text-orange-600 dark:text-orange-400">
-                        Reste {formatCurrency(invoice.amountResidual, invoice.currency.symbol)}
+                        Reste {formatCurrency(invoice.amount_residual, '€')}
                       </div>
                     )}
                   </td>

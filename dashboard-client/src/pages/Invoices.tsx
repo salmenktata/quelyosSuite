@@ -144,7 +144,7 @@ export default function Invoices() {
   const hasActiveFilters = stateFilter || paymentStateFilter || search
 
   const total = invoices.length
-  const paidCount = invoices.filter(inv => inv.paymentState === 'paid').length
+  const paidCount = invoices.filter(inv => inv.payment_state === 'paid').length
   const draftCount = invoices.filter(inv => inv.state === 'draft').length
   const totalAmount = stats?.totalInvoiced || 0
 
@@ -373,7 +373,7 @@ export default function Invoices() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900 dark:text-white">
-                                {invoice.partner?.name || '-'}
+                                {invoice.partner_name || '-'}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">

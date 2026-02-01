@@ -207,7 +207,7 @@ export function AutomationWorkflows() {
                     <Button
                       variant="outline"
                       size="sm"
-                      icon={workflow.active ? Square : Play}
+                      icon={(workflow.active ? Square : Play) as any}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleToggleWorkflow(workflow.id, workflow.active);
@@ -218,7 +218,7 @@ export function AutomationWorkflows() {
                     <Button
                       variant="outline"
                       size="sm"
-                      icon={Trash2}
+                      icon={Trash2 as any}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteWorkflow(workflow.id);

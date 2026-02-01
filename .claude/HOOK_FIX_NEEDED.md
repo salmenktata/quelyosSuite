@@ -1,8 +1,10 @@
 # 🔧 Fix Requis pour post_init_hook
 
-## 🐛 Problème Identifié
+## 🐛 Problème Identifié (RÉSOLU v19.0.1.70.0)
 
-Le `post_init_hook` dans `hooks.py` s'exécute MAIS ne persiste PAS les modifications car il utilise **SQL direct** au lieu de **l'ORM Odoo**.
+Le `post_init_hook` dans `hooks.py` s'exécutait MAIS ne persistait PAS les modifications pour 2 raisons :
+1. ~~SQL direct au lieu de l'ORM~~ (corrigé en v19.0.1.69.0)
+2. **Champ `company_id` manquant** dans `EmailConfig.create()` (corrigé en v19.0.1.70.0)
 
 ### Symptômes Observés
 
@@ -48,9 +50,27 @@ env.cr.execute("""
 - Odoo commit seulement les opérations **ORM** (`create()`, `write()`, etc.)
 - Ajouter `env.cr.commit()` dans un hook peut causer des **deadlocks**
 
-## ✅ Solution : Utiliser L'ORM
+## ✅ Solution Complète (v19.0.1.70.0)
 
-### Code Corrigé (à appliquer)
+### Cause Racine Réelle
+
+Le modèle `quelyos.email.config` a un champ **`company_id` requis** (required=True, ligne 17) :
+
+```python
+# models/email_config.py
+company_id = fields.Many2one(
+    'res.company',
+    string='Société',
+    required=True,  # ← CRITIQUE
+    default=lambda self: self.env.company
+)
+```
+
+Dans le contexte du hook `post_init_hook`, `self.env.company` peut ne pas être défini correctement, donc le `create()` échouait silencieusement.
+
+**Note** : `quelyos.ai.config` n'a PAS de champ `company_id`, donc pas besoin de le spécifier.
+
+### Code Corrigé (APPLIQUÉ v19.0.1.70.0)
 
 ```python
 # 3. Configurer l'utilisateur admin par défaut
@@ -158,13 +178,66 @@ SELECT provider, is_enabled FROM quelyos_ai_config WHERE provider = 'groq';
 - ✅ Zéro configuration manuelle
 - ⏱️ Temps : 2 min install = 2 min
 
-## 🚀 Prochaine Étape
+## 🚀 Modifications Appliquées
 
-1. Appliquer le fix ORM dans `hooks.py`
-2. Incrémenter version à `19.0.1.69.0`
-3. Tester avec `/fresh-install`
-4. Documenter dans `.claude/FRESH_INSTALL_OPTIMIZATION.md`
-5. Commit avec message : `fix(hooks): utiliser ORM au lieu de SQL direct pour persistence`
+### v19.0.1.70.0 (Correction finale)
+
+**hooks.py** (lignes 197-234) :
+```python
+# 6.1 Configuration Brevo
+if not existing_brevo and tenant:
+    EmailConfig.create({
+        'provider': 'brevo',
+        'is_active': True,
+        'api_key': '...',
+        'email_from': 'noreply@quelyos.com',
+        'email_from_name': 'Quelyos',
+        'company_id': tenant.company_id.id,  # ✅ AJOUTÉ
+    })
+
+# 6.2 Configuration Chatbot (Groq)
+if not existing_groq:
+    AIConfig.create({
+        'name': 'Groq AI (Chatbot)',
+        'provider': 'groq',
+        'is_enabled': True,
+        'model': 'llama-3.1-70b-versatile',
+        'api_key_encrypted': '...',
+        'max_tokens': 800,
+        'temperature': 0.7,
+        # PAS de company_id (champ n'existe pas)
+    })
+```
+
+### Installation Automatique quelyos_core
+
+**Module orchestrateur créé** : `odoo-backend/addons/quelyos_core/`
+
+**__manifest__.py** :
+```python
+'auto_install': True,  # ✅ Installation automatique
+'depends': ['quelyos_api'],  # Déclenche suite complète
+'data': [
+    'data/installer_config_data.xml',  # Config modules optionnels
+    'data/config_data.xml',
+    'data/module_category_data.xml',
+]
+```
+
+**Rôle** :
+- S'installe automatiquement lors création nouvelle DB Odoo 19
+- Installe quelyos_api par dépendance
+- Configure désactivation tours Odoo (website_generator, web_tour)
+- Active modules optionnels (stock_advanced, finance, sms_tn)
+
+**Conformité** : Conforme à ODOO_ISOLATION_RULES.md (seul module autorisé avec auto_install=True)
+
+## ✅ Prochaines Étapes
+
+1. Tester avec `/fresh-install`
+2. Vérifier que quelyos_core s'installe automatiquement
+3. Vérifier que les configs (Brevo, Groq) sont bien créées
+4. Commit avec message : `fix(hooks): ajouter company_id + auto-install quelyos_core`
 
 ## 📚 Référence Odoo
 

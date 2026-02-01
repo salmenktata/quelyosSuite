@@ -1,30 +1,12 @@
 import { useState, useEffect } from 'react'
 import { apiClient } from '@/lib/api'
+import type { Invoice } from '@quelyos/types'
 
 interface UseInvoicesParams {
   status?: string
   paymentState?: string
   dateFrom?: string
   dateTo?: string
-}
-
-interface InvoiceLocal {
-  id: number
-  name: string
-  state: 'draft' | 'posted' | 'cancel'
-  paymentState: string
-  customer: {
-    id: number
-    name: string
-    email: string
-  }
-  invoiceDate: string
-  dueDate: string
-  amountTotal: number
-  amountResidual: number
-  currency: {
-    symbol: string
-  }
 }
 
 interface Stats {
@@ -35,7 +17,7 @@ interface Stats {
 }
 
 export function useInvoices(params: UseInvoicesParams = {}) {
-  const [invoices, setInvoices] = useState<InvoiceLocal[]>([])
+  const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
@@ -56,15 +38,15 @@ export function useInvoices(params: UseInvoicesParams = {}) {
         
         // Calculer stats
         const totalInvoiced = response.data.data.invoices.reduce(
-          (sum: number, inv: InvoiceLocal) => sum + inv.amountTotal,
+          (sum: number, inv: Invoice) => sum + inv.amount_total,
           0
         )
         const totalPaid = response.data.data.invoices
-          .filter((inv: InvoiceLocal) => inv.paymentState === 'paid')
-          .reduce((sum: number, inv: InvoiceLocal) => sum + inv.amountTotal, 0)
+          .filter((inv: Invoice) => inv.payment_state === 'paid')
+          .reduce((sum: number, inv: Invoice) => sum + inv.amount_total, 0)
         const totalPending = response.data.data.invoices
-          .filter((inv: InvoiceLocal) => inv.paymentState === 'not_paid')
-          .reduce((sum: number, inv: InvoiceLocal) => sum + inv.amountResidual, 0)
+          .filter((inv: Invoice) => inv.payment_state === 'not_paid')
+          .reduce((sum: number, inv: Invoice) => sum + inv.amount_residual, 0)
         
         setStats({
           totalInvoiced,

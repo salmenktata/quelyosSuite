@@ -230,9 +230,9 @@ export default function CampaignsPage() {
                       <td className="px-6 py-4">
                         {campaign.status === 'sent' && campaign.channel === 'email' ? (
                           <div className="text-sm">
-                            <span className="text-emerald-600 dark:text-emerald-400">{campaign.rates.open}% ouvert</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">{campaign.rates.open_rate}% ouvert</span>
                             <span className="text-gray-400 mx-1">·</span>
-                            <span className="text-blue-600 dark:text-blue-400">{campaign.rates.click}% clics</span>
+                            <span className="text-blue-600 dark:text-blue-400">{campaign.rates.click_rate}% clics</span>
                           </div>
                         ) : (
                           <span className="text-sm text-gray-400">-</span>

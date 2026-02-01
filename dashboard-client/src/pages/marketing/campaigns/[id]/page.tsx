@@ -191,13 +191,13 @@ export default function CampaignDetailPage() {
                     <>
                       <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                         <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                          {campaign.rates.open}%
+                          {campaign.rates.open_rate}%
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">Taux d'ouverture</div>
                       </div>
                       <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                         <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                          {campaign.rates.click}%
+                          {campaign.rates.click_rate}%
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">Taux de clic</div>
                       </div>

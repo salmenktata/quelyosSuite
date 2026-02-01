@@ -39,7 +39,13 @@ Toutes les erreurs rencontrées lors de la session précédente ont été corrig
 - **Plans tarifaires** → 3 plans vérifiés (Starter, Pro, Enterprise)
 - **Config Brevo** → Créée avec clé API pré-configurée et **ACTIVÉE**
 - **Config Chatbot Groq** → Créée avec clé API chiffrée et **ACTIVÉE**
-- **Version** : 19.0.1.68.0 (hook corrigé - champ 'name' retiré)
+- **Version** : 19.0.1.70.0 (hook corrigé - company_id ajouté pour EmailConfig)
+
+### 6. quelyos_core - Installation automatique ✅
+- **Module orchestrateur** → auto_install=True (seul module autorisé)
+- **Dépendance** → quelyos_api (déclenche installation complète)
+- **Configuration** → Désactive tours Odoo, active modules optionnels
+- **Version** : 19.0.1.0.0
 
 ### 6. Documentation mise à jour ✅
 - `.claude/FRESH_INSTALL_FIXES.md` - Détails de toutes les corrections
@@ -79,9 +85,10 @@ Toutes les erreurs rencontrées lors de la session précédente ont été corrig
 - ✅ Redis prêt
 
 **Étape 4** : Installation Odoo + Modules (~90s)
+- ✅ quelyos_core installé AUTOMATIQUEMENT (auto_install=True)
+- ✅ quelyos_api installé par dépendance (v19.0.1.70.0)
 - ✅ 13 modules Odoo Community installés
 - ✅ stock_inventory, stock_warehouse_calendar installés
-- ✅ quelyos_api installé (v19.0.1.63.0)
 - ✅ **AUCUNE ERREUR** : faker, jwt, stripe, redis tous présents
 
 **Étape 5** : Démarrage Odoo production (~10s)
@@ -198,15 +205,17 @@ docker exec quelyos-postgres psql -U quelyos -d quelyos -c \
 - ⏱️ Temps : 30+ minutes (avec erreurs et corrections)
 - 🐛 Endpoint /api/auth/sso-login : HTTP 404
 
-### Après (Maintenant)
+### Après (v19.0.1.70.0 + quelyos_core)
+- ✅ **quelyos_core** : Installation AUTOMATIQUE (auto_install=True)
 - ✅ Toutes les dépendances pré-installées dans l'image
-- ✅ Hooks conformes Odoo 19
+- ✅ Hooks conformes Odoo 19 + company_id fix
 - ✅ XML valide avec préfixes x_
 - ✅ Image quelyos/odoo:19 personnalisée
 - ✅ Utilisateur admin configuré automatiquement
 - ✅ Groupe Access Rights ajouté (tous modules accessibles)
-- ✅ Config Brevo créée avec **clé API pré-configurée et ACTIVÉE**
-- ✅ Config Chatbot Groq créée avec **clé API chiffrée et ACTIVÉE**
+- ✅ Config Brevo créée avec **company_id + clé API ACTIVÉE**
+- ✅ Config Chatbot Groq créée avec **clé API chiffrée ACTIVÉE**
+- ✅ Tours Odoo désactivés (website_generator, web_tour)
 - ⏱️ Temps : ~2 minutes (automatique)
 - ✅ Endpoint /api/auth/sso-login : HTTP 401 ✓
 - 🎉 Dashboard : 9 modules visibles immédiatement

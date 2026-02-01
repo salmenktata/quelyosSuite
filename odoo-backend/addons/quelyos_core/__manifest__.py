@@ -1,86 +1,50 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Quelyos Core Orchestrator',
-    'version': '19.0.3.4.0',
-    'category': 'Quelyos/Foundation',
-    'summary': 'Orchestrateur principal Quelyos Suite - Installation automatique complète',
+    'name': 'Quelyos Core',
+    'version': '19.0.1.5.0',
+    'category': 'Quelyos/Core',
+    'summary': 'Module orchestrateur - Installation automatique Quelyos Suite',
     'description': """
-        Quelyos Core Orchestrator - 100% Autonome
-        ==========================================
-        Module orchestrateur de la suite Quelyos qui automatise l'installation complète de l'ERP.
+        Module Orchestrateur Quelyos Core
+        ==================================
 
-        **Installation en 1 clic** : Tous les modules requis sont installés automatiquement.
+        Ce module minimal sert d'orchestrateur pour l'installation automatique
+        de la suite complète Quelyos.
 
-        Modules Odoo Standard installés (Core Odoo 19 uniquement) :
-        -----------------------------------------------------------
-        - Gestion des ventes (sale_management, crm, delivery, payment, loyalty)
-        - Gestion du stock (stock)
-        - Gestion des contacts (contacts)
-        - Site web et e-commerce (website, website_sale)
-        - Comptabilité de base (account)
-        - Produits et catalogue (product)
-        - Email marketing (mass_mailing)
+        Rôle :
+        ------
+        - auto_install=True : S'installe automatiquement lors de la création
+          d'une nouvelle base de données Odoo 19
+        - Dépend de quelyos_api : Déclenche l'installation complète de la suite
+        - Aucune fonctionnalité propre : Module purement technique
 
-        Modules Quelyos natifs (zéro dépendance OCA/tierce) :
-        -----------------------------------------------------
-        - **quelyos_api** : Infrastructure multi-tenant et API REST (TOUJOURS)
-        - **quelyos_stock_advanced** : Inventaire avancé (remplace 3 modules OCA)
-        - **quelyos_finance** : Gestion trésorerie et budgets (par défaut OUI)
-        - **quelyos_sms_tn** : Notifications SMS Tunisie (par défaut OUI)
-
-        Isolation Complète :
-        -------------------
-        Quelyos Suite ne dépend QUE du core Odoo 19 standard. Aucune dépendance OCA ou tierce.
-        Garantit la pérennité, évite les régressions lors de mises à jour, simplifie la maintenance.
-
-        Configuration :
-        --------------
-        Modifier les paramètres système dans Paramètres > Technique > Paramètres > Paramètres système :
-        - quelyos.install_stock_advanced
-        - quelyos.install_finance
-        - quelyos.install_sms_tn
+        Conformité :
+        ------------
+        - Conforme à ODOO_ISOLATION_RULES.md
+        - Seul module Quelyos autorisé avec auto_install=True
+        - Ne modifie aucun comportement Odoo core
+        - Installation/désinstallation propre sans impact
 
         Architecture :
         --------------
-        Ce module utilise le mécanisme natif de dépendances Odoo + post_init_hook pour garantir
-        un ordre d'installation correct, une configuration système optimale, et l'isolation complète.
+        quelyos_core (orchestrateur, auto_install=True)
+            └─> quelyos_api (suite complète)
+                └─> 14 modules Odoo Community
+                └─> 2 modules OCA (stock_inventory, stock_warehouse_calendar)
     """,
     'author': 'Quelyos',
     'website': 'https://quelyos.com',
     'license': 'LGPL-3',
     'depends': [
-        # Odoo Standard Core
-        'base',
-        'web',
-        'mail',
-        'website',
-        'website_sale',
-        # Odoo Standard Commerce
-        'sale_management',
-        'product',
-        'account',
-        'crm',
-        'delivery',
-        'payment',
-        'loyalty',
-        # Odoo Standard Inventory
-        'stock',
-        'contacts',
-        # Odoo Standard Marketing
-        'mass_mailing',
-        # Quelyos Core Infrastructure
-        'quelyos_api',  # Infrastructure multi-tenant et API REST (OBLIGATOIRE)
-        # ISOLATION COMPLÈTE : Aucune dépendance OCA/tierce
-        # Fonctionnalités stock avancées fournies par quelyos_stock_advanced
+        'quelyos_api',  # Déclenche installation suite complète
     ],
     'data': [
-        'data/module_category_data.xml',
-        'data/config_data.xml',
-        'data/installer_config_data.xml',
+        'data/installer_config_data.xml',  # Config modules optionnels + désactivation tours Odoo
+        'data/config_data.xml',             # Configuration système additionnelle
+        'data/module_category_data.xml',    # Catégories modules Quelyos
     ],
-    'post_init_hook': 'post_init_hook',
+    'post_init_hook': 'post_init_hook',  # Configuration automatique après installation
     'installable': True,
-    'application': True,
-    'auto_install': False,
-    'sequence': 1,
+    'application': False,  # Pas une application visible
+    'auto_install': True,  # ✅ INSTALLATION AUTOMATIQUE (seul module autorisé)
 }
