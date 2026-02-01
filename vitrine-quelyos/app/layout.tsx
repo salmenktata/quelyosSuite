@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ConditionalChatBot from "./components/ConditionalChatBot";
+import dynamic from "next/dynamic";
+
+// Lazy load ChatBot (non-critique, below-the-fold)
+const ConditionalChatBot = dynamic(() => import("./components/ConditionalChatBot"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// ISR avec revalidation toutes les heures
-export const revalidate = 3600;
+// Force SSG (Static Site Generation) pour performance optimale
+export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://quelyos.com"),

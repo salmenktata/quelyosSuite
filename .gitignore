@@ -160,3 +160,7 @@ backoffice/.env
 /tmp/quelyos-*.log
 /tmp/quelyos-*.pid
 docs/audits/
+
+# Performance reports (générés par outils d'analyse)
+perf-reports/
+**/perf-reports/

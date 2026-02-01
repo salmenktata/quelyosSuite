@@ -3211,12 +3211,16 @@ class QuelyosInventoryAPI(BaseController):
             total: Nombre total
         """
         try:
-            # TODO PRODUCTION: Réactiver vérification permissions
-            # if not request.env.user.has_group('stock.group_stock_user'):
-            #     return {
-            #         'success': False,
-            #         '         'error': 'Accès refusé. Droits stock user requis.'
-            #     }
+            # SÉCURITÉ P0: Authentification obligatoire (en attendant JWT)
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            if not request.env.user.has_group('stock.group_stock_user'):
+                return {
+                    'success': False,
+                    'error': 'Accès refusé. Droits stock user requis.'
+                }
 
             limit = params.get('limit', 20)
             offset = params.get('offset', 0)

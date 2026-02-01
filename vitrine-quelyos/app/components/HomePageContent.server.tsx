@@ -1,10 +1,24 @@
 import Link from "next/link";
-import * as Icons from "./Icons";
-import { Target, Compass } from "lucide-react";
+import dynamic from "next/dynamic";
+import { MapPin, Sparkles, Zap, ArrowRight } from "./Icons";
+import { Compass } from "lucide-react";
 import Footer from "./Footer";
 import Container from "./Container";
 import Header from "./Header";
 import { getAllSolutions } from "../lib/solutions-data";
+
+// Lazy load composants below-the-fold pour optimiser bundle initial
+const DifferentiatorSection = dynamic(() => import("./DifferentiatorSection"), {
+  loading: () => <div className="relative py-20" />, // Placeholder pour éviter CLS
+});
+
+const StatsSection = dynamic(() => import("./StatsSection"), {
+  loading: () => <div className="relative border-y border-white/10 py-16" />,
+});
+
+const CTASection = dynamic(() => import("./CTASection"), {
+  loading: () => <div className="relative py-20" />,
+});
 
 const _modules = [
   {
@@ -121,7 +135,7 @@ export default function HomePageContentServer() {
         <Container>
           <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-300">
-              <Icons.MapPin className="h-4 w-4" />
+              <MapPin className="h-4 w-4" />
               Suite ERP française • Solutions métier intégrées
             </div>
             <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
@@ -141,12 +155,12 @@ export default function HomePageContentServer() {
               </span>
               <span className="text-slate-600">•</span>
               <span className="flex items-center gap-1">
-                <Icons.Sparkles className="h-4 w-4 text-purple-400" />
+                <Sparkles className="h-4 w-4 text-purple-400" />
                 Tout-en-un par secteur
               </span>
               <span className="text-slate-600">•</span>
               <span className="flex items-center gap-1">
-                <Icons.Zap className="h-4 w-4 text-emerald-400" />
+                <Zap className="h-4 w-4 text-emerald-400" />
                 Opérationnel en 1h
               </span>
             </div>
@@ -156,7 +170,7 @@ export default function HomePageContentServer() {
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
               >
                 Essai gratuit 30 jours
-                <Icons.ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
                 href="/tarifs"
@@ -190,7 +204,7 @@ export default function HomePageContentServer() {
                 >
                   <div className="relative">
                     <div className="mb-4 inline-flex rounded-xl bg-indigo-500/10 p-3">
-                      <Icons.Sparkles className="h-8 w-8 text-indigo-400" />
+                      <Sparkles className="h-8 w-8 text-indigo-400" />
                     </div>
                     <h3 className="mb-1 text-xl font-bold text-white">
                       {solution.name}
@@ -208,7 +222,7 @@ export default function HomePageContentServer() {
                     <div className="flex items-center justify-between">
                       <span className="inline-flex items-center gap-1 text-sm font-medium text-indigo-400 transition-all group-hover:underline">
                         Découvrir
-                        <Icons.ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-4 w-4" />
                       </span>
                       <div className="text-xs text-slate-500">
                         {solution.stats.clients}
@@ -225,131 +239,18 @@ export default function HomePageContentServer() {
               className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
             >
               Voir toutes les solutions métier
-              <Icons.ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </Container>
       </section>
 
-      {/* Différenciateurs */}
-      <section className="relative py-20">
-        <Container>
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Une approche métier, pas technique
-            </h2>
-            <p className="mt-4 text-lg text-slate-400">
-              Des solutions pensées pour votre activité, pas un ERP générique
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { icon: Target, title: "Solutions métier clés en main", desc: "Chaque solution est pensée pour votre secteur. Pas de fonctionnalités inutiles, que l'essentiel.", color: "text-indigo-400" },
-              { icon: Icons.Zap, title: "Opérationnel en 1 heure", desc: "Import automatique, configuration guidée. Vous êtes productif dès le premier jour.", color: "text-purple-400" },
-              { icon: Icons.Sparkles, title: "IA qui anticipe vos besoins", desc: "Prévisions trésorerie à 90%, suggestions de commandes, alertes proactives.", color: "text-emerald-400" },
-              { icon: Icons.TrendingUp, title: "ROI mesurable", desc: "Nos clients gagnent en moyenne 10h/semaine et augmentent leur CA de 30%.", color: "text-blue-400" },
-              { icon: Icons.Shield, title: "Made in France, RGPD natif", desc: "Hébergement France, support francophone, conformité garantie.", color: "text-cyan-400" },
-              { icon: Icons.DollarSign, title: "Tarifs transparents", desc: "Un prix fixe par solution. Pas de surprise, pas de frais cachés.", color: "text-orange-400" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-white/10 bg-slate-900/50 p-6 backdrop-blur-sm"
-              >
-                <item.icon className={`mb-4 h-8 w-8 ${item.color}`} />
-                <h3 className="mb-2 text-lg font-semibold text-white">{item.title}</h3>
-                <p className="text-sm text-slate-400">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* Différenciateurs - Lazy loaded */}
+      <DifferentiatorSection />
 
-      {/* Call to Action finale */}
-      <section className="relative py-20">
-        <Container>
-          <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/50 to-violet-950/50 p-12 text-center backdrop-blur-sm">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Prêt à transformer votre activité ?
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-300">
-              Rejoignez les entrepreneurs qui ont choisi Quelyos pour piloter leur business.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/solutions"
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-8 py-4 text-lg font-medium text-white transition-all hover:from-indigo-600 hover:to-indigo-700"
-              >
-                Découvrir les solutions
-                <Icons.ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-lg font-medium text-white transition-all hover:bg-white/10"
-              >
-                Nous contacter
-              </Link>
-            </div>
-            <p className="mt-6 text-sm text-slate-400">
-              Essai gratuit 30 jours • Sans carte bancaire • Support français
-            </p>
-          </div>
-        </Container>
-      </section>
-
-      {/* Stats */}
-      <section className="relative border-y border-white/10 bg-slate-900/50 py-16">
-        <Container>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            {[
-              { label: "Solutions intégrées", value: "8", icon: Icons.Layers },
-              { label: "Fonctionnalités", value: "+250", icon: Icons.Sparkles },
-              { label: "Prévisions IA", value: "90j", icon: Icons.RefreshCw },
-              { label: "Hébergement", value: "France", icon: Icons.MapPin },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="text-center"
-              >
-                <stat.icon className="mx-auto mb-3 h-8 w-8 text-indigo-400" />
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
-                <p className="mt-1 text-sm text-slate-400">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA final */}
-      <section className="relative py-20">
-        <Container narrow>
-          <div
-            className="overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/50 to-purple-950/50 p-8 text-center backdrop-blur-sm sm:p-12"
-          >
-            <Icons.Sparkles className="mx-auto mb-6 h-12 w-12 text-indigo-400" />
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Simplifiez votre gestion dès aujourd&apos;hui
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-              30 jours d&apos;essai gratuit, sans engagement. Toutes les fonctionnalités incluses.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-medium text-white transition-all hover:from-indigo-600 hover:to-purple-700"
-              >
-                Essai gratuit 30 jours
-                <Icons.ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link
-                href="/tarifs"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition-all hover:bg-white/10"
-              >
-                Voir les tarifs
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* CTA + Stats + CTA Final - Lazy loaded */}
+      <CTASection />
+      <StatsSection />
 
       <Footer />
     </div>
