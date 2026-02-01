@@ -68,6 +68,7 @@ const PlanSchema = z.object({
   trial_days: z.number().nonnegative().default(14),
   is_default: z.boolean().optional().default(false),
   is_popular: z.boolean().optional().default(false),
+  enabled_modules: z.array(z.string()).optional().default([]),
   features: z.object({
     wishlist_enabled: z.boolean(),
     reviews_enabled: z.boolean(),
