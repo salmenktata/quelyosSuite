@@ -20,8 +20,8 @@ export default function BankImportPage() {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('format', format)
-    const response = await apiClient.post('/finance/bank-statements/import', formData)
-    if (response.data.success) setResult(response.data.data)
+    const response = await apiClient.post<{ success: boolean; data: ImportResult }>('/finance/bank-statements/import', formData)
+    if (response.data.success && response.data.data) setResult(response.data.data)
     setImporting(false)
   }
 

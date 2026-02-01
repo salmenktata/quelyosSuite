@@ -344,6 +344,7 @@ export interface Cart {
   shipping: number
   discount: number
   total: number
+  amount_total?: number // Alias for total (backend naming)
   currency?: string
   coupon_code?: string
   coupon_discount?: number

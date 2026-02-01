@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
 
 export default function CFODashboardPage() {
-  const [kpis, setKpis] = useState<Record<string, unknown> | null>(null)
+  const [kpis, setKpis] = useState<Record<string, any> | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

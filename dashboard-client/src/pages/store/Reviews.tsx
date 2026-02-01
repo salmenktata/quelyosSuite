@@ -8,7 +8,7 @@
  * - Statistiques (total, en attente, note moyenne)
  * - Recherche par produit ou client
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Star, Check, X, MessageSquare, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';

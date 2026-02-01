@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { apiClient } from '@/lib/api'
 
 interface UseTaxReportsParams {
@@ -21,11 +21,7 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchReports()
-  }, [params.year, params.country])
-
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     try {
       setLoading(true)
       const response = await apiClient.post<{
@@ -42,7 +38,11 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params])
+
+  useEffect(() => {
+    fetchReports()
+  }, [fetchReports])
 
   const generate = async (year: number, month: number, country: string) => {
     const response = await apiClient.post('/finance/tax-reports/generate', { year, month, country })

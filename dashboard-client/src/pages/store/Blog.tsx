@@ -8,7 +8,7 @@
  * - Statistiques de lecture
  * - Mise en avant d'articles
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Eye, FileText, Clock, Tag, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
@@ -47,34 +47,7 @@ export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [editing, setEditing] = useState<BlogPost | null>(null);
 
-  useEffect(() => {
-    fetchCategories();
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [selectedCategory]);
-
-  const fetchCategories = async () => {
-    try {
-      const data = await apiFetchJson<{ result?: { success: boolean; categories: BlogCategory[] } }>(
-        '/api/admin/blog/categories',
-        {
-          method: 'POST',
-          body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {} }),
-        }
-      );
-      if (data.result?.success) {
-        setCategories(data.result.categories);
-      }
-    } catch {
-      logger.error("Erreur attrapée");
-      // Categories fetch error silenced
-    }
-  };
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -98,6 +71,33 @@ export default function Blog() {
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchPosts();
+  }, [fetchPosts]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await apiFetchJson<{ result?: { success: boolean; categories: BlogCategory[] } }>(
+        '/api/admin/blog/categories',
+        {
+          method: 'POST',
+          body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {} }),
+        }
+      );
+      if (data.result?.success) {
+        setCategories(data.result.categories);
+      }
+    } catch {
+      logger.error("Erreur attrapée");
+      // Categories fetch error silenced
     }
   };
 

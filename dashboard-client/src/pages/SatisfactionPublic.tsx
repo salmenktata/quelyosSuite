@@ -7,7 +7,7 @@
  * Route : /satisfaction/:token
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Star, CheckCircle, AlertCircle, Loader2, MessageSquare } from 'lucide-react'
 import { config } from '@/lib/config'
@@ -35,11 +35,7 @@ export default function SatisfactionPublic() {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    loadTicketInfo()
-  }, [token])
-
-  const loadTicketInfo = async () => {
+  const loadTicketInfo = useCallback(async () => {
     if (!token) {
       setError('Lien invalide')
       setViewState('error')
@@ -73,7 +69,11 @@ export default function SatisfactionPublic() {
       setError('Impossible de charger les informations du ticket')
       setViewState('error')
     }
-  }
+  }, [token])
+
+  useEffect(() => {
+    loadTicketInfo()
+  }, [loadTicketInfo])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

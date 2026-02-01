@@ -8,7 +8,7 @@
  * - Gestion des états (nouveau, en cours, résolu, fermé)
  * - Attribution et suivi
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DOMPurify from 'dompurify';
 import { MessageSquare, Clock, User, Send, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';

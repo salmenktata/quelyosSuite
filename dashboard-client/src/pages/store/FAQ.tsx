@@ -8,7 +8,7 @@
  * - Accordéon pour afficher les réponses
  * - Options de publication et mise en avant
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DOMPurify from 'dompurify';
 import { Plus, Edit, Trash2, ChevronDown, ChevronRight, HelpCircle, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';

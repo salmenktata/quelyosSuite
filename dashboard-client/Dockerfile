@@ -19,7 +19,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copie des fichiers de dépendances (layer cache)
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY dashboard-client/package.json ./dashboard-client/
 COPY packages/ ./packages/
 
