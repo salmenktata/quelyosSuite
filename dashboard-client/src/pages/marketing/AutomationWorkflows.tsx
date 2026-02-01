@@ -274,3 +274,5 @@ export function AutomationWorkflows() {
     </Layout>
   );
 }
+
+export default AutomationWorkflows

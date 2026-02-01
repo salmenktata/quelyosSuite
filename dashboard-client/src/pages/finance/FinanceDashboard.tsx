@@ -1,5 +1,21 @@
+/**
+ * Page Tableau de Bord Finance
+ *
+ * Fonctionnalités :
+ * - KPIs vitaux : solde actuel, évolution quotidienne et mensuelle
+ * - Alertes & actions urgentes : notifications prioritaires en temps réel
+ * - KPIs critiques TPE/PME : métriques clés pour piloter l'activité
+ * - Timeline de trésorerie : projection sur 30/60/90 jours avec prévisions
+ * - Insights AI : analyse automatique et recommandations personnalisées
+ * - Activité récente : dernières transactions et mouvements
+ * - Mode comparaison : analyse comparative avec périodes précédentes
+ * - Ajout rapide : création express de transactions via FAB
+ */
+
 import React, { useEffect, useMemo, useState, Suspense } from "react";
-import { ModularLayout } from "@/components/ModularLayout";
+import { Layout } from "@/components/Layout";
+import { Breadcrumbs, PageNotice, Button } from "@/components/common";
+import { financeNotices } from "@/lib/notices";
 import { useAuth } from "@/lib/finance/compat/auth";
 import { useCurrency } from "@/lib/finance/CurrencyContext";
 import { FadeInUp } from "@/lib/finance/compat/animated";
@@ -85,27 +101,33 @@ export default function DashboardPage() {
   // Show error state if data fetch failed (ignore auth errors - will redirect to login)
   if (dashboardError && user) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <p className="mb-4 text-red-500">
-            Erreur lors du chargement du tableau de bord
-          </p>
-          <button
-            onClick={() => refetch()}
-            className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90"
-          >
-            Réessayer
-          </button>
+      <Layout>
+        <div className="p-4 md:p-8">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+            <p className="text-red-800 dark:text-red-200 mb-4">
+              Erreur lors du chargement du tableau de bord
+            </p>
+            <Button variant="secondary" onClick={() => refetch()}>
+              Réessayer
+            </Button>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   const loading = isDashboardLoading || !dashboardData;
 
   return (
-    <ModularLayout>
-      <div className="space-y-4 sm:space-y-6 lg:space-y-8 p-4 md:p-8">
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Tableau de bord', href: '/dashboard' },
+            { label: 'Finance' },
+          ]}
+        />
+
         {/* Dashboard Header with Time Range Selector & Comparison Toggle */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -127,6 +149,8 @@ export default function DashboardPage() {
           />
         </div>
       </div>
+
+      <PageNotice config={financeNotices.dashboard} className="mb-6" />
 
       {/* 1. Hero Section - KPIs Vitaux */}
       {loading ? (
@@ -209,6 +233,6 @@ export default function DashboardPage() {
           onOpenChange={setIsQuickAddOpen}
         />
       </div>
-    </ModularLayout>
+    </Layout>
   );
 }

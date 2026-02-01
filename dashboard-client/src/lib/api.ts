@@ -259,7 +259,7 @@ class ApiClient {
 
       // Convertir en format LoginResponse pour compatibilité
       return {
-        success: true,
+        success: true, authenticated: true,
         session_id: result.access_token, // Pour compatibilité legacy
         user: {
           id: result.user.id,
@@ -368,21 +368,21 @@ class ApiClient {
    */
   async checkSession(): Promise<SessionResponse> {
     if (!tokenService.isAuthenticated()) {
-      return { success: false, is_authenticated: false }
+      return { success: false, authenticated: false, is_authenticated: false }
     }
 
     try {
       const userInfo = await this.getUserInfo()
       if (userInfo.success && userInfo.data?.user) {
         return {
-          success: true,
+          success: true, authenticated: true,
           is_authenticated: true,
           user: userInfo.data.user,
         }
       }
-      return { success: false, is_authenticated: false }
+      return { success: false, authenticated: false, is_authenticated: false }
     } catch {
-      return { success: false, is_authenticated: false }
+      return { success: false, authenticated: false, is_authenticated: false }
     }
   }
 

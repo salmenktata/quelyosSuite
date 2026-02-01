@@ -28,6 +28,31 @@ import type { PageNoticeConfig } from './types';
  * Couleur: emerald (vert)
  */
 export const financeNotices: Record<string, PageNoticeConfig> = {
+  // Dashboard
+  dashboard: {
+    pageId: 'finance-dashboard',
+    title: 'Tableau de bord Finance',
+    purpose:
+      "Pilotez votre trésorerie en temps réel avec KPIs, alertes, prévisions et insights personnalisés pour optimiser vos décisions financières.",
+    icon: BarChart3 as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Navigation rapide',
+        icon: Lightbulb,
+        items: [
+          'KPIs Hero : solde actuel, évolution et tendances instantanées',
+          'Alertes prioritaires : actions urgentes et notifications importantes',
+          'KPIs critiques : métriques clés pour piloter votre activité (DSO, BFR, cash burn)',
+          'Timeline 90 jours : projection trésorerie avec zones de risque identifiées',
+          'Insights AI : analyses automatiques et recommandations contextuelles',
+          'Activité récente : dernières transactions et mouvements bancaires',
+          'Mode comparaison : comparez avec périodes antérieures pour identifier les écarts',
+        ],
+      },
+    ],
+  },
+
   // Paramètres
   settings: {
     pageId: 'finance-settings',

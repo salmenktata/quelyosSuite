@@ -273,3 +273,5 @@ export function CampaignTrackingDetail() {
     </Layout>
   );
 }
+
+export default CampaignTrackingDetail

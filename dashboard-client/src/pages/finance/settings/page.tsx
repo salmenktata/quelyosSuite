@@ -11,7 +11,8 @@
  */
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { Layout } from "@/components/Layout";
 import { Breadcrumbs, PageNotice, SkeletonTable } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useRequireAuth } from "@/lib/finance/compat/auth";
@@ -60,6 +61,7 @@ const settingsGroups = [
 
 export default function SettingsOverviewPage() {
   useRequireAuth();
+  const location = useLocation();
   const [loading, setLoading] = React.useState(false);
   const [initialLoading, setInitialLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -142,7 +144,8 @@ export default function SettingsOverviewPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
       <Breadcrumbs
           items={[
             { label: "Finance", href: "/finance" },
@@ -210,7 +213,11 @@ export default function SettingsOverviewPage() {
                     <Link
                       key={section.href}
                       to={section.href}
-                      className="group flex h-full flex-col justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm transition hover:shadow-md hover:border-emerald-500 dark:hover:border-emerald-600"
+                      className={`group flex h-full flex-col justify-between rounded-lg border p-5 shadow-sm transition ${
+                        location.pathname === section.href
+                          ? 'border-emerald-500 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-emerald-500 dark:hover:border-emerald-600'
+                      }`}
                     >
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
@@ -319,5 +326,6 @@ export default function SettingsOverviewPage() {
         cancelText="Annuler"
       />
     </div>
-  );
+  </Layout>
+);
 }
