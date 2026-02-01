@@ -88,9 +88,16 @@ export default function NewInvoicePage() {
         })),
       }
 
-      const response = await apiClient.post('/finance/invoices/create', payload)
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          id: number;
+          name: string;
+        };
+        error?: string;
+      }>('/finance/invoices/create', payload)
 
-      if (response.data.success) {
+      if (response.data.success && response.data.data) {
         const invoiceId = response.data.data.id
 
         // Si validation demandée

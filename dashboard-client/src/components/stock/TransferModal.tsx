@@ -47,8 +47,14 @@ export function TransferModal({ onClose, onSuccess }: TransferModalProps) {
   })
 
   const products = ((productsData?.items || productsData?.data) as StockProduct[]) || []
-  const fromLocations = fromLocationsData?.data?.locations || []
-  const toLocations = toLocationsData?.data?.locations || []
+  const fromLocations = useMemo(() =>
+    fromLocationsData?.data?.locations || [],
+    [fromLocationsData]
+  )
+  const toLocations = useMemo(() =>
+    toLocationsData?.data?.locations || [],
+    [toLocationsData]
+  )
 
   // Validation
   const quantityNum = parseFloat(quantity) || 0

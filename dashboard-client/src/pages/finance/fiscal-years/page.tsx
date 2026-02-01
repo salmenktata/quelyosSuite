@@ -14,8 +14,13 @@ export default function FiscalYearsPage() {
   const [years, setYears] = useState<FiscalYear[]>([])
 
   useEffect(() => {
-    apiClient.post('/finance/fiscal-years').then(res => {
-      if (res.data.success) setYears(res.data.data.fiscalYears)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        fiscalYears: FiscalYear[];
+      };
+    }>('/finance/fiscal-years').then(res => {
+      if (res.data.success && res.data.data) setYears(res.data.data.fiscalYears)
     })
   }, [])
 

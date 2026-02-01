@@ -17,7 +17,7 @@ import { financeNotices } from '@/lib/notices/finance-notices'
 import { AlertCircle, RefreshCw, Building2 } from 'lucide-react'
 
 export default function ConsolidationPage() {
-  const [entities, setEntities] = useState([])
+  const [entities, setEntities] = useState<any[]>([])
   const [balanceSheet, setBalanceSheet] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -26,12 +26,20 @@ export default function ConsolidationPage() {
     setLoading(true)
     setError(false)
     Promise.all([
-      apiClient.post('/finance/consolidation/entities'),
-      apiClient.post('/finance/consolidation/balance-sheet'),
+      apiClient.post<{
+        success: boolean;
+        data: {
+          entities: any[];
+        };
+      }>('/finance/consolidation/entities'),
+      apiClient.post<{
+        success: boolean;
+        data: any;
+      }>('/finance/consolidation/balance-sheet'),
     ])
       .then(([entitiesRes, balanceRes]) => {
-        if (entitiesRes.data.success) setEntities(entitiesRes.data.data.entities)
-        if (balanceRes.data.success) setBalanceSheet(balanceRes.data.data)
+        if (entitiesRes.data.success && entitiesRes.data.data) setEntities(entitiesRes.data.data.entities)
+        if (balanceRes.data.success && balanceRes.data.data) setBalanceSheet(balanceRes.data.data)
         setLoading(false)
       })
       .catch(_err => {

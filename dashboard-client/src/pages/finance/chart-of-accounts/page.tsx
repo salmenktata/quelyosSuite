@@ -10,7 +10,7 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
 export default function ChartOfAccountsPage() {
-  const [accounts, setAccounts] = useState([])
+  const [accounts, setAccounts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

@@ -15,8 +15,13 @@ export default function AnalyticsAxesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/analytics/axes').then(res => {
-      if (res.data.success) setAxes(res.data.data.axes)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        axes: AnalyticAxis[];
+      };
+    }>('/finance/analytics/axes').then(res => {
+      if (res.data.success && res.data.data) setAxes(res.data.data.axes)
       setLoading(false)
     })
   }, [])

@@ -59,8 +59,12 @@ export default function InvoiceDetailPage() {
     try {
       setLoading(true)
       setError(null)
-      const response = await apiClient.post(`/finance/invoices/${id}`)
-      if (response.data.success) {
+      const response = await apiClient.post<{
+        success: boolean;
+        data: Invoice;
+        error?: string;
+      }>(`/finance/invoices/${id}`)
+      if (response.data.success && response.data.data) {
         setInvoice(response.data.data)
       } else {
         setError(response.data.error || 'Erreur lors du chargement de la facture')

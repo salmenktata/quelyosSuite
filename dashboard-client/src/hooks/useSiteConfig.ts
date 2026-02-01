@@ -11,6 +11,7 @@ export interface SiteConfig {
   wishlist_enabled: boolean
   reviews_enabled: boolean
   newsletter_enabled: boolean
+  guest_checkout_enabled?: boolean
   // Contact
   whatsapp_number: string
   contact_email: string
@@ -26,6 +27,18 @@ export interface SiteConfig {
   warranty_years: number
   // Paiement
   payment_methods: string[]
+  // SEO
+  site_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  og_image_url?: string
+  // Social
+  facebook_url?: string
+  instagram_url?: string
+  twitter_url?: string
+  youtube_url?: string
+  linkedin_url?: string
+  tiktok_url?: string
   // Catalogue (optionnel pour compatibilité)
   catalog_settings?: {
     viewers_count_enabled: boolean
@@ -40,6 +53,7 @@ export interface UpdateSiteConfigParams {
   wishlist_enabled?: boolean
   reviews_enabled?: boolean
   newsletter_enabled?: boolean
+  guest_checkout_enabled?: boolean
   // Contact
   whatsapp_number?: string
   contact_email?: string
@@ -55,6 +69,18 @@ export interface UpdateSiteConfigParams {
   warranty_years?: number
   // Paiement
   payment_methods?: string[]
+  // SEO
+  site_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  og_image_url?: string
+  // Social
+  facebook_url?: string
+  instagram_url?: string
+  twitter_url?: string
+  youtube_url?: string
+  linkedin_url?: string
+  tiktok_url?: string
   // Catalogue
   catalog_settings?: {
     viewers_count_enabled: boolean

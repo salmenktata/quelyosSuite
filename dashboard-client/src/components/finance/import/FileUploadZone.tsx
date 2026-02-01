@@ -19,7 +19,7 @@ export function FileUploadZone({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = useCallback((file: File): boolean => {
     // Vérifier extension
     const extension = file.name.split(".").pop()?.toLowerCase();
     if (!extension || !ACCEPTED_EXTENSIONS.includes(extension)) {
@@ -35,7 +35,7 @@ export function FileUploadZone({
     }
 
     return true;
-  };
+  }, [onError, maxSizeMB]);
 
   const handleFile = useCallback(
     (file: File) => {

@@ -16,8 +16,13 @@ export default function OpenBankingAccountsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/open-banking/accounts').then(res => {
-      if (res.data.success) setAccounts(res.data.data.accounts)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        accounts: BankAccount[];
+      };
+    }>('/finance/open-banking/accounts').then(res => {
+      if (res.data.success && res.data.data) setAccounts(res.data.data.accounts)
       setLoading(false)
     })
   }, [])

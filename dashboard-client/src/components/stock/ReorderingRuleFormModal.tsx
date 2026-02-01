@@ -56,7 +56,10 @@ export function ReorderingRuleFormModal({
   const { data: productsData } = useProducts({ include_archived: false })
 
   const warehouses = warehousesData || []
-  const products = (productsData?.items || productsData?.data || []) as Product[]
+  const products = useMemo(() =>
+    (productsData?.items || productsData?.data || []) as Product[],
+    [productsData]
+  )
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),

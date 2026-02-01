@@ -1,6 +1,7 @@
 interface Customer {
+  id?: number
   name: string
-  email: string
+  email?: string
   phone?: string | null
   street?: string | null
   zip?: string | null

@@ -19,8 +19,13 @@ export default function CostCentersPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/cost-centers').then(res => {
-      if (res.data.success) setCenters(res.data.data.costCenters)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        costCenters: CostCenter[];
+      };
+    }>('/finance/cost-centers').then(res => {
+      if (res.data.success && res.data.data) setCenters(res.data.data.costCenters)
       setLoading(false)
     })
   }, [])

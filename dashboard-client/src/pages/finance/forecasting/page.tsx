@@ -21,8 +21,14 @@ export default function ForecastingPage() {
 
   const loadPredictions = async () => {
     try {
-      const response = await apiClient.post('/finance/forecasting/predict', { days_ahead: 90 })
-      if (response.data.success) {
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          predictions: any[];
+          summary: any;
+        };
+      }>('/finance/forecasting/predict', { days_ahead: 90 })
+      if (response.data.success && response.data.data) {
         setPredictions(response.data.data.predictions)
         setSummary(response.data.data.summary)
       }

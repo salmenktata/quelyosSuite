@@ -17,7 +17,7 @@ import { useState } from 'react'
 export default function MaintenanceSettings() {
   const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'workflow' | 'sla'>('general')
 
-  const tabs = [
+  const tabs: Array<{ id: 'general' | 'notifications' | 'workflow' | 'sla'; label: string; icon: typeof SettingsIcon }> = [
     { id: 'general', label: 'Général', icon: SettingsIcon },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'workflow', label: 'Workflow', icon: Workflow },

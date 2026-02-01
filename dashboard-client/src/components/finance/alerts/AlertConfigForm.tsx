@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/finance/api";
 import { GlassCard, GlassButton } from "@/components/ui/glass";
 import { X, AlertTriangle, Info } from "lucide-react";
@@ -65,14 +65,7 @@ export default function AlertConfigForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mettre à jour le nom par défaut selon le type
-  useEffect(() => {
-    if (!alert && !formData.name) {
-      generateDefaultName();
-    }
-  }, [formData.type, formData.thresholdAmount, formData.horizonDays]);
-
-  function generateDefaultName() {
+  const generateDefaultName = useCallback(() => {
     let name = "";
     switch (formData.type) {
       case "THRESHOLD":
@@ -86,7 +79,14 @@ export default function AlertConfigForm({
         break;
     }
     setFormData((prev) => ({ ...prev, name }));
-  }
+  }, [formData.type, formData.thresholdAmount, formData.horizonDays]);
+
+  // Mettre à jour le nom par défaut selon le type
+  useEffect(() => {
+    if (!alert && !formData.name) {
+      generateDefaultName();
+    }
+  }, [alert, formData.name, generateDefaultName]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

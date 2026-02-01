@@ -4,11 +4,16 @@ import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
 
 export default function JournalsPage() {
-  const [journals, setJournals] = useState([])
+  const [journals, setJournals] = useState<any[]>([])
 
   useEffect(() => {
-    apiClient.post('/finance/journals').then(res => {
-      if (res.data.success) setJournals(res.data.data.journals)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        journals: any[];
+      };
+    }>('/finance/journals').then(res => {
+      if (res.data.success && res.data.data) setJournals(res.data.data.journals)
     })
   }, [])
 

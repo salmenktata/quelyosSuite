@@ -18,8 +18,13 @@ export default function SEPAMandatesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/sepa/mandates').then(res => {
-      if (res.data.success) setMandates(res.data.data.mandates)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        mandates: Mandate[];
+      };
+    }>('/finance/sepa/mandates').then(res => {
+      if (res.data.success && res.data.data) setMandates(res.data.data.mandates)
       setLoading(false)
     })
   }, [])

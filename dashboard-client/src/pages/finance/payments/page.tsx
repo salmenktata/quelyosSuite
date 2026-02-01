@@ -19,7 +19,7 @@ import { Plus, AlertCircle, RefreshCw, CreditCard } from 'lucide-react'
 
 export default function PaymentsPage() {
   const navigate = useNavigate()
-  const [payments, setPayments] = useState([])
+  const [payments, setPayments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -27,9 +27,14 @@ export default function PaymentsPage() {
     setLoading(true)
     setError(false)
     apiClient
-      .post('/finance/payments')
+      .post<{
+        success: boolean;
+        data: {
+          payments: any[];
+        };
+      }>('/finance/payments')
       .then(res => {
-        if (res.data.success) setPayments(res.data.data.payments)
+        if (res.data.success && res.data.data) setPayments(res.data.data.payments)
         setLoading(false)
       })
       .catch(_err => {

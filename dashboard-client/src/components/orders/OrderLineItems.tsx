@@ -3,7 +3,8 @@ import { ShoppingBag } from 'lucide-react'
 
 interface OrderLine {
   id: number
-  product: {
+  product?: {
+    id?: number
     name: string
     image?: string | null
   }

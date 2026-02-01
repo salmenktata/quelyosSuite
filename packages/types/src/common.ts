@@ -112,6 +112,7 @@ export interface Product {
   in_stock?: boolean
   stock_quantity?: number
   qty_available?: number
+  virtual_available?: number
   is_bestseller?: boolean
   is_new?: boolean
   discount_percent?: number
@@ -149,6 +150,7 @@ export interface ProductDetail extends Product {
   uom_id?: any; // TODO: typer correctement
   is_featured?: boolean;
   offer_end_date?: string | null;
+  virtual_available?: number;
   long_description?: string
   specifications?: Record<string, string>
   shipping_info?: string

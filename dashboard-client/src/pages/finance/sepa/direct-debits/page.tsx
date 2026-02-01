@@ -19,8 +19,13 @@ export default function SEPADirectDebitsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/sepa/direct-debits').then(res => {
-      if (res.data.success) setDebits(res.data.data.directDebits)
+    apiClient.post<{
+      success: boolean;
+      data: {
+        directDebits: DirectDebit[];
+      };
+    }>('/finance/sepa/direct-debits').then(res => {
+      if (res.data.success && res.data.data) setDebits(res.data.data.directDebits)
       setLoading(false)
     })
   }, [])

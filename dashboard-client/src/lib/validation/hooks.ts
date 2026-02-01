@@ -26,9 +26,9 @@ export function useZodForm<TOutput extends FieldValues>(
   schema: z.ZodType<TOutput>,
   options?: Omit<UseFormProps<TOutput>, 'resolver'>
 ) {
-  return useForm({
+  return useForm<TOutput>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     mode: 'onBlur',
     ...options,
   })

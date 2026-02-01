@@ -9,9 +9,12 @@ interface TrackingValue {
 }
 
 interface HistoryItem {
-  id: number
-  author: string
-  date: string | null
+  id?: number
+  author?: string
+  author_id?: number[]
+  user?: string
+  date?: string | null
+  action?: string
   body?: string | null
   trackingvalues?: TrackingValue[]
   subtype?: string | null
@@ -43,10 +46,10 @@ export function OrderHistory({ history, isLoading }: OrderHistoryProps) {
         Historique
       </h2>
       <div className="space-y-4 max-h-96 overflow-y-auto" role="log" aria-label="Historique des modifications">
-        {history.map((item) => (
-          <div key={item.id} className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 pb-4">
+        {history.map((item, index) => (
+          <div key={item.id || index} className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 pb-4">
             <div className="flex items-start justify-between mb-1 flex-wrap gap-2">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">{item.author}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{item.author || item.user || 'Inconnu'}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{item.date ? formatDate(item.date) : '-'}</p>
             </div>
 

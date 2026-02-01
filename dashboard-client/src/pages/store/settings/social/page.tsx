@@ -38,13 +38,14 @@ export default function SocialSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      const configData = config as any;
       setSocialConfig({
-        facebook_url: (config).facebook_url || "",
-        instagram_url: (config).instagram_url || "",
-        twitter_url: (config).twitter_url || "",
-        youtube_url: (config).youtube_url || "",
-        linkedin_url: (config).linkedin_url || "",
-        tiktok_url: (config).tiktok_url || "",
+        facebook_url: configData.facebook_url || "",
+        instagram_url: configData.instagram_url || "",
+        twitter_url: configData.twitter_url || "",
+        youtube_url: configData.youtube_url || "",
+        linkedin_url: configData.linkedin_url || "",
+        tiktok_url: configData.tiktok_url || "",
       });
     }
   }, [config]);
