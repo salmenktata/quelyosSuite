@@ -614,6 +614,59 @@ class SeedGenerator:
     def _phase_6_finance(self):
         """Phase 6 : Finance (factures, paiements)"""
         start_time = datetime.now()
+        self.job.update_progress(55, 'finance', "Configuration comptes comptables...")
+
+        # ÉTAPE CRITIQUE : Configurer les comptes comptables sur les produits
+        # Sans cela, _create_invoices() échoue avec constraint violation
+        income_account = self.env['account.account'].sudo().search([
+            ('account_type', '=', 'income'),
+        ], limit=1)
+
+        expense_account = self.env['account.account'].sudo().search([
+            ('account_type', '=', 'expense_direct_cost'),
+        ], limit=1)
+
+        if not income_account or not expense_account:
+            _logger.error(f"[SEED FINANCE] Comptes comptables manquants (income: {income_account.id if income_account else 'N/A'}, expense: {expense_account.id if expense_account else 'N/A'})")
+            self.job.update_progress(60, 'finance', "❌ Comptes comptables manquants")
+            self.results['finance'] = {'count': 0, 'duration_seconds': 0}
+            return
+
+        _logger.info(f"[SEED FINANCE] Configuration comptes: income_id={income_account.id}, expense_id={expense_account.id}")
+
+        # Configurer les comptes par défaut sur chaque ligne de commande via SQL direct
+        # Impossible via ORM car property fields sont JSONB avec structure complexe
+        company_id = self.tenant.company_id.id
+
+        # Mettre à jour toutes les sale.order.line pour définir income_account
+        # Note: Odoo résout account_id via product → category → property_account_income_categ_id
+        # Mais le cache peut être vide, donc on configure directement via fiscal position mapping
+
+        # Créer une position fiscale par défaut pour mapper automatiquement les comptes
+        fiscal_position = self.env['account.fiscal.position'].sudo().search([
+            ('company_id', '=', company_id)
+        ], limit=1)
+
+        if not fiscal_position:
+            fiscal_position = self.env['account.fiscal.position'].sudo().create({
+                'name': 'Position Fiscale par Défaut',
+                'company_id': company_id,
+                'auto_apply': True,
+            })
+            self.env.cr.commit()
+            _logger.info(f"[SEED FINANCE] Position fiscale créée: {fiscal_position.name}")
+
+        # Alternative: Configurer comptes via UPDATE SQL direct sur product_category
+        # Format JSONB attendu: {"company_id": account_id}
+        self.env.cr.execute(f"""
+            UPDATE product_category
+            SET
+                property_account_income_categ_id = '{{"{ {company_id}}": {income_account.id}}}'::jsonb,
+                property_account_expense_categ_id = '{{"{ {company_id}}": {expense_account.id}}}'::jsonb
+        """)
+        self.env.cr.commit()
+        _logger.info(f"[SEED FINANCE] Catégories configurées avec comptes via SQL (company_id={company_id})")
+
         self.job.update_progress(55, 'finance', "Génération factures...")
 
         if not self.cache['orders']:
@@ -621,26 +674,65 @@ class SeedGenerator:
             self.results['finance'] = {'count': 0, 'duration_seconds': 0}
             return
 
-        invoices_count = min(self.volumetry['invoices'], len(self.cache['orders']))
+        # Filtrer UNIQUEMENT les commandes confirmées (state='sale')
+        confirmed_orders = [o for o in self.cache['orders'] if o.state == 'sale']
+
+        if not confirmed_orders:
+            self.job.update_progress(60, 'finance', f"⚠️ Aucune commande confirmée ({len(self.cache['orders'])} au total), skip finance")
+            self.results['finance'] = {'count': 0, 'duration_seconds': 0}
+            return
+
+        invoices_count = min(self.volumetry['invoices'], len(confirmed_orders))
         payments_count = self.volumetry['payments']
 
-        # Créer factures depuis commandes
-        invoices_created = 0
-        for order in random.sample(self.cache['orders'], invoices_count):
-            if order.state != 'sale':  # Seulement les commandes confirmées
-                continue
+        _logger.info(f"[SEED FINANCE] {len(confirmed_orders)} commandes confirmées, création de {invoices_count} factures")
 
-            # Créer facture via l'action Odoo standard
+        # Créer factures depuis commandes confirmées - CRÉATION MANUELLE
+        # Note: _create_invoices() échoue car ne résout pas account_id depuis catégories
+        invoices_created = 0
+        journal = self.env['account.journal'].sudo().search([
+            ('type', '=', 'sale'),
+            ('company_id', '=', company_id)
+        ], limit=1)
+
+        if not journal:
+            _logger.error(f"[SEED FINANCE] Journal de vente introuvable pour company_id={company_id}")
+            self.results['finance'] = {'count': 0, 'duration_seconds': 0}
+            return
+
+        for order in random.sample(confirmed_orders, invoices_count):
             try:
-                # Méthode Odoo pour créer facture depuis sale.order
-                invoice = order._create_invoices()
-                if invoice:
-                    self.cache['invoices'].append(invoice)
-                    invoices_created += 1
+                # Créer facture vide d'abord
+                invoice = self.env['account.move'].sudo().create({
+                    'move_type': 'out_invoice',
+                    'partner_id': order.partner_id.id,
+                    'invoice_date': datetime.now().date(),
+                    'journal_id': journal.id,
+                    'company_id': company_id,
+                })
+
+                # Puis créer les lignes une par une avec account_id explicite
+                for line in order.order_line:
+                    self.env['account.move.line'].sudo().with_context(check_move_validity=False).create({
+                        'move_id': invoice.id,
+                        'product_id': line.product_id.id,
+                        'quantity': line.product_uom_qty,
+                        'price_unit': line.price_unit,
+                        'account_id': income_account.id,  # FORCE account_id
+                        'name': line.name or line.product_id.name,
+                        'partner_id': order.partner_id.id,
+                    })
+
+                self.cache['invoices'].append(invoice)
+                invoices_created += 1
+                _logger.info(f"[SEED FINANCE] Facture {invoice.name} créée pour commande {order.name}")
+
             except Exception as e:
-                _logger.warning(f"Failed to create invoice for order {order.id}: {e}")
+                _logger.warning(f"[SEED FINANCE] Failed to create invoice for order {order.id} ({order.name}): {e}")
+                # Ne pas rollback, continuer avec les autres factures
 
         self.env.cr.commit()
+        _logger.info(f"[SEED FINANCE] {invoices_created} factures créées sur {invoices_count} tentatives")
 
         # Créer paiements pour certaines factures
         payments_created = 0

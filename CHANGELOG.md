@@ -1,0 +1,589 @@
+# Changelog
+
+Toutes les modifications notables de ce projet sont documentées dans ce fichier.
+
+Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
+et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
+
+## [v1.0.0-apps-legacy] - 2026-01-31
+
+### ✨ Nouvelles Fonctionnalités
+
+- feat: intégration stratégie addons OCA + audit /parity Stock enrichi
+- feat: intégration auto-install modules OCA Stock (Phase 1)
+- feat: interfaces UI React pour modules OCA Stock (Phase 2)
+- feat: adaptation réussie modules OCA 18.0 pour Odoo 19.0 🎉
+- feat: création module quelyos_stock_advanced (wrapper OCA) 🚀
+- feat: interface Odoo pour lister modules OCA utilisés 📋
+- feat(crm): implémentation pipeline opportunités avec Kanban
+- feat(stock): ajout cycle count et verrouillage emplacements
+- feat(security): système de droits d'accès granulaires par abonnement
+- feat(stock): enrichissement données seed quelyos_stock_advanced
+- feat(security): implémentation protection granulaire accès par domaine
+- feat: ajout gaps P2 Stock: ABC, Forecast, UoM, Traçabilité, Rapports avancés
+- feat: gaps P0 Stock - validation inventaire & bons transfert (80% parité)
+- feat: gap P2 final - valorisation stock par catégorie (82% parité) 🎉
+- feat(uiux): ajout vérification rendu visuel menus et PageNotice
+- feat(uiux): refactoring complet page Finance Import (Score S: 130/140)
+- feat(finance): ajout structure et notices PaymentPlanning
+- feat: ajout pages Paramètres modules Store, Stock et CRM
+- feat: ajout commande /commit + réorganisation menu Store
+- feat: ajout module HR complet (employés, contrats, congés, présences)
+- feat(hr): add HR V2 - Appraisals module
+- feat: intégration vitrine-client + données démo Store
+- feat: ajout mode réduit sidebar avec tooltips
+- feat(pos): intégration comptable Odoo native + standardisation API
+- feat(hr): migration modèles HR vers héritage Odoo natif + correction tenant_id
+- feat: support multi-tenant complet pour tous les modules Quelyos Suite
+- feat: ajout tests E2E, monitoring OTEL, libs backend
+- feat(admin): ajout HealthDashboard et client GraphQL
+- feat: infrastructure multi-tenant et intégration Stripe
+- feat: multi-tenant SaaS + corrections Next.js 16
+- feat(api): ajout modules architecture enterprise (points 56-63)
+- feat(odoo): add quelyos_debrand module + minor lib fixes
+- feat(vitrine): ajout pages modules vitrine (CRM, HR, Stock, POS)
+- feat(odoo): personnalisation Odoo (thème fuchsia/orange, anonymisation, icônes)
+- feat: ajout commande /ecommerce (audit + roadmap 2026)
+- feat(vitrine): ajout pages légales racine + mise à jour footer
+- feat: ajout config production PM2/Docker + features e-commerce
+- feat: ajout features e-commerce social + pages secteurs + fix restart cache
+- feat(vitrine): refonte page tarifs avec offre agressive (-50%, 30j essai, freemium généreux)
+- feat: ajout système i18n frontend + pages LiveEvents et TrendingProducts backoffice
+- feat: amélioration administrabilité page produit + API site-config étendue
+- feat: amélioration système CMS menus + fix testimonials + données démo
+- feat: add complete Kubernetes infrastructure
+- feat: installation réussie module theme (sans HR)
+- feat: ajout moteur de thèmes propriétaire (page sélection dashboard + chargement dynamique vitrine-client)
+- feat: ajout Theme Builder visuel dashboard-client
+- feat: intégration SectionRenderer dans vitrine-client
+- feat: preview iframe temps réel Theme Builder
+- feat: moteur thèmes complet : AI generator + marketplace + 10 sections
+- feat: intégration sections + 2 nouveaux thèmes (tech-minimal, food-organic)
+- feat: endpoint import thèmes JSON + page dashboard
+- feat: intégration Stripe paiements marketplace thèmes premium
+- feat: intégration Stripe Connect payouts automatiques designers
+- feat: dashboard analytics marketplace thèmes complet
+- feat: plan de tests end-to-end marketplace complet
+- feat: theme builder Phase 1 - infrastructure et layout 3 colonnes
+- feat: theme builder Phase 2 - ColorPicker + FontSelector + validation JSON
+- feat: theme builder Phase 3 - drag & drop @dnd-kit complet
+- feat: ajout preview temps réel iframe + device toggle
+- feat: ajout tenant admin par défaut avec plan Enterprise
+- feat(quelyos_core): transform core into full orchestrator with auto-installation
+- feat: add SMS Marketing & Email Builder Premium features (Phase 2-3)
+- feat: refonte Theme Builder avec vues Build/Style + preview fenêtre popup
+- feat(quelyos_core): installer fresh Quelyos Suite avec orchestrateur v3.1.0
+- feat: ajout super-admin-client + désactivation fix-odoo-menus.sh
+- feat: super-admin-client complet (146 fichiers, 130+ hooks React)
+- feat: ajout commande /fresh-install + refonte super-admin-client
+- feat: ajout endpoint /api/auth/login + système refresh tokens + refonte super-admin-client
+- feat: intégration Posthog/Sentry + tests E2E Playwright
+- feat: renforcement sécurité multi-tenant + stratégie Single-DB
+- feat: optimisation architecture complète
+- feat: implémentation JWT Bearer pour dashboard-client
+- feat: implémentation ir.rule multi-tenant complète
+- feat: CI bloquante + security scan GitHub Actions
+- feat: implémentation audit logging complet
+- feat(super-admin): page Security avec 4 onglets
+- feat: implémentation fonctionnalités SaaS Super Admin (4 phases)
+- feat(vitrine): refonte page accueil + SEO + cohérence contenu
+- feat(super-admin): simplification gestion groupes sécurité par module Quelyos
+- feat(backend): système tickets support - Phase 1 Backend
+- feat(dashboard-client): système tickets support - Phase 2 Frontend
+- feat(dashboard): pages Support NewTicket + TicketDetail
+- feat(super-admin): page Support Tickets globale
+- feat(backend): endpoints Prio 1 - Assignation + Notes internes
+- feat(prio1): Assignation + Notes internes + Filtres
+- feat(prio2): Export CSV tickets
+- feat(prio2): Stats avancées affichées
+- feat(prio2): WebSocket notifications Dashboard Client
+- feat(support): pièces jointes pour tickets (Prio 2.4)
+- feat(support): templates réponses (Prio 2.5 - Backend)
+- feat(support): interface CRUD templates (Prio 2.5 - Frontend)
+- feat(support): dropdown templates dans formulaires réponse (Prio 2.5 final)
+- feat(support): SLA tracking avec alertes (Prio 3.1 - Backend)
+- feat(support): historique client complet (Prio 3.2 - Backend)
+- feat(super-admin): historique tickets client - Frontend (Prio 3.2)
+- feat(vitrine): ajout assistant chat IA avec corrections ESLint
+- feat(support): satisfaction automatique - Backend (Prio 3.3)
+- feat(dashboard): ajout lien retour vers site vitrine sur page login
+- feat(vitrine): ajout espace super admin avec suivi sitemap
+- feat(vitrine): ajout lien discret vers super admin dans Footer
+- feat(support): satisfaction automatique - Frontend (Prio 3.3 final)
+- feat(dashboard): ajout suivi sitemap vitrine dans super admin
+- feat(support): tickets liés parent/enfants (Prio 3.4)
+- feat(support): template email satisfaction via Python (workaround XML)
+- feat(ai): système chatbot IA complet avec FAQ + backend Groq
+- feat: ajout documentation automatisation sécurité GitHub
+- feat(backup): système backup par tenant (MVP)
+- feat(backup): système backups automatiques programmables par tenant
+- feat(backup): ajout navigation vers BackupSchedules
+- feat(security): isolation multi-tenant complète + refactoring Phase 2
+- feat(super-admin): page sitemap multi-apps (249 routes)
+- feat(sitemap): filtres avancés + V2 scripts auto + V3 dynamique
+- feat(sitemap): backend V3 avec healthcheck automatique et monitoring
+- feat(super-admin): configuration serveur SMTP/Brevo
+- feat(super-admin): migrate port 5176 → 9000 + documentation ports
+- feat(api): ajout route GET /api/super-admin/security-groups
+- feat: ajout toggle activation SMTP + fix email Brevo (from correct)
+- feat(marketing): Phase 2 - Link Tracker individuel (tracking clics par URL)
+- feat(stock): réservations manuelles avec expiration auto
+- feat(marketing): A/B testing avec variantes et sélection gagnant
+- feat(stock): Late Availability Filter pour prioriser commandes
+- feat(marketing): Analytics graphiques + Heatmaps clics
+- feat(infra): setup Turborepo + template SaaS + scaffold 7 apps
+- feat(finance-os): Quelyos Finance MVP — 49 pages, routing complet, auth JWT
+- feat(store-os): Quelyos Store MVP — 71 pages Store + Marketing
+- feat(saas): ajout pages HR attendance + stock valuation + contrôleur OCA
+- feat(saas): développement et optimisation 4 SaaS (Support, Sales, Store, Retail)
+- feat(backend): intégration 3 modules OCA Stock — Phase 2 addons OCA
+- feat(stock): UI Backoffice OCA — Groupes Inventaire + Calendriers Entrepôts
+- feat(marketing): API REST + UI Backoffice — Campagnes Email & Listes Diffusion (Odoo 19 natif)
+- feat(marketing): module Tracking Avancé — suivi détaillé ouvertures/clics emails
+- feat(marketing): module Automation — workflows marketing automatisés
+- feat(skills): ajout skill /align pour vérification alignement SaaS ↔ ERP
+- feat(marketing): pages UI Tracking + Automation
+- feat(commands): migration /align depuis skills/ vers commands/
+- feat(vitrine): transformation marketing modules → solutions métier
+- feat: Migration complète 7 SaaS → Système Éditions (Phase 0-8)
+
+### 🐛 Corrections de Bugs
+
+- fix: correction encoding apostrophes notices - fix build errors
+- fix: ajout fallback pour attributes undefined dans VariantSwatches
+- fix: installation réussie module quelyos_stock_advanced
+- fix: correction endpoints API Stock OCA
+- fix: ajout proxy Vite pour endpoints Stock OCA
+- fix: correction authentification API Stock OCA
+- fix: ajout catch-all proxy /api/ pour routes Odoo
+- fix(security): correction compatibilité Odoo 19 pour groupes sécurité
+- fix(views): suppression vue tree imbriquée incompatible Odoo 19
+- fix(store): corrections UI/UX module Store (Categories, Featured, MarketingPopups)
+- fix(crm): corrections UI/UX page Leads
+- fix(finance): refonte complète page Charts (10/100 → 95/100)
+- fix(quelyos_api): corrections multiples pour système droits d'accès
+- fix: correction props Layout pages Stock P2 (TypeScript)
+- fix(ui): corrections dark/light mode + automatisation vérifications UI/UX
+- fix: ajout méthode post() à ApiClient pour hooks Stock avancés
+- fix(dashboard): correction imports useRouter/router manquants
+- fix(dashboard): correction types Stock et imports Store
+- fix(finance): remplacement composants Glass* par composants UI standard
+- fix(finance): correction page breakeven et composant ReliabilityBadge
+- fix(store): upgrade ProductForm & SiteConfig to 5/5 quality standard
+- fix(finance): corrections TypeScript module Finance (162 → 145 erreurs)
+- fix(finance): corrections TypeScript supplémentaires (145 → 129 erreurs)
+- fix(finance): corrections TypeScript finales (129 → 110 erreurs)
+- fix(notices): conversion store-notices au nouveau format PageNoticeConfig (110 → 102 erreurs)
+- fix(store): remplacement boutons manuels par Button dans MyShop.tsx
+- fix(types): corrections mineures TypeScript (102 → 96 erreurs)
+- fix(store): ajout notices manquantes (staticPages, heroSlides, promoMessages, etc.)
+- fix(typescript): corrections Stock + Finance modules (-36 erreurs)
+- fix(finance): corrections TypeScript + ajout type PaymentFlow
+- fix(typescript): corrections Finance pages + types (-24 erreurs)
+- fix(odoo): correction deprecations @route type='json' → type='jsonrpc'
+- fix(store+finance): corrections TypeScript et améliorations UI
+- fix(dark-mode): correction visibilité textes + vérification automatique
+- fix(dark-mode): correction icônes et numéros calendrier
+- fix(api): correction CORS endpoint /api/ecommerce/stock/moves
+- fix: anonymisation jargon OCA + champs API vitrine
+- fix: audit UI/UX page forecast + corrections dark mode
+- fix: badges importance dark mode + titre SupplierCard
+- fix: correction warnings fields Odoo (tracking, states)
+- fix: add missing logger imports + fix DiscordIcon type
+- fix: remove store_demo_data.xml from manifest + fix testimonial fields
+- fix: correction gaps hardcodés vitrine-client + dark mode
+- fix: pages statiques dynamiques + données démo trust badges
+- fix: anonymisation complète Odoo vitrine-quelyos + dark mode erreurs
+- fix(hr): apply UI_PATTERNS.md standards to all HR pages
+- fix: correction erreurs TypeScript dashboard-client (151→65)
+- fix(store): correction erreur useModule page Attributes + audit UI/UX
+- fix(store): correction erreur useModule page Collections
+- fix(store): correction syntaxe JSX page Collections
+- fix: correction erreurs TypeScript multiples
+- fix(store): migration pages ModularLayout vers Layout standard
+- fix(store): migration Testimonials vers Layout standard
+- fix(store): migration FAQ vers Layout standard
+- fix(store): migration Blog vers Layout standard
+- fix(store): migration Tickets vers Layout standard
+- fix(store): migration SalesReports vers Layout standard
+- fix(store): migration StockAlerts vers Layout standard
+- fix(lib): corrections TypeScript pour Zod v4 et hooks
+- fix(backend): support Bearer auth pour endpoints shipping zones
+- fix(backend): amélioration gestion erreurs session store
+- fix(lib): update imports for sharding, batching, priority_queue
+- fix: disable tenant fetch on login page when no session
+- fix: suppression héritage tenant mixin dans live_event (non nécessaire)
+- fix: fallback image externe dans liste produits API
+- fix: correction deprecations type='json' → type='jsonrpc' (Odoo 19)
+- fix: erreur hydratation React LivestreamShopping
+- fix: corrections multiples module theme + tenant (Odoo 19 compat)
+- fix: correction emplacements stock invalides dans quelyos_stock_advanced
+- fix: ajout routes manquantes /store/themes/*
+- fix: correction redéfinitions variable error dans catch blocks
+- fix: corrections upgrade quelyos_api + tenant admin par défaut
+- fix(quelyos_core): correct OCA dependencies and XML errors
+- fix(quelyos_core): corriger signature post_init_hook pour Odoo 19
+- fix: correct TypeScript catch block errors in vitrine-client (Phase 5)
+- fix(types): correct regressions from perf commit (Phase 6 partial)
+- fix(types): continue fixing TypeScript errors (Phase 6)
+- fix: corriger toutes les erreurs TypeScript vitrine-client (108→0)
+- fix(quelyos_core): désactiver redirection website configurator
+- fix: correction crons subscriptions + upgrade module quelyos_api v19.0.1.1.2
+- fix: correction CORS pour credentials include + EmailStr + cron Odoo 19
+- fix(auth): correction authentification API Odoo 19
+- fix: CORS sso-login + formulaire login accepte username
+- fix(types): correction 23 erreurs TypeScript critiques + console.log
+- fix(types): réparation imports cassés + documentation TODOs
+- fix(dashboard): élimination dernières 4 erreurs ESLint
+- fix(dashboard): auto-suppression imports inutilisés
+- fix(dashboard): préfixage variables non utilisées (phase 4.2)
+- fix(vitrine): config ESLint + suppression directives inutiles
+- fix(vitrine): cohérence logo Sparkles sur page /register
+- fix(support): compatibilité Odoo 19 - create() vals_list
+- fix(security): correct 4 critical P0 vulnerabilities
+- fix(security): migrate xlsx to exceljs - elimine vulns P1
+- fix(backup): retire champs cron obsolètes (Odoo 19)
+- fix(auth): correction authentification dashboard avec admin/admin
+- fix(validators): rendre optionnels les champs manquants API
+- fix(backup): commit avant thread pour visibilité record
+- fix(sitemap): script V2 génération auto avec fs natif
+- fix(sitemap): compteurs Type dynamiques selon filtres Apps/Modules
+- fix(sitemap): correction cron XML Odoo 19 + méthode cleanup
+- fix(sitemap): simplification backend V3 MVP sans dépendances complexes
+- fix(types): remplacer ~220 types any par typage strict (283→66)
+- fix(dashboard): résolution conflit noms VariantManager
+- fix(api): restaurer routes pricelists + corrections bugs
+- fix(api): corriger deprecations Odoo 19 type='json' → type='jsonrpc'
+- fix(validation): migrer Pydantic V2 class Config → ConfigDict
+- fix(husky): retirer lignes dépréciées du hook pre-commit
+- fix(auth): migrer React 18 → 19 + corriger conflits tests
+- fix(tests): corriger tests unitaires stores vitrine-client
+- fix: corriger tests Playwright (version + port 3001)
+- fix(dashboard): corrections ESLint automatiques dark mode
+- fix(dashboard): corrections ESLint automatiques labels/inputs
+- fix(super-admin): corriger tests retry + validators
+- fix(cron): retirer champ numbercall obsolète Odoo 19
+- fix(odoo): migrer _sql_constraints → @api.constrains (Odoo 19)
+- fix(stock): migrer _sql_constraints → @api.constrains (quelyos_stock_advanced)
+- fix(saas): suppression Layout.tsx causant double layout dans store-os
+- fix(saas): correction hook useRequireAuth avec redirection auto
+- fix(saas): ajout useRequireAuth dans pages Attributes
+- fix(marketing): correction erreurs TypeScript hooks + notices
+- fix(cross-saas): correction destructuring API login/getUserInfo selon type ApiClient
+- fix(marketing): correction champ numbercall obsolète Odoo 19
+
+### ♻️ Refactorisation
+
+- refactor: harmonisation système notices module Finance + refactoring routes settings
+- refactor: simplification pages Finance settings + sécurisation nginx
+- refactor: amélioration UI page Flux Finance settings
+- refactor: migration composants UI natifs page Flux Finance
+- refactor: migration composants UI natifs page Sécurité Finance
+- refactor: nettoyage pages Intégrations et Notifications Finance
+- refactor: masquage références Odoo dans vitrine-client
+- refactor: masquage complet références Odoo dans vitrine-client
+- refactor: masquage références Odoo dans dashboard-client
+- refactor: masquage références Odoo dans code API interne (P2)
+- refactor: anonymisation URLs images + centralisation proxy
+- refactor: anonymisation URLs images au niveau API
+- refactor: suppression proxy Vite - accès direct Odoo via CORS
+- refactor(crm): harmonisation UI/UX Pipeline.tsx selon charte design
+- refactor(stock): harmonisation UI/UX module Stock selon charte design
+- refactor(stock): transformation module quelyos_stock_advanced en natif 100% Quelyos
+- refactor(finance): amélioration page Payment Planning et composants UI
+- refactor(store): extraction composants PromoBanners + prévisualisation temps réel
+- refactor(store): modernisation UI HeroSlides, Products, StaticPages
+- refactor(store): modernisation UI Menus & PromoMessages + fixes types
+- refactor(store): ajout imports icônes lucide-react TrustBadges
+- refactor(finance): refonte complète page Settings (140/140 Grade S+)
+- refactor(finance): optimisation complète du menu Finance (-43% items)
+- refactor(navigation): harmonisation menu latéral Phase 1
+- refactor(layout): extraction composants navigation + hooks customs
+- refactor: restructuration menu Finance + déplacement pages Stock valuation/turnover
+- refactor: page scenarios UI/UX 140pts + PageNotice + boutons Button
+- refactor: remplacement boutons natifs par composant Button (accounts)
+- refactor: refonte Store - dashboard KPIs + migration MyShop vers settings
+- refactor: fusion pages livraison - méthodes + paramètres en une seule page
+- refactor(hr): correction UI/UX page skills selon UI_PATTERNS.md
+- refactor(dashboard): amélioration UI/UX modules HR et POS
+- refactor: migration @heroicons/react vers lucide-react
+- refactor(vitrine): simplification menu navigation (suppression mega-menus)
+- refactor(vitrine-client): typage BackendClient - Phase 1 (39 any → 0)
+- refactor(vitrine-client): typage composants paiement - Phase 2 (14 any → 0)
+- refactor(vitrine-client): typage hooks & utils - Phase 3 (18 any → 0)
+- refactor: typage composants UI - Phase 4 (18 any → 0)
+- refactor(vitrine): réorganisation routes et amélioration contenu public
+- refactor(vitrine): unification icône Quelyos avec motif Sparkles
+- refactor(dashboard): centraliser fetch() → apiFetchJson avec headers multi-tenant
+- refactor(finance): TransactionListPage 13 useState → useReducer
+- refactor(components): décomposer VariantManager 869L → 5 sous-composants
+- refactor(finance): décomposer TransactionFormPage (773L → ~430L)
+- refactor(ai): décomposer ai_faq.py (793L → 3 modules)
+
+### 📚 Documentation
+
+- docs: ajout Phase 1.5 Opportunités Premium dans roadmap
+- docs: documentation état intégration OCA + corrections scripts
+- docs: ajout anti-patterns Odoo 19 spécifiques
+- docs(navigation): ajout documentation Phase 2 complétée
+- docs: mise à jour LOGME.md - audit cohérence 92% + corrections TypeScript
+- docs: ajout roadmap typage progressif + commande /autofix
+- docs: mise à jour roadmap - Phase 1 terminée
+- docs: mise à jour roadmap - Phase 2 terminée
+- docs: mise à jour roadmap - Phase 3 terminée
+- docs: roadmap de typage complétée - 89 any éliminés ✅
+- docs: mise à jour LOGME.md - moteur thèmes complet
+- docs: LOGME.md - session complète moteur thèmes (4 commits, +6814 lignes)
+- docs: LOGME.md - intégration Stripe paiements marketplace
+- docs: mise à jour LOGME.md - Task #11 Stripe Connect payouts
+- docs: mise à jour LOGME.md - Task #13 Analytics dashboard
+- docs: mise à jour LOGME.md - Task #9 Tests E2E
+- docs: mise à jour LOGME - theme builder Phase 1
+- docs: mise à jour LOGME - theme builder Phase 2
+- docs: mise à jour LOGME - theme builder Phase 3
+- docs: update README & LOGME for Phases 2-3 (Premium features)
+- docs(dependencies): enrich policy with Community & Enterprise strategies
+- docs: mise à jour LOGME - Phase 6 TypeScript vitrine-client
+- docs(security): P1 vulnerabilities audit and documentation
+- docs(security): audit post-migration xlsx - score A (96/100)
+- docs(api): documentation 23 nouvelles routes Phase 2 & 3
+- docs: audit parité globale Odoo 19 — 72% parité, 8 gaps P0, 28+ opportunités premium
+- docs: nettoyage et réorganisation documentation complète
+
+### 🔧 Maintenance
+
+- chore: nettoyage fichiers obsolètes après migration notices Finance
+- chore: nettoyage post-implémentation Stock + standardisation Odoo 19
+- chore: nettoyage projet + archivage rapports
+- chore: update documentation anonymisation Odoo
+- chore: ignore audit reports folder
+- chore: renforcement audit /no-odoo + corrections API marketing
+- chore: améliorations CI/CD, API base et notices store
+- chore: migration icônes heroicons vers lucide-react + fix Loyalty
+- chore: ajout commande /architect pour analyse architecture
+- chore: ajout fichiers restants multi-tenant
+- chore: nettoyage et overrides React types
+- chore: mise à jour lib/__init__.py
+- chore: nettoyage pages obsolètes + ajustements vitrine
+- chore: anonymisation Odoo (pricing, colorPalette, instructions CLAUDE.md)
+- chore: ajout règles ESLint CLAUDE.md + relaxation config vitrine
+- chore: nettoyage warnings ESLint vitrine-quelyos (imports non utilisés)
+- chore: corrections ESLint partielles vitrine-client
+- chore: assouplissement règles ESLint vitrine-client (warnings au lieu d'errors)
+- chore: auto-fix TypeScript catch blocks vitrine-client
+- chore: ajustements mineurs post theme-engine
+- chore: ajout dépendances Python qrcode + Pillow pour 2FA
+- chore(vitrine-client): auto-fix ESLint - corrections sûres
+- chore(vitrine-client): échapper apostrophes JSX
+- chore(dashboard-client): assouplir config ESLint pour corrections progressives
+- chore(dashboard-client): corrections ESLint sûres - Phase 2
+- chore(anonymisation): suppression mentions Odoo dans commentaires internes
+- chore(git): ajout vérification anonymisation dans pre-commit hook
+
+### 📦 Autres Changements
+
+- ci: ajout contrôles anti-Odoo (hook + GitHub Action)
+- perf: optimisations critiques P0 vitrine-quelyos & vitrine-client
+- perf: implémentation SSR catalogue produits vitrine-client
+- debug: ajout logs détaillés pour diagnostic 404
+- perf: cache Redis backend + optimisations images vitrine-client
+- test(navigation): tests unitaires Phase 2 (89 tests)
+- security: corrections vulnérabilités XSS et upgrade Next.js
+- perf(finance): lazy load xlsx pour optimisation bundle
+- security: corrections audit sécurité
+- security: add rate limiting to critical public endpoints
+- security: protect admin endpoints and configure Redis for production
+- security: protect ALL admin endpoints with authentication
+- perf(ecommerce+backoffice): optimisations performance complètes (P1+P2)
+- temp: désactiver noUnusedLocals (208 corrigées, 200 restantes)
+- test: ajout tests isolation cross-tenant
+- test: ajout tests isolation multi-tenant HTTP + correction champs obligatoires
+- security: ajout rate limiting endpoints auth e-commerce + passkey
+- security: renforcement CORS strict + headers sécurité
+- security: input validation + sanitization XSS
+- security: implémentation password policy complète
+- security: implémentation 2FA/MFA TOTP complet
+- security(P4): session management, IP whitelist, API keys, alertes
+- Revert "feat(vitrine): ajout lien discret vers super admin dans Footer"
+- Revert "feat(vitrine): ajout espace super admin avec suivi sitemap"
+- test: ajout tests unitaires composants common + refactor useTickets
+- test: amélioration tests dark mode + corrections finales
+
+## [v1.0.0] - 2026-01-26
+
+### ✨ Nouvelles Fonctionnalités
+
+- feat: Improve ResizeObserver fix & add website module uninstall tools
+- feat: Restructure Quelyos ERP with modular architecture
+- feat: make branding configurable via environment variables
+- feat: Add professional CMS templates and improve UX/UI
+- feat: Add image proxy API and improve product pages
+- feat: complete Phase 5 - Marketing and SEO
+- feat: add complete production infrastructure (Phase 6)
+- feat: add CI/CD and monitoring stack (Phase 6 complete)
+- feat: backoffice complet + frontend intégré + guide UX/UI 2026
+- feat: module Produits P1/P2 complet - tags, dimensions, stock et images variantes
+- feat: parité fonctionnelle complète - sprints 1-2-3 + backoffice moderne
+- feat: autocomplétion recherche produits, catégories drag & drop et UX moderne
+- feat: gestion processus tmux + filtres attributs produits
+- feat: add /polish slash command for refactoring
+- feat: ajout commandes slash restart-backoffice et restart-odoo
+- feat: amélioration majeure UX arbre catégories et corrections
+- feat: amélioration UX page Customers avec KPIs et tri
+- feat: système complet de gestion de session avec auto-refresh
+- feat: protection routes backoffice + vérification dark mode automatique
+- feat: création composant DataTable générique réutilisable
+- feat: système de récupération paniers abandonnés
+- feat: refactoring complet module Stock avec interface moderne
+- feat: endpoint API récupération panier abandonné
+- feat: système packaging et déploiement all-in-one
+- feat(stock): refactoring complet UI Stock avec onglets + édition inline
+- feat: dashboard complet avec KPIs et commandes récentes
+- feat: système complet de récupération panier abandonné (+15-30% CA estimé)
+- feat(payment): refactoring complet formulaire Stripe + UX moderne
+- feat: tests de parité automatiques Backend + E2E (Phase 1 terminée)
+- feat: intégration API complète Frontend ↔ Backend + tests
+- feat(backoffice): interface moderne gestion abonnements (54% parité Odoo)
+- feat: Stock Sprint 4-5, navigation moderne backoffice, API slug produit
+- feat: système d'affichage intelligent des variantes produits (catalogue + détail)
+- feat: nettoyage documentation + améliorations backoffice et frontend
+- feat: ajout champs produit et configuration site administrable
+- feat: ajout commandes Claude + modèles subscriptions & tenant + nettoyage docs
+- feat: ajout commandes claude + nettoyage projet + config site
+- feat: ajout commande /upgrade-odoo pour simplifier mise à jour modules
+- feat: interface thèmes + harmonisation types + cache temps réel tenant
+- feat: optimisation consommation tokens Claude (-70%)
+- feat: logger sécurisé + harmonisation types Cart/Odoo
+- feat: correction erreurs TypeScript build frontend (types variantes, filtres, logger)
+- feat: Sprint 1 - Homepage 100% administrable (Hero Slider, Bannières, PromoBar, Trust Badges)
+- feat: ajout endpoints upload images CMS (hero slides + promo banners)
+- feat: add image upload + dark mode support for CMS pages
+- feat: Sprint 2 - Menus Navigation + Images Catégories administrables
+- feat: Sprint 3 Phase 1 - Thème dynamique (backend)
+- feat: Sprint 3 Phase 1 - Thème dynamique (frontend)
+- feat: Sprint 3 Phase 1 - Thème dynamique (backoffice)
+- feat(backoffice): pages CMS administrables (HeroSlides, Bannières, Messages, Trust Badges)
+- feat(sprint3): SEO Metadata - Gestion complète tri-couche
+- feat(sprint3): Popups Marketing - Système complet engagement utilisateur
+- feat(sprint3): Pages Statiques WYSIWYG - Gestion complète CMS institutionnel
+- feat: Sprint 4 - Stock & Pricelists production-ready (CRUD complet)
+- feat: SSO Odoo pour login marketing/finance + auth callback dashboard
+- feat: amélioration navigation sidebar multi-groupes + persistance
+- feat: ajout upload image hero slides + recherche images
+- feat: validation complète champs hero slides (frontend + backend)
+- feat: configuration clés API images depuis backoffice (Site Config)
+- feat: page guide API images intégrée au backoffice
+- feat: bouton "Voir mon site" dans header backoffice
+- feat: module stock complet: modal ajustement riche + page locations + activation inventory
+- feat: module Stock/Warehouse complet - backoffice 100% autonome
+- feat: refonte système notices + modules CRM/ECMS + nettoyage pages obsolètes
+- feat: ajout notices pages Stock/CRM + harmonisation position (après header)
+
+### 🐛 Corrections de Bugs
+
+- fix: resolve cart creation error for guest users
+- fix: implémentation authentification backoffice + composants UI communs
+- fix: configuration proxy Vite pour éviter erreurs CORS
+- fix: compatibilité Odoo 19 - champ detailed_type → type
+- fix: déplacer /polish vers .claude/commands pour disponibilité
+- fix: correction accès champ mobile dans endpoints clients
+- fix: corrections bugs intégration API + tests E2E Playwright
+- fix(backoffice): correction affichage responsive page Abonnements
+- fix(backoffice): correction erreurs TypeScript page Abonnements
+- fix: robustesse API + gestion valeurs optionnelles + documentation Sprint 5
+- fix: protection valeurs optionnelles page produit (quantity, wishlist_count)
+- fix: calcul stock produits avec variants + affichage stock catalogue
+- fix: corrections prioritaires suite code review
+- fix: restauration mode strict TypeScript + corrections erreurs
+- fix: downgrade Tailwind v3 + fix config PostCSS backoffice
+- fix: harmonisation noms filtres prix (min_price/max_price)
+- fix: correction imports logger (@/lib/logger au lieu de @quelyos/logger)
+- fix: correction vérification variants + harmonisation alias Odoo
+- fix(security): audit sécurité P0/P1 - XSS, erreurs exposées, CORS
+- fix: configuration API Pexels + documentation hero slides
+- fix: gestion erreurs API images + guide configuration (Unsplash/Pexels)
+- fix: correction import Layout dans ApiGuide
+- fix: correction hydratation lucide-react + commandes restart vitrine/ecommerce
+- fix: correction CORS module Finance - credentials omit
+- fix: sécurisation validation XLSX + nettoyage console.log global
+- fix: correction rapports Finance + endpoints API + séparateurs menu navigation
+- fix: correction imports ecms -> store dans App.tsx pour build production
+
+### ♻️ Refactorisation
+
+- refactor: restructure project with quelyos_api module and separate backoffice
+- refactor(backoffice): optimisation et mode accordéon du menu sidebar
+- refactor(variants): composants compacts style Zalando + preview image au survol
+- refactor: réorganisation menu_views.xml (actions avant menus)
+- refactor: fusion quelyos_subscription dans quelyos_api + fix vues kanban odoo 19
+- refactor: remove subscription features + add multi-tenant setup tooling
+- refactor(frontend): replace console.error with logger
+- refactor: migration vers nouvelle architecture monorepo
+
+### 📚 Documentation
+
+- docs: add QUICKSTART guide for local testing
+- docs: rapport de tests complet
+- docs: mise à jour LOGME avec correction authentification
+- docs: plan de sprint pour résolution gaps P1
+- docs: planification Phase 4 - Modèle Commercial SaaS
+- docs: mise à jour LOGME.md et README.md
+- docs: mise à jour tableau parité Stock - sprints 1 & 2 complétés
+- docs: mise à jour LOGME.md - intégration API complète
+- docs: mise à jour LOGME.md avec tests E2E et corrections bugs
+- docs: mise à jour LOGME.md
+- docs: ajout instructions création tenants par défaut
+- docs: alignement complet documentation projet + scripts automatisés
+- docs: mise à jour nom repo vers quelyosSuite
+
+### 🔧 Maintenance
+
+- chore: mise à jour README et améliorations Categories.tsx
+- chore: ajout patterns gitignore pour fichiers de tests
+- chore: sauvegarde avant fusion Quelyos Suite
+- chore(hooks): update pre-commit paths for monorepo structure
+- chore(monorepo): finalize pnpm workspace migration
+- chore: nettoyage repo - scripts vers /scripts, docs archivés
+- chore: préparation déploiement production v1.0.0 sur VPS Contabo
+
+### 📦 Autres Changements
+
+- Initial commit: Quelyos ERP project setup
+- Remove roadmap document
+- Add project documentation
+- Setup development environment
+- Add Quelyos branding module with purple to blue color transformation
+- Enable Quelyos email templates for mail notifications
+- Enhance Quelyos branding module with advanced features and performance optimizations
+- Add comprehensive enterprise feature masking to Quelyos branding module
+- Remove legacy code and deprecated documentation
+- Migrate frontend from Vite to Next.js 15 with App Router
+- Add quelyos_ecommerce module for Next.js frontend integration
+- Add backend scripts and utilities for Odoo 19 management
+- Add comprehensive project documentation
+- Add production infrastructure and CI/CD configuration
+- Update .gitignore to exclude temp files and backups
+- Fix Apps menu accessibility issue
+- Critical fix: Disable problematic enterprise views and fix ecommerce module
+- Add filtering for uninstallable modules in Apps screen
+- Protect URLs from text replacement in branding module
+- Fix: Suppress ResizeObserver errors in branding module
+- Refactor quelyos_ecommerce: Security, Performance & Testing
+- Refactor quelyos_branding: Service Layer Architecture + 80 Tests
+- Add comprehensive refactoring summary document
+- Add validation report and health check script
+- Add quick start testing guide for manual validation
+- Add comprehensive test execution report
+- Fix critical bugs in quelyos_ecommerce module
+- Add comprehensive bug fix report
+- Complete project updates: frontend, backend fixes, and comprehensive documentation
+- perf: Improve Lighthouse scores with SSR and image optimization
+- style: improve footer link visibility and cleanup
+- polish: refactoring complet Customers.tsx - WCAG 2.1 AA + UX moderne
+- legal: ajout licences et conditions générales d'utilisation
+- polish: refactoring complet OrderDetail.tsx - architecture modulaire
+- perf(api): add limit to unbounded search() calls
+- perf(api): optimize N+1 queries in controllers
+- perf(frontend): optimize images and memoize components (P1-1 & P1-3)
+- perf: SSR HeroSlider + PromoBanners, skeleton loading, rapports analyse
+
