@@ -37,8 +37,8 @@ export default function PaymentScheduleCalendar() {
     setIsLoading(true);
     try {
       const [upcomingRes, overdueRes] = await Promise.all([
-        fetch("/api/ecommerce/supplier-invoices/upcoming?days=60"),
-        fetch("/api/ecommerce/supplier-invoices/overdue"),
+        fetch("/api/finance/supplier-invoices/upcoming?days=60"),
+        fetch("/api/finance/supplier-invoices/overdue"),
       ]);
 
       if (upcomingRes.ok) {
@@ -136,19 +136,19 @@ export default function PaymentScheduleCalendar() {
         <div className="flex gap-4 mb-4 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-red-500 dark:bg-red-400"></div>
-            <span className="text-gray-900 dark:text-white dark:!text-white">En retard</span>
+            <span className="text-gray-900 dark:text-white">En retard</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-orange-500 dark:bg-orange-400"></div>
-            <span className="text-gray-900 dark:text-white dark:!text-white">&gt;10k€</span>
+            <span className="text-gray-900 dark:text-white">&gt;10k€</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-blue-500 dark:bg-blue-400"></div>
-            <span className="text-gray-900 dark:text-white dark:!text-white">&gt;5k€</span>
+            <span className="text-gray-900 dark:text-white">&gt;5k€</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-green-500 dark:bg-green-400"></div>
-            <span className="text-gray-900 dark:text-white dark:!text-white">&lt;5k€</span>
+            <span className="text-gray-900 dark:text-white">&lt;5k€</span>
           </div>
         </div>
 

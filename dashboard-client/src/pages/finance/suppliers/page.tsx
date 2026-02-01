@@ -81,7 +81,7 @@ export default function SuppliersPage() {
       )
 
       setStats({
-        total: data.suppliers.length,
+        total: suppliersList.length,
         strategic,
         regular,
         occasional,

@@ -515,7 +515,7 @@ export default function ScenariosPage() {
               Comparaison sur {horizon} jours
             </h3>
             <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={320}>
                 <AreaChart data={chartData}>
                   <defs>
                     {scenarios.filter((s) => s.visible).map((scenario) => (

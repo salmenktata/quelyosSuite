@@ -108,7 +108,7 @@ export default function ScenariosPanel() {
 
   const fetchAvailableInvoices = async () => {
     try {
-      const data = await fetchApi<{ invoices: Record<string, unknown>[] }>("/api/ecommerce/supplier-invoices/upcoming?days=90", { method: "GET", credentials: "include" });
+      const data = await fetchApi<{ invoices: Record<string, unknown>[] }>("/api/finance/supplier-invoices/upcoming?days=90", { method: "GET", credentials: "include" });
       setAvailableInvoices(data.invoices || []);
     } catch (error) {
       logger.error("Erreur lors du chargement des factures:", error);
@@ -210,7 +210,7 @@ export default function ScenariosPanel() {
           <div className="flex items-center gap-3">
             <FileText className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white dark:!text-white">Scénarios de paiement</h3>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Scénarios de paiement</h3>
               <p className="text-sm text-muted-foreground">
                 Créez et comparez différentes stratégies de paiement
               </p>
@@ -325,13 +325,13 @@ export default function ScenariosPanel() {
                               className="rounded border-gray-300 dark:border-gray-600"
                             />
                             <div className="flex-1">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white dark:!text-white">{invoice.supplier.name}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">{invoice.supplier.name}</div>
                               <div className="text-xs text-muted-foreground">
                                 {invoice.invoiceNumber} • Échéance:{" "}
                                 {format(new Date(invoice.dueDate), "d MMM yyyy", { locale: fr })}
                               </div>
                             </div>
-                            <div className="text-sm font-semibold text-gray-900 dark:text-white dark:!text-white">{invoice.amount.toFixed(2)} €</div>
+                            <div className="text-sm font-semibold text-gray-900 dark:text-white">{invoice.amount.toFixed(2)} €</div>
                           </label>
                         ))}
                       </div>
@@ -375,7 +375,7 @@ export default function ScenariosPanel() {
       ) : scenarios.length === 0 ? (
         <Card className="p-12 text-center">
           <FileText className="h-12 w-12 mx-auto text-muted-foreground opacity-50" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white dark:!text-white mt-4">Aucun scénario</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-4">Aucun scénario</h3>
           <p className="text-muted-foreground mt-2">
             Créez votre premier scénario de planification des paiements
           </p>
@@ -392,7 +392,7 @@ export default function ScenariosPanel() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white dark:!text-white">{scenario.name}</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">{scenario.name}</h4>
                   <p className="text-xs text-muted-foreground mt-1">
                     {scenario.description || "Pas de description"}
                   </p>
@@ -429,7 +429,7 @@ export default function ScenariosPanel() {
                 </div>
 
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <div className="font-semibold text-gray-900 dark:text-white dark:!text-white">{scenario.totalAmount.toFixed(2)} €</div>
+                  <div className="font-semibold text-gray-900 dark:text-white">{scenario.totalAmount.toFixed(2)} €</div>
                 </div>
               </div>
 
@@ -467,19 +467,19 @@ export default function ScenariosPanel() {
       {/* Détails du scénario sélectionné */}
       {selectedScenario && (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white dark:!text-white mb-4">Détails du scénario</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Détails du scénario</h3>
 
           <div className="grid gap-4 md:grid-cols-2 mb-6">
             <div>
               <Label>Stratégie</Label>
-              <p className="text-sm text-gray-900 dark:text-white dark:!text-white">
+              <p className="text-sm text-gray-900 dark:text-white">
                 {STRATEGIES[selectedScenario.strategy as keyof typeof STRATEGIES]}
               </p>
             </div>
 
             <div>
               <Label>Période</Label>
-              <p className="text-sm text-gray-900 dark:text-white dark:!text-white">
+              <p className="text-sm text-gray-900 dark:text-white">
                 {format(new Date(selectedScenario.startDate), "d MMM yyyy", { locale: fr })} -{" "}
                 {format(new Date(selectedScenario.endDate), "d MMM yyyy", { locale: fr })}
               </p>
@@ -488,14 +488,14 @@ export default function ScenariosPanel() {
             {selectedScenario.maxDailyAmount && (
               <div>
                 <Label>Limite journalière</Label>
-                <p className="text-sm text-gray-900 dark:text-white dark:!text-white">{selectedScenario.maxDailyAmount.toFixed(2)} €</p>
+                <p className="text-sm text-gray-900 dark:text-white">{selectedScenario.maxDailyAmount.toFixed(2)} €</p>
               </div>
             )}
 
             {selectedScenario.targetCashReserve && (
               <div>
                 <Label>Réserve de trésorerie</Label>
-                <p className="text-sm text-gray-900 dark:text-white dark:!text-white">{selectedScenario.targetCashReserve.toFixed(2)} €</p>
+                <p className="text-sm text-gray-900 dark:text-white">{selectedScenario.targetCashReserve.toFixed(2)} €</p>
               </div>
             )}
           </div>
@@ -507,10 +507,10 @@ export default function ScenariosPanel() {
                 {selectedScenario.invoices.map((invoice) => (
                   <div key={invoice.id} className="flex justify-between items-center p-2 border border-gray-200 dark:border-gray-700 rounded">
                     <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white dark:!text-white">{invoice.supplier.name}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">{invoice.supplier.name}</div>
                       <div className="text-xs text-muted-foreground">{invoice.invoiceNumber}</div>
                     </div>
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white dark:!text-white">{invoice.amount.toFixed(2)} €</div>
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white">{invoice.amount.toFixed(2)} €</div>
                   </div>
                 ))}
               </div>
