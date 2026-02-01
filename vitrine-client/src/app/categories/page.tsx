@@ -8,6 +8,9 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 import { logger } from '@/lib/logger';
 
+// Force SSR (pas de SSG) pour éviter timeout build
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Catégories de Produits | Quelyos',
   description: 'Explorez toutes nos catégories de produits',
