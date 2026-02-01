@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
+import { logger } from '@/lib/logger';
 import { useRouter } from 'next/navigation';
 import { Button, Badge } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
 import type { Cart } from '@quelyos/types';
 
 interface CartSummaryProps {

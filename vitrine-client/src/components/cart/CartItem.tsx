@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { logger } from '@/lib/logger';
 import Image from 'next/image';
 import { Button } from '@/components/common';
 import { useCartStore } from '@/store/cartStore';
-import { logger } from '@quelyos/logger';
 import type { CartLine } from '@quelyos/types';
 
 interface CartItemProps {
