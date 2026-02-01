@@ -213,13 +213,13 @@ export default function OrderDetailPage() {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Sous-total</span>
-                  <span>{formatPrice(order.amount_untaxed || order.subtotal, order.currency?.symbol || '€')}</span>
+                  <span>{formatPrice(order.amount_untaxed || order.subtotal || 0, order.currency?.symbol || '€')}</span>
                 </div>
 
                 {(order.amount_tax || order.tax_total) > 0 && (
                   <div className="flex justify-between text-gray-600">
                     <span>TVA</span>
-                    <span>{formatPrice(order.amount_tax || order.tax_total, order.currency?.symbol || '€')}</span>
+                    <span>{formatPrice(order.amount_tax || order.tax_total || 0, order.currency?.symbol || '€')}</span>
                   </div>
                 )}
               </div>
