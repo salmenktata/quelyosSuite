@@ -43,7 +43,7 @@ export default function OrderDetailPage() {
       try {
         const result = await backendClient.getOrder(parseInt(orderId));
         if (result.success && result.data) {
-          setOrder(result.data.order);
+          setOrder(result.data.order as OrderDetail);
         } else {
           setOrder(null);
         }
