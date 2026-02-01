@@ -52,10 +52,9 @@ export const TopNavbar = memo(function TopNavbar({
   const { theme, toggleTheme } = useTheme()
   const Icon = currentModule.icon
 
-  // Show primary modules in quick access, others accessible via App Launcher
-  // Priorité: modules les plus utilisés (max 6 pour éviter surcharge)
-  const primaryModuleIds = ['home', 'finance', 'store', 'crm', 'stock', 'pos']
-  const quickModules = modules.filter(m => primaryModuleIds.includes(m.id))
+  // Afficher tous les modules accessibles (limité à 8 pour éviter surcharge)
+  // Les modules sont déjà filtrés par permissions dans ModularLayout
+  const quickModules = modules.slice(0, 8)
 
   return (
     <header className={`h-14 bg-gray-900 border-b border-gray-800 flex items-center px-4 fixed top-0 left-0 right-0 z-50 transition-transform duration-100 ease-out ${isVisible ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>
