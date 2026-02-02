@@ -405,13 +405,22 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
 **Tolérance ZÉRO** : Tout mot "Odoo"/"odoo"/"OCA"/"OpenERP" dans le code client = bug CRITIQUE à corriger immédiatement.
 
+## ⚡ CRÉATION COMMANDES SLASH - RÈGLE ABSOLUE
+**Emplacement UNIQUE** : `.claude/commands/<nom>.md`
+- ✅ Créer dans `.claude/commands/` (SEUL répertoire reconnu)
+- ❌ JAMAIS dans `.claude/skills/` (non détecté comme commande slash)
+- ❌ JAMAIS dans `scripts/` ou ailleurs
+- **Format** : Fichier Markdown `.md` avec titre `# Commande /<nom> - Description`
+- **Vérification** : Après création, confirmer présence dans la liste des skills disponibles
+
 ## Commandes disponibles
-**DevOps** : `/ship`, `/commit`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`
+**DevOps** : `/ship`, `/commit`, `/deploy`, `/test`, `/security`, `/perf`, `/db-sync`, `/vps`
 **Odoo** : `/upgrade-odoo`, `/restart-odoo`, `/restart-backoffice`, `/restart-vitrine`, `/restart-ecommerce`, `/restart-all`
-**Qualité** : `/polish`, `/parity`, `/coherence`, `/clean`, `/analyze-page`, `/docs`, `/uiux`
+**Qualité** : `/polish`, `/parity`, `/coherence`, `/coherence-ui`, `/clean`, `/analyze-page`, `/docs`, `/uiux`
 **Architecture** : `/architect` (analyse architecture), `/leverage` (capitalisation sur existant Odoo vs custom), `/no-odoo` (anonymisation)
 **Développement** : `/evolve` (analyse holistique + développement feature : réflexion, technique, contexte, perspective, amélioration)
 **E-commerce** : `/ecommerce` (audit exploitation Backoffice + roadmap évolutions 2026)
+**Infrastructure** : `/vps` (gestion serveur VPS Contabo : check, update, prepare, fix, deploy, status)
 
 ## Essentiels
 1. Lire [README.md](README.md) (présentation) et [README-DEV.md](README-DEV.md) (détails techniques Odoo), [ARCHITECTURE.md](ARCHITECTURE.md) et [LOGME.md](docs/LOGME.md) en début de session
