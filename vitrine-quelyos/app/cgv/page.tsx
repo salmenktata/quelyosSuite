@@ -86,29 +86,18 @@ export default function CGVPage() {
               </p>
 
               <div className="grid gap-4 mt-6">
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-white m-0">Starter</h3>
-                    <span className="text-emerald-400 font-bold">Gratuit</span>
-                  </div>
-                  <ul className="text-sm space-y-1 m-0 p-0 list-none">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 1 utilisateur</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Fonctionnalités de base</li>
-                  </ul>
-                </div>
-
                 <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-white m-0">Pro</h3>
+                      <h3 className="font-semibold text-white m-0">Plan de base</h3>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500 text-white">Populaire</span>
                     </div>
-                    <span className="text-indigo-300 font-bold">29€ HT/mois</span>
+                    <span className="text-indigo-300 font-bold">9€ HT/mois</span>
                   </div>
                   <ul className="text-sm space-y-1 m-0 p-0 list-none">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> 5 utilisateurs</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> Toutes les fonctionnalités</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> Support prioritaire</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> 5 utilisateurs inclus</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> 1 module au choix inclus</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-indigo-400" /> Modules additionnels de 5€ à 19€/mois</li>
                   </ul>
                 </div>
 
@@ -119,6 +108,7 @@ export default function CGVPage() {
                   </div>
                   <ul className="text-sm space-y-1 m-0 p-0 list-none">
                     <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-violet-400" /> Utilisateurs illimités</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-violet-400" /> Tous les modules inclus</li>
                     <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-violet-400" /> SLA garanti 99.9%</li>
                   </ul>
                 </div>
@@ -246,12 +236,8 @@ export default function CGVPage() {
             <div className="space-y-4 text-slate-300">
               <div className="grid gap-3 mt-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
-                  <span>Starter</span>
-                  <span className="text-sm text-slate-400">Email (72h)</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
-                  <span>Pro</span>
-                  <span className="text-sm text-indigo-400">Email + Chat (24h)</span>
+                  <span>Plan de base</span>
+                  <span className="text-sm text-indigo-400">Email (48h)</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
                   <span>Enterprise</span>

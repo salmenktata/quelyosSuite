@@ -272,7 +272,7 @@ export default function FinanceSiteHeader() {
             <NavDropdown label="Fonctionnalités" items={featuresItems} columns={2} />
             <NavDropdown label="Solutions" items={solutionsItems} />
             <Link
-              href="/finance/pricing"
+              href="/tarifs"
               className="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
             >
               Tarifs
@@ -401,7 +401,7 @@ export default function FinanceSiteHeader() {
                   </p>
                   <div className="space-y-1">
                     <Link
-                      href="/finance/pricing"
+                      href="/tarifs"
                       className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
                     >
                       Tarifs

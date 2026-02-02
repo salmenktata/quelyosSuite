@@ -27,7 +27,7 @@ const faqs = [
     category: "general",
     question: "Quelyos est-il gratuit ?",
     answer:
-      "Oui, Quelyos propose un essai gratuit de 14 jours sans carte bancaire. Après l'essai, vous choisissez entre les plans Starter (19€/mois), Pro (49€/mois) ou Enterprise (sur devis) selon vos besoins.",
+      "Oui, Quelyos propose un essai gratuit de 30 jours sans carte bancaire. Après l'essai, le plan de base démarre à 9€/mois avec 1 module au choix inclus. Ajoutez ensuite les modules dont vous avez besoin (de 5€ à 19€/mois chacun). Offre Enterprise sur devis.",
   },
   {
     category: "general",
@@ -63,7 +63,7 @@ const faqs = [
     category: "account",
     question: "Puis-je essayer avant de payer ?",
     answer:
-      "Absolument ! Profitez de 14 jours d'essai gratuit avec accès complet à toutes les fonctionnalités. Aucune carte bancaire requise pour démarrer l'essai.",
+      "Absolument ! Profitez de 30 jours d'essai gratuit avec accès complet à tous les modules. Aucune carte bancaire requise pour démarrer l'essai.",
   },
   {
     category: "features",

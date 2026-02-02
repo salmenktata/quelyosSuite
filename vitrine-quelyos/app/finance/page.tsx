@@ -149,7 +149,7 @@ export default function FinancePage() {
             <div className="mt-6 flex items-center justify-center gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-400" />
-                Essai gratuit 14 jours
+                Essai gratuit 30 jours
               </span>
               <span className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-400" />
@@ -370,7 +370,7 @@ export default function FinancePage() {
               Prêt à piloter votre trésorerie ?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-              Essayez Quelyos Finance gratuitement pendant 14 jours. Aucune
+              Essayez Quelyos Finance gratuitement pendant 30 jours. Aucune
               carte bancaire requise.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">

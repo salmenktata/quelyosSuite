@@ -95,7 +95,7 @@ export default function BureauEtudesPage() {
                 <ArrowRight size={16} />
               </Link>
               <Link
-                href="/finance/pricing"
+                href="/tarifs"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
               >
                 Voir les tarifs

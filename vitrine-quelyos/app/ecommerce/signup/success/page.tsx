@@ -84,7 +84,7 @@ function SignupSuccessContent() {
               Votre boutique est prête !
             </h1>
             <p className="text-gray-400 text-lg">
-              Bienvenue sur Quelyos. Votre essai gratuit de 14 jours commence maintenant.
+              Bienvenue sur Quelyos. Votre essai gratuit de 30 jours commence maintenant.
             </p>
           </motion.div>
 

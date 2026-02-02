@@ -133,7 +133,7 @@ const faqs = [
     category: "getting-started",
     question: "Puis-je tester Quelyos avant de m'engager ?",
     answer:
-      "Absolument ! Nous proposons un compte de démonstration avec des données fictives pour explorer toutes les fonctionnalités. De plus, le plan Freemium est gratuit à vie pour les fonctionnalités de base.",
+      "Absolument ! Nous proposons un essai gratuit de 30 jours avec accès complet à tous les modules pour explorer toutes les fonctionnalités. Aucune carte bancaire requise.",
   },
   {
     category: "getting-started",
@@ -158,7 +158,7 @@ const faqs = [
     category: "account",
     question: "Puis-je avoir plusieurs entreprises sur un compte ?",
     answer:
-      "Oui, les plans Pro et Expert permettent de gérer plusieurs entreprises depuis un seul compte. Chaque entreprise dispose de ses propres comptes, catégories et budgets distincts.",
+      "Oui, vous pouvez gérer plusieurs entreprises depuis un seul compte. Chaque entreprise dispose de ses propres comptes, catégories et budgets distincts.",
   },
   // Facturation
   {
@@ -246,7 +246,7 @@ const faqs = [
     category: "team",
     question: "Combien d'utilisateurs puis-je ajouter ?",
     answer:
-      "Freemium : 1 utilisateur. Pro : 5 utilisateurs. Expert : utilisateurs illimités. Des packs d'utilisateurs supplémentaires sont disponibles pour le plan Pro.",
+      "Le plan de base inclut 5 utilisateurs. Des packs de 5 utilisateurs supplémentaires sont disponibles à 15€/mois. Au-delà de 20 utilisateurs, contactez-nous pour une offre Enterprise.",
   },
 ];
 
@@ -265,7 +265,7 @@ const detectIntent = (message: string): { response: string; suggestions?: string
   // Prix / Tarifs
   if (msg.includes("prix") || msg.includes("tarif") || msg.includes("coût") || msg.includes("combien")) {
     return {
-      response: "Nos tarifs commencent à 19€/mois (plan Starter) avec 30 jours d'essai gratuit. Le plan Business à 49€/mois inclut tous les 9 modules. Souhaitez-vous voir les détails ?",
+      response: "Le plan de base démarre à 9€/mois avec 1 module au choix inclus et 30 jours d'essai gratuit. Ajoutez les modules dont vous avez besoin (de 5€ à 19€/mois chacun). Tous les modules réunis : 89€/mois. Souhaitez-vous voir les détails ?",
       suggestions: ["Voir les tarifs", "Comparer les plans", "Essai gratuit"]
     };
   }
@@ -974,11 +974,11 @@ export default function SupportPage() {
                       Support Premium
                     </h3>
                     <p className="mt-1 text-sm text-slate-400">
-                      Les clients Pro et Expert bénéficient d&apos;un support
+                      Les abonnés bénéficient d&apos;un support
                       prioritaire avec temps de réponse garanti.
                     </p>
                     <Link
-                      href="/finance/pricing"
+                      href="/tarifs"
                       className="mt-3 inline-flex items-center gap-1 text-sm text-amber-400 hover:text-amber-300"
                     >
                       Découvrir nos offres

@@ -193,7 +193,7 @@ export default function StockPage() {
                 Optimisez votre gestion de stock
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-                Essayez Quelyos Stock gratuitement pendant 14 jours.
+                Essayez Quelyos Stock gratuitement pendant 30 jours.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link

@@ -61,7 +61,7 @@ export default function MarketingPage() {
       icon: DollarSign,
       title: "Prix TPE, résultats pro",
       description:
-        "99€/mois. Moins cher qu'une agence, plus efficace qu'un stagiaire.",
+        "Moins cher qu'une agence, plus efficace qu'un stagiaire. Module Marketing à partir de 9€/mois.",
     },
   ];
 

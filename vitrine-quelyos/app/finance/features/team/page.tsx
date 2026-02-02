@@ -204,8 +204,8 @@ export default function TeamFeaturePage() {
               Prêt à gérer votre trésorerie en équipe ?
             </h2>
             <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-              Invitez jusqu&apos;à 5 membres gratuitement sur le plan Starter,
-              ou des équipes illimitées sur les plans supérieurs.
+              5 utilisateurs inclus dans le plan de base.
+              Ajoutez des packs de 5 utilisateurs supplémentaires selon vos besoins.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

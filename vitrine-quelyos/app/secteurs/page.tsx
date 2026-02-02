@@ -15,6 +15,10 @@ import {
   CheckCircle,
   Compass,
   Sparkles,
+  Factory,
+  Home,
+  GraduationCap,
+  Truck,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -117,6 +121,54 @@ const secteurs = [
     bgGradient: "from-green-500/10 to-emerald-500/5",
     href: "/secteurs/associations",
   },
+  {
+    id: "industrie",
+    name: "Industrie",
+    tagline: "PME industrielles, ateliers, usines",
+    description: "Maintenance préventive, stock pièces détachées, pilotage financier et gestion des équipes techniques.",
+    features: ["GMAO complète", "Stock pièces", "Finance", "Planning équipes"],
+    icon: Factory,
+    color: "slate",
+    gradient: "from-slate-500 to-gray-500",
+    bgGradient: "from-slate-500/10 to-gray-500/5",
+    href: "/secteurs/industrie",
+  },
+  {
+    id: "immobilier",
+    name: "Immobilier",
+    tagline: "Agences, syndics, gestionnaires",
+    description: "Pipeline de mandats, comptabilité locative, relances impayés et relation client pour les professionnels de l'immobilier.",
+    features: ["Pipeline mandats", "Comptabilité locative", "Relances", "Matching biens"],
+    icon: Home,
+    color: "violet",
+    gradient: "from-violet-500 to-purple-500",
+    bgGradient: "from-violet-500/10 to-purple-500/5",
+    href: "/secteurs/immobilier",
+  },
+  {
+    id: "education",
+    name: "Formation",
+    tagline: "Centres, écoles, organismes",
+    description: "Inscriptions en ligne, conformité Qualiopi, facturation OPCO/CPF et planning formateurs.",
+    features: ["Inscriptions en ligne", "Qualiopi", "Facturation OPCO", "Planning"],
+    icon: GraduationCap,
+    color: "blue",
+    gradient: "from-blue-500 to-sky-500",
+    bgGradient: "from-blue-500/10 to-sky-500/5",
+    href: "/secteurs/education",
+  },
+  {
+    id: "logistique",
+    name: "Logistique",
+    tagline: "Transporteurs, entreposeurs",
+    description: "Gestion d'entrepôts, maintenance de flotte, pilotage des coûts et relation client pour la logistique.",
+    features: ["Gestion entrepôts", "Maintenance flotte", "Coûts transport", "CRM logistique"],
+    icon: Truck,
+    color: "teal",
+    gradient: "from-teal-500 to-emerald-500",
+    bgGradient: "from-teal-500/10 to-emerald-500/5",
+    href: "/secteurs/logistique",
+  },
 ];
 
 const colorClasses: Record<string, { text: string; border: string; bg: string }> = {
@@ -128,6 +180,9 @@ const colorClasses: Record<string, { text: string; border: string; bg: string }>
   amber: { text: "text-amber-400", border: "border-amber-500/30", bg: "bg-amber-500" },
   cyan: { text: "text-cyan-400", border: "border-cyan-500/30", bg: "bg-cyan-500" },
   green: { text: "text-green-400", border: "border-green-500/30", bg: "bg-green-500" },
+  slate: { text: "text-slate-400", border: "border-slate-500/30", bg: "bg-slate-500" },
+  violet: { text: "text-violet-400", border: "border-violet-500/30", bg: "bg-violet-500" },
+  teal: { text: "text-teal-400", border: "border-teal-500/30", bg: "bg-teal-500" },
 };
 
 export default function SecteursPage() {

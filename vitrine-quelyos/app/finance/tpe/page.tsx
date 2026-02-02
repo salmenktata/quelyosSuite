@@ -536,7 +536,7 @@ export default function LandingTPE() {
                     <th className="p-4 text-center">
                       <div className="flex flex-col items-center">
                         <span className="text-indigo-400 font-bold">Quelyos</span>
-                        <span className="text-xs text-slate-500">29€/mois</span>
+                        <span className="text-xs text-slate-500">9€/mois</span>
                       </div>
                     </th>
                     <th className="p-4 text-center">
@@ -626,7 +626,7 @@ export default function LandingTPE() {
             </h2>
             <p className="mt-3 text-lg text-slate-300 max-w-xl mx-auto">
               Rejoignez les 127 dirigeants TPE qui pilotent leur trésorerie 90 jours à l&apos;avance.
-              <strong className="text-white"> Essai gratuit 14 jours, sans carte bancaire.</strong>
+              <strong className="text-white"> Essai gratuit 30 jours, sans carte bancaire.</strong>
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
               <Link

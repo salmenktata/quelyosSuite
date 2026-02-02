@@ -242,7 +242,7 @@ export default function ModulesPage() {
                 Un prix, toutes les solutions
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-                Avec le plan Business à 99€/mois, accédez à l&apos;ensemble des solutions sans limitation.
+                À partir de 9€/mois avec 1 module au choix inclus. Ajoutez les modules dont vous avez besoin, quand vous en avez besoin.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
@@ -257,7 +257,7 @@ export default function ModulesPage() {
                   className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition-all hover:bg-white/10"
                 >
                   <Sparkles className="h-5 w-5" />
-                  Essai gratuit 14 jours
+                  Essai gratuit 30 jours
                 </Link>
               </div>
             </m.div>

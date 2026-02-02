@@ -28,6 +28,10 @@ import {
   Building2,
   Users,
   Wrench,
+  Factory,
+  Home,
+  GraduationCap,
+  Truck,
 } from "lucide-react";
 import config from "../lib/config";
 import Container from "./Container";
@@ -47,16 +51,22 @@ const modulesNav = [
 // Solutions métier par secteur pour le mega menu
 const solutionsNav = {
   commerce: [
-    { id: "restaurant", name: "Quelyos Resto", tagline: "Solution complète restauration", icon: UtensilsCrossed, href: "/solutions/restaurant", color: "text-orange-400" },
-    { id: "commerce", name: "Quelyos Boutique", tagline: "Solution commerce omnicanal", icon: ShoppingBag, href: "/solutions/commerce", color: "text-pink-400" },
-    { id: "ecommerce", name: "Quelyos Store", tagline: "Solution vente en ligne", icon: Globe, href: "/solutions/ecommerce", color: "text-indigo-400" },
-    { id: "services", name: "Quelyos Pro", tagline: "Solution agences & services B2B", icon: Briefcase, href: "/solutions/services", color: "text-blue-400" },
+    { id: "restaurant", name: "Quelyos Resto", tagline: "Restauration complète", icon: UtensilsCrossed, href: "/solutions/restaurant", color: "text-orange-400" },
+    { id: "commerce", name: "Quelyos Boutique", tagline: "Commerce omnicanal", icon: ShoppingBag, href: "/solutions/commerce", color: "text-pink-400" },
+    { id: "ecommerce", name: "Quelyos Store", tagline: "Vente en ligne", icon: Globe, href: "/solutions/ecommerce", color: "text-indigo-400" },
+    { id: "hotellerie", name: "Quelyos Hotel", tagline: "Hôtellerie & hébergement", icon: Building2, href: "/solutions/hotellerie", color: "text-cyan-400" },
+  ],
+  services: [
+    { id: "services", name: "Quelyos Pro", tagline: "Services B2B & agences", icon: Briefcase, href: "/solutions/services", color: "text-blue-400" },
+    { id: "sante", name: "Quelyos Care", tagline: "Santé & bien-être", icon: Heart, href: "/solutions/sante", color: "text-red-400" },
+    { id: "immobilier", name: "Quelyos Immo", tagline: "Immobilier & gestion", icon: Home, href: "/solutions/immobilier", color: "text-violet-400" },
+    { id: "education", name: "Quelyos Edu", tagline: "Formation & éducation", icon: GraduationCap, href: "/solutions/education", color: "text-blue-400" },
   ],
   metiers: [
-    { id: "sante", name: "Quelyos Care", tagline: "Solution santé & bien-être", icon: Heart, href: "/solutions/sante", color: "text-red-400" },
-    { id: "btp", name: "Quelyos Build", tagline: "Solution BTP & artisanat", icon: Hammer, href: "/solutions/btp", color: "text-amber-400" },
-    { id: "hotellerie", name: "Quelyos Hotel", tagline: "Solution hôtellerie", icon: Building2, href: "/solutions/hotellerie", color: "text-cyan-400" },
-    { id: "associations", name: "Quelyos Club", tagline: "Solution vie associative", icon: Users, href: "/solutions/associations", color: "text-green-400" },
+    { id: "btp", name: "Quelyos Build", tagline: "BTP & artisanat", icon: Hammer, href: "/solutions/btp", color: "text-amber-400" },
+    { id: "industrie", name: "Quelyos Industrie", tagline: "PME industrielles", icon: Factory, href: "/solutions/industrie", color: "text-slate-400" },
+    { id: "logistique", name: "Quelyos Logistique", tagline: "Transport & entreposage", icon: Truck, href: "/solutions/logistique", color: "text-teal-400" },
+    { id: "associations", name: "Quelyos Club", tagline: "Vie associative", icon: Users, href: "/solutions/associations", color: "text-green-400" },
   ]
 };
 
@@ -102,12 +112,12 @@ export default function Header() {
 
               {solutionsDropdown && (
                 <div className="absolute left-0 top-full pt-2">
-                  <div className="w-[520px] rounded-xl border border-white/10 bg-slate-800/95 p-4 shadow-xl backdrop-blur-xl">
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Colonne Commerce & Services */}
+                  <div className="w-[740px] rounded-xl border border-white/10 bg-slate-800/95 p-4 shadow-xl backdrop-blur-xl">
+                    <div className="grid grid-cols-3 gap-6">
+                      {/* Colonne Commerce */}
                       <div>
                         <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                          Commerce & Services
+                          Commerce
                         </p>
                         <div className="space-y-1">
                           {solutionsNav.commerce.map((item) => (
@@ -125,10 +135,31 @@ export default function Header() {
                           ))}
                         </div>
                       </div>
-                      {/* Colonne Métiers spécialisés */}
+                      {/* Colonne Services */}
                       <div>
                         <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                          Métiers spécialisés
+                          Services
+                        </p>
+                        <div className="space-y-1">
+                          {solutionsNav.services.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={item.href}
+                              className="flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+                            >
+                              <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.color}`} />
+                              <div>
+                                <p className="text-sm font-medium text-white">{item.name}</p>
+                                <p className="text-xs text-slate-400">{item.tagline}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Colonne Industrie & Terrain */}
+                      <div>
+                        <p className="mb-3 border-b border-white/10 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                          Industrie & Terrain
                         </p>
                         <div className="space-y-1">
                           {solutionsNav.metiers.map((item) => (

@@ -251,7 +251,7 @@ export default function FeaturesPage() {
                 href={config.finance.register}
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-8 py-4 text-lg font-semibold text-white shadow-2xl shadow-indigo-500/50 transition-all hover:scale-105 hover:shadow-indigo-500/70"
               >
-                Essayer gratuitement 14 jours
+                Essayer gratuitement 30 jours
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
@@ -581,7 +581,7 @@ export default function FeaturesPage() {
               </h2>
               <p className="mx-auto mt-6 max-w-2xl text-xl text-slate-300">
                 Rejoignez les dirigeants de TPE qui dorment tranquilles grâce à Quelyos.
-                <strong className="text-white block mt-2">14 jours gratuits, sans carte bancaire.</strong>
+                <strong className="text-white block mt-2">30 jours gratuits, sans carte bancaire.</strong>
               </p>
 
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

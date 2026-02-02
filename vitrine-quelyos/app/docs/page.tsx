@@ -23,7 +23,7 @@ const sections = [
     title: "Démarrage rapide",
     description: "Configurez Quelyos en quelques minutes",
     links: [
-      { title: "Créer un compte", href: "/finance/pricing", available: true },
+      { title: "Créer un compte", href: "/register", available: true },
       { title: "Découvrir les fonctionnalités", href: "/finance/features", available: true },
       { title: "Connecter vos banques", href: null, available: false },
       { title: "Premiers pas", href: null, available: false },
@@ -90,7 +90,7 @@ const resources = [
     icon: CreditCard,
     title: "Tarifs & Abonnements",
     description: "Comparez les offres et choisissez la vôtre",
-    href: "/finance/pricing",
+    href: "/tarifs",
     color: "orange",
   },
 ];

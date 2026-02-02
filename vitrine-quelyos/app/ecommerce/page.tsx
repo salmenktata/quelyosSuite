@@ -121,7 +121,7 @@ export default function EcommercePage() {
               >
                 <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 text-sm text-emerald-300 mb-6">
                   <Sparkles className="h-4 w-4" />
-                  14 jours d&apos;essai gratuit
+                  30 jours d&apos;essai gratuit
                 </div>
 
                 <div className="flex items-center gap-4 mb-6">
@@ -154,14 +154,14 @@ export default function EcommercePage() {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 mb-6">
                   <Link
-                    href="/ecommerce/signup?plan=pro"
+                    href="/register?module=store"
                     className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
                   >
                     <Sparkles className="h-5 w-5" />
                     Créer ma boutique gratuitement
                   </Link>
                   <Link
-                    href="/ecommerce/pricing"
+                    href="/tarifs?module=store"
                     className="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-3 font-semibold text-white hover:bg-white/10 transition-all"
                   >
                     Voir les tarifs
@@ -349,22 +349,22 @@ export default function EcommercePage() {
               Prêt à lancer votre boutique ?
             </h2>
             <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-              Commencez votre essai gratuit de 14 jours et créez votre boutique
+              Commencez votre essai gratuit de 30 jours et créez votre boutique
               en quelques minutes.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/ecommerce/signup?plan=pro"
+                href="/register?module=store"
                 className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 font-semibold text-white hover:from-amber-600 hover:to-orange-600 transition-all"
               >
                 <Sparkles className="h-5 w-5" />
                 Créer ma boutique
               </Link>
               <Link
-                href="/ecommerce/pricing"
+                href="/tarifs?module=store"
                 className="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-8 py-3 font-semibold text-white hover:bg-white/10 transition-all"
               >
-                Comparer les plans
+                Voir les tarifs
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>

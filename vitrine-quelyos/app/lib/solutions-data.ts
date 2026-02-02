@@ -201,7 +201,7 @@ export const solutionsData: Record<string, SolutionData> = {
     valueProp: 'Gérez votre boutique physique et en ligne depuis une interface unique. Synchronisation automatique, zéro double saisie.',
     verb: 'faire grandir votre commerce',
 
-    modulesIncluded: ['POS', 'Stock', 'Store', 'Finance', 'Marketing'],
+    modulesIncluded: ['Store', 'POS', 'Stock', 'CRM'],
 
     stats: {
       clients: '180+',
@@ -615,7 +615,7 @@ export const solutionsData: Record<string, SolutionData> = {
     valueProp: 'Solution tout-en-un pour professionnels de santé et bien-être. Gestion de cabinet simplifiée, conformité garantie.',
     verb: 'gérer votre cabinet',
 
-    modulesIncluded: ['CRM', 'Finance', 'Marketing'],
+    modulesIncluded: ['CRM', 'Finance', 'Marketing', 'Support'],
 
     stats: {
       clients: '120+',
@@ -753,7 +753,7 @@ export const solutionsData: Record<string, SolutionData> = {
     valueProp: 'Gérez votre activité d\'artisan ou PME du BTP de A à Z. Devis rapides, suivi de chantiers, facturation automatique.',
     verb: 'piloter vos chantiers',
 
-    modulesIncluded: ['CRM', 'Stock', 'Finance', 'HR'],
+    modulesIncluded: ['GMAO', 'Stock', 'Finance', 'CRM'],
 
     stats: {
       clients: '95+',
@@ -891,7 +891,7 @@ export const solutionsData: Record<string, SolutionData> = {
     valueProp: 'Solution complète pour hôtels, chambres d\'hôtes et hébergements touristiques. Optimisez votre taux d\'occupation.',
     verb: 'gérer votre établissement',
 
-    modulesIncluded: ['CRM', 'POS', 'Finance', 'Marketing'],
+    modulesIncluded: ['Support', 'GMAO', 'Finance', 'CRM', 'Marketing'],
 
     stats: {
       clients: '85+',
@@ -1154,6 +1154,558 @@ export const solutionsData: Record<string, SolutionData> = {
         'Comptabilité associative conforme',
         'Site web association',
         'Support prioritaire'
+      ]
+    }
+  },
+
+  industrie: {
+    id: 'industrie',
+    name: 'Quelyos Industrie',
+    sectorName: 'Industrie',
+    headline: 'Optimisez votre production, anticipez les pannes',
+    subheadline: 'Maintenance, stock, finance, RH : pilotage industriel complet',
+    valueProp: 'Solution tout-en-un pour PME industrielles. Maintenance prédictive, gestion des pièces détachées et pilotage financier en temps réel.',
+    verb: 'piloter votre production',
+
+    modulesIncluded: ['GMAO', 'Stock', 'Finance', 'RH'],
+
+    stats: {
+      clients: '80+',
+      timeSaved: '16h/semaine',
+      precision: '92%',
+      mainMetric: '-40% de pannes imprévues'
+    },
+
+    painPoints: [
+      {
+        problem: 'Pannes imprévues qui paralysent la production',
+        solution: 'Maintenance préventive planifiée et alertes prédictives. -40% de pannes imprévues.'
+      },
+      {
+        problem: 'Pièces détachées manquantes au moment critique',
+        solution: 'Stock de pièces suivi en temps réel avec seuils d\'alerte et commandes automatiques.'
+      },
+      {
+        problem: 'Traçabilité et conformité ISO chronophages',
+        solution: 'Historique complet des interventions et rapports de conformité automatiques.'
+      },
+      {
+        problem: 'Difficultés à planifier les équipes de maintenance',
+        solution: 'Planning RH intégré avec compétences et habilitations. Affectation optimisée.'
+      },
+      {
+        problem: 'Pas de visibilité sur les coûts de maintenance',
+        solution: 'Analyse détaillée des coûts par équipement, ligne de production et type d\'intervention.'
+      },
+      {
+        problem: 'Maintenance réactive au lieu de préventive',
+        solution: 'Planification automatique des maintenances selon les heures de fonctionnement et l\'historique.'
+      }
+    ],
+
+    features: [
+      {
+        icon: '🔧',
+        title: 'GMAO complète',
+        description: 'Gestion des équipements, ordres de travail, historique interventions, planning maintenance.',
+        benefit: '-40% de pannes'
+      },
+      {
+        icon: '📦',
+        title: 'Stock pièces détachées',
+        description: 'Inventaire temps réel des pièces, alertes de seuil, commandes fournisseurs automatiques.',
+        benefit: 'Zéro rupture critique'
+      },
+      {
+        icon: '💰',
+        title: 'Pilotage financier',
+        description: 'Budgets maintenance, analyse des coûts par équipement, prévisions de trésorerie.',
+        benefit: '92% de précision'
+      },
+      {
+        icon: '👷',
+        title: 'Gestion des équipes',
+        description: 'Planning techniciens, compétences et habilitations, suivi des heures par intervention.',
+        benefit: 'Productivité optimale'
+      },
+      {
+        icon: '📊',
+        title: 'Tableaux de bord production',
+        description: 'KPIs temps réel : MTBF, MTTR, taux de disponibilité, coûts maintenance/production.',
+        benefit: 'Décisions data-driven'
+      },
+      {
+        icon: '📋',
+        title: 'Conformité et traçabilité',
+        description: 'Rapports automatiques ISO, historique complet, audits facilités.',
+        benefit: 'Conformité garantie'
+      },
+      {
+        icon: '⚙️',
+        title: 'Maintenance préventive',
+        description: 'Planification automatique selon heures de fonctionnement, cycles et historique.',
+        benefit: '+30% de durée de vie'
+      },
+      {
+        icon: '🔗',
+        title: 'Intégrations industrielles',
+        description: 'Connexion capteurs IoT, ERP existant, systèmes SCADA et automates.',
+        benefit: 'Écosystème connecté'
+      }
+    ],
+
+    testimonials: [
+      {
+        quote: "La maintenance préventive a réduit nos pannes de 40%. On ne subit plus, on anticipe. Le ROI a été immédiat.",
+        author: 'Philippe Garnier',
+        role: 'Directeur technique',
+        company: 'Mécanique Garnier',
+        location: 'Lyon',
+        metric: '-40% de pannes'
+      },
+      {
+        quote: "Le suivi des pièces détachées nous a évité des arrêts de production coûteux. Plus jamais de pièce manquante en urgence.",
+        author: 'Nathalie Blanc',
+        role: 'Responsable maintenance',
+        company: 'Plasturgie du Sud',
+        location: 'Montpellier',
+        metric: 'Zéro rupture critique'
+      },
+      {
+        quote: "Les rapports de conformité ISO se génèrent automatiquement. On a gagné 2 jours par mois sur la documentation.",
+        author: 'Jean-Marc Petit',
+        role: 'Directeur qualité',
+        company: 'Ateliers Réunis',
+        location: 'Strasbourg',
+        metric: '2 jours gagnés/mois'
+      }
+    ],
+
+    pricing: {
+      basePrice: 99,
+      features: [
+        'Solutions GMAO, Stock, Finance, RH incluses',
+        'Gestion des équipements et maintenance préventive',
+        'Stock pièces détachées avec alertes',
+        'Planning techniciens et habilitations',
+        'Tableaux de bord production temps réel',
+        'Conformité et traçabilité automatiques',
+        'Utilisateurs illimités',
+        'Support prioritaire industriel'
+      ]
+    }
+  },
+
+  immobilier: {
+    id: 'immobilier',
+    name: 'Quelyos Immo',
+    sectorName: 'Immobilier',
+    headline: 'Gérez vos biens et vos mandats sans effort',
+    subheadline: 'Mandats, prospects, finance, support : gestion immobilière simplifiée',
+    valueProp: 'Solution complète pour agences immobilières, syndics et gestionnaires de biens. Pipeline de mandats, suivi financier et relation client.',
+    verb: 'développer votre activité immobilière',
+
+    modulesIncluded: ['CRM', 'Finance', 'Marketing', 'Support'],
+
+    stats: {
+      clients: '70+',
+      timeSaved: '14h/semaine',
+      precision: '91%',
+      mainMetric: '+35% de mandats signés'
+    },
+
+    painPoints: [
+      {
+        problem: 'Pipeline de mandats désorganisé, prospects perdus',
+        solution: 'CRM immobilier avec pipeline visuel et relances automatiques. +35% de mandats signés.'
+      },
+      {
+        problem: 'Relances impayés chronophages et inefficaces',
+        solution: 'Relances automatiques par email/SMS avec escalade progressive. -60% d\'impayés.'
+      },
+      {
+        problem: 'Comptabilité locative complexe et source d\'erreurs',
+        solution: 'Comptabilité automatisée : loyers, charges, régularisations, rapports propriétaires.'
+      },
+      {
+        problem: 'Difficultés à qualifier et convertir les prospects',
+        solution: 'Scoring automatique des prospects et alertes de matching avec les biens disponibles.'
+      },
+      {
+        problem: 'Communication dispersée avec propriétaires et locataires',
+        solution: 'Portail dédié avec suivi des demandes, notifications et historique complet.'
+      },
+      {
+        problem: 'Visites et mandats mal planifiés',
+        solution: 'Agenda intégré avec prise de RDV en ligne et rappels automatiques.'
+      }
+    ],
+
+    features: [
+      {
+        icon: '🏠',
+        title: 'Pipeline de mandats',
+        description: 'Suivi visuel des mandats : prospection, estimation, signature, commercialisation.',
+        benefit: '+35% de mandats'
+      },
+      {
+        icon: '💰',
+        title: 'Comptabilité locative',
+        description: 'Gestion automatique des loyers, charges, régularisations et rapports propriétaires.',
+        benefit: 'Zéro erreur comptable'
+      },
+      {
+        icon: '📧',
+        title: 'Relances automatiques',
+        description: 'Relances impayés par email/SMS avec escalade. Rappels de loyers et de visites.',
+        benefit: '-60% d\'impayés'
+      },
+      {
+        icon: '🎯',
+        title: 'Matching biens/prospects',
+        description: 'Alertes automatiques quand un bien correspond aux critères d\'un prospect.',
+        benefit: '+25% de conversion'
+      },
+      {
+        icon: '📅',
+        title: 'Agenda et visites',
+        description: 'Prise de RDV en ligne, planning des visites, comptes-rendus automatiques.',
+        benefit: 'Organisation optimale'
+      },
+      {
+        icon: '📊',
+        title: 'Analytics immobilier',
+        description: 'Tableaux de bord : taux d\'occupation, rendement locatif, délai de commercialisation.',
+        benefit: 'Pilotage précis'
+      },
+      {
+        icon: '📲',
+        title: 'Marketing immobilier',
+        description: 'Diffusion multi-portails, campagnes email ciblées, vitrines digitales.',
+        benefit: '+40% de visibilité'
+      },
+      {
+        icon: '🔗',
+        title: 'Portail propriétaires',
+        description: 'Espace dédié propriétaires avec reporting, documents et communication directe.',
+        benefit: 'Satisfaction propriétaires'
+      }
+    ],
+
+    testimonials: [
+      {
+        quote: "Le CRM immobilier a structuré notre prospection. On signe 35% de mandats en plus grâce aux relances automatiques.",
+        author: 'Claire Mercier',
+        role: 'Directrice',
+        company: 'Agence Mercier Immobilier',
+        location: 'Bordeaux',
+        metric: '+35% de mandats'
+      },
+      {
+        quote: "Les relances automatiques d'impayés ont divisé nos retards de paiement par 3. Un gain de temps et de trésorerie énorme.",
+        author: 'Stéphane Roux',
+        role: 'Gestionnaire',
+        company: 'Gestion Patrimoine Sud',
+        location: 'Nice',
+        metric: '-60% d\'impayés'
+      },
+      {
+        quote: "Le matching automatique biens/prospects nous permet de répondre en temps réel. Les clients sont impressionnés par notre réactivité.",
+        author: 'Marine Lefort',
+        role: 'Agent immobilier',
+        company: 'Immo Prestige',
+        location: 'Paris',
+        metric: '+25% de conversion'
+      }
+    ],
+
+    pricing: {
+      basePrice: 99,
+      features: [
+        'Solutions CRM, Finance, Marketing, Support incluses',
+        'Pipeline de mandats avec suivi visuel',
+        'Comptabilité locative automatisée',
+        'Relances impayés intelligentes',
+        'Matching biens/prospects automatique',
+        'Diffusion multi-portails',
+        'Utilisateurs illimités',
+        'Support prioritaire immobilier'
+      ]
+    }
+  },
+
+  education: {
+    id: 'education',
+    name: 'Quelyos Edu',
+    sectorName: 'Formation & Éducation',
+    headline: 'Formez, certifiez, facturez : tout en un',
+    subheadline: 'Inscriptions, Qualiopi, facturation OPCO : solution formation complète',
+    valueProp: 'Solution dédiée aux organismes de formation, écoles privées et centres de formation. Conformité Qualiopi, gestion des inscriptions et facturation OPCO/CPF.',
+    verb: 'gérer votre organisme de formation',
+
+    modulesIncluded: ['CRM', 'Finance', 'Marketing', 'RH'],
+
+    stats: {
+      clients: '65+',
+      timeSaved: '18h/semaine',
+      precision: '95%',
+      mainMetric: '+45% d\'inscriptions'
+    },
+
+    painPoints: [
+      {
+        problem: 'Gestion des inscriptions manuelle et source d\'erreurs',
+        solution: 'Formulaires d\'inscription en ligne avec validation automatique. +45% d\'inscriptions.'
+      },
+      {
+        problem: 'Conformité Qualiopi chronophage et stressante',
+        solution: 'Suivi automatique des indicateurs Qualiopi. Rapports prêts pour l\'audit.'
+      },
+      {
+        problem: 'Facturation OPCO/CPF complexe et retardée',
+        solution: 'Facturation automatique adaptée aux financeurs (OPCO, CPF, Pôle Emploi).'
+      },
+      {
+        problem: 'Planning formateurs difficile à gérer',
+        solution: 'Planning intégré avec disponibilités, compétences et affectation automatique.'
+      },
+      {
+        problem: 'Suivi des parcours stagiaires incomplet',
+        solution: 'Dossier stagiaire complet : présences, évaluations, certifications, satisfaction.'
+      },
+      {
+        problem: 'Communication avec les stagiaires inefficace',
+        solution: 'Notifications automatiques : convocations, rappels, attestations, enquêtes satisfaction.'
+      }
+    ],
+
+    features: [
+      {
+        icon: '📝',
+        title: 'Inscriptions en ligne',
+        description: 'Formulaires personnalisés, validation automatique, dossiers complets dématérialisés.',
+        benefit: '+45% d\'inscriptions'
+      },
+      {
+        icon: '✅',
+        title: 'Conformité Qualiopi',
+        description: 'Suivi des 32 indicateurs, génération automatique des preuves et rapports d\'audit.',
+        benefit: 'Audit serein'
+      },
+      {
+        icon: '💰',
+        title: 'Facturation OPCO/CPF',
+        description: 'Facturation automatique adaptée à chaque financeur. Suivi des paiements en temps réel.',
+        benefit: 'Trésorerie optimisée'
+      },
+      {
+        icon: '📅',
+        title: 'Planning formateurs',
+        description: 'Gestion des disponibilités, compétences, affectation automatique et suivi des heures.',
+        benefit: 'Organisation fluide'
+      },
+      {
+        icon: '📊',
+        title: 'Suivi parcours stagiaires',
+        description: 'Émargement digital, évaluations, progression, certifications et attestations.',
+        benefit: 'Traçabilité complète'
+      },
+      {
+        icon: '📧',
+        title: 'Communication automatisée',
+        description: 'Convocations, rappels, envoi d\'attestations et enquêtes de satisfaction automatiques.',
+        benefit: '+60% de satisfaction'
+      },
+      {
+        icon: '📋',
+        title: 'Catalogue formations',
+        description: 'Catalogue en ligne avec programmes, objectifs, prérequis et modalités.',
+        benefit: 'Visibilité accrue'
+      },
+      {
+        icon: '🔗',
+        title: 'Intégrations formation',
+        description: 'Connexion Mon Compte Formation, OPCO, LMS existants, outils de visioconférence.',
+        benefit: 'Écosystème complet'
+      }
+    ],
+
+    testimonials: [
+      {
+        quote: "La conformité Qualiopi est devenue simple. Les preuves se génèrent automatiquement, l'audit s'est passé sans stress.",
+        author: 'Isabelle Martin',
+        role: 'Directrice pédagogique',
+        company: 'Centre de Formation Pro',
+        location: 'Lyon',
+        metric: 'Audit Qualiopi réussi'
+      },
+      {
+        quote: "La facturation OPCO automatique nous a fait gagner 3 jours par mois. Plus d'erreurs, plus de retards de paiement.",
+        author: 'François Duval',
+        role: 'Responsable administratif',
+        company: 'Académie du Digital',
+        location: 'Paris',
+        metric: '3 jours gagnés/mois'
+      },
+      {
+        quote: "Les inscriptions en ligne ont boosté notre recrutement de 45%. Les stagiaires s'inscrivent 24/7, c'est un game changer.",
+        author: 'Sophie Legrand',
+        role: 'Gérante',
+        company: 'FormAction',
+        location: 'Toulouse',
+        metric: '+45% d\'inscriptions'
+      }
+    ],
+
+    pricing: {
+      basePrice: 99,
+      features: [
+        'Solutions CRM, Finance, Marketing, RH incluses',
+        'Inscriptions en ligne automatisées',
+        'Conformité Qualiopi intégrée',
+        'Facturation OPCO/CPF automatique',
+        'Planning formateurs et émargement digital',
+        'Suivi parcours et certifications',
+        'Utilisateurs illimités',
+        'Support prioritaire formation'
+      ]
+    }
+  },
+
+  logistique: {
+    id: 'logistique',
+    name: 'Quelyos Logistique',
+    sectorName: 'Logistique & Transport',
+    headline: 'Optimisez vos flux, maîtrisez vos coûts',
+    subheadline: 'Entrepôts, flotte, finance, clients : pilotage logistique complet',
+    valueProp: 'Solution complète pour transporteurs, logisticiens et entreposeurs. Gestion des entrepôts, maintenance de flotte et pilotage financier intégré.',
+    verb: 'optimiser votre logistique',
+
+    modulesIncluded: ['Stock', 'GMAO', 'Finance', 'CRM'],
+
+    stats: {
+      clients: '60+',
+      timeSaved: '15h/semaine',
+      precision: '93%',
+      mainMetric: '-25% de coûts logistiques'
+    },
+
+    painPoints: [
+      {
+        problem: 'Gestion des entrepôts inefficace, erreurs de picking',
+        solution: 'WMS intégré avec emplacements, picking optimisé et traçabilité complète.'
+      },
+      {
+        problem: 'Maintenance de la flotte réactive et coûteuse',
+        solution: 'Maintenance préventive planifiée : vidanges, contrôles, pneumatiques. -30% de pannes.'
+      },
+      {
+        problem: 'Pas de visibilité sur les coûts par trajet/client',
+        solution: 'Analyse détaillée des coûts : carburant, péages, maintenance, main-d\'œuvre par livraison.'
+      },
+      {
+        problem: 'Difficultés à planifier les tournées',
+        solution: 'Optimisation automatique des tournées et affectation véhicules/chauffeurs.'
+      },
+      {
+        problem: 'Conformité réglementaire chronophage',
+        solution: 'Suivi automatique : contrôles techniques, permis, ADR, chronotachygraphes.'
+      },
+      {
+        problem: 'Relations clients peu structurées',
+        solution: 'CRM logistique : suivi contrats, SLA, réclamations et satisfaction client.'
+      }
+    ],
+
+    features: [
+      {
+        icon: '📦',
+        title: 'Gestion d\'entrepôts',
+        description: 'WMS complet : emplacements, réception, picking, expédition, inventaire tournant.',
+        benefit: '-50% d\'erreurs picking'
+      },
+      {
+        icon: '🚛',
+        title: 'Maintenance de flotte',
+        description: 'Suivi véhicules, maintenance préventive, contrôles techniques, gestion pneumatiques.',
+        benefit: '-30% de pannes'
+      },
+      {
+        icon: '💰',
+        title: 'Pilotage financier',
+        description: 'Analyse des coûts par trajet, client et véhicule. Prévisions de trésorerie.',
+        benefit: '93% de précision'
+      },
+      {
+        icon: '🎯',
+        title: 'CRM logistique',
+        description: 'Suivi contrats clients, SLA, réclamations, devis automatiques, facturation.',
+        benefit: '+20% de fidélisation'
+      },
+      {
+        icon: '📊',
+        title: 'Analytics transport',
+        description: 'KPIs temps réel : taux de remplissage, coût au km, délai de livraison, productivité.',
+        benefit: 'Décisions optimisées'
+      },
+      {
+        icon: '📋',
+        title: 'Conformité réglementaire',
+        description: 'Suivi automatique des contrôles, permis, habilitations et documents obligatoires.',
+        benefit: 'Conformité garantie'
+      },
+      {
+        icon: '🗺️',
+        title: 'Optimisation tournées',
+        description: 'Planification automatique des itinéraires et affectation véhicules/chauffeurs.',
+        benefit: '-15% de carburant'
+      },
+      {
+        icon: '🔗',
+        title: 'Intégrations transport',
+        description: 'Connexion transporteurs, TMS existants, systèmes de géolocalisation et EDI.',
+        benefit: 'Écosystème connecté'
+      }
+    ],
+
+    testimonials: [
+      {
+        quote: "L'optimisation des entrepôts a réduit nos erreurs de picking de 50%. La productivité a explosé, les clients sont satisfaits.",
+        author: 'Marc Fontaine',
+        role: 'Directeur logistique',
+        company: 'LogiExpress',
+        location: 'Marseille',
+        metric: '-50% d\'erreurs'
+      },
+      {
+        quote: "La maintenance préventive de notre flotte de 40 véhicules nous a fait économiser 25% sur les réparations en un an.",
+        author: 'Antoine Berger',
+        role: 'Gérant',
+        company: 'Transport Berger',
+        location: 'Lille',
+        metric: '-25% de coûts maintenance'
+      },
+      {
+        quote: "L'analyse des coûts par trajet nous a permis de renégocier nos tarifs. On sait exactement combien coûte chaque livraison.",
+        author: 'Élodie Dupont',
+        role: 'DAF',
+        company: 'Stockage & Co',
+        location: 'Nantes',
+        metric: '-25% de coûts logistiques'
+      }
+    ],
+
+    pricing: {
+      basePrice: 99,
+      features: [
+        'Solutions Stock, GMAO, Finance, CRM incluses',
+        'WMS complet : entrepôts et picking',
+        'Maintenance préventive de flotte',
+        'Analyse des coûts par trajet/client',
+        'Optimisation des tournées',
+        'Conformité réglementaire automatique',
+        'Utilisateurs illimités',
+        'Support prioritaire logistique'
       ]
     }
   }

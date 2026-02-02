@@ -176,7 +176,7 @@ const featureComparison: FeatureCategory[] = [
     name: "Tarification & Support",
     features: [
       { name: "Version gratuite", quelyos: true, pennylane: false, agicap: false, qonto: false, highlight: true },
-      { name: "Essai gratuit 14j", quelyos: true, pennylane: true, agicap: false, qonto: true },
+      { name: "Essai gratuit 30j", quelyos: true, pennylane: true, agicap: false, qonto: true },
       { name: "Sans engagement", quelyos: true, pennylane: false, agicap: false, qonto: true, highlight: true },
       { name: "Support dédié", quelyos: true, pennylane: true, agicap: true, qonto: true },
       { name: "Onboarding inclus", quelyos: true, pennylane: "partial", agicap: true, qonto: false },
@@ -196,13 +196,13 @@ const differentiators = [
   {
     icon: Zap,
     title: "Prévisions IA accessibles",
-    description: "Technologie de prédiction ML dès le plan Freemium, pas réservée aux grands comptes.",
+    description: "Technologie de prédiction ML dès le plan de base, pas réservée aux grands comptes.",
     color: "purple",
   },
   {
     icon: Euro,
     title: "Tarif transparent",
-    description: "19€/mois tout inclus, sans engagement. Pas de devis, pas de commercial, pas de surprise.",
+    description: "À partir de 9€/mois, sans engagement. Pas de devis, pas de commercial, pas de surprise.",
     color: "emerald",
   },
   {
@@ -327,8 +327,8 @@ export default function ComparePage() {
     tagline: "Prévisions trésorerie TPE",
     targetAudience: "Indépendants, TPE, Freelances",
     pricing: {
-      starter: "Gratuit",
-      pro: "19€/mois",
+      starter: "9€/mois",
+      pro: "18€/mois",
       note: "Sans engagement",
     },
     pros: [
@@ -572,7 +572,7 @@ export default function ComparePage() {
               {
                 profile: "TPE (1-5 employés)",
                 recommendation: "Quelyos",
-                why: "Le meilleur rapport qualité/prix avec des prévisions avancées à 19€/mois.",
+                why: "Le meilleur rapport qualité/prix avec des prévisions avancées dès 9€/mois.",
                 icon: Building2,
               },
               {
@@ -656,7 +656,7 @@ export default function ComparePage() {
                 <ArrowRight size={16} />
               </Link>
               <Link
-                href="/finance/pricing"
+                href="/tarifs"
                 className="inline-flex items-center gap-2 rounded-lg px-6 py-4 text-sm font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:bg-white/5"
               >
                 Voir les tarifs

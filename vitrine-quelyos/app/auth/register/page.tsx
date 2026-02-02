@@ -193,9 +193,9 @@ function RegisterForm() {
   ];
 
   const plans = [
-    { name: 'Starter', price: 'Gratuit', popular: false },
-    { name: 'Pro', price: '29€/mois', popular: true },
-    { name: 'Enterprise', price: 'Sur mesure', popular: false },
+    { name: 'Essai gratuit', price: '30 jours', popular: false },
+    { name: 'Base', price: '9€/mois', popular: true },
+    { name: 'Enterprise', price: 'Sur devis', popular: false },
   ];
 
   return (

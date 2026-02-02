@@ -120,7 +120,7 @@ export default function ForecastFeaturePage() {
                     href={config.finance.register}
                     className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white hover:bg-white/10 transition-all"
                   >
-                    Essai gratuit 14 jours
+                    Essai gratuit 30 jours
                   </Link>
                 </div>
               </div>

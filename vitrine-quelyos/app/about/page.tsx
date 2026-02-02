@@ -450,7 +450,7 @@ export default function AboutPage() {
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <p className="text-xs text-slate-500 text-center mt-4">
-                Aucune carte bancaire requise • Essai gratuit 14 jours
+                Aucune carte bancaire requise • Essai gratuit 30 jours
               </p>
             </div>
           </div>

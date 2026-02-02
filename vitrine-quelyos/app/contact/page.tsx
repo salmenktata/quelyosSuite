@@ -312,7 +312,7 @@ export default function ContactPage() {
               },
               {
                 q: "Comment puis-je obtenir de l'aide technique ?",
-                a: "Le support technique est accessible directement depuis l'application. Les clients Pro et Expert bénéficient d'un support prioritaire.",
+                a: "Le support technique est accessible directement depuis l'application. Tous les abonnés bénéficient d'un support par email sous 48h.",
               },
             ].map((faq, i) => (
               <motion.div
