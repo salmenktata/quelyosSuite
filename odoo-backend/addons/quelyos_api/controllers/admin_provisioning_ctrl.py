@@ -53,13 +53,6 @@ class AdminProvisioningController(SuperAdminController):
             return response
 
         # Vérification authentification
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         # Vérification super admin
         try:
             self._check_super_admin()
@@ -203,13 +196,6 @@ class AdminProvisioningController(SuperAdminController):
             return response
 
         # Vérification authentification
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         # Vérification super admin
         try:
             self._check_super_admin()

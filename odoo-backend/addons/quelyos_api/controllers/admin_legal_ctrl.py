@@ -48,13 +48,6 @@ class AdminLegalController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:

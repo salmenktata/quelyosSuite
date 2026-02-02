@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from odoo import http
 from odoo.http import request
+from odoo.exceptions import AccessDenied
 from .super_admin import SuperAdminController
 from ..config import get_cors_headers
 
@@ -23,13 +24,6 @@ class AdminSecurityController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -69,13 +63,6 @@ class AdminSecurityController(SuperAdminController):
         """Ajoute un domaine à la whitelist CORS"""
         origin = request.httprequest.headers.get('Origin', '')
         cors_headers = get_cors_headers(origin)
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -142,13 +129,6 @@ class AdminSecurityController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -196,13 +176,6 @@ class AdminSecurityController(SuperAdminController):
         """Supprime une entrée CORS"""
         origin = request.httprequest.headers.get('Origin', '')
         cors_headers = get_cors_headers(origin)
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -266,12 +239,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -323,12 +290,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -372,12 +333,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -419,12 +374,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -473,12 +422,6 @@ class AdminSecurityController(SuperAdminController):
         """Crée une règle IP whitelist"""
         origin = request.httprequest.headers.get('Origin', '')
         cors_headers = get_cors_headers(origin)
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -538,12 +481,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -587,12 +524,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -642,12 +573,6 @@ class AdminSecurityController(SuperAdminController):
         """Crée une nouvelle clé API"""
         origin = request.httprequest.headers.get('Origin', '')
         cors_headers = get_cors_headers(origin)
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -706,12 +631,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -755,12 +674,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -799,12 +712,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -846,12 +753,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -897,12 +798,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -962,12 +857,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1010,9 +899,6 @@ class AdminSecurityController(SuperAdminController):
     @http.route('/api/super-admin/security/rate-limits', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def rate_limits_create(self):
         """Créer une règle de rate limiting"""
-        if not request.session.uid:
-            return {'success': False, 'error': 'Non authentifié'}
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1045,9 +931,6 @@ class AdminSecurityController(SuperAdminController):
     @http.route('/api/super-admin/security/rate-limits/<int:rule_id>', type='jsonrpc', auth='public', methods=['PUT', 'DELETE'], csrf=False)
     def rate_limits_update_delete(self, rule_id):
         """Modifier ou supprimer une règle de rate limiting"""
-        if not request.session.uid:
-            return {'success': False, 'error': 'Non authentifié'}
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1089,12 +972,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -1147,12 +1024,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1201,12 +1072,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1241,12 +1106,6 @@ class AdminSecurityController(SuperAdminController):
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1274,9 +1133,6 @@ class AdminSecurityController(SuperAdminController):
     @http.route('/api/super-admin/security/waf-rules', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def waf_rules_create(self):
         """Créer une règle WAF"""
-        if not request.session.uid:
-            return {'success': False, 'error': 'Non authentifié'}
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1313,9 +1169,6 @@ class AdminSecurityController(SuperAdminController):
     @http.route('/api/super-admin/security/waf-rules/<int:rule_id>', type='jsonrpc', auth='public', methods=['PUT', 'DELETE'], csrf=False)
     def waf_rules_update_delete(self, rule_id):
         """Modifier ou supprimer une règle WAF"""
-        if not request.session.uid:
-            return {'success': False, 'error': 'Non authentifié'}
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1353,9 +1206,6 @@ class AdminSecurityController(SuperAdminController):
     @http.route('/api/super-admin/security/waf-rules/init-defaults', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def waf_rules_init_defaults(self):
         """Initialiser les règles WAF par défaut"""
-        if not request.session.uid:
-            return {'success': False, 'error': 'Non authentifié'}
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -1378,12 +1228,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -1418,12 +1262,6 @@ class AdminSecurityController(SuperAdminController):
 
         if request.httprequest.method == 'OPTIONS':
             return request.make_response('', headers=list(cors_headers.items()))
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers, status=401
-            )
 
         try:
             self._check_super_admin()
@@ -1460,13 +1298,6 @@ class AdminSecurityController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()

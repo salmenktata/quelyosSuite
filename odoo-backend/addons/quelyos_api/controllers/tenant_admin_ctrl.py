@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from odoo import http
 from odoo.http import request
+from odoo.exceptions import AccessDenied
 from .super_admin import SuperAdminController
 from ..config import get_cors_headers
 
@@ -23,13 +24,6 @@ class TenantAdminController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -78,13 +72,6 @@ class TenantAdminController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -155,13 +142,6 @@ class TenantAdminController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -227,13 +207,6 @@ class TenantAdminController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -380,13 +353,6 @@ class TenantAdminController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()

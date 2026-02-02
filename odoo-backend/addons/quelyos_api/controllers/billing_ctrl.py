@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from odoo import http
 from odoo.http import request
+from odoo.exceptions import AccessDenied
 from .super_admin import SuperAdminController
 from ..config import get_cors_headers
 
@@ -23,7 +24,7 @@ class BillingController(SuperAdminController):
             month_str = month_date.strftime('%Y-%m')
 
             # Calculer MRR pour ce mois (simplifié - à améliorer avec données historiques)
-            Subscription = request.env['quelyos.subscription']
+            Subscription = request.env['quelyos.subscription'].sudo()
             mrr_data = Subscription.get_mrr_breakdown()
 
             result.append({
@@ -44,13 +45,6 @@ class BillingController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -67,7 +61,7 @@ class BillingController(SuperAdminController):
             if plan:
                 domain.append(('plan_id.code', '=', plan))
 
-            Subscription = request.env['quelyos.subscription']
+            Subscription = request.env['quelyos.subscription'].sudo()
             subscriptions = Subscription.search(domain, order='mrr desc')
 
             data = {
@@ -95,13 +89,6 @@ class BillingController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -193,13 +180,6 @@ class BillingController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -210,7 +190,7 @@ class BillingController(SuperAdminController):
             )
 
         try:
-            data = request.env['quelyos.subscription'].get_mrr_breakdown()
+            data = request.env['quelyos.subscription'].sudo().get_mrr_breakdown()
             return request.make_json_response({'success': True, **data}, headers=cors_headers)
 
         except Exception as e:
@@ -232,13 +212,6 @@ class BillingController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -249,7 +222,7 @@ class BillingController(SuperAdminController):
             )
 
         try:
-            data = request.env['quelyos.subscription'].get_churn_analysis(months=int(months))
+            data = request.env['quelyos.subscription'].sudo().get_churn_analysis(months=int(months))
             return request.make_json_response({'success': True, 'data': data}, headers=cors_headers)
 
         except Exception as e:
@@ -270,13 +243,6 @@ class BillingController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -366,13 +332,6 @@ class BillingController(SuperAdminController):
             response.status_code = 204
             return response
 
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
-
         try:
             self._check_super_admin()
         except AccessDenied as e:
@@ -423,13 +382,6 @@ class BillingController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
@@ -509,13 +461,6 @@ class BillingController(SuperAdminController):
             response = request.make_response('', headers=list(cors_headers.items()))
             response.status_code = 204
             return response
-
-        if not request.session.uid:
-            return request.make_json_response(
-                {'success': False, 'error': 'Non authentifié'},
-                headers=cors_headers,
-                status=401
-            )
 
         try:
             self._check_super_admin()
