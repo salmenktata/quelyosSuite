@@ -23,7 +23,7 @@ COPY packages ./packages
 COPY ${APP_DIR} ./${APP_DIR}
 
 # Installer les dépendances
-RUN pnpm install --frozen-lockfile --filter "./${APP_DIR}..." --filter "./packages/*" --filter "./shared/*"
+RUN pnpm install --no-frozen-lockfile --filter "./${APP_DIR}..." --filter "./packages/*" --filter "./shared/*"
 
 # Build packages partagés d'abord
 RUN pnpm --filter "./packages/*" build 2>/dev/null || true
