@@ -42,20 +42,25 @@ export default function ImportPage() {
   const [accounts, setAccounts] = useState<Array<{ id: number; name: string }>>([]);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchAccounts() {
       try {
         const data = await apiFetchJson<Array<{ id: number; name: string }>>(
           '/api/ecommerce/accounts'
         );
+        if (cancelled) return;
         setAccounts(data);
         if (data.length > 0 && !state.selectedAccountId) {
           dispatch({ type: "SELECT_ACCOUNT", payload: data[0].id });
         }
       } catch (err) {
+        if (cancelled) return;
         logger.error("Error fetching accounts:", err);
       }
     }
     fetchAccounts();
+    return () => { cancelled = true; };
   }, [state.selectedAccountId, dispatch]);
 
   const currentStepIndex = STEPS.findIndex((s) => s.id === state.currentStep);

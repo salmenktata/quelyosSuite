@@ -277,7 +277,7 @@ export function HealthDashboard() {
 
       {/* Erreur */}
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
             <AlertTriangle className="h-5 w-5" />
             <span>Erreur: {error}</span>

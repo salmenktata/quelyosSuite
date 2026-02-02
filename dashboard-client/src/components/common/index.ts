@@ -56,6 +56,8 @@ export type { DataTableProps, DataTableColumn, BulkAction, MobileCardConfig } fr
 export { ImageUpload } from './ImageUpload'
 export type { ImageUploadProps } from './ImageUpload'
 
+export { ErrorAlert } from './ErrorAlert'
+
 export { ErrorBoundary } from './ErrorBoundary'
 export { ModuleErrorBoundary } from './ModuleErrorBoundary'
 

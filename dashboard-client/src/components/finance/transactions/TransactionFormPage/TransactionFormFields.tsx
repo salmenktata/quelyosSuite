@@ -278,7 +278,7 @@ export function TransactionFormFields({
       )}
 
       {error && (
-        <div className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+        <div role="alert" className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
           {error}
         </div>
       )}

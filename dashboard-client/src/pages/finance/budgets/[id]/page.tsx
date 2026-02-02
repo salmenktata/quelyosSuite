@@ -52,23 +52,26 @@ export default function BudgetDetailPage() {
   };
 
   useEffect(() => {
+    if (!params.id) return;
+    let cancelled = false;
+
     async function loadBudget() {
       try {
         setLoading(true);
         setError(null);
         const data = await api<BudgetDetail>(`/budgets/${params.id}/detail`);
-        setBudget(data);
+        if (!cancelled) setBudget(data);
       } catch (err) {
+        if (cancelled) return;
         logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur lors du chargement du budget");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
-    if (params.id) {
-      loadBudget();
-    }
+    loadBudget();
+    return () => { cancelled = true; };
   }, [params.id]);
 
   if (loading) {

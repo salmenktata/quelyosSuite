@@ -37,6 +37,8 @@ export default function ThemesPage() {
 
   // Charger les thèmes disponibles
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadThemes() {
       try {
         setLoading(true);
@@ -51,6 +53,7 @@ export default function ThemesPage() {
             params: { category: selectedCategory === 'all' ? null : selectedCategory },
             id: 1,
           }),
+          signal: controller.signal,
         });
 
         const data = await response.json();
@@ -61,13 +64,15 @@ export default function ThemesPage() {
           setError('Erreur lors du chargement des thèmes');
         }
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         setError('Impossible de charger les thèmes');
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
 
     loadThemes();
+    return () => controller.abort();
   }, [selectedCategory]);
 
   // Charger le thème actif du tenant

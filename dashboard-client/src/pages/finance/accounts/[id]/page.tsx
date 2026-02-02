@@ -56,21 +56,24 @@ export default function AccountDetailPage() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) return;
+    let cancelled = false;
 
     const fetchAccount = async () => {
       try {
         setLoading(true);
         const data = await api<Account>(`/accounts/${accountId}`);
-        setAccount(data);
+        if (!cancelled) setAccount(data);
       } catch (err) {
+        if (cancelled) return;
         logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur de chargement");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchAccount();
+    return () => { cancelled = true; };
   }, [accountId, user, authLoading]);
 
   const formatCurrency = (amount: number, curr?: string) => {

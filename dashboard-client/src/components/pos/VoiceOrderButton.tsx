@@ -228,7 +228,7 @@ function VoiceModal({
 
           {/* Error feedback */}
           {error && (
-            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center gap-3">
+            <div role="alert" className="mb-4 p-4 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
               <span className="text-red-700 dark:text-red-300 font-medium">{error}</span>
             </div>

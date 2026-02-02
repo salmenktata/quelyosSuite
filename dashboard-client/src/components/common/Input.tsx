@@ -82,7 +82,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
 
           {error && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+            <div role="alert" className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"

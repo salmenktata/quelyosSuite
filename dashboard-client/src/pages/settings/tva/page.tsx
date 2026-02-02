@@ -195,7 +195,7 @@ export default function TvaPage() {
 
               <div className="flex items-center justify-end gap-3">
                 {error && (
-                  <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+                  <span role="alert" className="text-sm text-red-600 dark:text-red-400">{error}</span>
                 )}
                 {saved && !error && (
                   <span className="text-sm text-emerald-600 dark:text-emerald-400">Paramètres sauvegardés.</span>

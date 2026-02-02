@@ -49,6 +49,7 @@ export function SearchAutocomplete<T = unknown>({
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const requestIdRef = useRef(0)
 
   // Sync with controlled value
   useEffect(() => {
@@ -71,17 +72,20 @@ export function SearchAutocomplete<T = unknown>({
       }
 
       debounceTimerRef.current = setTimeout(async () => {
+        const currentRequestId = ++requestIdRef.current
         setIsLoading(true)
         try {
           const results = await fetchSuggestions(query)
+          if (currentRequestId !== requestIdRef.current) return
           setSuggestions(results.slice(0, maxSuggestions))
           setIsOpen(results.length > 0)
           setHighlightedIndex(-1)
         } catch (error) {
+          if (currentRequestId !== requestIdRef.current) return
           logger.error('Error fetching suggestions:', error)
           setSuggestions([])
         } finally {
-          setIsLoading(false)
+          if (currentRequestId === requestIdRef.current) setIsLoading(false)
         }
       }, debounceMs)
     },
