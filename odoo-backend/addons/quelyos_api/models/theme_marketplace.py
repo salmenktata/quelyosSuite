@@ -44,10 +44,10 @@ class QuelyosThemeDesigner(models.Model):
     ], string='Statut', default='pending', required=True)
 
     # Statistiques
-    themes_count = fields.Integer(string='Nombre Thèmes', compute='_compute_stats')
-    total_sales = fields.Integer(string='Ventes Totales', compute='_compute_stats')
-    total_revenue = fields.Monetary(string='Revenus Totaux', currency_field='currency_id', compute='_compute_stats')
-    average_rating = fields.Float(string='Note Moyenne', compute='_compute_stats', digits=(3, 2))
+    themes_count = fields.Integer(string='Nombre Thèmes', compute='_compute_stats', store=True)
+    total_sales = fields.Integer(string='Ventes Totales', compute='_compute_stats', store=True)
+    total_revenue = fields.Monetary(string='Revenus Totaux', currency_field='currency_id', compute='_compute_stats', store=True)
+    average_rating = fields.Float(string='Note Moyenne', compute='_compute_stats', digits=(3, 2), store=True)
 
     # Paiement
     currency_id = fields.Many2one('res.currency', string='Devise', default=lambda self: self.env.company.currency_id)
@@ -65,7 +65,7 @@ class QuelyosThemeDesigner(models.Model):
     stripe_payouts_enabled = fields.Boolean(string='Payouts Activés', default=False)
     stripe_charges_enabled = fields.Boolean(string='Charges Activées', default=False)
     last_payout_date = fields.Datetime(string='Dernier Payout')
-    pending_balance = fields.Monetary(string='Solde En Attente', currency_field='currency_id', compute='_compute_pending_balance')
+    pending_balance = fields.Monetary(string='Solde En Attente', currency_field='currency_id', compute='_compute_pending_balance', store=True)
 
     # Relations
     submission_ids = fields.One2many('quelyos.theme.submission', 'designer_id', string='Soumissions')
@@ -167,7 +167,7 @@ class QuelyosThemeSubmission(models.Model):
     total_revenue = fields.Monetary(string='Revenus Totaux', currency_field='currency_id', compute='_compute_sales_stats', store=True)
     designer_revenue = fields.Monetary(string='Revenus Designer', currency_field='currency_id', compute='_compute_sales_stats', store=True)
     platform_revenue = fields.Monetary(string='Revenus Plateforme', currency_field='currency_id', compute='_compute_sales_stats', store=True)
-    average_rating = fields.Float(string='Note Moyenne', compute='_compute_rating', digits=(3, 2))
+    average_rating = fields.Float(string='Note Moyenne', compute='_compute_rating', digits=(3, 2), store=True)
     reviews_count = fields.Integer(string='Nombre Avis')
 
     # Relations

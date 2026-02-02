@@ -41,7 +41,7 @@ class QuelyosSEPAPaymentOrder(models.Model):
     sepa_file = fields.Binary(string='Fichier SEPA XML', readonly=True, attachment=True)
     sepa_filename = fields.Char(string='Nom fichier', readonly=True)
     
-    total_amount = fields.Monetary(string='Montant total', compute='_compute_total', currency_field='currency_id')
+    total_amount = fields.Monetary(string='Montant total', compute='_compute_total', currency_field='currency_id', store=True)
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
     
     @api.depends('line_ids.amount')

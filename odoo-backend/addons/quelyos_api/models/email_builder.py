@@ -68,6 +68,7 @@ class EmailBuilder(models.Model):
     blocks_count = fields.Integer(
         string='Nombre Blocs',
         compute='_compute_blocks_count',
+        store=True,
         help='Nombre total de blocs dans le template'
     )
 

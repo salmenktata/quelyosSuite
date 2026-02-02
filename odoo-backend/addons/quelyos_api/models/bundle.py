@@ -22,13 +22,13 @@ class ProductBundle(models.Model):
         'bundle_id',
         string='Produits inclus'
     )
-    product_count = fields.Integer('Nb produits', compute='_compute_prices')
+    product_count = fields.Integer('Nb produits', compute='_compute_prices', store=True)
 
     # Prix
-    total_price = fields.Float('Prix total (sans remise)', compute='_compute_prices')
+    total_price = fields.Float('Prix total (sans remise)', compute='_compute_prices', store=True)
     bundle_price = fields.Float('Prix bundle', required=True)
-    discount_amount = fields.Float('Économie', compute='_compute_prices')
-    discount_percent = fields.Float('% Réduction', compute='_compute_prices')
+    discount_amount = fields.Float('Économie', compute='_compute_prices', store=True)
+    discount_percent = fields.Float('% Réduction', compute='_compute_prices', store=True)
 
     # Configuration
     company_id = fields.Many2one(
@@ -146,7 +146,7 @@ class BundleLine(models.Model):
 
     # Informations produit (pour affichage)
     product_price = fields.Float(related='product_id.list_price', string='Prix unitaire')
-    subtotal = fields.Float('Sous-total', compute='_compute_subtotal')
+    subtotal = fields.Float('Sous-total', compute='_compute_subtotal', store=True)
 
     @api.depends('product_id.list_price', 'quantity')
     def _compute_subtotal(self):

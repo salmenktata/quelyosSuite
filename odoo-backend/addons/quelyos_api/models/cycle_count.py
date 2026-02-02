@@ -61,6 +61,7 @@ class CycleCount(models.Model):
     counted_products = fields.Integer(
         string='Produits Comptés',
         compute='_compute_counted_products',
+        store=True,
     )
 
     line_ids = fields.One2many(

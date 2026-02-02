@@ -79,8 +79,8 @@ class HRAppraisal(models.Model):
 
     # Objectifs
     goal_ids = fields.One2many('quelyos.hr.goal', 'appraisal_id', string='Objectifs')
-    goals_achieved = fields.Integer('Objectifs atteints', compute='_compute_goals_stats')
-    goals_total = fields.Integer('Total objectifs', compute='_compute_goals_stats')
+    goals_achieved = fields.Integer('Objectifs atteints', compute='_compute_goals_stats', store=True)
+    goals_total = fields.Integer('Total objectifs', compute='_compute_goals_stats', store=True)
 
     # Formation
     training_needs = fields.Text('Besoins en formation')

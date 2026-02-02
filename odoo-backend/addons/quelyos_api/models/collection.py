@@ -26,7 +26,7 @@ class ProductCollection(models.Model):
         'product_id',
         string='Produits'
     )
-    product_count = fields.Integer('Nb produits', compute='_compute_product_count')
+    product_count = fields.Integer('Nb produits', compute='_compute_product_count', store=True)
 
     # Configuration
     company_id = fields.Many2one(

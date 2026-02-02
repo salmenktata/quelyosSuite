@@ -21,7 +21,7 @@ class FlashSale(models.Model):
         'flash_sale_id',
         string='Produits'
     )
-    product_count = fields.Integer('Nb produits', compute='_compute_counts')
+    product_count = fields.Integer('Nb produits', compute='_compute_counts', store=True)
 
     # Configuration
     company_id = fields.Many2one(
@@ -45,8 +45,8 @@ class FlashSale(models.Model):
         ('ended', 'Terminé'),
     ], string='Statut', compute='_compute_state', store=False)
 
-    total_sales = fields.Float('Ventes totales', compute='_compute_counts')
-    total_orders = fields.Integer('Nb commandes', compute='_compute_counts')
+    total_sales = fields.Float('Ventes totales', compute='_compute_counts', store=True)
+    total_orders = fields.Integer('Nb commandes', compute='_compute_counts', store=True)
 
     @api.depends('date_start', 'date_end', 'is_active')
     def _compute_state(self):
@@ -118,15 +118,15 @@ class FlashSaleLine(models.Model):
     # Prix
     original_price = fields.Float('Prix original', required=True)
     flash_price = fields.Float('Prix flash', required=True)
-    discount_percent = fields.Float('% Réduction', compute='_compute_discount')
+    discount_percent = fields.Float('% Réduction', compute='_compute_discount', store=True)
 
     # Stock
     qty_available = fields.Integer('Quantité disponible', required=True, default=100)
     qty_sold = fields.Integer('Quantité vendue', default=0)
-    qty_remaining = fields.Integer('Restant', compute='_compute_remaining')
+    qty_remaining = fields.Integer('Restant', compute='_compute_remaining', store=True)
 
     # Stats
-    total_sold = fields.Float('Total vendu', compute='_compute_total_sold')
+    total_sold = fields.Float('Total vendu', compute='_compute_total_sold', store=True)
 
     @api.depends('original_price', 'flash_price')
     def _compute_discount(self):

@@ -94,7 +94,7 @@ class SupportTicket(models.Model):
         'ticket_id',
         string='Messages'
     )
-    message_count = fields.Integer('Nb messages', compute='_compute_message_count')
+    message_count = fields.Integer('Nb messages', compute='_compute_message_count', store=True)
 
     # Satisfaction
     satisfaction_rating = fields.Selection([
@@ -137,6 +137,7 @@ class SupportTicket(models.Model):
     child_ticket_count = fields.Integer(
         'Nombre de tickets liés',
         compute='_compute_child_ticket_count',
+        store=True,
         help='Nombre de tickets liés à ce ticket'
     )
     has_parent = fields.Boolean(
@@ -164,8 +165,8 @@ class SupportTicket(models.Model):
     ], string='Source', default='dashboard')
 
     # Délais
-    response_time = fields.Float('Temps première réponse (h)', compute='_compute_times')
-    resolution_time = fields.Float('Temps résolution (h)', compute='_compute_times')
+    response_time = fields.Float('Temps première réponse (h)', compute='_compute_times', store=True)
+    resolution_time = fields.Float('Temps résolution (h)', compute='_compute_times', store=True)
 
     # SLA (Service Level Agreement)
     sla_policy_id = fields.Many2one('quelyos.sla.policy', string='Politique SLA', compute='_compute_sla_policy', store=True)
