@@ -151,7 +151,7 @@ export default function AccountsPage() {
   })
 
   const portfolios = portfoliosData || []
-  const accounts = accountsData || []
+  const accounts = useMemo(() => accountsData || [], [accountsData])
   const error = accountsError?.message || null
 
   function resetAccountForm() {

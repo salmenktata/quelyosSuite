@@ -70,7 +70,7 @@ export default function Customers() {
 
       return sortOrder === 'asc' ? Number(aValue) - Number(bValue) : Number(bValue) - Number(aValue)
     })
-  }, [data?.items, data?.data, sortField, sortOrder])
+  }, [data, sortField, sortOrder])
 
   // Calcul des statistiques
   const stats = useMemo(() => {
@@ -93,7 +93,7 @@ export default function Customers() {
       totalRevenue,
       avgBasket,
     }
-  }, [data?.data])
+  }, [data])
 
   // Gestion de l'export CSV
   const handleExportCSV = useCallback(async () => {
