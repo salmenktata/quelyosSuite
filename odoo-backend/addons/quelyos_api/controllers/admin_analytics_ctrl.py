@@ -50,11 +50,11 @@ class AdminAnalyticsController(SuperAdminController):
             churn_analysis = Subscription.get_churn_analysis(months=1)
             churn_rate = churn_analysis[0].get('churn_rate', 0) if churn_analysis else 0
 
-            # Revenue by plan
+            # Revenue by plan (dynamique depuis mrr_data)
             revenue_by_plan = [
-                {'plan': 'starter', 'revenue': mrr_data.get('starter', 0)},
-                {'plan': 'pro', 'revenue': mrr_data.get('pro', 0)},
-                {'plan': 'enterprise', 'revenue': mrr_data.get('enterprise', 0)},
+                {'plan': code, 'revenue': mrr}
+                for code, mrr in mrr_data.items()
+                if code != 'total' and mrr > 0
             ]
 
             # Top customers (tenants avec le plus haut MRR)

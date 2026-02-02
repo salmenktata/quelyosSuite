@@ -290,13 +290,12 @@ export const DashboardMetricsSchema = z.object({
   recent_subscriptions: z.array(RecentSubscriptionSchema),
 })
 
-export const MRRBreakdownSchema = z.object({
-  success: z.boolean().optional(),
-  starter: z.number().nonnegative(),
-  pro: z.number().nonnegative(),
-  enterprise: z.number().nonnegative(),
-  total: z.number().nonnegative(),
-})
+export const MRRBreakdownSchema = z
+  .object({
+    success: z.boolean().optional(),
+    total: z.number().nonnegative().optional().default(0),
+  })
+  .catchall(z.number().nonnegative())
 
 export const ChurnAnalysisItemSchema = z.object({
   month: z.string(),

@@ -34,10 +34,14 @@ import { api } from '@/lib/api/gateway'
 import { DashboardMetricsSchema, validateApiResponse } from '@/lib/validators'
 import type { DashboardMetrics } from '@/lib/validators'
 
-const COLORS = {
-  starter: '#10b981',
-  pro: '#3b82f6',
-  enterprise: '#8b5cf6',
+const PLAN_COLORS = [
+  '#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444',
+  '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1',
+  '#14b8a6', '#a855f7', '#22c55e',
+]
+
+function getPlanColor(index: number): string {
+  return PLAN_COLORS[index % PLAN_COLORS.length]
 }
 
 function computeTrend(history: Array<{ month: string; mrr: number }>): { value: number; label: string } {
@@ -176,8 +180,8 @@ export function Dashboard() {
                   outerRadius={100}
                   label={(entry) => `${entry.plan}: ${entry.revenue}\u20AC`}
                 >
-                  {metrics.revenue_by_plan.map((entry) => (
-                    <Cell key={entry.plan} fill={COLORS[entry.plan as keyof typeof COLORS] || '#6b7280'} />
+                  {metrics.revenue_by_plan.map((entry, index) => (
+                    <Cell key={entry.plan} fill={getPlanColor(index)} />
                   ))}
                 </Pie>
                 <Tooltip />
