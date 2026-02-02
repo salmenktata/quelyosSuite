@@ -141,6 +141,13 @@ export const MODULES: Module[] = [
         ],
       },
       {
+        title: 'Abonnements',
+        tabGroup: 'Abonnements',
+        items: [
+          { name: 'Tous les abonnements', path: '/dashboard/subscriptions', icon: CreditCard },
+        ],
+      },
+      {
         title: 'Configuration',
         tabGroup: 'Paramètres',
         items: [

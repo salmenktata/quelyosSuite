@@ -248,6 +248,10 @@ const GlobalSettingsSecurity = lazy(() => import('./pages/settings/security/page
 const GlobalSettingsDevise = lazy(() => import('./pages/settings/devise/page'))
 const GlobalSettingsTva = lazy(() => import('./pages/settings/tva/page'))
 
+// Lazy loaded pages - Subscriptions (module Accueil)
+const Subscriptions = lazy(() => import('./pages/subscriptions/page'))
+const SubscriptionDetail = lazy(() => import('./pages/subscriptions/[id]/page'))
+
 // Lazy loaded pages - Others
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Invoices = lazy(() => import('./pages/Invoices'))
@@ -366,6 +370,23 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Subscriptions routes (module Accueil) */}
+              <Route
+                path="/dashboard/subscriptions"
+                element={
+                  <ProtectedRoute>
+                    <Subscriptions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/subscriptions/:id"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionDetail />
                   </ProtectedRoute>
                 }
               />
