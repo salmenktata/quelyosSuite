@@ -42,7 +42,22 @@ import { useMaintenanceTabs, detectMaintenanceTab } from '../hooks/useMaintenanc
 
 // Components
 import { Button } from './common/Button'
-import { ReadOnlyProvider, ReadOnlyBanner } from './common/ReadOnlyGuard'
+import { ReadOnlyProvider, useReadOnly } from './common/ReadOnlyGuard'
+import { Eye } from 'lucide-react'
+
+/** Affiche la bannière lecture seule uniquement si le context est read-only */
+function ReadOnlyBannerWrapper() {
+  const { isReadOnly } = useReadOnly()
+  if (!isReadOnly) return null
+  return (
+    <div className="px-6 pt-4">
+      <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-sm">
+        <Eye className="w-4 h-4 flex-shrink-0" />
+        <span>Mode lecture seule — les modifications sont désactivées</span>
+      </div>
+    </div>
+  )
+}
 import { SidebarMenuItem } from './navigation/SidebarMenuItem'
 import { AppLauncher } from './navigation/AppLauncher'
 import { TopNavbar } from './navigation/TopNavbar'
@@ -883,11 +898,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 moduleId={currentModule.id}
                 pageId={pathToPageId(currentModule.id, location.pathname) ?? undefined}
               >
-                {getAccessLevel(currentModule.id) === 'read' && (
-                  <div className="px-6 pt-4">
-                    <ReadOnlyBanner />
-                  </div>
-                )}
+                <ReadOnlyBannerWrapper />
                 {children}
               </ReadOnlyProvider>
             </div>

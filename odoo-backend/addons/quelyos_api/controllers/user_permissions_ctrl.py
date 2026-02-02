@@ -221,6 +221,13 @@ class UserPermissionsController(http.Controller):
                     'created_at': member.create_date.isoformat() if member.create_date else None,
                 })
 
+            # Modules activés par le plan du tenant
+            plan_modules = ['home']
+            if tenant.plan_id:
+                plan_modules = tenant.plan_id.get_enabled_modules_list()
+            elif tenant.subscription_id and tenant.subscription_id.plan_id:
+                plan_modules = tenant.subscription_id.plan_id.get_enabled_modules_list()
+
             return request.make_json_response({
                 'success': True,
                 'team': members,
@@ -229,6 +236,7 @@ class UserPermissionsController(http.Controller):
                     'name': tenant.name,
                     'code': tenant.code,
                 },
+                'plan_modules': plan_modules,
             }, headers=cors_headers)
 
         except Exception as e:

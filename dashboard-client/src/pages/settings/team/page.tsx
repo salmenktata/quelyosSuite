@@ -73,7 +73,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json()
 }
 
-function AccessLevelBadge({ level }: { level: AccessLevel }) {
+function _AccessLevelBadge({ level }: { level: AccessLevel }) {
   const styles = {
     none: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     read: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
@@ -119,6 +119,7 @@ function AccessLevelSelect({
 export default function TeamManagement() {
   const { isTenantManager, isSuperAdmin } = usePermissions()
   const [team, setTeam] = useState<TeamMember[]>([])
+  const [planModules, setPlanModules] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState<number | null>(null)
@@ -137,13 +138,20 @@ export default function TeamManagement() {
 
   const canManage = isTenantManager() || isSuperAdmin()
 
+  // Modules visibles = filtrés par le plan du tenant (si disponible)
+  const allModuleIds = Object.keys(MODULE_LABELS) as ModuleId[]
+  const visibleModules: ModuleId[] = allModuleIds.filter(
+    (moduleId) => planModules.length === 0 || planModules.includes(moduleId)
+  )
+
   const loadTeam = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await apiFetch<{ success: boolean; team: TeamMember[]; error?: string }>('/api/tenant/team')
+      const data = await apiFetch<{ success: boolean; team: TeamMember[]; plan_modules?: string[]; error?: string }>('/api/tenant/team')
       if (data.success) {
         setTeam(data.team)
+        if (data.plan_modules) setPlanModules(data.plan_modules)
       } else {
         setError(data.error || 'Erreur de chargement')
       }
@@ -171,8 +179,7 @@ export default function TeamManagement() {
       if (member) {
         // Initialiser les permissions d'édition
         const perms: typeof editingPermissions = {}
-        const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support', 'maintenance']
-        for (const mod of allModules) {
+        for (const mod of visibleModules) {
           const existing = member.permissions[mod]
           perms[mod] = {
             level: (existing?.level as AccessLevel) || 'none',
@@ -357,7 +364,7 @@ export default function TeamManagement() {
             <div>
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Permissions initiales</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                {(Object.keys(MODULE_LABELS) as ModuleId[]).map((moduleId) => (
+                {visibleModules.map((moduleId) => (
                   <div key={moduleId} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-900/50">
                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{MODULE_LABELS[moduleId]}</span>
                     <AccessLevelSelect
@@ -452,7 +459,7 @@ export default function TeamManagement() {
                     {/* Quick permission badges */}
                     {!member.is_manager && (
                       <div className="hidden md:flex items-center gap-1">
-                        {(Object.keys(MODULE_LABELS) as ModuleId[]).slice(0, 5).map((moduleId) => {
+                        {visibleModules.slice(0, 5).map((moduleId) => {
                           const perm = member.permissions[moduleId]
                           const level = (perm?.level as AccessLevel) || 'none'
                           if (level === 'none') return null
@@ -530,7 +537,7 @@ export default function TeamManagement() {
                     </h4>
 
                     <div className="space-y-2">
-                      {(Object.keys(MODULE_LABELS) as ModuleId[]).map((moduleId) => {
+                      {visibleModules.map((moduleId) => {
                         const perm = editingPermissions[moduleId]
                         const level = perm?.level || 'none'
                         const isExpanded = expandedModule === `${member.id}-${moduleId}`
