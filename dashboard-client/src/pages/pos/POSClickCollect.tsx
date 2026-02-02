@@ -122,6 +122,7 @@ const mockOrders: ClickCollectOrder[] = [
 type FilterStatus = 'all' | 'pending' | 'ready' | 'collected'
 
 export default function POSClickCollect() {
+  const now = useMemo(() => Date.now(), [])
   const [orders, setOrders] = useState<ClickCollectOrder[]>(mockOrders)
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -182,7 +183,7 @@ export default function POSClickCollect() {
 
   // Time elapsed
   const getTimeElapsed = (dateStr: string) => {
-    const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000)
+    const mins = Math.floor((now - new Date(dateStr).getTime()) / 60000)
     if (mins < 60) return `${mins} min`
     const hours = Math.floor(mins / 60)
     return `${hours}h ${mins % 60}min`

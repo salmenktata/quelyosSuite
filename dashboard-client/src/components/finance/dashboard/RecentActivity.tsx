@@ -1,5 +1,5 @@
-import { memo, useState } from "react";
-import { Link } from "react-router-dom";
+import { memo, useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StaggerContainer, StaggerItem } from "@/lib/finance/compat/animated";
 import {
@@ -43,6 +43,7 @@ export const RecentActivity = memo(function RecentActivity({
   formatAmount,
 }: RecentActivityProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const deleteMutation = useMutation({
@@ -95,9 +96,9 @@ export const RecentActivity = memo(function RecentActivity({
     duplicateMutation.mutate(transaction);
   };
 
-  const handleEdit = (transactionId: number) => {
-    window.location.href = `/finance/transactions?edit=${transactionId}`;
-  };
+  const handleEdit = useCallback((transactionId: number) => {
+    navigate(`/finance/transactions?edit=${transactionId}`);
+  }, [navigate]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6" data-guide="recent-transactions">

@@ -32,23 +32,23 @@ export function StockAlert({ productId, productName }: StockAlertProps) {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    checkSubscriptionStatus();
-  }, [productId]);
+    const checkSubscriptionStatus = async () => {
+      if (!user) return;
 
-  const checkSubscriptionStatus = async () => {
-    if (!user) return;
+      try {
+        const response = await backendClient.getStockAlertStatus(productId);
 
-    try {
-      const response = await backendClient.getStockAlertStatus(productId);
-
-      if (response.success && response.data) {
-        setSubscribed(response.data.subscribed);
-        setSubscriptionId(response.data.subscription_id || null);
+        if (response.success && response.data) {
+          setSubscribed(response.data.subscribed);
+          setSubscriptionId(response.data.subscription_id || null);
+        }
+      } catch (error) {
+        logger.error('Error checking subscription status:', error);
       }
-    } catch (error) {
-      logger.error('Error checking subscription status:', error);
-    }
-  };
+    };
+
+    checkSubscriptionStatus();
+  }, [productId, user]);
 
   const handleSubscribe = async () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

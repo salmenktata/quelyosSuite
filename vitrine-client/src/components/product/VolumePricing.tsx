@@ -29,21 +29,21 @@ export function VolumePricing({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchVolumePricing = async () => {
+      try {
+        const response = await backendClient.getProductVolumePricing(productId);
+        if (response.success && response.data && response.data.tiers.length > 0) {
+          setTiers(response.data.tiers);
+        }
+      } catch (error) {
+        logger.error('Error fetching volume pricing:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchVolumePricing();
   }, [productId]);
-
-  const fetchVolumePricing = async () => {
-    try {
-      const response = await backendClient.getProductVolumePricing(productId);
-      if (response.success && response.data && response.data.tiers.length > 0) {
-        setTiers(response.data.tiers);
-      }
-    } catch (error) {
-      logger.error('Error fetching volume pricing:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (isLoading || tiers.length === 0) {
     return null;

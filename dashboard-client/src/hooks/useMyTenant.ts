@@ -53,6 +53,8 @@ export function useMyTenant() {
 
       if (!response.ok) {
         if (response.status === 401) {
+          // Token invalide côté serveur → nettoyer la session locale
+          tokenService.clear()
           throw new Error('Session expirée. Veuillez vous reconnecter.')
         }
         if (response.status === 404) {

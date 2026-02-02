@@ -10,7 +10,7 @@
  * - Statistiques détaillées (ouvertures, clics, rebonds)
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Badge, Skeleton, ConfirmModal, Button } from '@/components/common';
@@ -47,6 +47,7 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function EmailCampaignDetailPage() {
+  const fallbackDate = useMemo(() => new Date().toISOString(), []);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const toast = useToast();
@@ -140,7 +141,7 @@ export default function EmailCampaignDetailPage() {
               {getStatusBadge(campaign.state || 'draft')}
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Campagne créée le {new Date(campaign.create_date || Date.now()).toLocaleDateString('fr-FR')}
+              Campagne créée le {new Date(campaign.create_date || fallbackDate).toLocaleDateString('fr-FR')}
             </p>
           </div>
           <div className="flex items-center gap-2">

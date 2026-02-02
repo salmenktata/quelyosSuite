@@ -33,9 +33,12 @@ const STATUS_CONFIG: Record<TurnoverStatus, { label: string; variant: 'success' 
 }
 
 export default function StockTurnoverPage() {
-  const [dateRange, setDateRange] = useState({
-    start_date: new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0]
+  const [dateRange, setDateRange] = useState(() => {
+    const now = Date.now()
+    return {
+      start_date: new Date(now - 90 * 86400000).toISOString().split('T')[0],
+      end_date: new Date(now).toISOString().split('T')[0],
+    }
   })
   const [statusFilter, setStatusFilter] = useState<TurnoverStatus | 'all'>('all')
   const [categoryFilter, _setCategoryFilter] = useState<number | undefined>()

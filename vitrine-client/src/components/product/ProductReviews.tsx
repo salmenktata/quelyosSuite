@@ -93,10 +93,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
   });
 
   useEffect(() => {
-    fetchReviews();
-  }, [productId]);
-
-  const fetchReviews = async () => {
+    const fetchReviews = async () => {
     setIsLoading(true);
     try {
       const response = await backendClient.getProductReviews(productId);
@@ -113,7 +110,10 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
     } finally {
       setIsLoading(false);
     }
-  };
+    };
+
+    fetchReviews();
+  }, [productId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

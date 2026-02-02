@@ -95,12 +95,24 @@ export default function Login() {
   const [verifying2FA, setVerifying2FA] = useState(false)
   const totpInputRef = useRef<HTMLInputElement>(null)
 
-  // Rediriger si déjà connecté
+  // Rediriger si déjà connecté (vérification API pour éviter boucle de redirection)
   useEffect(() => {
-    if (tokenService.isAuthenticated()) {
-      const defaultPath = getDefaultModulePath()
-      navigate(defaultPath, { replace: true })
-    }
+    if (!tokenService.isAuthenticated()) return
+
+    let cancelled = false
+    api.getUserInfo().then((result) => {
+      if (cancelled) return
+      if (result.success) {
+        const defaultPath = getDefaultModulePath()
+        navigate(defaultPath, { replace: true })
+      } else {
+        // Token local valide mais session serveur invalide → nettoyer
+        tokenService.clear()
+      }
+    }).catch(() => {
+      if (!cancelled) tokenService.clear()
+    })
+    return () => { cancelled = true }
   }, [navigate])
 
   const handleSubmit = async (e: FormEvent) => {

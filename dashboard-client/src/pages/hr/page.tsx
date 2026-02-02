@@ -25,10 +25,12 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 
 export default function HRDashboard() {
   const navigate = useNavigate()
   const { tenant } = useMyTenant()
+  const now = useMemo(() => Date.now(), [])
   const {
     data: dashboardData,
     isLoading,
@@ -281,7 +283,7 @@ export default function HRDashboard() {
               <tbody>
                 {expiringContracts.slice(0, 5).map((contract) => {
                   const daysLeft = contract.date_end
-                    ? Math.ceil((new Date(contract.date_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                    ? Math.ceil((new Date(contract.date_end).getTime() - now) / (1000 * 60 * 60 * 24))
                     : 0
                   return (
                     <tr key={contract.id} className="border-b border-gray-100 dark:border-gray-700 last:border-0">

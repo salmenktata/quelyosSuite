@@ -48,7 +48,7 @@ export function VariantSelector({
         onVariantChange(firstVariant);
       }
     }
-  }, [productId, variants.length]);
+  }, [productId, variants.length, selectedVariant, onVariantChange, variants]);
 
   // Trouver la variante exacte correspondant à la sélection
   const matchingVariant = useMemo(() => {
@@ -67,7 +67,7 @@ export function VariantSelector({
     if (matchingVariant && matchingVariant !== selectedVariant) {
       onVariantChange(matchingVariant);
     }
-  }, [matchingVariant]);
+  }, [matchingVariant, selectedVariant, onVariantChange]);
 
   // Déterminer quelles valeurs d&apos;attribut sont disponibles selon la sélection actuelle
   const getAvailableValues = (attributeId: number) => {

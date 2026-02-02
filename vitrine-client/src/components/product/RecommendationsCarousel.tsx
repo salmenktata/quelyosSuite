@@ -30,32 +30,32 @@ export const RecommendationsCarousel = memo(function RecommendationsCarousel({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchRecommendations();
-  }, [productId, type]);
+    const fetchRecommendations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const fetchRecommendations = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (type === 'upsell') {
-        const response = await backendClient.getUpsellProducts(productId, limit);
-        if (response.success && response.products) {
-          setProducts(response.products);
+        if (type === 'upsell') {
+          const response = await backendClient.getUpsellProducts(productId, limit);
+          if (response.success && response.products) {
+            setProducts(response.products);
+          }
+        } else {
+          const response = await backendClient.getRecommendations(productId, limit);
+          if (response.success && response.data?.products) {
+            setProducts(response.data.products);
+          }
         }
-      } else {
-        const response = await backendClient.getRecommendations(productId, limit);
-        if (response.success && response.data?.products) {
-          setProducts(response.data.products);
-        }
+      } catch (err) {
+        logger.error('Error fetching recommendations:', err);
+        setError('Failed to load recommendations');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      logger.error('Error fetching recommendations:', err);
-      setError('Failed to load recommendations');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchRecommendations();
+  }, [productId, type, limit]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {

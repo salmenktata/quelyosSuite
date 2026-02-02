@@ -57,31 +57,31 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
   const { addToCart } = useCartStore();
 
   useEffect(() => {
-    if (isOpen && productId) {
-      loadProduct();
-    }
-  }, [isOpen, productId]);
+    if (!isOpen || !productId) return;
 
-  const loadProduct = async () => {
-    try {
-      setLoading(true);
+    const loadProduct = async () => {
+      try {
+        setLoading(true);
 
-      const response = await backendClient.getProduct(productId);
+        const response = await backendClient.getProduct(productId);
 
-      if (response.success && response.product) {
-        setProduct(response.product as unknown as Product);
+        if (response.success && response.product) {
+          setProduct(response.product as unknown as Product);
 
-        // Set default variant if available
-        if (response.product.variants && response.product.variants.length > 0) {
-          setSelectedVariant(response.product.variants[0].id);
+          // Set default variant if available
+          if (response.product.variants && response.product.variants.length > 0) {
+            setSelectedVariant(response.product.variants[0].id);
+          }
         }
+      } catch (error) {
+        logger.error('Error loading product:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      logger.error('Error loading product:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    loadProduct();
+  }, [isOpen, productId]);
 
   const handleAddToCart = async () => {
     if (!product) return;

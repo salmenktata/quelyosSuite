@@ -42,24 +42,24 @@ export function VariantSwatches({
   const swatchSize = size === 'sm' ? 'w-5 h-5' : 'w-6 h-6';
 
   useEffect(() => {
+    async function loadVariants() {
+      setIsLoading(true);
+      try {
+        const response = await fetchVariantsLazy(productId);
+
+        if (response && response.success) {
+          setAttributeLines(response.attributes || []);
+          setVariants(response.variants);
+        }
+      } catch (error) {
+        logger.error('Error loading variants:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
     loadVariants();
   }, [productId]);
-
-  async function loadVariants() {
-    setIsLoading(true);
-    try {
-      const response = await fetchVariantsLazy(productId);
-
-      if (response && response.success) {
-        setAttributeLines(response.attributes || []);
-        setVariants(response.variants);
-      }
-    } catch (error) {
-      logger.error('Error loading variants:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   // Ordre de priorité pour l'affichage des attributs
   const ATTRIBUTE_PRIORITY = [
@@ -101,7 +101,7 @@ export function VariantSwatches({
 
     // Prendre les N premiers selon maxAttributes
     return sortedAttributes.slice(0, maxAttributes);
-  }, [attributeLines, maxAttributes]);
+  }, [attributeLines, maxAttributes, getAttributePriority]);
 
   // Fonction générique pour extraire valeurs uniques d&apos;un attribut
   const getAttributeValues = (attribute: AttributeLine) => {

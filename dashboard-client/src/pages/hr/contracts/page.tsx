@@ -8,7 +8,7 @@
  * - Création de nouveaux contrats
  * - Visualisation des détails de contrat
  */
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
@@ -28,6 +28,7 @@ import {
 export default function ContractsPage() {
   const navigate = useNavigate()
   const { tenant } = useMyTenant()
+  const now = useMemo(() => Date.now(), [])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [typeFilter, setTypeFilter] = useState<string | undefined>()
@@ -157,7 +158,7 @@ export default function ContractsPage() {
                 <ul className="mt-2 space-y-1">
                   {expiringContracts.slice(0, 3).map(c => {
                     const daysLeft = c.date_end
-                      ? Math.ceil((new Date(c.date_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                      ? Math.ceil((new Date(c.date_end).getTime() - now) / (1000 * 60 * 60 * 24))
                       : 0
                     return (
                       <li key={c.id} className="text-sm text-amber-700 dark:text-amber-400">

@@ -3,7 +3,7 @@
  * Uses Redis-cached endpoints when available
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { backendClient } from '@/lib/backend/client';
 import type { Product } from '@quelyos/types';
 
@@ -41,25 +41,23 @@ export function useCachedProducts(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cached, setCached] = useState(false);
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Use regular endpoint - caching is handled transparently by backend
-      const _endpoint = '/products';
-
       const response = await backendClient.getProducts({
         limit,
         offset,
-        ...filters,
+        ...filtersRef.current,
         sort,
       });
 
       if (response.success && response.products) {
         setProducts(response.products);
-        // Backend doesn't return cached flag, set to false by default
         setCached(false);
       } else {
         setError('Failed to fetch products');
@@ -70,11 +68,13 @@ export function useCachedProducts(
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, offset, sort]);
+
+  const filtersKey = JSON.stringify(filters);
 
   useEffect(() => {
     fetchProducts();
-  }, [limit, offset, JSON.stringify(filters), sort, useCache]);
+  }, [fetchProducts, filtersKey, useCache]);
 
   return {
     products,
@@ -103,17 +103,15 @@ export function useCachedProduct(
   const [error, setError] = useState<string | null>(null);
   const [cached, setCached] = useState(false);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Use regular endpoint - caching is handled transparently by backend
       const response = await backendClient.getProduct(productId);
 
       if (response.success && response.product) {
         setProduct(response.product);
-        // Backend doesn't return cached flag, set to false by default
         setCached(false);
       } else {
         setError('Product not found');
@@ -124,13 +122,13 @@ export function useCachedProduct(
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId]);
 
   useEffect(() => {
     if (productId) {
       fetchProduct();
     }
-  }, [productId, useCache]);
+  }, [productId, useCache, fetchProduct]);
 
   return {
     product,

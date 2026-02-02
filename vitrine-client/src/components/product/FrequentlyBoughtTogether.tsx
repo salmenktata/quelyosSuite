@@ -54,28 +54,27 @@ export function FrequentlyBoughtTogether({
   const toast = useToast();
 
   useEffect(() => {
+    const fetchFrequentlyBought = async () => {
+      try {
+        const response = await backendClient.getFrequentlyBoughtTogether(productId);
+        if (response.success && response.data) {
+          setProducts(response.data.products);
+          setBundleData({
+            total: response.data.bundle_total,
+            discount: response.data.bundle_discount,
+            price: response.data.bundle_price,
+          });
+          setSelectedProducts(new Set(response.data.products.map((p: FrequentlyBoughtProduct) => p.id)));
+        }
+      } catch (error) {
+        logger.error('Error fetching frequently bought together:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchFrequentlyBought();
   }, [productId]);
-
-  const fetchFrequentlyBought = async () => {
-    try {
-      const response = await backendClient.getFrequentlyBoughtTogether(productId);
-      if (response.success && response.data) {
-        setProducts(response.data.products);
-        setBundleData({
-          total: response.data.bundle_total,
-          discount: response.data.bundle_discount,
-          price: response.data.bundle_price,
-        });
-        // Sélectionner tous les produits par défaut
-        setSelectedProducts(new Set(response.data.products.map((p: FrequentlyBoughtProduct) => p.id)));
-      }
-    } catch (error) {
-      logger.error('Error fetching frequently bought together:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const toggleProduct = (productIdToToggle: number) => {
     setSelectedProducts(prev => {

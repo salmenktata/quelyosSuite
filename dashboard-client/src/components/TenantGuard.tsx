@@ -32,6 +32,7 @@ interface TenantGuardProps {
  * Routes publiques par défaut (pas de tenant requis)
  */
 const DEFAULT_PUBLIC_ROUTES = [
+  '/',
   '/login',
   '/forgot-password',
   '/reset-password',
@@ -46,7 +47,9 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
   const location = useLocation()
 
   // Vérifier si la route courante est publique
-  const isPublicRoute = publicRoutes.some((route) => location.pathname.startsWith(route))
+  const isPublicRoute = publicRoutes.some((route) =>
+    route === '/' ? location.pathname === '/' : location.pathname.startsWith(route)
+  )
 
   const isAuthenticated = tokenService.isAuthenticated()
 

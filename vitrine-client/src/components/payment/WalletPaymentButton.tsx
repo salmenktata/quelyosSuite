@@ -52,53 +52,51 @@ export function WalletPaymentButton({
 
   useEffect(() => {
     if (!stripe) return;
+
+    const initializePaymentRequest = async () => {
+      try {
+        // Create Payment Request
+        const pr = stripe.paymentRequest({
+          country: 'FR',
+          currency: 'eur',
+          total: {
+            label: 'Total',
+            amount: Math.round(amount * 100), // Convert to cents
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+          requestShipping: true,
+          shippingOptions: [
+            {
+              id: 'standard',
+              label: 'Livraison standard',
+              detail: '3-5 jours',
+              amount: 0,
+            },
+          ],
+        });
+
+        // Check if wallet payment is available
+        const result = await pr.canMakePayment();
+
+        if (result) {
+          setCanMakePayment(true);
+          setPaymentRequest(pr);
+
+          // Handle payment method submission
+          pr.on('paymentmethod', async (event) => {
+            await handlePaymentMethod(event as unknown as PaymentMethodEvent, stripe);
+          });
+        } else {
+          logger.debug('Wallet payment not available on this device/browser');
+        }
+      } catch (error) {
+        logger.error('Error initializing payment request:', error);
+      }
+    };
+
     initializePaymentRequest();
   }, [stripe, amount]);
-
-  const initializePaymentRequest = async () => {
-    if (!stripe) return;
-
-    try {
-
-      // Create Payment Request
-      const pr = stripe.paymentRequest({
-        country: 'FR',
-        currency: 'eur',
-        total: {
-          label: 'Total',
-          amount: Math.round(amount * 100), // Convert to cents
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-        requestShipping: true,
-        shippingOptions: [
-          {
-            id: 'standard',
-            label: 'Livraison standard',
-            detail: '3-5 jours',
-            amount: 0,
-          },
-        ],
-      });
-
-      // Check if wallet payment is available
-      const result = await pr.canMakePayment();
-
-      if (result) {
-        setCanMakePayment(true);
-        setPaymentRequest(pr);
-
-        // Handle payment method submission
-        pr.on('paymentmethod', async (event) => {
-          await handlePaymentMethod(event as unknown as PaymentMethodEvent, stripe);
-        });
-      } else {
-        logger.debug('Wallet payment not available on this device/browser');
-      }
-    } catch (error) {
-      logger.error('Error initializing payment request:', error);
-    }
-  };
 
   const handlePaymentMethod = async (event: PaymentMethodEvent, stripeInstance: Stripe) => {
     try {

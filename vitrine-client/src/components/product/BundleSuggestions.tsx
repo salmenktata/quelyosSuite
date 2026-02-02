@@ -31,39 +31,36 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
   const { addToCart } = useCartStore();
 
   useEffect(() => {
-    loadBundleProducts();
-  }, [currentProduct.id]);
+    const loadBundleProducts = async () => {
+      try {
+        setIsLoading(true);
 
-  const loadBundleProducts = async () => {
-    try {
-      setIsLoading(true);
+        const response = await backendClient.getProducts({
+          category_id: currentProduct.category?.id,
+          limit: 3,
+          offset: 0,
+        });
 
-      // Récupérer les produits de la même catégorie ou produits liés
-      const response = await backendClient.getProducts({
-        category_id: currentProduct.category?.id,
-        limit: 3,
-        offset: 0,
-      });
+        if (response.success && response.products) {
+          const otherProducts = response.products
+            .filter(p => p.id !== currentProduct.id)
+            .slice(0, 2);
 
-      if (response.success && response.products) {
-        // Filtrer le produit actuel et prendre 2-3 produits aléatoires
-        const otherProducts = response.products
-          .filter(p => p.id !== currentProduct.id)
-          .slice(0, 2);
+          setBundleProducts(otherProducts);
 
-        setBundleProducts(otherProducts);
-
-        // Sélectionner automatiquement tous les produits
-        const initialSelection = new Set<number>([currentProduct.id]);
-        otherProducts.forEach(p => initialSelection.add(p.id));
-        setSelectedProducts(initialSelection);
+          const initialSelection = new Set<number>([currentProduct.id]);
+          otherProducts.forEach(p => initialSelection.add(p.id));
+          setSelectedProducts(initialSelection);
+        }
+      } catch (error) {
+        logger.error('Error loading bundle products:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      logger.error('Error loading bundle products:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    loadBundleProducts();
+  }, [currentProduct.id, currentProduct.category?.id]);
 
   const toggleProduct = (productId: number) => {
     // Ne pas permettre de désélectionner le produit actuel

@@ -67,23 +67,7 @@ export function ProductFilters({ categoryId, onFiltersChange }: ProductFiltersPr
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>({});
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadFacets();
-    parseFiltersFromURL();
-  }, [categoryId]);
-
-  useEffect(() => {
-    // Notify parent of filter changes
-    if (onFiltersChange) {
-      onFiltersChange({
-        priceRanges: selectedPriceRanges,
-        attributes: selectedAttributes,
-        brands: selectedBrands,
-      });
-    }
-  }, [selectedPriceRanges, selectedAttributes, selectedBrands]);
-
-  const parseFiltersFromURL = () => {
+  const parseFiltersFromURL = React.useCallback(() => {
     // Parse price ranges
     const priceParam = searchParams.get('price');
     if (priceParam) {
@@ -104,23 +88,37 @@ export function ProductFilters({ categoryId, onFiltersChange }: ProductFiltersPr
     if (brandParam) {
       setSelectedBrands(brandParam.split(','));
     }
-  };
+  }, [searchParams]);
 
-  const loadFacets = async () => {
-    try {
-      setLoading(true);
-
-      const response = await backendClient.getProductFacets(categoryId);
-
-      if (response.success && response.data) {
-        setFacets(response.data as unknown as Facets);
+  useEffect(() => {
+    const loadFacets = async () => {
+      try {
+        setLoading(true);
+        const response = await backendClient.getProductFacets(categoryId);
+        if (response.success && response.data) {
+          setFacets(response.data as unknown as Facets);
+        }
+      } catch (error) {
+        logger.error('Error loading facets:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      logger.error('Error loading facets:', error);
-    } finally {
-      setLoading(false);
+    };
+
+    loadFacets();
+    parseFiltersFromURL();
+  }, [categoryId, parseFiltersFromURL]);
+
+  useEffect(() => {
+    // Notify parent of filter changes
+    if (onFiltersChange) {
+      onFiltersChange({
+        priceRanges: selectedPriceRanges,
+        attributes: selectedAttributes,
+        brands: selectedBrands,
+      });
     }
-  };
+  }, [selectedPriceRanges, selectedAttributes, selectedBrands, onFiltersChange]);
 
   const updateURL = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
