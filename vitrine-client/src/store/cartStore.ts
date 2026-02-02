@@ -35,7 +35,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to fetch cart', isLoading: false });
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
         }
       },
 
@@ -51,7 +51,7 @@ export const useCartStore = create<CartState>()(
             return false;
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
       },
@@ -68,7 +68,7 @@ export const useCartStore = create<CartState>()(
             return false;
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
       },
@@ -85,7 +85,7 @@ export const useCartStore = create<CartState>()(
             return false;
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
       },
@@ -102,7 +102,7 @@ export const useCartStore = create<CartState>()(
             return false;
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
       },
@@ -119,7 +119,7 @@ export const useCartStore = create<CartState>()(
             return { success: false, message: response.error };
           }
         } catch (error: unknown) {
-          const errorMessage = _error instanceof Error ? _error.message : "Error";
+          const errorMessage = error instanceof Error ? error.message : "Error";
           set({ error: errorMessage, isLoading: false });
           return { success: false, message: errorMessage };
         }
@@ -137,7 +137,7 @@ export const useCartStore = create<CartState>()(
             return false;
           }
         } catch (error: unknown) {
-          set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
+          set({ error: error instanceof Error ? error.message : "Error", isLoading: false });
           return false;
         }
       },

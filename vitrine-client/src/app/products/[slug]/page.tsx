@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
       const error = _error as { response?: { status?: number } };
       // Ignorer silencieusement si endpoint pas encore implémenté (404)
       if (error?.response?.status !== 404) {
-        logger.error('Erreur chargement produits similaires:', _error);
+        logger.error('Erreur chargement produits similaires:', error);
       }
     }
   };

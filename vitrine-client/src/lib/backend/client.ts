@@ -156,7 +156,7 @@ export class BackendClient {
         return { success: false, error: 'Not implemented' } as T;
       }
 
-      logger.error(`Erreur API [${endpoint}]:`, _error);
+      logger.error(`Erreur API [${endpoint}]:`, error);
 
       // Extract error message from various possible formats
       const errorMessage =

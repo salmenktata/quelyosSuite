@@ -50,7 +50,7 @@ async function jsonrpc<T = unknown>(
       return { success: false, error: 'Not implemented' } as T;
     }
 
-    logger.error(`Erreur API CMS [${endpoint}]:`, _error);
+    logger.error(`Erreur API CMS [${endpoint}]:`, error);
     const errorMessage =
       error.response?.data?.error ||
       error.response?.data?.message ||

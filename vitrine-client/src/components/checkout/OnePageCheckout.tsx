@@ -170,7 +170,7 @@ export function OnePageCheckout() {
         setError(response.message || 'Échec de la commande');
       }
     } catch (error: unknown) {
-      const err = _error as Error;
+      const err = error as Error;
       logger.error('Error completing checkout:', err);
       setError(err.message || 'Une erreur est survenue');
     } finally {

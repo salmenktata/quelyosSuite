@@ -60,7 +60,7 @@ export default function PublicWishlistPage() {
         setError(response.message || 'Failed to load wishlist');
       }
     } catch (error: unknown) {
-      const err = _error as Error;
+      const err = error as Error;
       logger.error('Error loading wishlist:', err);
       setError(err.message || 'Une erreur est survenue');
     } finally {

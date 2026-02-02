@@ -72,9 +72,9 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         set({ error: response.message || 'Failed to fetch loyalty balance', loading: false });
       }
     } catch (error: unknown) {
-      logger.error('Error fetching loyalty balance:', _error);
+      logger.error('Error fetching loyalty balance:', error);
       set({
-        error: _error instanceof Error ? _error.message : 'An error occurred while fetching loyalty balance',
+        error: error instanceof Error ? error.message : 'An error occurred while fetching loyalty balance',
         loading: false
       });
     }
@@ -88,7 +88,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         set({ tiers: response.data.tiers as unknown as LoyaltyTier[] });
       }
     } catch (error: unknown) {
-      logger.error('Error fetching loyalty tiers:', _error);
+      logger.error('Error fetching loyalty tiers:', error);
     }
   },
 
@@ -122,15 +122,15 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
         };
       }
     } catch (error: unknown) {
-      logger.error('Error redeeming points:', _error);
+      logger.error('Error redeeming points:', error);
       set({
-        error: _error instanceof Error ? _error.message : 'An error occurred while redeeming points',
+        error: error instanceof Error ? error.message : 'An error occurred while redeeming points',
         loading: false
       });
 
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'An error occurred while redeeming points',
+        error: error instanceof Error ? error.message : 'An error occurred while redeeming points',
       };
     }
   },
@@ -148,7 +148,7 @@ export const useLoyaltyStore = create<LoyaltyStore>((set, get) => ({
 
       return { points: 0, program_active: false };
     } catch (error: unknown) {
-      logger.error('Error calculating points:', _error);
+      logger.error('Error calculating points:', error);
       return { points: 0, program_active: false };
     }
   },
