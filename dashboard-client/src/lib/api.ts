@@ -306,7 +306,7 @@ class ApiClient {
 
       logger.warn('[API] Refresh failed:', result.error)
       return false
-    } catch (_error) {
+    } catch (error) {
       logger.error('[API] Refresh error:', error)
       return false
     }
@@ -355,7 +355,7 @@ class ApiClient {
           credentials: 'include',
         })
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('[API] Logout error:', error)
     } finally {
       tokenService.clear()

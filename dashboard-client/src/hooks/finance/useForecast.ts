@@ -201,7 +201,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
         const data = (await api(`/dashboard/forecast?days=${days}`)) as ForecastResponse;
         setForecast(data);
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Impossible de charger la projection.");
     } finally {
       setLoading(false);
@@ -219,7 +219,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       if (saved) {
         setWhatIfScenarios(JSON.parse(saved) as ScenarioImpact[]);
       }
-    } catch (_err) {
+    } catch (err) {
       logger.warn("Failed to load what-if scenarios from localStorage:", err);
     }
   }, []);
@@ -228,7 +228,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
     setWhatIfScenarios(scenarios);
     try {
       localStorage.setItem("whatIfScenarios", JSON.stringify(scenarios));
-    } catch (_err) {
+    } catch (err) {
       logger.warn("Failed to save what-if scenarios to localStorage:", err);
     }
   }, []);
@@ -237,7 +237,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
     setWhatIfScenarios([]);
     try {
       localStorage.removeItem("whatIfScenarios");
-    } catch (_err) {
+    } catch (err) {
       logger.warn("Failed to remove what-if scenarios from localStorage:", err);
     }
   }, []);

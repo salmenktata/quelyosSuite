@@ -110,7 +110,7 @@ export default function NewInvoicePage() {
       } else {
         alert(`Erreur: ${response.data.error}`)
       }
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       logger.error("Erreur:", err);
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
       alert(`Erreur: ${errorMessage}`)

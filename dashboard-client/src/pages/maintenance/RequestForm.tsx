@@ -73,7 +73,7 @@ export default function RequestForm() {
       } else {
         showError(result.error || 'Erreur lors de la création')
       }
-    } catch (_error) {
+    } catch (error) {
       showError('Erreur lors de la création de la demande')
     }
   }

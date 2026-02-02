@@ -72,7 +72,7 @@ export default function CategoriesPage() {
       const data = await api<Category[] | { data: Category[] }>("/finance/categories");
       const cats = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setCategories(cats);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur chargement catégories:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement des catégories.");
     } finally {
@@ -98,7 +98,7 @@ export default function CategoriesPage() {
       setColor(DEFAULT_COLORS[0]);
       setKind("EXPENSE");
       setShowForm(false);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur création catégorie:", err);
       setError(err instanceof Error ? err.message : "Impossible de créer la catégorie.");
     } finally {
@@ -113,7 +113,7 @@ export default function CategoriesPage() {
     try {
       await api(`/finance/categories/${id}`, { method: "DELETE" });
       setCategories(prev => prev.filter(c => c.id !== id));
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur suppression catégorie:", err);
       setError(err instanceof Error ? err.message : "Impossible de supprimer la catégorie.");
     } finally {
@@ -147,7 +147,7 @@ export default function CategoriesPage() {
       if (created.length > 0) {
         setCategories(prev => [...prev, ...created]);
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur seed catégories:", err);
       setError(err instanceof Error ? err.message : "Erreur lors de la création des catégories.");
     } finally {

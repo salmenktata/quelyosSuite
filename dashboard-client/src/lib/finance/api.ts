@@ -104,7 +104,7 @@ export async function api<T = unknown>(
       throw new Error(errorMessage)
     }
     return (json.data ?? json) as T
-  } catch (_error) {
+  } catch (error) {
     logger.error('Finance API (via ecommerce) Error:', {
       url: fullUrl,
       endpoint,

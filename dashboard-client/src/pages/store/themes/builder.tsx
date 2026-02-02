@@ -124,8 +124,8 @@ function ActionsToolbar() {
         setSaveError(errorMsg);
         toast.error(errorMsg);
       }
-    } catch (_error) {
-      logger.error("Erreur:", _error);
+    } catch (error) {
+      logger.error("Erreur:", error);
       const errorMsg = 'Erreur lors de la sauvegarde du thème';
       setSaveError(errorMsg);
       toast.error(errorMsg);

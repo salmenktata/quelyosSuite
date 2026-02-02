@@ -33,7 +33,7 @@ export function useTaxReports(params: UseTaxReportsParams = {}) {
       }>('/finance/tax-reports', params)
       if (response.data.success && response.data.data) setReports(response.data.data.reports)
       else setError(response.data.error || null)
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erreur réseau')
     } finally {
       setLoading(false)

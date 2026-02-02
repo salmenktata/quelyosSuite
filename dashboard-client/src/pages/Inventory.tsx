@@ -69,7 +69,7 @@ export default function Inventory() {
       } else {
         toast.error(result.error || 'Erreur lors de la préparation de l\'inventaire')
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error('Erreur lors de la préparation de l\'inventaire')
     }
@@ -116,7 +116,7 @@ export default function Inventory() {
       } else {
         toast.error(result.error || 'Erreur lors de la validation de l\'inventaire')
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error('Erreur lors de la validation de l\'inventaire')
     }

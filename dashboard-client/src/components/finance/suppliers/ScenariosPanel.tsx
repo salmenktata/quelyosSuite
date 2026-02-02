@@ -109,7 +109,7 @@ export default function ScenariosPanel() {
     try {
       const data = await fetchApi<{ scenarios: Scenario[] }>("/api/ecommerce/payment-planning/scenarios", { method: "GET", credentials: "include" });
       setScenarios(data.scenarios || []);
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur lors du chargement des scénarios:", error);
     } finally {
       setIsLoading(false);
@@ -120,7 +120,7 @@ export default function ScenariosPanel() {
     try {
       const data = await fetchApi<{ invoices: AvailableInvoice[] }>("/api/finance/supplier-invoices/upcoming?days=90", { method: "GET", credentials: "include" });
       setAvailableInvoices(data.invoices || []);
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur lors du chargement des factures:", error);
     }
   };
@@ -151,7 +151,7 @@ export default function ScenariosPanel() {
       await fetchScenarios();
       setShowCreateDialog(false);
       resetForm();
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setIsCreating(false);
@@ -166,7 +166,7 @@ export default function ScenariosPanel() {
       });
 
       await fetchScenarios();
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur lors de l'activation:", error);
     }
   };
@@ -186,7 +186,7 @@ export default function ScenariosPanel() {
       if (selectedScenario?.id === scenarioId) {
         setSelectedScenario(null);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur lors de la suppression:", error);
     }
   };

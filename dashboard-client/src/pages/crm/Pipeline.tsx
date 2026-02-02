@@ -28,7 +28,7 @@ export default function Pipeline() {
     try {
       await updateStageMutation.mutateAsync({ id: leadId, stage_id: stageId })
       toast.success('Opportunité déplacée avec succès')
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erreur lors du déplacement de l\'opportunité')
       logger.error('Pipeline stage change error:', error)
     }

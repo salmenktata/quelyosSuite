@@ -60,7 +60,7 @@ export function AIGeneratorModal({ isOpen, onClose, onGenerate }: AIGeneratorMod
       } else {
         setError(data.result?.error || 'Erreur lors de la génération');
       }
-    } catch (_err) {
+    } catch (err) {
       setError('Impossible de générer le thème. Réessayez.');
     } finally {
       setLoading(false);

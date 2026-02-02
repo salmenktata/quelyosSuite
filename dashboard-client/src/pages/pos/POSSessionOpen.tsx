@@ -49,7 +49,7 @@ export default function POSSessionOpen() {
       })
       // Redirect to terminal
       navigate('/pos/terminal')
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'ouverture de la session')
     }

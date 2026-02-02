@@ -71,7 +71,7 @@ export default function ForgotPassword() {
 
       logger.info('Password reset requested for:', email)
       setSuccess(true)
-    } catch (_err) {
+    } catch (err) {
       logger.error('Reset password error:', err)
       setError('Impossible d\'envoyer l\'email. Vérifiez l\'adresse.')
     } finally {

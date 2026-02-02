@@ -179,7 +179,7 @@ export function useApiRequest<T = unknown>(
       logger.debug('[useApiRequest] Success:', url, response)
 
       return response.data
-    } catch (_err) {
+    } catch (err) {
       // Vérifier si annulée
       if (abortControllerRef.current?.signal.aborted) {
         return null

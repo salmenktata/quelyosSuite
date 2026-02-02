@@ -122,7 +122,7 @@ export default function OptimizationPanel() {
       });
 
       setResult(data);
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setIsLoading(false);
@@ -164,7 +164,7 @@ export default function OptimizationPanel() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'export");
     }
   };
@@ -178,7 +178,7 @@ export default function OptimizationPanel() {
         if (data.accounts && data.accounts.length > 0) {
           setSelectedAccountId(data.accounts[0].id.toString());
         }
-      } catch (_err) {
+      } catch (err) {
         logger.error("Error loading accounts:", err);
       }
     };
@@ -220,7 +220,7 @@ export default function OptimizationPanel() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'export PDF");
     }
   };

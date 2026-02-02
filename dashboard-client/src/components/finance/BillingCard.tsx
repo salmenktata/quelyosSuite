@@ -86,7 +86,7 @@ export function BillingCard() {
 
       setPlans(plansData);
       setSubscription(subData);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Error loading billing data:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
     } finally {
@@ -118,7 +118,7 @@ export function BillingCard() {
 
       // Redirect to Stripe checkout
       window.location.href = url;
-    } catch (_err) {
+    } catch (err) {
       logger.error("Error creating checkout:", err);
       setError(err instanceof Error ? err.message : "Erreur lors du paiement");
       setCheckoutLoading(false);
@@ -144,7 +144,7 @@ export function BillingCard() {
 
       // Redirect to Stripe customer portal
       window.location.href = url;
-    } catch (_err) {
+    } catch (err) {
       logger.error("Error opening portal:", err);
       setError(err instanceof Error ? err.message : "Erreur d'accès au portail");
       setCheckoutLoading(false);

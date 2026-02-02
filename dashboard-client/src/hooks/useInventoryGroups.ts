@@ -115,7 +115,7 @@ export function useInventoryGroups(params: InventoryGroupsParams = {}) {
       } else {
         setError(result.data?.error || 'Erreur lors du chargement des groupes d\'inventaire');
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
     } finally {
       setLoading(false);
@@ -170,7 +170,7 @@ export function useInventoryGroupDetail(groupId: number | null) {
       } else {
         setError(result.data?.error || 'Erreur lors du chargement du groupe');
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
     } finally {
       setLoading(false);
@@ -218,7 +218,7 @@ export function useCreateInventoryGroup() {
         setError(result.data?.error || 'Erreur lors de la création');
         return null;
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return null;
     } finally {
@@ -256,7 +256,7 @@ export function useStartInventoryGroup() {
         setError(result.data?.error || 'Erreur lors du démarrage');
         return false;
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return false;
     } finally {
@@ -294,7 +294,7 @@ export function useValidateInventoryGroup() {
         setError(result.data?.error || 'Erreur lors de la validation');
         return false;
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return false;
     } finally {
@@ -332,7 +332,7 @@ export function useCancelInventoryGroup() {
         setError(result.data?.error || 'Erreur lors de l\'annulation');
         return false;
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return false;
     } finally {
@@ -370,7 +370,7 @@ export function useDeleteInventoryGroup() {
         setError(result.data?.error || 'Erreur lors de la suppression');
         return false;
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return false;
     } finally {

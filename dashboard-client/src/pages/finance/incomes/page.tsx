@@ -55,7 +55,7 @@ export default function IncomesPage() {
       ])
       setTransactions(txData)
       setCategories(catData)
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {

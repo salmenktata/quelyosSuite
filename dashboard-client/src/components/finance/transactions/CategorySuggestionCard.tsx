@@ -91,7 +91,7 @@ export function CategorySuggestionCard({
       } else {
         setSuggestion(null);
       }
-    } catch (_err) {
+    } catch (err) {
       // Silently fail - ML suggestions are optional
       logger.error("Failed to fetch category suggestion:", err);
       setError(null); // Don't show error to user

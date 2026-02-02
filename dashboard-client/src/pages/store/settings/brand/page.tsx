@@ -203,7 +203,7 @@ export default function BrandSettingsPage() {
       await updateTenantMutation.mutateAsync(newConfig);
       toast.success(`Thème "${preset.label}" appliqué`);
       refetch();
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de l'application du thème");
     }
@@ -237,7 +237,7 @@ export default function BrandSettingsPage() {
       toast.success("Identité de marque mise à jour");
       setHasChanges(false);
       refetch();
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de la mise à jour");
     }

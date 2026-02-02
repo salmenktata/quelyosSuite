@@ -106,7 +106,7 @@ export function useTableData<T = unknown>(
             timestamp: Date.now(),
           });
         }
-      } catch (_err) {
+      } catch (err) {
         logger.error("[useTableData] Error:", err);
         setError(err instanceof Error ? err.message : "Erreur de chargement");
       } finally {

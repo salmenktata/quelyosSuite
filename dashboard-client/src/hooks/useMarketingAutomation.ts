@@ -77,7 +77,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -101,7 +101,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data.automation;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -125,7 +125,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -149,7 +149,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -178,7 +178,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -202,7 +202,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data.participant;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -225,7 +225,7 @@ export function useMarketingAutomation() {
       }
       
       return result.data;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;

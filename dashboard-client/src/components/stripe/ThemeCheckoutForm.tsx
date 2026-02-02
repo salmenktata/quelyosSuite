@@ -119,7 +119,7 @@ export function ThemeCheckoutForm({
       } else {
         throw new Error('Payment status: ' + (paymentIntent?.status || 'unknown'));
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error('[ThemeCheckoutForm] Payment error:', err);
       setError(err instanceof Error ? err.message : 'Payment failed');
       setProcessing(false);

@@ -60,7 +60,7 @@ export default function ThemesPage() {
         } else {
           setError('Erreur lors du chargement des thèmes');
         }
-      } catch (_err) {
+      } catch (err) {
         setError('Impossible de charger les thèmes');
       } finally {
         setLoading(false);
@@ -91,7 +91,7 @@ export default function ThemesPage() {
         if (data.result?.config) {
           setActiveTheme(data.result.config.id);
         }
-      } catch (_err) {
+      } catch (err) {
         logger.error('[StoreThemes] Erreur chargement thème actif');
       }
     }
@@ -121,7 +121,7 @@ export default function ThemesPage() {
       } else {
         setError('Erreur lors de l\'activation du thème');
       }
-    } catch (_err) {
+    } catch (err) {
       setError('Impossible d\'activer le thème');
     }
   };

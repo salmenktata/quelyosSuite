@@ -84,7 +84,7 @@ export default function NewAccountPage() {
     try {
       const data = await api(withCompanyParam("/portfolios"));
       setPortfolios(Array.isArray(data) ? data : []);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur de chargement des portefeuilles", err);
     }
   }, [withCompanyParam]);
@@ -115,7 +115,7 @@ export default function NewAccountPage() {
       });
 
       navigate(ROUTES.FINANCE.DASHBOARD.ACCOUNTS.HOME);
-    } catch (_err) {
+    } catch (err) {
       setError(
         err instanceof Error ? err.message : "Impossible de créer le compte."
       );

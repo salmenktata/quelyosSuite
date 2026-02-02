@@ -218,7 +218,7 @@ export default function AccountsPage() {
         resetAccountForm()
       }
       await refetchAccounts()
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       const message = err instanceof Error ? err.message : 'Impossible de supprimer le compte.'
       if (message.includes('ACCOUNT_HAS_TRANSACTIONS')) {
@@ -270,7 +270,7 @@ export default function AccountsPage() {
 
       closeDeleteConflict()
       await refetchAccounts()
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setConflictError(
         err instanceof Error

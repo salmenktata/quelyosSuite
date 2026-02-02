@@ -56,8 +56,8 @@ export default function TrendingProducts() {
     try {
       await toggleTrending.mutateAsync(productId);
       toast.success('Statut mis à jour');
-    } catch (_err) {
-      logger.error("Erreur:", _err);
+    } catch (err) {
+      logger.error("Erreur:", err);
       toast.error('Erreur lors de la mise à jour');
     }
   };
@@ -78,8 +78,8 @@ export default function TrendingProducts() {
       });
       setEditingProduct(null);
       toast.success('Données mises à jour');
-    } catch (_err) {
-      logger.error("Erreur:", _err);
+    } catch (err) {
+      logger.error("Erreur:", err);
       toast.error('Erreur lors de la sauvegarde');
     }
   };

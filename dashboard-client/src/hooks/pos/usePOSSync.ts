@@ -105,7 +105,7 @@ export function usePOSSync(options: UsePOSSyncOptions = {}) {
         success: false,
         error: response.data.error || 'Sync failed',
       }
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',

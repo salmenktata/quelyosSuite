@@ -82,7 +82,7 @@ export default function HeroSlides() {
         toast.success('Slide mis à jour')
       }
       handleCancel()
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la sauvegarde'
       toast.error(errorMessage)

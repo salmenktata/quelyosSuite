@@ -61,7 +61,7 @@ export default function AlertWidget() {
       );
 
       setRecentTriggers(sorted.slice(0, 3));
-    } catch (_err) {
+    } catch (err) {
       logger.error("Failed to load alert triggers:", err);
     } finally {
       setLoading(false);

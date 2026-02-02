@@ -133,7 +133,7 @@ export default function ScenariosPage() {
     try {
       const data = (await api(`/dashboard/forecast?days=${horizon}`)) as ForecastResponse
       setBaseData(data)
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement")
     } finally {

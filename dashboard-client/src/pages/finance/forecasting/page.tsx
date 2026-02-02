@@ -32,8 +32,8 @@ export default function ForecastingPage() {
         setPredictions(response.data.data.predictions)
         setSummary(response.data.data.summary)
       }
-    } catch (_error) {
-      logger.error("Erreur:", _error);
+    } catch (error) {
+      logger.error("Erreur:", error);
       // Error handled
     } finally {
       setLoading(false)

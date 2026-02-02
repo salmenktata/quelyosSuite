@@ -125,7 +125,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
         photographer: img.user.name,
         photographer_url: img.user.links.html,
       }))
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur Unsplash:', error)
       throw error
     }
@@ -166,7 +166,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
         photographer: img.photographer,
         photographer_url: img.photographer_url,
       }))
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur Pexels:', error)
       throw error
     }
@@ -198,13 +198,13 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       if (source === 'unsplash') {
         try {
           results = await searchUnsplash()
-        } catch (_e) {
+        } catch (e) {
           errors.push(e as Error)
         }
       } else if (source === 'pexels') {
         try {
           results = await searchPexels()
-        } catch (_e) {
+        } catch (e) {
           errors.push(e as Error)
         }
       } else {
@@ -243,7 +243,7 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
       if (results.length === 0 && errors.length > 0) {
         setError(errors.map(e => getErrorMessage(e)).join(' | '))
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur recherche images:', error)
       setError(getErrorMessage(error as Error))
       setImages([])

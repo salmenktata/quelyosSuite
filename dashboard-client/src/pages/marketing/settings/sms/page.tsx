@@ -59,7 +59,7 @@ export default function MarketingSMSSettingsPage() {
 
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration SMS enregistrée");
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
@@ -73,7 +73,7 @@ export default function MarketingSMSSettingsPage() {
     try {
       await testMutation.mutateAsync({ mobile: testPhone, message: testMessage });
       toast.success("SMS de test envoyé");
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }

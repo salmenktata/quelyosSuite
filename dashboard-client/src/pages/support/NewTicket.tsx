@@ -106,8 +106,8 @@ export default function NewTicket() {
       if (result.success) {
         navigate(`/support/tickets/${result.ticket.id}`)
       }
-    } catch (_error) {
-      logger.error("Erreur:", _error);
+    } catch (error) {
+      logger.error("Erreur:", error);
       setErrors({ submit: 'Erreur lors de la création du ticket. Veuillez réessayer.' })
     }
   }

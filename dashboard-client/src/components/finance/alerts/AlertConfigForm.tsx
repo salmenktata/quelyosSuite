@@ -135,7 +135,7 @@ export default function AlertConfigForm({
       });
 
       onSave();
-    } catch (_err) {
+    } catch (err) {
       logger.error("Failed to save alert:", err);
       setError(
         err instanceof Error

@@ -69,7 +69,7 @@ export default function SettingsOverviewPage() {
       try {
         const data = await api("/company/settings") as { isDemo?: boolean };
         setIsDemoActive(data.isDemo || false);
-      } catch (_e) {
+      } catch (e) {
         logger.error("Erreur lors de la vérification du statut démo:", e);
       } finally {
         setInitialLoading(false);
@@ -125,7 +125,7 @@ export default function SettingsOverviewPage() {
         setShowToast(false);
         window.location.reload();
       }, 3500);
-    } catch (_e) {
+    } catch (e) {
       const error = e as Error;
       setError(error.message || "Erreur inconnue");
     } finally {

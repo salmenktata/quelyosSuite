@@ -120,7 +120,7 @@ export default function CustomerCategories() {
       setNewCategoryName('');
       setSelectedColor(0);
       setIsCreateModalOpen(false);
-    } catch (_error) {
+    } catch (error) {
       logger.error('[CustomerCategories] Create error:', error);
       toast.error(error instanceof Error ? error.message : 'Erreur lors de la création');
     }
@@ -143,7 +143,7 @@ export default function CustomerCategories() {
       setEditingCategory(null);
       setNewCategoryName('');
       setSelectedColor(0);
-    } catch (_error) {
+    } catch (error) {
       logger.error('[CustomerCategories] Edit error:', error);
       toast.error(error instanceof Error ? error.message : 'Erreur lors de la modification');
     }
@@ -158,7 +158,7 @@ export default function CustomerCategories() {
       setIsDeleteModalOpen(false);
       setDeletingCategory(null);
       setSelectedCategories((prev) => prev.filter((id) => id !== deletingCategory.id));
-    } catch (_error) {
+    } catch (error) {
       logger.error('[CustomerCategories] Delete error:', error);
       toast.error(error instanceof Error ? error.message : 'Erreur lors de la suppression');
     }
@@ -171,7 +171,7 @@ export default function CustomerCategories() {
       await Promise.all(selectedCategories.map((id) => deleteMutation.mutateAsync(id)));
       toast.success(`${selectedCategories.length} catégorie(s) supprimée(s)`);
       setSelectedCategories([]);
-    } catch (_error) {
+    } catch (error) {
       logger.error('[CustomerCategories] Bulk delete error:', error);
       toast.error('Erreur lors de la suppression groupée');
     }

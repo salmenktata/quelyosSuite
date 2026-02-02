@@ -5,14 +5,22 @@
  * Il initialise automatiquement le tenant_id dans le client API.
  * Il extrait automatiquement le tenant domain depuis l'URL (sous-domaine).
  *
+ * SÉCURITÉ CRITIQUE :
+ * - Injecte automatiquement X-Tenant-Domain dans tous les appels API
+ * - Isole les données localStorage par tenant (via tenantStorage)
+ * - Empêche l'accès cross-tenant
+ *
  * Usage:
  * - Wrapper l'app avec <TenantProvider>
  * - Utiliser useTenantContext() pour accéder au tenant courant
+ * - Utiliser tenantStorage au lieu de localStorage
  */
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { api } from '@/lib/api'
+import { tenantStorage } from '@/lib/tenantStorage'
+import { logger } from '@quelyos/logger'
 
 interface TenantContextValue {
   tenantId: number | null
@@ -23,6 +31,8 @@ interface TenantContextValue {
   error: Error | null
   setTenantId: (id: number | null) => void
   setTenantDomain: (domain: string | null) => void
+  /** Nettoie toutes les données du tenant courant (logout) */
+  clearTenantData: () => void
 }
 
 const TenantContext = createContext<TenantContextValue | null>(null)
@@ -75,6 +85,12 @@ export function TenantProvider({ children }: TenantProviderProps) {
   const setTenantId = (id: number | null) => {
     setManualTenantId(id)
     api.setTenantId(id)
+
+    // Nettoyer les données du tenant précédent si changement de tenant
+    if (id && tenant?.id && id !== tenant.id) {
+      logger.warn('[TenantContext] Changement de tenant détecté, nettoyage localStorage')
+      tenantStorage.clear()
+    }
   }
 
   const setTenantDomain = (domain: string | null) => {
@@ -82,6 +98,17 @@ export function TenantProvider({ children }: TenantProviderProps) {
     if (domain) {
       api.setTenantDomain(domain)
     }
+  }
+
+  /**
+   * Nettoie toutes les données du tenant courant
+   * Appelé lors du logout ou du changement de tenant
+   */
+  const clearTenantData = () => {
+    logger.info('[TenantContext] Nettoyage données tenant')
+    tenantStorage.clear()
+    setManualTenantId(null)
+    api.setTenantId(null)
   }
 
   const value: TenantContextValue = {
@@ -93,6 +120,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
     error: error as Error | null,
     setTenantId,
     setTenantDomain,
+    clearTenantData,
   }
 
   return (

@@ -236,7 +236,7 @@ export function useVoiceOrdering(options: UseVoiceOrderingOptions = {}): UseVoic
     if (recognitionRef.current && !isListening) {
       try {
         recognitionRef.current.start()
-      } catch (_e) {
+      } catch (e) {
         logger.error('[Voice] Start error:', e)
       }
     }

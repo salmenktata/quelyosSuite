@@ -53,7 +53,7 @@ export default function SocialSettingsPage() {
     try {
       await updateMutation.mutateAsync(socialConfig);
       toast.success("Réseaux sociaux mis à jour");
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de la mise à jour");
     }

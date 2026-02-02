@@ -52,7 +52,7 @@ export default function SitemapMonitoring() {
       const data = await response.json();
       setEntries(data.entries);
       setStats(data.stats);
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur lors du chargement du sitemap:', error);
     } finally {
       setLoading(false);

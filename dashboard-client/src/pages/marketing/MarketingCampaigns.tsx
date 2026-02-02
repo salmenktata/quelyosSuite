@@ -60,7 +60,7 @@ export default function MarketingCampaigns() {
 
     try {
       await sendCampaignMutation.mutateAsync(id);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de l'envoi de la campagne:", err);
     }
   };
@@ -70,7 +70,7 @@ export default function MarketingCampaigns() {
 
     try {
       await deleteCampaignMutation.mutateAsync(id);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de la suppression de la campagne:", err);
     }
   };

@@ -41,7 +41,7 @@ export default function ContactSettingsPage() {
       contactSchema.parse(contactConfig);
       setErrors({});
       return true;
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
@@ -65,7 +65,7 @@ export default function ContactSettingsPage() {
     try {
       await updateMutation.mutateAsync(contactConfig);
       toast.success("Informations de contact mises à jour");
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de la mise à jour");
     }

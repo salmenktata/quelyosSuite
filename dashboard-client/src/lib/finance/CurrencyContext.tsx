@@ -70,10 +70,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         const settings = raw ? JSON.parse(raw) : {};
         settings.currency = data.displayCurrency;
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      } catch (_err) {
+      } catch (err) {
         logger.error("Erreur lors de la sauvegarde locale", err);
       }
-    } catch (_err) {
+    } catch (err) {
       // Don't log auth errors (expected when not logged in)
       if (!(err instanceof AuthenticationError)) {
         logger.error("Erreur lors de la récupération de la devise utilisateur", err);
@@ -86,7 +86,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
           const savedCurrency = parsed.currency ?? DEFAULT_CURRENCY;
           setCurrencyState(savedCurrency);
         }
-      } catch (_e) {
+      } catch (e) {
         logger.error("Erreur localStorage fallback", e);
       }
     }
@@ -101,7 +101,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       }>("/currencies");
 
       setAvailableCurrencies(data.currencies);
-    } catch (_err) {
+    } catch (err) {
       // Don't log auth errors (expected when not logged in)
       if (!(err instanceof AuthenticationError)) {
         logger.error("Erreur lors de la récupération des devises", err);
@@ -124,7 +124,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       }>("/currencies/exchange-rates");
 
       setExchangeRates(data.rates);
-    } catch (_err) {
+    } catch (err) {
       // Don't log auth errors (expected when not logged in)
       if (!(err instanceof AuthenticationError)) {
         logger.error("Erreur lors de la récupération des taux de change", err);
@@ -149,7 +149,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
             const savedCurrency = parsed.currency ?? DEFAULT_CURRENCY;
             setCurrencyState(savedCurrency);
           }
-        } catch (_e) {
+        } catch (e) {
           // Ignore localStorage errors
         }
         // Set default currencies for unauthenticated users
@@ -191,7 +191,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       const settings = raw ? JSON.parse(raw) : {};
       settings.currency = newCurrency;
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de la sauvegarde locale", err);
     }
 
@@ -202,7 +202,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         method: "PUT",
         body: { currency: newCurrency } as { currency: string },
       });
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de la sauvegarde backend de la devise", err);
       // Revert on error
       await fetchUserCurrency();

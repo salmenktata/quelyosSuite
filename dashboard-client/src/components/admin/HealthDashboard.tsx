@@ -193,7 +193,7 @@ export function HealthDashboard() {
       const data = await response.json()
       setHealth(data)
       setError(null)
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch health status')
 
       // Données de fallback pour affichage

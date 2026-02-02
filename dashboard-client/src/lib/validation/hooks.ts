@@ -111,7 +111,7 @@ export function useAsyncValidation<TSchema extends z.ZodType>(
       if (asyncValidator) {
         try {
           await asyncValidator(result.data)
-        } catch (_error) {
+        } catch (error) {
           return {
             success: false,
             errors: [

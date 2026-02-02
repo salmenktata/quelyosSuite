@@ -49,7 +49,7 @@ export function useGlobalCache<T>(key: string, fetcher: () => Promise<T>) {
 
       cache.set(key, newEntry);
       setState(newEntry);
-    } catch (_err) {
+    } catch (err) {
       const errorEntry: CacheEntry<T> = {
         data: null,
         timestamp: now,

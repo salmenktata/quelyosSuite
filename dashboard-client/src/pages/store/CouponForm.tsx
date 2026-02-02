@@ -106,7 +106,7 @@ export default function CouponForm() {
       await createCoupon.mutateAsync(data)
       toast.success(`Le coupon "${formData.code.toUpperCase()}" a été créé avec succès`)
       navigate('/coupons')
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur lors de la création du coupon:', error)
       toast.error('Erreur lors de la création du coupon. Veuillez réessayer.')
     }

@@ -127,7 +127,7 @@ function CameraScannerModal({ onScan: _onScan, onClose }: CameraScannerModalProp
           videoRef.current.srcObject = stream
           setLoading(false)
         }
-      } catch (_err) {
+      } catch (err) {
         setError('Impossible d\'accéder à la caméra')
         setLoading(false)
       }

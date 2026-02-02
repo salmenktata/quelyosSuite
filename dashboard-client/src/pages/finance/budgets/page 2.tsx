@@ -26,7 +26,7 @@ export default function BudgetsPage() {
       setLoading(true);
       const data = await api<Budget[]>("/budgets");
       setBudgets(data);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement des budgets.");
     } finally {
@@ -53,7 +53,7 @@ export default function BudgetsPage() {
 
       setNewBudgetName("");
       fetchBudgets();
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(
         err instanceof Error ? err.message : "Impossible de créer le budget."

@@ -49,7 +49,7 @@ export default function MailingLists() {
       await createMailingListMutation.mutateAsync({ name: newListName });
       setNewListName('');
       setShowCreateModal(false);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de la création de la liste:", err);
     }
   };
@@ -59,7 +59,7 @@ export default function MailingLists() {
 
     try {
       await deleteMailingListMutation.mutateAsync(id);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur lors de la suppression de la liste:", err);
     }
   };

@@ -51,7 +51,7 @@ export function ImageUpload({
     try {
       setUploading(true)
       await onUpload(file)
-    } catch (_err) {
+    } catch (err) {
       setError('Erreur lors de l\'upload')
       setPreview(currentImageUrl || null)
     } finally {

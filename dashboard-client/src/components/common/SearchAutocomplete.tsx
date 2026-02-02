@@ -77,7 +77,7 @@ export function SearchAutocomplete<T = unknown>({
           setSuggestions(results.slice(0, maxSuggestions))
           setIsOpen(results.length > 0)
           setHighlightedIndex(-1)
-        } catch (_error) {
+        } catch (error) {
           logger.error('Error fetching suggestions:', error)
           setSuggestions([])
         } finally {

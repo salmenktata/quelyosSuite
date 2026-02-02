@@ -62,8 +62,8 @@ export default function AccountDetailPage() {
         setLoading(true);
         const data = await api<Account>(`/accounts/${accountId}`);
         setAccount(data);
-      } catch (_err) {
-      logger.error("Erreur:", err);
+      } catch (err) {
+        logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur de chargement");
       } finally {
         setLoading(false);

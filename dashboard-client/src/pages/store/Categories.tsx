@@ -172,7 +172,7 @@ export default function Categories() {
       toast.success(`La catégorie "${formData.name}" a été créée avec succès`)
       setFormData({ name: '', parent_id: '' })
       setIsCreating(false)
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error('Erreur lors de la création de la catégorie')
     }
@@ -193,7 +193,7 @@ export default function Categories() {
       toast.success(`La catégorie "${formData.name}" a été modifiée avec succès`)
       setFormData({ name: '', parent_id: '' })
       setEditingCategory(null)
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error('Erreur lors de la modification de la catégorie')
     }
@@ -206,7 +206,7 @@ export default function Categories() {
       await deleteCategoryMutation.mutateAsync(deleteModal.id)
       toast.success(`La catégorie "${deleteModal.name}" a été supprimée avec succès`)
       setDeleteModal(null)
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error('Erreur lors de la suppression de la catégorie')
     }
@@ -217,7 +217,7 @@ export default function Categories() {
       try {
         await moveCategoryMutation.mutateAsync({ id: categoryId, newParentId })
         toast.success('Catégorie déplacée avec succès')
-      } catch (_error) {
+      } catch (error) {
       logger.error("Erreur:", error);
         toast.error('Erreur lors du déplacement de la catégorie')
       }

@@ -56,7 +56,7 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
       }
 
       return true
-    } catch (_error) {
+    } catch (error) {
       logger.error('Session check error:', error)
       return false
     }
@@ -82,7 +82,7 @@ export function useSessionManager(config: SessionManagerConfig = {}) {
         toast.error('Votre session a expiré. Veuillez vous reconnecter.')
         navigate('/login')
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Session refresh error:', error)
     }
   }, [navigate, toast, isDevMode])

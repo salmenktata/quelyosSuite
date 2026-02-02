@@ -49,7 +49,7 @@ export function ExportDropdown({
         });
         await exportData(rows, format, filename);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Export failed:', error);
     } finally {
       setLoading(false);

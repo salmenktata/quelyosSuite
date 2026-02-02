@@ -64,7 +64,7 @@ export default function NewBudgetPage() {
       if (data.categoryId) setCategoryId(data.categoryId.toString());
       if (data.period) setPeriod(data.period as "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY" | "CUSTOM");
       if (data.startDate) setStartDate(data.startDate.split("T")[0]);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement du budget");
     } finally {
@@ -107,7 +107,7 @@ export default function NewBudgetPage() {
       }
 
       navigate(ROUTES.FINANCE.DASHBOARD.BUDGETS.HOME);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur lors de l'enregistrement");
     } finally {

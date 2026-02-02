@@ -41,7 +41,7 @@ export function SessionCloseModal({
         note: note || undefined,
       })
       setZReport(report)
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la fermeture')
     }
   }

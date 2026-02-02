@@ -239,7 +239,7 @@ export default function ProductForm() {
         }
       }
       navigate('/products')
-    } catch (_error) {
+    } catch (error) {
       toast.error(`Erreur lors de ${isEditing ? 'la modification' : 'la création'} du produit`)
       logger.error('Error saving product:', error)
     }

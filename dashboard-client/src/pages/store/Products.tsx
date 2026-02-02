@@ -143,7 +143,7 @@ export default function Products() {
           }))
         }
         return []
-      } catch (_err) {
+      } catch (err) {
         logger.error('Error fetching suggestions:', err)
         return []
       }

@@ -104,7 +104,7 @@ export default function PayoutsPage() {
       if (designerData.result.designer.stripe_connect_account_id) {
         await fetchConnectStatus(designerData.result.designer.id);
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error('[ThemePayouts] Error fetching designer data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
@@ -139,7 +139,7 @@ export default function PayoutsPage() {
           charges_enabled: data.result.charges_enabled,
         });
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error('[ThemePayouts] Error fetching Stripe Connect status:', err);
     }
   };
@@ -170,7 +170,7 @@ export default function PayoutsPage() {
 
       // Rediriger vers Stripe
       window.location.href = data.result.account_link_url;
-    } catch (_err) {
+    } catch (err) {
       logger.error('[ThemePayouts] Error starting onboarding:', err);
       setError(err instanceof Error ? err.message : 'Onboarding failed');
     }

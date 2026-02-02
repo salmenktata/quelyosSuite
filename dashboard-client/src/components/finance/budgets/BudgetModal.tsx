@@ -64,7 +64,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
         startDate: budget.startDate ? budget.startDate.split("T")[0] : new Date().toISOString().split("T")[0],
         endDate: budget.endDate ? budget.endDate.split("T")[0] : ""
       });
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de chargement");
     } finally {
       setLoading(false);
@@ -119,7 +119,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
 
       onSuccess();
       onClose();
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde");
     } finally {
       setLoading(false);

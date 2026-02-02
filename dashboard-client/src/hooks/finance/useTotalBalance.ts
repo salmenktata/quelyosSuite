@@ -126,7 +126,7 @@ export function useTotalBalance(): BalanceData {
       balanceCache = { data: newData, timestamp: now };
       
       setData(newData);
-    } catch (_err) {
+    } catch (err) {
       logger.error("[useTotalBalance] Error:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
     } finally {

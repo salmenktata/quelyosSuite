@@ -118,7 +118,7 @@ class WebSocketClient {
       this.socket.onmessage = this.handleMessage.bind(this)
       this.socket.onclose = this.handleClose.bind(this)
       this.socket.onerror = this.handleError.bind(this)
-    } catch (_error) {
+    } catch (error) {
       logger.error('[WS] Connection error:', error)
       this.scheduleReconnect()
     }
@@ -281,7 +281,7 @@ class WebSocketClient {
       if (message.channel && this.handlers.has(message.channel)) {
         this.handlers.get(message.channel)!.forEach((handler) => handler(message))
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('[WS] Message parse error:', error)
     }
   }

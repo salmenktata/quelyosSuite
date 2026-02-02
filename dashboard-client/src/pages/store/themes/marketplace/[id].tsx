@@ -73,8 +73,8 @@ export default function MarketplaceThemeDetailPage() {
       if (data.result?.success && data.result.theme) {
         setTheme(data.result.theme);
       }
-    } catch (_error) {
-      logger.error("Erreur:", _error);
+    } catch (error) {
+      logger.error("Erreur:", error);
       // Error loading theme - silently fail
     } finally {
       setLoading(false);
@@ -125,8 +125,8 @@ export default function MarketplaceThemeDetailPage() {
       } else {
         alert(data.result?.error || 'Erreur lors de l\'achat');
       }
-    } catch (_error) {
-      logger.error("Erreur:", _error);
+    } catch (error) {
+      logger.error("Erreur:", error);
       // Error purchasing theme
       alert('Erreur lors de l\'achat. Réessayez.');
     } finally {

@@ -154,8 +154,8 @@ export default function ThemeBuilderPreview() {
         try {
           const state = JSON.parse(stored) as BuilderState;
           setThemeState(state);
-        } catch (_error) {
-      logger.error("Erreur:", _error);
+        } catch (error) {
+      logger.error("Erreur:", error);
           // Error parsing theme state - ignore
         }
       }
@@ -231,8 +231,8 @@ export default function ThemeBuilderPreview() {
       try {
         const state = JSON.parse(stored) as BuilderState;
         setThemeState(state);
-      } catch (_error) {
-      logger.error("Erreur:", _error);
+      } catch (error) {
+      logger.error("Erreur:", error);
         // Error parsing theme state - ignore
       }
     }

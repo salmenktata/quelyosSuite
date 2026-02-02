@@ -116,7 +116,7 @@ export function useApiData<T>({
       }
 
       onSuccess?.(result);
-    } catch (_err) {
+    } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       setError(error);
       onError?.(error);

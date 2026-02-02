@@ -184,7 +184,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
 
       toast.success('Thème importé avec succès');
       return true;
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erreur lors de l\'import du JSON');
       return false;
     }

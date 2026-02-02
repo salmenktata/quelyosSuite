@@ -66,7 +66,7 @@ export function useMarketingTracking() {
       }
       
       return result.data.tracking;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -90,7 +90,7 @@ export function useMarketingTracking() {
       }
       
       return result.data.heatmap;
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;
@@ -118,7 +118,7 @@ export function useMarketingTracking() {
         timeline: result.data.timeline,
         total_events: result.data.total_events,
       };
-    } catch (_err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(errorMsg);
       throw err;

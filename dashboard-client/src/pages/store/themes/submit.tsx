@@ -121,7 +121,7 @@ export default function SubmitThemePage() {
       } else {
         setError(data.result?.error || 'Erreur lors de la soumission');
       }
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       setError('Erreur lors de la soumission. Réessayez.');
     } finally {

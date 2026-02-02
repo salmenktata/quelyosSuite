@@ -57,7 +57,7 @@ export default function PaymentMethodsPage() {
         state: newState,
       });
       toast.success(`${provider.name} ${newState === 'enabled' ? 'activé' : 'désactivé'}`);
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur lors de la modification: ${error}`);
     }
@@ -67,7 +67,7 @@ export default function PaymentMethodsPage() {
     try {
       const result = await testProviderMutation.mutateAsync(provider.id);
       toast.success(result.message || "Connexion réussie !");
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error(`Test échoué: ${error}`);
     }
@@ -81,7 +81,7 @@ export default function PaymentMethodsPage() {
       });
       toast.success(`Configuration de ${provider.name} enregistrée`);
       setEditingProvider(null);
-    } catch (_error) {
+    } catch (error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur lors de l'enregistrement: ${error}`);
     }

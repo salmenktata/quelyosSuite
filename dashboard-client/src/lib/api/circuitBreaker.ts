@@ -64,7 +64,7 @@ export class CircuitBreaker {
       const result = await this.executeWithTimeout(fn)
       this.onSuccess()
       return result
-    } catch (_error) {
+    } catch (error) {
       this.onFailure()
       throw error
     }

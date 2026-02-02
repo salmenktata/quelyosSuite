@@ -162,7 +162,7 @@ export default function ContactListsPage() {
         dispatch({ type: "SET_CSV_PREVIEW", payload: preview });
         dispatch({ type: "SET_COLUMN_MAPPING", payload: preview.column_mapping });
         dispatch({ type: "SET_IMPORT_STEP", payload: 'preview' });
-      } catch (_err) {
+      } catch (err) {
       logger.error("Erreur:", err);
         toast.error('Erreur lors de la lecture du fichier');
       }
@@ -193,7 +193,7 @@ export default function ContactListsPage() {
       } });
       dispatch({ type: "SET_IMPORT_STEP", payload: 'result' });
       toast.success(`${result.total} contacts importés`);
-    } catch (_err) {
+    } catch (err) {
       logger.error("Erreur:", err);
       toast.error('Erreur lors de l\'import');
     }

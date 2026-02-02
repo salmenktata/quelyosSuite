@@ -42,7 +42,7 @@ export function CampaignTrackingDetail() {
       setTracking(trackingData);
       setHeatmap(heatmapData);
       setTimeline(timelineData.timeline);
-    } catch (_err) {
+    } catch (err) {
       logger.error('Erreur chargement tracking:', err);
     }
   }, [campaignId, getCampaignTracking, getCampaignHeatmap, getCampaignTimeline]);

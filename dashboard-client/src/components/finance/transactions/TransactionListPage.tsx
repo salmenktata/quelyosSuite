@@ -155,7 +155,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
       ]);
       dispatch({ type: 'SET_TRANSACTIONS', payload: txData });
       dispatch({ type: 'SET_CATEGORIES', payload: catData });
-    } catch (_err) {
+    } catch (err) {
       dispatch({ type: 'SET_ERROR', payload: err instanceof Error ? err.message : "Erreur de chargement" });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -216,7 +216,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
     try {
       await api(`/transactions/${id}`, { method: "DELETE" });
       await fetchData();
-    } catch (_err) {
+    } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
     } finally {
       dispatch({ type: 'SET_DELETING_ID', payload: null });
@@ -230,7 +230,7 @@ export function TransactionListPage({ type }: TransactionListPageProps) {
       await Promise.all(state.selectedIds.map((id) => api(`/transactions/${id}`, { method: "DELETE" })));
       dispatch({ type: 'CLEAR_SELECTION' });
       await fetchData();
-    } catch (_err) {
+    } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
     }
   }

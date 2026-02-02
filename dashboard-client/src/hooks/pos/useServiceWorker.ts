@@ -71,7 +71,7 @@ export function useServiceWorker(): UseServiceWorkerReturn {
       if (registration.active) {
         setState((prev) => ({ ...prev, isReady: true }))
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('[SW Hook] Registration failed:', error)
     }
   }, [state.isSupported])
@@ -198,7 +198,7 @@ export function useBackgroundSync() {
         const registration = await navigator.serviceWorker.ready
         await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register(tag)
         logger.debug('[Background Sync] Registered:', tag)
-      } catch (_error) {
+      } catch (error) {
         logger.error('[Background Sync] Failed to register:', error)
       }
     }

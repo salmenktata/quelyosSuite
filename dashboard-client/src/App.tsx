@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, lazy, useEffect } from 'react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
+import { TenantGuard } from './components/TenantGuard'
 import { useSessionManager } from './hooks/useSessionManager'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useBranding } from './hooks/useBranding'
@@ -350,6 +351,7 @@ export default function App() {
       <ErrorBoundary>
         <ThemeProvider>
           <ToastProvider>
+            <TenantGuard>
               <SessionManager />
               <Suspense fallback={<PageLoader />}>
               <Routes>
@@ -1908,6 +1910,7 @@ export default function App() {
               />
             </Routes>
             </Suspense>
+            </TenantGuard>
           </ToastProvider>
         </ThemeProvider>
       </ErrorBoundary>

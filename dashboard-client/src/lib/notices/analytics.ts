@@ -35,7 +35,7 @@ export function trackNoticeView(pageId: string): void {
     analytics.views++;
     analytics.lastViewed = new Date().toISOString();
     saveNoticeAnalytics(pageId, analytics);
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to track notice view:', error);
   }
 }
@@ -48,7 +48,7 @@ export function trackNoticeExpansion(pageId: string): void {
     const analytics = getNoticeAnalytics(pageId);
     analytics.expansions++;
     saveNoticeAnalytics(pageId, analytics);
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to track notice expansion:', error);
   }
 }
@@ -61,7 +61,7 @@ export function trackNoticeCollapse(pageId: string): void {
     const analytics = getNoticeAnalytics(pageId);
     analytics.collapses++;
     saveNoticeAnalytics(pageId, analytics);
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to track notice collapse:', error);
   }
 }
@@ -94,7 +94,7 @@ export function trackNoticeFeedback(pageId: string, isHelpful: boolean, comment?
     saveNoticeAnalytics(pageId, analytics);
 
     logger.info(`Notice feedback recorded: ${pageId} - ${isHelpful ? 'helpful' : 'not helpful'}`);
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to track notice feedback:', error);
   }
 }
@@ -108,7 +108,7 @@ export function getNoticeAnalytics(pageId: string): NoticeAnalytics {
     if (stored) {
       return JSON.parse(stored);
     }
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to get notice analytics:', error);
   }
 
@@ -133,7 +133,7 @@ function saveNoticeAnalytics(pageId: string, analytics: NoticeAnalytics): void {
       `${STORAGE_KEY_PREFIX}${pageId}`,
       JSON.stringify(analytics)
     );
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to save notice analytics:', error);
   }
 }
@@ -147,7 +147,7 @@ export function getNoticeFeedback(pageId: string): NoticeFeedback | null {
     if (stored) {
       return JSON.parse(stored);
     }
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to get notice feedback:', error);
   }
   return null;
@@ -175,7 +175,7 @@ export function getAllNoticeAnalytics(): Record<string, NoticeAnalytics> {
         allAnalytics[pageId] = analytics;
       }
     }
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to get all notice analytics:', error);
   }
 
