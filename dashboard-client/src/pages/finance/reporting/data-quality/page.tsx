@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import { ShieldCheck } from 'lucide-react'
@@ -63,6 +63,7 @@ export default function DataQualityPage() {
     : 0;
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -73,7 +74,7 @@ export default function DataQualityPage() {
           ]}
         />
 
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
+        <m.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
               <ShieldCheck className="h-6 w-6 text-white" />
@@ -83,12 +84,12 @@ export default function DataQualityPage() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Fiabilité et prérequis des indicateurs financiers</p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         <PageNotice config={financeNotices.dataQuality} />
 
         {/* Global Score */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
+        <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
           <GlassPanel gradient="emerald" className="p-6">
             <div className="text-center">
               <p className="text-sm text-emerald-200 mb-2">Score de Fiabilité Global</p>
@@ -101,7 +102,7 @@ export default function DataQualityPage() {
               </p>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
@@ -168,5 +169,6 @@ export default function DataQualityPage() {
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }
