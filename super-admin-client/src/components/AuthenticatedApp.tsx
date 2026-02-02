@@ -32,6 +32,7 @@ const EmailSettings = lazy(() => import('@/pages/EmailSettings').then(m => ({ de
 const Sitemap = lazy(() => import('@/pages/Sitemap').then(m => ({ default: m.Sitemap })))
 const SeedData = lazy(() => import('@/pages/SeedData').then(m => ({ default: m.SeedData })))
 const InstallWizardPage = lazy(() => import('@/pages/InstallWizardPage').then(m => ({ default: m.InstallWizardPage })))
+const LegalSettings = lazy(() => import('@/pages/LegalSettings').then(m => ({ default: m.LegalSettings })))
 
 // Composant de chargement pour Suspense
 const PageLoader = () => (
@@ -69,6 +70,7 @@ function PageViewTracker() {
       '/backup-schedules': 'Backup Schedules',
       '/settings': 'Settings',
       '/email-settings': 'Email Settings',
+      '/legal-settings': 'Legal Settings',
       '/sitemap': 'Sitemap',
       '/seed-data': 'Seed Data',
       '/tenants/install': 'Install Wizard',
@@ -137,6 +139,7 @@ export function AuthenticatedApp() {
           <Route path="backup-schedules" element={<BackupSchedules />} />
           <Route path="settings" element={<Settings />} />
           <Route path="email-settings" element={<EmailSettings />} />
+          <Route path="legal-settings" element={<LegalSettings />} />
           <Route path="sitemap" element={<Sitemap />} />
           <Route path="seed-data" element={<SeedData />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

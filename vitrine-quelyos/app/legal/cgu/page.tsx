@@ -16,9 +16,12 @@ import {
 } from "lucide-react";
 
 import config from "@/app/lib/config";
+import { useDynamicLegalConfig } from "@/app/lib/useDynamicLegalConfig";
 import Container from "@/app/components/Container";
 import Footer from "@/app/components/Footer";
 export default function CGUPage() {
+  const legalConfig = useDynamicLegalConfig();
+
   useEffect(() => {
     document.documentElement.classList.remove("light");
     document.documentElement.classList.add("dark");
@@ -60,7 +63,7 @@ export default function CGUPage() {
             Document légal
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold">Conditions Générales d&apos;Utilisation</h1>
-          <p className="text-slate-400">Dernière mise à jour : Janvier 2026</p>
+          <p className="text-slate-400">Dernière mise à jour : {legalConfig.lastUpdate}</p>
         </div>
         
         {/* Table des matières */}
@@ -361,15 +364,25 @@ export default function CGUPage() {
             </div>
             <div className="space-y-4 text-slate-300">
               <p className="m-0">
-                Les présentes CGU sont régies par le droit international applicable.
+                Les présentes CGU sont régies par le {legalConfig.jurisdiction.law}.
               </p>
               <p className="m-0">
-                En cas de litige, les parties s&apos;engagent à rechercher une solution amiable avant toute
-                action judiciaire. À défaut d&apos;accord, la compétence sera déterminée selon les conventions internationales.
+                {`En cas de litige, les parties s'engagent à rechercher une solution amiable avant toute
+                action judiciaire.`}
               </p>
               <p className="m-0">
-                <strong className="text-white">Contact :</strong> Pour toute question relative aux présentes 
-                CGU, vous pouvez nous contacter à legal@quelyos.com
+                <strong className="text-white">Médiation :</strong> {legalConfig.mediator.info}
+              </p>
+              <p className="m-0">
+                <strong className="text-white">Médiateur désigné :</strong> {legalConfig.mediator.name}
+              </p>
+              <p className="m-0">
+                {`À défaut de résolution amiable ou de médiation, compétence est attribuée aux `}
+                {legalConfig.jurisdiction.courts}.
+              </p>
+              <p className="m-0">
+                <strong className="text-white">Contact :</strong> Pour toute question relative aux présentes
+                CGU, vous pouvez nous contacter à {legalConfig.contact.legal}
               </p>
             </div>
           </section>

@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { 
-  ArrowLeft, 
-  Building2, 
-  Mail, 
+import {
+  ArrowLeft,
+  Building2,
+  Mail,
   Globe,
   Server,
   FileText,
@@ -13,9 +13,12 @@ import {
 } from "lucide-react";
 
 import config from "@/app/lib/config";
+import { useDynamicLegalConfig } from "@/app/lib/useDynamicLegalConfig";
 import Container from "@/app/components/Container";
 import Footer from "@/app/components/Footer";
 export default function MentionsLegalesPage() {
+  const cfg = useDynamicLegalConfig();
+
   useEffect(() => {
     document.documentElement.classList.remove("light");
     document.documentElement.classList.add("dark");
@@ -57,7 +60,7 @@ export default function MentionsLegalesPage() {
             Document légal
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold">Mentions Légales</h1>
-          <p className="text-slate-400">Dernière mise à jour : Janvier 2026</p>
+          <p className="text-slate-400">Dernière mise à jour : {cfg.lastUpdate}</p>
         </div>
         
         <div className="prose prose-invert prose-slate max-w-none">
@@ -71,10 +74,15 @@ export default function MentionsLegalesPage() {
             </div>
             
             <div className="space-y-3 text-slate-300">
-              <p className="m-0"><strong className="text-white">Raison sociale :</strong> Quelyos SAS</p>
-              <p className="m-0"><strong className="text-white">Forme juridique :</strong> Société par Actions Simplifiée</p>
-              <p className="m-0"><strong className="text-white">Capital social :</strong> 10 000 €</p>
-              <p className="m-0"><strong className="text-white">Email :</strong> contact@quelyos.com</p>
+              <p className="m-0"><strong className="text-white">Raison sociale :</strong> {cfg.company.legalName}</p>
+              <p className="m-0"><strong className="text-white">Forme juridique :</strong> {cfg.company.legalForm}</p>
+              <p className="m-0"><strong className="text-white">Capital social :</strong> {cfg.company.capital}</p>
+              <p className="m-0"><strong className="text-white">Siège social :</strong> {cfg.company.address}</p>
+              <p className="m-0"><strong className="text-white">SIRET :</strong> {cfg.company.siret}</p>
+              <p className="m-0"><strong className="text-white">SIREN :</strong> {cfg.company.siren}</p>
+              <p className="m-0"><strong className="text-white">RCS :</strong> {cfg.company.rcs}</p>
+              <p className="m-0"><strong className="text-white">N° TVA intracommunautaire :</strong> {cfg.company.tvaIntra}</p>
+              <p className="m-0"><strong className="text-white">Email :</strong> {cfg.contact.email}</p>
             </div>
           </section>
           
@@ -88,8 +96,8 @@ export default function MentionsLegalesPage() {
             </div>
             
             <div className="space-y-3 text-slate-300">
-              <p className="m-0"><strong className="text-white">Directeur de publication :</strong> M. Jean Dupont, Président</p>
-              <p className="m-0"><strong className="text-white">Contact :</strong> direction@quelyos.com</p>
+              <p className="m-0"><strong className="text-white">Directeur de publication :</strong> {cfg.company.director}, {cfg.company.directorTitle}</p>
+              <p className="m-0"><strong className="text-white">Contact :</strong> {cfg.contact.legal}</p>
             </div>
           </section>
           
@@ -103,8 +111,9 @@ export default function MentionsLegalesPage() {
             </div>
             
             <div className="space-y-3 text-slate-300">
-              <p className="m-0"><strong className="text-white">Hébergeur :</strong> Infrastructure cloud européenne certifiée</p>
-              <p className="m-0"><strong className="text-white">Contact hébergeur :</strong> Disponible sur demande</p>
+              <p className="m-0"><strong className="text-white">Hébergeur :</strong> {cfg.hosting.provider}</p>
+              <p className="m-0"><strong className="text-white">Adresse :</strong> {cfg.hosting.address}</p>
+              <p className="m-0"><strong className="text-white">Localisation :</strong> {cfg.hosting.country}</p>
             </div>
           </section>
           
@@ -151,7 +160,7 @@ export default function MentionsLegalesPage() {
                 </Link>.
               </p>
               <p className="m-0">
-                <strong className="text-white">Délégué à la Protection des Données (DPO) :</strong> dpo@quelyos.com
+                <strong className="text-white">Délégué à la Protection des Données (DPO) :</strong> {cfg.contact.dpo}
               </p>
             </div>
           </section>

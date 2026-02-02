@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/hooks/useAuth'
-import { LayoutDashboard, Users, Package, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut, Shield, FileText, MessageSquare, FilePlus, Sparkles, Map, Mail } from 'lucide-react'
+import { LayoutDashboard, Users, Package, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut, Shield, FileText, MessageSquare, FilePlus, Sparkles, Map, Mail, Scale } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -20,6 +20,7 @@ const navigation = [
   { name: 'Sitemap', path: '/sitemap', icon: Map },
   { name: 'Paramètres', path: '/settings', icon: Settings },
   { name: 'Email (SMTP)', path: '/email-settings', icon: Mail },
+  { name: 'Mentions légales', path: '/legal-settings', icon: Scale },
 ]
 
 export function Layout() {

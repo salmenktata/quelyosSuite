@@ -74,6 +74,7 @@ from . import billing_ctrl
 from . import admin_analytics_ctrl
 from . import admin_security_ctrl
 from . import admin_backup_ctrl
+from . import admin_legal_ctrl
 from . import admin_tickets_ctrl
 from . import admin_settings_ctrl
 from . import admin_seed_ctrl

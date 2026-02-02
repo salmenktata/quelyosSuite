@@ -342,12 +342,20 @@ export default function CGVPage() {
                 possibilité de recourir gratuitement à un médiateur de la consommation.
               </p>
               <p className="m-0">
-                <strong className="text-white">Médiateur :</strong> Disponible sur demande
-                <br />
-                <strong className="text-white">Contact :</strong> legal@quelyos.com
+                <strong className="text-white">Médiation :</strong> {legalConfig.mediator.info}
               </p>
               <p className="m-0">
-                À défaut de résolution amiable, la compétence sera déterminée selon les conventions internationales.
+                <strong className="text-white">Médiateur désigné :</strong> {legalConfig.mediator.name}
+              </p>
+              <p className="m-0">
+                Les présentes CGV sont soumises au {legalConfig.jurisdiction.law}.
+              </p>
+              <p className="m-0">
+                {`À défaut de résolution amiable ou de médiation, compétence exclusive est attribuée
+                aux `}{legalConfig.jurisdiction.courts}.
+              </p>
+              <p className="m-0">
+                <strong className="text-white">Contact :</strong> {legalConfig.contact.legal}
               </p>
             </div>
           </section>
