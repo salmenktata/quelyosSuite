@@ -1,0 +1,92 @@
+# Docker Compose - Frontends Quelyos Suite (VPS Production)
+# Usage: docker compose -f deploy/vps/docker-compose.yml up -d
+
+services:
+  vitrine:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.nextjs
+      args:
+        APP_DIR: vitrine
+    container_name: quelyos-vitrine
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+    networks:
+      - quelyos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  ecommerce:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.nextjs
+      args:
+        APP_DIR: ecommerce
+    container_name: quelyos-ecommerce
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+    networks:
+      - quelyos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.vite
+      args:
+        APP_DIR: dashboard
+    container_name: quelyos-dashboard
+    restart: unless-stopped
+    ports:
+      - "5175:80"
+    networks:
+      - quelyos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  superadmin:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.vite
+      args:
+        APP_DIR: superadmin
+    container_name: quelyos-superadmin
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    networks:
+      - quelyos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  quelyos-network:
+    external: true
+    name: backend_quelyos-network

@@ -268,7 +268,7 @@ export const sitemapData: AppSection[] = [
   {
     id: 'vitrine-client',
     name: 'Boutique E-commerce',
-    baseUrl: isDev ? 'http://localhost:3001' : 'https://boutique.quelyos.com',
+    baseUrl: isDev ? 'http://localhost:3001' : 'https://shop.quelyos.com',
     port: 3001,
     icon: ShoppingBag,
     color: 'text-purple-600 dark:text-purple-400',

@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - shared/*
+  - dashboard
+  - vitrine
+  - ecommerce
+  - superadmin
