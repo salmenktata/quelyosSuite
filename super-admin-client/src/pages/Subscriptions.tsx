@@ -7,7 +7,7 @@
  * - Détails subscription : billing history, actions admin
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/gateway'
 import { SubscriptionsResponseSchema, ChurnAnalysisSchema, MRRBreakdownSchema, validateApiResponse } from '@/lib/validators'
@@ -52,6 +52,21 @@ export function Subscriptions() {
     staleTime: 5 * 60 * 1000,
   })
 
+  const mrrCategories = useMemo(() => {
+    if (!mrrBreakdown) return null
+    let modules = 0
+    let solutions = 0
+    let enterprise = 0
+    for (const [key, val] of Object.entries(mrrBreakdown)) {
+      if (key === 'success' || key === 'total') continue
+      const num = typeof val === 'number' ? val : 0
+      if (key.startsWith('mod_')) modules += num
+      else if (key.startsWith('sol_')) solutions += num
+      else if (key === 'enterprise') enterprise = num
+    }
+    return { modules, solutions, enterprise, total: mrrBreakdown.total ?? 0 }
+  }, [mrrBreakdown])
+
   return (
     <div className="space-y-6">
       <div>
@@ -60,18 +75,7 @@ export function Subscriptions() {
       </div>
 
       {/* MRR Breakdown */}
-      {mrrBreakdown && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <MetricCard title="Starter MRR" value={`${mrrBreakdown.starter.toLocaleString('fr-FR')} €`} color="green" />
-          <MetricCard title="Pro MRR" value={`${mrrBreakdown.pro.toLocaleString('fr-FR')} €`} color="blue" />
-          <MetricCard
-            title="Enterprise MRR"
-            value={`${mrrBreakdown.enterprise.toLocaleString('fr-FR')} €`}
-            color="purple"
-          />
-          <MetricCard title="Total MRR" value={`${mrrBreakdown.total.toLocaleString('fr-FR')} €`} color="teal" />
-        </div>
-      )}
+      {mrrBreakdown && <MRRBreakdownCards data={mrrBreakdown} />}
 
       {/* Filters */}
       <div className="flex gap-4">
