@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Info, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import type { PageNoticeConfig, Notice } from "@/lib/notices";
@@ -119,7 +119,8 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
   }
 
   return (
-    <motion.div
+    <LazyMotion features={domAnimation}>
+    <m.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
@@ -128,7 +129,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
       <AnimatePresence mode="wait">
         {mounted && isCollapsed ? (
           // Collapsed State
-          <motion.div
+          <m.div
             key="collapsed"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -151,10 +152,10 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                 <ChevronDown className={`h-4 w-4 ${colorConfig.iconText} flex-shrink-0`} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         ) : mounted ? (
           // Expanded State
-          <motion.div
+          <m.div
             key="expanded"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -271,7 +272,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ) : (
           // Loading State (prevents hydration mismatch)
           <div className={`border ${colorConfig.border} ${colorConfig.bg} rounded-xl backdrop-blur-sm p-5`}>
@@ -333,6 +334,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
           </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

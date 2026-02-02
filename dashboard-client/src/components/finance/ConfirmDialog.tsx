@@ -3,7 +3,7 @@
 import React from "react";
 import { AlertTriangle, CheckCircle, XCircle, Info } from "lucide-react";
 import { AnimatePresence, ScaleInBounce, Hoverable } from "@quelyos/ui/animated";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -58,11 +58,12 @@ export function ConfirmDialog({
   const styles = variantStyles[variant];
 
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -112,5 +113,6 @@ export function ConfirmDialog({
         </div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 }

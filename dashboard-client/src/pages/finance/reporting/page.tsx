@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import { financeNotices } from '@/lib/notices/finance-notices'
@@ -145,6 +145,7 @@ export default function ReportingHubPage() {
   useRequireAuth()
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -154,7 +155,7 @@ export default function ReportingHubPage() {
           ]}
         />
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -169,11 +170,11 @@ export default function ReportingHubPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         <PageNotice config={financeNotices.reporting} />
 
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -183,7 +184,7 @@ export default function ReportingHubPage() {
           {reports.map(report => {
             const Icon = report.icon
             return (
-              <motion.div key={report.id} variants={itemVariants}>
+              <m.div key={report.id} variants={itemVariants}>
                 <Link to={report.href}>
                   <GlassPanel
                     className="group relative h-full cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
@@ -219,12 +220,12 @@ export default function ReportingHubPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-purple-500/0 to-indigo-500/0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
                   </GlassPanel>
                 </Link>
-              </motion.div>
+              </m.div>
             )
           })}
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -248,7 +249,7 @@ export default function ReportingHubPage() {
               </button>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
       </div>
     </Layout>
   )

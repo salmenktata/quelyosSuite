@@ -12,7 +12,7 @@
  */
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Breadcrumbs, PageNotice, SkeletonTable, Button } from "@/components/common";
 import { financeNotices } from "@/lib/notices/finance-notices";
@@ -75,6 +75,7 @@ export default function ForecastPage() {
     : [];
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -98,7 +99,7 @@ export default function ForecastPage() {
         <HorizonSelector selectedDays={selectedDays} onSelect={setSelectedDays} />
 
         {forecast?.model && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3 rounded-lg border border-indigo-500/30 bg-indigo-100 dark:bg-indigo-500/10 px-4 py-3"
@@ -121,7 +122,7 @@ export default function ForecastPage() {
                 Entraîné: {new Date(forecast.model.last_trained).toLocaleDateString("fr-FR")}
               </span>
             )}
-          </motion.div>
+          </m.div>
         )}
 
         {loading && <SkeletonTable rows={5} columns={4} />}
@@ -140,7 +141,7 @@ export default function ForecastPage() {
             {cards.map((card) => {
               const Icon = card.icon;
               return (
-                <motion.div
+                <m.div
                   key={card.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -151,7 +152,7 @@ export default function ForecastPage() {
                     accentColor={card.color}
                     icon={<Icon size={18} />}
                   />
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
@@ -206,5 +207,6 @@ export default function ForecastPage() {
         <AccountBreakdown accounts={forecast?.perAccount ?? []} currency={currency} />
       </div>
     </Layout>
+    </LazyMotion>
   );
 }

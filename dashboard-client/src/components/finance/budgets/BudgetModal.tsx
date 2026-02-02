@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { api } from "@/lib/finance/api";
 import type { CreateBudgetRequest, UpdateBudgetRequest } from "@/types/api";
 import { AnimatePresence, ScaleInBounce, Hoverable } from "@/lib/finance/compat/animated";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 type BudgetPeriod = "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY" | "CUSTOM";
 
@@ -127,11 +127,12 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -305,5 +306,6 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
         </div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 }

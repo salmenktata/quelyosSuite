@@ -1,7 +1,7 @@
 
 
 import { AlertTriangle } from "lucide-react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 interface AnomalyAlertBadgeProps {
   severity: "low" | "medium" | "high";
@@ -46,7 +46,8 @@ export default function AnomalyAlertBadge({
   };
 
   return (
-    <motion.div
+    <LazyMotion features={domAnimation}>
+    <m.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -84,6 +85,7 @@ export default function AnomalyAlertBadge({
           ×
         </button>
       )}
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

@@ -1,7 +1,7 @@
 
 
 import { Target, TrendingUp, TrendingDown, Calendar, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { formatMoney } from "@/lib/format";
 
 interface BudgetRecommendation {
@@ -68,7 +68,8 @@ export default function BudgetRecommendationCard({
     currentBudget && Math.abs(currentBudget - recommendation.recommendedAmount) > 0.01;
 
   return (
-    <motion.div
+    <LazyMotion features={domAnimation}>
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -228,6 +229,7 @@ export default function BudgetRecommendationCard({
       <p className="text-xs text-slate-500 text-center mt-3">
         {recommendation.samplesUsed} transactions analysées sur {recommendation.analysisMonths} mois
       </p>
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

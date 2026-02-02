@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Target, TrendingUp, AlertCircle, CheckCircle, Activity, Info } from "lucide-react";
 import { api } from "@/lib/finance/api";
 import { GlassPanel } from "@/components/ui/glass";
@@ -90,6 +90,7 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
   const { data_points, cutoffs_tested } = metrics.validation;
 
   return (
+    <LazyMotion features={domAnimation}>
     <GlassPanel gradient="indigo" className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
@@ -117,7 +118,7 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* MAE */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
@@ -131,17 +132,17 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
 
           {/* Progress bar */}
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-            <motion.div
+            <m.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(mae_percentage, 100)}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
               className={`h-full rounded-full ${meets_target ? "bg-emerald-500" : "bg-amber-500"}`}
             />
           </div>
-        </motion.div>
+        </m.div>
 
         {/* MAPE */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -153,10 +154,10 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
           </div>
           <div className="text-2xl font-bold text-white">{(mape * 100).toFixed(1)}%</div>
           <div className="mt-1 text-xs text-slate-500">Erreur en pourcentage</div>
-        </motion.div>
+        </m.div>
 
         {/* RMSE */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -170,7 +171,7 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
             {rmse.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} {currency}
           </div>
           <div className="mt-1 text-xs text-slate-500">Erreur quadratique</div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Explanation */}
@@ -195,5 +196,6 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
         </div>
       )}
     </GlassPanel>
+    </LazyMotion>
   );
 }

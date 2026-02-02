@@ -3,7 +3,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import { currencies } from "@/lib/finance/currencies";
 import { AnimatePresence, ScaleInBounce, Hoverable } from "@/lib/finance/compat/animated";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 type AccountType =
   | "banque"
@@ -107,11 +107,12 @@ export const AccountModal = memo(function AccountModal({
   const title = isCreate ? "Nouveau compte" : "Modifier le compte";
 
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -355,5 +356,6 @@ export const AccountModal = memo(function AccountModal({
         </div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 });

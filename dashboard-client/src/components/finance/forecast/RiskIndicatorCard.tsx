@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Shield, Activity, AlertTriangle, Info } from "lucide-react";
 import type { RiskIndicator, RiskLevel } from "@/types/forecast";
 
@@ -62,7 +62,8 @@ export function RiskIndicatorCard({ risk, currency }: RiskIndicatorCardProps) {
   const Icon = config.icon;
 
   return (
-    <motion.div
+    <LazyMotion features={domAnimation}>
+    <m.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className={`rounded-2xl border ${config.border} ${config.bg} p-6`}
@@ -85,7 +86,7 @@ export function RiskIndicatorCard({ risk, currency }: RiskIndicatorCardProps) {
       </div>
 
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-        <motion.div
+        <m.div
           initial={{ width: 0 }}
           animate={{ width: `${risk.score}%` }}
           transition={{ duration: 1, ease: "easeOut" }}
@@ -127,6 +128,7 @@ export function RiskIndicatorCard({ risk, currency }: RiskIndicatorCardProps) {
           ))}
         </div>
       )}
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

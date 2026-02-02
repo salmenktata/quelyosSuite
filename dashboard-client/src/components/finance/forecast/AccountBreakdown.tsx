@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { BarChart3, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass";
 import type { ForecastAccount } from "@/types/forecast";
@@ -15,6 +15,7 @@ export function AccountBreakdown({ accounts, currency }: AccountBreakdownProps) 
   if (accounts.length === 0) return null;
 
   return (
+    <LazyMotion features={domAnimation}>
     <GlassPanel gradient="indigo" className="space-y-4 p-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Détail par compte</h2>
@@ -29,7 +30,7 @@ export function AccountBreakdown({ accounts, currency }: AccountBreakdownProps) 
           const isExpanded = expandedAccount === acc.accountId;
 
           return (
-            <motion.div
+            <m.div
               key={acc.accountId}
               layout
               className="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02]"
@@ -81,7 +82,7 @@ export function AccountBreakdown({ accounts, currency }: AccountBreakdownProps) 
 
               <AnimatePresence>
                 {isExpanded && acc.daily.length > 0 && (
-                  <motion.div
+                  <m.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -126,13 +127,14 @@ export function AccountBreakdown({ accounts, currency }: AccountBreakdownProps) 
                         </tbody>
                       </table>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </m.div>
           );
         })}
       </div>
     </GlassPanel>
+    </LazyMotion>
   );
 }

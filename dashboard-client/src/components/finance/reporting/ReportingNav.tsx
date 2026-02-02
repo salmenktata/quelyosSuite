@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import {
   BarChart3,
   TrendingUp,
@@ -116,6 +116,7 @@ export function ReportingNav() {
   const { pathname } = useLocation();
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="mb-4">
       <div className="relative overflow-x-auto pb-2">
         <div className="flex gap-2 min-w-max">
@@ -136,7 +137,7 @@ export function ReportingNav() {
                 )}
               >
                 {isActive && (
-                  <motion.div
+                  <m.div
                     layoutId="activeReport"
                     className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-lg"
                     transition={{ type: "spring", duration: 0.5 }}
@@ -152,5 +153,6 @@ export function ReportingNav() {
         </div>
       </div>
     </div>
+    </LazyMotion>
   );
 }

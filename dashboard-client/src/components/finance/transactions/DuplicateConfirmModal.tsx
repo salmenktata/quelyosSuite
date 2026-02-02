@@ -3,7 +3,7 @@
 import React from "react";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import { AnimatePresence, ScaleInBounce, Hoverable } from "@/lib/finance/compat/animated";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 interface DuplicateMatch {
   transactionId: number;
@@ -41,11 +41,12 @@ export function DuplicateConfirmModal({
   const confidencePercent = Math.round(topMatch?.similarity_score * 100);
 
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && matches.length > 0 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           {/* Overlay */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -195,5 +196,6 @@ export function DuplicateConfirmModal({
         </div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 }
