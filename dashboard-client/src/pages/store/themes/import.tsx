@@ -14,6 +14,7 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/common';
 import { Upload, CheckCircle, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 import { logger } from '@quelyos/logger';
+import { tenantFetch } from '@/lib/tenantFetch';
 
 // Thèmes JSON à importer (paths relatifs depuis public/)
 const THEMES_TO_IMPORT = [
@@ -53,7 +54,7 @@ export default function ThemesImportPage() {
       );
 
       // Appeler endpoint batch import
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/import-batch`, {
+      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/import-batch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

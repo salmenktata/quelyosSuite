@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, SkeletonTable } from '@/components/common';
 import { logger } from '@quelyos/logger';
+import { tenantFetch } from '@/lib/tenantFetch';
 import {
   TrendingUp,
   DollarSign,
@@ -97,31 +98,31 @@ export default function AnalyticsPage() {
 
       // Récupérer toutes les données en parallèle
       const [overviewRes, themesRes, designersRes, categoriesRes, timelineRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/overview`, {
+        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/overview`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {}, id: 1 }),
         }),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-themes`, {
+        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-themes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: { limit: 5 }, id: 2 }),
         }),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-designers`, {
+        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-designers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: { limit: 5 }, id: 3 }),
         }),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/category-stats`, {
+        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/category-stats`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {}, id: 4 }),
         }),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/sales-timeline`, {
+        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/sales-timeline`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

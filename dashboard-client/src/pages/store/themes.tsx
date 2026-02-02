@@ -16,6 +16,7 @@ import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/com
 import { storeNotices } from '@/lib/notices';
 import { Palette, Check, Eye, Tag, RefreshCw } from 'lucide-react';
 import type { Theme, ThemeCategory } from '@/types/theme';
+import { tenantFetch } from '@/lib/tenantFetch';
 
 const CATEGORIES: { value: ThemeCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'Tous' },
@@ -44,7 +45,7 @@ export default function ThemesPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes`, {
+        const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -80,7 +81,7 @@ export default function ThemesPage() {
     async function loadActiveTheme() {
       try {
         const tenantId = 1; // TODO: Récupérer depuis le contexte
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/tenants/${tenantId}/theme`, {
+        const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/tenants/${tenantId}/theme`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -107,7 +108,7 @@ export default function ThemesPage() {
   const handleActivateTheme = async (themeCode: string) => {
     try {
       const tenantId = 1; // TODO: Récupérer depuis le contexte
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/tenants/${tenantId}/theme/set`, {
+      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/tenants/${tenantId}/theme/set`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Important pour l'auth

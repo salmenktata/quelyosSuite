@@ -16,6 +16,7 @@ import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/com
 import { storeNotices } from '@/lib/notices';
 import { DollarSign, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
+import { tenantFetch } from '@/lib/tenantFetch';
 
 interface StripeConnectStatus {
   onboarding_completed: boolean;
@@ -61,7 +62,7 @@ export default function PayoutsPage() {
       setError(null);
 
       // Récupérer profil designer
-      const designerRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/me`, {
+      const designerRes = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/me`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -82,7 +83,7 @@ export default function PayoutsPage() {
       setDesigner(designerData.result.designer);
 
       // Récupérer revenus
-      const revenuesRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/revenues`, {
+      const revenuesRes = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/revenues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -118,7 +119,7 @@ export default function PayoutsPage() {
 
   const fetchConnectStatus = async (designerId: number) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/stripe-connect/status`, {
+      const res = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/stripe-connect/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -148,7 +149,7 @@ export default function PayoutsPage() {
     if (!designer) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/stripe-connect/onboard`, {
+      const res = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/designers/stripe-connect/onboard`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

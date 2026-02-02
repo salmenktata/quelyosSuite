@@ -15,6 +15,7 @@ import { Breadcrumbs, Button, PageNotice } from '@/components/common';
 import { Upload, Image, DollarSign, CheckCircle, AlertCircle, FileUp } from 'lucide-react';
 import type { ThemeCategory } from '@/types/theme';
 import { logger } from '@quelyos/logger';
+import { tenantFetch } from '@/lib/tenantFetch';
 
 const CATEGORIES: { value: ThemeCategory; label: string }[] = [
   { value: 'fashion', label: 'Mode' },
@@ -86,7 +87,7 @@ export default function SubmitThemePage() {
         return;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/submissions`, {
+      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/submissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

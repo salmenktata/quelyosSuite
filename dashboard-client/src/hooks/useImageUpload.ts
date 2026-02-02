@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { tenantFetch } from '@/lib/tenantFetch'
 
 interface UploadImageOptions {
   endpoint: string
@@ -14,7 +15,7 @@ export function useImageUpload({ endpoint, id, invalidateKey }: UploadImageOptio
       const formData = new FormData()
       formData.append('image', file)
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${endpoint}/${id}/upload-image`, {
+      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}${endpoint}/${id}/upload-image`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,

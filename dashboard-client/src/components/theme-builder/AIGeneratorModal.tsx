@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { X, Sparkles, Wand2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/common';
 import type { ThemeConfig } from '@/types/theme';
+import { tenantFetch } from '@/lib/tenantFetch';
 
 interface AIGeneratorModalProps {
   isOpen: boolean;
@@ -39,7 +40,7 @@ export function AIGeneratorModal({ isOpen, onClose, onGenerate }: AIGeneratorMod
     setError(null);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/generate`, {
+      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
