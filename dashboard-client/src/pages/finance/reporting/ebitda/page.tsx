@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -76,6 +76,7 @@ export default function EBITDAReportPage() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -87,7 +88,7 @@ export default function EBITDAReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -104,14 +105,14 @@ export default function EBITDAReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.ebitda} className="mb-6" />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
@@ -122,11 +123,11 @@ export default function EBITDAReportPage() {
               showDetails={true}
               reportId="ebitda"
             />
-          </motion.div>
+          </m.div>
         )}
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -179,11 +180,11 @@ export default function EBITDAReportPage() {
               )}
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -194,12 +195,12 @@ export default function EBITDAReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -218,13 +219,13 @@ export default function EBITDAReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
         {!loading && !error && apiData && (
         <>
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -278,11 +279,11 @@ export default function EBITDAReportPage() {
               <Minus className="h-8 w-8 text-amber-300" />
             </div>
           </GlassCard>
-        </motion.div>
+        </m.div>
 
         {/* Historical Trend */}
         {!loading && !error && historyData && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
@@ -310,11 +311,11 @@ export default function EBITDAReportPage() {
             defaultMonths={historyMonths as 3 | 6 | 12}
             onMonthsChange={(months) => setHistoryMonths(months)}
           />
-        </motion.div>
+        </m.div>
         )}
 
         {/* Benchmark Comparison */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -345,10 +346,10 @@ export default function EBITDAReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Waterfall: Operating Profit to EBITDA */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -437,10 +438,10 @@ export default function EBITDAReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Margin Comparison */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -491,10 +492,10 @@ export default function EBITDAReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Recommendations */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -526,10 +527,11 @@ export default function EBITDAReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
         </>
         )}
       </div>
     </Layout>
+    </LazyMotion>
   )
 }
