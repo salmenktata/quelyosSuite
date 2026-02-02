@@ -23,7 +23,7 @@ class BlogCategory(models.Model):
         index=True
     )
     post_ids = fields.One2many('quelyos.blog.post', 'category_id', string='Articles')
-    post_count = fields.Integer('Nb articles', compute='_compute_post_count')
+    post_count = fields.Integer('Nb articles', compute='_compute_post_count', store=True)
     @api.depends('post_ids')
 
     @api.constrains('slug', 'company_id')
@@ -121,7 +121,7 @@ class BlogPost(models.Model):
 
     # Stats
     views_count = fields.Integer('Vues', default=0)
-    reading_time = fields.Integer('Temps lecture (min)', compute='_compute_reading_time')
+    reading_time = fields.Integer('Temps lecture (min)', compute='_compute_reading_time', store=True)
     @api.depends('content')
     def _compute_reading_time(self):
         for post in self:
