@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import {
   Check,
   X,
@@ -244,7 +244,7 @@ function FeatureIcon({ value }: { value: FeatureValue }) {
 
 function CompetitorCard({ competitor, isQuelyos = false }: { competitor: Competitor; isQuelyos?: boolean }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -311,7 +311,7 @@ function CompetitorCard({ competitor, isQuelyos = false }: { competitor: Competi
           </ul>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -344,6 +344,7 @@ export default function ComparePage() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -354,7 +355,7 @@ export default function ComparePage() {
         <div className="pointer-events-none absolute -right-40 top-40 h-[400px] w-[400px] rounded-full bg-violet-500/15 blur-[100px]" />
 
         <Container className="text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -371,7 +372,7 @@ export default function ComparePage() {
               Comparez les solutions de gestion de trésorerie pour TPE. 
               Nous jouons la transparence : voici nos forces et nos limites.
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -413,7 +414,7 @@ export default function ComparePage() {
               const colors = colorClasses[diff.color] || colorClasses.indigo;
 
               return (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -426,7 +427,7 @@ export default function ComparePage() {
                   </div>
                   <h3 className="mb-2 font-semibold text-white">{diff.title}</h3>
                   <p className="text-sm text-slate-400">{diff.description}</p>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
@@ -598,7 +599,7 @@ export default function ComparePage() {
               const isQuelyos = item.recommendation.includes("Quelyos");
               
               return (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -628,7 +629,7 @@ export default function ComparePage() {
                     </div>
                     <p className="mt-1 text-sm text-slate-400">{item.why}</p>
                   </div>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
@@ -669,5 +670,6 @@ export default function ComparePage() {
       {/* Footer */}
       <Footer />
     </div>
+    </LazyMotion>
   );
 }

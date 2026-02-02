@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Mail, MessageSquare, MapPin, Clock, Send, CheckCircle } from "lucide-react";
 import { logger } from "../lib/logger";
 import Header from "../components/Header";
@@ -43,13 +43,14 @@ export default function ContactPage() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
       <Header />
 
       {/* Hero */}
       <section className="relative py-20">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -59,7 +60,7 @@ export default function ContactPage() {
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
               Une question ? Un projet ? Nous sommes là pour vous accompagner.
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -68,7 +69,7 @@ export default function ContactPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-3">
             {/* Contact Info */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
@@ -142,10 +143,10 @@ export default function ContactPage() {
                   </a>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Contact Form */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
@@ -291,7 +292,7 @@ export default function ContactPage() {
                   </form>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </Container>
       </section>
@@ -315,7 +316,7 @@ export default function ContactPage() {
                 a: "Le support technique est accessible directement depuis l'application. Tous les abonnés bénéficient d'un support par email sous 48h.",
               },
             ].map((faq, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -325,7 +326,7 @@ export default function ContactPage() {
               >
                 <h3 className="font-semibold text-white">{faq.q}</h3>
                 <p className="mt-2 text-sm text-slate-400">{faq.a}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -333,5 +334,6 @@ export default function ContactPage() {
 
       <Footer />
     </div>
+    </LazyMotion>
   );
 }

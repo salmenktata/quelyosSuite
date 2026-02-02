@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import {
   Check,
   ArrowRight,
@@ -343,7 +343,7 @@ function FAQSection() {
                   </button>
                   <AnimatePresence>
                     {isOpen && (
-                      <motion.div
+                      <m.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -352,7 +352,7 @@ function FAQSection() {
                         <div className="border-t border-white/5 px-4 pb-4 pt-3">
                           <p className="text-sm leading-relaxed text-slate-400">{faq.a}</p>
                         </div>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -386,7 +386,7 @@ function ModuleCard({
   const price = billingPeriod === "yearly" ? mod.annualPrice : mod.price;
 
   return (
-    <motion.button
+    <m.button
       onClick={onToggle}
       whileTap={{ scale: 0.98 }}
       className={`group relative flex flex-col rounded-xl border p-4 text-left transition-all ${
@@ -431,7 +431,7 @@ function ModuleCard({
           {mod.limits.included} {mod.limits.name} inclus
         </p>
       )}
-    </motion.button>
+    </m.button>
   );
 }
 
@@ -580,6 +580,7 @@ export default function TarifsPage() {
   }, [selectedModules, freeModuleKey, extraUserPacks, billingPeriod, grid]);
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
       <Header />
 
@@ -597,7 +598,7 @@ export default function TarifsPage() {
         <div className="pointer-events-none absolute -right-40 top-40 h-[400px] w-[400px] rounded-full bg-violet-500/15 blur-[100px]" />
 
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -639,7 +640,7 @@ export default function TarifsPage() {
                 </span>
               )}
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -660,7 +661,7 @@ export default function TarifsPage() {
               >
                 {tab.label}
                 {viewMode === tab.key && (
-                  <motion.div
+                  <m.div
                     layoutId="viewTab"
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
                     transition={{ type: "spring", duration: 0.5 }}
@@ -918,7 +919,7 @@ export default function TarifsPage() {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {grid.solutions.map((solution, index) => (
-                <motion.div
+                <m.div
                   key={solution.slug || solution.code}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -930,7 +931,7 @@ export default function TarifsPage() {
                     billingPeriod={billingPeriod}
                     onSelect={selectSolutionModules}
                   />
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
@@ -977,7 +978,7 @@ export default function TarifsPage() {
         <Container>
           <div className="mb-12 grid gap-8 text-center md:grid-cols-3">
             {trustMetrics.map((metric, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -986,13 +987,13 @@ export default function TarifsPage() {
               >
                 <div className="text-3xl font-bold text-white">{metric.value}</div>
                 <div className="mt-1 text-sm text-slate-400">{metric.label}</div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
             {testimonials.map((testimonial, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1012,7 +1013,7 @@ export default function TarifsPage() {
                     <div className="text-xs text-slate-500">{testimonial.detail}</div>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
@@ -1044,7 +1045,7 @@ export default function TarifsPage() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative py-20">
         <Container narrow>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -1078,11 +1079,12 @@ export default function TarifsPage() {
                 Configurer mon abonnement
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
       <Footer />
     </div>
+    </LazyMotion>
   );
 }

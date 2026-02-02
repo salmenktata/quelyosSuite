@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import { createComponentLogger } from "@/lib/logger";
@@ -517,6 +517,7 @@ export default function SupportPage() {
   }, [chatOpen]);
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -526,7 +527,7 @@ export default function SupportPage() {
         <div className="pointer-events-none absolute -left-40 bottom-0 h-[400px] w-[400px] rounded-full bg-violet-500/10 blur-[100px]" />
 
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -546,7 +547,7 @@ export default function SupportPage() {
               Support technique, questions commerciales ou simple curiosité —
               notre équipe est là pour vous accompagner.
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -555,7 +556,7 @@ export default function SupportPage() {
         <Container>
           <div className="grid gap-4 md:grid-cols-3">
             {contactMethods.map((method, index) => (
-              <motion.a
+              <m.a
                 key={method.title}
                 href={method.href}
                 target={method.external ? "_blank" : undefined}
@@ -578,7 +579,7 @@ export default function SupportPage() {
                   {method.value}
                   {method.external && <ExternalLink size={14} />}
                 </div>
-              </motion.a>
+              </m.a>
             ))}
           </div>
         </Container>
@@ -615,7 +616,7 @@ export default function SupportPage() {
       {/* FAQ Section */}
       <section className="border-t border-white/5 py-20">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -628,7 +629,7 @@ export default function SupportPage() {
             <p className="mx-auto mt-4 max-w-xl text-slate-400">
               Trouvez rapidement les réponses aux questions les plus courantes.
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Search */}
           <div className="mx-auto mt-8 max-w-lg">
@@ -673,7 +674,7 @@ export default function SupportPage() {
           <div className="mx-auto mt-10 max-w-3xl space-y-3">
             {(searchQuery ? allFilteredFaqs : filteredFaqs).map(
               (faq, index) => (
-                <motion.div
+                <m.div
                   key={`${faq.category}-${index}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -696,7 +697,7 @@ export default function SupportPage() {
                   </button>
                   <AnimatePresence>
                     {openFaq === index && (
-                      <motion.div
+                      <m.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -706,10 +707,10 @@ export default function SupportPage() {
                         <div className="border-t border-white/5 px-5 py-4 text-slate-400">
                           {faq.answer}
                         </div>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
-                </motion.div>
+                </m.div>
               )
             )}
 
@@ -741,7 +742,7 @@ export default function SupportPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-2">
             {/* Form */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -754,7 +755,7 @@ export default function SupportPage() {
               </p>
 
               {formSubmitted ? (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="mt-8 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-8 text-center"
@@ -785,7 +786,7 @@ export default function SupportPage() {
                   >
                     Envoyer un autre message
                   </button>
-                </motion.div>
+                </m.div>
               ) : (
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -914,10 +915,10 @@ export default function SupportPage() {
                   </button>
                 </form>
               )}
-            </motion.div>
+            </m.div>
 
             {/* Info */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -1016,7 +1017,7 @@ export default function SupportPage() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </Container>
       </section>
@@ -1024,7 +1025,7 @@ export default function SupportPage() {
       {/* Chatbot Amélioré */}
       <AnimatePresence>
         {chatOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -1065,7 +1066,7 @@ export default function SupportPage() {
             {/* Messages avec scroll auto */}
             <div className="h-80 space-y-3 overflow-y-auto bg-gradient-to-b from-slate-900 to-slate-950 p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-700">
               {chatMessages.map((msg, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1098,12 +1099,12 @@ export default function SupportPage() {
                       </div>
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               ))}
 
               {/* Typing indicator */}
               {isTyping && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
@@ -1115,7 +1116,7 @@ export default function SupportPage() {
                       <div className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               )}
 
               {/* Scroll anchor */}
@@ -1148,12 +1149,12 @@ export default function SupportPage() {
                 <span>Propulsé par l&apos;IA Quelyos</span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Chatbot Toggle Button avec badge */}
-      <motion.div
+      <m.div
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", damping: 15, stiffness: 200, delay: 0.5 }}
@@ -1173,23 +1174,23 @@ export default function SupportPage() {
         >
           {/* Badge de notification */}
           {hasNewMessage && !chatOpen && (
-            <motion.div
+            <m.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-xs font-bold text-white shadow-lg"
             >
-              <motion.span
+              <m.span
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
               >
                 1
-              </motion.span>
-            </motion.div>
+              </m.span>
+            </m.div>
           )}
 
           {/* Pulse ring */}
           {!chatOpen && (
-            <motion.div
+            <m.div
               className="absolute inset-0 rounded-full bg-indigo-500"
               animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
               transition={{ repeat: Infinity, duration: 2 }}
@@ -1198,7 +1199,7 @@ export default function SupportPage() {
 
           <AnimatePresence mode="wait">
             {chatOpen ? (
-              <motion.div
+              <m.div
                 key="close"
                 initial={{ rotate: -90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
@@ -1206,9 +1207,9 @@ export default function SupportPage() {
                 transition={{ duration: 0.2 }}
               >
                 <X size={26} />
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 key="chat"
                 initial={{ rotate: 90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
@@ -1216,14 +1217,14 @@ export default function SupportPage() {
                 transition={{ duration: 0.2 }}
               >
                 <MessageCircle size={26} className="transition-transform group-hover:scale-110" />
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </button>
 
         {/* Tooltip */}
         {!chatOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1 }}
@@ -1234,9 +1235,9 @@ export default function SupportPage() {
               <span>Besoin d&apos;aide ? Je suis là !</span>
             </div>
             <div className="absolute right-0 top-1/2 h-3 w-3 -translate-y-1/2 translate-x-1/2 rotate-45 bg-slate-900" />
-          </motion.div>
+          </m.div>
         )}
-      </motion.div>
+      </m.div>
 
       {/* Footer CTA */}
       <section className="border-t border-white/5 py-16">
@@ -1268,5 +1269,6 @@ export default function SupportPage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

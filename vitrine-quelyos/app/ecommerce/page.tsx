@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -95,7 +95,7 @@ const useCases = [
 
 export default function EcommercePage() {
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-amber-950/20 to-slate-900">
         {/* Hero */}
@@ -115,7 +115,7 @@ export default function EcommercePage() {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -172,10 +172,10 @@ export default function EcommercePage() {
                 <p className="text-sm text-slate-500">
                   Sans carte bancaire • Annulez à tout moment
                 </p>
-              </motion.div>
+              </m.div>
 
               {/* Preview Card */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -237,7 +237,7 @@ export default function EcommercePage() {
                     Créer la commande
                   </button>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </Container>
         </div>
@@ -249,7 +249,7 @@ export default function EcommercePage() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {useCases.map((useCase, index) => (
-              <motion.div
+              <m.div
                 key={useCase.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -262,7 +262,7 @@ export default function EcommercePage() {
                   {useCase.name}
                 </p>
                 <p className="text-xs text-slate-400">{useCase.desc}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -278,7 +278,7 @@ export default function EcommercePage() {
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -295,7 +295,7 @@ export default function EcommercePage() {
                   {feature.title}
                 </h3>
                 <p className="text-slate-400 text-sm">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -339,7 +339,7 @@ export default function EcommercePage() {
 
         {/* Final CTA */}
         <Container className="py-16">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -368,10 +368,10 @@ export default function EcommercePage() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </div>
       <Footer />
-    </>
+    </LazyMotion>
   );
 }

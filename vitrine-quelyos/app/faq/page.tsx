@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import { ArrowRight, ChevronDown, HelpCircle, Search } from "lucide-react";
@@ -160,6 +160,7 @@ export default function FaqPage() {
   });
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <FAQPageSchema faqs={faqs} />
       <Header />
@@ -168,7 +169,7 @@ export default function FaqPage() {
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-indigo-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -194,7 +195,7 @@ export default function FaqPage() {
                 />
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -224,7 +225,7 @@ export default function FaqPage() {
         <Container>
           <div className="space-y-3">
             {filteredFaqs.map((faq, index) => (
-              <motion.div
+              <m.div
                 key={faq.question}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -245,7 +246,7 @@ export default function FaqPage() {
                 </button>
                 <AnimatePresence>
                   {openIndex === index && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -254,10 +255,10 @@ export default function FaqPage() {
                       <div className="border-t border-white/5 px-5 py-4">
                         <p className="text-slate-400">{faq.answer}</p>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
@@ -296,5 +297,6 @@ export default function FaqPage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

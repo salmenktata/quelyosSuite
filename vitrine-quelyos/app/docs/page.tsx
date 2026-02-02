@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -97,6 +97,7 @@ const resources = [
 
 export default function DocsPage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -104,7 +105,7 @@ export default function DocsPage() {
         <div className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -116,7 +117,7 @@ export default function DocsPage() {
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
               Guides, tutoriels et ressources pour tirer le meilleur parti de Quelyos Finance.
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -125,7 +126,7 @@ export default function DocsPage() {
         <Container>
           <div className="grid gap-8 sm:grid-cols-2">
             {sections.map((section, i) => (
-              <motion.div
+              <m.div
                 key={section.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -161,7 +162,7 @@ export default function DocsPage() {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -182,7 +183,7 @@ export default function DocsPage() {
                 orange: "bg-orange-500/10 text-orange-400 group-hover:bg-orange-500/20",
               };
 
-              const Card = resource.href ? motion(Link) : motion.div;
+              const Card = resource.href ? m(Link) : m.div;
 
               return (
                 <Card
@@ -224,7 +225,7 @@ export default function DocsPage() {
       {/* Support CTA */}
       <section className="border-t border-white/5 py-24">
         <Container className="text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -259,9 +260,10 @@ export default function DocsPage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

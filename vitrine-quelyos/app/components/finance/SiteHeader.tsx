@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -185,7 +185,7 @@ function NavDropdown({
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
@@ -222,7 +222,7 @@ function NavDropdown({
                 </Link>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -250,7 +250,7 @@ export default function FinanceSiteHeader() {
   }, [pathname]);
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
@@ -317,7 +317,7 @@ export default function FinanceSiteHeader() {
         {mobileOpen && (
           <>
             {/* Backdrop */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -326,7 +326,7 @@ export default function FinanceSiteHeader() {
             />
 
             {/* Panel */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: "100%" }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
@@ -441,10 +441,10 @@ export default function FinanceSiteHeader() {
                   </Link>
                 </div>
               </nav>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
 }

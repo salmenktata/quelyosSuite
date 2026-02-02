@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -68,6 +68,7 @@ const accountTypes = [
 
 export default function AccountsFeaturePage() {
   return (
+    <LazyMotion features={domAnimation}>
     <>
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -156,7 +157,7 @@ export default function AccountsFeaturePage() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -168,7 +169,7 @@ export default function AccountsFeaturePage() {
                   {feature.title}
                 </h3>
                 <p className="text-slate-400">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
@@ -214,5 +215,6 @@ export default function AccountsFeaturePage() {
       </div>
       <Footer />
     </>
+    </LazyMotion>
   );
 }

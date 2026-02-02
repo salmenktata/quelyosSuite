@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Link from "next/link";
 import {
   Sparkles,
@@ -107,6 +107,7 @@ export default function FeaturesPage() {
   ];
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/5">
@@ -149,16 +150,16 @@ export default function FeaturesPage() {
       {/* Hero */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-6"
           >
             <Sparkles className="w-4 h-4" />
             <span>Fonctionnalités complètes</span>
-          </motion.div>
+          </m.div>
 
-          <motion.h1
+          <m.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -168,9 +169,9 @@ export default function FeaturesPage() {
             <span className="bg-gradient-to-r from-emerald-400 to-green-500 text-transparent bg-clip-text">
               pour briller sur les réseaux
             </span>
-          </motion.h1>
+          </m.h1>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -178,7 +179,7 @@ export default function FeaturesPage() {
           >
             Une suite complète d&apos;outils IA conçue spécialement pour les
             TPE. Simple, efficace, orientée résultats.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
@@ -217,7 +218,7 @@ export default function FeaturesPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {mainFeatures.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -243,7 +244,7 @@ export default function FeaturesPage() {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
@@ -309,5 +310,6 @@ export default function FeaturesPage() {
       {/* Footer */}
       <Footer />
     </div>
+    </LazyMotion>
   );
 }

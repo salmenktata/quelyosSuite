@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import {
   ArrowRight,
@@ -214,6 +214,7 @@ const benefits = [
 
 export default function FeaturesPage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
       <Header />
 
@@ -223,7 +224,7 @@ export default function FeaturesPage() {
         <div className="pointer-events-none absolute -right-40 top-60 h-[500px] w-[500px] rounded-full bg-violet-500/20 blur-[150px]" />
 
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-4xl text-center"
@@ -266,7 +267,7 @@ export default function FeaturesPage() {
             <p className="mt-6 text-sm text-slate-400">
               Sans CB • Sans engagement • RGPD compliant • Support inclus
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -275,7 +276,7 @@ export default function FeaturesPage() {
         <Container>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {benefits.map((benefit, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -285,7 +286,7 @@ export default function FeaturesPage() {
               >
                 <benefit.icon className="h-5 w-5 flex-shrink-0 text-indigo-400" />
                 <span className="text-sm font-medium text-white">{benefit.text}</span>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -294,7 +295,7 @@ export default function FeaturesPage() {
       {/* Fonctionnalités Phares */}
       <section className="relative py-20">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -309,11 +310,11 @@ export default function FeaturesPage() {
             <p className="mt-4 text-lg text-slate-400">
               Ce qui fait de Quelyos le meilleur outil de trésorerie pour TPE services B2B
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid gap-8 lg:grid-cols-2">
             {coreFeatures.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -347,7 +348,7 @@ export default function FeaturesPage() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -358,7 +359,7 @@ export default function FeaturesPage() {
         <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[150px]" />
 
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -379,11 +380,11 @@ export default function FeaturesPage() {
               5 assistants intelligents pour automatiser vos tâches répétitives et vous faire gagner du temps.
               <strong className="text-white block mt-2">Testé et approuvé par des centaines d&apos;entreprises.</strong>
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {mlFeatures.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -425,11 +426,11 @@ export default function FeaturesPage() {
                     <span>Inclus dans votre abonnement • Sans frais supplémentaires</span>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -466,14 +467,14 @@ export default function FeaturesPage() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
       {/* Cas d'usage Réels */}
       <section className="relative py-20 bg-gradient-to-b from-indigo-950/20 to-transparent">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -488,11 +489,11 @@ export default function FeaturesPage() {
             <p className="mt-4 text-lg text-slate-400">
               Découvrez comment Quelyos a transformé leur quotidien
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid gap-8 md:grid-cols-3">
             {useCases.map((useCase, index) => (
-              <motion.div
+              <m.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -518,7 +519,7 @@ export default function FeaturesPage() {
                   <p className="text-xs font-medium text-slate-500 uppercase mb-2">Résultat</p>
                   <p className="text-sm font-semibold text-white">{useCase.result}</p>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -527,7 +528,7 @@ export default function FeaturesPage() {
       {/* Toutes les Fonctionnalités */}
       <section className="relative py-20">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -539,11 +540,11 @@ export default function FeaturesPage() {
             <p className="mt-4 text-lg text-slate-400">
               Tout ce dont vous avez besoin pour piloter votre trésorerie au quotidien
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {powerFeatures.map((feature, index) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -556,7 +557,7 @@ export default function FeaturesPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-sm text-slate-400">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -565,7 +566,7 @@ export default function FeaturesPage() {
       {/* CTA Final Puissant */}
       <section className="relative py-20">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -615,11 +616,12 @@ export default function FeaturesPage() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
       <Footer />
     </div>
+    </LazyMotion>
   );
 }

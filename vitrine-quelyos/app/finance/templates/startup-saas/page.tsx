@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -56,6 +56,7 @@ const benefits = [
 
 export default function StartupSaasPage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -63,7 +64,7 @@ export default function StartupSaasPage() {
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-emerald-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -92,10 +93,10 @@ export default function StartupSaasPage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Metrics preview */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -123,7 +124,7 @@ export default function StartupSaasPage() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -140,7 +141,7 @@ export default function StartupSaasPage() {
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {challenges.map((challenge, i) => (
-              <motion.div
+              <m.div
                 key={challenge.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -153,7 +154,7 @@ export default function StartupSaasPage() {
                 </div>
                 <h3 className="font-semibold text-white">{challenge.title}</h3>
                 <p className="mt-2 text-sm text-slate-400">{challenge.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -215,5 +216,6 @@ export default function StartupSaasPage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

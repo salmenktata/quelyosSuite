@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -52,6 +52,7 @@ const stats = [
 
 export default function TemplatesPage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -60,7 +61,7 @@ export default function TemplatesPage() {
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -81,10 +82,10 @@ export default function TemplatesPage() {
               vous permettent de démarrer en quelques minutes avec les bonnes catégories, 
               budgets et indicateurs.
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Stats */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -103,7 +104,7 @@ export default function TemplatesPage() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -119,7 +120,7 @@ export default function TemplatesPage() {
 
           <div className="grid gap-8 lg:grid-cols-3">
             {templates.map((template, i) => (
-              <motion.div
+              <m.div
                 key={template.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -150,7 +151,7 @@ export default function TemplatesPage() {
                     <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -182,7 +183,7 @@ export default function TemplatesPage() {
                   description: "Connectez vos comptes et commencez à piloter vos finances.",
                 },
               ].map((item, i) => (
-                <motion.div
+                <m.div
                   key={item.step}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -195,7 +196,7 @@ export default function TemplatesPage() {
                   </div>
                   <h3 className="font-semibold text-white">{item.title}</h3>
                   <p className="mt-2 text-sm text-slate-400">{item.description}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
@@ -229,5 +230,6 @@ export default function TemplatesPage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

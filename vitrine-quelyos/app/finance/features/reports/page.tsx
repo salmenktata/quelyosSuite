@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -57,6 +57,7 @@ const reports = [
 
 export default function ReportsFeaturePage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -64,7 +65,7 @@ export default function ReportsFeaturePage() {
         <div className="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-blue-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -93,10 +94,10 @@ export default function ReportsFeaturePage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Reports Demo */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -130,7 +131,7 @@ export default function ReportsFeaturePage() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -138,7 +139,7 @@ export default function ReportsFeaturePage() {
         <Container>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -151,7 +152,7 @@ export default function ReportsFeaturePage() {
                 </div>
                 <h3 className="font-semibold text-white">{feature.title}</h3>
                 <p className="mt-2 text-sm text-slate-400">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -172,5 +173,6 @@ export default function ReportsFeaturePage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

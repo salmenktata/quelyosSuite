@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -94,6 +94,7 @@ const whatIfScenarios = [
 
 export default function ForecastFeaturePage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -101,7 +102,7 @@ export default function ForecastFeaturePage() {
         <div className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-amber-500/15 blur-[120px]" />
         
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -130,10 +131,10 @@ export default function ForecastFeaturePage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Forecast Demo */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -173,7 +174,7 @@ export default function ForecastFeaturePage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -181,7 +182,7 @@ export default function ForecastFeaturePage() {
         <Container>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -194,7 +195,7 @@ export default function ForecastFeaturePage() {
                 </div>
                 <h3 className="font-semibold text-white">{feature.title}</h3>
                 <p className="mt-2 text-sm text-slate-400">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -203,7 +204,7 @@ export default function ForecastFeaturePage() {
       {/* What-If Simulator Section */}
       <section className="border-t border-white/5 py-24">
         <Container>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -224,11 +225,11 @@ export default function ForecastFeaturePage() {
               Et si j&apos;embauche ? Et si je perds ce client ? Notre simulateur interactif
               vous montre l&apos;impact en temps réel sur votre trésorerie à 90 jours.
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {whatIfScenarios.map((scenario, i) => (
-              <motion.div
+              <m.div
                 key={scenario.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -241,11 +242,11 @@ export default function ForecastFeaturePage() {
                 </div>
                 <h3 className="mb-2 font-semibold text-white">{scenario.title}</h3>
                 <p className="text-sm text-slate-400">{scenario.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -257,7 +258,7 @@ export default function ForecastFeaturePage() {
             <p className="mt-2 text-sm text-slate-400">
               Impact calculé en temps réel sur vos prévisions. Sauvegarde automatique de vos simulations.
             </p>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -276,5 +277,6 @@ export default function ForecastFeaturePage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }

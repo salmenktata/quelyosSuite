@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Header from "@/app/components/Header";
 import Container from "@/app/components/Container";
 import {
@@ -67,6 +67,7 @@ const features = [
 
 export default function AlertsFeaturePage() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-slate-950">
       <Header />
 
@@ -74,7 +75,7 @@ export default function AlertsFeaturePage() {
         <div className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-red-500/15 blur-[120px]" />
 
         <Container className="relative">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto max-w-3xl text-center"
@@ -103,10 +104,10 @@ export default function AlertsFeaturePage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Alert Preview */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -146,7 +147,7 @@ export default function AlertsFeaturePage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </Container>
       </section>
 
@@ -159,7 +160,7 @@ export default function AlertsFeaturePage() {
           </div>
           <div className="grid gap-8 sm:grid-cols-3">
             {alertTypes.map((alert, i) => (
-              <motion.div
+              <m.div
                 key={alert.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -173,7 +174,7 @@ export default function AlertsFeaturePage() {
                 <h3 className="mb-2 font-semibold text-white">{alert.title}</h3>
                 <p className="mb-4 text-sm text-slate-400">{alert.description}</p>
                 <p className="text-xs text-slate-500">{alert.example}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -184,7 +185,7 @@ export default function AlertsFeaturePage() {
         <Container>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, i) => (
-              <motion.div
+              <m.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -197,7 +198,7 @@ export default function AlertsFeaturePage() {
                 </div>
                 <h3 className="mb-2 font-semibold text-white">{feature.title}</h3>
                 <p className="text-sm text-slate-400">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </Container>
@@ -207,7 +208,7 @@ export default function AlertsFeaturePage() {
       <section className="border-t border-white/5 py-24">
         <Container>
           <div className="mx-auto max-w-3xl">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -226,7 +227,7 @@ export default function AlertsFeaturePage() {
                   <p className="text-sm text-slate-400">Agence Web, 8 personnes</p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </Container>
       </section>
@@ -246,5 +247,6 @@ export default function AlertsFeaturePage() {
         </Container>
       </section>
     </div>
+    </LazyMotion>
   );
 }
