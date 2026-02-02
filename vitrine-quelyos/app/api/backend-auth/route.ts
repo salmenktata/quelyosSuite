@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8069';
-const BACKEND_DB = process.env.BACKEND_DB || 'quelyos';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,38 +10,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Login et mot de passe requis' }, { status: 400 });
     }
 
-    const response = await fetch(`${BACKEND_URL}/web/session/authenticate`, {
+    // Utiliser l'endpoint JWT au lieu de /web/session/authenticate
+    const response = await fetch(`${BACKEND_URL}/api/auth/sso-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'call',
-        params: { db: BACKEND_DB, login, password },
-        id: 1,
-      }),
+      body: JSON.stringify({ login, password }),
     });
 
     const data = await response.json();
 
-    if (data.error || !data.result?.uid) {
+    if (!response.ok || !data.success) {
       return NextResponse.json(
-        { error: data.error?.data?.message || 'Identifiants invalides' },
+        { error: data.error || 'Identifiants invalides' },
         { status: 401 }
       );
     }
 
-    // Extract session_id from Set-Cookie header
-    const setCookie = response.headers.get('set-cookie') || '';
-    const sessionMatch = setCookie.match(/session_id=([^;]+)/);
-    const sessionId = sessionMatch ? sessionMatch[1] : data.result.session_id;
-
-    // Return success with session info for dashboard handoff
+    // Return JWT token info for dashboard handoff
     return NextResponse.json({
       success: true,
-      uid: data.result.uid,
-      name: data.result.name,
-      username: data.result.username || login,
-      session_id: sessionId,
+      uid: data.user?.id,
+      name: data.user?.name || login,
+      username: data.user?.login || login,
+      access_token: data.access_token,
+      expires_in: data.expires_in || 900,
     });
   } catch {
     return NextResponse.json(

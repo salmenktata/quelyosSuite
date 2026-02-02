@@ -189,7 +189,7 @@ jobs:
       - name: Check if packages exist
         id: check
         run: |
-          if [ -d "packages/ui-kit" ] || [ -d "packages/api-client" ] || [ -d "packages/utils" ]; then
+          if [ -d "packages/ui-kit" ] || [ -d "packages/utils" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -217,13 +217,6 @@ jobs:
         run: |
           if [ -d "packages/ui-kit" ]; then
             cd packages/ui-kit && pnpm build
-          fi
-
-      - name: Build @quelyos/api-client
-        if: steps.check.outputs.exists == 'true'
-        run: |
-          if [ -d "packages/api-client" ]; then
-            cd packages/api-client && pnpm build
           fi
 
       - name: Build @quelyos/utils

@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
+import { config } from '@/app/lib/config';
 
 // Icônes inline
 const Shield = ({ className }: { className?: string }) => (
@@ -141,14 +142,15 @@ function LoginForm() {
         throw new Error(data.error || 'Identifiants invalides');
       }
 
-      // Redirect to dashboard with session handoff params
+      // Redirect to dashboard with JWT handoff params
       const params = new URLSearchParams({
-        session_id: data.session_id || '',
+        access_token: data.access_token || '',
+        expires_in: String(data.expires_in || 900),
         uid: String(data.uid),
         name: data.name || email,
         from: 'marketing',
       });
-      window.location.href = `http://localhost:5175/auth-callback?${params.toString()}`;
+      window.location.href = `${config.marketing.app}/auth-callback?${params.toString()}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur de connexion');
     } finally {

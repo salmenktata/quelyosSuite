@@ -41,7 +41,6 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@quelyos/ui': fileURLToPath(new URL('../../packages/ui', import.meta.url)),
-      '@quelyos/api-client': fileURLToPath(new URL('../../packages/api-client', import.meta.url)),
       '@quelyos/hooks': fileURLToPath(new URL('../../packages/hooks', import.meta.url)),
       '@quelyos/auth': fileURLToPath(new URL('../../packages/auth', import.meta.url)),
       '@quelyos/utils': fileURLToPath(new URL('../../packages/utils', import.meta.url)),

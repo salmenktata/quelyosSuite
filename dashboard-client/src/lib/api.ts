@@ -51,6 +51,8 @@ interface JWTLoginResponse {
     tenant_domain?: string
   }
   error?: string
+  requires_2fa?: boolean
+  pending_token?: string
 }
 
 // Développement : accès direct au backend via VITE_API_URL
@@ -122,6 +124,7 @@ class ApiClient {
       '/api/auth/sso-login',
       '/api/auth/passkey-login',
       '/api/auth/refresh',
+      '/api/auth/2fa/verify',
       '/api/health',
     ]
     
@@ -198,14 +201,9 @@ class ApiClient {
       throw new Error(errorMessage)
     }
 
-    // Vérifier si le résultat est null UNIQUEMENT si on a un token
-    // (les endpoints publics peuvent retourner null légitimement)
-    if (json.result === null && !endpoint.includes('/logout') && tokenService.isAuthenticated()) {
-      // Si le résultat est null et qu'on a un token, c'est probablement une session expirée
-      tokenService.clear()
-      window.location.href = '/login'
-      throw new Error('Session expirée')
-    }
+    // Note: un résultat null n'indique PAS forcément une session expirée.
+    // Certains endpoints retournent légitimement null (listes vides, données non trouvées).
+    // La déconnexion est gérée par le status 401 et les erreurs d'auth ci-dessus.
 
     return json.result as T
   }
@@ -244,6 +242,16 @@ class ApiClient {
     const result = (await response.json()) as JWTLoginResponse
     logger.debug('[API] login() result:', result)
 
+    // 2FA requis
+    if (result.requires_2fa && result.pending_token) {
+      logger.debug('[API] Login requires 2FA')
+      return {
+        success: true,
+        requires_2fa: true,
+        pending_token: result.pending_token,
+      } as LoginResponse & { requires_2fa: boolean; pending_token: string }
+    }
+
     if (result.success && result.access_token && result.user) {
       logger.debug('[API] Login successful, storing JWT tokens')
 
@@ -276,6 +284,50 @@ class ApiClient {
         error: result.error || 'Identifiants invalides',
       } as LoginResponse
     }
+  }
+
+  /**
+   * Vérifie le code TOTP 2FA et complète le login
+   */
+  async verify2FA(pendingToken: string, code: string): Promise<LoginResponse> {
+    const url = `${this.baseUrl}/api/auth/2fa/verify`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ pending_token: pendingToken, code }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = (await response.json()) as JWTLoginResponse
+
+    if (result.success && result.access_token && result.user) {
+      tokenService.setTokens(result.access_token, result.expires_in || 900, result.user)
+
+      if (result.user.tenant_id) {
+        this.tenantId = result.user.tenant_id
+      }
+
+      return {
+        success: true, authenticated: true,
+        session_id: result.access_token,
+        user: {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email || result.user.login,
+          login: result.user.login,
+          groups: result.user.groups || [],
+        },
+      } as LoginResponse
+    }
+
+    return {
+      success: false,
+      error: result.error || 'Code invalide',
+    } as LoginResponse
   }
 
   /**

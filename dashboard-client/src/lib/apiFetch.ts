@@ -48,12 +48,6 @@ export async function apiFetch(url: string, options: ApiFetchOptions = {}): Prom
     const accessToken = tokenService.getAccessToken();
     if (accessToken) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
-    } else {
-      // Fallback session_id
-      const sessionId = localStorage.getItem('session_id');
-      if (sessionId && sessionId !== 'null') {
-        (headers as Record<string, string>)['X-Session-Id'] = sessionId;
-      }
     }
   }
 
@@ -65,7 +59,7 @@ export async function apiFetch(url: string, options: ApiFetchOptions = {}): Prom
   });
 
   // Gestion erreur 401 (session expirée)
-  if (response.status === 401 && !import.meta.env.DEV) {
+  if (response.status === 401) {
     tokenService.clear();
     window.location.href = '/login';
     throw new Error('Session expirée');

@@ -22,7 +22,6 @@
       "@/*": ["./src/*"],
       "@quelyos/logger": ["../shared/logger/src"],
       "@quelyos/types": ["../shared/types/src"],
-      "@quelyos/api-client": ["../shared/api-client/src"]
     }
   },
   "include": [

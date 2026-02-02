@@ -18,6 +18,8 @@
 // React & Router
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, createContext, useContext, useMemo, useCallback } from 'react'
+import { tokenService } from '../lib/tokenService'
+import { api } from '../lib/api'
 
 // Hooks
 import { usePermissions } from '../hooks/usePermissions'
@@ -356,10 +358,12 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     setTimeout(() => setIsModuleChanging(false), 300)
   }, [navigate])
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('session_id')
-    localStorage.removeItem('user')
-    localStorage.removeItem('auth_source')
+  const handleLogout = useCallback(async () => {
+    try {
+      await api.logout()
+    } catch {
+      tokenService.clear()
+    }
     window.location.href = '/login'
   }, [])
 

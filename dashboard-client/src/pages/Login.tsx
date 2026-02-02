@@ -1,8 +1,11 @@
-import { FormEvent, useState, useEffect } from 'react'
+import { FormEvent, useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../lib/api'
+import { tokenService } from '../lib/tokenService'
 import { logger } from '@quelyos/logger'
 import { getDefaultModulePath } from '../lib/defaultModule'
+
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'http://localhost:3000'
 
 // Icônes inline
 const Shield = ({ className }: { className?: string }) => (
@@ -84,15 +87,17 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [oauthLoading, setOauthLoading] = useState<string | null>(null)
+  // 2FA state
+  const [requires2FA, setRequires2FA] = useState(false)
+  const [pendingToken, setPendingToken] = useState('')
+  const [totpCode, setTotpCode] = useState('')
+  const [isBackupMode, setIsBackupMode] = useState(false)
+  const [verifying2FA, setVerifying2FA] = useState(false)
+  const totpInputRef = useRef<HTMLInputElement>(null)
 
-  // Rediriger si déjà connecté (seulement en production)
+  // Rediriger si déjà connecté
   useEffect(() => {
-    if (import.meta.env.DEV) return
-
-    const sessionId = localStorage.getItem('session_id')
-    const user = localStorage.getItem('user')
-
-    if (sessionId && user) {
+    if (tokenService.isAuthenticated()) {
       const defaultPath = getDefaultModulePath()
       navigate(defaultPath, { replace: true })
     }
@@ -104,9 +109,13 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const result = await api.login(email, password)
+      const result = await api.login(email, password) as { success: boolean; error?: string; requires_2fa?: boolean; pending_token?: string }
 
-      if (result.success) {
+      if (result.requires_2fa && result.pending_token) {
+        setRequires2FA(true)
+        setPendingToken(result.pending_token)
+        setTimeout(() => totpInputRef.current?.focus(), 100)
+      } else if (result.success) {
         const defaultPath = getDefaultModulePath()
         navigate(defaultPath)
       } else {
@@ -127,6 +136,51 @@ export default function Login() {
     const oauthUrl = `/api/auth/oauth/${provider}`
     window.location.href = oauthUrl
   }
+
+  const handleVerify2FA = useCallback(async (code: string) => {
+    setVerifying2FA(true)
+    setError('')
+    try {
+      const result = await api.verify2FA(pendingToken, code)
+      if (result.success) {
+        const defaultPath = getDefaultModulePath()
+        navigate(defaultPath)
+      } else {
+        setError(result.error || 'Code invalide')
+        setTotpCode('')
+      }
+    } catch (err) {
+      logger.error('2FA verify error:', err)
+      setError('Erreur de vérification')
+      setTotpCode('')
+    } finally {
+      setVerifying2FA(false)
+    }
+  }, [pendingToken, navigate])
+
+  const handleTotpChange = useCallback((value: string) => {
+    if (isBackupMode) {
+      const cleaned = value.replace(/[^a-zA-Z0-9-]/g, '').toUpperCase()
+      setTotpCode(cleaned)
+      if (cleaned.length === 9 && cleaned.includes('-')) {
+        handleVerify2FA(cleaned)
+      }
+    } else {
+      const digits = value.replace(/\D/g, '').slice(0, 6)
+      setTotpCode(digits)
+      if (digits.length === 6) {
+        handleVerify2FA(digits)
+      }
+    }
+  }, [isBackupMode, handleVerify2FA])
+
+  const handleCancel2FA = useCallback(() => {
+    setRequires2FA(false)
+    setPendingToken('')
+    setTotpCode('')
+    setError('')
+    setIsBackupMode(false)
+  }, [])
 
   const stats = [
     { value: '2 500+', label: 'Entreprises', Icon: Building2 },
@@ -154,7 +208,7 @@ export default function Login() {
         <div className="relative z-10 flex w-full flex-col justify-between p-12 text-white xl:p-16">
           {/* Logo & Brand */}
           <div className="flex items-start justify-between">
-            <a href="http://localhost:3000" className="flex w-fit items-center gap-3 transition-opacity hover:opacity-80">
+            <a href={SITE_URL} className="flex w-fit items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-orange-500 shadow-lg shadow-orange-500/25">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
@@ -163,7 +217,7 @@ export default function Login() {
                 <p className="text-xs uppercase tracking-widest text-fuchsia-200/80">Backoffice</p>
               </div>
             </a>
-            <a href="http://localhost:3000" className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
+            <a href={SITE_URL} className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden xl:inline">Retour</span>
             </a>
@@ -235,18 +289,87 @@ export default function Login() {
         <div className="relative z-10 mx-auto w-full max-w-md px-6 py-12 lg:px-12">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-between lg:hidden">
-            <a href="http://localhost:3000" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+            <a href={SITE_URL} className="flex items-center gap-3 transition-opacity hover:opacity-80">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-orange-500 shadow-lg">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Quelyos</span>
             </a>
-            <a href="http://localhost:3000" className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
+            <a href={SITE_URL} className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white">
               <ArrowLeft className="h-4 w-4" />
               <span>Retour</span>
             </a>
           </div>
 
+          {requires2FA ? (
+            /* 2FA Verification Screen */
+            <div className="space-y-6">
+              <button
+                onClick={handleCancel2FA}
+                className="flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Retour
+              </button>
+
+              <div className="flex flex-col items-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-fuchsia-500/20 mb-4">
+                  <Shield className="h-7 w-7 text-fuchsia-300" />
+                </div>
+                <h2 className="text-xl font-bold text-white">
+                  {isBackupMode ? 'Code de secours' : 'Vérification 2FA'}
+                </h2>
+                <p className="text-sm text-slate-400 mt-1 text-center">
+                  {isBackupMode
+                    ? 'Saisissez un code de secours (format XXXX-XXXX)'
+                    : 'Saisissez le code à 6 chiffres de votre application'}
+                </p>
+              </div>
+
+              {error && (
+                <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300" role="alert">
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-red-400" />
+                  {error}
+                </div>
+              )}
+
+              <input
+                ref={totpInputRef}
+                type="text"
+                value={totpCode}
+                onChange={(e) => handleTotpChange(e.target.value)}
+                onPaste={(e) => {
+                  e.preventDefault()
+                  handleTotpChange(e.clipboardData.getData('text').trim())
+                }}
+                disabled={verifying2FA}
+                autoComplete="one-time-code"
+                inputMode={isBackupMode ? 'text' : 'numeric'}
+                placeholder={isBackupMode ? 'XXXX-XXXX' : '000000'}
+                className="h-14 w-full rounded-xl border border-slate-700/50 bg-slate-900/50 px-4 text-center text-2xl font-mono tracking-[0.3em] text-white placeholder:text-slate-500 transition-all focus:border-fuchsia-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/20 disabled:opacity-50"
+              />
+
+              {verifying2FA && (
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-fuchsia-400/30 border-t-fuchsia-400" />
+                  Vérification...
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setTotpCode('')
+                  setIsBackupMode(!isBackupMode)
+                  setError('')
+                }}
+                className="w-full flex items-center justify-center gap-2 text-sm text-fuchsia-400 hover:text-fuchsia-300 transition-colors"
+              >
+                {isBackupMode ? 'Utiliser le code TOTP' : 'Utiliser un code de secours'}
+              </button>
+            </div>
+          ) : (
+          <>
           {/* Header */}
           <div className="mb-8 space-y-2">
             <h2 className="text-2xl font-bold text-white lg:text-3xl">Connexion</h2>
@@ -377,7 +500,7 @@ export default function Login() {
           <div className="mt-8 space-y-4 text-center">
             <p className="text-sm text-slate-400">Pas encore de compte ?</p>
             <a
-              href="http://localhost:3000/register"
+              href={`${SITE_URL}/register`}
               className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/30 font-medium text-white transition-all hover:border-slate-600/50 hover:bg-slate-800/50"
             >
               <span>Créer un compte</span>
@@ -391,6 +514,8 @@ export default function Login() {
               © 2026 Quelyos. Backoffice sécurisé.
             </p>
           </div>
+          </>
+          )}
         </div>
       </div>
     </div>

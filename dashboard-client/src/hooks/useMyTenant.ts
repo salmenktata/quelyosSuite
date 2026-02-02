@@ -10,21 +10,21 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@quelyos/logger'
+import { tokenService } from '@/lib/tokenService'
 import type { TenantConfig, TenantFormData } from './useTenants'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
 function getAuthHeaders(): HeadersInit {
-  const sessionId = localStorage.getItem('session_id')
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   }
 
-  if (sessionId && sessionId !== 'null' && sessionId !== 'undefined') {
-    headers['X-Session-Id'] = sessionId
+  const accessToken = tokenService.getAccessToken()
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`
   }
 
-  // CRITIQUE SÉCURITÉ : Injecter X-Tenant-Domain pour isolation multi-tenant
   const tenantDomain = window.location.hostname
   if (tenantDomain) {
     headers['X-Tenant-Domain'] = tenantDomain
@@ -33,12 +33,8 @@ function getAuthHeaders(): HeadersInit {
   return headers
 }
 
-/**
- * Vérifie si l'utilisateur a une session valide
- */
 function hasValidSession(): boolean {
-  const sessionId = localStorage.getItem('session_id')
-  return !!(sessionId && sessionId !== 'null' && sessionId !== 'undefined')
+  return tokenService.isAuthenticated()
 }
 
 /**

@@ -22,7 +22,6 @@
       "@/*": ["./src/*"],
       "@quelyos/logger": ["../shared/logger/src"],
       "@quelyos/types": ["../packages/types"],
-      "@quelyos/api-client": ["../shared/api-client/src"],
       "@quelyos/ui/animated": ["./src/lib/finance/compat/animated.tsx"]
     }
   },

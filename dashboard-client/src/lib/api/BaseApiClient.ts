@@ -14,6 +14,7 @@ import { logger } from '@quelyos/logger'
 import { backendCircuitBreaker } from './circuitBreaker'
 import { withRetry, RETRY_CONFIGS, type RetryConfig } from './retry'
 import { getRequestIdHeaders } from './requestId'
+import { tokenService } from '../tokenService'
 
 /**
  * Configuration du client API
@@ -86,21 +87,10 @@ export class BaseApiClient {
   }
 
   /**
-   * Récupère le token d'authentification
+   * Récupère le token d'authentification via tokenService
    */
   protected getAuthToken(): string | null {
-    // Priorité : session_id (nouveau) > backend_session_token (legacy)
-    const sessionId = localStorage.getItem('session_id')
-    if (sessionId && sessionId !== 'null' && sessionId !== 'undefined' && sessionId.trim() !== '') {
-      return sessionId
-    }
-
-    const legacyToken = localStorage.getItem('backend_session_token')
-    if (legacyToken && legacyToken !== 'null') {
-      return legacyToken
-    }
-
-    return null
+    return tokenService.getAccessToken()
   }
 
   /**
@@ -162,7 +152,7 @@ export class BaseApiClient {
     }
 
     // Session expirée (401) - rediriger vers login
-    if (statusCode === 401 && !import.meta.env.DEV) {
+    if (statusCode === 401) {
       this.handleSessionExpired()
     }
 
@@ -175,13 +165,8 @@ export class BaseApiClient {
    */
   protected handleSessionExpired(): void {
     logger.warn('[BaseApiClient] Session expired, redirecting to login')
-    localStorage.removeItem('session_id')
-    localStorage.removeItem('backend_session_token')
-    localStorage.removeItem('user')
-
-    if (!import.meta.env.DEV) {
-      window.location.href = '/login'
-    }
+    tokenService.clear()
+    window.location.href = '/login'
   }
 
   /**

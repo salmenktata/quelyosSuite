@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@quelyos/logger'
 import { backendRpc } from '@/lib/backend-rpc'
+import { tokenService } from '@/lib/tokenService'
 
 // URL de l'API (même config que api.ts)
 const API_URL = import.meta.env.VITE_API_URL || ''
@@ -121,19 +122,14 @@ export function useUpdateSiteConfig() {
 
   return useMutation({
     mutationFn: async (params: UpdateSiteConfigParams) => {
-      // Récupérer le session_id pour l'authentification
-      const sessionId = localStorage.getItem('session_id')
-
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       }
 
-      if (sessionId && sessionId !== 'null' && sessionId !== 'undefined') {
-        headers['X-Session-Id'] = sessionId
+      const accessToken = tokenService.getAccessToken()
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`
       }
-
-      // L'endpoint update est de type JSON-RPC avec auth='public'
-      // L'authentification se fait via le header X-Session-Id (pas de cookies)
       const response = await fetch(`${API_URL}/api/ecommerce/site-config/update`, {
         method: 'POST',
         headers,

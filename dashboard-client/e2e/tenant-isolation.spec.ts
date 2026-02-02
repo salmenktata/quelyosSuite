@@ -76,18 +76,18 @@ test.describe('Isolation localStorage', () => {
   test('les keys globales ne sont pas préfixées', async ({ page }) => {
     await loginToTenant(page, TENANT_A)
 
-    // session_id ne devrait PAS être préfixé
-    const sessionId = await page.evaluate(() =>
-      localStorage.getItem('session_id'),
+    // quelyos_dashboard_auth (JWT token) ne devrait PAS être préfixé par tenant
+    const authData = await page.evaluate(() =>
+      localStorage.getItem('quelyos_dashboard_auth'),
     )
-    expect(sessionId).not.toBeNull()
+    expect(authData).not.toBeNull()
 
     // Vérifier qu'il n'y a pas de version préfixée
-    const prefixedSession = await page.evaluate(() => {
+    const prefixedAuth = await page.evaluate(() => {
       const tid = localStorage.getItem('tenant_id')
-      return localStorage.getItem(`tenant_${tid}:session_id`)
+      return localStorage.getItem(`tenant_${tid}:quelyos_dashboard_auth`)
     })
-    expect(prefixedSession).toBeNull()
+    expect(prefixedAuth).toBeNull()
   })
 })
 
@@ -337,11 +337,11 @@ test.describe('Nettoyage données tenant', () => {
       await logoutButton.click()
     }
 
-    // Vérifier que session_id est supprimé
+    // Vérifier que les tokens JWT sont supprimés après logout
     await page.waitForTimeout(1000)
-    const sessionAfterLogout = await page.evaluate(() =>
-      localStorage.getItem('session_id'),
+    const authAfterLogout = await page.evaluate(() =>
+      localStorage.getItem('quelyos_dashboard_auth'),
     )
-    expect(sessionAfterLogout).toBeNull()
+    expect(authAfterLogout).toBeNull()
   })
 })

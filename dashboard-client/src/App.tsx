@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy } from 'react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
 import { TenantGuard } from './components/TenantGuard'
@@ -12,8 +12,6 @@ import { FinanceErrorBoundary } from './components/finance/FinanceErrorBoundary'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { ModuleErrorBoundary } from './components/common/ModuleErrorBoundary'
 import { Loader2 } from 'lucide-react'
-import { tokenService } from './lib/tokenService'
-import { api } from './lib/api'
 
 // Pages essentielles (chargées immédiatement)
 import Login from './pages/Login'
@@ -278,16 +276,9 @@ function PageLoader() {
   )
 }
 
-// TEMPORAIRE : SessionManager désactivé en DEV (voir TODO_AUTH.md)
 function SessionManager() {
-  // Ne rien faire en mode développement
-  if (import.meta.env.DEV) {
-    return null
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useSessionManager({
-    enableAutoRefresh: true,
-    enableWarning: true,
+    enableWarning: !import.meta.env.DEV,
   })
   return null
 }
@@ -341,13 +332,7 @@ function PosModule({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useBranding() // Appliquer branding dynamique selon édition
-
-  // Configure JWT auto-refresh
-  useEffect(() => {
-    tokenService.setRefreshFunction(async () => {
-      return await api.refreshToken()
-    })
-  }, [])
+  // JWT refresh is configured in useAuth (compat/auth.ts)
 
   return (
     <QueryClientProvider client={queryClient}>

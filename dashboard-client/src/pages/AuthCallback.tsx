@@ -1,36 +1,37 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { tokenService } from '../lib/tokenService'
 import { getDefaultModulePath } from '../lib/defaultModule'
 
 /**
  * Auth callback page for SSO handoff from vitrine (localhost:3000)
- * Receives session params via URL and stores them in localStorage
+ * Receives JWT token via URL params and stores via tokenService
  */
 export default function AuthCallback() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id')
+    const accessToken = searchParams.get('access_token') || searchParams.get('session_id')
+    const expiresIn = searchParams.get('expires_in')
     const uid = searchParams.get('uid')
     const name = searchParams.get('name')
-    const from = searchParams.get('from') // 'finance' or 'marketing'
 
-    if (sessionId && uid) {
-      // Store session info for the dashboard
-      localStorage.setItem('session_id', sessionId)
-      localStorage.setItem('user', JSON.stringify({
-        id: parseInt(uid, 10),
-        name: name || 'Utilisateur',
-        email: '',
-      }))
-      localStorage.setItem('auth_source', from || 'unknown')
+    if (accessToken && uid) {
+      // Store via tokenService
+      tokenService.setTokens(
+        accessToken,
+        expiresIn ? parseInt(expiresIn, 10) : 900,
+        {
+          id: parseInt(uid, 10),
+          name: name || 'Utilisateur',
+          login: '',
+        }
+      )
 
-      // Redirect to default module
       const defaultPath = getDefaultModulePath()
       navigate(defaultPath, { replace: true })
     } else {
-      // No valid session, redirect to login
       navigate('/login', { replace: true })
     }
   }, [searchParams, navigate])

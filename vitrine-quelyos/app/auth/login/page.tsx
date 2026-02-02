@@ -154,14 +154,15 @@ function LoginForm() {
         return;
       }
 
-      // Redirect to dashboard with session handoff params
+      // Redirect to dashboard with JWT handoff params
       const params = new URLSearchParams({
-        session_id: data.session_id || '',
+        access_token: data.access_token || '',
+        expires_in: String(data.expires_in || 900),
         uid: String(data.uid),
         name: data.name || email,
         from: 'finance',
       });
-      window.location.href = `http://localhost:5175/auth-callback?${params.toString()}`;
+      window.location.href = `${config.finance.app}/auth-callback?${params.toString()}`;
     } catch {
       setError('Impossible de se connecter. Vérifiez votre connexion.');
       setLoading(false);

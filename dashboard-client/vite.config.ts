@@ -127,7 +127,6 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '@quelyos/logger': fileURLToPath(new URL('../shared/logger/src', import.meta.url)),
         '@quelyos/types': fileURLToPath(new URL('../shared/types/src', import.meta.url)),
-        '@quelyos/api-client': fileURLToPath(new URL('../shared/api-client/src', import.meta.url)),
         '@quelyos/ui/animated': fileURLToPath(new URL('./src/lib/finance/compat/animated.tsx', import.meta.url)),
       },
     },

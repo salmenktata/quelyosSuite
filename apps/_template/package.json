@@ -12,7 +12,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@quelyos/api-client": "workspace:*",
     "@quelyos/auth": "workspace:*",
     "@quelyos/hooks": "workspace:*",
     "@quelyos/ui": "workspace:*",

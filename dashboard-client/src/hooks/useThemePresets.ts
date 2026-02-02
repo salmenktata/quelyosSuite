@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@quelyos/logger'
+import { tokenService } from '@/lib/tokenService'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
@@ -80,13 +81,13 @@ export interface ThemePresetFormData {
 }
 
 function getAuthHeaders(): HeadersInit {
-  const sessionId = localStorage.getItem('session_id')
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   }
 
-  if (sessionId && sessionId !== 'null' && sessionId !== 'undefined') {
-    headers['X-Session-Id'] = sessionId
+  const accessToken = tokenService.getAccessToken()
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`
   }
 
   return headers

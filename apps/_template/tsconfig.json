@@ -21,7 +21,6 @@
       "@/*": ["./src/*"],
       "@quelyos/ui": ["../../packages/ui"],
       "@quelyos/ui/*": ["../../packages/ui/*"],
-      "@quelyos/api-client": ["../../packages/api-client"],
       "@quelyos/hooks": ["../../packages/hooks"],
       "@quelyos/auth": ["../../packages/auth"],
       "@quelyos/utils": ["../../packages/utils"]

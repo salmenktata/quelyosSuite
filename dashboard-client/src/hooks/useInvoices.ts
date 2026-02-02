@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { apiClient } from '@/lib/api'
+import { tokenService } from '@/lib/tokenService'
 import type { Invoice } from '@quelyos/types'
 
 interface UseInvoicesParams {
@@ -100,7 +101,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
         `${import.meta.env.VITE_BACKEND_URL}/api/finance/invoices/${invoiceId}/pdf`,
         {
           headers: {
-            'X-Session-Id': localStorage.getItem('session_id') || '',
+            'Authorization': `Bearer ${tokenService.getAccessToken() || ''}`,
           },
         }
       )

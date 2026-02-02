@@ -66,7 +66,6 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       '@quelyos/logger': path.resolve(__dirname, '../shared/logger/src'),
       '@quelyos/types': path.resolve(__dirname, '../shared/types/src'),
-      '@quelyos/api-client': path.resolve(__dirname, '../shared/api-client/src'),
     },
   },
 

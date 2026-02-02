@@ -4,7 +4,7 @@
  */
 
 import { logger } from '@/lib/logger'
-import { getValidSessionId } from '@/lib/session'
+import { tokenService } from '@/lib/tokenService'
 
 // Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
 // Le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
@@ -39,8 +39,7 @@ export async function api<T = unknown>(
   endpoint: string,
   options: ApiOptions = {}
 ): Promise<T> {
-  // Utiliser session_id pour l'auth (optionnel car endpoints sont auth='public')
-  const sessionId = getValidSessionId()
+  const accessToken = tokenService.getAccessToken()
 
   const { method = 'GET', body, headers = {} } = options
 
@@ -48,13 +47,10 @@ export async function api<T = unknown>(
     method,
     headers: {
       'Content-Type': 'application/json',
-      // Header d'authentification
-      ...(sessionId && { 'X-Session-Id': sessionId }),
+      ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
       ...headers,
     },
-    // Ne pas inclure les credentials en cross-origin (incompatible avec CORS wildcard)
-    // L'authentification se fait via le header X-Session-Id
-    credentials: 'omit',
+    credentials: 'include',
   }
 
   if (body && method !== 'GET') {

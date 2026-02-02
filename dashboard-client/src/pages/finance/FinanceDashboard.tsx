@@ -9,7 +9,7 @@
  * - Conforme standards UI_PATTERNS.md
  */
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button } from '@/components/common';
@@ -36,7 +36,7 @@ import { TreasuryForecast } from '@/components/finance/dashboard/TreasuryForecas
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { user, isLoading: isAuthLoading } = useAuth();
+  const { user } = useAuth();
   const { baseCurrency, formatAmount } = useCurrency();
 
   // Fetch dashboard data (30 days, no auto-refresh)
@@ -147,28 +147,7 @@ export default function DashboardPage() {
     };
   }, [dashboardData, previousPeriodData]);
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      window.location.href = '/login';
-    }
-  }, [user, isAuthLoading]);
-
-  // Show loader during auth check
-  if (isAuthLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect
-  }
+  // Auth is handled by ProtectedRoute wrapper
 
   const loading = isDashboardLoading || !dashboardData;
 

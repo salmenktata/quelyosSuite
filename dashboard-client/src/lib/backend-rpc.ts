@@ -1,4 +1,5 @@
 import { logger } from '@quelyos/logger'
+import { tokenService } from './tokenService'
 
 // En développement, utiliser le proxy Vite (pas de CORS)
 // En production, utiliser l'URL complète
@@ -27,18 +28,17 @@ export async function backendRpc<T = unknown>(
     'Content-Type': 'application/json',
   }
 
-  // Ajouter le session_id si disponible
-  // Utiliser Authorization au lieu de X-Session-Id pour compatibilité CORS
-  const sessionId = localStorage.getItem('session_id')
-  if (sessionId && sessionId !== 'null' && sessionId !== 'undefined') {
-    headers['Authorization'] = `Bearer ${sessionId}`
+  // Utiliser le JWT token du tokenService
+  const accessToken = tokenService.getAccessToken()
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`
   }
 
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      credentials: 'omit',
+      credentials: 'include',
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'call',
@@ -48,10 +48,8 @@ export async function backendRpc<T = unknown>(
     })
 
     if (!response.ok) {
-      if (response.status === 401 && !import.meta.env.DEV) {
-        // Session expirée, nettoyer et rediriger (seulement en production)
-        localStorage.removeItem('session_id')
-        localStorage.removeItem('user')
+      if (response.status === 401) {
+        tokenService.clear()
         window.location.href = '/login'
         throw new Error('Session expirée')
       }
@@ -65,10 +63,8 @@ export async function backendRpc<T = unknown>(
 
     if (json.error) {
       const errorMessage = json.error.data?.message || json.error.message || 'API Error'
-      if (!import.meta.env.DEV && (errorMessage.toLowerCase().includes('session') || errorMessage.toLowerCase().includes('authentication'))) {
-        // Rediriger vers login seulement en production
-        localStorage.removeItem('session_id')
-        localStorage.removeItem('user')
+      if (errorMessage.toLowerCase().includes('session') || errorMessage.toLowerCase().includes('authentication')) {
+        tokenService.clear()
         window.location.href = '/login'
       }
       return {
@@ -82,7 +78,6 @@ export async function backendRpc<T = unknown>(
       data: json.result,
     }
   } catch (error) {
-    // Log technique (masqué en production pour sécurité)
     logger.error('[backendRpc] Error:', error)
     return {
       success: false,
