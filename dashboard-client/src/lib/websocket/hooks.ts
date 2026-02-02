@@ -140,7 +140,7 @@ export function useSyncedState<T>(channel: string, initialValue: T): [T, (value:
       setValue(newValue)
       publish('update', newValue)
     },
-    [publish]
+    [publish, setValue]
   )
 
   return [value, setAndPublish]

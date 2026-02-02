@@ -45,7 +45,7 @@ export function CampaignTrackingDetail() {
     } catch (err) {
       logger.error('Erreur chargement tracking:', err);
     }
-  }, [campaignId]);
+  }, [campaignId, getCampaignTracking, getCampaignHeatmap, getCampaignTimeline]);
 
   useEffect(() => {
     if (campaignId) {

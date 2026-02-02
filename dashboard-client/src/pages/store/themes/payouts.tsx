@@ -9,7 +9,7 @@
  * - Demande de payout manuel (si admin)
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
@@ -55,11 +55,7 @@ export default function PayoutsPage() {
   const [error, setError] = useState<string | null>(null);
   const [_onboardingUrl, setOnboardingUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchDesignerData();
-  }, []);
-
-  const fetchDesignerData = async () => {
+  const fetchDesignerData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -114,7 +110,11 @@ export default function PayoutsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDesignerData();
+  }, [fetchDesignerData]);
 
   const fetchConnectStatus = async (designerId: number) => {
     try {

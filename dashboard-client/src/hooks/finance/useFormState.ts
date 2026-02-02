@@ -111,6 +111,13 @@ export function useFormState<T extends Record<string, any>>({
     [values, validate, setFieldTouched, setFieldError]
   );
 
+  const handleReset = useCallback(() => {
+    setValues(initialValues);
+    setErrors({});
+    setTouched({});
+    setIsDirty(false);
+  }, [initialValues]);
+
   const handleSubmit = useCallback(
     async (e?: React.FormEvent) => {
       if (e) {
@@ -148,15 +155,8 @@ export function useFormState<T extends Record<string, any>>({
         }
       }
     },
-    [values, validate, onSubmit, resetOnSubmitSuccess]
+    [values, validate, onSubmit, resetOnSubmitSuccess, handleReset]
   );
-
-  const handleReset = useCallback(() => {
-    setValues(initialValues);
-    setErrors({});
-    setTouched({});
-    setIsDirty(false);
-  }, [initialValues]);
 
   return {
     values,

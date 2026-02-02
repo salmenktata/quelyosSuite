@@ -32,7 +32,7 @@ export function AutomationWorkflows() {
     } catch (err) {
       logger.error('Erreur chargement workflows:', err);
     }
-  }, [filter]);
+  }, [filter, listAutomations]);
 
   useEffect(() => {
     loadWorkflows();

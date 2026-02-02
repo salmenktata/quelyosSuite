@@ -113,13 +113,16 @@ export function useTableData<T = unknown>(
         setLoading(false);
       }
     },
-    [fetchFn, enableCache, cacheKey, ...deps]
+    [fetchFn, enableCache, cacheKey]
   );
 
-  // Fetch initial
+  // Créer une clé stable pour les dépendances
+  const depsKey = useMemo(() => JSON.stringify(deps), [deps]);
+
+  // Fetch initial et refetch quand deps changent
   useEffect(() => {
     fetch();
-  }, [fetch]);
+  }, [fetch, depsKey]);
 
   // Données filtrées
   const filteredData = useMemo(() => {
