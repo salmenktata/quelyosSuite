@@ -27,6 +27,7 @@ import {
   Hammer,
   Building2,
   Users,
+  Wrench,
 } from "lucide-react";
 import config from "../lib/config";
 import Container from "./Container";
@@ -40,6 +41,7 @@ const modulesNav = [
   { id: "hr", name: "RH", tagline: "Gestion du personnel", icon: UsersRound, href: "/hr", color: "text-cyan-400" },
   { id: "pos", name: "Point de Vente", tagline: "Caisse & Click & Collect", icon: Monitor, href: "/pos", color: "text-teal-400" },
   { id: "marketing", name: "Marketing", tagline: "Campagnes Email & SMS", icon: Megaphone, href: "/marketing", color: "text-pink-400" },
+  { id: "gmao", name: "GMAO", tagline: "Maintenance & Équipements", icon: Wrench, href: "/gmao", color: "text-slate-400" },
 ];
 
 // Solutions métier par secteur pour le mega menu

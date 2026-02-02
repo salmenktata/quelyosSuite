@@ -10,7 +10,7 @@ import {
   UsersRound,
   Monitor,
   Megaphone,
-  Home,
+  Wrench,
   ArrowRight,
   CheckCircle,
   Layers,
@@ -114,16 +114,16 @@ const modules = [
     status: "production",
   },
   {
-    id: "home",
-    name: "Home",
-    tagline: "Dashboard unifié",
-    description: "Vue d'ensemble de toute votre activité. KPIs consolidés, alertes et raccourcis.",
-    features: ["Dashboard global", "KPIs unifiés", "Notifications", "Personnalisation"],
-    icon: Home,
+    id: "gmao",
+    name: "GMAO",
+    tagline: "Maintenance & Équipements",
+    description: "Planifiez et suivez la maintenance de vos équipements. Interventions préventives, curatives et prédictives.",
+    features: ["Suivi équipements", "Maintenance préventive", "Ordres de travail", "Historique interventions"],
+    icon: Wrench,
     color: "slate",
     gradient: "from-slate-500 to-slate-600",
     bgGradient: "from-slate-500/10 to-slate-600/5",
-    href: "/",
+    href: "/gmao",
     status: "production",
   },
 ];
@@ -169,7 +169,7 @@ export default function ModulesPage() {
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-xl text-slate-300">
-                Finance, Commerce, CRM, Stock, RH, Point de Vente, Marketing — une plateforme unifiée pour piloter toute votre entreprise.
+                Finance, Commerce, CRM, Stock, RH, Point de Vente, Marketing, GMAO — une plateforme unifiée pour piloter toute votre entreprise.
               </p>
             </m.div>
           </Container>

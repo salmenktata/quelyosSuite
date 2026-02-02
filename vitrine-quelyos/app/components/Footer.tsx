@@ -53,6 +53,7 @@ export default function Footer() {
               <li><Link href="/hr" className="text-sm text-slate-400 hover:text-white">RH</Link></li>
               <li><Link href="/pos" className="text-sm text-slate-400 hover:text-white">Point de Vente</Link></li>
               <li><Link href="/marketing" className="text-sm text-slate-400 hover:text-white">Marketing</Link></li>
+              <li><Link href="/gmao" className="text-sm text-slate-400 hover:text-white">GMAO</Link></li>
             </ul>
           </div>
 

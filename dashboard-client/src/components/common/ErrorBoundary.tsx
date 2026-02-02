@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { logger } from '@/lib/logger'
+import { isChunkError } from '@/lib/lazyWithRetry'
 
 interface Props {
   children: ReactNode
@@ -88,6 +89,36 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback
       }
 
+      const chunkErr = isChunkError(this.state.error)
+
+      // Erreur de chunk périmé : UI spécifique avec reload
+      if (chunkErr) {
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+            <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="h-16 w-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                  <RefreshCw className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Mise à jour disponible
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {`Une nouvelle version de l'application est disponible. Veuillez recharger la page.`}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Recharger la page
+              </button>
+            </div>
+          </div>
+        )
+      }
+
       // Sinon, afficher l'UI d'erreur par défaut
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
@@ -98,7 +129,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white dark:text-gray-100 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Une erreur s'est produite
             </h2>
 
@@ -131,7 +162,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
               <button
                 onClick={() => window.location.href = '/'}
-                className="inline-flex items-center justify-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
               >
                 <Home className="h-4 w-4 mr-2" />
                 Retour à l'accueil
