@@ -3,14 +3,17 @@
  *
  * Fonctionnalités principales :
  * - KPIs globaux : MRR, ARR, Active Subscriptions, Churn Rate
+ * - Tendances calculées dynamiquement depuis mrr_history
+ * - Sparklines mini-graphes dans les KPI cards
  * - Charts : MRR History, Revenue by Plan, Tenant Growth
  * - Top Customers par MRR
  * - At-Risk Customers (prédiction churn)
  * - Recent Subscriptions
  */
 
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { TrendingUp, Users, CreditCard, AlertTriangle } from 'lucide-react'
+import { TrendingUp, TrendingDown, Users, AlertTriangle } from 'lucide-react'
 import {
   ChartWrapper,
   LineChart,
@@ -24,6 +27,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  AreaChart,
+  Area,
 } from '@/components/charts/ChartComponents'
 import { api } from '@/lib/api/gateway'
 import { DashboardMetricsSchema, validateApiResponse } from '@/lib/validators'
@@ -35,6 +40,16 @@ const COLORS = {
   enterprise: '#8b5cf6',
 }
 
+function computeTrend(history: Array<{ month: string; mrr: number }>): { value: number; label: string } {
+  if (!history || history.length < 2) return { value: 0, label: '0%' }
+  const current = history[history.length - 1].mrr
+  const previous = history[history.length - 2].mrr
+  if (previous === 0) return { value: 0, label: '0%' }
+  const pct = ((current - previous) / previous) * 100
+  const sign = pct >= 0 ? '+' : ''
+  return { value: pct, label: `${sign}${pct.toFixed(1)}%` }
+}
+
 export function Dashboard() {
   const { data: metrics, isLoading } = useQuery({
     queryKey: ['super-admin-dashboard'],
@@ -44,6 +59,19 @@ export function Dashboard() {
     },
     staleTime: 5 * 60 * 1000,
   })
+
+  const trends = useMemo(() => {
+    if (!metrics?.mrr_history?.length) return { mrr: { value: 0, label: '0%' }, arr: { value: 0, label: '0%' } }
+    const mrrTrend = computeTrend(metrics.mrr_history)
+    // ARR trend = same % as MRR (ARR = MRR * 12)
+    return { mrr: mrrTrend, arr: mrrTrend }
+  }, [metrics?.mrr_history])
+
+  // Sparkline data: last 6 months of MRR
+  const sparklineData = useMemo(() => {
+    if (!metrics?.mrr_history) return []
+    return metrics.mrr_history.slice(-6)
+  }, [metrics?.mrr_history])
 
   if (isLoading) {
     return (
@@ -78,30 +106,32 @@ export function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
           title="MRR"
-          value={`${metrics.mrr.toLocaleString('fr-FR')} €`}
-          icon={TrendingUp}
-          trend="+12.5%"
+          value={`${metrics.mrr.toLocaleString('fr-FR')} \u20AC`}
+          icon={trends.mrr.value >= 0 ? TrendingUp : TrendingDown}
+          trend={trends.mrr.label}
           color="teal"
+          sparkline={sparklineData}
         />
         <KPICard
           title="ARR"
-          value={`${metrics.arr.toLocaleString('fr-FR')} €`}
-          icon={TrendingUp}
-          trend="+15.2%"
+          value={`${metrics.arr.toLocaleString('fr-FR')} \u20AC`}
+          icon={trends.arr.value >= 0 ? TrendingUp : TrendingDown}
+          trend={trends.arr.label}
           color="blue"
+          sparkline={sparklineData}
         />
         <KPICard
           title="Abonnements Actifs"
           value={metrics.active_subscriptions.toString()}
           icon={Users}
-          trend="+8"
+          trend={`${metrics.active_subscriptions} actifs`}
           color="emerald"
         />
         <KPICard
           title="Churn Rate"
           value={`${metrics.churn_rate.toFixed(1)}%`}
           icon={AlertTriangle}
-          trend="-1.2%"
+          trend={`${metrics.churn_rate.toFixed(1)}% ce mois`}
           color={metrics.churn_rate > 5 ? 'red' : 'green'}
           trendInverted
         />
@@ -127,7 +157,7 @@ export function Dashboard() {
                   labelStyle={{ color: '#f3f4f6' }}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="mrr" stroke="#14b8a6" strokeWidth={2} name="MRR (€)" />
+                <Line type="monotone" dataKey="mrr" stroke="#14b8a6" strokeWidth={2} name="MRR (\u20AC)" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -144,7 +174,7 @@ export function Dashboard() {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
-                  label={(entry) => `${entry.plan}: ${entry.revenue}€`}
+                  label={(entry) => `${entry.plan}: ${entry.revenue}\u20AC`}
                 >
                   {metrics.revenue_by_plan.map((entry) => (
                     <Cell key={entry.plan} fill={COLORS[entry.plan as keyof typeof COLORS] || '#6b7280'} />
@@ -189,7 +219,7 @@ export function Dashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                      {tenant.mrr.toLocaleString('fr-FR')} €
+                      {tenant.mrr.toLocaleString('fr-FR')} {'\u20AC'}
                     </td>
                   </tr>
                 ))}
@@ -228,7 +258,7 @@ export function Dashboard() {
                 {metrics.at_risk_customers.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
-                      Aucun customer à risque 🎉
+                      Aucun customer à risque
                     </td>
                   </tr>
                 ) : (
@@ -250,7 +280,7 @@ export function Dashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                        {customer.mrr.toLocaleString('fr-FR')} €
+                        {customer.mrr.toLocaleString('fr-FR')} {'\u20AC'}
                       </td>
                     </tr>
                   ))
@@ -313,7 +343,7 @@ export function Dashboard() {
                     {sub.created_at ? new Date(sub.created_at).toLocaleDateString('fr-FR') : 'N/A'}
                   </td>
                   <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                    {sub.mrr.toLocaleString('fr-FR')} €
+                    {sub.mrr.toLocaleString('fr-FR')} {'\u20AC'}
                   </td>
                 </tr>
               ))}
@@ -332,9 +362,10 @@ interface KPICardProps {
   trend: string
   color: string
   trendInverted?: boolean
+  sparkline?: Array<{ month: string; mrr: number }>
 }
 
-function KPICard({ title, value, icon: Icon, trend, color, trendInverted }: KPICardProps) {
+function KPICard({ title, value, icon: Icon, trend, color, trendInverted, sparkline }: KPICardProps) {
   const isPositive = trend.startsWith('+')
   const trendColor = trendInverted
     ? isPositive
@@ -364,6 +395,28 @@ function KPICard({ title, value, icon: Icon, trend, color, trendInverted }: KPIC
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
+      {/* Sparkline */}
+      {sparkline && sparkline.length > 1 && (
+        <div className="mt-3 h-10">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={sparkline}>
+              <defs>
+                <linearGradient id={`spark-${color}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#14b8a6" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#14b8a6" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type="monotone"
+                dataKey="mrr"
+                stroke="#14b8a6"
+                strokeWidth={1.5}
+                fill={`url(#spark-${color})`}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   )
 }

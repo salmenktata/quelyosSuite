@@ -10,7 +10,7 @@ const configSchema = z.object({
   environment: z.enum(['development', 'staging', 'production']).default('development'),
   debug: z.boolean().default(false),
 
-  apiUrl: z.string().url(),
+  apiUrl: z.string(),
   apiTimeout: z.number().min(1000).max(60000).default(30000),
   apiRetryAttempts: z.number().min(0).max(5).default(3),
 
@@ -48,7 +48,7 @@ function loadConfig(): AppConfig {
     debug: import.meta.env.VITE_DEBUG === 'true',
 
     // En dev, utiliser le proxy Vite (URL vide = même origine)
-    apiUrl: import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? '' : 'http://localhost:8069'),
+    apiUrl: import.meta.env.DEV ? '' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8069'),
     apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 
@@ -79,7 +79,7 @@ function loadConfig(): AppConfig {
       console.warn('Using default values for invalid config fields')
       return configSchema.parse({
         ...rawConfig,
-        apiUrl: rawConfig.apiUrl || (import.meta.env.DEV ? '' : 'http://localhost:8069'),
+        apiUrl: rawConfig.apiUrl,
       })
     }
 

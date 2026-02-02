@@ -10,6 +10,8 @@ import { Loader2 } from 'lucide-react'
 export {
   LineChart,
   Line,
+  AreaChart,
+  Area,
   PieChart,
   Pie,
   Cell,

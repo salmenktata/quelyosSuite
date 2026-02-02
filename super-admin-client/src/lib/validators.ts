@@ -50,7 +50,7 @@ export const TenantSchema = z.object({
     z.literal(false),
     z.null(),
   ]).optional(),
-  plan_code: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan_code: z.string().nullable().optional(),
   plan_name: z.string().nullable().optional(),
   users_count: z.number().nonnegative().optional(),
   products_count: z.number().nonnegative().optional(),
@@ -152,15 +152,24 @@ export const SystemHealthSchema = z.object({
 
 export const PlanSchema = z.object({
   id: z.number(),
-  code: z.enum(['starter', 'pro', 'enterprise']),
+  code: z.string(),
   name: z.string(),
   description: z.string().optional(),
+  plan_type: z.enum(['module', 'solution', 'user_pack', 'enterprise']).optional().default('module'),
   price_monthly: z.number().nonnegative(),
   price_yearly: z.number().nonnegative().optional(),
   max_users: z.number().nonnegative(),
   max_products: z.number().nonnegative(),
   max_orders_per_year: z.number().nonnegative(),
   trial_days: z.number().nonnegative(),
+  original_price: z.number().nonnegative().optional().default(0),
+  badge_text: z.string().optional().default(''),
+  cta_text: z.string().optional().default('Essai gratuit 30 jours'),
+  cta_href: z.string().optional().default('/register'),
+  yearly_discount_pct: z.number().nonnegative().optional().default(20),
+  features_marketing: z.array(z.string()).optional().default([]),
+  icon_name: z.string().optional().default('Layers'),
+  color_theme: z.enum(['emerald', 'indigo', 'amber', 'violet']).optional().default('emerald'),
   enabled_modules: z.array(z.string()).optional(),
   features: z.object({
     wishlist_enabled: z.boolean().optional(),
@@ -182,6 +191,16 @@ export const PlanSchema = z.object({
   is_default: z.boolean().optional(),
   subscribers_count: z.number().nonnegative().optional(),
   created_at: z.string().optional(),
+  // Nouveaux champs modulaires
+  module_key: z.string().nullable().optional(),
+  limit_name: z.string().nullable().optional(),
+  limit_included: z.number().nonnegative().optional().default(0),
+  surplus_price: z.number().nonnegative().optional().default(0),
+  surplus_unit: z.number().nonnegative().optional().default(500),
+  users_included: z.number().nonnegative().optional().default(5),
+  pack_size: z.number().nonnegative().optional().default(5),
+  solution_slug: z.string().nullable().optional(),
+  solution_modules: z.array(z.string()).optional(),
 })
 
 export const PlansResponseSchema = z.object({
@@ -198,14 +217,14 @@ export const TopCustomerSchema = z.object({
   id: z.number(),
   name: z.string(),
   mrr: z.number().nonnegative(),
-  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan: z.string().nullable().optional(),
 })
 
 export const AtRiskCustomerSchema = z.object({
   id: z.number(),
   name: z.string(),
   tenant_id: z.number().nullable().optional(),
-  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan: z.string().nullable().optional(),
   mrr: z.number().nonnegative(),
   health_score: z.number().min(0).max(100),
   health_status: z.enum(['healthy', 'at_risk', 'critical']),
@@ -232,7 +251,7 @@ export const HealthOverviewSchema = z.object({
 export const RecentSubscriptionSchema = z.object({
   id: z.number(),
   name: z.string(),
-  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan: z.string().nullable().optional(),
   state: z.enum(['trial', 'active', 'past_due', 'cancelled', 'expired']),
   mrr: z.number().nonnegative(),
   created_at: z.string().nullable().optional(),
@@ -243,7 +262,7 @@ export const DashboardAtRiskCustomerSchema = z.object({
   id: z.number(),
   name: z.string(),
   mrr: z.number().nonnegative(),
-  plan: z.enum(['starter', 'pro', 'enterprise']).nullable().optional(),
+  plan: z.string().nullable().optional(),
   health_score: z.number().min(0).max(100).optional(),
   health_status: z.enum(['healthy', 'at_risk', 'critical']).optional(),
 })
@@ -347,6 +366,38 @@ export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown
   }
   return result.data
 }
+
+// ============================================================================
+// SCHEMAS SECURITY ALERTS
+// ============================================================================
+
+export const SecurityAlertSchema = z.object({
+  id: z.number(),
+  alert_type: z.string(),
+  severity: z.enum(['critical', 'high', 'medium', 'low']),
+  message: z.string(),
+  status: z.enum(['active', 'acknowledged', 'resolved']),
+  source_ip: z.string().nullable().optional(),
+  tenant_id: z.number().nullable().optional(),
+  tenant_name: z.string().nullable().optional(),
+  details: z.record(z.string(), z.unknown()).nullable().optional(),
+  acknowledged_at: z.string().nullable().optional(),
+  resolved_at: z.string().nullable().optional(),
+  created_at: z.string(),
+})
+
+export const SecurityAlertsSummarySchema = z.object({
+  total_24h: z.number().nonnegative(),
+  critical_count: z.number().nonnegative(),
+  unresolved_count: z.number().nonnegative(),
+  resolved_count: z.number().nonnegative(),
+})
+
+export const SecurityAlertsResponseSchema = z.object({
+  success: z.boolean().optional(),
+  data: z.array(SecurityAlertSchema).optional().default([]),
+  summary: SecurityAlertsSummarySchema.optional(),
+})
 
 // ============================================================================
 // SCHEMAS BACKUPS & CORS
@@ -519,3 +570,6 @@ export type TransactionsResponse = z.infer<typeof TransactionsResponseSchema>
 export type ProvisioningJobsResponse = z.infer<typeof ProvisioningJobsResponseSchema>
 export type Plan = z.infer<typeof PlanSchema>
 export type PlansResponse = z.infer<typeof PlansResponseSchema>
+export type SecurityAlert = z.infer<typeof SecurityAlertSchema>
+export type SecurityAlertsSummary = z.infer<typeof SecurityAlertsSummarySchema>
+export type SecurityAlertsResponse = z.infer<typeof SecurityAlertsResponseSchema>

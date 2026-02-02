@@ -21,6 +21,7 @@ const Monitoring = lazy(() => import('@/pages/Monitoring').then(m => ({ default:
 const Backups = lazy(() => import('@/pages/Backups').then(m => ({ default: m.Backups })))
 const BackupSchedules = lazy(() => import('@/pages/BackupSchedules').then(m => ({ default: m.BackupSchedules })))
 const Security = lazy(() => import('@/pages/Security').then(m => ({ default: m.Security })))
+const SecurityAlerts = lazy(() => import('@/pages/SecurityAlerts').then(m => ({ default: m.SecurityAlerts })))
 const AiConfig = lazy(() => import('@/pages/AiConfig').then(m => ({ default: m.AiConfig })))
 const SupportTickets = lazy(() => import('@/pages/SupportTickets').then(m => ({ default: m.SupportTickets })))
 const SupportTemplates = lazy(() => import('@/pages/SupportTemplates').then(m => ({ default: m.SupportTemplates })))
@@ -34,6 +35,8 @@ const SeedData = lazy(() => import('@/pages/SeedData').then(m => ({ default: m.S
 const InstallWizardPage = lazy(() => import('@/pages/InstallWizardPage').then(m => ({ default: m.InstallWizardPage })))
 const LegalSettings = lazy(() => import('@/pages/LegalSettings').then(m => ({ default: m.LegalSettings })))
 const SecuritySettings = lazy(() => import('@/pages/SecuritySettings').then(m => ({ default: m.SecuritySettings })))
+const SecurityGroups = lazy(() => import('@/pages/SecurityGroups').then(m => ({ default: m.SecurityGroups })))
+const NotFound = lazy(() => import('@/pages/NotFound').then(m => ({ default: m.NotFound })))
 
 // Composant de chargement pour Suspense
 const PageLoader = () => (
@@ -63,6 +66,8 @@ function PageViewTracker() {
       '/monitoring': 'Monitoring',
       '/security': 'Security',
       '/security/2fa': 'Security 2FA Settings',
+      '/security/groups': 'Security Groups',
+      '/security/alerts': 'Security Alerts',
       '/ai-config': 'AI Configuration',
       '/support-tickets': 'Support Tickets',
       '/support-templates': 'Support Templates',
@@ -132,6 +137,8 @@ export function AuthenticatedApp() {
           <Route path="monitoring" element={<Monitoring />} />
           <Route path="security" element={<Security />} />
           <Route path="security/2fa" element={<SecuritySettings />} />
+          <Route path="security/groups" element={<SecurityGroups />} />
+          <Route path="security/alerts" element={<SecurityAlerts />} />
           <Route path="ai-config" element={<AiConfig />} />
           <Route path="support-tickets" element={<SupportTickets />} />
           <Route path="support-templates" element={<SupportTemplates />} />
@@ -145,7 +152,7 @@ export function AuthenticatedApp() {
           <Route path="legal-settings" element={<LegalSettings />} />
           <Route path="sitemap" element={<Sitemap />} />
           <Route path="seed-data" element={<SeedData />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
       </Suspense>
