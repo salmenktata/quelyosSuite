@@ -119,6 +119,7 @@ export interface Product {
   offer_end_date?: string | null
   discount_percent?: number
   rating?: number
+  avg_rating?: number
   reviews_count?: number
   tags?: string[]
   product_tag_ids?: Array<{ id: number; name: string }> // Backend tags format
