@@ -317,7 +317,7 @@ export default function Header() {
                 </p>
                 <div className="space-y-3">
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Commerce & Services</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Commerce</p>
                     <div className="grid grid-cols-1 gap-2">
                       {solutionsNav.commerce.map((item) => (
                         <Link
@@ -333,7 +333,23 @@ export default function Header() {
                     </div>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Métiers spécialisés</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Services</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {solutionsNav.services.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300 hover:bg-white/10"
+                        >
+                          <item.icon className={`h-4 w-4 ${item.color}`} />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Industrie & Terrain</p>
                     <div className="grid grid-cols-1 gap-2">
                       {solutionsNav.metiers.map((item) => (
                         <Link

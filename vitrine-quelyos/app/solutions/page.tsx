@@ -6,7 +6,7 @@ import Footer from '@/app/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Solutions métier Quelyos - Par secteur d\'activité',
-  description: 'Découvrez nos solutions complètes par métier : restauration, commerce, e-commerce, services, santé, BTP, hôtellerie, associations.',
+  description: 'Découvrez nos 12 solutions complètes par métier : restauration, commerce, e-commerce, services, santé, BTP, hôtellerie, associations, industrie, immobilier, formation, logistique.',
 };
 
 export default async function SolutionsIndexPage() {
@@ -43,7 +43,7 @@ export default async function SolutionsIndexPage() {
               Choisissez votre solution métier
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600 dark:text-slate-400">
-              Solutions complètes et clés en main pour 8 secteurs d&apos;activité
+              Solutions complètes et clés en main pour 12 secteurs d&apos;activité
             </p>
           </div>
 

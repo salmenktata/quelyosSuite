@@ -109,6 +109,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/solutions/btp", changeFrequency: "monthly", priority: 0.7 },
     { path: "/solutions/hotellerie", changeFrequency: "monthly", priority: 0.7 },
     { path: "/solutions/associations", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/industrie", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/immobilier", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/education", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/solutions/logistique", changeFrequency: "monthly", priority: 0.7 },
+
+    // Secteurs
+    { path: "/secteurs/industrie", changeFrequency: "monthly", priority: 0.6 },
+    { path: "/secteurs/immobilier", changeFrequency: "monthly", priority: 0.6 },
+    { path: "/secteurs/education", changeFrequency: "monthly", priority: 0.6 },
+    { path: "/secteurs/logistique", changeFrequency: "monthly", priority: 0.6 },
 
     // E-commerce
     { path: "/ecommerce/pricing", changeFrequency: "monthly", priority: 0.8 },

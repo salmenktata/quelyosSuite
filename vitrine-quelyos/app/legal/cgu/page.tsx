@@ -278,7 +278,7 @@ export default function CGUPage() {
             <div className="space-y-4 text-slate-300">
               <p className="m-0">
                 Le traitement des données personnelles est régi par notre{" "}
-                <Link href="/confidentialite" className="text-indigo-400 hover:text-indigo-300 underline">
+                <Link href="/legal/confidentialite" className="text-indigo-400 hover:text-indigo-300 underline">
                   Politique de Confidentialité
                 </Link>, qui fait partie intégrante des présentes CGU.
               </p>

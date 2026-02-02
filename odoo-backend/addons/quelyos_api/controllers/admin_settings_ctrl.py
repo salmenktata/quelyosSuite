@@ -313,6 +313,253 @@ class AdminSettingsController(SuperAdminController):
                 status=500
             )
 
+    @http.route('/api/super-admin/plans/seed-defaults', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def seed_default_plans(self):
+        """Insère ou met à jour la configuration par défaut des plans tarifaires"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            created = 0
+            updated = 0
+
+            defaults = self._get_default_plans()
+
+            for plan_data in defaults:
+                existing = Plan.search([
+                    ('code', '=', plan_data['code']),
+                ], limit=1)
+
+                if existing:
+                    existing.write(plan_data)
+                    updated += 1
+                else:
+                    Plan.create(plan_data)
+                    created += 1
+
+            _logger.info(
+                f"[AUDIT] Plans seed - User: {request.env.user.login} | "
+                f"Created: {created}, Updated: {updated}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'{created} créés, {updated} mis à jour',
+                'created': created,
+                'updated': updated,
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Seed default plans error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=500
+            )
+
+    def _get_default_plans(self):
+        """Retourne la liste des plans par défaut"""
+        common = {
+            'max_users': 5,
+            'max_products': 500,
+            'max_orders_per_year': 5000,
+            'trial_days': 30,
+            'cta_text': 'Essai gratuit 30 jours',
+            'cta_href': '/register',
+            'yearly_discount_pct': 22,
+            'feature_guest_checkout': True,
+            'active': True,
+            'support_level': 'email_chat_24h',
+        }
+
+        plans = []
+
+        # ── Plan de base ──
+        plans.append({
+            **common,
+            'code': 'base',
+            'name': 'Quelyos Base',
+            'description': 'Accès plateforme + 1 module au choix',
+            'plan_type': 'base',
+            'price_monthly': 9,
+            'price_yearly': 84,
+            'icon_name': 'Layers',
+            'color_theme': 'emerald',
+            'is_default': True,
+            'sequence': 1,
+            'features_marketing': json.dumps([
+                '5 utilisateurs inclus',
+                '1 module au choix',
+                'Essai gratuit 30 jours',
+                'Support email & chat',
+            ]),
+            'enabled_modules': json.dumps(['home']),
+        })
+
+        # ── 9 modules ──
+        modules_data = [
+            ('mod_finance', 'Finance', 'finance', 9, 84, 'Trésorerie, budgets, prévisions, export FEC', 'Wallet', 'emerald', 10,
+             ['Trésorerie temps réel', 'Budgets et prévisions IA', 'Export FEC comptable', 'Multi-devises'],
+             'transactions', 500, 3, 500),
+            ('mod_store', 'Boutique', 'store', 19, 180, 'Catalogue, commandes, promotions, thèmes', 'Store', 'indigo', 20,
+             ['Catalogue produits', 'Gestion commandes', 'Promotions & coupons', 'Thèmes personnalisables'],
+             'products', 500, 5, 500),
+            ('mod_stock', 'Stock', 'stock', 9, 84, 'Inventaire, mouvements, valorisation', 'Package', 'amber', 30,
+             ['Inventaire temps réel', 'Mouvements de stock', 'Valorisation FIFO/LIFO', 'Alertes rupture'],
+             None, 0, 0, 0),
+            ('mod_crm', 'CRM', 'crm', 12, 112, 'Pipeline, opportunités, facturation', 'Users', 'violet', 40,
+             ['Pipeline commercial', 'Gestion opportunités', 'Facturation intégrée', 'Rapports ventes'],
+             'contacts', 1000, 3, 1000),
+            ('mod_marketing', 'Marketing', 'marketing', 9, 84, 'Campagnes email/SMS, listes diffusion', 'Megaphone', 'emerald', 50,
+             ['Campagnes email', 'SMS marketing', 'Listes de diffusion', 'Analytics campagnes'],
+             None, 0, 0, 0),
+            ('mod_hr', 'RH', 'hr', 12, 112, 'Employés, congés, contrats, compétences', 'UserCog', 'emerald', 60,
+             ['Fiches employés', 'Gestion congés', 'Contrats de travail', 'Compétences & formations'],
+             'employees', 25, 5, 25),
+            ('mod_support', 'Support', 'support', 5, 48, 'Tickets, FAQ, base de connaissances', 'LifeBuoy', 'emerald', 70,
+             ['Système tickets', 'FAQ publique', 'Base de connaissances', 'SLA configurable'],
+             'tickets_month', 50, 2, 50),
+            ('mod_pos', 'Point de Vente', 'pos', 15, 140, 'Terminal, kiosk, cuisine, analytics', 'Monitor', 'amber', 80,
+             ['Terminal de vente', 'Mode kiosk', 'Écran cuisine', 'Analytics POS'],
+             None, 0, 0, 0),
+            ('mod_maintenance', 'GMAO', 'maintenance', 9, 84, 'Maintenance équipements, planning', 'Wrench', 'emerald', 90,
+             ['Gestion équipements', 'Planning maintenance', 'Ordres de travail', 'Historique interventions'],
+             'equipments', 50, 3, 50),
+        ]
+
+        for code, name, module_key, price, yearly, desc, icon, color, seq, features, limit_name, limit_inc, surplus_p, surplus_u in modules_data:
+            plan = {
+                **common,
+                'code': code,
+                'name': name,
+                'description': desc,
+                'plan_type': 'module',
+                'price_monthly': price,
+                'price_yearly': yearly,
+                'icon_name': icon,
+                'color_theme': color,
+                'sequence': 100 + seq,
+                'module_key': module_key,
+                'features_marketing': json.dumps(features),
+                'enabled_modules': json.dumps([module_key]),
+            }
+            if limit_name:
+                plan['limit_name'] = limit_name
+                plan['limit_included'] = limit_inc
+                plan['surplus_price'] = surplus_p
+                plan['surplus_unit'] = surplus_u
+            plans.append(plan)
+
+        # ── 12 solutions métier ──
+        solutions_data = [
+            ('sol_restaurant', 'Quelyos Resto', 'restaurant', 45, 420, 'Solution complète restauration', 'UtensilsCrossed', 'amber', 10,
+             ['pos', 'stock', 'finance', 'crm', 'marketing'], ['Point de Vente', 'Stock temps réel', 'Finance intégrée', 'CRM', 'Marketing']),
+            ('sol_commerce', 'Quelyos Commerce', 'commerce', 45, 420, 'Commerce physique + digital', 'ShoppingBag', 'indigo', 20,
+             ['store', 'pos', 'stock', 'crm'], ['Boutique en ligne', 'Point de Vente', 'Stock', 'CRM']),
+            ('sol_ecommerce', 'Quelyos Store', 'ecommerce', 45, 420, 'E-commerce complet', 'Globe', 'emerald', 30,
+             ['store', 'stock', 'marketing', 'finance', 'crm'], ['Boutique en ligne', 'Stock', 'Marketing', 'Finance', 'CRM']),
+            ('sol_services', 'Quelyos Pro', 'services', 35, 324, 'Entreprises de services', 'Briefcase', 'violet', 40,
+             ['crm', 'finance', 'hr', 'marketing'], ['CRM', 'Finance', 'RH', 'Marketing']),
+            ('sol_sante', 'Quelyos Care', 'sante', 29, 276, 'Cabinets & cliniques', 'Heart', 'emerald', 50,
+             ['crm', 'finance', 'marketing', 'support'], ['CRM', 'Finance', 'Marketing', 'Support']),
+            ('sol_btp', 'Quelyos Build', 'btp', 35, 324, 'BTP & construction', 'HardHat', 'amber', 60,
+             ['maintenance', 'stock', 'finance', 'crm'], ['GMAO', 'Stock', 'Finance', 'CRM']),
+            ('sol_hotellerie', 'Quelyos Hotel', 'hotellerie', 39, 360, 'Hôtellerie & hébergement', 'Hotel', 'emerald', 70,
+             ['support', 'maintenance', 'finance', 'crm', 'marketing'], ['Support', 'GMAO', 'Finance', 'CRM', 'Marketing']),
+            ('sol_associations', 'Quelyos Club', 'associations', 19, 180, 'Associations & ONG', 'HandHeart', 'emerald', 80,
+             ['crm', 'finance', 'marketing'], ['CRM (adhérents)', 'Finance', 'Marketing']),
+            ('sol_industrie', 'Quelyos Industrie', 'industrie', 35, 324, 'PME industrielles & ateliers', 'Factory', 'emerald', 90,
+             ['maintenance', 'stock', 'finance', 'hr'], ['GMAO', 'Stock', 'Finance', 'RH']),
+            ('sol_immobilier', 'Quelyos Immo', 'immobilier', 29, 276, 'Agences & gestion immobilière', 'Home', 'violet', 100,
+             ['crm', 'finance', 'marketing', 'support'], ['CRM', 'Finance', 'Marketing', 'Support']),
+            ('sol_education', 'Quelyos Edu', 'education', 35, 324, 'Formation & enseignement', 'GraduationCap', 'indigo', 110,
+             ['crm', 'finance', 'marketing', 'hr'], ['CRM', 'Finance', 'Marketing', 'RH']),
+            ('sol_logistique', 'Quelyos Logistique', 'logistique', 35, 324, 'Transport & entreposage', 'Truck', 'emerald', 120,
+             ['stock', 'maintenance', 'finance', 'crm'], ['Stock', 'GMAO', 'Finance', 'CRM']),
+        ]
+
+        for code, name, slug, price, yearly, desc, icon, color, seq, modules, features in solutions_data:
+            plans.append({
+                **common,
+                'code': code,
+                'name': name,
+                'description': desc,
+                'plan_type': 'solution',
+                'price_monthly': price,
+                'price_yearly': yearly,
+                'icon_name': icon,
+                'color_theme': color,
+                'sequence': 200 + seq,
+                'solution_slug': slug,
+                'solution_modules': json.dumps(modules),
+                'features_marketing': json.dumps(features),
+                'enabled_modules': json.dumps(modules),
+            })
+
+        # ── Pack utilisateurs ──
+        plans.append({
+            **common,
+            'code': 'user_pack_5',
+            'name': 'Pack +5 Utilisateurs',
+            'description': '+5 utilisateurs supplémentaires',
+            'plan_type': 'user_pack',
+            'price_monthly': 15,
+            'price_yearly': 140,
+            'icon_name': 'Users',
+            'color_theme': 'amber',
+            'sequence': 400,
+            'pack_size': 5,
+            'features_marketing': json.dumps([
+                '+5 utilisateurs',
+                'Accès à tous les modules souscrits',
+                'Support inclus',
+            ]),
+            'enabled_modules': json.dumps(['home']),
+        })
+
+        # ── Enterprise ──
+        plans.append({
+            **common,
+            'code': 'enterprise',
+            'name': 'Enterprise',
+            'description': 'Solution sur mesure pour grandes entreprises',
+            'plan_type': 'enterprise',
+            'price_monthly': 0,
+            'price_yearly': 0,
+            'icon_name': 'Building2',
+            'color_theme': 'violet',
+            'sequence': 500,
+            'features_marketing': json.dumps([
+                'Utilisateurs illimités',
+                'Tous les modules inclus',
+                'SLA garanti 99.9%',
+                'Account manager dédié',
+                'Migration & onboarding',
+                'API avancée',
+            ]),
+            'feature_api_access': True,
+            'feature_priority_support': True,
+            'feature_custom_domain': True,
+            'enabled_modules': json.dumps(['home']),
+        })
+
+        return plans
+
     def _serialize_plan(self, plan):
         """Sérialise un plan pour l'API super-admin"""
         # Compter les subscribers

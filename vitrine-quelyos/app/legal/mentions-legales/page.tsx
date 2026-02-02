@@ -155,7 +155,7 @@ export default function MentionsLegalesPage() {
               </p>
               <p className="m-0">
                 Pour plus d&apos;informations sur la gestion de vos données personnelles, veuillez consulter notre{" "}
-                <Link href="/confidentialite" className="text-indigo-400 hover:text-indigo-300 underline">
+                <Link href="/legal/confidentialite" className="text-indigo-400 hover:text-indigo-300 underline">
                   Politique de Confidentialité
                 </Link>.
               </p>

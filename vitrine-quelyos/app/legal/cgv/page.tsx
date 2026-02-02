@@ -73,7 +73,7 @@ export default function CGVPage() {
           <p className="text-slate-300 m-0">
             Les présentes Conditions Générales de Vente (CGV) s&apos;appliquent à toute souscription d&apos;un 
             abonnement aux services Quelyos. Elles complètent les{" "}
-            <Link href="/cgu" className="text-indigo-400 hover:text-indigo-300 underline">
+            <Link href="/legal/cgu" className="text-indigo-400 hover:text-indigo-300 underline">
               Conditions Générales d&apos;Utilisation
             </Link>{" "}
             et priment sur celles-ci en cas de contradiction concernant les aspects commerciaux.

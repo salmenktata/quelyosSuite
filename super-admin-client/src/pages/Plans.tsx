@@ -14,7 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Package, Plus, Edit2, Archive, Check, X, Loader2, Users,
   Clock, Blocks, Palette, Megaphone, Trash2, Layers,
-  DollarSign, ChevronDown, ChevronUp, AlertTriangle,
+  DollarSign, ChevronDown, ChevronUp, AlertTriangle, RotateCcw,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { ModuleGroupSelector } from '@/components/common'
@@ -218,6 +218,18 @@ export function Plans() {
     onError: () => toast.error('Erreur lors de la sauvegarde'),
   })
 
+  const seedDefaults = useMutation({
+    mutationFn: async () => {
+      return api.request({ method: 'POST', path: '/api/super-admin/plans/seed-defaults' })
+    },
+    onSuccess: (res) => {
+      const data = (res as { data: { created: number; updated: number } }).data
+      toast.success(`Configuration par défaut appliquée : ${data.created} créés, ${data.updated} mis à jour`)
+      queryClient.invalidateQueries({ queryKey: ['super-admin-plans'] })
+    },
+    onError: () => toast.error('Erreur lors de l\'initialisation des plans par défaut'),
+  })
+
   const archivePlan = useMutation({
     mutationFn: async (id: number) => api.request({ method: 'DELETE', path: `/api/super-admin/plans/${id}` }),
     onSuccess: () => {
@@ -250,13 +262,24 @@ export function Plans() {
             {modulePlans.length} modules • {solutionPlans.length} solutions • {totalSubscribers} abonnés • {totalMRR.toLocaleString('fr-FR')}€ MRR
           </p>
         </div>
-        <button
-          onClick={() => { setEditingPlan(null); setShowModal(true) }}
-          className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition"
-        >
-          <Plus className="w-4 h-4" />
-          Nouveau Plan
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => seedDefaults.mutate()}
+            disabled={seedDefaults.isPending}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition disabled:opacity-50"
+            title="Insérer ou actualiser la configuration par défaut (9 modules, 12 solutions, packs, enterprise)"
+          >
+            {seedDefaults.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+            Config par défaut
+          </button>
+          <button
+            onClick={() => { setEditingPlan(null); setShowModal(true) }}
+            className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition"
+          >
+            <Plus className="w-4 h-4" />
+            Nouveau Plan
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}

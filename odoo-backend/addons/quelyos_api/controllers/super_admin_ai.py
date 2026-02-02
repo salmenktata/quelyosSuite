@@ -511,6 +511,95 @@ class SuperAdminAiController(http.Controller):
                 'latency_ms': 0
             }, headers=cors_headers, status=500)
 
+    @http.route('/api/super-admin/ai/seed-defaults', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def seed_default_providers(self):
+        """Insère ou met à jour la configuration par défaut des providers IA."""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        try:
+            self._check_super_admin()
+
+            AIConfig = request.env['quelyos.ai.config'].sudo()
+            created = 0
+            updated = 0
+
+            defaults = [
+                {
+                    'name': 'Groq AI (Chatbot)',
+                    'provider': 'groq',
+                    'model': 'llama-3.1-70b-versatile',
+                    'max_tokens': 800,
+                    'temperature': 0.7,
+                    'priority': 1,
+                    'is_enabled': True,
+                },
+                {
+                    'name': 'Groq Rapide (Fallback)',
+                    'provider': 'groq',
+                    'model': 'llama-3.1-8b-instant',
+                    'max_tokens': 500,
+                    'temperature': 0.5,
+                    'priority': 2,
+                    'is_enabled': False,
+                },
+                {
+                    'name': 'Claude Sonnet (Premium)',
+                    'provider': 'claude',
+                    'model': 'claude-3-5-sonnet-20241022',
+                    'max_tokens': 1024,
+                    'temperature': 0.7,
+                    'priority': 3,
+                    'is_enabled': False,
+                },
+            ]
+
+            for provider_data in defaults:
+                existing = AIConfig.search([
+                    ('name', '=', provider_data['name']),
+                ], limit=1)
+
+                # Ne pas écraser l'API key existante
+                if existing:
+                    update_vals = {k: v for k, v in provider_data.items() if k != 'name'}
+                    # Garder is_enabled tel quel si le provider existe déjà
+                    update_vals.pop('is_enabled', None)
+                    existing.write(update_vals)
+                    updated += 1
+                else:
+                    AIConfig.create(provider_data)
+                    created += 1
+
+            _logger.info(
+                f"[Super Admin AI] Seed defaults - User: {request.env.user.login} | "
+                f"Created: {created}, Updated: {updated}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'{created} créés, {updated} mis à jour',
+                'created': created,
+                'updated': updated,
+            }, headers=cors_headers)
+
+        except AccessDenied as e:
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=403)
+
+        except Exception as e:
+            _logger.error(f"[Super Admin AI] Erreur seed defaults: {e}", exc_info=True)
+            return request.make_json_response({
+                'success': False,
+                'error': str(e)
+            }, headers=cors_headers, status=500)
+
     @http.route('/api/super-admin/ai/metrics', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_metrics(self):
         """
