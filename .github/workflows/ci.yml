@@ -189,7 +189,7 @@ jobs:
       - name: Check if packages exist
         id: check
         run: |
-          if [ -d "packages/ui-kit" ] || [ -d "packages/utils" ]; then
+          if [ -d "packages/ui" ] || [ -d "packages/utils" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -212,11 +212,11 @@ jobs:
         if: steps.check.outputs.exists == 'true'
         run: pnpm install --frozen-lockfile
 
-      - name: Build @quelyos/ui-kit
+      - name: Build @quelyos/ui
         if: steps.check.outputs.exists == 'true'
         run: |
-          if [ -d "packages/ui-kit" ]; then
-            cd packages/ui-kit && pnpm build
+          if [ -d "packages/ui" ]; then
+            cd packages/ui && pnpm build
           fi
 
       - name: Build @quelyos/utils
@@ -255,6 +255,20 @@ jobs:
             --select=E9,F63,F7,F82 \
             --show-source \
             --statistics
+
+  # ==========================================================================
+  # ODOO ISOLATION CHECK - Multi-tenant safety
+  # ==========================================================================
+  check-odoo-isolation:
+    name: Check Odoo Isolation Rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tenant isolation rules
+        run: |
+          chmod +x scripts/check-odoo-isolation.sh
+          ./scripts/check-odoo-isolation.sh
 
   # ==========================================================================
   # SECURITY SCAN - npm audit
