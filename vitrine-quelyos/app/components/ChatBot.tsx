@@ -62,9 +62,8 @@ export default function ChatBot() {
     setHasNewMessage(false)
 
     try {
-      // Appel à l'API backend
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
-      const response = await fetch(`${backendUrl}/api/ai/chat`, {
+      // Appel à la route API Next.js (avec fallback keywords intégré)
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -78,22 +77,18 @@ export default function ChatBot() {
 
       const data = await response.json()
 
-      if (data.success) {
-        const botMessage: ChatMessage = {
-          type: 'bot',
-          text: data.response,
-          suggestions: data.suggestions,
-          timestamp: new Date()
-        }
+      const botMessage: ChatMessage = {
+        type: 'bot',
+        text: data.response,
+        suggestions: data.suggestions,
+        timestamp: new Date()
+      }
 
-        setIsTyping(false)
-        setChatMessages(prev => [...prev, botMessage])
+      setIsTyping(false)
+      setChatMessages(prev => [...prev, botMessage])
 
-        if (!chatOpen) {
-          setHasNewMessage(true)
-        }
-      } else {
-        throw new Error(data.error || 'Erreur inconnue')
+      if (!chatOpen) {
+        setHasNewMessage(true)
       }
     } catch (error) {
       log.error('Erreur chat:', error)

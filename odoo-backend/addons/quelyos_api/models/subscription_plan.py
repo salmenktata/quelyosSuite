@@ -393,7 +393,9 @@ class SubscriptionPlan(models.Model):
     def get_pricing_grid(self):
         """Retourne la grille tarifaire structurée pour l'API publique."""
         module_plans = self.get_module_plans()
+        base_plan = self.search([('plan_type', '=', 'base'), ('active', '=', True)], limit=1)
         user_pack = self.search([('plan_type', '=', 'user_pack'), ('active', '=', True)], limit=1)
+        enterprise_plan = self.search([('plan_type', '=', 'enterprise'), ('active', '=', True)], limit=1)
 
         # Solutions métier
         solution_plans = self.search([
@@ -405,7 +407,21 @@ class SubscriptionPlan(models.Model):
         all_in_regular = sum(m.price_monthly for m in module_plans)
         all_in_discounted = round(all_in_regular * 0.9)  # -10%
 
+        # Base plan defaults
+        base_price = base_plan.price_monthly if base_plan else 9
+        base_discount = base_plan.yearly_discount_pct if base_plan else 22
+        base_users = base_plan.users_included if base_plan else 5
+        base_trial = base_plan.trial_days if base_plan else 30
+
         return {
+            'base': {
+                'price': base_price,
+                'annualPrice': round(base_price * (1 - base_discount / 100)),
+                'usersIncluded': base_users,
+                'freeModuleChoice': True,
+                'trialDays': base_trial,
+                'yearlyDiscountPct': base_discount,
+            },
             'modules': [{
                 'key': m.module_key,
                 'name': m.name,
@@ -440,6 +456,18 @@ class SubscriptionPlan(models.Model):
                 'savings': self._compute_solution_savings(s),
                 'features': s.get_features_marketing_list(),
             } for s in solution_plans],
+            'enterprise': {
+                'features': enterprise_plan.get_features_marketing_list() if enterprise_plan else [
+                    'Utilisateurs illimités',
+                    'Tous les modules inclus',
+                    'SLA garanti 99.9%',
+                    'Account manager dédié',
+                    'Support téléphonique 24/7',
+                    'Intégrations sur mesure',
+                ],
+                'cta': enterprise_plan.cta_text if enterprise_plan else 'Nous contacter',
+                'href': enterprise_plan.cta_href if enterprise_plan else '/contact',
+            },
             'allInDiscount': {
                 'regularTotal': all_in_regular,
                 'discountedPrice': all_in_discounted,

@@ -31,7 +31,7 @@ export const config = {
   finance: {
     app: FINANCE_BASE,
     login: join(FINANCE_BASE, "/login"),
-    register: join(FINANCE_BASE, "/register"),
+    register: "/register?module=finance",
     dashboard: join(FINANCE_BASE, "/dashboard"),
     accounts: join(FINANCE_BASE, "/dashboard/accounts"),
     forecast: join(FINANCE_BASE, "/dashboard/forecast"),
@@ -43,7 +43,7 @@ export const config = {
   marketing: {
     app: MARKETING_BASE,
     login: join(MARKETING_BASE, "/login"),
-    register: join(MARKETING_BASE, "/register"),
+    register: "/register?module=marketing",
     dashboard: join(MARKETING_BASE, "/dashboard"),
   },
   // URLs Super Admin

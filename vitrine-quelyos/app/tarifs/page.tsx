@@ -87,7 +87,7 @@ function usePricingGrid(): PricingGrid {
         if (!res.ok) return;
         const data = await res.json();
         if (!cancelled && data.success && data.data) {
-          setGrid(data.data);
+          setGrid({ ...FALLBACK_PRICING_GRID, ...data.data });
         }
       } catch {
         // fallback silencieux
@@ -127,22 +127,22 @@ function getModuleColors(color: string) {
 
 const testimonials = [
   {
-    quote: "Quelyos a transform\u00E9 notre gestion. On passe 70% de temps en moins sur la compta et les pr\u00E9visions IA nous alertent avant les probl\u00E8mes.",
+    quote: "Quelyos a transformé notre gestion. On passe 70% de temps en moins sur la compta et les prévisions IA nous alertent avant les problèmes.",
     author: "Marie D.",
     role: "Fondatrice @ModaShop",
-    detail: "E-commerce mode \u2022 Plan Boutique + Finance",
+    detail: "E-commerce mode • Plan Boutique + Finance",
   },
   {
-    quote: "Le rapport qualit\u00E9-prix est imbattable. On a r\u00E9cup\u00E9r\u00E9 3 factures impay\u00E9es le premier mois. Rentabilis\u00E9 en 2 semaines.",
+    quote: "Le rapport qualité-prix est imbattable. On a récupéré 3 factures impayées le premier mois. Rentabilisé en 2 semaines.",
     author: "Thomas L.",
-    role: "G\u00E9rant Cabinet Martin",
-    detail: "Comptabilit\u00E9 \u2022 Module Finance seul",
+    role: "Gérant Cabinet Martin",
+    detail: "Comptabilité • Module Finance seul",
   },
 ];
 
 const trustMetrics = [
-  { value: "+500", label: "entreprises accompagn\u00E9es" },
-  { value: "92%", label: "de pr\u00E9cision IA sur 12 mois" },
+  { value: "+500", label: "entreprises accompagnées" },
+  { value: "92%", label: "de précision IA sur 12 mois" },
   { value: "4.8/5", label: "note moyenne clients" },
 ];
 
@@ -156,15 +156,15 @@ const faqs = [
     questions: [
       {
         q: "Comment fonctionne le pricing modulaire ?",
-        a: "Vous payez un abonnement de base (9\u20AC/mois) qui inclut le module Home + 1 module au choix. Ensuite, ajoutez uniquement les modules dont vous avez besoin. Pas de pack inutile.",
+        a: "Vous payez un abonnement de base (9€/mois) qui inclut le module Home + 1 module au choix. Ensuite, ajoutez uniquement les modules dont vous avez besoin. Pas de pack inutile.",
       },
       {
-        q: "Qu\u2019est-ce qu\u2019un pack m\u00E9tier (Solution) ?",
-        a: "Les Solutions m\u00E9tier regroupent plusieurs modules en un pack sectoriel \u00E0 prix r\u00E9duit. Par exemple, Quelyos Resto combine POS + Stock + Finance pour 39\u20AC au lieu de 54\u20AC en modules s\u00E9par\u00E9s.",
+        q: "Qu'est-ce qu'un pack métier (Solution) ?",
+        a: "Les Solutions métier regroupent plusieurs modules en un pack sectoriel à prix réduit. Par exemple, Quelyos Resto combine POS + Stock + Finance pour 39€ au lieu de 54€ en modules séparés.",
       },
       {
-        q: "Comment fonctionne l\u2019essai 30 jours ?",
-        a: "30 jours d\u2019acc\u00E8s complet \u00E0 tous les modules. Aucune carte bancaire requise. \u00C0 la fin, choisissez vos modules ou restez sur le plan de base.",
+        q: "Comment fonctionne l'essai 30 jours ?",
+        a: "30 jours d'accès complet à tous les modules. Aucune carte bancaire requise. À la fin, choisissez vos modules ou restez sur le plan de base.",
       },
     ],
   },
@@ -172,29 +172,29 @@ const faqs = [
     category: "Tarifs & Facturation",
     questions: [
       {
-        q: "Puis-je changer de modules \u00E0 tout moment ?",
-        a: "Oui, ajout ou retrait instantan\u00E9. Le changement est proratis\u00E9 au jour pr\u00E8s sur votre facture.",
+        q: "Puis-je changer de modules à tout moment ?",
+        a: "Oui, ajout ou retrait instantané. Le changement est proratisé au jour près sur votre facture.",
       },
       {
         q: "Y a-t-il un engagement ?",
-        a: "Aucun engagement. Annulation en 1 clic. Satisfait ou rembours\u00E9 30 jours.",
+        a: "Aucun engagement. Annulation en 1 clic. Satisfait ou remboursé 30 jours.",
       },
       {
         q: "Les tarifs sont-ils HT ou TTC ?",
-        a: "Tous les tarifs affich\u00E9s sont HT. La TVA applicable sera ajout\u00E9e lors de la facturation.",
+        a: "Tous les tarifs affichés sont HT. La TVA applicable sera ajoutée lors de la facturation.",
       },
     ],
   },
   {
-    category: "S\u00E9curit\u00E9 & RGPD",
+    category: "Sécurité & RGPD",
     questions: [
       {
-        q: "O\u00F9 sont h\u00E9berg\u00E9es mes donn\u00E9es ?",
-        a: "Infrastructure s\u00E9curis\u00E9e, datacenters certifi\u00E9s ISO 27001. Conformit\u00E9 RGPD garantie.",
+        q: "Où sont hébergées mes données ?",
+        a: "Infrastructure sécurisée, datacenters certifiés ISO 27001. Conformité RGPD garantie.",
       },
       {
-        q: "Puis-je ajouter des utilisateurs suppl\u00E9mentaires ?",
-        a: "Oui, par packs de 5 utilisateurs (15\u20AC/mois). 5 utilisateurs sont inclus dans le plan de base.",
+        q: "Puis-je ajouter des utilisateurs supplémentaires ?",
+        a: "Oui, par packs de 5 utilisateurs (15€/mois). 5 utilisateurs sont inclus dans le plan de base.",
       },
     ],
   },
@@ -225,7 +225,7 @@ function ROICalculator() {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white">
-            Calculez vos \u00E9conomies
+            Calculez vos économies
           </h3>
           <p className="text-sm text-slate-400">Estimation ROI annuel</p>
         </div>
@@ -235,9 +235,9 @@ function ROICalculator() {
         <div className="space-y-5">
           {[
             { label: "Heures/mois sur la gestion", value: hoursPerMonth, set: setHoursPerMonth, min: 2, max: 40, step: 1, unit: "h" },
-            { label: "Votre taux horaire", value: hourlyRate, set: setHourlyRate, min: 20, max: 150, step: 5, unit: "\u20AC" },
-            { label: "Factures oubli\u00E9es/mois", value: missedInvoices, set: setMissedInvoices, min: 0, max: 10, step: 1, unit: "" },
-            { label: "Montant moyen facture", value: avgInvoiceAmount, set: setAvgInvoiceAmount, min: 100, max: 5000, step: 100, unit: "\u20AC" },
+            { label: "Votre taux horaire", value: hourlyRate, set: setHourlyRate, min: 20, max: 150, step: 5, unit: "€" },
+            { label: "Factures oubliées/mois", value: missedInvoices, set: setMissedInvoices, min: 0, max: 10, step: 1, unit: "" },
+            { label: "Montant moyen facture", value: avgInvoiceAmount, set: setAvgInvoiceAmount, min: 100, max: 5000, step: 100, unit: "€" },
           ].map((item) => (
             <div key={item.label}>
               <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
@@ -259,35 +259,35 @@ function ROICalculator() {
 
         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
           <h4 className="mb-4 text-sm font-medium uppercase tracking-wider text-emerald-400">
-            Vos \u00E9conomies estim\u00E9es
+            Vos économies estimées
           </h4>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400"><Clock size={14} />Temps gagn\u00E9/an</span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><Clock size={14} />Temps gagné/an</span>
               <span className="font-medium text-white">{(timeSaved * 12).toFixed(0)}h</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400"><Euro size={14} />Valeur temps gagn\u00E9</span>
-              <span className="font-medium text-white">{timeSavings.toLocaleString("fr-FR")}\u20AC</span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><Euro size={14} />Valeur temps gagné</span>
+              <span className="font-medium text-white">{timeSavings.toLocaleString("fr-FR")}€</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400"><TrendingUp size={14} />Factures r\u00E9cup\u00E9r\u00E9es</span>
-              <span className="font-medium text-white">{invoiceSavings.toLocaleString("fr-FR")}\u20AC</span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><TrendingUp size={14} />Factures récupérées</span>
+              <span className="font-medium text-white">{invoiceSavings.toLocaleString("fr-FR")}€</span>
             </div>
 
             <div className="my-3 border-t border-white/10" />
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">{`Co\u00FBt moyen/an (base + 2 modules)`}</span>
-              <span className="font-medium text-slate-400">-{businessCost}\u20AC</span>
+              <span className="text-sm text-slate-400">{`Coût moyen/an (base + 2 modules)`}</span>
+              <span className="font-medium text-slate-400">-{businessCost}€</span>
             </div>
 
             <div className="rounded-lg bg-emerald-500/10 p-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-emerald-400">\u00C9conomie nette/an</span>
+                <span className="font-semibold text-emerald-400">Économie nette/an</span>
                 <span className="text-2xl font-bold text-emerald-400">
-                  +{(totalSavings - businessCost).toLocaleString("fr-FR")}\u20AC
+                  +{(totalSavings - businessCost).toLocaleString("fr-FR")}€
                 </span>
               </div>
               <p className="mt-1 text-right text-xs text-emerald-400/70">ROI : {roi.toFixed(0)}%</p>
@@ -308,7 +308,7 @@ function ROICalculator() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// FAQ ACCORD\u00C9ON
+// FAQ ACCORDÉON
 // ═══════════════════════════════════════════════════════════════════════════
 
 function FAQSection() {
@@ -420,7 +420,7 @@ function ModuleCard({
           <span className="text-sm font-bold text-emerald-400">Inclus</span>
         ) : (
           <>
-            <span className="text-lg font-bold text-white">{price}\u20AC</span>
+            <span className="text-lg font-bold text-white">{price}€</span>
             <span className="text-xs text-slate-500">/mois</span>
           </>
         )}
@@ -470,7 +470,7 @@ function SolutionCard({
           </div>
         </div>
         <div className="text-right shrink-0">
-          <div className="text-lg font-bold text-white">{price}\u20AC<span className="text-xs text-slate-500">/mois</span></div>
+          <div className="text-lg font-bold text-white">{price}€<span className="text-xs text-slate-500">/mois</span></div>
           {solution.savings > 0 && (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400">
               <Percent size={10} />-{solution.savings}%
@@ -498,7 +498,7 @@ function SolutionCard({
         onClick={() => onSelect(solution.modules)}
         className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg ${colors.bg} border ${colors.border} px-3 py-2 text-xs font-semibold ${colors.text} transition-all hover:bg-white/10`}
       >
-        S\u00E9lectionner ce pack
+        Sélectionner ce pack
         <ChevronRight size={12} />
       </button>
     </div>
@@ -616,7 +616,7 @@ export default function TarifsPage() {
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-              {`Plan de base \u00E0 ${grid.base.price}\u20AC/mois + modules au choix. ${grid.base.usersIncluded} utilisateurs inclus. 1 module offert.`}
+              {`Plan de base à ${grid.base.price}€/mois + modules au choix. ${grid.base.usersIncluded} utilisateurs inclus. 1 module offert.`}
             </p>
 
             {/* Toggle Mensuel/Annuel */}
@@ -649,7 +649,7 @@ export default function TarifsPage() {
           <div className="flex items-center justify-center gap-4">
             {[
               { key: "configurator" as const, label: "Configurateur" },
-              { key: "solutions" as const, label: "Solutions m\u00E9tier" },
+              { key: "solutions" as const, label: "Solutions métier" },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -697,14 +697,14 @@ export default function TarifsPage() {
                     </div>
                     <div className="text-right">
                       <span className="text-2xl font-bold text-white">
-                        {billingPeriod === "yearly" ? grid.base.annualPrice : grid.base.price}\u20AC
+                        {billingPeriod === "yearly" ? grid.base.annualPrice : grid.base.price}€
                       </span>
                       <span className="text-sm text-slate-400">/mois</span>
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <span className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-xs text-indigo-300">Dashboard & Analytics</span>
-                    <span className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-xs text-indigo-300">Param\u00E8tres</span>
+                    <span className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-xs text-indigo-300">Paramètres</span>
                     <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs text-emerald-300">Essai {grid.base.trialDays}j gratuit</span>
                     <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs text-emerald-300">1 module offert</span>
                   </div>
@@ -717,7 +717,7 @@ export default function TarifsPage() {
                       Choisissez vos modules
                       {pricing.selectedCount > 0 && (
                         <span className="ml-2 text-sm font-normal text-slate-400">
-                          ({pricing.selectedCount} s\u00E9lectionn\u00E9{pricing.selectedCount > 1 ? "s" : ""})
+                          ({pricing.selectedCount} sélectionné{pricing.selectedCount > 1 ? "s" : ""})
                         </span>
                       )}
                     </h3>
@@ -740,7 +740,7 @@ export default function TarifsPage() {
                   </div>
                 </div>
 
-                {/* Utilisateurs suppl\u00E9mentaires */}
+                {/* Utilisateurs supplémentaires */}
                 <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -750,7 +750,7 @@ export default function TarifsPage() {
                       <div>
                         <h4 className="font-semibold text-white">Utilisateurs</h4>
                         <p className="text-xs text-slate-400">
-                          {grid.base.usersIncluded} inclus \u2022 Packs de {grid.userPacks.size}
+                          {grid.base.usersIncluded} inclus • Packs de {grid.userPacks.size}
                         </p>
                       </div>
                     </div>
@@ -779,7 +779,7 @@ export default function TarifsPage() {
 
                   {extraUserPacks > 0 && (
                     <p className="mt-2 text-right text-xs text-slate-400">
-                      +{extraUserPacks} pack{extraUserPacks > 1 ? "s" : ""} = +{pricing.usersTotal}\u20AC/mois
+                      +{extraUserPacks} pack{extraUserPacks > 1 ? "s" : ""} = +{pricing.usersTotal}€/mois
                     </p>
                   )}
 
@@ -792,7 +792,7 @@ export default function TarifsPage() {
                 </div>
               </div>
 
-              {/* COLONNE DROITE : R\u00E9capitulatif sticky (1/3) */}
+              {/* COLONNE DROITE : Récapitulatif sticky (1/3) */}
               <div className="lg:sticky lg:top-8 lg:self-start">
                 <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-500/5 to-transparent p-6">
                   <h3 className="mb-4 text-lg font-semibold text-white">Votre abonnement</h3>
@@ -800,7 +800,7 @@ export default function TarifsPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-400">Plan de base</span>
-                      <span className="text-white">{pricing.basePrice}\u20AC</span>
+                      <span className="text-white">{pricing.basePrice}€</span>
                     </div>
 
                     {selectedModules.map((key) => {
@@ -815,7 +815,7 @@ export default function TarifsPage() {
                             {isFree && <span className="ml-1 text-emerald-400 text-xs">(offert)</span>}
                           </span>
                           <span className={isFree ? "text-emerald-400" : "text-white"}>
-                            {isFree ? "0\u20AC" : `${price}\u20AC`}
+                            {isFree ? "0€" : `${price}€`}
                           </span>
                         </div>
                       );
@@ -824,7 +824,7 @@ export default function TarifsPage() {
                     {extraUserPacks > 0 && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-400">+{extraUserPacks * grid.userPacks.size} utilisateurs</span>
-                        <span className="text-white">{pricing.usersTotal}\u20AC</span>
+                        <span className="text-white">{pricing.usersTotal}€</span>
                       </div>
                     )}
                   </div>
@@ -834,19 +834,19 @@ export default function TarifsPage() {
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-white">Total</span>
                       <div className="text-right">
-                        <span className="text-3xl font-bold text-white">{pricing.monthly}\u20AC</span>
+                        <span className="text-3xl font-bold text-white">{pricing.monthly}€</span>
                         <span className="text-sm text-slate-400">/mois</span>
                       </div>
                     </div>
 
                     {billingPeriod === "yearly" && (
                       <p className="mt-1 text-right text-xs text-emerald-400">
-                        Soit {pricing.monthly * 12}\u20AC/an
+                        Soit {pricing.monthly * 12}€/an
                       </p>
                     )}
 
                     <p className="mt-1 text-right text-xs text-slate-500">
-                      {pricing.totalUsers} utilisateurs \u2022 {pricing.selectedCount} module{pricing.selectedCount !== 1 ? "s" : ""}
+                      {pricing.totalUsers} utilisateurs • {pricing.selectedCount} module{pricing.selectedCount !== 1 ? "s" : ""}
                     </p>
                   </div>
 
@@ -856,9 +856,9 @@ export default function TarifsPage() {
                       <p className="text-xs text-amber-400">
                         <Star size={12} className="mr-1 inline" />
                         <strong>Tous les modules</strong> pour seulement{" "}
-                        <span className="font-bold">{pricing.allInPrice}\u20AC/mois</span>
+                        <span className="font-bold">{pricing.allInPrice}€/mois</span>
                         {pricing.allInRegular > pricing.allInPrice && (
-                          <span className="ml-1 text-slate-500 line-through">{pricing.allInRegular}\u20AC</span>
+                          <span className="ml-1 text-slate-500 line-through">{pricing.allInRegular}€</span>
                         )}
                       </p>
                     </div>
@@ -874,7 +874,7 @@ export default function TarifsPage() {
                   </Link>
 
                   <p className="mt-3 text-center text-[10px] text-slate-500">
-                    Sans carte bancaire \u2022 Sans engagement \u2022 R\u00E9siliation en 1 clic
+                    Sans carte bancaire • Sans engagement • Résiliation en 1 clic
                   </p>
                 </div>
 
@@ -885,7 +885,7 @@ export default function TarifsPage() {
                     <h4 className="text-sm font-semibold text-white">Enterprise</h4>
                   </div>
                   <p className="text-xs text-slate-400 mb-3">
-                    Utilisateurs illimit\u00E9s, SLA 99.9%, account manager d\u00E9di\u00E9
+                    Utilisateurs illimités, SLA 99.9%, account manager dédié
                   </p>
                   <Link
                     href="/contact"
@@ -902,24 +902,24 @@ export default function TarifsPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════
-          SOLUTIONS M\u00C9TIER
+          SOLUTIONS MÉTIER
       ═══════════════════════════════════════════════════════════════════ */}
       {viewMode === "solutions" && (
         <section className="relative py-12">
           <Container>
             <div className="mb-8 text-center">
               <h2 className="mb-4 text-3xl font-bold text-white">
-                Solutions m\u00E9tier cl\u00E9s en main
+                Solutions métier clés en main
               </h2>
               <p className="text-lg text-slate-400">
-                Des packs sectoriels \u00E0 prix r\u00E9duit vs modules individuels. Le plan de base ({grid.base.price}\u20AC/mois) s&apos;ajoute.
+                Des packs sectoriels à prix réduit vs modules individuels. Le plan de base ({grid.base.price}€/mois) s&apos;ajoute.
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {grid.solutions.map((solution, index) => (
                 <motion.div
-                  key={solution.id}
+                  key={solution.slug || solution.code}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -960,7 +960,7 @@ export default function TarifsPage() {
         <Container narrow>
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-white">
-              Combien allez-vous \u00E9conomiser ?
+              Combien allez-vous économiser ?
             </h2>
             <p className="mt-2 text-slate-400">
               Calculez votre ROI en quelques secondes
@@ -1020,7 +1020,7 @@ export default function TarifsPage() {
             <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2">
               <Shield size={16} className="text-emerald-400" />
               <span className="text-sm text-emerald-400">
-                Donn\u00E9es h\u00E9berg\u00E9es de mani\u00E8re s\u00E9curis\u00E9e (RGPD)
+                Données hébergées de manière sécurisée (RGPD)
               </span>
             </div>
           </div>
@@ -1033,7 +1033,7 @@ export default function TarifsPage() {
       <section className="relative py-16">
         <Container narrow>
           <h2 className="mb-8 text-center text-2xl font-bold text-white">
-            Questions fr\u00E9quentes
+            Questions fréquentes
           </h2>
           <FAQSection />
         </Container>
@@ -1052,13 +1052,13 @@ export default function TarifsPage() {
           >
             <Zap className="mx-auto mb-4 h-12 w-12 text-indigo-400" />
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Pr\u00EAt \u00E0 simplifier votre gestion ?
+              Prêt à simplifier votre gestion ?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
               {grid.base.trialDays} jours d&apos;essai gratuit. Sans carte bancaire. Sans engagement.
             </p>
             <p className="mt-2 font-semibold text-emerald-400">
-              {`\u00C0 partir de ${grid.base.price}\u20AC/mois \u2022 1 module offert`}
+              {`À partir de ${grid.base.price}€/mois • 1 module offert`}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
