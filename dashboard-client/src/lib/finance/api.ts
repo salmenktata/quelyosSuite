@@ -6,9 +6,9 @@
 import { logger } from '@/lib/logger'
 import { tokenService } from '@/lib/tokenService'
 
-// Utiliser URLs relatives en dev et prod pour profiter du proxy Vite/Next.js
-// Le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
-const API_BASE_URL = ''
+// En dev, le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
+// En prod, VITE_API_URL pointe vers le domaine API (ex: https://api.quelyos.com)
+const API_BASE_URL = import.meta.env.VITE_API_URL || ''
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
