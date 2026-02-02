@@ -74,6 +74,7 @@ export default function SeoSettingsPage() {
   useEffect(() => {
     if (config) {
       const configData = config as unknown as Record<string, string>;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSeoConfig({
         site_title: configData.site_title || "",
         meta_description: configData.meta_description || "",

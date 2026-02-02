@@ -73,6 +73,7 @@ export default function SMSSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         apiKey: "",
         senderName: config.senderName,

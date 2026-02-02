@@ -12,7 +12,7 @@ interface TaxReport {
   vatCollected: number
   vatDeductible: number
   vatNet: number
-  month?: string
+  month?: number
   year?: number
 }
 

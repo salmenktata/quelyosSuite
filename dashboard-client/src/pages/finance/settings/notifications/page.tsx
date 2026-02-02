@@ -113,7 +113,7 @@ export default function NotificationsPage() {
 
       // Auto-hide success after 3s
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
+    } catch (_err) {
       // Fallback: save locally only
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       setError("Sauvegardé localement (API indisponible)");

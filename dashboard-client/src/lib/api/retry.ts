@@ -321,7 +321,7 @@ export async function fetchWithRetry(
 /**
  * Décorateur pour ajouter retry à une fonction
  */
-export function retryable<T extends (...args: any[]) => Promise<any>>(
+export function retryable<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   config?: Partial<RetryConfig>
 ): T {

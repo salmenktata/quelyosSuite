@@ -39,6 +39,7 @@ export function AttributeFilter({
           expandedSet.add(attr.id)
         }
       })
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedAttributes(expandedSet)
     }
   }, [attributes, selectedValues])

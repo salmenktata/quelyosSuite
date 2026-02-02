@@ -5,10 +5,16 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
 export default function ProfitLossPage() {
-  const [data, setData] = useState<any>(null)
+  interface ProfitLossData {
+    revenue: number
+    expenses: number
+    netProfit: number
+  }
+
+  const [data, setData] = useState<ProfitLossData | null>(null)
 
   useEffect(() => {
-    apiClient.post('/finance/reports/profit-loss').then(res => {
+    apiClient.post<{ success: boolean; data: ProfitLossData }>('/finance/reports/profit-loss').then(res => {
       if (res.data.success) setData(res.data.data)
     })
   }, [])

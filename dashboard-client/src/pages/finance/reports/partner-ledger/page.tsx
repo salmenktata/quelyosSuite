@@ -9,11 +9,28 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
 export default function PartnerLedgerPage() {
-  const [data, setData] = useState<any>(null)
+  interface LedgerLine {
+    date: string
+    move: string
+    debit: number
+    credit: number
+    balance: number
+  }
+
+  interface PartnerLedgerData {
+    partner: { name: string }
+    lines: LedgerLine[]
+    totalDebit: number
+    totalCredit: number
+    totalBalance: number
+    balance: number
+  }
+
+  const [data, setData] = useState<PartnerLedgerData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiClient.post('/finance/reports/partner-ledger').then(res => {
+    apiClient.post<{ success: boolean; data: PartnerLedgerData }>('/finance/reports/partner-ledger').then(res => {
       if (res.data.success) setData(res.data.data)
       setLoading(false)
     })
@@ -46,7 +63,7 @@ export default function PartnerLedgerPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {data.lines.map((line: any, index: number) => (
+            {data.lines.map((line, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{formatDate(line.date)}</td>
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{line.move}</td>

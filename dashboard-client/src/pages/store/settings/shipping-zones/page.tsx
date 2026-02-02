@@ -59,6 +59,7 @@ export default function ShippingZonesPage() {
       for (const zone of data.zones) {
         prices[zone.code] = zone.price;
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setZonePrices(prices);
       setFreeThreshold(data.free_threshold);
     }

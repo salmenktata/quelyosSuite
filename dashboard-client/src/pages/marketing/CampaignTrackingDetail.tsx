@@ -49,6 +49,7 @@ export function CampaignTrackingDetail() {
 
   useEffect(() => {
     if (campaignId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadData();
     }
   }, [campaignId, loadData]);

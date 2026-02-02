@@ -35,6 +35,7 @@ export function AutomationWorkflows() {
   }, [filter, listAutomations]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadWorkflows();
   }, [loadWorkflows]);
 

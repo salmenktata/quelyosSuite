@@ -400,6 +400,7 @@ export function CategoryTree({
   useEffect(() => {
     if (expandAll !== undefined) {
       const allIds = getAllCategoryIds(categories)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedIds(expandAll ? new Set(allIds) : new Set())
     }
   }, [expandAll, categories])

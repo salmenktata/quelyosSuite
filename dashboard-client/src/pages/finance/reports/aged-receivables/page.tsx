@@ -9,10 +9,31 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
 export default function AgedReceivablesPage() {
-  const [data, setData] = useState<any>(null)
+  interface AgedPartner {
+    id: number
+    name: string
+    current: number
+    period1: number
+    period2: number
+    period3: number
+    total: number
+  }
+
+  interface AgedReceivablesData {
+    partners: AgedPartner[]
+    totals: {
+      current: number
+      period1: number
+      period2: number
+      period3: number
+      total: number
+    }
+  }
+
+  const [data, setData] = useState<AgedReceivablesData | null>(null)
 
   useEffect(() => {
-    apiClient.post('/finance/reports/aged-receivables').then(res => {
+    apiClient.post<{ success: boolean; data: AgedReceivablesData }>('/finance/reports/aged-receivables').then(res => {
       if (res.data.success) setData(res.data.data)
     })
   }, [])
@@ -43,7 +64,7 @@ export default function AgedReceivablesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {data.partners.map((partner: any) => (
+            {data.partners.map((partner) => (
               <tr key={partner.id}>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{partner.name}</td>
                 <td className="px-6 py-4 text-sm text-right text-gray-900 dark:text-white">{formatCurrency(partner.current, '€')}</td>

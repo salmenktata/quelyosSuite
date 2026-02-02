@@ -54,7 +54,7 @@ export default function TaxDeclarationsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {months.map((month, index) => {
           const monthNum = index + 1
-          const report = reports.find((r: any) => r.month === monthNum)
+          const report = reports.find((r) => r.month === monthNum)
 
           return (
             <div key={monthNum} className="bg-white dark:bg-gray-800 rounded-lg border p-4">

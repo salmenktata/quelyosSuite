@@ -38,6 +38,7 @@ export default function SocialSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSocialConfig({
         facebook_url: config.facebook_url || "",
         instagram_url: config.instagram_url || "",

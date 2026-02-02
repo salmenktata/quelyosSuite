@@ -69,6 +69,7 @@ export function useNavigationHistory(): NavigationHistoryReturn {
     const path = location.pathname
     // Ignorer certaines routes
     if (path && path !== '/' && path !== '/login') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       addToHistory(path)
     }
   }, [location.pathname, addToHistory])

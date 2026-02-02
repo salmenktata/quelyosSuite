@@ -31,6 +31,7 @@ export function CustomerFilters({
   useEffect(() => {
     if (hasSearched || debouncedSearch) {
       onSearch(debouncedSearch)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasSearched(true)
     }
   }, [debouncedSearch, hasSearched, onSearch])

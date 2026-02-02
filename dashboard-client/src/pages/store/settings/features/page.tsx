@@ -84,6 +84,7 @@ export default function FeaturesSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFeatures({
         wishlist_enabled: config.wishlist_enabled ?? true,
         reviews_enabled: config.reviews_enabled ?? true,
@@ -96,6 +97,7 @@ export default function FeaturesSettingsPage() {
 
   useEffect(() => {
     if (tenant) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDarkModeSettings({
         dark_mode_enabled: tenant.theme?.darkMode?.enabled ?? true,
         dark_mode_default: tenant.theme?.darkMode?.defaultDark ?? false,

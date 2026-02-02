@@ -20,6 +20,7 @@ export default function ReturnsSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setReturnsConfig({
         return_delay_days: config.return_delay_days || 30,
         refund_delay_days: config.refund_delay_days || "7-10",

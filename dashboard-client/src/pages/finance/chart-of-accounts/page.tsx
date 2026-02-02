@@ -29,10 +29,10 @@ export default function ChartOfAccountsPage() {
     const response = await apiClient.post<{
       success: boolean;
       data: {
-        accounts: any[];
+        accounts: Account[];
       };
     }>('/finance/accounts')
-    if (response.data.success && response.data.data) setAccounts(response.data.data.accounts as any[])
+    if (response.data.success && response.data.data) setAccounts(response.data.data.accounts)
     setLoading(false)
   }
 

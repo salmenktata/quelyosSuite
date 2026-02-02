@@ -55,6 +55,7 @@ export default function MarketingEmailSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         provider: config.provider,
         smtpHost: config.smtpHost,

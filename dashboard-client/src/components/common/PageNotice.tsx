@@ -56,6 +56,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored !== null) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsCollapsed(stored === "true");
       }
 

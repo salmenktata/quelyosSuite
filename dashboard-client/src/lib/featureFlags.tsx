@@ -253,7 +253,7 @@ export const useFeatureFlags = create<FeatureFlagsStore>()(
               })
             }
           }
-        } catch (error) {
+        } catch (_error) {
           // Failed to sync feature flags from backend - silently continue
         }
       },

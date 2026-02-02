@@ -19,7 +19,18 @@ import { Plus, AlertCircle, RefreshCw, CreditCard } from 'lucide-react'
 
 export default function PaymentsPage() {
   const navigate = useNavigate()
-  const [payments, setPayments] = useState<any[]>([])
+  interface Payment {
+    id: number
+    name: string
+    partner: string
+    amount: number
+    date: string
+    state: string
+    paymentType: string
+    description?: string
+  }
+
+  const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -30,12 +41,12 @@ export default function PaymentsPage() {
       .post<{
         success: boolean;
         data: {
-          payments: any[];
+          payments: Payment[];
         };
         error?: string;
       }>('/finance/payments')
       .then(res => {
-        if (res.data.success && res.data.data) setPayments(res.data.data.payments as any[])
+        if (res.data.success && res.data.data) setPayments(res.data.data.payments)
         setLoading(false)
       })
       .catch(_err => {
@@ -45,6 +56,7 @@ export default function PaymentsPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPayments()
   }, [])
 
@@ -132,7 +144,7 @@ export default function PaymentsPage() {
         {!error && payments.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {payments.map((payment: any) => (
+              {payments.map((payment) => (
                 <div
                   key={payment.id}
                   className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"

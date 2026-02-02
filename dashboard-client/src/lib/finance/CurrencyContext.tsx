@@ -149,7 +149,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
             const savedCurrency = parsed.currency ?? DEFAULT_CURRENCY;
             setCurrencyState(savedCurrency);
           }
-        } catch (e) {
+        } catch (_e) {
           // Ignore localStorage errors
         }
         // Set default currencies for unauthenticated users

@@ -112,6 +112,7 @@ export default function BrandSettingsPage() {
   // Initialize from tenant data
   useEffect(() => {
     if (tenant) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBrandConfig({
         brand_name: tenant.name || "",
         slogan: tenant.branding?.slogan || "",

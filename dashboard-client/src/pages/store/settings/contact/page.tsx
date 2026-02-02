@@ -28,6 +28,7 @@ export default function ContactSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setContactConfig({
         contact_email: config.contact_email || "",
         contact_phone: config.contact_phone || "",

@@ -63,6 +63,7 @@ export function useGlobalCache<T>(key: string, fetcher: () => Promise<T>) {
   }, [key, fetcher]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetch();
   }, [fetch]);
 

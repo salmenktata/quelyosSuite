@@ -160,6 +160,7 @@ export function useServiceWorker(): UseServiceWorkerReturn {
 
     // Vérifier si déjà prêt
     if (navigator.serviceWorker.controller) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState((prev) => ({ ...prev, isReady: true }))
     }
 
@@ -172,6 +173,7 @@ export function useServiceWorker(): UseServiceWorkerReturn {
   // Enregistrer automatiquement au montage
   useEffect(() => {
     if (state.isSupported && !state.isRegistered) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       register()
     }
   }, [state.isSupported, state.isRegistered, register])

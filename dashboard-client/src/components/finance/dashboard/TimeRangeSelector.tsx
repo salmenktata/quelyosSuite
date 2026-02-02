@@ -32,6 +32,7 @@ export const TimeRangeSelector = memo(function TimeRangeSelector({
 
   // Load preference from localStorage on mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     if (storageKey) {
       const saved = localStorage.getItem(storageKey);

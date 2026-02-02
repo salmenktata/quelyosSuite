@@ -3,15 +3,31 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
 
+interface KpiEntry {
+  value: number | string
+  status?: string
+}
+
+interface CFOKpis {
+  dso: KpiEntry
+  dpo: KpiEntry
+  cashConversionCycle: KpiEntry
+  workingCapitalRatio: KpiEntry
+  currentRatio: KpiEntry
+  quickRatio: KpiEntry
+  ebitdaMargin: KpiEntry
+  netProfitMargin: KpiEntry
+}
+
 export default function CFODashboardPage() {
-  const [kpis, setKpis] = useState<Record<string, any> | null>(null)
+  const [kpis, setKpis] = useState<CFOKpis | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     apiClient.post<{
       success: boolean;
       data: {
-        kpis: Record<string, unknown>;
+        kpis: CFOKpis;
       };
     }>('/finance/cfo/kpis').then(res => {
       if (res.data.success && res.data.data) setKpis(res.data.data.kpis)

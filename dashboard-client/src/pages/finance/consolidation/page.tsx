@@ -16,9 +16,22 @@ import { formatCurrency } from '@/lib/utils'
 import { financeNotices } from '@/lib/notices/finance-notices'
 import { AlertCircle, RefreshCw, Building2 } from 'lucide-react'
 
+interface ConsolidationEntity {
+  id: number
+  name: string
+  code: string
+  consolidationPercent: number
+  currency: string
+}
+
+interface ConsolidationBalanceSheet {
+  assets: { total: { consolidated: number } }
+  liabilities: { total: { consolidated: number } }
+}
+
 export default function ConsolidationPage() {
-  const [entities, setEntities] = useState<any[]>([])
-  const [balanceSheet, setBalanceSheet] = useState<any>(null)
+  const [entities, setEntities] = useState<ConsolidationEntity[]>([])
+  const [balanceSheet, setBalanceSheet] = useState<ConsolidationBalanceSheet | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -29,16 +42,16 @@ export default function ConsolidationPage() {
       apiClient.post<{
         success: boolean;
         data: {
-          entities: any[];
+          entities: ConsolidationEntity[];
         };
       }>('/finance/consolidation/entities'),
       apiClient.post<{
         success: boolean;
-        data: any;
+        data: ConsolidationBalanceSheet;
       }>('/finance/consolidation/balance-sheet'),
     ])
       .then(([entitiesRes, balanceRes]) => {
-        if (entitiesRes.data.success && entitiesRes.data.data) setEntities(entitiesRes.data.data.entities as any[])
+        if (entitiesRes.data.success && entitiesRes.data.data) setEntities(entitiesRes.data.data.entities)
         if (balanceRes.data.success && balanceRes.data.data) setBalanceSheet(balanceRes.data.data)
         setLoading(false)
       })
@@ -49,6 +62,7 @@ export default function ConsolidationPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchConsolidation()
   }, [])
 
@@ -128,7 +142,7 @@ export default function ConsolidationPage() {
                   Entités ({entities.length})
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {entities.map((entity: any) => (
+                  {entities.map((entity) => (
                     <div
                       key={entity.id}
                       className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"

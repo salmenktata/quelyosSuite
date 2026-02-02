@@ -142,7 +142,7 @@ export default function ProductForm() {
       }
       // Charger le ruban (badge) du produit
       if (product.ribbon) {
-        setSelectedRibbonId(product.ribbon.id)
+        setSelectedRibbonId(product.ribbon.id ?? null)
       } else {
         setSelectedRibbonId(null)
       }

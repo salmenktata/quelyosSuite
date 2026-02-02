@@ -38,6 +38,7 @@ export const SectionHeader = memo(function SectionHeader({
 
   // Load collapsed state from localStorage
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     if (storageKey) {
       const saved = localStorage.getItem(storageKey);

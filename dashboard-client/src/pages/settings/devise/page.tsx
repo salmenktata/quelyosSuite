@@ -23,20 +23,19 @@ const SETTINGS_KEY = "qyl_settings";
 export default function DeviseFormatsPage() {
   const { currency, setCurrency, availableCurrencies, isLoading: currenciesLoading, baseCurrency } = useCurrency();
   const { theme, setTheme } = useTheme();
-  const [lang, setLang] = useState("fr");
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return;
+  const [lang, setLang] = useState(() => {
+    if (typeof window === "undefined") return "fr";
     try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return "fr";
       const parsed = JSON.parse(raw);
-      setLang(parsed.lang ?? "fr");
+      return parsed.lang ?? "fr";
     } catch (err) {
       logger.error("Lecture des préférences impossible", err);
+      return "fr";
     }
-  }, []);
+  });
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (saved) {

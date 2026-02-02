@@ -97,7 +97,7 @@ export default function ThemesPage() {
         if (data.result?.config) {
           setActiveTheme(data.result.config.id);
         }
-      } catch (err) {
+      } catch (_err) {
         logger.error('[StoreThemes] Erreur chargement thème actif');
       }
     }
@@ -127,7 +127,7 @@ export default function ThemesPage() {
       } else {
         setError('Erreur lors de l\'activation du thème');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Impossible d\'activer le thème');
     }
   };

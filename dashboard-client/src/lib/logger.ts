@@ -15,14 +15,14 @@ export const logger = {
   /**
    * Log d'erreur - détails complets en dev, silencieux en prod
    */
-  error: (...args: any[]) => {
+  error: (...args: unknown[]) => {
     if (isDevelopment) {
       console.error(...args);
     }
 
     // Logger dans le health check
     const errorMsg = args
-      .map((arg) => (typeof arg === 'string' ? arg : arg?.message || JSON.stringify(arg)))
+      .map((arg) => (typeof arg === 'string' ? arg : (arg instanceof Error ? arg.message : JSON.stringify(arg))))
       .join(' ');
 
     healthLogError(errorMsg);
@@ -31,7 +31,7 @@ export const logger = {
   /**
    * Log d'avertissement - détails complets en dev, silencieux en prod
    */
-  warn: (...args: any[]) => {
+  warn: (...args: unknown[]) => {
     if (isDevelopment) {
       console.warn(...args);
     }
@@ -47,14 +47,14 @@ export const logger = {
   /**
    * Log d'information - toujours visible (utilisé pour messages non-sensibles)
    */
-  info: (...args: any[]) => {
+  info: (...args: unknown[]) => {
     console.info(...args);
   },
 
   /**
    * Log de debug - uniquement en développement
    */
-  debug: (...args: any[]) => {
+  debug: (...args: unknown[]) => {
     if (isDevelopment) {
       console.debug('[DEBUG]', ...args);
     }
@@ -73,28 +73,30 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
 
     // Type narrowing pour accès propriétés
     if (error && typeof error === 'object') {
-      const err = error as Record<string, any>;
-      return err.response?.data?.error || err.message || 'Une erreur est survenue';
+      const err = error as Record<string, unknown>;
+      const resp = err.response as Record<string, unknown> | undefined;
+      return String(resp?.data ?? err.message ?? 'Une erreur est survenue');
     }
     return 'Une erreur est survenue';
   }
 
   // En production, messages génériques basés sur le type d'erreur
   if (error && typeof error === 'object') {
-    const err = error as Record<string, any>;
+    const err = error as Record<string, unknown>;
+    const response = err.response as Record<string, unknown> | undefined;
 
-    if (err.response?.status === 404) {
+    if (response?.status === 404) {
       return 'Ressource non trouvée';
     }
-    if (err.response?.status === 401 || err.response?.status === 403) {
+    if (response?.status === 401 || response?.status === 403) {
       return 'Accès non autorisé. Veuillez vous reconnecter.';
     }
-    if (err.response?.status >= 500) {
+    if (typeof response?.status === 'number' && response.status >= 500) {
       return 'Erreur du serveur. Veuillez réessayer ultérieurement.';
     }
 
     // Détection par message d'erreur
-    const message = err.message?.toLowerCase?.() || '';
+    const message = typeof err.message === 'string' ? err.message.toLowerCase() : '';
     if (message.includes('network') || message.includes('fetch')) {
       return 'Erreur de connexion au serveur';
     }

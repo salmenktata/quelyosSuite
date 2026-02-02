@@ -107,6 +107,7 @@ export function FontSelector({
       link.rel = 'stylesheet';
       document.head.appendChild(link);
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoadedFonts((prev) => new Set(prev).add(value));
 
       // Cleanup

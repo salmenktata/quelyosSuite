@@ -5,10 +5,15 @@ import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
 export default function BalanceSheetPage() {
-  const [data, setData] = useState<any>(null)
+  interface BalanceSheetData {
+    assets: { current: number; fixed: number; total: number }
+    liabilities: { current: number; longTerm: number; equity: number; total: number }
+  }
+
+  const [data, setData] = useState<BalanceSheetData | null>(null)
 
   useEffect(() => {
-    apiClient.post('/finance/reports/balance-sheet').then(res => {
+    apiClient.post<{ success: boolean; data: BalanceSheetData }>('/finance/reports/balance-sheet').then(res => {
       if (res.data.success) setData(res.data.data)
     })
   }, [])

@@ -24,6 +24,7 @@ export default function PreferencesPage() {
   useEffect(() => {
     const stored = localStorage.getItem(DEFAULT_MODULE_KEY);
     if (stored && canAccessModule(stored as ModuleId)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedModule(stored as ModuleId);
     }
   }, [canAccessModule]);

@@ -52,7 +52,14 @@ interface TenantProviderProps {
 
 export function TenantProvider({ children }: TenantProviderProps) {
   const { tenant, isLoading, error } = useMyTenant()
-  const [manualTenantId, setManualTenantId] = useState<number | null>(null)
+  const [manualTenantId, setManualTenantId] = useState<number | null>(() => {
+    const storedTenantId = localStorage.getItem('tenant_id')
+    if (storedTenantId && storedTenantId !== 'null') {
+      const id = parseInt(storedTenantId, 10)
+      if (!isNaN(id)) return id
+    }
+    return null
+  })
   const [tenantDomain, setTenantDomainState] = useState<string | null>(() => extractTenantDomain())
 
   // Synchroniser le tenant avec le client API
@@ -71,16 +78,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
     }
   }, [tenantDomain])
 
-  // Charger le tenant_id depuis localStorage au démarrage
-  useEffect(() => {
-    const storedTenantId = localStorage.getItem('tenant_id')
-    if (storedTenantId && storedTenantId !== 'null') {
-      const id = parseInt(storedTenantId, 10)
-      if (!isNaN(id)) {
-        setManualTenantId(id)
-      }
-    }
-  }, [])
+  // tenant_id chargé depuis localStorage via lazy init du useState
 
   const setTenantId = (id: number | null) => {
     setManualTenantId(id)

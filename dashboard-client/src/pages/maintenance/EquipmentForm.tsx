@@ -54,7 +54,7 @@ export default function EquipmentForm() {
       } else {
         showError(result.error || 'Erreur lors de la création')
       }
-    } catch (error) {
+    } catch (_error) {
       showError('Erreur lors de la création de l\'équipement')
     }
   }

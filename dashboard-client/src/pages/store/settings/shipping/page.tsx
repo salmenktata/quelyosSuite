@@ -44,7 +44,7 @@ export default function ShippingSettingsPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<any>(null);
+  const [selectedMethod, setSelectedMethod] = useState<DeliveryMethod | null>(null);
   const [form, setForm] = useState<DeliveryFormData>({
     name: "",
     fixed_price: 0,
@@ -54,6 +54,7 @@ export default function ShippingSettingsPage() {
 
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShippingConfig({
         shipping_standard_days: config.shipping_standard_days || "2-5",
         shipping_express_days: config.shipping_express_days || "1-2",

@@ -43,6 +43,7 @@ export default function RequestForm() {
   // Pré-sélectionner équipement si passé en paramètre
   useEffect(() => {
     if (equipmentIdParam) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => ({ ...prev, equipment_id: parseInt(equipmentIdParam, 10) }))
     }
   }, [equipmentIdParam])
@@ -73,7 +74,7 @@ export default function RequestForm() {
       } else {
         showError(result.error || 'Erreur lors de la création')
       }
-    } catch (error) {
+    } catch (_error) {
       showError('Erreur lors de la création de la demande')
     }
   }

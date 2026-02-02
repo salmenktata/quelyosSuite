@@ -59,10 +59,10 @@ export function useDebounce<T>(value: T, delay: number = 300): T {
  * <input onChange={(e) => debouncedSave(e.target.value)} />
  * ```
  */
-export function useDebouncedCallback<T extends (...args: any[]) => any>(
+export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number = 300,
-  _deps: any[] = []
+  _deps: unknown[] = []
 ): (...args: Parameters<T>) => void {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 

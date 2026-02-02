@@ -30,6 +30,7 @@ export function useMaintenanceTabs(sections: MenuSection[], currentPath: string)
   // Mettre à jour activeTab quand le path change
   useEffect(() => {
     const newTab = detectMaintenanceTab(location.pathname)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveTab(newTab)
   }, [location.pathname])
 

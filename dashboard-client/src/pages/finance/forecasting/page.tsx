@@ -10,9 +10,29 @@ import { TrendingUp, Brain } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import { logger } from '@quelyos/logger';
 
+interface ForecastPrediction {
+  date: string
+  predicted: number
+  lowerBound: number
+  upperBound: number
+}
+
+interface ForecastPeriodSummary {
+  avgCashFlow: number
+}
+
+interface ForecastSummary {
+  trend: string
+  avgPredicted: number
+  confidence: number
+  days30: ForecastPeriodSummary
+  days60: ForecastPeriodSummary
+  days90: ForecastPeriodSummary
+}
+
 export default function ForecastingPage() {
-  const [predictions, setPredictions] = useState<any[]>([])
-  const [summary, setSummary] = useState<any>(null)
+  const [predictions, setPredictions] = useState<ForecastPrediction[]>([])
+  const [summary, setSummary] = useState<ForecastSummary | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -24,8 +44,8 @@ export default function ForecastingPage() {
       const response = await apiClient.post<{
         success: boolean;
         data: {
-          predictions: any[];
-          summary: any;
+          predictions: ForecastPrediction[];
+          summary: ForecastSummary;
         };
       }>('/finance/forecasting/predict', { days_ahead: 90 })
       if (response.data.success && response.data.data) {
@@ -96,7 +116,7 @@ export default function ForecastingPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {predictions.slice(0, 30).map((pred: any, index: number) => (
+            {predictions.slice(0, 30).map((pred, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{pred.date}</td>
                 <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-white">

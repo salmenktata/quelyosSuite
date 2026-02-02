@@ -86,6 +86,7 @@ export const AccountModal = memo(function AccountModal({
   // Sync form data with initialData when it changes
   useEffect(() => {
     if (initialData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(initialData);
     }
   }, [initialData]);

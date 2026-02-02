@@ -139,12 +139,7 @@ function GenericSectionPreview({ type }: { type: string }) {
 export default function ThemeBuilderPreview() {
   const [themeState, setThemeState] = useState<BuilderState | null>(null);
   const [device, setDevice] = useState<Device>('desktop');
-  const [isStandalone, setIsStandalone] = useState(false);
-
-  // Détecter si la page est ouverte en standalone (nouvelle fenêtre) ou en iframe
-  useEffect(() => {
-    setIsStandalone(window.self === window.top);
-  }, []);
+  const [isStandalone] = useState(() => typeof window !== 'undefined' && window.self === window.top);
 
   // Charger le thème depuis localStorage
   useEffect(() => {
