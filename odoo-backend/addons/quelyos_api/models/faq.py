@@ -22,7 +22,7 @@ class FAQCategory(models.Model):
         index=True
     )
     faq_ids = fields.One2many('quelyos.faq', 'category_id', string='Questions')
-    faq_count = fields.Integer('Nb questions', compute='_compute_faq_count')
+    faq_count = fields.Integer('Nb questions', compute='_compute_faq_count', store=True)
     @api.depends('faq_ids')
 
     @api.constrains('code', 'company_id')
