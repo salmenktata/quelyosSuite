@@ -1086,11 +1086,11 @@ class QuelyosCartAPI(BaseController):
             # Rechercher les commandes des filleuls
             referred_partners = request.env['res.partner'].sudo().search([
                 ('referred_by', '=', partner.id)
-            ])
+            ], limit=500)
             referred_orders = request.env['sale.order'].sudo().search([
                 ('partner_id', 'in', referred_partners.ids),
                 ('state', 'in', ['sale', 'done'])
-            ])
+            ], limit=5000)
             total_referred_amount = sum(referred_orders.mapped('amount_total'))
             earned_rewards = round(total_referred_amount * 0.05, 2)  # 5% de récompense
 
