@@ -138,7 +138,7 @@ export interface Product {
   product_length?: number
   product_width?: number
   product_height?: number
-  ribbon?: Ribbon | { id: number; name: string } | null
+  ribbon?: Partial<Ribbon> | null
   currency?: {
     symbol: string
     name?: string
