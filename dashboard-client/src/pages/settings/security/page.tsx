@@ -127,11 +127,14 @@ export default function SecurityPage() {
     setTwoFAError(null);
 
     try {
-      const data = await api<{ qr_code: string; secret: string }>("/api/auth/2fa/setup", {
+      const data = await api<{ qr_code: string; secret: string; backup_codes?: string[] }>("/api/auth/2fa/setup", {
         method: "POST",
       });
       setTwoFASecret(data.secret);
       setTwoFAQRCode(data.qr_code);
+      if (data.backup_codes) {
+        setBackupCodes(data.backup_codes);
+      }
       setTwoFAStep('setup');
     } catch (err) {
       logger.error("Erreur:", err);
@@ -151,11 +154,10 @@ export default function SecurityPage() {
     setTwoFAError(null);
 
     try {
-      const data = await api<{ backup_codes: string[] }>("/api/auth/2fa/confirm", {
+      await api<{ success: boolean }>("/api/auth/2fa/confirm", {
         method: "POST",
         body: { code: twoFACode },
       });
-      setBackupCodes(data.backup_codes);
       setTwoFAStep('backup-codes');
       setTwoFACode("");
       setTwoFAEnabled(true);
@@ -203,11 +205,11 @@ export default function SecurityPage() {
     setTwoFALoading(true);
     setTwoFAError(null);
     try {
-      const data = await api<{ backup_codes: string[] }>("/api/auth/2fa/backup-codes/regenerate", {
+      const data = await api<{ backup_codes?: string[] }>("/api/auth/2fa/backup-codes/regenerate", {
         method: "POST",
         body: { code: twoFACode },
       });
-      setBackupCodes(data.backup_codes);
+      setBackupCodes(data.backup_codes ?? []);
       setTwoFAStep('backup-codes');
       setTwoFACode("");
     } catch (err) {
@@ -558,7 +560,7 @@ export default function SecurityPage() {
           )}
 
           {/* Backup Codes Display */}
-          {twoFAStep === 'backup-codes' && backupCodes.length > 0 && (
+          {twoFAStep === 'backup-codes' && backupCodes?.length > 0 && (
             <div className="space-y-4">
               <div className="text-center">
                 <p className="text-sm font-medium text-white">Codes de secours</p>

@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Save, Building2, Mail, Server, Scale, Users, Loader2 } from 'lucide-react'
-import { gateway } from '@/lib/api'
+import { gateway } from '@/lib/api/gateway'
 import { useToast } from '@/contexts/ToastContext'
 
 interface LegalData {

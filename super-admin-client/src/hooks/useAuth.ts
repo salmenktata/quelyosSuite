@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router'
-import { gateway } from '@/lib/api'
+import { gateway } from '@/lib/api/gateway'
 import { tokenService } from '@/lib/tokenService'
 import { useAnalytics } from './useAnalytics'
 import { logger } from '@/lib/logger'
