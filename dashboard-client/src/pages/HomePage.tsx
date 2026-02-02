@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'http://localhost:3000'
+
 // Icônes inline
 const Sparkles = ({ className }: { className?: string }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,7 +155,7 @@ export default function HomePage() {
               </Link>
 
               <a
-                href="http://localhost:3000/register"
+                href={`${SITE_URL}/register`}
                 className="flex h-14 items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/30 px-8 font-medium text-white transition-all hover:border-slate-600/50 hover:bg-slate-800/50"
               >
                 <span>Créer un compte</span>

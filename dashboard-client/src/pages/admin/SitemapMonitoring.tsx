@@ -15,6 +15,8 @@ import { Breadcrumbs, Button } from '@/components/common';
 import { Search, ExternalLink, RefreshCw, FileText, TrendingUp, AlertCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'http://localhost:3000';
+
 interface SitemapEntry {
   path: string;
   url: string;
@@ -46,7 +48,7 @@ export default function SitemapMonitoring() {
     try {
       setLoading(true);
       // Appel à l'API du site vitrine
-      const response = await fetch('http://localhost:3000/api/superadmin/sitemap');
+      const response = await fetch(`${SITE_URL}/api/superadmin/sitemap`);
       if (!response.ok) throw new Error('Failed to fetch sitemap');
 
       const data = await response.json();
@@ -293,7 +295,7 @@ export default function SitemapMonitoring() {
           Affichage de {filteredEntries.length} sur {entries.length} URLs
         </p>
         <a
-          href="http://localhost:3000/sitemap.xml"
+          href={`${SITE_URL}/sitemap.xml`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 text-violet-600 transition-colors hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"

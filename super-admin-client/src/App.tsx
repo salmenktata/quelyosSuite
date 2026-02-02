@@ -3,6 +3,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { AuthenticatedApp } from './components/AuthenticatedApp'
 import { Login } from './pages/Login'
 import { useAuth } from './hooks/useAuth'
+import { tokenService } from './lib/tokenService'
 import { useEffect } from 'react'
 
 function App() {
@@ -12,10 +13,9 @@ function App() {
   // TEMPORAIRE DEV: Désactiver redirection auto
   useEffect(() => {
     if (import.meta.env.DEV) {
-      // DEV MODE - Auth checks disabled (intentionnel)
       return
     }
-    if (!isLoading && !isAuthenticated && location.pathname !== '/login') {
+    if (!isLoading && !isAuthenticated && !tokenService.isAuthenticated() && location.pathname !== '/login') {
       window.location.href = '/login'
     }
   }, [isLoading, isAuthenticated, location.pathname])
@@ -26,14 +26,14 @@ function App() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Vérification de l'authentification...</p>
+          <p className="text-gray-600 dark:text-gray-400">{`Vérification de l'authentification...`}</p>
         </div>
       </div>
     )
   }
 
-  // DEV: Laisser passer si dev mode
-  const canAccess = import.meta.env.DEV || isAuthenticated
+  // Vérifier auth via state React OU tokenService (résout race condition après login)
+  const canAccess = import.meta.env.DEV || isAuthenticated || tokenService.isAuthenticated()
 
   return (
     <ErrorBoundary>

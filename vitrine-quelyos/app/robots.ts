@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3006";
+const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000";
 const baseUrl = BASE_URL.replace(/\/$/, "");
 
 export default function robots(): MetadataRoute.Robots {

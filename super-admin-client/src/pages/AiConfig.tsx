@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Sparkles, Activity, TrendingUp, Loader2, CheckCircle2, XCircle, Settings, Trash2, TestTube, Save, X } from 'lucide-react'
+import { config } from '../lib/config'
 
 interface AiProvider {
   id: number
@@ -66,7 +67,7 @@ export function AiConfig() {
       setLoading(true)
       setError(null)
 
-      const response = await fetch('http://localhost:8069/api/super-admin/ai/providers', {
+      const response = await fetch(`${config.apiUrl}/api/super-admin/ai/providers`, {
         credentials: 'include',
       })
 
@@ -89,7 +90,7 @@ export function AiConfig() {
 
   const loadMetrics = async () => {
     try {
-      const response = await fetch('http://localhost:8069/api/super-admin/ai/metrics', {
+      const response = await fetch(`${config.apiUrl}/api/super-admin/ai/metrics`, {
         credentials: 'include',
       })
       if (response.ok) {
@@ -105,7 +106,7 @@ export function AiConfig() {
     if (!confirm('Supprimer ce provider ?')) return
 
     try {
-      const response = await fetch(`http://localhost:8069/api/super-admin/ai/providers/${providerId}`, {
+      const response = await fetch(`${config.apiUrl}/api/super-admin/ai/providers/${providerId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -285,7 +286,7 @@ function ProviderCard({
   const handleTest = async () => {
     setTesting(true)
     try {
-      const response = await fetch(`http://localhost:8069/api/super-admin/ai/providers/${provider.id}/test`, {
+      const response = await fetch(`${config.apiUrl}/api/super-admin/ai/providers/${provider.id}/test`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -386,7 +387,7 @@ function ProviderModal({ provider, onClose }: { provider: AiProvider | null; onC
   const handleSave = async () => {
     setSaving(true)
     try {
-      const url = provider ? `http://localhost:8069/api/super-admin/ai/providers/${provider.id}` : 'http://localhost:8069/api/super-admin/ai/providers'
+      const url = provider ? `${config.apiUrl}/api/super-admin/ai/providers/${provider.id}` : `${config.apiUrl}/api/super-admin/ai/providers`
       const method = provider ? 'PUT' : 'POST'
 
       const response = await fetch(url, {

@@ -63,7 +63,8 @@ export default function ChatBot() {
 
     try {
       // Appel à l'API backend
-      const response = await fetch('http://localhost:8069/api/ai/chat', {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+      const response = await fetch(`${backendUrl}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

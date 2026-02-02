@@ -1,5 +1,7 @@
 import { Globe, LayoutDashboard, ShieldCheck, ShoppingBag, type LucideIcon } from 'lucide-react'
 
+const isDev = import.meta.env.DEV
+
 /**
  * Configuration Sitemap Multi-Apps
  *
@@ -34,7 +36,7 @@ export const sitemapData: AppSection[] = [
   {
     id: 'vitrine-quelyos',
     name: 'Vitrine Quelyos',
-    baseUrl: 'http://localhost:3000',
+    baseUrl: isDev ? 'http://localhost:3000' : 'https://quelyos.com',
     port: 3000,
     icon: Globe,
     color: 'text-blue-600 dark:text-blue-400',
@@ -110,7 +112,7 @@ export const sitemapData: AppSection[] = [
   {
     id: 'dashboard-client',
     name: 'Dashboard Client',
-    baseUrl: 'http://localhost:5175',
+    baseUrl: isDev ? 'http://localhost:5175' : 'https://backoffice.quelyos.com',
     port: 5175,
     icon: LayoutDashboard,
     color: 'text-emerald-600 dark:text-emerald-400',
@@ -239,7 +241,7 @@ export const sitemapData: AppSection[] = [
   {
     id: 'super-admin-client',
     name: 'Super Admin Client',
-    baseUrl: 'http://localhost:9000',
+    baseUrl: isDev ? 'http://localhost:9000' : 'https://admin.quelyos.com',
     port: 9000,
     icon: ShieldCheck,
     color: 'text-teal-600 dark:text-teal-400',
@@ -266,7 +268,7 @@ export const sitemapData: AppSection[] = [
   {
     id: 'vitrine-client',
     name: 'Boutique E-commerce',
-    baseUrl: 'http://localhost:3001',
+    baseUrl: isDev ? 'http://localhost:3001' : 'https://boutique.quelyos.com',
     port: 3001,
     icon: ShoppingBag,
     color: 'text-purple-600 dark:text-purple-400',
