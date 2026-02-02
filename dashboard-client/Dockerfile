@@ -49,7 +49,8 @@ LABEL org.opencontainers.image.vendor="Quelyos"
 LABEL edition="${EDITION}"
 
 # Copie des fichiers buildés depuis le builder
-COPY --from=builder /app/dashboard-client/dist-${EDITION} /usr/share/nginx/html
+# Note: vite produit 'dist' pour edition=full, 'dist-${EDITION}' pour les autres
+COPY --from=builder /app/dashboard-client/dist /usr/share/nginx/html
 
 # Configuration Nginx optimisée pour SPA
 COPY dashboard-client/nginx.conf /etc/nginx/nginx.conf

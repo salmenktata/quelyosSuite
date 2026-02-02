@@ -121,6 +121,7 @@ export interface Product {
   rating?: number
   avg_rating?: number
   reviews_count?: number
+  review_count?: number // Alias for reviews_count
   tags?: string[]
   product_tag_ids?: Array<{ id: number; name: string }> // Backend tags format
   attributes?: ProductAttribute[]
