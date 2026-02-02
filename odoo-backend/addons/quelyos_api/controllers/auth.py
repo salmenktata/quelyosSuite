@@ -38,8 +38,9 @@ COOKIE_NAME_ACCESS = 'access_token'  # JWT access token
 COOKIE_MAX_AGE_SESSION = 30 * 60  # 30 minutes
 COOKIE_MAX_AGE_ACCESS = ACCESS_TOKEN_EXPIRY_MINUTES * 60  # 15 minutes (JWT)
 COOKIE_MAX_AGE_REFRESH = 7 * 24 * 60 * 60  # 7 jours
-COOKIE_SECURE = os.environ.get('COOKIE_SECURE', 'false').lower() == 'true'  # HTTPS uniquement en prod
-COOKIE_SAMESITE = 'Lax'  # Protection CSRF
+COOKIE_SECURE = os.environ.get('COOKIE_SECURE', 'true').lower() != 'false'  # HTTPS par défaut en prod
+COOKIE_SAMESITE = 'None'  # Cross-domain (api.quelyos.com → backoffice.quelyos.com)
+COOKIE_DOMAIN = os.environ.get('COOKIE_DOMAIN', '.quelyos.com')  # Partage cookies entre sous-domaines
 
 
 class AuthController(http.Controller):
@@ -284,7 +285,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             # Définir cookie refresh token (7 jours)
@@ -295,7 +297,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             # Définir cookie JWT access token (15 min) - optionnel pour clients cookies
@@ -306,7 +309,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             return response
@@ -616,7 +620,10 @@ class AuthController(http.Controller):
             old_refresh_token = request.httprequest.cookies.get(COOKIE_NAME_REFRESH)
 
             if not old_refresh_token:
-                return {'success': False, 'error': 'Refresh token manquant'}
+                return request.make_json_response(
+                    {'success': False, 'error': 'Refresh token manquant'},
+                    status=401
+                )
 
             # Rotation du refresh token (révoque l'ancien, génère un nouveau)
             ip_address = request.httprequest.remote_addr
@@ -630,13 +637,20 @@ class AuthController(http.Controller):
                 )
             except AccessDenied as e:
                 _logger.warning(f"Refresh token rotation failed: {e}")
-                return {'success': False, 'error': 'Refresh token invalide ou expiré'}
+                return request.make_json_response(
+                    {'success': False, 'error': 'Refresh token invalide ou expiré'},
+                    status=401
+                )
 
-            # Créer une nouvelle session Odoo
-            request.session.authenticate(request.env, {
+            # Initialiser la session Odoo directement (pas authenticate car refresh token déjà validé)
+            env = request.env(user=user.id)
+            user_context = dict(env['res.users'].context_get())
+            request.session.should_rotate = True
+            request.session.update({
                 'db': request.db,
+                'login': user.login,
                 'uid': user.id,
-                'login': user.login
+                'context': user_context,
             })
 
             session_id = request.session.sid
@@ -685,7 +699,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             # Mettre à jour le cookie refresh token (rotation)
@@ -696,7 +711,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             # Mettre à jour le cookie JWT access token
@@ -707,14 +723,18 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             return response
 
         except Exception as e:
             _logger.error(f"Token refresh error: {e}")
-            return {'success': False, 'error': 'Erreur lors du rafraîchissement du token'}
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur lors du rafraîchissement du token'},
+                status=500
+            )
 
     @http.route('/api/auth/logout', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
     def logout_session(self, **kwargs):
@@ -759,7 +779,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
             response.set_cookie(
                 COOKIE_NAME_REFRESH,
@@ -768,7 +789,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
             response.set_cookie(
                 COOKIE_NAME_ACCESS,
@@ -777,7 +799,8 @@ class AuthController(http.Controller):
                 httponly=True,
                 secure=COOKIE_SECURE,
                 samesite=COOKIE_SAMESITE,
-                path='/'
+                path='/',
+                domain=COOKIE_DOMAIN
             )
 
             return response
