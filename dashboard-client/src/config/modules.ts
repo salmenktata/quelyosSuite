@@ -141,10 +141,10 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Abonnements',
-        tabGroup: 'Abonnements',
+        title: 'Abonnement',
+        tabGroup: 'Abonnement',
         items: [
-          { name: 'Tous les abonnements', path: '/dashboard/subscriptions', icon: CreditCard },
+          { name: 'Mon abonnement', path: '/dashboard/subscriptions', icon: CreditCard },
         ],
       },
       {

@@ -1,55 +1,78 @@
 /**
- * Abonnements - Liste et gestion des abonnements clients
+ * Mon Abonnement - Vue self-service abonnement client
  *
  * Fonctionnalités :
- * 1. Liste paginée des abonnements avec tri par date
- * 2. Filtrage par statut (trial, active, past_due, cancelled, expired)
- * 3. KPIs résumé (total actifs, MRR, en trial, à risque)
- * 4. Recherche par nom client ou référence
- * 5. Navigation vers détail pour actions (upgrade, cancel, etc.)
+ * 1. Affichage plan actuel avec statut et dates clés
+ * 2. Jauges d'utilisation quotas (utilisateurs, produits, commandes)
+ * 3. Plans disponibles pour upgrade avec comparaison
+ * 4. Actions : upgrade plan, annuler abonnement
+ * 5. État vide si aucun abonnement (invitation à souscrire)
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button, Badge, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, Badge } from '@/components/common'
 import {
   CreditCard,
-  Search,
-  RefreshCw,
   AlertCircle,
   Users,
-  TrendingUp,
+  Package,
+  ShoppingCart,
+  Calendar,
+  RefreshCw,
+  Zap,
+  XCircle,
+  Crown,
+  ArrowUpRight,
   Clock,
-  ChevronLeft,
-  ChevronRight,
+  CheckCircle,
 } from 'lucide-react'
 import { backendRpc } from '@/lib/backend-rpc'
 import { logger } from '@quelyos/logger'
 
-interface SubscriptionItem {
+interface CurrentSubscription {
   id: number
   name: string
-  partner_name: string
-  partner_email: string
-  plan_name: string
-  plan_code: string
+  partner: { id: number; name: string; email: string }
+  plan: { id: number; name: string; code: string }
   state: string
   billing_cycle: string
   start_date: string | null
+  trial_end_date: string | null
   next_billing_date: string | null
-  current_users_count: number
+  usage: {
+    users: QuotaInfo
+    products: QuotaInfo
+    orders: QuotaInfo
+  }
+}
+
+interface QuotaInfo {
+  current: number
+  limit: number
+  percentage: number
+  is_limit_reached: boolean
+}
+
+interface PlanInfo {
+  id: number
+  name: string
+  code: string
+  price_monthly: number
+  price_yearly: number
   max_users: number
-  current_products_count: number
   max_products: number
-  current_orders_count: number
   max_orders_per_year: number
+  support_level: string
+  features: string[]
+  description: string
+  is_popular: boolean
 }
 
 const STATE_LABELS: Record<string, string> = {
-  trial: 'Essai',
+  trial: 'Essai gratuit',
   active: 'Actif',
-  past_due: 'En retard',
+  past_due: 'Paiement en retard',
   cancelled: 'Annulé',
   expired: 'Expiré',
 }
@@ -67,103 +90,113 @@ const CYCLE_LABELS: Record<string, string> = {
   yearly: 'Annuel',
 }
 
-const PAGE_SIZE = 20
-
 const breadcrumbItems = [
   { label: 'Accueil', href: '/dashboard' },
-  { label: 'Abonnements' },
+  { label: 'Mon abonnement' },
 ]
 
-export default function SubscriptionsPage() {
-  const navigate = useNavigate()
-  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([])
-  const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(0)
+export default function SubscriptionPage() {
+  const [subscription, setSubscription] = useState<CurrentSubscription | null>(null)
+  const [plans, setPlans] = useState<PlanInfo[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
-  const [stateFilter, setStateFilter] = useState<string>('all')
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [showPlans, setShowPlans] = useState(false)
 
-  const fetchSubscriptions = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await backendRpc<{ data: SubscriptionItem[]; total: number }>(
-        '/api/ecommerce/subscription/admin/list',
-        { limit: PAGE_SIZE, offset: page * PAGE_SIZE }
-      )
-      if (res.success && res.data) {
-        const raw = (res.data as unknown as { data: SubscriptionItem[]; total: number })
-        setSubscriptions(raw.data || [])
-        setTotal(raw.total || 0)
+      const [subRes, plansRes] = await Promise.all([
+        backendRpc<{ data: CurrentSubscription | null }>('/api/ecommerce/subscription/current', {}),
+        backendRpc<{ data: PlanInfo[] }>('/api/ecommerce/subscription/plans', {}),
+      ])
+
+      if (subRes.success) {
+        const raw = subRes.data as unknown as { data: CurrentSubscription | null }
+        setSubscription(raw.data ?? null)
       } else {
-        setError(res.error || 'Erreur lors du chargement')
+        setError(subRes.error || 'Erreur lors du chargement')
+      }
+
+      if (plansRes.success) {
+        const rawPlans = plansRes.data as unknown as { data: PlanInfo[] }
+        setPlans(rawPlans.data || [])
       }
     } catch (_err) {
-      logger.error('Erreur fetch subscriptions:', _err)
-      setError('Impossible de charger les abonnements')
+      logger.error('Erreur fetch subscription:', _err)
+      setError('Impossible de charger les informations')
     } finally {
       setIsLoading(false)
     }
-  }, [page])
+  }, [])
 
   useEffect(() => {
-    fetchSubscriptions()
-  }, [fetchSubscriptions])
+    fetchData()
+  }, [fetchData])
 
-  const filtered = subscriptions.filter((sub) => {
-    const matchSearch =
-      !search ||
-      sub.name.toLowerCase().includes(search.toLowerCase()) ||
-      sub.partner_name.toLowerCase().includes(search.toLowerCase()) ||
-      sub.partner_email.toLowerCase().includes(search.toLowerCase())
-    const matchState = stateFilter === 'all' || sub.state === stateFilter
-    return matchSearch && matchState
-  })
+  const handleCancel = async () => {
+    setActionLoading('cancel')
+    try {
+      const res = await backendRpc('/api/ecommerce/subscription/cancel', {})
+      if (res.success) {
+        await fetchData()
+      } else {
+        setError(res.error || `Erreur lors de l'annulation`)
+      }
+    } catch (_err) {
+      logger.error('Erreur annulation:', _err)
+      setError(`Impossible d'annuler l'abonnement`)
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
-  const activeCount = subscriptions.filter((s) => s.state === 'active').length
-  const trialCount = subscriptions.filter((s) => s.state === 'trial').length
-  const pastDueCount = subscriptions.filter((s) => s.state === 'past_due').length
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  const handleUpgrade = async (planId: number) => {
+    setActionLoading(`upgrade-${planId}`)
+    try {
+      const res = await backendRpc('/api/ecommerce/subscription/upgrade', { plan_id: planId })
+      if (res.success) {
+        setShowPlans(false)
+        await fetchData()
+      } else {
+        setError(res.error || `Erreur lors de la mise à niveau`)
+      }
+    } catch (_err) {
+      logger.error('Erreur upgrade:', _err)
+      setError(`Impossible de mettre à niveau l'abonnement`)
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '—'
     return new Date(dateStr).toLocaleDateString('fr-FR', {
       day: '2-digit',
-      month: 'short',
+      month: 'long',
       year: 'numeric',
     })
   }
 
-  const usageBar = (current: number, max: number) => {
-    if (max === 0) return <span className="text-xs text-gray-500 dark:text-gray-400">Illimité</span>
-    const pct = Math.min((current / max) * 100, 100)
-    const color =
-      pct >= 90 ? 'bg-red-500' : pct >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
-    return (
-      <div className="flex items-center gap-2">
-        <div className="w-16 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
-        </div>
-        <span className="text-xs text-gray-600 dark:text-gray-400">
-          {current}/{max}
-        </span>
-      </div>
-    )
+  const daysUntil = (dateStr: string | null) => {
+    if (!dateStr) return null
+    const diff = Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    return diff > 0 ? diff : 0
   }
 
-  if (isLoading && subscriptions.length === 0) {
+  if (isLoading) {
     return (
       <Layout>
         <div className="p-4 md:p-8 space-y-6">
           <Breadcrumbs items={breadcrumbItems} />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-28 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
             ))}
           </div>
-          <SkeletonTable rows={8} columns={6} />
+          <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
         </div>
       </Layout>
     )
@@ -178,23 +211,17 @@ export default function SubscriptionsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Abonnements
+              Mon abonnement
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {total} abonnement{total > 1 ? 's' : ''} au total
+              {subscription
+                ? `Plan ${subscription.plan.name} — ${CYCLE_LABELS[subscription.billing_cycle] || subscription.billing_cycle}`
+                : 'Aucun abonnement actif'}
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={fetchSubscriptions} icon={<RefreshCw className="w-4 h-4" />}>
+          <Button variant="outline" size="sm" onClick={fetchData} icon={<RefreshCw className="w-4 h-4" />}>
             Actualiser
           </Button>
-        </div>
-
-        {/* KPIs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <KpiCard icon={CreditCard} label="Actifs" value={activeCount} color="emerald" />
-          <KpiCard icon={Clock} label="En essai" value={trialCount} color="blue" />
-          <KpiCard icon={AlertCircle} label="En retard" value={pastDueCount} color="amber" />
-          <KpiCard icon={Users} label="Total" value={total} color="gray" />
         </div>
 
         {/* Error */}
@@ -205,159 +232,363 @@ export default function SubscriptionsPage() {
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Rechercher client ou référence..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-          <select
-            value={stateFilter}
-            onChange={(e) => setStateFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
-          >
-            <option value="all">Tous les statuts</option>
-            <option value="trial">En essai</option>
-            <option value="active">Actif</option>
-            <option value="past_due">En retard</option>
-            <option value="cancelled">Annulé</option>
-            <option value="expired">Expiré</option>
-          </select>
-        </div>
-
-        {/* Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Référence</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Client</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Plan</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Statut</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Cycle</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Utilisateurs</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-400">Prochaine facture</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
-                      {search || stateFilter !== 'all'
-                        ? 'Aucun abonnement ne correspond aux filtres'
-                        : 'Aucun abonnement trouvé'}
-                    </td>
-                  </tr>
-                ) : (
-                  filtered.map((sub) => (
-                    <tr
-                      key={sub.id}
-                      onClick={() => navigate(`/dashboard/subscriptions/${sub.id}`)}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
-                    >
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                        {sub.name}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <p className="text-gray-900 dark:text-white">{sub.partner_name}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{sub.partner_email}</p>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge variant="neutral">{sub.plan_name}</Badge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge variant={STATE_COLORS[sub.state] || 'neutral'}>
-                          {STATE_LABELS[sub.state] || sub.state}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
-                        {CYCLE_LABELS[sub.billing_cycle] || sub.billing_cycle}
-                      </td>
-                      <td className="px-4 py-3">
-                        {usageBar(sub.current_users_count, sub.max_users)}
-                      </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
-                        {formatDate(sub.next_billing_date)}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Page {page + 1} sur {totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page === 0}
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  icon={<ChevronLeft className="w-4 h-4" />}
-                >
-                  Précédent
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page >= totalPages - 1}
-                  onClick={() => setPage((p) => p + 1)}
-                  icon={<ChevronRight className="w-4 h-4" />}
-                >
-                  Suivant
-                </Button>
+        {!subscription ? (
+          /* No subscription - CTA */
+          <NoSubscription plans={plans} onSelectPlan={handleUpgrade} actionLoading={actionLoading} />
+        ) : (
+          <>
+            {/* Trial banner */}
+            {subscription.state === 'trial' && subscription.trial_end_date && (
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center gap-3">
+                <Clock className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    {`Période d'essai — ${daysUntil(subscription.trial_end_date)} jour(s) restant(s)`}
+                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                    {`Fin de l'essai le ${formatDate(subscription.trial_end_date)}`}
+                  </p>
+                </div>
               </div>
+            )}
+
+            {/* Past due warning */}
+            {subscription.state === 'past_due' && (
+              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  Votre paiement est en retard. Veuillez régulariser pour éviter la suspension.
+                </p>
+              </div>
+            )}
+
+            {/* Info cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <InfoCard
+                icon={CreditCard}
+                label="Plan actuel"
+                value={subscription.plan.name}
+                sub={
+                  <Badge variant={STATE_COLORS[subscription.state] || 'neutral'}>
+                    {STATE_LABELS[subscription.state] || subscription.state}
+                  </Badge>
+                }
+              />
+              <InfoCard
+                icon={Calendar}
+                label="Début"
+                value={formatDate(subscription.start_date)}
+              />
+              <InfoCard
+                icon={Calendar}
+                label="Prochaine facture"
+                value={formatDate(subscription.next_billing_date)}
+                sub={
+                  subscription.next_billing_date
+                    ? <span className="text-xs text-gray-500 dark:text-gray-400">{`Dans ${daysUntil(subscription.next_billing_date)} jour(s)`}</span>
+                    : undefined
+                }
+              />
+              <InfoCard
+                icon={Zap}
+                label="Cycle"
+                value={CYCLE_LABELS[subscription.billing_cycle] || subscription.billing_cycle}
+              />
             </div>
-          )}
-        </div>
+
+            {/* Quotas */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                Utilisation des quotas
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <QuotaGauge
+                  icon={Users}
+                  label="Utilisateurs"
+                  current={subscription.usage.users.current}
+                  limit={subscription.usage.users.limit}
+                  percentage={subscription.usage.users.percentage}
+                  isLimitReached={subscription.usage.users.is_limit_reached}
+                />
+                <QuotaGauge
+                  icon={Package}
+                  label="Produits"
+                  current={subscription.usage.products.current}
+                  limit={subscription.usage.products.limit}
+                  percentage={subscription.usage.products.percentage}
+                  isLimitReached={subscription.usage.products.is_limit_reached}
+                />
+                <QuotaGauge
+                  icon={ShoppingCart}
+                  label="Commandes / an"
+                  current={subscription.usage.orders.current}
+                  limit={subscription.usage.orders.limit}
+                  percentage={subscription.usage.orders.percentage}
+                  isLimitReached={subscription.usage.orders.is_limit_reached}
+                />
+              </div>
+
+              {/* Upgrade CTA if quota near limit */}
+              {(subscription.usage.users.percentage >= 80 ||
+                subscription.usage.products.percentage >= 80 ||
+                subscription.usage.orders.percentage >= 80) && (
+                <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <ArrowUpRight className="w-5 h-5 text-indigo-500" />
+                    <p className="text-sm text-indigo-700 dark:text-indigo-300">
+                      {`Vous approchez de vos limites. Passez à un plan supérieur pour plus de capacité.`}
+                    </p>
+                  </div>
+                  <Button variant="primary" size="sm" onClick={() => setShowPlans(true)}>
+                    Voir les plans
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setShowPlans(!showPlans)}
+                icon={<Crown className="w-4 h-4" />}
+              >
+                {showPlans ? 'Masquer les plans' : 'Changer de plan'}
+              </Button>
+              {(subscription.state === 'active' || subscription.state === 'trial') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancel}
+                  disabled={actionLoading === 'cancel'}
+                  icon={<XCircle className="w-4 h-4" />}
+                >
+                  {actionLoading === 'cancel' ? 'Annulation...' : 'Annuler mon abonnement'}
+                </Button>
+              )}
+            </div>
+
+            {/* Plans upgrade */}
+            {showPlans && (
+              <PlansGrid
+                plans={plans}
+                currentPlanId={subscription.plan.id}
+                billingCycle={subscription.billing_cycle}
+                onUpgrade={handleUpgrade}
+                actionLoading={actionLoading}
+              />
+            )}
+          </>
+        )}
       </div>
     </Layout>
   )
 }
 
-function KpiCard({
+/* ─── Sub-components ──────────────────────────────────────────── */
+
+function NoSubscription({
+  plans,
+  onSelectPlan,
+  actionLoading,
+}: {
+  plans: PlanInfo[]
+  onSelectPlan: (planId: number) => void
+  actionLoading: string | null
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          Aucun abonnement actif
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+          {`Choisissez un plan ci-dessous pour commencer avec une période d'essai gratuite.`}
+        </p>
+      </div>
+      {plans.length > 0 && (
+        <PlansGrid
+          plans={plans}
+          currentPlanId={null}
+          billingCycle="monthly"
+          onUpgrade={onSelectPlan}
+          actionLoading={actionLoading}
+        />
+      )}
+    </div>
+  )
+}
+
+function PlansGrid({
+  plans,
+  currentPlanId,
+  billingCycle,
+  onUpgrade,
+  actionLoading,
+}: {
+  plans: PlanInfo[]
+  currentPlanId: number | null
+  billingCycle: string
+  onUpgrade: (planId: number) => void
+  actionLoading: string | null
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {plans.map((plan) => {
+        const isCurrent = plan.id === currentPlanId
+        const price = billingCycle === 'yearly' ? plan.price_yearly : plan.price_monthly
+        return (
+          <div
+            key={plan.id}
+            className={`relative bg-white dark:bg-gray-800 rounded-xl border p-5 flex flex-col ${
+              plan.is_popular
+                ? 'border-indigo-500 dark:border-indigo-400 ring-1 ring-indigo-500 dark:ring-indigo-400'
+                : 'border-gray-200 dark:border-gray-700'
+            }`}
+          >
+            {plan.is_popular && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-indigo-500 text-white text-xs font-medium rounded-full">
+                Populaire
+              </span>
+            )}
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 min-h-[2.5rem]">
+              {plan.description || '\u00A0'}
+            </p>
+            <p className="mt-4">
+              <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                {price > 0 ? `${price}€` : 'Gratuit'}
+              </span>
+              {price > 0 && (
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  /{billingCycle === 'yearly' ? 'an' : 'mois'}
+                </span>
+              )}
+            </p>
+            <ul className="mt-4 space-y-2 flex-1">
+              <PlanLimit label="Utilisateurs" value={plan.max_users} />
+              <PlanLimit label="Produits" value={plan.max_products} />
+              <PlanLimit label="Commandes/an" value={plan.max_orders_per_year} />
+              {plan.features.slice(0, 3).map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4">
+              {isCurrent ? (
+                <Button variant="outline" size="sm" disabled className="w-full">
+                  Plan actuel
+                </Button>
+              ) : (
+                <Button
+                  variant={plan.is_popular ? 'primary' : 'outline'}
+                  size="sm"
+                  className="w-full"
+                  onClick={() => onUpgrade(plan.id)}
+                  disabled={actionLoading === `upgrade-${plan.id}`}
+                >
+                  {actionLoading === `upgrade-${plan.id}`
+                    ? 'En cours...'
+                    : currentPlanId
+                      ? 'Passer à ce plan'
+                      : 'Commencer'}
+                </Button>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function PlanLimit({ label, value }: { label: string; value: number }) {
+  return (
+    <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <span className="font-medium text-gray-900 dark:text-white">
+        {value === 0 ? 'Illimité' : value}
+      </span>
+      {label}
+    </li>
+  )
+}
+
+function InfoCard({
   icon: Icon,
   label,
   value,
-  color,
+  sub,
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
-  value: number
-  color: string
+  value: string
+  sub?: React.ReactNode
 }) {
-  const colorMap: Record<string, string> = {
-    emerald: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
-    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-    amber: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
-    gray: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
-  }
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-      <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-lg ${colorMap[color] || colorMap.gray}`}>
-          <Icon className="w-5 h-5" />
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-        </div>
+      <div className="flex items-center gap-3 mb-2">
+        <Icon className="w-4 h-4 text-gray-400" />
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
       </div>
+      <p className="text-lg font-semibold text-gray-900 dark:text-white">{value}</p>
+      {sub && <div className="mt-1">{sub}</div>}
+    </div>
+  )
+}
+
+function QuotaGauge({
+  icon: Icon,
+  label,
+  current,
+  limit,
+  percentage,
+  isLimitReached,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  current: number
+  limit: number
+  percentage: number
+  isLimitReached: boolean
+}) {
+  const pct = Math.min(percentage, 100)
+  const color = isLimitReached
+    ? 'text-red-600 dark:text-red-400'
+    : pct >= 80
+      ? 'text-amber-600 dark:text-amber-400'
+      : 'text-emerald-600 dark:text-emerald-400'
+  const barColor = isLimitReached ? 'bg-red-500' : pct >= 80 ? 'bg-amber-500' : 'bg-emerald-500'
+
+  return (
+    <div className="text-center">
+      <div className="flex items-center justify-center gap-2 mb-3">
+        <Icon className={`w-5 h-5 ${color}`} />
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
+      </div>
+      <p className={`text-3xl font-bold ${color}`}>
+        {current}
+        <span className="text-lg text-gray-400 dark:text-gray-500">
+          /{limit === 0 ? '∞' : limit}
+        </span>
+      </p>
+      {limit > 0 && (
+        <>
+          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-3 overflow-hidden">
+            <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{pct.toFixed(0)}% utilisé</p>
+        </>
+      )}
+      {limit === 0 && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Illimité</p>
+      )}
+      {isLimitReached && (
+        <p className="text-xs text-red-600 dark:text-red-400 font-medium mt-1">Limite atteinte</p>
+      )}
     </div>
   )
 }
