@@ -39,12 +39,13 @@ ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
 
     # ============ PRODUCTION ============
-    # Domaines Quelyos (à activer selon déploiement)
-    # 'https://quelyos.com',
-    # 'https://www.quelyos.com',
-    # 'https://app.quelyos.com',
-    # 'https://admin.quelyos.com',
-    # 'https://api.quelyos.com',
+    'https://quelyos.com',
+    'https://www.quelyos.com',
+    'https://shop.quelyos.com',
+    'https://backoffice.quelyos.com',
+    'https://admin.quelyos.com',
+    'https://api.quelyos.com',
+    'https://app.quelyos.com',
 
     # Domaines tenants (pattern: https://*.quelyos.com)
     # Gérés dynamiquement via QUELYOS_ALLOWED_ORIGINS
