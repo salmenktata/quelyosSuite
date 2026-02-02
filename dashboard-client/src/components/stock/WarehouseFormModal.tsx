@@ -283,7 +283,7 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
                   </label>
                 </div>
 
-                {form2.watch('use_existing_partner') ? (
+                {useExistingPartner ? (
                   <div>
                     <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                       Sélectionner un contact

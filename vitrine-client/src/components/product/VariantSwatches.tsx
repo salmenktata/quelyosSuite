@@ -61,47 +61,37 @@ export function VariantSwatches({
     loadVariants();
   }, [productId]);
 
-  // Ordre de priorité pour l'affichage des attributs
-  const ATTRIBUTE_PRIORITY = [
-    { keywords: ['color', 'couleur'], weight: 1 },
-    { keywords: ['size', 'taille'], weight: 2 },
-    { keywords: ['shoes size', 'pointure', 'shoe size'], weight: 3 },
-    { keywords: ['material', 'matériau', 'matiere', 'matière'], weight: 4 },
-    { keywords: ['finish', 'finition', 'aspect'], weight: 5 },
-    { keywords: ['style'], weight: 6 },
-    { keywords: ['pattern', 'motif'], weight: 7 },
-  ];
-
-  // Fonction pour calculer la priorité d&apos;un attribut
-  const getAttributePriority = (attr: AttributeLine): number => {
-    const attrNameLower = attr.attribute_name.toLowerCase();
-
-    // Vérifier si c'est une couleur (priorité absolue)
-    if (attr.display_type === 'color') return 1;
-
-    // Chercher dans la liste de priorités
-    for (const priority of ATTRIBUTE_PRIORITY) {
-      if (priority.keywords.some(keyword => attrNameLower.includes(keyword))) {
-        return priority.weight;
-      }
-    }
-
-    // Attributs non reconnus : priorité basse
-    return 999;
-  };
-
   // Sélectionner les attributs à afficher avec ordre de priorité
   const displayedAttributes = React.useMemo(() => {
     if (!attributeLines?.length) return [];
 
-    // Trier les attributs par priorité
+    const ATTRIBUTE_PRIORITY = [
+      { keywords: ['color', 'couleur'], weight: 1 },
+      { keywords: ['size', 'taille'], weight: 2 },
+      { keywords: ['shoes size', 'pointure', 'shoe size'], weight: 3 },
+      { keywords: ['material', 'matériau', 'matiere', 'matière'], weight: 4 },
+      { keywords: ['finish', 'finition', 'aspect'], weight: 5 },
+      { keywords: ['style'], weight: 6 },
+      { keywords: ['pattern', 'motif'], weight: 7 },
+    ];
+
+    const getAttributePriority = (attr: AttributeLine): number => {
+      const attrNameLower = attr.attribute_name.toLowerCase();
+      if (attr.display_type === 'color') return 1;
+      for (const priority of ATTRIBUTE_PRIORITY) {
+        if (priority.keywords.some(keyword => attrNameLower.includes(keyword))) {
+          return priority.weight;
+        }
+      }
+      return 999;
+    };
+
     const sortedAttributes = [...attributeLines].sort((a, b) => {
       return getAttributePriority(a) - getAttributePriority(b);
     });
 
-    // Prendre les N premiers selon maxAttributes
     return sortedAttributes.slice(0, maxAttributes);
-  }, [attributeLines, maxAttributes, getAttributePriority]);
+  }, [attributeLines, maxAttributes]);
 
   // Fonction générique pour extraire valeurs uniques d&apos;un attribut
   const getAttributeValues = (attribute: AttributeLine) => {

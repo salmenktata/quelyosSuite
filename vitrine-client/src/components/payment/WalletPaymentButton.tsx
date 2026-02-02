@@ -53,15 +53,75 @@ export function WalletPaymentButton({
   useEffect(() => {
     if (!stripe) return;
 
+    const handlePaymentMethod = async (event: PaymentMethodEvent, stripeInstance: Stripe) => {
+      try {
+        setProcessing(true);
+
+        const { paymentMethod, shippingAddress, payerName: _payerName, payerEmail: _payerEmail } = event;
+
+        const response = await backendClient.createWalletPayment({
+          amount: Math.round(amount * 100),
+          payment_method_id: parseInt(paymentMethod.id, 10) || 0,
+          shipping_address: {
+            firstName: shippingAddress?.recipient?.split(' ')[0] || '',
+            lastName: shippingAddress?.recipient?.split(' ').slice(1).join(' ') || '',
+            address: shippingAddress?.addressLine?.[0] || '',
+            city: shippingAddress?.city || '',
+            postalCode: shippingAddress?.postalCode || '',
+            country: shippingAddress?.country || '',
+            phone: shippingAddress?.phone || '',
+          },
+          order_id: orderId,
+        });
+
+        if (!response.success || !response.data?.client_secret) {
+          event.complete('fail');
+          if (onError) {
+            onError(response.message || 'Payment failed');
+          }
+          return;
+        }
+
+        const { error: confirmError, paymentIntent } = await stripeInstance.confirmCardPayment(
+          response.data.client_secret,
+          { payment_method: paymentMethod.id },
+          { handleActions: false }
+        );
+
+        if (confirmError) {
+          event.complete('fail');
+          if (onError) {
+            onError(confirmError.message || 'Payment confirmation failed');
+          }
+          return;
+        }
+
+        event.complete('success');
+
+        if (onSuccess) {
+          onSuccess(paymentIntent.id);
+        } else {
+          router.push(`/checkout/confirmation?payment_intent=${paymentIntent.id}`);
+        }
+      } catch (error: unknown) {
+        logger.error('Error processing wallet payment:', error);
+        event.complete('fail');
+        if (onError) {
+          onError(error instanceof Error ? error.message : 'Payment processing error');
+        }
+      } finally {
+        setProcessing(false);
+      }
+    };
+
     const initializePaymentRequest = async () => {
       try {
-        // Create Payment Request
         const pr = stripe.paymentRequest({
           country: 'FR',
           currency: 'eur',
           total: {
             label: 'Total',
-            amount: Math.round(amount * 100), // Convert to cents
+            amount: Math.round(amount * 100),
           },
           requestPayerName: true,
           requestPayerEmail: true,
@@ -76,14 +136,12 @@ export function WalletPaymentButton({
           ],
         });
 
-        // Check if wallet payment is available
         const result = await pr.canMakePayment();
 
         if (result) {
           setCanMakePayment(true);
           setPaymentRequest(pr);
 
-          // Handle payment method submission
           pr.on('paymentmethod', async (event) => {
             await handlePaymentMethod(event as unknown as PaymentMethodEvent, stripe);
           });
@@ -96,75 +154,7 @@ export function WalletPaymentButton({
     };
 
     initializePaymentRequest();
-  }, [stripe, amount]);
-
-  const handlePaymentMethod = async (event: PaymentMethodEvent, stripeInstance: Stripe) => {
-    try {
-      setProcessing(true);
-
-      // Get payment method from event
-      const { paymentMethod, shippingAddress, payerName: _payerName, payerEmail: _payerEmail } = event;
-
-      // Create payment intent on backend
-      const response = await backendClient.createWalletPayment({
-        amount: Math.round(amount * 100),
-        payment_method_id: parseInt(paymentMethod.id, 10) || 0,
-        shipping_address: {
-          firstName: shippingAddress?.recipient?.split(' ')[0] || '',
-          lastName: shippingAddress?.recipient?.split(' ').slice(1).join(' ') || '',
-          address: shippingAddress?.addressLine?.[0] || '',
-          city: shippingAddress?.city || '',
-          postalCode: shippingAddress?.postalCode || '',
-          country: shippingAddress?.country || '',
-          phone: shippingAddress?.phone || '',
-        },
-        order_id: orderId,
-      });
-
-      if (!response.success || !response.data?.client_secret) {
-        event.complete('fail');
-        if (onError) {
-          onError(response.message || 'Payment failed');
-        }
-        return;
-      }
-
-      // Confirm payment intent
-      const { error: confirmError, paymentIntent } = await stripeInstance.confirmCardPayment(
-        response.data.client_secret,
-        {
-          payment_method: paymentMethod.id,
-        },
-        { handleActions: false }
-      );
-
-      if (confirmError) {
-        event.complete('fail');
-        if (onError) {
-          onError(confirmError.message || 'Payment confirmation failed');
-        }
-        return;
-      }
-
-      // Complete payment
-      event.complete('success');
-
-      if (onSuccess) {
-        onSuccess(paymentIntent.id);
-      } else {
-        // Default: redirect to confirmation page
-        router.push(`/checkout/confirmation?payment_intent=${paymentIntent.id}`);
-      }
-    } catch (error: unknown) {
-      logger.error('Error processing wallet payment:', error);
-      event.complete('fail');
-      if (onError) {
-        onError(error instanceof Error ? error.message : 'Payment processing error');
-      }
-    } finally {
-      setProcessing(false);
-    }
-  };
+  }, [stripe, amount, orderId, onError, onSuccess, router]);
 
   // Don't render if wallet payment is not available
   if (!canMakePayment || !paymentRequest) {

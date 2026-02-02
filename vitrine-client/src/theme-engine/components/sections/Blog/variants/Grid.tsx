@@ -112,7 +112,7 @@ export default function Grid({ config, className = '', theme }: GridProps) {
         </div>
 
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/blog"
             className="inline-block px-8 py-3 rounded-lg font-semibold transition-all hover:scale-105"
             style={{
@@ -121,7 +121,7 @@ export default function Grid({ config, className = '', theme }: GridProps) {
             }}
           >
             Voir tous les articles
-          </a>
+          </Link>
         </div>
       </div>
     </section>

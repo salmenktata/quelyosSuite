@@ -58,7 +58,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Opportunité
-                  <SortIcon field="name" />
+                  {renderSortIcon("name")}
                 </button>
               </th>
               <th className="px-4 py-3 text-left">
@@ -67,7 +67,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Client
-                  <SortIcon field="partner_name" />
+                  {renderSortIcon("partner_name")}
                 </button>
               </th>
               <th className="px-4 py-3 text-left">
@@ -76,7 +76,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Stage
-                  <SortIcon field="stage_name" />
+                  {renderSortIcon("stage_name")}
                 </button>
               </th>
               <th className="px-4 py-3 text-right">
@@ -85,7 +85,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 ml-auto text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Revenu Attendu
-                  <SortIcon field="expected_revenue" />
+                  {renderSortIcon("expected_revenue")}
                 </button>
               </th>
               <th className="px-4 py-3 text-right">
@@ -94,7 +94,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 ml-auto text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Probabilité
-                  <SortIcon field="probability" />
+                  {renderSortIcon("probability")}
                 </button>
               </th>
               <th className="px-4 py-3 text-left">
@@ -103,7 +103,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                   className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Date Création
-                  <SortIcon field="create_date" />
+                  {renderSortIcon("create_date")}
                 </button>
               </th>
             </tr>

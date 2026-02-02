@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -56,6 +56,73 @@ export function MarketingPopup() {
     delay: 2000,
     enabled: popup?.trigger_type === 'exit_intent',
   });
+
+  const shouldShowPopup = useCallback((campaign: PopupCampaign): boolean => {
+    const storageKey = `popup_shown_${campaign.id}`;
+
+    switch (campaign.display_frequency) {
+      case 'once':
+        if (localStorage.getItem(storageKey)) {
+          return false;
+        }
+        break;
+
+      case 'daily': {
+        const lastShown = localStorage.getItem(storageKey);
+        if (lastShown) {
+          const lastShownDate = new Date(lastShown);
+          const today = new Date();
+          if (
+            lastShownDate.getFullYear() === today.getFullYear() &&
+            lastShownDate.getMonth() === today.getMonth() &&
+            lastShownDate.getDate() === today.getDate()
+          ) {
+            return false;
+          }
+        }
+        break;
+      }
+
+      case 'session':
+        if (sessionStorage.getItem(storageKey)) {
+          return false;
+        }
+        break;
+
+      case 'always':
+        break;
+    }
+
+    return true;
+  }, []);
+
+  const showPopup = useCallback(() => {
+    if (!popup) return;
+
+    setIsVisible(true);
+
+    const storageKey = `popup_shown_${popup.id}`;
+
+    switch (popup.display_frequency) {
+      case 'once':
+        localStorage.setItem(storageKey, 'true');
+        break;
+
+      case 'daily':
+        localStorage.setItem(storageKey, new Date().toISOString());
+        break;
+
+      case 'session':
+        sessionStorage.setItem(storageKey, 'true');
+        break;
+    }
+  }, [popup]);
+
+  const getScrollPercentage = useCallback((): number => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    return (scrollTop / scrollHeight) * 100;
+  }, []);
 
   const loadActivePopup = React.useCallback(async () => {
     try {
@@ -118,79 +185,14 @@ export function MarketingPopup() {
         // Handled by useExitIntent hook
         break;
     }
-  }, [popup, isVisible]);
+  }, [popup, isVisible, shouldShowPopup, showPopup, getScrollPercentage]);
 
   // Handle exit intent trigger
   useEffect(() => {
     if (exitIntentDetected && popup && !isVisible && shouldShowPopup(popup)) {
       showPopup();
     }
-  }, [exitIntentDetected, popup, isVisible]);
-
-  const shouldShowPopup = (campaign: PopupCampaign): boolean => {
-    const storageKey = `popup_shown_${campaign.id}`;
-
-    switch (campaign.display_frequency) {
-      case 'once':
-        // Check localStorage for permanent record
-        if (localStorage.getItem(storageKey)) {
-          return false;
-        }
-        break;
-
-      case 'daily':
-        // Check if shown today
-        const lastShown = localStorage.getItem(storageKey);
-        if (lastShown) {
-          const lastShownDate = new Date(lastShown);
-          const today = new Date();
-          if (
-            lastShownDate.getFullYear() === today.getFullYear() &&
-            lastShownDate.getMonth() === today.getMonth() &&
-            lastShownDate.getDate() === today.getDate()
-          ) {
-            return false;
-          }
-        }
-        break;
-
-      case 'session':
-        // Check sessionStorage
-        if (sessionStorage.getItem(storageKey)) {
-          return false;
-        }
-        break;
-
-      case 'always':
-        // Always show (no storage check)
-        break;
-    }
-
-    return true;
-  };
-
-  const showPopup = () => {
-    if (!popup) return;
-
-    setIsVisible(true);
-
-    // Record that popup was shown
-    const storageKey = `popup_shown_${popup.id}`;
-
-    switch (popup.display_frequency) {
-      case 'once':
-        localStorage.setItem(storageKey, 'true');
-        break;
-
-      case 'daily':
-        localStorage.setItem(storageKey, new Date().toISOString());
-        break;
-
-      case 'session':
-        sessionStorage.setItem(storageKey, 'true');
-        break;
-    }
-  };
+  }, [exitIntentDetected, popup, isVisible, shouldShowPopup, showPopup]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -207,12 +209,6 @@ export function MarketingPopup() {
     }
 
     handleClose();
-  };
-
-  const getScrollPercentage = (): number => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    return (scrollTop / scrollHeight) * 100;
   };
 
   // Don't render anything if loading or no popup

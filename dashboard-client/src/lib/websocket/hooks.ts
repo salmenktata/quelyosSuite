@@ -41,7 +41,10 @@ export function useWebSocket() {
  */
 export function useChannel(channel: string, handler: MessageHandler) {
   const handlerRef = useRef(handler)
-  handlerRef.current = handler
+
+  useEffect(() => {
+    handlerRef.current = handler
+  })
 
   useEffect(() => {
     const unsubscribe = wsClient.subscribe(channel, (message) => {
@@ -159,15 +162,19 @@ function useLocalState<T>(initialValue: T): [T, (value: T) => void] {
  * const { onlineUsers, isOnline } = usePresence('dashboard')
  */
 export function usePresence(room: string) {
-  const onlineUsersRef = useRef<Set<string>>(new Set())
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set())
 
   useChannel(`presence:${room}`, (message) => {
     if (message.event === 'join') {
-      onlineUsersRef.current.add(message.data as string)
+      setOnlineUsers((prev) => new Set([...prev, message.data as string]))
     } else if (message.event === 'leave') {
-      onlineUsersRef.current.delete(message.data as string)
+      setOnlineUsers((prev) => {
+        const next = new Set(prev)
+        next.delete(message.data as string)
+        return next
+      })
     } else if (message.event === 'list') {
-      onlineUsersRef.current = new Set(message.data as string[])
+      setOnlineUsers(new Set(message.data as string[]))
     }
   })
 
@@ -184,7 +191,7 @@ export function usePresence(room: string) {
   }, [room])
 
   return {
-    onlineUsers: Array.from(onlineUsersRef.current),
-    isOnline: (userId: string) => onlineUsersRef.current.has(userId),
+    onlineUsers: Array.from(onlineUsers),
+    isOnline: (userId: string) => onlineUsers.has(userId),
   }
 }
