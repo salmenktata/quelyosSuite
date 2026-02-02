@@ -9,7 +9,7 @@
 #   ./scripts/deploy-vps.sh --skip-backup --skip-odoo  # Options
 # =============================================================================
 
-set -euo pipefail
+set -eo pipefail
 
 # ── Config ────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,23 +20,30 @@ VPS_DIR="/home/deploy/quelyos-suite"
 BACKUP_DIR="/home/deploy/backups"
 DB_NAME="quelyos"
 DB_USER="odoo"
-
-# Domaines pour health check
-declare -A DOMAINS=(
-  [vitrine]="quelyos.com"
-  [ecommerce]="shop.quelyos.com"
-  [dashboard]="backoffice.quelyos.com"
-  [superadmin]="admin.quelyos.com"
-)
 API_DOMAIN="api.quelyos.com"
 
-# Mapping noms locaux -> VPS
-declare -A NAME_MAP=(
-  [dashboard-client]="dashboard"
-  [vitrine-quelyos]="vitrine"
-  [vitrine-client]="ecommerce"
-  [super-admin-client]="superadmin"
-)
+# Apps list (bash 3 compatible - no associative arrays)
+APP_NAMES="vitrine ecommerce dashboard superadmin"
+LOCAL_NAMES="vitrine-quelyos vitrine-client dashboard-client super-admin-client"
+
+# Lookup functions (bash 3 compatible)
+get_domain() {
+  case "$1" in
+    vitrine)    echo "quelyos.com" ;;
+    ecommerce)  echo "shop.quelyos.com" ;;
+    dashboard)  echo "backoffice.quelyos.com" ;;
+    superadmin) echo "admin.quelyos.com" ;;
+  esac
+}
+
+get_vps_name() {
+  case "$1" in
+    dashboard-client)    echo "dashboard" ;;
+    vitrine-quelyos)     echo "vitrine" ;;
+    vitrine-client)      echo "ecommerce" ;;
+    super-admin-client)  echo "superadmin" ;;
+  esac
+}
 
 # Couleurs
 RED='\033[0;31m'
@@ -175,7 +182,8 @@ fi
 # Sync apps (avec mapping noms)
 sync_app() {
   local local_name="$1"
-  local vps_name="${NAME_MAP[$local_name]}"
+  local vps_name
+  vps_name=$(get_vps_name "$local_name")
 
   if [ -n "$APP_FILTER" ] && [ "$APP_FILTER" != "$vps_name" ]; then
     return
@@ -251,19 +259,6 @@ fi
 # ── STEP 7: HEALTH CHECK ─────────────────────────────────────────
 step 7 "Health checks"
 
-if $DRY_RUN; then
-  for svc in "${!DOMAINS[@]}"; do
-    echo -e "  ${YELLOW}[DRY-RUN] curl${NC} https://${DOMAINS[$svc]}/"
-  done
-  echo -e "  ${YELLOW}[DRY-RUN] curl${NC} https://$API_DOMAIN/api/health"
-  echo -e "\n${GREEN}${BOLD}[DRY-RUN] Deploiement simule avec succes${NC}"
-  exit 0
-fi
-
-# Attendre que les conteneurs demarrent
-echo -e "  ${YELLOW}Attente demarrage (15s)...${NC}"
-sleep 15
-
 HEALTH_OK=true
 
 check_health() {
@@ -279,11 +274,29 @@ check_health() {
   fi
 }
 
-for svc in "${!DOMAINS[@]}"; do
+if $DRY_RUN; then
+  for svc in $APP_NAMES; do
+    if [ -n "$APP_FILTER" ] && [ "$APP_FILTER" != "$svc" ]; then
+      continue
+    fi
+    domain=$(get_domain "$svc")
+    echo -e "  ${YELLOW}[DRY-RUN] curl${NC} https://$domain/"
+  done
+  echo -e "  ${YELLOW}[DRY-RUN] curl${NC} https://$API_DOMAIN/api/health"
+  echo -e "\n${GREEN}${BOLD}[DRY-RUN] Deploiement simule avec succes${NC}"
+  exit 0
+fi
+
+# Attendre que les conteneurs demarrent
+echo -e "  ${YELLOW}Attente demarrage (15s)...${NC}"
+sleep 15
+
+for svc in $APP_NAMES; do
   if [ -n "$APP_FILTER" ] && [ "$APP_FILTER" != "$svc" ]; then
     continue
   fi
-  check_health "$svc" "https://${DOMAINS[$svc]}/"
+  domain=$(get_domain "$svc")
+  check_health "$svc" "https://$domain/"
 done
 
 check_health "api" "https://$API_DOMAIN/api/health"
