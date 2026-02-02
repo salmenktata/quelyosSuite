@@ -28,7 +28,6 @@ import {
   Truck,
   Wrench,
   UsersRound,
-  LifeBuoy,
   type LucideIcon,
 } from "lucide-react";
 import Header from "../../components/Header";
