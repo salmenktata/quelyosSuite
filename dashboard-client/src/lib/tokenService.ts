@@ -297,6 +297,10 @@ class TokenService {
         user: this.state.user,
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      // Synchroniser tenant_id pour TenantContext
+      if (this.state.user?.tenantId) {
+        localStorage.setItem('tenant_id', String(this.state.user.tenantId))
+      }
     } catch (e) {
       logger.warn('[TokenService] Failed to save to storage', e)
     }

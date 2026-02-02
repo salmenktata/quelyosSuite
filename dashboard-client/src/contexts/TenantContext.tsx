@@ -19,6 +19,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { api } from '@/lib/api'
+import { tokenService } from '@/lib/tokenService'
 import { tenantStorage } from '@/lib/tenantStorage'
 import { logger } from '@quelyos/logger'
 
@@ -53,10 +54,18 @@ interface TenantProviderProps {
 export function TenantProvider({ children }: TenantProviderProps) {
   const { tenant, isLoading, error } = useMyTenant()
   const [manualTenantId, setManualTenantId] = useState<number | null>(() => {
+    // 1. Essayer localStorage
     const storedTenantId = localStorage.getItem('tenant_id')
     if (storedTenantId && storedTenantId !== 'null') {
       const id = parseInt(storedTenantId, 10)
       if (!isNaN(id)) return id
+    }
+    // 2. Fallback: récupérer depuis le token JWT (tokenService)
+    const user = tokenService.getUser()
+    if (user?.tenantId) {
+      // Synchroniser dans localStorage pour les prochains chargements
+      localStorage.setItem('tenant_id', String(user.tenantId))
+      return user.tenantId
     }
     return null
   })
@@ -109,13 +118,16 @@ export function TenantProvider({ children }: TenantProviderProps) {
     api.setTenantId(null)
   }
 
+  const resolvedTenantId = tenant?.id ?? manualTenantId
+
   const value: TenantContextValue = {
-    tenantId: tenant?.id ?? manualTenantId,
+    tenantId: resolvedTenantId,
     tenantName: tenant?.name ?? null,
     tenantCode: tenant?.code ?? null,
     tenantDomain,
-    isLoading,
-    error: error as Error | null,
+    isLoading: isLoading && !resolvedTenantId,
+    // Ne pas propager l'erreur si on a un tenantId valide en fallback
+    error: resolvedTenantId ? null : (error as Error | null),
     setTenantId,
     setTenantDomain,
     clearTenantData,
