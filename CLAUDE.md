@@ -270,8 +270,8 @@ import { ... } from 'lucide-react'  // JAMAIS heroicons
 - `super-admin-client/` : React + Vite (Admin SaaS : 9000)
 
 ### Packages partagés (monorepo Turborepo)
-- `packages/ui-kit/` : @quelyos/ui-kit (composants React partagés)
-- `packages/api-client/` : @quelyos/api-client (client API partagé)
+- `packages/ui/` : @quelyos/ui (composants React partagés)
+- `packages/backend/` : @quelyos/backend (client API unifié)
 - `packages/utils/` : @quelyos/utils (helpers)
 - `packages/logger/` : @quelyos/logger (existant)
 
@@ -394,14 +394,14 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 
 ### Packages partagés (@quelyos/*)
 **Critique** : Les packages partagés sont utilisés par tous les frontends.
-- ❌ `packages/api-client/src/odoo.ts` → ✅ `packages/api-client/src/client.ts`
+- ❌ `packages/backend/src/odoo.ts` → ✅ `packages/backend/src/client.ts`
 - ❌ `OdooApiClient` → ✅ `ApiClient`
 - ❌ Commentaire `// Odoo XML-RPC` → ✅ `// Backend API`
 
 ### Vérification
 **OBLIGATOIRE** : Lancer `/no-odoo` **AVANT chaque commit** pour vérifier conformité dans :
 - vitrine-client, dashboard-client, vitrine-quelyos, super-admin-client
-- **Packages partagés** : packages/ui-kit, packages/api-client, packages/utils
+- **Packages partagés** : packages/ui, packages/backend, packages/utils
 
 **Tolérance ZÉRO** : Tout mot "Odoo"/"odoo"/"OCA"/"OpenERP" dans le code client = bug CRITIQUE à corriger immédiatement.
 
@@ -430,7 +430,7 @@ Alerter AVANT : schéma DB, modèles Odoo, endpoints API
 5. Alerter avant modif structurelle Odoo
 6. Logger sécurisé (`@quelyos/logger` au lieu de `console.log`)
 7. Tailwind + Zod uniquement
-8. Composants partagés via `@quelyos/ui-kit`
+8. Composants partagés via `@quelyos/ui`
 
 ## 🔧 DÉVELOPPEMENT MODULES ODOO - CHECKLIST OBLIGATOIRE
 
