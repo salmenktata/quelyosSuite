@@ -75,7 +75,14 @@ export function Subscriptions() {
       </div>
 
       {/* MRR Breakdown */}
-      {mrrBreakdown && <MRRBreakdownCards data={mrrBreakdown} />}
+      {mrrCategories && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <MetricCard title="Modules MRR" value={`${mrrCategories.modules.toLocaleString('fr-FR')} €`} color="green" />
+          <MetricCard title="Solutions MRR" value={`${mrrCategories.solutions.toLocaleString('fr-FR')} €`} color="blue" />
+          <MetricCard title="Enterprise MRR" value={`${mrrCategories.enterprise.toLocaleString('fr-FR')} €`} color="purple" />
+          <MetricCard title="Total MRR" value={`${mrrCategories.total.toLocaleString('fr-FR')} €`} color="teal" />
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex gap-4">
@@ -98,8 +105,8 @@ export function Subscriptions() {
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500"
         >
           <option value="all">Tous les plans</option>
-          <option value="starter">Starter</option>
-          <option value="pro">Pro</option>
+          <option value="module">Modules</option>
+          <option value="solution">Solutions</option>
           <option value="enterprise">Enterprise</option>
         </select>
       </div>
