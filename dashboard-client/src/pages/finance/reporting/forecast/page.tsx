@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -59,6 +59,7 @@ export default function ForecastReportPage() {
   const error = apiError?.message || null;
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -70,7 +71,7 @@ export default function ForecastReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -87,13 +88,13 @@ export default function ForecastReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.forecast} />
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -120,11 +121,11 @@ export default function ForecastReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -135,12 +136,12 @@ export default function ForecastReportPage() {
                 <span>Calcul des prévisions...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -159,7 +160,7 @@ export default function ForecastReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Content */}
@@ -167,7 +168,7 @@ export default function ForecastReportPage() {
         <>
         {/* Alerts */}
         {(apiData.alerts?.lowCash || apiData.alerts?.negativeBalance) && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -201,11 +202,11 @@ export default function ForecastReportPage() {
                 </div>
               </GlassCard>
             )}
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -264,11 +265,11 @@ export default function ForecastReportPage() {
               </div>
             </GlassCard>
           )}
-        </motion.div>
+        </m.div>
 
         {/* Trends Panel */}
         {apiData.trends && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -302,11 +303,11 @@ export default function ForecastReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
         )}
 
         {/* Forecast Chart - Simplified Text View */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -349,10 +350,11 @@ export default function ForecastReportPage() {
               ))}
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
         </>
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }
