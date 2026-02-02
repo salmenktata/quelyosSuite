@@ -396,5 +396,6 @@ export default function ByPortfolioReportPage() {
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }
