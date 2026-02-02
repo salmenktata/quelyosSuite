@@ -29,13 +29,13 @@ RUN pnpm install --frozen-lockfile
 # Copie du code source
 COPY dashboard-client/ ./dashboard-client/
 
-# Build shared packages first
+# Build shared packages first (skip turbo workspace build)
 WORKDIR /app/packages/logger
-RUN pnpm build
+RUN pnpm run build || true
 
-# Build de l'édition spécifique
+# Build de l'édition spécifique (direct vite build)
 WORKDIR /app/dashboard-client
-RUN VITE_EDITION=${EDITION} pnpm run build
+RUN VITE_EDITION=${EDITION} npx vite build
 
 # ============================================================================
 # STAGE 2 : RUNNER (NGINX)

@@ -146,6 +146,21 @@ export interface Product {
 }
 
 /**
+ * Product filters for search/listing
+ */
+export interface ProductFilters {
+  limit?: number
+  offset?: number
+  sort?: string
+  category_id?: number
+  min_price?: number
+  max_price?: number
+  is_new?: boolean
+  is_featured?: boolean
+  is_bestseller?: boolean
+}
+
+/**
  * Detailed product with full information
  */
 export interface ProductDetail extends Product {

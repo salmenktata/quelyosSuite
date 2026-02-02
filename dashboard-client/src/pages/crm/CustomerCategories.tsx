@@ -54,6 +54,29 @@ export default function CustomerCategories() {
     return color?.class || 'bg-gray-200 dark:bg-gray-600';
   };
 
+  // Filtered & sorted categories (memoized)
+  const filteredCategories = useMemo(() => {
+    if (!categories) return [];
+
+    let filtered = categories.filter((category) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (colorFilter !== null) {
+      filtered = filtered.filter((c) => c.color === colorFilter);
+    }
+
+    filtered.sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.partner_count - a.partner_count;
+      }
+    });
+
+    return filtered;
+  }, [categories, searchQuery, colorFilter, sortBy]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -81,30 +104,7 @@ export default function CustomerCategories() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCategories, searchQuery, colorFilter, sortBy]);
-
-  // Filtered & sorted categories (memoized)
-  const filteredCategories = useMemo(() => {
-    if (!categories) return [];
-
-    let filtered = categories.filter((category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    if (colorFilter !== null) {
-      filtered = filtered.filter((c) => c.color === colorFilter);
-    }
-
-    filtered.sort((a, b) => {
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.partner_count - a.partner_count;
-      }
-    });
-
-    return filtered;
-  }, [categories, searchQuery, colorFilter, sortBy]);
+  }, [selectedCategories, filteredCategories]);
 
   // Handlers
   const handleCreateCategory = async (e: React.FormEvent) => {
