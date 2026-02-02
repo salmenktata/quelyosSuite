@@ -41,7 +41,7 @@ export default function AccountWishlistPage() {
         if (result.success && result.wishlist) {
           setWishlist(result.wishlist);
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('Erreur chargement wishlist:', error);
       } finally {
         setIsLoading(false);
@@ -68,7 +68,7 @@ export default function AccountWishlistPage() {
       } else {
         throw new Error(result.error || 'Erreur suppression wishlist');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur suppression wishlist:', error);
       const message = error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.';
       alert(message);
@@ -91,7 +91,7 @@ export default function AccountWishlistPage() {
       } else {
         alert(result.error || 'Erreur lors de la génération du lien');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur partage wishlist:', error);
       alert('Une erreur est survenue');
     } finally {
@@ -113,7 +113,7 @@ export default function AccountWishlistPage() {
       if (result.success) {
         setShareUrl(null);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur désactivation partage:', error);
     }
   };

@@ -115,7 +115,7 @@ async function fetchTenantConfig(
     }
 
     return null;
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to fetch tenant config:', error);
     return null;
   }
@@ -163,7 +163,7 @@ export function TenantProvider({
     try {
       const config = await fetchTenantConfig(code);
       setTenant(config);
-    } catch (_err) {
+    } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to load tenant');
       setError(error);
       logger.error('Tenant loading error:', error);

@@ -43,7 +43,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
   const handleRemoveCoupon = async () => {
     try {
       await removeCoupon();
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to remove coupon:', error);
     }
   };

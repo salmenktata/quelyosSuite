@@ -59,7 +59,7 @@ export default function PublicWishlistPage() {
       } else {
         setError(response.message || 'Failed to load wishlist');
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const err = _error as Error;
       logger.error('Error loading wishlist:', err);
       setError(err.message || 'Une erreur est survenue');
@@ -71,7 +71,7 @@ export default function PublicWishlistPage() {
   const handleAddToCart = async (productId: number) => {
     try {
       await addToCart(productId, 1);
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error adding to cart:', error);
     }
   };

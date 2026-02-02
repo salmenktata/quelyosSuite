@@ -35,7 +35,7 @@ export default function Featured({ config, className = '', theme }: FeaturedProp
         if (response.success && response.categories) {
           setCategories(response.categories as unknown as Category[]);
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('Error loading categories:', error);
       } finally {
         setLoading(false);

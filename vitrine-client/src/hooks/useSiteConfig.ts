@@ -112,7 +112,7 @@ export function useSiteConfig(): UseSiteConfigResult {
     try {
       const config = await fetchSiteConfigFromAPI();
       setData(config);
-    } catch (_err) {
+    } catch (err) {
       setIsError(true);
       setError(err instanceof Error ? err : new Error('Unknown error'));
       // Garder les valeurs par défaut en cas d'erreur

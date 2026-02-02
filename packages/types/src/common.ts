@@ -115,6 +115,8 @@ export interface Product {
   virtual_available?: number
   is_bestseller?: boolean
   is_new?: boolean
+  is_featured?: boolean
+  offer_end_date?: string | null
   discount_percent?: number
   rating?: number
   reviews_count?: number

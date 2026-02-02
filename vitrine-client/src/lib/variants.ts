@@ -41,7 +41,7 @@ export async function fetchVariantsLazy(productId: number): Promise<VariantsResp
     }
 
     return null;
-  } catch (_error) {
+  } catch (error) {
     logger.error(`Erreur lors de la récupération des variantes du produit ${productId}:`, error);
     return null;
   }

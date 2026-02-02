@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json(data.result, {
       headers: { 'Cache-Control': 'public, max-age=300' },
     })
-  } catch (_error) {
+  } catch (error) {
     logger.error('Promo messages API error:', error)
     return NextResponse.json(
       { success: true, messages: [] },

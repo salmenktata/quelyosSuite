@@ -28,7 +28,7 @@ export async function GET() {
     };
 
     return NextResponse.json(health, { status: 200 });
-  } catch (_error) {
+  } catch (error) {
     return NextResponse.json(
       {
         status: 'error',

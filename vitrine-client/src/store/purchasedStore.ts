@@ -32,7 +32,7 @@ export const usePurchasedStore = create<PurchasedState>()((set, get) => ({
       } else {
         set({ isLoading: false });
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error fetching purchased products:', error);
       set({ isLoading: false });
     }

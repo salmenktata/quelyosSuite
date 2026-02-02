@@ -124,7 +124,7 @@ export default function CheckoutPaymentPage() {
       } else {
         throw new Error(result.error || 'Erreur confirmation commande');
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       logger.error('Erreur confirmation commande:', error);
       alert(error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.');
     } finally {

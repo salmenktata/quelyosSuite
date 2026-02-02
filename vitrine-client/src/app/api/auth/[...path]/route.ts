@@ -60,7 +60,7 @@ export async function POST(
 
     return nextResponse;
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Auth API error:', error);
     return NextResponse.json(
       { success: false, error: 'Authentication failed' },
@@ -106,7 +106,7 @@ export async function GET(
     const data = await response.json();
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Auth API error:', error);
     return NextResponse.json(
       { success: false, error: 'Authentication check failed' },

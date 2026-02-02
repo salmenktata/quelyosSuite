@@ -56,7 +56,7 @@ export default function CartPage() {
       } else {
         setCouponError(result.message || 'Coupon invalide');
       }
-    } catch (_err) {
+    } catch (err) {
       setCouponError('Erreur lors de l\'application du coupon');
     } finally {
       setCouponLoading(false);

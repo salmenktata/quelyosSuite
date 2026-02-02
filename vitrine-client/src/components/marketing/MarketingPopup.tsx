@@ -120,7 +120,7 @@ export function MarketingPopup() {
       if (response.success && response.data?.popup) {
         setPopup(response.data.popup as unknown as PopupCampaign);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error loading popup:', error);
     } finally {
       setLoading(false);
@@ -201,7 +201,7 @@ export function MarketingPopup() {
       // Track click
       try {
         await backendClient.trackPopupClick(popup.id);
-      } catch (_error) {
+      } catch (error) {
         logger.error('Error tracking popup click:', error);
       }
     }

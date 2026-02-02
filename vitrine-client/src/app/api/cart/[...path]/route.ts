@@ -45,7 +45,7 @@ export async function GET(
     const data = await response.json();
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch cart data' },
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const data = await response.json();
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update cart' },
@@ -132,7 +132,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const data = await response.json();
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to delete from cart' },

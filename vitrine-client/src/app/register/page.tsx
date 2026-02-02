@@ -96,7 +96,7 @@ export default function RegisterPage() {
       } else {
         setErrors({ form: 'Une erreur est survenue. Veuillez réessayer.' });
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const err = _error as Error;
       setErrors({ form: err.message || 'Une erreur est survenue. Veuillez réessayer.' });
     } finally {

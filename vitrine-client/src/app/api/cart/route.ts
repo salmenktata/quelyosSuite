@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     // Retourner directement le result
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch cart', cart: null },
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data.result || data);
 
-  } catch (_error) {
+  } catch (error) {
     logger.error('Cart API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update cart' },

@@ -88,7 +88,7 @@ async function getHomeData(): Promise<{ products: Product[]; categories: Categor
     }
 
     return { products, categories, heroSlides, promoBanners, benefits };
-  } catch (_error) {
+  } catch (error) {
     logger.error('Error fetching home data:', error);
     return { products: [], categories: [], heroSlides: [], promoBanners: [], benefits: [] };
   }

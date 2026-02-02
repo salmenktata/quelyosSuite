@@ -59,7 +59,7 @@ export function UpsellModal({
       if (response.success && response.products) {
         setUpsellProducts(response.products);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error fetching upsell products:', error);
     } finally {
       setLoading(false);

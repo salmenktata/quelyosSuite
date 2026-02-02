@@ -156,7 +156,7 @@ export async function fetchSiteConfig(): Promise<SiteConfig> {
       cacheTimestamp = now;
       return cachedConfig;
     }
-  } catch (_error) {
+  } catch (error) {
     logger.warn('Échec de récupération de la configuration, utilisation des valeurs par défaut:', error);
   }
 

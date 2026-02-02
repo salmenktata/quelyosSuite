@@ -79,7 +79,7 @@ export function OnePageCheckout() {
           setSelectedDelivery(response.data.delivery_methods[0].id);
         }
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error loading delivery methods:', error);
     }
   };
@@ -169,7 +169,7 @@ export function OnePageCheckout() {
       } else {
         setError(response.message || 'Échec de la commande');
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const err = _error as Error;
       logger.error('Error completing checkout:', err);
       setError(err.message || 'Une erreur est survenue');

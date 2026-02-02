@@ -34,7 +34,7 @@ export const useCartStore = create<CartState>()(
           } else {
             set({ error: response.error || 'Failed to fetch cart', isLoading: false });
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
         }
       },
@@ -50,7 +50,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to add to cart', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
           return false;
         }
@@ -67,7 +67,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to update quantity', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
           return false;
         }
@@ -84,7 +84,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to remove item', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
           return false;
         }
@@ -101,7 +101,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to clear cart', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
           return false;
         }
@@ -118,7 +118,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to apply coupon', isLoading: false });
             return { success: false, message: response.error };
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           const errorMessage = _error instanceof Error ? _error.message : "Error";
           set({ error: errorMessage, isLoading: false });
           return { success: false, message: errorMessage };
@@ -136,7 +136,7 @@ export const useCartStore = create<CartState>()(
             set({ error: response.error || 'Failed to remove coupon', isLoading: false });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({ error: _error instanceof Error ? _error.message : "Error", isLoading: false });
           return false;
         }

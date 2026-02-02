@@ -65,7 +65,7 @@ function CartRecoverContent() {
       } else {
         setError(response.message || 'Échec de la récupération du panier');
       }
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       const err = _error as Error;
       logger.error('Error recovering cart:', err);
       setError(err.message || 'Une erreur est survenue');

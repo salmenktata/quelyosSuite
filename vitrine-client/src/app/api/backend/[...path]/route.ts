@@ -59,7 +59,7 @@ export async function POST(
     const result = shouldAnonymize(backendPath) ? anonymizeResponse(rawResult) : rawResult;
 
     return NextResponse.json(result);
-  } catch (_error: unknown) {
+  } catch (error: unknown) {
     logger.error('Proxy error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
@@ -121,7 +121,7 @@ export async function GET(
     const result = shouldAnonymize(backendPath) ? anonymizeResponse(rawResult) : rawResult;
 
     return NextResponse.json(result);
-  } catch (_error: unknown) {
+  } catch (error: unknown) {
     logger.error('Proxy error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },

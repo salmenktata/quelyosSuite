@@ -84,7 +84,7 @@ export default function ProductDetailPage() {
       } else {
         router.push('/products');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur chargement produit:', error);
       router.push('/products');
     } finally {

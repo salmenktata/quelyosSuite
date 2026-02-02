@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
             });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({
             error: _error instanceof Error ? _error.message : 'Login failed',
             isLoading: false,
@@ -63,7 +63,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           // Même en cas d'erreur, on déconnecte localement
           set({
             user: null,
@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthState>()(
             });
             return false;
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({
             error: _error instanceof Error ? _error.message : 'Registration failed',
             isLoading: false,
@@ -115,7 +115,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
             });
           }
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({
             user: null,
             isAuthenticated: false,
@@ -144,7 +144,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
           return false;
-        } catch (_error: unknown) {
+        } catch (error: unknown) {
           set({
             error: _error instanceof Error ? _error.message : 'Profile update failed',
             isLoading: false,

@@ -47,7 +47,7 @@ export default function AccountOrdersPage() {
         if (result.success && result.orders) {
           setOrders(result.orders);
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('Erreur chargement commandes:', error);
       } finally {
         setIsLoading(false);
@@ -85,7 +85,7 @@ export default function AccountOrdersPage() {
       } else {
         toast.error(result.error || 'Erreur lors de la recommande');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur reorder:', error);
       toast.error('Une erreur est survenue');
     } finally {

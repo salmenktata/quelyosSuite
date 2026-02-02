@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
       } else {
         setError(response.error || 'Failed to load analytics');
       }
-    } catch (_err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);

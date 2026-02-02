@@ -49,7 +49,7 @@ export default function CheckoutShippingPage() {
 
       // Rediriger vers le paiement
       router.push('/checkout/payment');
-    } catch (_error) {
+    } catch (error) {
       logger.error('Erreur mise à jour adresse:', error);
       alert('Une erreur est survenue. Veuillez réessayer.');
     } finally {
