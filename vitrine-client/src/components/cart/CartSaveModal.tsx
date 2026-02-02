@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon, EnvelopeIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { X, Mail, CheckCircle } from 'lucide-react';
 import { backendClient } from '@/lib/backend/client';
 import { logger } from '@/lib/logger';
 
@@ -128,7 +128,7 @@ export function CartSaveModal({ isOpen, onClose }: CartSaveModalProps) {
                     className="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     aria-label="Fermer"
                   >
-                    <XMarkIcon className="h-5 w-5 text-gray-400" />
+                    <X className="h-5 w-5 text-gray-400" />
                   </button>
                 </div>
 
@@ -136,7 +136,7 @@ export function CartSaveModal({ isOpen, onClose }: CartSaveModalProps) {
                 {success ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                      <CheckCircleIcon className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-green-800 dark:text-green-300">
                           Email envoyé à {email}
@@ -190,7 +190,7 @@ export function CartSaveModal({ isOpen, onClose }: CartSaveModalProps) {
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                          <Mail className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
                           type="email"

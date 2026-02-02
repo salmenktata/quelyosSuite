@@ -43,7 +43,6 @@ const nextConfig: NextConfig = {
       'lucide-react',
       'framer-motion',
       '@headlessui/react',
-      '@heroicons/react',
     ],
   },
 
