@@ -20,7 +20,10 @@ import {
 import config from "@/app/lib/config";
 import Container from "@/app/components/Container";
 import Footer from "@/app/components/Footer";
+import { useDynamicLegalConfig } from "@/app/lib/useDynamicLegalConfig";
+
 export default function CGVPage() {
+  const legalConfig = useDynamicLegalConfig();
   useEffect(() => {
     document.documentElement.classList.remove("light");
     document.documentElement.classList.add("dark");
