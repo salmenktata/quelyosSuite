@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/store/cartStore';
@@ -15,6 +15,7 @@ export default function CheckoutSuccessPage() {
   const router = useRouter();
   const { clearCart } = useCartStore();
   const { isAuthenticated } = useAuthStore();
+  const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
 
   useEffect(() => {
     // Vider le panier après confirmation
@@ -65,7 +66,7 @@ export default function CheckoutSuccessPage() {
             <div className="bg-gray-50 rounded-lg p-6 mb-8">
               <p className="text-sm text-gray-600 mb-2">Numéro de commande</p>
               <p className="text-2xl font-bold text-primary">
-                #{Math.floor(Math.random() * 1000000)}
+                #{orderNumber}
               </p>
             </div>
 

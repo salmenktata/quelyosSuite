@@ -66,6 +66,21 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
 
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingFormData, string>>>({});
 
+  const handleSelectSavedAddress = React.useCallback((addr: Address) => {
+    setSelectedSavedAddress(addr);
+    // Remplir le formulaire avec l'adresse selectionnee
+    const nameParts = (addr.name || '').split(' ');
+    setData(prev => ({
+      ...prev,
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      address: addr.street || '',
+      city: addr.city || '',
+      postalCode: addr.zip || '',
+      phone: addr.phone || prev.phone,
+    }));
+  }, []);
+
   // Charger les adresses sauvegardees
   useEffect(() => {
     if (isAuthenticated) {
@@ -81,22 +96,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
         }
       });
     }
-  }, [isAuthenticated]);
-
-  const handleSelectSavedAddress = (addr: Address) => {
-    setSelectedSavedAddress(addr);
-    // Remplir le formulaire avec l'adresse selectionnee
-    const nameParts = (addr.name || '').split(' ');
-    setData(prev => ({
-      ...prev,
-      firstName: nameParts[0] || '',
-      lastName: nameParts.slice(1).join(' ') || '',
-      address: addr.street || '',
-      city: addr.city || '',
-      postalCode: addr.zip || '',
-      phone: addr.phone || prev.phone,
-    }));
-  };
+  }, [isAuthenticated, handleSelectSavedAddress]);
 
   const selectedGovernorate = useMemo(
     () => GOVERNORATES.find((g) => g.code === data.governorate),

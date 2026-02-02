@@ -24,7 +24,7 @@ interface FAQCategory {
 }
 
 // FAQ par défaut (fallback)
-const getDefaultFAQs = (config: any): FAQItem[] => {
+const getDefaultFAQs = (config: { shipping?: Record<string, unknown>; returns?: Record<string, unknown> }): FAQItem[] => {
   const { shipping, returns } = config;
   return [
     {

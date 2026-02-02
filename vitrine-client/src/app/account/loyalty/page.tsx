@@ -17,7 +17,7 @@ export default function LoyaltyPage() {
   useEffect(() => {
     fetchBalance();
     fetchTiers();
-  }, []);
+  }, [fetchBalance, fetchTiers]);
 
   const handleRedeemPoints = async () => {
     if (!redeemAmount || isNaN(Number(redeemAmount)) || Number(redeemAmount) <= 0) {

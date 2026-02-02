@@ -40,8 +40,9 @@ export default async function ProductsPage({
 
   // Valider le type de sort
   const validSorts = ['name', 'price_asc', 'price_desc', 'newest', 'popularity'] as const;
-  const sort = validSorts.includes(params.sort as any)
-    ? (params.sort as typeof validSorts[number])
+  type ValidSort = typeof validSorts[number];
+  const sort = validSorts.includes(params.sort as ValidSort)
+    ? (params.sort as ValidSort)
     : 'name';
 
   const filters: ProductFilters = {

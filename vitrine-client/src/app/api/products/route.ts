@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
 
     // Construire les paramètres pour le backend
-    const params: any = {};
+    const params: Record<string, string | number | boolean> = {};
 
     if (searchParams.get('category_id')) {
       params.category_id = parseInt(searchParams.get('category_id')!);

@@ -27,17 +27,7 @@ function CartRecoverContent() {
     message: string;
   } | null>(null);
 
-  useEffect(() => {
-    if (!token) {
-      setError('Lien de récupération invalide');
-      setLoading(false);
-      return;
-    }
-
-    recoverCart();
-  }, [token]);
-
-  const recoverCart = async () => {
+  const recoverCart = React.useCallback(async () => {
     if (!token) {
       setError('Token invalide');
       setLoading(false);
@@ -71,7 +61,17 @@ function CartRecoverContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, fetchCart]);
+
+  useEffect(() => {
+    if (!token) {
+      setError('Lien de récupération invalide');
+      setLoading(false);
+      return;
+    }
+
+    recoverCart();
+  }, [token, recoverCart]);
 
   if (loading) {
     return (

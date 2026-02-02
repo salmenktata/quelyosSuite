@@ -32,25 +32,7 @@ export function UpsellModal({
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(5);
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchUpsellProducts();
-      setCountdown(5);
-    }
-  }, [isOpen, productId]);
-
-  // Countdown timer
-  useEffect(() => {
-    if (!isOpen || countdown === 0) return;
-
-    const timer = setTimeout(() => {
-      setCountdown(countdown - 1);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [isOpen, countdown]);
-
-  const fetchUpsellProducts = async () => {
+  const fetchUpsellProducts = React.useCallback(async () => {
     try {
       setLoading(true);
 
@@ -64,7 +46,25 @@ export function UpsellModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUpsellProducts();
+      setCountdown(5);
+    }
+  }, [isOpen, productId, fetchUpsellProducts]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!isOpen || countdown === 0) return;
+
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [isOpen, countdown]);
 
   const handleAddUpsell = async (upsellProductId: number) => {
     if (onAddToCart) {

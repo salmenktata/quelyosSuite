@@ -85,7 +85,7 @@ export default async function CategoriesPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {categories.map((category: any) => (
+              {categories.map((category: { id: number; name: string; image_url?: string; product_count?: number; slug?: string }) => (
                 <Link
                   key={category.id}
                   href={`/products?category=${category.id}`}

@@ -79,7 +79,7 @@ export async function GET(
 
     // Extract query parameters
     const searchParams = request.nextUrl.searchParams;
-    const queryParams: Record<string, any> = {};
+    const queryParams: Record<string, string> = {};
     searchParams.forEach((value, key) => {
       queryParams[key] = value;
     });

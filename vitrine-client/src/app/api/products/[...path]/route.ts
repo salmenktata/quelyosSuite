@@ -23,7 +23,7 @@ export async function GET(
     const endpoint = pathString ? `/api/ecommerce/products/${pathString}` : '/api/ecommerce/products';
 
     // Construire les paramètres
-    const requestParams: any = {};
+    const requestParams: Record<string, string> = {};
     searchParams.forEach((value, key) => {
       requestParams[key] = value;
     });

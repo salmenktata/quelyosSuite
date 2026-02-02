@@ -123,11 +123,13 @@ export function FAQChatbot() {
         timestamp: new Date(),
       }]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const messageIdRef = React.useRef(0);
 
   const handleSend = async (text?: string) => {
     const messageText = text || input.trim();
@@ -135,7 +137,7 @@ export function FAQChatbot() {
 
     // Ajouter le message utilisateur
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: String(++messageIdRef.current),
       type: 'user',
       text: messageText,
       timestamp: new Date(),
@@ -150,7 +152,7 @@ export function FAQChatbot() {
     // Trouver la meilleure reponse
     const faq = findBestAnswer(messageText);
     const botResponse: Message = {
-      id: (Date.now() + 1).toString(),
+      id: String(++messageIdRef.current),
       type: 'bot',
       text: faq
         ? faq.answer

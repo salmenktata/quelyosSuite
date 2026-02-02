@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import type { ThemeContextValue } from '../../../../engine/types';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
@@ -97,14 +98,14 @@ export default function Grid({ config, className = '', theme }: GridProps) {
                     {post.date}
                   </span>
                 </div>
-                <a
+                <Link
                   href={`/blog/${post.slug}`}
                   className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all"
                   style={{ color: theme.colors.primary }}
                 >
                   Lire la suite
                   <ArrowRight size={18} />
-                </a>
+                </Link>
               </div>
             </article>
           ))}

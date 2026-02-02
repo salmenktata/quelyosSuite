@@ -41,13 +41,7 @@ export default function PublicWishlistPage() {
 
   const { addToCart } = useCartStore();
 
-  useEffect(() => {
-    if (token) {
-      loadWishlist();
-    }
-  }, [token]);
-
-  const loadWishlist = async () => {
+  const loadWishlist = React.useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -66,7 +60,13 @@ export default function PublicWishlistPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      loadWishlist();
+    }
+  }, [token, loadWishlist]);
 
   const handleAddToCart = async (productId: number) => {
     try {

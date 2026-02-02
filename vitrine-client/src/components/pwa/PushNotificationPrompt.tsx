@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { logger } from '@/lib/logger';
 
@@ -36,7 +36,7 @@ export function PushNotificationPrompt() {
     }
   }, [isAuthenticated]);
 
-  const requestPermission = async () => {
+  const requestPermission = useCallback(async () => {
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
@@ -52,7 +52,7 @@ export function PushNotificationPrompt() {
     } catch (error) {
       logger.error('Error requesting notification permission:', error);
     }
-  };
+  }, []);
 
   const subscribeToPush = async () => {
     try {

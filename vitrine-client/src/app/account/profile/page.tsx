@@ -94,7 +94,7 @@ export default function AccountProfilePage() {
     setIsSaving(true);
 
     try {
-      const profileData: any = {
+      const profileData: Record<string, string> = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

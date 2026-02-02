@@ -12,7 +12,8 @@ interface CenteredProps {
 
 export default function Centered({ config, className = '', theme }: CenteredProps) {
   const title = (config?.title as string) || 'Offre à Durée Limitée';
-  const endDate = (config?.endDate as string) || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const [defaultEndDate] = useState(() => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString());
+  const endDate = (config?.endDate as string) || defaultEndDate;
   const ctaText = (config?.ctaText as string) || 'Profiter de l\'offre';
   const ctaUrl = (config?.ctaUrl as string) || '/products';
 

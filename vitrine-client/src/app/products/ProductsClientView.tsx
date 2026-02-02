@@ -91,9 +91,9 @@ export default function ProductsClientView({
     };
 
     fetchProducts();
-  }, [filters]);
+  }, [filters, initialFilters]);
 
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: string | number | boolean | undefined) => {
     setFilters({
       ...filters,
       [key]: value,

@@ -68,30 +68,6 @@ export default function ProductDetailPage() {
   // Track recently viewed products
   useRecentlyViewed({ product });
 
-  useEffect(() => {
-    fetchProduct();
-  }, [slug]);
-
-  const fetchProduct = async () => {
-    setIsLoading(true);
-    try {
-      const response = await backendClient.getProductBySlug(slug);
-      if (response.success && response.product) {
-        setProduct(response.product);
-
-        // Charger les produits similaires
-        fetchRelatedProducts(response.product.id);
-      } else {
-        router.push('/products');
-      }
-    } catch (error) {
-      logger.error('Erreur chargement produit:', error);
-      router.push('/products');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchRelatedProducts = async (productId: number) => {
     try {
       const response = await backendClient.getUpsellProducts(productId);
@@ -106,6 +82,28 @@ export default function ProductDetailPage() {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      try {
+        const response = await backendClient.getProductBySlug(slug);
+        if (response.success && response.product) {
+          setProduct(response.product);
+          fetchRelatedProducts(response.product.id);
+        } else {
+          router.push('/products');
+        }
+      } catch (error) {
+        logger.error('Erreur chargement produit:', error);
+        router.push('/products');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [slug, router]);
 
   const handleAddToCart = useCallback(async () => {
     if (!product) return;
