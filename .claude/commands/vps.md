@@ -423,81 +423,71 @@ echo "✅ Corrections appliquées"
 
 ### 5. /vps deploy - Déploiement Production
 
-**ATTENTION** : Déploiement en production = DOWNTIME possible.
+**Connexion** : `ssh quelyos-vps` (alias → deploy@184.174.32.177)
+**Repo** : `/home/deploy/quelyos-suite` (cloné via deploy key SSH)
+**Script** : `./deploy.sh [app|all]`
 
 #### 5.1 Pré-déploiement
-- [ ] Backup base de données : `pg_dump quelyos_prod > backup.sql`
-- [ ] Snapshot VPS (via panel Contabo)
-- [ ] Vérifier `/vps check` = 100% vert
-- [ ] Tests locaux passés : `/test`
+- [ ] Vérifier `/vps check` = pas de P0
+- [ ] Code pushé sur `main`
 
-#### 5.2 Build & Transfer
+#### 5.2 Déploiement via deploy.sh
 ```bash
-# Build local des images Docker
-docker compose -f docker-compose.prod.yml build
-
-# Tag et push vers registry (Docker Hub ou privé)
-docker tag quelyos-vitrine:latest your-registry/quelyos-vitrine:latest
-docker push your-registry/quelyos-vitrine:latest
-
-# OU : Transférer code source sur VPS et build distant
-rsync -avz --exclude 'node_modules' --exclude '.git' \
-  ./ user@vps-ip:/opt/quelyos/app/
+ssh quelyos-vps "cd ~/quelyos-suite && ./deploy.sh all"
+# Ou une seule app :
+ssh quelyos-vps "cd ~/quelyos-suite && ./deploy.sh dashboard"
+ssh quelyos-vps "cd ~/quelyos-suite && ./deploy.sh vitrine"
+ssh quelyos-vps "cd ~/quelyos-suite && ./deploy.sh shop"
+ssh quelyos-vps "cd ~/quelyos-suite && ./deploy.sh super-admin"
 ```
 
-#### 5.3 Déploiement
-```bash
-ssh user@vps-ip << 'EOF'
-  cd /opt/quelyos
+Le script fait : `git pull` → `pnpm install` → `pnpm build` → `pm2 restart` → `pm2 save`
 
-  # Pull dernières images
-  docker compose -f docker-compose.prod.yml pull
-
-  # Arrêt services
-  docker compose -f docker-compose.prod.yml down
-
-  # Migration DB (si nécessaire)
-  # docker exec quelyos-db-prod pg_restore ...
-
-  # Redémarrage
-  docker compose -f docker-compose.prod.yml up -d
-
-  # Vérifier santé
-  docker compose -f docker-compose.prod.yml ps
-  docker compose -f docker-compose.prod.yml logs --tail=50
-EOF
-```
+#### 5.3 Architecture services
+| App | Sous-domaine | Port | PM2 name | Type |
+|-----|-------------|------|----------|------|
+| vitrine-quelyos | quelyos.com | 3000 | vitrine | Next.js |
+| vitrine-client | shop.quelyos.com | 3001 | shop | Next.js |
+| dashboard-client | backoffice.quelyos.com | 5175 | dashboard | Vite SPA (serve) |
+| super-admin-client | admin.quelyos.com | 9000 | super-admin | Vite SPA (serve) |
+| odoo-backend | api.quelyos.com | 8069 | Docker (quelyos-odoo) | Odoo 19 |
 
 #### 5.4 Post-déploiement
-- [ ] Healthcheck API : `curl https://api.quelyos.com/health`
-- [ ] Tester frontends : ouvrir chaque domaine
-- [ ] Vérifier logs : `docker compose logs -f`
-- [ ] Monitoring actif (Sentry, Uptime Robot)
+- [ ] `pm2 list` : toutes les apps "online"
+- [ ] Tester HTTP : `curl -s -o /dev/null -w '%{http_code}' https://[domaine]` pour chaque sous-domaine
+- [ ] Vérifier logs si erreur : `pm2 logs [app] --lines 20`
 
 ---
 
 ### 6. /vps status - État Services Production
 
-Affiche statut temps réel :
+**Connexion** : `ssh quelyos-vps`
+
+Vérifications à effectuer :
 
 ```bash
-ssh user@vps-ip << 'EOF'
-  echo "=== Docker Containers ==="
-  docker compose -f /opt/quelyos/docker-compose.prod.yml ps
+# PM2 apps
+ssh quelyos-vps "pm2 list"
 
-  echo -e "\n=== System Resources ==="
-  free -h
-  df -h /
+# Docker containers
+ssh quelyos-vps "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
 
-  echo -e "\n=== Nginx Status ==="
-  systemctl status nginx --no-pager
+# Ressources système
+ssh quelyos-vps "free -h && df -h /"
 
-  echo -e "\n=== SSL Certificates ==="
-  sudo certbot certificates
+# Nginx
+ssh quelyos-vps "sudo nginx -t && systemctl status nginx --no-pager -l"
 
-  echo -e "\n=== Last 20 Logs ==="
-  docker compose -f /opt/quelyos/docker-compose.prod.yml logs --tail=20
-EOF
+# SSL
+ssh quelyos-vps "sudo certbot certificates 2>/dev/null | grep -E 'Domains|Expiry'"
+
+# Test HTTP tous sous-domaines
+for d in quelyos.com www.quelyos.com api.quelyos.com backoffice.quelyos.com admin.quelyos.com shop.quelyos.com; do
+  echo "$d → $(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 https://$d)"
+done
+
+# Health monitor
+ssh quelyos-vps "tail -20 /opt/quelyos/backups/health.log"
 ```
 
 **Output** : Dashboard textuel avec émojis :
