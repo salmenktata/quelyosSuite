@@ -8,7 +8,7 @@
  * - Statistiques (total, en attente, note moyenne)
  * - Recherche par produit ou client
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Star, Check, X, MessageSquare, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
@@ -40,11 +40,7 @@ export default function Reviews() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [replyText, setReplyText] = useState('');
 
-  useEffect(() => {
-    fetchReviews();
-  }, [filter]);
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setError(null);
     try {
       const params: Record<string, string> = {};
@@ -68,7 +64,11 @@ export default function Reviews() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleApprove = async (id: number) => {
     const data = await apiFetchJson<{ result?: { success: boolean } }>(

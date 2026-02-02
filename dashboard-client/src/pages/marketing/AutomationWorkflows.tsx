@@ -9,7 +9,7 @@
  * 5. Suppression workflow
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { useMarketingAutomation } from '@/hooks/useMarketingAutomation';
@@ -24,11 +24,7 @@ export function AutomationWorkflows() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<AutomationDetail | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
-  useEffect(() => {
-    loadWorkflows();
-  }, [filter]);
-
-  const loadWorkflows = async () => {
+  const loadWorkflows = useCallback(async () => {
     try {
       const params = filter === 'active' ? { active_only: true } : {};
       const data = await listAutomations(params);
@@ -36,7 +32,11 @@ export function AutomationWorkflows() {
     } catch (err) {
       logger.error('Erreur chargement workflows:', err);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    loadWorkflows();
+  }, [loadWorkflows]);
 
   const handleToggleWorkflow = async (id: number, currentActive: boolean) => {
     try {

@@ -7,7 +7,7 @@
  * - Filtrage par période
  * - Visualisation des parts de CA
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, ShoppingCart, DollarSign, Package, Calendar, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
@@ -36,11 +36,7 @@ export default function SalesReports() {
     to: new Date().toISOString().split('T')[0],
   });
 
-  useEffect(() => {
-    fetchReport();
-  }, [dateRange]);
-
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -66,7 +62,11 @@ export default function SalesReports() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport]);
 
   if (loading) {
     return (

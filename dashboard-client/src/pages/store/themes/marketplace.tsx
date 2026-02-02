@@ -9,7 +9,7 @@
  * - Statistiques designers
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, PageNotice } from '@/components/common';
 import { Search, Filter, Star, Download, DollarSign, User, Palette } from 'lucide-react';
@@ -53,11 +53,7 @@ export default function MarketplacePage() {
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'premium'>('all');
   const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'rating'>('popular');
 
-  useEffect(() => {
-    loadThemes();
-  }, [selectedCategory, priceFilter, sortBy]);
-
-  const loadThemes = async () => {
+  const loadThemes = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -90,7 +86,11 @@ export default function MarketplacePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory, priceFilter, sortBy]);
+
+  useEffect(() => {
+    loadThemes();
+  }, [loadThemes]);
 
   const filteredThemes = themes.filter((theme) =>
     theme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

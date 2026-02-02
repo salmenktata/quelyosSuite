@@ -8,7 +8,7 @@
  * - Gestion des états (nouveau, en cours, résolu, fermé)
  * - Attribution et suivi
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DOMPurify from 'dompurify';
 import { MessageSquare, Clock, User, Send, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
@@ -50,11 +50,7 @@ export default function Tickets() {
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [replyText, setReplyText] = useState('');
 
-  useEffect(() => {
-    fetchTickets();
-  }, [filter]);
-
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setError(null);
     try {
       const params: Record<string, string> = {};
@@ -80,7 +76,11 @@ export default function Tickets() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
 
   const fetchTicketDetail = async (ticketId: number) => {
     try {

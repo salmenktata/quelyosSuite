@@ -10,7 +10,7 @@
  * - Confirmation après achat
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button } from '@/components/common';
@@ -51,11 +51,7 @@ export default function MarketplaceThemeDetailPage() {
   const [purchasing, setPurchasing] = useState(false);
   const [purchased, setPurchased] = useState(false);
 
-  useEffect(() => {
-    loadTheme();
-  }, [id]);
-
-  const loadTheme = async () => {
+  const loadTheme = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -83,7 +79,11 @@ export default function MarketplaceThemeDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadTheme();
+  }, [loadTheme]);
 
   const handlePurchase = async () => {
     if (!theme) return;

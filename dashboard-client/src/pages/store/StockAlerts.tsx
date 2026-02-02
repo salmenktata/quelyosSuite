@@ -7,7 +7,7 @@
  * - Seuil d'alerte configurable
  * - Indicateurs visuels de niveau de stock
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, Package, RefreshCw, Settings, AlertCircle } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
@@ -36,11 +36,7 @@ export default function StockAlerts() {
   const [error, setError] = useState<string | null>(null);
   const [threshold, setThreshold] = useState(10);
 
-  useEffect(() => {
-    fetchAlerts();
-  }, [threshold]);
-
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -63,7 +59,11 @@ export default function StockAlerts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [threshold]);
+
+  useEffect(() => {
+    fetchAlerts();
+  }, [fetchAlerts]);
 
   if (loading) {
     return (

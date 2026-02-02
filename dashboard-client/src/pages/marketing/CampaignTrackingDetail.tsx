@@ -9,7 +9,7 @@
  * 5. Timeline chronologique interactions
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
@@ -31,13 +31,7 @@ export function CampaignTrackingDetail() {
   const [heatmap, setHeatmap] = useState<HeatmapLink[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
 
-  useEffect(() => {
-    if (campaignId) {
-      loadData();
-    }
-  }, [campaignId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [trackingData, heatmapData, timelineData] = await Promise.all([
         getCampaignTracking(campaignId),
@@ -51,7 +45,13 @@ export function CampaignTrackingDetail() {
     } catch (err) {
       logger.error('Erreur chargement tracking:', err);
     }
-  };
+  }, [campaignId]);
+
+  useEffect(() => {
+    if (campaignId) {
+      loadData();
+    }
+  }, [campaignId, loadData]);
 
   const isLoading = campaignLoading || trackingLoading;
 

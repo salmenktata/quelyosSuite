@@ -10,7 +10,7 @@
  * - Dates de création et d'échéance formatées
  * - Informations client avec contact et adresse
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
@@ -51,11 +51,7 @@ export default function InvoiceDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (id) fetchInvoice()
-  }, [id])
-
-  const fetchInvoice = async () => {
+  const fetchInvoice = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -75,7 +71,11 @@ export default function InvoiceDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) fetchInvoice()
+  }, [id, fetchInvoice])
 
   const getStatusBadge = (status: Invoice['status']) => {
     const styles = {
