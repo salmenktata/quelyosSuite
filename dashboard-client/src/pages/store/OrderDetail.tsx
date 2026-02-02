@@ -48,7 +48,7 @@ export default function OrderDetail() {
       await updateStatus.mutateAsync({ id: orderId, action: actionModal.action })
       toast.success('Statut mis à jour avec succès')
       setActionModal(null)
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error('Erreur lors de la mise à jour du statut')
     }
@@ -73,7 +73,7 @@ export default function OrderDetail() {
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
       toast.success('Bon de livraison téléchargé avec succès')
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error('Erreur lors du téléchargement du bon de livraison')
     }
@@ -89,7 +89,7 @@ export default function OrderDetail() {
         trackingRef,
       })
       toast.success('Numéro de suivi mis à jour avec succès')
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error('Erreur lors de la mise à jour du numéro de suivi')
     }
@@ -101,7 +101,7 @@ export default function OrderDetail() {
     try {
       await sendQuotation.mutateAsync(orderId)
       toast.success('Devis envoyé par email avec succès')
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error("Erreur lors de l'envoi du devis")
     }

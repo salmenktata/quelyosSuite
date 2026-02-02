@@ -224,7 +224,7 @@ export class BackendClient {
       await this.jsonrpc('/auth/logout');
       this.clearSession();
       return { success: true };
-    } catch (error) {
+    } catch (_error) {
       this.clearSession();
       return { success: false };
     }
@@ -242,7 +242,7 @@ export class BackendClient {
   async getSession(): Promise<SessionResponse> {
     try {
       return await this.jsonrpc<SessionResponse>('/auth/session');
-    } catch (error) {
+    } catch (_error) {
       return { authenticated: false };
     }
   }

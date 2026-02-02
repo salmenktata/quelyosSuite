@@ -94,7 +94,7 @@ export default function SMSSettingsPage() {
 
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration SMS enregistrée");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
@@ -113,7 +113,7 @@ export default function SMSSettingsPage() {
       });
       toast.success("SMS de test envoyé");
       setTestMobile("");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }

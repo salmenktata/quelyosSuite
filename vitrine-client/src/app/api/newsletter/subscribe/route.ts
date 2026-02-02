@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: result.message || 'Inscription réussie'
     })
-  } catch (error) {
+  } catch (_error) {
     logger.error('Newsletter subscribe API error:', error)
     return NextResponse.json(
       { success: false, error: 'Une erreur est survenue' },

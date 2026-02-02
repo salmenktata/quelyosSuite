@@ -45,7 +45,7 @@ export function StockAlert({ productId, productName }: StockAlertProps) {
         setSubscribed(response.data.subscribed);
         setSubscriptionId(response.data.subscription_id || null);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error checking subscription status:', error);
     }
   };

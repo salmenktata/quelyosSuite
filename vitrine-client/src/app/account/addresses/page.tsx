@@ -33,7 +33,7 @@ export default function AccountAddressesPage() {
         if (result.success && result.addresses) {
           setAddresses(result.addresses);
         }
-      } catch (error) {
+      } catch (_error) {
         logger.error('Erreur chargement adresses:', error);
       } finally {
         setIsLoading(false);

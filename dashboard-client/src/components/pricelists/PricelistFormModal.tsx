@@ -94,7 +94,7 @@ export function PricelistFormModal({ isOpen, onClose, pricelist }: PricelistForm
         success(`Liste de prix "${data.name}" créée avec succès`);
       }
       onClose();
-    } catch (error) {
+    } catch (_error) {
       showError(
         error instanceof Error ? error.message : 'Erreur lors de la sauvegarde'
       );

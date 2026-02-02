@@ -88,7 +88,7 @@ export async function fetchWithRequestId(
     }
 
     return response
-  } catch (error) {
+  } catch (_error) {
     const duration = performance.now() - startTime
 
     // Log l'erreur avec le request ID

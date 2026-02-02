@@ -117,7 +117,7 @@ export function OrdersKanban({ orders, onOrderUpdate }: OrdersKanbanProps) {
       })
       toast.success(`Commande déplacée vers "${targetState}" avec succès`)
       onOrderUpdate()
-    } catch (err) {
+    } catch (_err) {
       toast.error('Erreur lors du déplacement de la commande')
     } finally {
       setDraggedOrder(null)

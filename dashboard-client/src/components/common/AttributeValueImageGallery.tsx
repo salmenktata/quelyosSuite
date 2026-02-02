@@ -98,7 +98,7 @@ export function AttributeValueImageGallery({
 
       await uploadMutation.mutateAsync(imagesData)
       onSuccess?.(`${imagesData.length} image(s) uploadée(s)`)
-    } catch (error) {
+    } catch (_error) {
       logger.error('Upload error:', error)
       onError?.("Erreur lors de l'upload des images")
     } finally {
@@ -136,7 +136,7 @@ export function AttributeValueImageGallery({
     try {
       await deleteMutation.mutateAsync(imageId)
       onSuccess?.('Image supprimée')
-    } catch (error) {
+    } catch (_error) {
       logger.error('Delete error:', error)
       onError?.('Erreur lors de la suppression')
     }
@@ -160,7 +160,7 @@ export function AttributeValueImageGallery({
     const imageIds = newImages.map((img) => img.id)
     try {
       await reorderMutation.mutateAsync(imageIds)
-    } catch (error) {
+    } catch (_error) {
       logger.error('Reorder error:', error)
     }
 

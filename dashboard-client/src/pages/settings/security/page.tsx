@@ -105,7 +105,7 @@ export default function SecurityPage() {
       setNewPassword("");
       setConfirmPassword("");
       setTimeout(() => setPasswordSuccess(false), 5000);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setPasswordError(err instanceof Error ? err.message : "Erreur lors du changement de mot de passe");
     } finally {
@@ -124,7 +124,7 @@ export default function SecurityPage() {
       setTwoFASecret(data.secret);
       setTwoFAQRCode(data.qrCode);
       setTwoFASetupMode(true);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la configuration 2FA");
     } finally {
@@ -149,7 +149,7 @@ export default function SecurityPage() {
       setTwoFAEnabled(true);
       setTwoFASetupMode(false);
       setTwoFACode("");
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Code invalide");
     } finally {
@@ -164,7 +164,7 @@ export default function SecurityPage() {
     try {
       await api("/user/2fa/disable", { method: "POST" });
       setTwoFAEnabled(false);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la désactivation");
     } finally {

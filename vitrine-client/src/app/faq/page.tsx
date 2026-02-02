@@ -114,7 +114,7 @@ export default function FAQPage() {
           setFaqItems(getDefaultFAQs(config));
           setCategories(defaultCategories);
         }
-      } catch (error) {
+      } catch (_error) {
         logger.error('Erreur chargement FAQ:', error);
         // Fallback aux données par défaut
         setFaqItems(getDefaultFAQs(config));

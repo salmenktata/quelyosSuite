@@ -70,7 +70,7 @@ export async function fetchApi<T>(
         return await doFetch()
       }
       return await backendCircuitBreaker.execute(doFetch)
-    } catch (error) {
+    } catch (_error) {
       // Ne pas retry sur circuit breaker open
       if (error instanceof CircuitBreakerError) {
         throw error

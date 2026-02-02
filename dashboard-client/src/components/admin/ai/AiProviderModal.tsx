@@ -150,7 +150,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
           'Veuillez d\'abord sauvegarder le provider, puis utiliser le bouton "Tester" depuis la liste.'
         );
       }
-    } catch (err) {
+    } catch (_err) {
       setError(
         err instanceof Error ? err.message : 'Erreur lors du test'
       );
@@ -205,7 +205,7 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
       }
 
       onClose(true);
-    } catch (err) {
+    } catch (_err) {
       setError(
         err instanceof Error ? err.message : 'Erreur lors de la sauvegarde'
       );

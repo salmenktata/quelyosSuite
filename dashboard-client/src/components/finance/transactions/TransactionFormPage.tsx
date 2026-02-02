@@ -125,7 +125,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
           ? data.filter((tx: Transaction) => tx.type === config.type)
           : []
       );
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Erreur de chargement des transactions.",
@@ -139,7 +139,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
     try {
       const data = await api("/accounts");
       setAccounts(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Erreur de chargement des comptes.",
@@ -151,7 +151,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
     try {
       const data = await api(`/categories?kind=${config.categoryKind}`);
       setCategories(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Erreur de chargement des catégories.",
@@ -210,7 +210,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
               });
               return; // Stopper ici, attendre user action
             }
-          } catch (err) {
+          } catch (_err) {
             // Silently fail - duplicate check is optional
             logger.warn("Duplicate check failed:", err);
           }
@@ -225,7 +225,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
 
       dispatch({ type: 'RESET_FORM_DATA' });
       fetchTransactions();
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Impossible d'ajouter la transaction.",
@@ -283,7 +283,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
       });
 
       dispatch({ type: 'CONFIRM_DUPLICATE' });
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Erreur lors de la confirmation du doublon.",
@@ -325,7 +325,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
 
       dispatch({ type: 'IGNORE_DUPLICATE' });
       fetchTransactions();
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Impossible de créer la transaction.",
@@ -344,7 +344,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
       await api(`/transactions/${id}`, { method: "DELETE" });
       if (state.editingId === id) cancelEdit();
       fetchTransactions();
-    } catch (err) {
+    } catch (_err) {
       dispatch({
         type: 'SET_ERROR',
         payload: err instanceof Error ? err.message : "Impossible de supprimer la transaction.",

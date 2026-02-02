@@ -31,7 +31,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json(data.result, {
       headers: { 'Cache-Control': 'public, max-age=300' },
     })
-  } catch (error) {
+  } catch (_error) {
     logger.error('Trust badges API error:', error)
     return NextResponse.json(
       { success: true, badges: [] },

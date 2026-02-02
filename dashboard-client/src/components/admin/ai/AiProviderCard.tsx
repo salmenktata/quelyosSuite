@@ -101,7 +101,7 @@ export function AiProviderCard({
       }
 
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       alert(
         `Erreur lors du test:\n${error instanceof Error ? error.message : 'Erreur inconnue'}`
       );

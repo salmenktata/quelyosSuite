@@ -49,7 +49,7 @@ export const RecommendationsCarousel = memo(function RecommendationsCarousel({
           setProducts(response.data.products);
         }
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error('Error fetching recommendations:', err);
       setError('Failed to load recommendations');
     } finally {

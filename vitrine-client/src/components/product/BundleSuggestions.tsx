@@ -58,7 +58,7 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
         otherProducts.forEach(p => initialSelection.add(p.id));
         setSelectedProducts(initialSelection);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error loading bundle products:', error);
     } finally {
       setIsLoading(false);
@@ -88,7 +88,7 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
       for (const product of selectedProductsList) {
         await addToCart(product.id, 1);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error adding bundle to cart:', error);
     } finally {
       setIsAddingToCart(false);

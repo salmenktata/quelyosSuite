@@ -169,7 +169,7 @@ export default function ByCategoryReportPage() {
 
       const txs = await api<Transaction[]>(`/transactions?${params.toString()}`);
       setCategoryTransactions(prev => ({ ...prev, [categoryId || 0]: txs }));
-    } catch (err) {
+    } catch (_err) {
       logger.error("Error loading transactions:", err);
     } finally {
       setLoadingTransactions(prev => ({ ...prev, [categoryId || 0]: false }));

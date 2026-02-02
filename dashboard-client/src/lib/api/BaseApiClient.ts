@@ -202,7 +202,7 @@ export class BaseApiClient {
       })
       clearTimeout(timeoutId)
       return response
-    } catch (error) {
+    } catch (_error) {
       clearTimeout(timeoutId)
       if (error instanceof Error && error.name === 'AbortError') {
         throw new ApiError(`Request timeout after ${timeout}ms`, 408, undefined, url)
@@ -407,7 +407,7 @@ export class BaseApiClient {
         success: true,
         data: json.result,
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('[BaseApiClient] RPC error:', error)
       return {
         success: false,

@@ -122,7 +122,7 @@ export default function OptimizationPanel() {
       });
 
       setResult(data);
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setIsLoading(false);
@@ -164,7 +164,7 @@ export default function OptimizationPanel() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'export");
     }
   };
@@ -178,7 +178,7 @@ export default function OptimizationPanel() {
         if (data.accounts && data.accounts.length > 0) {
           setSelectedAccountId(data.accounts[0].id.toString());
         }
-      } catch (err) {
+      } catch (_err) {
         logger.error("Error loading accounts:", err);
       }
     };
@@ -220,7 +220,7 @@ export default function OptimizationPanel() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'export PDF");
     }
   };
@@ -260,7 +260,7 @@ export default function OptimizationPanel() {
 
       // Recharger l'optimisation pour voir les nouveaux statuts
       handleOptimize();
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       logger.error("Error executing payments:", err);
       alert(`Erreur: ${err instanceof Error ? err.message : 'Erreur inconnue'}`);
     } finally {

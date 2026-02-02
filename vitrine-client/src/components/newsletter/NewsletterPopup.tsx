@@ -52,7 +52,7 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
       setTimeout(() => {
         onClose();
       }, 2000);
-    } catch (err) {
+    } catch (_err) {
       setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);

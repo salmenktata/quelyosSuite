@@ -68,7 +68,7 @@ export default function ArchivesPage() {
       const data = await api("/transactions?archived=true");
       setTransactions(Array.isArray(data) ? data : []);
       setSelectedIds([]);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement des archives.");
     } finally {
@@ -112,7 +112,7 @@ export default function ArchivesPage() {
       });
       setSelectedIds([]);
       fetchArchives();
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de désarchiver");
     }
@@ -128,7 +128,7 @@ export default function ArchivesPage() {
       });
       setSelectedIds([]);
       fetchArchives();
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Impossible de supprimer");
     }

@@ -64,7 +64,7 @@ export default function SatisfactionPublic() {
 
       setTicketInfo(ticket)
       setViewState('form')
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       logger.error('Error loading ticket info:', err)
       setError('Impossible de charger les informations du ticket')
       setViewState('error')
@@ -106,7 +106,7 @@ export default function SatisfactionPublic() {
       }
 
       setViewState('success')
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       logger.error('Error submitting satisfaction:', err)
       setError('Erreur lors de l\'envoi de votre avis')
       setIsSubmitting(false)

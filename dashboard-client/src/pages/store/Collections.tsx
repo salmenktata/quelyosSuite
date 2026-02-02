@@ -87,7 +87,7 @@ export default function Collections() {
         setEditing(null);
         fetchCollections();
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Collections fetch error:', error);
     }
   };

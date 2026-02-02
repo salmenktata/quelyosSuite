@@ -57,7 +57,7 @@ export default function NotificationsPage() {
           setSettings((prev) => ({ ...prev, ...parsed }));
         }
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error("Failed to fetch preferences:", err);
       // Fallback to localStorage
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -113,7 +113,7 @@ export default function NotificationsPage() {
 
       // Auto-hide success after 3s
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
+    } catch (_err) {
       // Fallback: save locally only
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       setError("Sauvegardé localement (API indisponible)");

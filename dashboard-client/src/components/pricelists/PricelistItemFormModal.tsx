@@ -125,7 +125,7 @@ export function PricelistItemFormModal({
         }));
       }
       return [];
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching product suggestions:', error);
       return [];
     }
@@ -200,7 +200,7 @@ export function PricelistItemFormModal({
         success('Règle de prix ajoutée avec succès');
       }
       onClose();
-    } catch (error) {
+    } catch (_error) {
       showError(error instanceof Error ? error.message : 'Erreur lors de la création');
     }
   };

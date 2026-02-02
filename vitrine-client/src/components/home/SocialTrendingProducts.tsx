@@ -22,7 +22,7 @@ export function SocialTrendingProducts() {
       if (response.success && response.products) {
         setProducts(response.products);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching trending products:', error);
     } finally {
       setIsLoading(false);

@@ -190,7 +190,7 @@ export default function Stock() {
       document.body.removeChild(link)
 
       toast.success(`${allProds.length} produits exportés avec succès`)
-    } catch (error) {
+    } catch (_error) {
       logger.error('Export CSV error:', error)
       toast.error("Erreur lors de l'export CSV")
     }
@@ -263,7 +263,7 @@ export default function Stock() {
       document.body.removeChild(link)
 
       toast.success('Rapport de valorisation exporté avec succès')
-    } catch (error) {
+    } catch (_error) {
       logger.error('Export valorisation error:', error)
       toast.error("Erreur lors de l'export du rapport")
     }

@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
       },
     });
-  } catch (error: unknown) {
+  } catch (_error: unknown) {
     logger.error('Image proxy error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to proxy image' },

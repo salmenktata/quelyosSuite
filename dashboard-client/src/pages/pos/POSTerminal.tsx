@@ -90,7 +90,7 @@ export default function POSTerminal() {
       await checkout(payments)
       setShowPayment(false)
       // TODO: Print receipt
-    } catch (error) {
+    } catch (_error) {
       logger.error('Checkout error:', error)
     }
   }

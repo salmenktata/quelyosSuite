@@ -24,7 +24,7 @@ export function ExportButton({
       const data = await onExport();
       const filenameWithDate = `${filename}-${dateKey(new Date())}.csv`;
       downloadCSV(data, filenameWithDate);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Export failed:', error);
     } finally {
       setLoading(false);

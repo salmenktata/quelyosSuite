@@ -109,7 +109,7 @@ export function ExportButton({ accountId, className = "" }: ExportButtonProps) {
         setSuccess(false);
         setIsOpen(false);
       }, 2000);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Export error:", err);
       alert(err instanceof Error ? err.message : "Erreur lors de l'export");
     } finally {

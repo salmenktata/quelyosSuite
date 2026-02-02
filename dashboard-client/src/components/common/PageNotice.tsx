@@ -70,7 +70,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
 
       // Tracker la vue
       trackNoticeView(normalizedConfig.pageId);
-    } catch (error) {
+    } catch (_error) {
       logger.error("Failed to load notice preference:", error);
     }
 
@@ -93,7 +93,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
       } else {
         trackNoticeExpansion(normalizedConfig.pageId);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error("Failed to save notice preference:", error);
     }
   };
@@ -107,7 +107,7 @@ export function PageNotice({ config, className = "", enableFeedback = true }: Pa
       setFeedbackGiven(true);
       setFeedbackValue(isHelpful);
       logger.info(`Notice feedback: ${normalizedConfig.pageId} - ${isHelpful ? 'helpful' : 'not helpful'}`);
-    } catch (error) {
+    } catch (_error) {
       logger.error("Failed to submit feedback:", error);
     }
   };

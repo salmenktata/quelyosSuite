@@ -59,7 +59,7 @@ export default function Payments() {
 
       alert(`Remboursement de ${formatPrice(parseFloat(refundAmount), selectedTransaction.currency)} effectué avec succès !`)
       handleCloseRefundModal()
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       alert("Erreur lors du remboursement : " + (error as Error).message)
     }

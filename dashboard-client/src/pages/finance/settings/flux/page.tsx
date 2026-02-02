@@ -109,7 +109,7 @@ export default function FluxSettingsPage() {
       // Pour l'instant, on utilise les paramètres par défaut
       setFlowTypeSettings(defaultSettings);
       setCustomFlowTypes([]);
-    } catch (e) {
+    } catch (_e) {
       logger.error("Erreur chargement paramètres flux:", e);
       setError("Impossible de charger les paramètres");
     } finally {
@@ -180,7 +180,7 @@ export default function FluxSettingsPage() {
       
       setSuccess("Paramètres sauvegardés avec succès");
       setTimeout(() => setSuccess(null), 3000);
-    } catch (e) {
+    } catch (_e) {
       logger.error("Erreur sauvegarde:", e);
       setError("Erreur lors de la sauvegarde");
     } finally {

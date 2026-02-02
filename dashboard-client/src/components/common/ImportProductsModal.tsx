@@ -188,7 +188,7 @@ export function ImportProductsModal({
         }
         setParsedData(data)
         setStep('preview')
-      } catch (err) {
+      } catch (_err) {
         setParseError(err instanceof Error ? err.message : 'Erreur lors du parsing du fichier')
       }
     }
@@ -204,7 +204,7 @@ export function ImportProductsModal({
       })
       setImportResult(result)
       setStep('result')
-    } catch (err) {
+    } catch (_err) {
       setParseError(err instanceof Error ? err.message : 'Erreur lors de l\'import')
     } finally {
       setIsImporting(false)

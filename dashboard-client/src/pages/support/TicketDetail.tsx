@@ -99,7 +99,7 @@ export default function TicketDetail() {
       await uploadMutation.mutateAsync(file)
       // Reset input
       e.target.value = ''
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setUploadError(err instanceof Error ? err.message : 'Erreur lors de l\'upload')
     }

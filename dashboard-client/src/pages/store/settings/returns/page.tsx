@@ -32,7 +32,7 @@ export default function ReturnsSettingsPage() {
     try {
       await updateMutation.mutateAsync(returnsConfig);
       toast.success("Politique de retours mise à jour");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de la mise à jour");
     }

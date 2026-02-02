@@ -113,7 +113,7 @@ export default function PortfoliosPage() {
     try {
       await api(`/portfolios/${id}`, { method: "DELETE" });
       await refetchPortfolios();
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
     }
   };
@@ -143,7 +143,7 @@ export default function PortfoliosPage() {
       setShowAccountModal(false);
       setSelectedPortfolio(null);
       await refetchPortfolios();
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
     }
   };

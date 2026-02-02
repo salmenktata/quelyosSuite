@@ -71,7 +71,7 @@ export function FrequentlyBoughtTogether({
         // Sélectionner tous les produits par défaut
         setSelectedProducts(new Set(response.data.products.map((p: FrequentlyBoughtProduct) => p.id)));
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching frequently bought together:', error);
     } finally {
       setIsLoading(false);
@@ -108,7 +108,7 @@ export function FrequentlyBoughtTogether({
       }
 
       toast.success(`${1 + selectedProducts.size} produit(s) ajouté(s) au panier !`);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error adding bundle to cart:', error);
       toast.error('Une erreur est survenue');
     } finally {

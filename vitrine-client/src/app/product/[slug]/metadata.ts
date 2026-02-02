@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // Fetch SEO metadata from backend
     return await getProductSeoMetadata(productId);
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error generating product metadata:', error);
     return {
       title: 'Product',
@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 //     return response.data.products.map((product: any) => ({
 //       slug: product.slug || String(product.id),
 //     }));
-//   } catch (error) {
+//   } catch (_error) {
 //     logger.error('Error generating static params:', error);
 //     return [];
 //   }

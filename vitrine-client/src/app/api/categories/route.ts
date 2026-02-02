@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
     // Retourner directement le result
     return NextResponse.json(data.result || data);
 
-  } catch (error) {
+  } catch (_error) {
     logger.error('Categories API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch categories' },

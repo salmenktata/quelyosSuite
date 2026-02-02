@@ -64,7 +64,7 @@ export default function LeadDetail() {
       })
       toast.success('Opportunité mise à jour avec succès')
       setIsEditing(false)
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erreur lors de la mise à jour')
       logger.error('Lead update error:', error)
     }

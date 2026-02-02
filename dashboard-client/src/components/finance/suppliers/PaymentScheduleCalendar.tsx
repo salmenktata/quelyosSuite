@@ -44,7 +44,7 @@ export default function PaymentScheduleCalendar() {
 
       setUpcomingInvoices((upcomingData.invoices || []).map((inv: Invoice) => ({ ...inv, isOverdue: false })));
       setOverdueInvoices((overdueData.invoices || []).map((inv: Invoice) => ({ ...inv, isOverdue: true })));
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur lors du chargement des factures:", error);
     } finally {
       setIsLoading(false);

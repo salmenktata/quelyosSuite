@@ -54,7 +54,7 @@ export function VariantSwatches({
         setAttributeLines(response.attributes || []);
         setVariants(response.variants);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error loading variants:', error);
     } finally {
       setIsLoading(false);

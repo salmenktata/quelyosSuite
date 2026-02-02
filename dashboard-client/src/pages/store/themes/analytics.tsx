@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
       if (designersData.result?.success) setTopDesigners(designersData.result.designers);
       if (categoriesData.result?.success) setCategories(categoriesData.result.categories);
       if (timelineData.result?.success) setTimeline(timelineData.result.timeline);
-    } catch (err) {
+    } catch (_err) {
       logger.error('[ThemeAnalytics] Error fetching analytics:', err);
       setError(err instanceof Error ? err.message : 'Failed to load analytics');
     } finally {

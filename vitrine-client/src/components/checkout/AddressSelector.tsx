@@ -55,7 +55,7 @@ export function AddressSelector({
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching addresses:', error);
     } finally {
       setIsLoading(false);
@@ -74,7 +74,7 @@ export function AddressSelector({
         setShowAddForm(false);
         setNewAddress({});
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error adding address:', error);
     }
   };
@@ -85,7 +85,7 @@ export function AddressSelector({
     try {
       await backendClient.deleteAddress(id);
       fetchAddresses();
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error deleting address:', error);
     }
   };

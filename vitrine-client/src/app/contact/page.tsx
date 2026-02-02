@@ -58,7 +58,7 @@ export default function ContactPage() {
       } else {
         toast.error(response.error || 'Une erreur est survenue. Veuillez reessayer.');
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       logger.error('Contact form error:', error);
       toast.error('Une erreur est survenue. Veuillez reessayer.');
     } finally {

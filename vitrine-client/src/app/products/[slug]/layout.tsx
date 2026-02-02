@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         'product:condition': 'new',
       },
     };
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error generating product metadata:', error);
     return {
       title: 'Produit - ' + siteConfig.brand.name,

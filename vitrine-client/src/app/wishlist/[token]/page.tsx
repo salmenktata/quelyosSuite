@@ -71,7 +71,7 @@ export default function PublicWishlistPage() {
   const handleAddToCart = async (productId: number) => {
     try {
       await addToCart(productId, 1);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error adding to cart:', error);
     }
   };

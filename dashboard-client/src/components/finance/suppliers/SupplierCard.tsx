@@ -91,7 +91,7 @@ export default function SupplierCard({ supplier, onRefresh }: SupplierCardProps)
       }
 
       if (onRefresh) onRefresh();
-    } catch (err) {
+    } catch (_err) {
       alert(err instanceof Error ? err.message : "Erreur lors de la suppression");
       setIsDeleting(false);
     }

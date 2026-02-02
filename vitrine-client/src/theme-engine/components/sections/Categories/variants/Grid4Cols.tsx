@@ -37,7 +37,7 @@ export default function Grid4Cols({ config, className = '', theme }: Grid4ColsPr
         if (response.success && response.categories) {
           setCategories(response.categories as unknown as Category[]);
         }
-      } catch (error) {
+      } catch (_error) {
         logger.error('Error loading categories:', error);
       } finally {
         setLoading(false);

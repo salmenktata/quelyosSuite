@@ -62,7 +62,7 @@ export function useWarehouses(params: WarehousesParams = {}) {
         // Le backend retourne { success, data: [...], total }
         // response.data est directement le tableau
         return (response.data as Warehouse[]) || [];
-      } catch (error) {
+      } catch (_error) {
         logger.error('[useWarehouses] Fetch error:', error);
         throw error;
       }

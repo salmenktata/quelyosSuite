@@ -45,7 +45,7 @@ async function registerServiceWorker() {
         });
       }
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Service Worker registration failed:', error);
   }
 }

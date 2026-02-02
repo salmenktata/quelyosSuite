@@ -56,7 +56,7 @@ async function lookupTenant(
       });
       return { code: data.tenant.code };
     }
-  } catch (error) {
+  } catch (_error) {
     // En cas d'erreur réseau, continuer sans tenant
     logger.error('[Proxy] Tenant lookup error:', error);
   }

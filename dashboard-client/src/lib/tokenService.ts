@@ -242,7 +242,7 @@ class TokenService {
     this.listeners.forEach((listener) => {
       try {
         listener(event, data)
-      } catch (e) {
+      } catch (_e) {
         logger.error('[TokenService] Listener error', e)
       }
     })
@@ -288,7 +288,7 @@ class TokenService {
         user: this.state.user,
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    } catch (e) {
+    } catch (_e) {
       logger.warn('[TokenService] Failed to save to storage', e)
     }
   }
@@ -312,7 +312,7 @@ class TokenService {
       } else {
         this.removeFromStorage()
       }
-    } catch (e) {
+    } catch (_e) {
       logger.warn('[TokenService] Failed to load from storage', e)
       this.removeFromStorage()
     }

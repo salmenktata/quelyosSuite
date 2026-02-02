@@ -81,7 +81,7 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Erreur chargement variantes:', error);
     } finally {
       setIsLoadingVariants(false);

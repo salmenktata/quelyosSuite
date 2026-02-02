@@ -56,7 +56,7 @@ export function CartSaveModal({ isOpen, onClose }: CartSaveModalProps) {
         setError(response.error || 'Une erreur est survenue');
         logger.error('Erreur sauvegarde panier:', response.error);
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Impossible de sauvegarder le panier. Veuillez réessayer.');
       logger.error('Erreur sauvegarde panier:', err);
     } finally {

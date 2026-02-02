@@ -30,7 +30,7 @@ const CartItem: React.FC<CartItemProps> = ({
     setIsUpdating(true);
     try {
       await updateQuantity(item.id, newQuantity);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to update quantity:', error);
     } finally {
       setIsUpdating(false);
@@ -41,7 +41,7 @@ const CartItem: React.FC<CartItemProps> = ({
     setIsRemoving(true);
     try {
       await removeItem(item.id);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to remove item:', error);
       setIsRemoving(false);
     }

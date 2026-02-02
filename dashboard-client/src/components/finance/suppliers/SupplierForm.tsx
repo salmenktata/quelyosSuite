@@ -115,7 +115,7 @@ export default function SupplierForm({ initialData, supplierId, mode }: Supplier
       }
 
       navigate("/finance/suppliers");
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
       setIsSubmitting(false);
     }

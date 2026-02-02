@@ -33,7 +33,7 @@ export default function Grid4Cols({ config, className = '', theme }: Grid4ColsPr
         if (response.success && response.products) {
           setProducts(response.products);
         }
-      } catch (error) {
+      } catch (_error) {
         logger.error('Error loading products:', error);
       } finally {
         setLoading(false);

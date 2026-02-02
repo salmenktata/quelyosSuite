@@ -79,7 +79,7 @@ export function OnePageCheckout() {
           setSelectedDelivery(response.data.delivery_methods[0].id);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error loading delivery methods:', error);
     }
   };

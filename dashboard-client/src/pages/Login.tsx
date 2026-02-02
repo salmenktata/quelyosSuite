@@ -112,7 +112,7 @@ export default function Login() {
       } else {
         setError(result.error || 'Échec de la connexion')
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error('Login error:', err)
       setError('Erreur de connexion. Vérifiez vos identifiants.')
     } finally {

@@ -33,7 +33,7 @@ export default function DeviseFormatsPage() {
     try {
       const parsed = JSON.parse(raw);
       setLang(parsed.lang ?? "fr");
-    } catch (err) {
+    } catch (_err) {
       logger.error("Lecture des préférences impossible", err);
     }
   }, []);
@@ -60,7 +60,7 @@ export default function DeviseFormatsPage() {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
       }
       setSaved(true);
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur sauvegarde langue:", err);
     }
   }

@@ -73,7 +73,7 @@ export default function AbandonedCarts() {
       try {
         await sendReminderMutation.mutateAsync(cartId)
         alert('Email de relance envoyé avec succès !')
-      } catch (error) {
+      } catch (_error) {
       logger.error("Erreur:", error);
         alert("Erreur lors de l'envoi de l'email : " + (error as Error).message)
       }

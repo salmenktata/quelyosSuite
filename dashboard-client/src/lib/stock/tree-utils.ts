@@ -192,7 +192,7 @@ export function getExpandedLocationIds(): Set<number> {
       const ids = JSON.parse(stored) as number[]
       return new Set(ids)
     }
-  } catch (error) {
+  } catch (_error) {
     logger.error('tree-utils: Error reading expanded IDs from localStorage:', error)
   }
   return new Set()
@@ -204,7 +204,7 @@ export function getExpandedLocationIds(): Set<number> {
 function saveExpandedLocationIds(ids: Set<number>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]))
-  } catch (error) {
+  } catch (_error) {
     logger.error('tree-utils: Error saving expanded IDs to localStorage:', error)
   }
 }

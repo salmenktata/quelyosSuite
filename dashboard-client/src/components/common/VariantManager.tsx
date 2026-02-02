@@ -85,7 +85,7 @@ export function VariantManager({
       setShowAddAttribute(false)
       setSelectedAttributeId('')
       setSelectedValueIds([])
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : "Erreur lors de l'ajout")
     }
   }
@@ -103,7 +103,7 @@ export function VariantManager({
     try {
       await deleteAttributeMutation.mutateAsync(lineId)
       onSuccess?.('Attribut supprimé avec succès')
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : 'Erreur lors de la suppression')
     }
   }
@@ -129,7 +129,7 @@ export function VariantManager({
       })
       onSuccess?.('Attribut mis à jour avec succès')
       cancelEditAttribute()
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : "Erreur lors de la mise à jour")
     }
   }
@@ -149,7 +149,7 @@ export function VariantManager({
       } else {
         onSuccess?.('Toutes les variantes sont déjà créées')
       }
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : 'Erreur lors de la régénération')
     }
   }
@@ -163,7 +163,7 @@ export function VariantManager({
     try {
       await updateVariantMutation.mutateAsync(data)
       onSuccess?.('Variante modifiée avec succès')
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : 'Erreur lors de la modification')
       throw error
     }
@@ -174,7 +174,7 @@ export function VariantManager({
     try {
       await updateVariantStockMutation.mutateAsync(data)
       onSuccess?.('Stock mis à jour avec succès')
-    } catch (error) {
+    } catch (_error) {
       onError?.(error instanceof Error ? error.message : 'Erreur lors de la mise à jour du stock')
       throw error
     }

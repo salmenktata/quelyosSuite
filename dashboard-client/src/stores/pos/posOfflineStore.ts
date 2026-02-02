@@ -211,7 +211,7 @@ export const usePOSOfflineStore = create<OfflineState>()((set, get) => ({
     try {
       const orders = await getOrdersFromIDB()
       set({ orders })
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to load offline orders:', error)
     }
   },
@@ -264,7 +264,7 @@ export async function syncOfflineOrders(
         await store.updateOrderStatus(order.id, 'error', result.error)
         failed++
       }
-    } catch (error) {
+    } catch (_error) {
       await store.updateOrderStatus(
         order.id,
         'error',

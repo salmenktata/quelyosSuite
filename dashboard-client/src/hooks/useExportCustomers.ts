@@ -47,7 +47,7 @@ export function useExportCustomers() {
       window.URL.revokeObjectURL(url)
 
       return true
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : "Erreur lors de l'export CSV"
       setError(errorMessage)
       return false

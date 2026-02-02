@@ -50,7 +50,7 @@ export async function GET(
     const data = await response.json();
     return NextResponse.json(data.result || data);
 
-  } catch (error) {
+  } catch (_error) {
     logger.error('Products API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch product data' },

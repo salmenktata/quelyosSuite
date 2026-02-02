@@ -109,7 +109,7 @@ export default function ThemesImportPage() {
       }
 
       setResults(importResults);
-    } catch (err) {
+    } catch (_err) {
       logger.error('[ThemeImport] Import error:', err);
       setGlobalError(err instanceof Error ? err.message : 'Import failed');
     } finally {

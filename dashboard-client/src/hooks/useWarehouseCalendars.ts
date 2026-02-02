@@ -94,7 +94,7 @@ export function useWarehouses(tenantId?: number) {
       } else {
         setError(result.data?.error || 'Erreur lors du chargement des entrepôts');
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
     } finally {
       setLoading(false);
@@ -145,7 +145,7 @@ export function useSetWarehouseCalendar() {
         setError(result.data?.error || 'Erreur lors de l\'assignation');
         return null;
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return null;
     } finally {
@@ -196,7 +196,7 @@ export function useCalendars(tenantId?: number) {
       } else {
         setError(result.data?.error || 'Erreur lors du chargement des calendriers');
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
     } finally {
       setLoading(false);
@@ -251,7 +251,7 @@ export function useCreateCalendar() {
         setError(result.data?.error || 'Erreur lors de la création');
         return null;
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return null;
     } finally {
@@ -306,7 +306,7 @@ export function usePlanDeliveryDate() {
         setError(result.data?.error || 'Erreur lors du calcul');
         return null;
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Erreur réseau');
       return null;
     } finally {

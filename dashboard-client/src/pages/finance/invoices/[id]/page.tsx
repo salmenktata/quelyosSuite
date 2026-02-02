@@ -65,7 +65,7 @@ export default function InvoiceDetailPage() {
       } else {
         setError(response.data.error || 'Erreur lors du chargement de la facture')
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error('Erreur:', err)
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {

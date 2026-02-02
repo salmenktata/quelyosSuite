@@ -76,7 +76,7 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
           setSelectedVariant(response.product.variants[0].id);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error loading product:', error);
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export function QuickViewModal({ productId, isOpen, onClose }: QuickViewModalPro
       setTimeout(() => {
         onClose();
       }, 500);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error adding to cart:', error);
     } finally {
       setAddingToCart(false);

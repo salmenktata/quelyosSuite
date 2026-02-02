@@ -29,7 +29,7 @@ export function AutomationWorkflows() {
       const params = filter === 'active' ? { active_only: true } : {};
       const data = await listAutomations(params);
       setWorkflows(data.automations);
-    } catch (err) {
+    } catch (_err) {
       logger.error('Erreur chargement workflows:', err);
     }
   }, [filter, listAutomations]);
@@ -46,7 +46,7 @@ export function AutomationWorkflows() {
         await startAutomation(id);
       }
       loadWorkflows();
-    } catch (err) {
+    } catch (_err) {
       logger.error('Erreur toggle workflow:', err);
     }
   };
@@ -58,7 +58,7 @@ export function AutomationWorkflows() {
       await deleteAutomation(id);
       loadWorkflows();
       if (selectedWorkflow?.id === id) setSelectedWorkflow(null);
-    } catch (err) {
+    } catch (_err) {
       logger.error('Erreur suppression workflow:', err);
     }
   };
@@ -67,7 +67,7 @@ export function AutomationWorkflows() {
     try {
       const detail = await getAutomation(id);
       setSelectedWorkflow(detail);
-    } catch (err) {
+    } catch (_err) {
       logger.error('Erreur chargement détail:', err);
     }
   };

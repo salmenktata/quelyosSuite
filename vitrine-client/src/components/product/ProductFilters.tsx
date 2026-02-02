@@ -115,7 +115,7 @@ export function ProductFilters({ categoryId, onFiltersChange }: ProductFiltersPr
       if (response.success && response.data) {
         setFacets(response.data as unknown as Facets);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error loading facets:', error);
     } finally {
       setLoading(false);

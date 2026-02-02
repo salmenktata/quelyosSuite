@@ -55,7 +55,7 @@ export default function ScenarioComparison() {
         const data = await response.json();
         setAvailableScenarios(data.scenarios || []);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur lors du chargement des scénarios:", error);
     }
   };
@@ -104,7 +104,7 @@ export default function ScenarioComparison() {
           ]);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur lors du chargement du scénario:", error);
     } finally {
       setIsLoading(false);

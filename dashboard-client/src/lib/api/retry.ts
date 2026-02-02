@@ -243,7 +243,7 @@ export async function withRetry<T>(
         attempts: attempt,
         totalTime: Date.now() - startTime,
       }
-    } catch (error) {
+    } catch (_error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
       // Vérifier si on peut retrier

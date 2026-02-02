@@ -90,7 +90,7 @@ export function ImageGallery({
       )
 
       await onUpload(imagesData)
-    } catch (error) {
+    } catch (_error) {
       logger.error('Upload error:', error)
       alert('Erreur lors de l\'upload des images')
     } finally {

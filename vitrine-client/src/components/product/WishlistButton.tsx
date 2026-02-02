@@ -50,7 +50,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
       } else {
         await addToWishlist(productId);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error toggling wishlist:', error);
     } finally {
       setIsLoading(false);

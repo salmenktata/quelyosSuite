@@ -152,7 +152,7 @@ export function StockAdjustmentModal({
 
       onSuccess()
       onClose()
-    } catch (err) {
+    } catch (_err) {
       logger.error('Stock adjustment error:', err)
       toast.error('Erreur lors de la mise à jour du stock')
     }

@@ -53,7 +53,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
       } else {
         showError(response.error || 'Erreur lors de l\'export')
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Export stock error:', error)
       showError(error instanceof Error ? error.message : 'Erreur lors de l\'export')
     }

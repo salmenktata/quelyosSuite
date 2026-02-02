@@ -56,7 +56,7 @@ export async function GET(
         'Cache-Control': 'no-store',
       },
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Tenant API error:', error);
     return NextResponse.json(
       { success: false, error: 'Erreur serveur' },

@@ -34,7 +34,7 @@ export function useReorderingRules(params?: UseReorderingRulesParams) {
         }
 
         return response.data as ReorderingRulesResponse
-      } catch (error) {
+      } catch (_error) {
         logger.error('[useReorderingRules] Fetch error:', error)
         throw error
       }

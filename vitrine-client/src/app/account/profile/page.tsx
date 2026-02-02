@@ -122,7 +122,7 @@ export default function AccountProfilePage() {
       } else {
         throw new Error(result.error || 'Erreur mise à jour profil');
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       logger.error('Erreur mise à jour profil:', error);
       alert(error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.');
     } finally {

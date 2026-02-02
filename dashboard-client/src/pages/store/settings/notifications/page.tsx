@@ -60,7 +60,7 @@ export default function NotificationsPage() {
     try {
       await updatePreferencesMutation.mutateAsync({ [key]: value });
       toast.success("Préférence mise à jour");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }

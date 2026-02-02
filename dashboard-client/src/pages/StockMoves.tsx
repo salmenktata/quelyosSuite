@@ -138,7 +138,7 @@ export default function StockMoves() {
       document.body.removeChild(link)
 
       toast.success(`${allMoves.length} mouvements exportés avec succès`)
-    } catch (error) {
+    } catch (_error) {
       logger.error('Export CSV error:', error)
       toast.error('Erreur lors de l\'export CSV')
     }

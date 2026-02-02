@@ -201,7 +201,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
         const data = (await api(`/dashboard/forecast?days=${days}`)) as ForecastResponse;
         setForecast(data);
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Impossible de charger la projection.");
     } finally {
       setLoading(false);
@@ -219,7 +219,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       if (saved) {
         setWhatIfScenarios(JSON.parse(saved) as ScenarioImpact[]);
       }
-    } catch (err) {
+    } catch (_err) {
       logger.warn("Failed to load what-if scenarios from localStorage:", err);
     }
   }, []);
@@ -228,7 +228,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
     setWhatIfScenarios(scenarios);
     try {
       localStorage.setItem("whatIfScenarios", JSON.stringify(scenarios));
-    } catch (err) {
+    } catch (_err) {
       logger.warn("Failed to save what-if scenarios to localStorage:", err);
     }
   }, []);
@@ -237,7 +237,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
     setWhatIfScenarios([]);
     try {
       localStorage.removeItem("whatIfScenarios");
-    } catch (err) {
+    } catch (_err) {
       logger.warn("Failed to remove what-if scenarios from localStorage:", err);
     }
   }, []);
@@ -247,7 +247,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       try {
         await api("/forecast-events", { method: "POST", body: event as Record<string, unknown> });
         fetchForecast(selectedDays);
-      } catch (err: unknown) {
+      } catch (_err: unknown) {
         logger.error("Error adding event:", err);
         alert("Erreur lors de l'ajout de l'événement");
       }
@@ -261,7 +261,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       try {
         await api(`/forecast-events/${id}`, { method: "DELETE" });
         fetchForecast(selectedDays);
-      } catch (err: unknown) {
+      } catch (_err: unknown) {
         logger.error("Error deleting event:", err);
         alert("Erreur lors de la suppression de l'événement");
       }
@@ -275,7 +275,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
         await api("/forecast-events/import", { method: "POST", body: { events } as Record<string, unknown> });
         fetchForecast(selectedDays);
         alert(`${events.length} événements importés avec succès`);
-      } catch (err: unknown) {
+      } catch (_err: unknown) {
         logger.error("Error importing events:", err);
         alert("Erreur lors de l'import des événements");
       }

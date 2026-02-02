@@ -25,7 +25,7 @@ export function useCustomerCategories() {
 
         const result = response.data as { success: boolean; data: CustomerCategory[]; total: number };
         return result.data || [];
-      } catch (error) {
+      } catch (_error) {
         logger.error('[useCustomerCategories] Fetch error:', error);
         throw error;
       }

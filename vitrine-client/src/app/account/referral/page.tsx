@@ -40,7 +40,7 @@ export default function ReferralPage() {
       if (response.success && response.data) {
         setData(response.data);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Error fetching referral data:', error);
     } finally {
       setIsLoading(false);

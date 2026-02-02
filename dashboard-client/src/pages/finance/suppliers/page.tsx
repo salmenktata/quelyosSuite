@@ -87,7 +87,7 @@ export default function SuppliersPage() {
         occasional,
         totalInvoices,
       })
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {

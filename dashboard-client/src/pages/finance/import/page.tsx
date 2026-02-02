@@ -51,7 +51,7 @@ export default function ImportPage() {
         if (data.length > 0 && !state.selectedAccountId) {
           dispatch({ type: "SELECT_ACCOUNT", payload: data[0].id });
         }
-      } catch (error) {
+      } catch (_error) {
         logger.error("Error fetching accounts:", error);
       }
     }

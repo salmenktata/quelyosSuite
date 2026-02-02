@@ -79,7 +79,7 @@ export default function MarketingEmailSettingsPage() {
 
       await updateMutation.mutateAsync(dataToSend);
       toast.success("Configuration email enregistrée");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }
@@ -89,7 +89,7 @@ export default function MarketingEmailSettingsPage() {
     try {
       const result = await testMutation.mutateAsync(testEmail ? { testEmail } : undefined);
       toast.success(result.message || "Connexion réussie");
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error(`Erreur: ${error}`);
     }

@@ -127,7 +127,7 @@ export default function MySubmissionsPage() {
           total_revenue: subs.reduce((sum: number, s: Submission) => sum + s.designer_revenue, 0),
         });
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('[MySubmissions] Error loading submissions:', error);
     } finally {
       setLoading(false);

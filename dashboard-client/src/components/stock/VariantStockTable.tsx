@@ -65,7 +65,7 @@ export function VariantStockTable({ productId, variants, onStockUpdated }: Props
       setEditingVariantId(null)
       setEditingQuantity('')
       onStockUpdated?.()
-    } catch (error) {
+    } catch (_error) {
       showError('Erreur lors de la mise à jour du stock')
     }
   }

@@ -32,7 +32,7 @@ export function useLocationsTree(params?: UseLocationsTreeParams) {
         }
 
         return ((response.data as Record<string, unknown>)?.locations as StockLocation[]) || []
-      } catch (error) {
+      } catch (_error) {
         logger.error('[useLocationsTree] Fetch error:', error)
         throw error
       }

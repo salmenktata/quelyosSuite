@@ -113,7 +113,7 @@ export function useAuth(): AuthContextType {
 
         setIsLoading(false)
         return { success: false, error: result.error || 'Identifiants invalides' }
-      } catch (error) {
+      } catch (_error) {
         setIsLoading(false)
         return { success: false, error: error instanceof Error ? error.message : 'Erreur de connexion' }
       }

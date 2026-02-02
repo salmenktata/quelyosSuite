@@ -127,7 +127,7 @@ export default function FeaturesSettingsPage() {
       toast.success("Fonctionnalités mises à jour");
       setHasChanges(false);
       refetch();
-    } catch (error) {
+    } catch (_error) {
       logger.error("Erreur:", error);
       toast.error("Erreur lors de la mise à jour");
     }

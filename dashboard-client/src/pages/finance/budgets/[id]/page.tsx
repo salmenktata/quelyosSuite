@@ -58,7 +58,7 @@ export default function BudgetDetailPage() {
         setError(null);
         const data = await api<BudgetDetail>(`/budgets/${params.id}/detail`);
         setBudget(data);
-      } catch (err) {
+      } catch (_err) {
       logger.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Erreur lors du chargement du budget");
       } finally {

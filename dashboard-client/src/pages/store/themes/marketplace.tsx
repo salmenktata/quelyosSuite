@@ -81,7 +81,7 @@ export default function MarketplacePage() {
       if (data.result?.success && data.result.themes) {
         setThemes(data.result.themes);
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('[ThemeMarketplace] Error loading marketplace themes:', error);
     } finally {
       setLoading(false);

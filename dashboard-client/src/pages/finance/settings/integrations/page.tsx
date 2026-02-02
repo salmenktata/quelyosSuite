@@ -76,7 +76,7 @@ export default function IntegrationsPage() {
         }));
         setIntegrations(items);
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error("Impossible de charger les intégrations", err);
       setIntegrations(
         AVAILABLE_INTEGRATIONS.map((base) => ({
@@ -109,7 +109,7 @@ export default function IntegrationsPage() {
         });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
       }
-    } catch (err) {
+    } catch (_err) {
       logger.error("Connexion échouée", err);
     } finally {
       setConnecting(null);

@@ -53,7 +53,7 @@ export default function TvaPage() {
       try {
         const parsed = JSON.parse(raw) as VatSnapshot;
         setSnapshot({ ...DEFAULT_SNAPSHOT, ...parsed });
-      } catch (err) {
+      } catch (_err) {
         logger.error("Impossible de lire le snapshot TVA", err);
       }
     }
@@ -83,7 +83,7 @@ export default function TvaPage() {
       }
       // Future: call API/Stripe pricing sync here
       setSaved(true);
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Sauvegarde impossible");
     } finally {
       setSaving(false);

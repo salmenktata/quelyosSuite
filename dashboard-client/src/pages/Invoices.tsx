@@ -121,7 +121,7 @@ export default function Invoices() {
       setSendingEmail(true)
       await sendEmail(invoiceId)
       toast.success(`Facture ${invoiceName} envoyée par email`)
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error(`Erreur lors de l'envoi de la facture: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
     } finally {
@@ -133,7 +133,7 @@ export default function Invoices() {
     try {
       setDownloadingPDF(true)
       await downloadPDF(invoiceId)
-    } catch (err) {
+    } catch (_err) {
       logger.error("Erreur:", err);
       toast.error(`Erreur lors du téléchargement: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
     } finally {

@@ -75,7 +75,7 @@ export default function SupplierListPage() {
         occasional,
         totalInvoices,
       });
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {
       setIsLoading(false);

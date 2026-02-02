@@ -81,7 +81,7 @@ export async function backendRpc<T = unknown>(
       success: true,
       data: json.result,
     }
-  } catch (error) {
+  } catch (_error) {
     // Log technique (masqué en production pour sécurité)
     logger.error('[backendRpc] Error:', error)
     return {
