@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -110,6 +110,7 @@ export default function ByAccountReportPage() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -121,7 +122,7 @@ export default function ByAccountReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -136,13 +137,13 @@ export default function ByAccountReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.byAccount} />
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -168,11 +169,11 @@ export default function ByAccountReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -183,12 +184,12 @@ export default function ByAccountReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -208,13 +209,13 @@ export default function ByAccountReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
         {!loading && !error && apiData && (
         <>
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -271,7 +272,7 @@ export default function ByAccountReportPage() {
               )}
             </div>
           </GlassCard>
-        </motion.div>
+        </m.div>
 
         {/* Accounts by Portfolio */}
         {(() => {
@@ -295,7 +296,7 @@ export default function ByAccountReportPage() {
             const portfolioName = isUnassigned ? "Comptes non assignés" : portfolioKey;
 
             return (
-              <motion.div
+              <m.div
                 key={portfolioKey}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -319,7 +320,7 @@ export default function ByAccountReportPage() {
                 {/* Accounts Grid for this portfolio */}
                 <div className="grid gap-4 md:grid-cols-2">
                   {groupAccounts.map((account, index) => (
-            <motion.div
+            <m.div
               key={account.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -417,10 +418,10 @@ export default function ByAccountReportPage() {
                 </div>
                 </GlassCard>
               </div>
-            </motion.div>
+            </m.div>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             );
           });
         })()}
@@ -429,5 +430,6 @@ export default function ByAccountReportPage() {
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }

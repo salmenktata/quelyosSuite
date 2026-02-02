@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -113,6 +113,7 @@ export default function ByPortfolioReportPage() {
     : null;
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -124,7 +125,7 @@ export default function ByPortfolioReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -141,13 +142,13 @@ export default function ByPortfolioReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.byPortfolio} className="mb-6" />
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -173,11 +174,11 @@ export default function ByPortfolioReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -188,12 +189,12 @@ export default function ByPortfolioReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -213,13 +214,13 @@ export default function ByPortfolioReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs globaux */}
         {!loading && !error && apiData && (
         <>
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -258,17 +259,17 @@ export default function ByPortfolioReportPage() {
               <TrendingUp className="h-8 w-8 text-emerald-300" />
             </div>
           </GlassCard>
-        </motion.div>
+        </m.div>
 
         {/* Liste des portefeuilles */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="space-y-4"
         >
           {portfolios.map((portfolio, idx) => (
-            <motion.div
+            <m.div
               key={portfolio.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -328,7 +329,7 @@ export default function ByPortfolioReportPage() {
 
                   {/* Détails étendus si sélectionné */}
                   {selectedPortfolio === portfolio.id && (
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
@@ -384,13 +385,13 @@ export default function ByPortfolioReportPage() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </GlassCard>
               </div>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
         </>
         )}
       </div>
