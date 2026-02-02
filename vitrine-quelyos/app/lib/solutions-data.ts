@@ -1,7 +1,10 @@
 /**
  * Données des packages sectoriels Quelyos
  * 8 solutions métier complètes avec contenu illustratif
+ * Prix dynamiques depuis /api/public/pricing, contenu marketing statique
  */
+
+import { fetchPricingGrid, FALLBACK_PRICING_GRID, type SolutionPlan } from './plans-api'
 
 export interface PainPoint {
   problem: string;
@@ -37,6 +40,8 @@ export interface SolutionData {
   testimonials: Testimonial[];
   pricing: {
     basePrice: number;
+    annualPrice?: number;
+    savings?: number;
     features: string[];
   };
   stats: {
@@ -1161,3 +1166,49 @@ export const getSolutionData = (sectorId: string): SolutionData | undefined => {
 export const getAllSolutions = (): SolutionData[] => {
   return Object.values(solutionsData);
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FONCTIONS DYNAMIQUES — Prix depuis l'API backend
+// ═══════════════════════════════════════════════════════════════════════════
+
+function mergeSolutionWithPricing(
+  solution: SolutionData,
+  apiSolution?: SolutionPlan
+): SolutionData {
+  if (!apiSolution) return solution;
+
+  return {
+    ...solution,
+    pricing: {
+      ...solution.pricing,
+      basePrice: apiSolution.price,
+      annualPrice: apiSolution.annualPrice,
+      savings: apiSolution.savings,
+    },
+    modulesIncluded: apiSolution.modules.length > 0
+      ? apiSolution.features
+      : solution.modulesIncluded,
+  };
+}
+
+export async function getAllSolutionsDynamic(): Promise<SolutionData[]> {
+  const grid = await fetchPricingGrid() || FALLBACK_PRICING_GRID;
+  const solutions = Object.values(solutionsData);
+
+  return solutions.map((sol) => {
+    const apiMatch = grid.solutions.find((s) => s.slug === sol.id);
+    return mergeSolutionWithPricing(sol, apiMatch);
+  });
+}
+
+export async function getSolutionDataDynamic(
+  sectorId: string
+): Promise<SolutionData | undefined> {
+  const solution = solutionsData[sectorId];
+  if (!solution) return undefined;
+
+  const grid = await fetchPricingGrid() || FALLBACK_PRICING_GRID;
+  const apiMatch = grid.solutions.find((s) => s.slug === sectorId);
+
+  return mergeSolutionWithPricing(solution, apiMatch);
+}

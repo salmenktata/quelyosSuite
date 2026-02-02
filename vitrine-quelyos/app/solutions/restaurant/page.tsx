@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getSolutionData } from '@/app/lib/solutions-data';
+import { getSolutionDataDynamic } from '@/app/lib/solutions-data';
 import PainPointsGrid from '@/app/components/solutions/PainPointsGrid';
 import { FeaturesGrid } from '@/app/components/solutions/SolutionFeatureCard';
 import { TestimonialsGrid } from '@/app/components/solutions/TestimonialCard';
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RestaurantSolutionPage() {
-  const solution = getSolutionData(SECTOR_ID);
+export default async function RestaurantSolutionPage() {
+  const solution = await getSolutionDataDynamic(SECTOR_ID);
 
   if (!solution) {
     return <div>Solution non trouvée</div>;
@@ -151,6 +151,8 @@ export default function RestaurantSolutionPage() {
               packageName={solution.name}
               sectorName={solution.sectorName}
               basePrice={solution.pricing.basePrice}
+              annualPrice={solution.pricing.annualPrice}
+              savings={solution.pricing.savings}
               features={solution.pricing.features}
               highlighted
             />

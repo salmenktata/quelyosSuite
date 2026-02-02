@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getSolutionData } from '@/app/lib/solutions-data';
+import { getSolutionDataDynamic } from '@/app/lib/solutions-data';
 import PainPointsGrid from '@/app/components/solutions/PainPointsGrid';
 import { FeaturesGrid } from '@/app/components/solutions/SolutionFeatureCard';
 import { TestimonialsGrid } from '@/app/components/solutions/TestimonialCard';
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://quelyos.com/solutions/ecommerce' },
 };
 
-export default function EcommerceSolutionPage() {
-  const solution = getSolutionData(SECTOR_ID);
+export default async function EcommerceSolutionPage() {
+  const solution = await getSolutionDataDynamic(SECTOR_ID);
   if (!solution) return <div>Solution non trouvée</div>;
 
   return (
@@ -62,7 +62,7 @@ export default function EcommerceSolutionPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center"><h2 className="text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">Tarif {solution.name}</h2></div>
           <div className="mx-auto mt-16 max-w-2xl">
-            <PackagePricing packageName={solution.name} sectorName={solution.sectorName} basePrice={solution.pricing.basePrice} features={solution.pricing.features} highlighted />
+            <PackagePricing packageName={solution.name} sectorName={solution.sectorName} basePrice={solution.pricing.basePrice} annualPrice={solution.pricing.annualPrice} savings={solution.pricing.savings} features={solution.pricing.features} highlighted />
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
@@ -18,10 +18,22 @@ import {
   Shield,
   Clock,
   HelpCircle,
+  Layers,
+  Target,
+  PiggyBank,
+  BarChart3,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Container from "@/app/components/Container";
+
+// Mapping icônes dynamiques
+const iconMap: Record<string, LucideIcon> = {
+  Store, Crown, Rocket, Building2, Layers, Target, PiggyBank, BarChart3, Shield, Zap,
+};
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PLANS SAAS E-COMMERCE
@@ -483,6 +495,41 @@ function FAQSection() {
 
 export default function EcommercePricingPage() {
   const [isYearly, setIsYearly] = useState(false);
+  const [dynamicPlans, setDynamicPlans] = useState(plans);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/public/plans?plan_type=ecommerce`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const mapped = data.data.map((p: Record<string, unknown>) => ({
+            id: p.id as string,
+            name: p.name as string,
+            description: p.description as string,
+            price: (p.price as number) > 0 ? String(p.price) : "Sur devis",
+            period: (p.period as string) || "par mois",
+            highlight: p.highlight as boolean,
+            badge: p.badge as string | undefined,
+            cta: p.cta as string,
+            ctaHref: p.href as string,
+            icon: iconMap[(p.icon as string)] || Store,
+            color: (p.color as string) || "emerald",
+            features: (p.features as string[]) || [],
+          }));
+          setDynamicPlans(mapped);
+        }
+      } catch {
+        // fallback silencieux
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
@@ -554,7 +601,7 @@ export default function EcommercePricingPage() {
       <section className="py-12 px-4">
         <Container>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan, index) => (
+            {dynamicPlans.map((plan, index) => (
               <motion.div
                 key={plan.id}
                 initial={{ opacity: 0, y: 20 }}

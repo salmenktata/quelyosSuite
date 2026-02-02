@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllSolutions } from '@/app/lib/solutions-data';
+import { getAllSolutionsDynamic } from '@/app/lib/solutions-data';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   description: 'Découvrez nos solutions complètes par métier : restauration, commerce, e-commerce, services, santé, BTP, hôtellerie, associations.',
 };
 
-export default function SolutionsIndexPage() {
-  const solutions = getAllSolutions();
+export default async function SolutionsIndexPage() {
+  const solutions = await getAllSolutionsDynamic();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -70,12 +70,28 @@ export default function SolutionsIndexPage() {
                 </p>
 
                 {/* Prix */}
-                <div className="mb-4 flex items-baseline gap-1">
+                <div className="mb-2 flex items-baseline gap-1">
                   <span className="text-2xl font-bold text-slate-900 dark:text-white">
                     {solution.pricing.basePrice}€
                   </span>
                   <span className="text-sm text-slate-600 dark:text-slate-400">/mois</span>
                 </div>
+
+                {/* Prix annuel */}
+                {solution.pricing.annualPrice && solution.pricing.annualPrice < solution.pricing.basePrice && (
+                  <p className="mb-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                    ou {solution.pricing.annualPrice}€/mois en annuel
+                  </p>
+                )}
+
+                {/* Économies */}
+                {solution.pricing.savings != null && solution.pricing.savings > 0 && (
+                  <div className="mb-4">
+                    <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      -{solution.pricing.savings}% vs modules séparés
+                    </span>
+                  </div>
+                )}
 
                 {/* Modules inclus */}
                 <div className="mb-6 text-xs text-slate-500 dark:text-slate-500">
@@ -103,12 +119,18 @@ export default function SolutionsIndexPage() {
               Vous ne trouvez pas votre secteur ?
             </h2>
             <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
-              Notre suite complète s&apos;adapte à tous les métiers. Contactez-nous pour une solution sur mesure.
+              Notre suite modulaire s&apos;adapte à tous les métiers. Composez votre solution sur mesure.
             </p>
-            <div className="mt-10">
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <Link
+                href="/tarifs"
+                className="inline-block rounded-lg bg-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500"
+              >
+                Configurer ma suite
+              </Link>
               <Link
                 href="/contact"
-                className="inline-block rounded-lg bg-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="inline-block rounded-lg border border-slate-300 bg-white px-8 py-4 text-base font-semibold text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800"
               >
                 Nous contacter
               </Link>

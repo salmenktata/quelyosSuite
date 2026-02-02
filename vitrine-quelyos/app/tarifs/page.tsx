@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
-  X,
   ArrowRight,
   Sparkles,
   Calculator,
@@ -13,238 +12,159 @@ import {
   TrendingUp,
   Clock,
   Euro,
-  Layers,
   Building2,
-  Rocket,
   Crown,
   Shield,
   Users,
   Zap,
-  BarChart3,
-  Lock,
   HelpCircle,
   Star,
   Quote,
+  Plus,
+  Minus,
+  Wallet,
+  Store,
+  Package,
+  Megaphone,
+  UserCog,
+  LifeBuoy,
+  Monitor,
+  Wrench,
+  Globe,
+  ShoppingBag,
+  Briefcase,
+  Heart,
+  HardHat,
+  Hotel,
+  HandHeart,
+  UtensilsCrossed,
+  Percent,
+  ChevronRight,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
-import config from "@/app/lib/config";
-import { getAllSolutions } from "@/app/lib/solutions-data";
+import {
+  type PricingGrid,
+  type ModulePlan,
+  type SolutionPlan,
+  FALLBACK_PRICING_GRID,
+} from "@/app/lib/plans-api";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DONNÉES DES PLANS - SUITE QUELYOS (Ordre: Enterprise → Business → Starter)
+// ICÔNES MAPPING
 // ═══════════════════════════════════════════════════════════════════════════
 
-const suitePlans = [
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    description: "Solution sur mesure, support dédié",
-    price: "Sur devis",
-    period: "",
-    highlight: false,
-    cta: "Contacter commercial",
-    href: "/contact",
-    icon: Crown,
-    color: "amber" as const,
-    features: [
-      "Utilisateurs illimités",
-      "Toutes les solutions",
-      "SLA garanti 99.9%",
-      "Account manager dédié",
-      "Personnalisation complète",
-      "Intégrations sur mesure",
-      "Formation sur site",
-      "Support téléphonique 24/7",
-    ],
-    limitations: [],
-  },
-  {
-    id: "business",
-    name: "Business",
-    description: "L'ERP complet pour les PME ambitieuses",
-    price: "49",
-    originalPrice: "99",
-    period: "/mois",
-    annualPrice: "37",
-    highlight: true,
-    badge: "Meilleure offre",
-    cta: "Essai gratuit 30 jours",
-    href: "/register?plan=business",
-    icon: Rocket,
-    color: "indigo" as const,
-    features: [
-      "10 utilisateurs inclus",
-      "Toutes les solutions incluses",
-      "Prévisions IA avancées 24 mois",
-      "API REST complète",
-      "Intégrations 50+ apps",
-      "Support prioritaire 4h",
-      "Formations illimitées",
-      "Export FEC + rapports PDF",
-    ],
-    limitations: [],
-  },
-  {
-    id: "starter",
-    name: "Starter",
-    description: "Tout pour bien démarrer",
-    price: "19",
-    originalPrice: "49",
-    period: "/mois",
-    annualPrice: "14",
-    highlight: false,
-    cta: "Essai gratuit 30 jours",
-    href: "/register?plan=starter",
-    icon: Layers,
-    color: "emerald" as const,
-    features: [
-      "3 utilisateurs inclus",
-      "Finance + 2 solutions au choix",
-      "Prévisions IA 12 mois",
-      "API basique incluse",
-      "Support prioritaire 24h",
-      "Export FEC comptable",
-    ],
-    limitations: [],
-  },
-];
+const iconMap: Record<string, LucideIcon> = {
+  Wallet, Store, Package, Users, Megaphone, UserCog, LifeBuoy, Monitor, Wrench,
+  Crown, Building2, Shield, Star, Globe, ShoppingBag, Briefcase, Heart,
+  HardHat, Hotel, HandHeart, UtensilsCrossed, Zap,
+};
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SOLUTIONS INDIVIDUELLES (collapsed by default)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const moduleFinance = [
-  {
-    name: "Freemium",
-    price: "0€",
-    period: "à vie",
-    description: "Vraiment gratuit, vraiment utile",
-    features: [
-      "5 comptes bancaires",
-      "500 transactions/mois",
-      "Dashboard complet",
-      "Prévisions IA 3 mois",
-      "Export CSV & PDF",
-    ],
-    limitations: [],
-    cta: "Commencer gratuitement",
-    href: config.finance.app,
-  },
-  {
-    name: "Pro",
-    price: "9€",
-    originalPrice: "29€",
-    period: "/mois",
-    description: "Pour TPE actives",
-    features: [
-      "Comptes illimités",
-      "Transactions illimitées",
-      "Prévisions IA 12 mois",
-      "Export FEC comptable",
-      "Support prioritaire",
-    ],
-    limitations: [],
-    cta: "Essai 30 jours",
-    href: config.finance.app,
-    highlight: true,
-  },
-  {
-    name: "Expert",
-    price: "29€",
-    originalPrice: "79€",
-    period: "/mois",
-    description: "Multi-devises & API",
-    features: [
-      "Tout Pro inclus",
-      "Multi-devises (MENA)",
-      "API REST complète",
-      "Scénarios what-if",
-      "SLA garanti",
-    ],
-    limitations: [],
-    cta: "Essai 30 jours",
-    href: config.finance.app,
-  },
-];
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TABLEAU COMPARATIF FEATURES SUITE vs MODULES
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface ComparisonRow {
-  feature: string;
-  moduleSeul: string | boolean;
-  suite: string | boolean;
-  tooltip?: string;
+function DynamicIcon({ name, className }: { name: string; className?: string }) {
+  const IconComponent = iconMap[name] || Package;
+  return <IconComponent className={className} />;
 }
 
-const suiteVsModuleComparison: ComparisonRow[] = [
-  { feature: "Prévisions IA avancées", moduleSeul: false, suite: true },
-  { feature: "API REST complète", moduleSeul: "Limitée", suite: "Complète" },
-  { feature: "Intégrations 50+ apps", moduleSeul: false, suite: true },
-  { feature: "Support prioritaire", moduleSeul: "Email 48h", suite: "24h" },
-  { feature: "Multi-utilisateurs", moduleSeul: "1 seul", suite: "5+" },
-  { feature: "Personnalisation", moduleSeul: false, suite: true },
-  { feature: "Export FEC comptable", moduleSeul: "Pro+", suite: true },
-  { feature: "Formation incluse", moduleSeul: false, suite: true },
-];
+// ═══════════════════════════════════════════════════════════════════════════
+// HOOK: FETCH PRICING GRID DYNAMIQUE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069";
+
+function usePricingGrid(): PricingGrid {
+  const [grid, setGrid] = useState<PricingGrid>(FALLBACK_PRICING_GRID);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/public/pricing`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data.success && data.data) {
+          setGrid(data.data);
+        }
+      } catch {
+        // fallback silencieux
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  return grid;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SOCIAL PROOF - Témoignages & Logos
+// MODULE COLOR CLASSES
+// ═══════════════════════════════════════════════════════════════════════════
+
+const moduleColorMap: Record<string, { bg: string; border: string; text: string; ring: string }> = {
+  emerald: { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-400", ring: "ring-emerald-500/50" },
+  indigo: { bg: "bg-indigo-500/10", border: "border-indigo-500/30", text: "text-indigo-400", ring: "ring-indigo-500/50" },
+  amber: { bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-400", ring: "ring-amber-500/50" },
+  violet: { bg: "bg-violet-500/10", border: "border-violet-500/30", text: "text-violet-400", ring: "ring-violet-500/50" },
+  pink: { bg: "bg-pink-500/10", border: "border-pink-500/30", text: "text-pink-400", ring: "ring-pink-500/50" },
+  teal: { bg: "bg-teal-500/10", border: "border-teal-500/30", text: "text-teal-400", ring: "ring-teal-500/50" },
+  sky: { bg: "bg-sky-500/10", border: "border-sky-500/30", text: "text-sky-400", ring: "ring-sky-500/50" },
+  orange: { bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-400", ring: "ring-orange-500/50" },
+  slate: { bg: "bg-slate-500/10", border: "border-slate-500/30", text: "text-slate-400", ring: "ring-slate-500/50" },
+  rose: { bg: "bg-rose-500/10", border: "border-rose-500/30", text: "text-rose-400", ring: "ring-rose-500/50" },
+};
+
+function getModuleColors(color: string) {
+  return moduleColorMap[color] || moduleColorMap.emerald;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SOCIAL PROOF
 // ═══════════════════════════════════════════════════════════════════════════
 
 const testimonials = [
   {
-    quote:
-      "Depuis que j'utilise Quelyos, je passe 70% de temps en moins sur ma compta. L'IA me prévient avant les problèmes de trésorerie.",
+    quote: "Quelyos a transform\u00E9 notre gestion. On passe 70% de temps en moins sur la compta et les pr\u00E9visions IA nous alertent avant les probl\u00E8mes.",
     author: "Marie D.",
     role: "Fondatrice @ModaShop",
-    detail: "E-commerce mode • Cliente depuis 8 mois • Plan Business",
+    detail: "E-commerce mode \u2022 Plan Boutique + Finance",
   },
   {
-    quote:
-      "Le ROI est évident : j'ai récupéré 3 factures impayées le premier mois. L'outil s'est rentabilisé en 2 semaines.",
+    quote: "Le rapport qualit\u00E9-prix est imbattable. On a r\u00E9cup\u00E9r\u00E9 3 factures impay\u00E9es le premier mois. Rentabilis\u00E9 en 2 semaines.",
     author: "Thomas L.",
-    role: "Gérant Cabinet Martin",
-    detail: "Comptabilité • Client depuis 1 an • Plan Pro",
+    role: "G\u00E9rant Cabinet Martin",
+    detail: "Comptabilit\u00E9 \u2022 Module Finance seul",
   },
-];
-
-const trustLogos = [
-  { name: "Cabinet Martin", type: "Comptabilité" },
-  { name: "Le Bistrot", type: "Restaurant" },
-  { name: "WebFlow Agency", type: "Agence digitale" },
-  { name: "ModaShop", type: "E-commerce" },
-  { name: "Artisan Durand", type: "Artisanat" },
 ];
 
 const trustMetrics = [
-  { value: "+500", label: "entreprises accompagnées" },
-  { value: "92%", label: "de précision IA sur 12 mois" },
+  { value: "+500", label: "entreprises accompagn\u00E9es" },
+  { value: "92%", label: "de pr\u00E9cision IA sur 12 mois" },
   { value: "4.8/5", label: "note moyenne clients" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-// FAQ GROUPÉE
+// FAQ
 // ═══════════════════════════════════════════════════════════════════════════
 
 const faqs = [
   {
-    category: "Offre de lancement",
+    category: "Offre & Pricing",
     questions: [
       {
-        q: "Pourquoi ces prix sont-ils si bas ?",
-        a: "Offre de lancement : nous voulons conquérir de nouveaux marchés. Profitez de -50% maintenant, ce tarif sera verrouillé à vie pour vous.",
+        q: "Comment fonctionne le pricing modulaire ?",
+        a: "Vous payez un abonnement de base (9\u20AC/mois) qui inclut le module Home + 1 module au choix. Ensuite, ajoutez uniquement les modules dont vous avez besoin. Pas de pack inutile.",
       },
       {
-        q: "Le Freemium est-il vraiment gratuit à vie ?",
-        a: "Oui, à vie. 5 comptes bancaires, 500 transactions/mois, prévisions IA 3 mois incluses. Pas de watermark, pas de limitation cachée.",
+        q: "Qu\u2019est-ce qu\u2019un pack m\u00E9tier (Solution) ?",
+        a: "Les Solutions m\u00E9tier regroupent plusieurs modules en un pack sectoriel \u00E0 prix r\u00E9duit. Par exemple, Quelyos Resto combine POS + Stock + Finance pour 39\u20AC au lieu de 54\u20AC en modules s\u00E9par\u00E9s.",
       },
       {
-        q: "Comment fonctionne l'essai 30 jours ?",
-        a: "30 jours d'accès complet au plan choisi. Aucune carte bancaire requise. Satisfait ou remboursé. À la fin, continuez ou passez au Freemium.",
+        q: "Comment fonctionne l\u2019essai 30 jours ?",
+        a: "30 jours d\u2019acc\u00E8s complet \u00E0 tous les modules. Aucune carte bancaire requise. \u00C0 la fin, choisissez vos modules ou restez sur le plan de base.",
       },
     ],
   },
@@ -252,29 +172,29 @@ const faqs = [
     category: "Tarifs & Facturation",
     questions: [
       {
-        q: "Puis-je changer de formule à tout moment ?",
-        a: "Oui, upgrade ou downgrade instantané. Le changement est proratisé au jour près.",
+        q: "Puis-je changer de modules \u00E0 tout moment ?",
+        a: "Oui, ajout ou retrait instantan\u00E9. Le changement est proratis\u00E9 au jour pr\u00E8s sur votre facture.",
       },
       {
         q: "Y a-t-il un engagement ?",
-        a: "Aucun engagement. Annulation en 1 clic. Satisfait ou remboursé 30 jours.",
+        a: "Aucun engagement. Annulation en 1 clic. Satisfait ou rembours\u00E9 30 jours.",
       },
       {
         q: "Les tarifs sont-ils HT ou TTC ?",
-        a: "Tous les tarifs affichés sont HT. La TVA applicable sera ajoutée lors de la facturation.",
+        a: "Tous les tarifs affich\u00E9s sont HT. La TVA applicable sera ajout\u00E9e lors de la facturation.",
       },
     ],
   },
   {
-    category: "Sécurité & RGPD",
+    category: "S\u00E9curit\u00E9 & RGPD",
     questions: [
       {
-        q: "Où sont hébergées mes données ?",
-        a: "Infrastructure sécurisée, datacenters certifiés ISO 27001. Conformité RGPD garantie.",
+        q: "O\u00F9 sont h\u00E9berg\u00E9es mes donn\u00E9es ?",
+        a: "Infrastructure s\u00E9curis\u00E9e, datacenters certifi\u00E9s ISO 27001. Conformit\u00E9 RGPD garantie.",
       },
       {
-        q: "L'export FEC est-il compatible ?",
-        a: "Format officiel DGFiP. Compatible Sage, Ciel, EBP, Pennylane et tous les autres.",
+        q: "Puis-je ajouter des utilisateurs suppl\u00E9mentaires ?",
+        a: "Oui, par packs de 5 utilisateurs (15\u20AC/mois). 5 utilisateurs sont inclus dans le plan de base.",
       },
     ],
   },
@@ -294,7 +214,7 @@ function ROICalculator() {
   const timeSavings = timeSaved * hourlyRate * 12;
   const invoiceSavings = missedInvoices * avgInvoiceAmount * 12 * 0.8;
   const totalSavings = timeSavings + invoiceSavings;
-  const businessCost = 49 * 12; // Nouveau prix agressif
+  const businessCost = 33 * 12;
   const roi = ((totalSavings - businessCost) / businessCost) * 100;
 
   return (
@@ -305,142 +225,80 @@ function ROICalculator() {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white">
-            Calculez vos économies
+            Calculez vos \u00E9conomies
           </h3>
           <p className="text-sm text-slate-400">Estimation ROI annuel</p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Inputs */}
         <div className="space-y-5">
-          <div>
-            <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
-              <span>Heures/mois sur la gestion</span>
-              <span className="font-medium text-white">{hoursPerMonth}h</span>
-            </label>
-            <input
-              type="range"
-              min="2"
-              max="40"
-              value={hoursPerMonth}
-              onChange={(e) => setHoursPerMonth(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
-              <span>Votre taux horaire</span>
-              <span className="font-medium text-white">{hourlyRate}€</span>
-            </label>
-            <input
-              type="range"
-              min="20"
-              max="150"
-              step="5"
-              value={hourlyRate}
-              onChange={(e) => setHourlyRate(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
-              <span>Factures oubliées/mois</span>
-              <span className="font-medium text-white">{missedInvoices}</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              value={missedInvoices}
-              onChange={(e) => setMissedInvoices(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
-              <span>Montant moyen facture</span>
-              <span className="font-medium text-white">{avgInvoiceAmount}€</span>
-            </label>
-            <input
-              type="range"
-              min="100"
-              max="5000"
-              step="100"
-              value={avgInvoiceAmount}
-              onChange={(e) => setAvgInvoiceAmount(Number(e.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-indigo-500"
-            />
-          </div>
+          {[
+            { label: "Heures/mois sur la gestion", value: hoursPerMonth, set: setHoursPerMonth, min: 2, max: 40, step: 1, unit: "h" },
+            { label: "Votre taux horaire", value: hourlyRate, set: setHourlyRate, min: 20, max: 150, step: 5, unit: "\u20AC" },
+            { label: "Factures oubli\u00E9es/mois", value: missedInvoices, set: setMissedInvoices, min: 0, max: 10, step: 1, unit: "" },
+            { label: "Montant moyen facture", value: avgInvoiceAmount, set: setAvgInvoiceAmount, min: 100, max: 5000, step: 100, unit: "\u20AC" },
+          ].map((item) => (
+            <div key={item.label}>
+              <label className="mb-2 flex items-center justify-between text-sm text-slate-400">
+                <span>{item.label}</span>
+                <span className="font-medium text-white">{item.value}{item.unit}</span>
+              </label>
+              <input
+                type="range"
+                min={item.min}
+                max={item.max}
+                step={item.step}
+                value={item.value}
+                onChange={(e) => item.set(Number(e.target.value))}
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-indigo-500"
+              />
+            </div>
+          ))}
         </div>
 
-        {/* Results */}
         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
           <h4 className="mb-4 text-sm font-medium uppercase tracking-wider text-emerald-400">
-            Vos économies estimées
+            Vos \u00E9conomies estim\u00E9es
           </h4>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400">
-                <Clock size={14} />
-                Temps gagné/an
-              </span>
-              <span className="font-medium text-white">
-                {(timeSaved * 12).toFixed(0)}h
-              </span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><Clock size={14} />Temps gagn\u00E9/an</span>
+              <span className="font-medium text-white">{(timeSaved * 12).toFixed(0)}h</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400">
-                <Euro size={14} />
-                Valeur temps gagné
-              </span>
-              <span className="font-medium text-white">
-                {timeSavings.toLocaleString("fr-FR")}€
-              </span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><Euro size={14} />Valeur temps gagn\u00E9</span>
+              <span className="font-medium text-white">{timeSavings.toLocaleString("fr-FR")}\u20AC</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-slate-400">
-                <TrendingUp size={14} />
-                Factures récupérées
-              </span>
-              <span className="font-medium text-white">
-                {invoiceSavings.toLocaleString("fr-FR")}€
-              </span>
+              <span className="flex items-center gap-2 text-sm text-slate-400"><TrendingUp size={14} />Factures r\u00E9cup\u00E9r\u00E9es</span>
+              <span className="font-medium text-white">{invoiceSavings.toLocaleString("fr-FR")}\u20AC</span>
             </div>
 
             <div className="my-3 border-t border-white/10" />
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">Coût Business/an</span>
-              <span className="font-medium text-slate-400">
-                -{businessCost}€
-              </span>
+              <span className="text-sm text-slate-400">{`Co\u00FBt moyen/an (base + 2 modules)`}</span>
+              <span className="font-medium text-slate-400">-{businessCost}\u20AC</span>
             </div>
 
             <div className="rounded-lg bg-emerald-500/10 p-3">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-emerald-400">
-                  Économie nette/an
-                </span>
+                <span className="font-semibold text-emerald-400">\u00C9conomie nette/an</span>
                 <span className="text-2xl font-bold text-emerald-400">
-                  +{(totalSavings - businessCost).toLocaleString("fr-FR")}€
+                  +{(totalSavings - businessCost).toLocaleString("fr-FR")}\u20AC
                 </span>
               </div>
-              <p className="mt-1 text-right text-xs text-emerald-400/70">
-                ROI : {roi.toFixed(0)}%
-              </p>
+              <p className="mt-1 text-right text-xs text-emerald-400/70">ROI : {roi.toFixed(0)}%</p>
             </div>
           </div>
 
           <Link
-            href="/register?plan=business"
+            href="/register"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-400"
           >
-            Essayer Business gratuitement
+            Essayer gratuitement 30 jours
             <ArrowRight size={14} />
           </Link>
         </div>
@@ -450,7 +308,7 @@ function ROICalculator() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// FAQ ACCORDÉON
+// FAQ ACCORD\u00C9ON
 // ═══════════════════════════════════════════════════════════════════════════
 
 function FAQSection() {
@@ -474,23 +332,14 @@ function FAQSection() {
             {category.questions.map((faq, index) => {
               const itemId = `${category.category}-${index}`;
               const isOpen = openItems.includes(itemId);
-
               return (
-                <div
-                  key={index}
-                  className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]"
-                >
+                <div key={index} className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
                   <button
                     onClick={() => toggleItem(itemId)}
                     className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-white/[0.02]"
                   >
                     <span className="font-medium text-white">{faq.q}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`shrink-0 text-slate-400 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
+                    <ChevronDown size={18} className={`shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {isOpen && (
@@ -501,9 +350,7 @@ function FAQSection() {
                         transition={{ duration: 0.2 }}
                       >
                         <div className="border-t border-white/5 px-4 pb-4 pt-3">
-                          <p className="text-sm leading-relaxed text-slate-400">
-                            {faq.a}
-                          </p>
+                          <p className="text-sm leading-relaxed text-slate-400">{faq.a}</p>
                         </div>
                       </motion.div>
                     )}
@@ -519,52 +366,232 @@ function FAQSection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PAGE PRINCIPALE
+// COMPOSANT MODULE CARD (Configurateur)
 // ═══════════════════════════════════════════════════════════════════════════
 
-type TabType = "packages" | "plans" | "individual";
+function ModuleCard({
+  mod,
+  selected,
+  isFreeChoice,
+  onToggle,
+  billingPeriod,
+}: {
+  mod: ModulePlan;
+  selected: boolean;
+  isFreeChoice: boolean;
+  onToggle: () => void;
+  billingPeriod: "monthly" | "yearly";
+}) {
+  const colors = getModuleColors(mod.color);
+  const price = billingPeriod === "yearly" ? mod.annualPrice : mod.price;
+
+  return (
+    <motion.button
+      onClick={onToggle}
+      whileTap={{ scale: 0.98 }}
+      className={`group relative flex flex-col rounded-xl border p-4 text-left transition-all ${
+        selected
+          ? `${colors.border} ${colors.bg} ring-2 ${colors.ring}`
+          : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+      }`}
+    >
+      {isFreeChoice && selected && (
+        <span className="absolute -top-2 right-3 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white">
+          OFFERT
+        </span>
+      )}
+
+      <div className="mb-3 flex items-center justify-between">
+        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${colors.bg}`}>
+          <DynamicIcon name={mod.icon} className={`h-4 w-4 ${colors.text}`} />
+        </div>
+        <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
+          selected ? `${colors.border} ${colors.bg}` : "border-white/20"
+        }`}>
+          {selected && <Check size={12} className={colors.text} />}
+        </div>
+      </div>
+
+      <h4 className="text-sm font-semibold text-white">{mod.name}</h4>
+      <p className="mt-1 text-xs text-slate-400 line-clamp-2">{mod.description}</p>
+
+      <div className="mt-3 flex items-baseline gap-1">
+        {isFreeChoice && selected ? (
+          <span className="text-sm font-bold text-emerald-400">Inclus</span>
+        ) : (
+          <>
+            <span className="text-lg font-bold text-white">{price}\u20AC</span>
+            <span className="text-xs text-slate-500">/mois</span>
+          </>
+        )}
+      </div>
+
+      {mod.limits && (
+        <p className="mt-2 text-[10px] text-slate-500">
+          {mod.limits.included} {mod.limits.name} inclus
+        </p>
+      )}
+    </motion.button>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPOSANT SOLUTION CARD
+// ═══════════════════════════════════════════════════════════════════════════
+
+function SolutionCard({
+  solution,
+  modules,
+  billingPeriod,
+  onSelect,
+}: {
+  solution: SolutionPlan;
+  modules: ModulePlan[];
+  billingPeriod: "monthly" | "yearly";
+  onSelect: (moduleKeys: string[]) => void;
+}) {
+  const colors = getModuleColors(solution.color);
+  const price = billingPeriod === "yearly" ? solution.annualPrice : solution.price;
+
+  const includedModuleNames = solution.modules
+    .map((key) => modules.find((m) => m.key === key)?.name || key)
+    .join(", ");
+
+  return (
+    <div className={`rounded-xl border ${colors.border} ${colors.bg} p-4 transition-all hover:bg-white/[0.06]`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
+            <DynamicIcon name={solution.icon} className={`h-5 w-5 ${colors.text}`} />
+          </div>
+          <div>
+            <h4 className="font-semibold text-white">{solution.name}</h4>
+            <p className="text-xs text-slate-400">{solution.description}</p>
+          </div>
+        </div>
+        <div className="text-right shrink-0">
+          <div className="text-lg font-bold text-white">{price}\u20AC<span className="text-xs text-slate-500">/mois</span></div>
+          {solution.savings > 0 && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400">
+              <Percent size={10} />-{solution.savings}%
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {solution.modules.map((key) => {
+          const mod = modules.find((m) => m.key === key);
+          if (!mod) return null;
+          const mColors = getModuleColors(mod.color);
+          return (
+            <span key={key} className={`rounded-full ${mColors.bg} px-2 py-0.5 text-[10px] font-medium ${mColors.text}`}>
+              {mod.name}
+            </span>
+          );
+        })}
+      </div>
+
+      <p className="mt-2 text-[10px] text-slate-500">Inclut : {includedModuleNames}</p>
+
+      <button
+        onClick={() => onSelect(solution.modules)}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg ${colors.bg} border ${colors.border} px-3 py-2 text-xs font-semibold ${colors.text} transition-all hover:bg-white/10`}
+      >
+        S\u00E9lectionner ce pack
+        <ChevronRight size={12} />
+      </button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PAGE PRINCIPALE — CONFIGURATEUR INTERACTIF
+// ═══════════════════════════════════════════════════════════════════════════
+
+type ViewMode = "configurator" | "solutions";
 
 export default function TarifsPage() {
-  const [activeTab, setActiveTab] = useState<TabType>("packages");
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
-    "monthly"
-  );
-  const [_showModules, _setShowModules] = useState(false);
-  const [showComparison, setShowComparison] = useState(false);
+  const grid = usePricingGrid();
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [freeModuleKey, setFreeModuleKey] = useState<string | null>(null);
+  const [extraUserPacks, setExtraUserPacks] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>("configurator");
 
-  const solutions = getAllSolutions();
+  const toggleModule = useCallback((key: string) => {
+    setSelectedModules((prev) => {
+      const next = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
+      // Si c'est le premier module sélectionné, il est offert
+      if (next.length === 1 && !prev.includes(key)) {
+        setFreeModuleKey(key);
+      }
+      // Si on désélectionne le module offert, attribuer au premier restant
+      if (key === freeModuleKey) {
+        setFreeModuleKey(next.length > 0 ? next[0] : null);
+      }
+      return next;
+    });
+  }, [freeModuleKey]);
 
-  const getPrice = (basePrice: string, annualPrice?: string) => {
-    if (basePrice === "Sur devis") return basePrice;
-    if (billingPeriod === "yearly" && annualPrice) return annualPrice;
-    return basePrice;
-  };
+  const selectSolutionModules = useCallback((moduleKeys: string[]) => {
+    setSelectedModules(moduleKeys);
+    setFreeModuleKey(moduleKeys[0] || null);
+    setViewMode("configurator");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
-  const colorClasses = {
-    amber: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/50" },
-    indigo: { bg: "bg-indigo-500/10", text: "text-indigo-400", border: "border-indigo-500/50" },
-    emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/50" },
-  };
+  // Calculer le total dynamiquement
+  const pricing = useMemo(() => {
+    const isYearly = billingPeriod === "yearly";
+    const basePrice = isYearly ? grid.base.annualPrice : grid.base.price;
+
+    let modulesTotal = 0;
+    for (const key of selectedModules) {
+      if (key === freeModuleKey) continue;
+      const mod = grid.modules.find((m) => m.key === key);
+      if (mod) {
+        modulesTotal += isYearly ? mod.annualPrice : mod.price;
+      }
+    }
+
+    const userPackPrice = isYearly ? grid.userPacks.annualPrice : grid.userPacks.price;
+    const usersTotal = extraUserPacks * userPackPrice;
+
+    const monthly = basePrice + modulesTotal + usersTotal;
+    const totalUsers = grid.base.usersIncluded + (extraUserPacks * grid.userPacks.size);
+
+    const allModulesTotal = grid.modules.reduce((sum, m) => sum + (isYearly ? m.annualPrice : m.price), 0);
+    const allInPrice = grid.allInDiscount
+      ? (isYearly ? Math.round(grid.allInDiscount.discountedPrice * (1 - grid.base.yearlyDiscountPct / 100)) : grid.allInDiscount.discountedPrice)
+      : allModulesTotal;
+
+    return {
+      basePrice,
+      modulesTotal,
+      usersTotal,
+      monthly,
+      totalUsers,
+      selectedCount: selectedModules.length,
+      freeModule: freeModuleKey,
+      allInPrice: allInPrice + basePrice,
+      allInRegular: (isYearly ? Math.round((grid.allInDiscount?.regularTotal || allModulesTotal) * (1 - grid.base.yearlyDiscountPct / 100)) : (grid.allInDiscount?.regularTotal || allModulesTotal)) + basePrice,
+    };
+  }, [selectedModules, freeModuleKey, extraUserPacks, billingPeriod, grid]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
       <Header />
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          PROMO BANNER
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* PROMO BANNER */}
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-center">
         <p className="text-sm font-medium text-white">
-          🚀 <strong>Offre de lancement</strong> : -50% sur tous les plans + 30 jours d&apos;essai gratuit
-          <span className="ml-2 rounded bg-white/20 px-2 py-0.5 text-xs">
-            Temps limité
-          </span>
+          <strong>Offre de lancement</strong> : 30 jours d&apos;essai gratuit + 1 module offert
+          <span className="ml-2 rounded bg-white/20 px-2 py-0.5 text-xs">Sans carte bancaire</span>
         </p>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          HERO SECTION
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* HERO */}
       <section className="relative overflow-hidden pb-8 pt-16">
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-indigo-500/20 blur-[120px]" />
         <div className="pointer-events-none absolute -right-40 top-40 h-[400px] w-[400px] rounded-full bg-violet-500/15 blur-[100px]" />
@@ -578,56 +605,37 @@ export default function TarifsPage() {
           >
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm text-emerald-400">
               <Sparkles size={14} />
-              30 jours d&apos;essai gratuit • Sans carte bancaire • Sans engagement
+              Composez votre ERP sur mesure
             </span>
 
             <h1 className="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Gérez votre entreprise,
+              Payez uniquement
               <br />
               <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                pas votre administratif
+                ce dont vous avez besoin
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-              Rejoignez +500 TPE qui automatisent leur gestion. Pas
-              d&apos;engagement, résiliation en 1 clic.
+              {`Plan de base \u00E0 ${grid.base.price}\u20AC/mois + modules au choix. ${grid.base.usersIncluded} utilisateurs inclus. 1 module offert.`}
             </p>
 
             {/* Toggle Mensuel/Annuel */}
             <div className="mt-8 flex items-center justify-center gap-3">
-              <span
-                className={`text-sm transition-colors ${
-                  billingPeriod === "monthly" ? "text-white" : "text-slate-500"
-                }`}
-              >
+              <span className={`text-sm transition-colors ${billingPeriod === "monthly" ? "text-white" : "text-slate-500"}`}>
                 Mensuel
               </span>
               <button
-                onClick={() =>
-                  setBillingPeriod(
-                    billingPeriod === "monthly" ? "yearly" : "monthly"
-                  )
-                }
-                className={`relative h-7 w-14 rounded-full transition-colors ${
-                  billingPeriod === "yearly" ? "bg-indigo-500" : "bg-white/20"
-                }`}
+                onClick={() => setBillingPeriod(billingPeriod === "monthly" ? "yearly" : "monthly")}
+                className={`relative h-7 w-14 rounded-full transition-colors ${billingPeriod === "yearly" ? "bg-indigo-500" : "bg-white/20"}`}
               >
-                <span
-                  className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                    billingPeriod === "yearly" ? "left-8" : "left-1"
-                  }`}
-                />
+                <span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${billingPeriod === "yearly" ? "left-8" : "left-1"}`} />
               </button>
-              <span
-                className={`text-sm transition-colors ${
-                  billingPeriod === "yearly" ? "text-white" : "text-slate-500"
-                }`}
-              >
+              <span className={`text-sm transition-colors ${billingPeriod === "yearly" ? "text-white" : "text-slate-500"}`}>
                 Annuel
               </span>
               {billingPeriod === "yearly" && (
                 <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-400">
-                  3 mois offerts (-25%)
+                  -{grid.base.yearlyDiscountPct}%
                 </span>
               )}
             </div>
@@ -635,457 +643,324 @@ export default function TarifsPage() {
         </Container>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          TABS NAVIGATION
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* VIEW MODE TABS */}
       <section className="relative border-b border-white/10 bg-slate-900/30">
         <Container>
           <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={() => setActiveTab("packages")}
-              className={`relative px-6 py-4 text-sm font-medium transition-all ${
-                activeTab === "packages"
-                  ? "text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Packages sectoriels
-              {activeTab === "packages" && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
-                  transition={{ type: "spring", duration: 0.5 }}
-                />
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab("plans")}
-              className={`relative px-6 py-4 text-sm font-medium transition-all ${
-                activeTab === "plans"
-                  ? "text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Plans universels
-              {activeTab === "plans" && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
-                  transition={{ type: "spring", duration: 0.5 }}
-                />
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab("individual")}
-              className={`relative px-6 py-4 text-sm font-medium transition-all ${
-                activeTab === "individual"
-                  ? "text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Solutions individuelles
-              {activeTab === "individual" && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
-                  transition={{ type: "spring", duration: 0.5 }}
-                />
-              )}
-            </button>
+            {[
+              { key: "configurator" as const, label: "Configurateur" },
+              { key: "solutions" as const, label: "Solutions m\u00E9tier" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setViewMode(tab.key)}
+                className={`relative px-6 py-4 text-sm font-medium transition-all ${
+                  viewMode === tab.key ? "text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {tab.label}
+                {viewMode === tab.key && (
+                  <motion.div
+                    layoutId="viewTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"
+                    transition={{ type: "spring", duration: 0.5 }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
         </Container>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          TAB CONTENT: PACKAGES SECTORIELS
+          CONFIGURATEUR INTERACTIF
       ═══════════════════════════════════════════════════════════════════ */}
-      {activeTab === "packages" && (
+      {viewMode === "configurator" && (
         <section className="relative py-12">
           <Container>
-            <div className="mb-12 text-center">
+            <div className="grid gap-8 lg:grid-cols-3">
+              {/* COLONNE GAUCHE : Modules (2/3) */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Plan de base */}
+                <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20">
+                        <Shield className="h-5 w-5 text-indigo-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white">Plan de base</h3>
+                        <p className="text-xs text-slate-400">
+                          Home + {grid.base.usersIncluded} utilisateurs + 1 module offert
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-white">
+                        {billingPeriod === "yearly" ? grid.base.annualPrice : grid.base.price}\u20AC
+                      </span>
+                      <span className="text-sm text-slate-400">/mois</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-xs text-indigo-300">Dashboard & Analytics</span>
+                    <span className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-xs text-indigo-300">Param\u00E8tres</span>
+                    <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs text-emerald-300">Essai {grid.base.trialDays}j gratuit</span>
+                    <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs text-emerald-300">1 module offert</span>
+                  </div>
+                </div>
+
+                {/* Grille des modules */}
+                <div>
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-white">
+                      Choisissez vos modules
+                      {pricing.selectedCount > 0 && (
+                        <span className="ml-2 text-sm font-normal text-slate-400">
+                          ({pricing.selectedCount} s\u00E9lectionn\u00E9{pricing.selectedCount > 1 ? "s" : ""})
+                        </span>
+                      )}
+                    </h3>
+                    {pricing.selectedCount === 0 && (
+                      <span className="text-xs text-emerald-400">Le 1er module est offert</span>
+                    )}
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {grid.modules.map((mod) => (
+                      <ModuleCard
+                        key={mod.key}
+                        mod={mod}
+                        selected={selectedModules.includes(mod.key)}
+                        isFreeChoice={freeModuleKey === mod.key}
+                        onToggle={() => toggleModule(mod.key)}
+                        billingPeriod={billingPeriod}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Utilisateurs suppl\u00E9mentaires */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/10">
+                        <Users className="h-4 w-4 text-violet-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Utilisateurs</h4>
+                        <p className="text-xs text-slate-400">
+                          {grid.base.usersIncluded} inclus \u2022 Packs de {grid.userPacks.size}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setExtraUserPacks(Math.max(0, extraUserPacks - 1))}
+                        disabled={extraUserPacks === 0}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white transition-colors hover:bg-white/10 disabled:opacity-30"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <div className="text-center">
+                        <span className="text-lg font-bold text-white">{pricing.totalUsers}</span>
+                        <p className="text-[10px] text-slate-500">utilisateurs</p>
+                      </div>
+                      <button
+                        onClick={() => setExtraUserPacks(Math.min(3, extraUserPacks + 1))}
+                        disabled={extraUserPacks >= 3}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white transition-colors hover:bg-white/10 disabled:opacity-30"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {extraUserPacks > 0 && (
+                    <p className="mt-2 text-right text-xs text-slate-400">
+                      +{extraUserPacks} pack{extraUserPacks > 1 ? "s" : ""} = +{pricing.usersTotal}\u20AC/mois
+                    </p>
+                  )}
+
+                  {extraUserPacks >= 3 && (
+                    <p className="mt-2 text-xs text-amber-400">
+                      {`Plus de ${grid.base.usersIncluded + 3 * grid.userPacks.size} utilisateurs ?`}{" "}
+                      <Link href="/contact" className="underline hover:text-amber-300">Contactez-nous pour Enterprise</Link>
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* COLONNE DROITE : R\u00E9capitulatif sticky (1/3) */}
+              <div className="lg:sticky lg:top-8 lg:self-start">
+                <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-500/5 to-transparent p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-white">Votre abonnement</h3>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Plan de base</span>
+                      <span className="text-white">{pricing.basePrice}\u20AC</span>
+                    </div>
+
+                    {selectedModules.map((key) => {
+                      const mod = grid.modules.find((m) => m.key === key);
+                      if (!mod) return null;
+                      const isFree = key === freeModuleKey;
+                      const price = isFree ? 0 : (billingPeriod === "yearly" ? mod.annualPrice : mod.price);
+                      return (
+                        <div key={key} className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">
+                            {mod.name}
+                            {isFree && <span className="ml-1 text-emerald-400 text-xs">(offert)</span>}
+                          </span>
+                          <span className={isFree ? "text-emerald-400" : "text-white"}>
+                            {isFree ? "0\u20AC" : `${price}\u20AC`}
+                          </span>
+                        </div>
+                      );
+                    })}
+
+                    {extraUserPacks > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-400">+{extraUserPacks * grid.userPacks.size} utilisateurs</span>
+                        <span className="text-white">{pricing.usersTotal}\u20AC</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Total */}
+                  <div className="mt-4 border-t border-white/10 pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-white">Total</span>
+                      <div className="text-right">
+                        <span className="text-3xl font-bold text-white">{pricing.monthly}\u20AC</span>
+                        <span className="text-sm text-slate-400">/mois</span>
+                      </div>
+                    </div>
+
+                    {billingPeriod === "yearly" && (
+                      <p className="mt-1 text-right text-xs text-emerald-400">
+                        Soit {pricing.monthly * 12}\u20AC/an
+                      </p>
+                    )}
+
+                    <p className="mt-1 text-right text-xs text-slate-500">
+                      {pricing.totalUsers} utilisateurs \u2022 {pricing.selectedCount} module{pricing.selectedCount !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+
+                  {/* All-in promo */}
+                  {pricing.selectedCount > 0 && pricing.selectedCount < grid.modules.length && (
+                    <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+                      <p className="text-xs text-amber-400">
+                        <Star size={12} className="mr-1 inline" />
+                        <strong>Tous les modules</strong> pour seulement{" "}
+                        <span className="font-bold">{pricing.allInPrice}\u20AC/mois</span>
+                        {pricing.allInRegular > pricing.allInPrice && (
+                          <span className="ml-1 text-slate-500 line-through">{pricing.allInRegular}\u20AC</span>
+                        )}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <Link
+                    href={`/register?modules=${selectedModules.join(",")}&billing=${billingPeriod}&users=${pricing.totalUsers}`}
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/25"
+                  >
+                    Essai gratuit {grid.base.trialDays} jours
+                    <ArrowRight size={14} />
+                  </Link>
+
+                  <p className="mt-3 text-center text-[10px] text-slate-500">
+                    Sans carte bancaire \u2022 Sans engagement \u2022 R\u00E9siliation en 1 clic
+                  </p>
+                </div>
+
+                {/* Enterprise CTA */}
+                <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Crown className="h-4 w-4 text-amber-400" />
+                    <h4 className="text-sm font-semibold text-white">Enterprise</h4>
+                  </div>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Utilisateurs illimit\u00E9s, SLA 99.9%, account manager d\u00E9di\u00E9
+                  </p>
+                  <Link
+                    href="/contact"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-400 transition-all hover:bg-amber-500/20"
+                  >
+                    Contacter commercial
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          SOLUTIONS M\u00C9TIER
+      ═══════════════════════════════════════════════════════════════════ */}
+      {viewMode === "solutions" && (
+        <section className="relative py-12">
+          <Container>
+            <div className="mb-8 text-center">
               <h2 className="mb-4 text-3xl font-bold text-white">
-                Des solutions clés en main pour votre métier
+                Solutions m\u00E9tier cl\u00E9s en main
               </h2>
               <p className="text-lg text-slate-400">
-                Chaque package regroupe les solutions essentielles pour votre secteur d&apos;activité
+                Des packs sectoriels \u00E0 prix r\u00E9duit vs modules individuels. Le plan de base ({grid.base.price}\u20AC/mois) s&apos;ajoute.
               </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {solutions.map((solution, index) => (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {grid.solutions.map((solution, index) => (
                 <motion.div
                   key={solution.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-all hover:border-indigo-500/30 hover:bg-white/[0.04]"
                 >
-                  <h3 className="mb-2 text-xl font-bold text-white">{solution.name}</h3>
-                  <p className="mb-4 text-sm text-slate-400">{solution.sectorName}</p>
-
-                  <div className="mb-4 flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-white">{solution.pricing.basePrice}€</span>
-                    <span className="text-sm text-slate-400">/mois</span>
-                  </div>
-
-                  <div className="mb-4 text-xs text-slate-500">
-                    {solution.modulesIncluded.join(" • ")}
-                  </div>
-
-                  <Link
-                    href={`/solutions/${solution.id}`}
-                    className="flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-indigo-400"
-                  >
-                    En savoir plus
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  <SolutionCard
+                    solution={solution}
+                    modules={grid.modules}
+                    billingPeriod={billingPeriod}
+                    onSelect={selectSolutionModules}
+                  />
                 </motion.div>
               ))}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-8 text-center">
               <p className="text-sm text-slate-400">
                 Vous ne trouvez pas votre secteur ?{" "}
                 <Link href="/contact" className="text-indigo-400 hover:text-indigo-300">
                   Contactez-nous pour une solution sur mesure
                 </Link>
               </p>
+              <button
+                onClick={() => setViewMode("configurator")}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-400 transition-all hover:bg-indigo-500/20"
+              >
+                Ou composez votre propre configuration
+                <ArrowRight size={14} />
+              </button>
             </div>
           </Container>
         </section>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════
-          TAB CONTENT: PLANS UNIVERSELS (SUITE QUELYOS)
-      ═══════════════════════════════════════════════════════════════════ */}
-      {activeTab === "plans" && (
-        <section className="relative py-12">
-          <Container>
-            <div className="mb-8 flex items-center justify-center gap-3">
-              <div className="rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-2">
-                <Layers className="h-6 w-6 text-indigo-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-white">Suite Quelyos</h2>
-              <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-400">
-                ERP Complet
-              </span>
-            </div>
-
-          <div className="grid gap-6 lg:grid-cols-3">
-            {suitePlans.map((plan, index) => {
-              const Icon = plan.icon;
-              const colors = colorClasses[plan.color];
-
-              return (
-                <motion.div
-                  key={plan.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`relative flex flex-col rounded-2xl border p-6 ${
-                    plan.highlight
-                      ? "border-indigo-500/50 bg-gradient-to-b from-indigo-500/10 to-transparent shadow-xl shadow-indigo-500/10 lg:scale-105 lg:z-10"
-                      : "border-white/10 bg-white/[0.02]"
-                  }`}
-                >
-                  {plan.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-indigo-500/25">
-                        <Star size={12} />
-                        {plan.badge}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="mb-6 flex items-start justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold text-white">
-                        {plan.name}
-                      </h3>
-                      <p className="mt-1 text-sm text-slate-400">
-                        {plan.description}
-                      </p>
-                    </div>
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.bg}`}
-                    >
-                      <Icon className={`h-5 w-5 ${colors.text}`} />
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      {plan.price === "Sur devis" ? (
-                        <span className="text-3xl font-bold text-white">
-                          Sur devis
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-4xl font-bold text-white">
-                            {getPrice(plan.price, plan.annualPrice)}€
-                          </span>
-                          <span className="text-slate-400">{plan.period}</span>
-                          {plan.originalPrice && (
-                            <span className="text-lg text-slate-500 line-through">
-                              {plan.originalPrice}€
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </div>
-                    {billingPeriod === "yearly" &&
-                      plan.annualPrice &&
-                      plan.price !== "Sur devis" && (
-                        <p className="mt-1 text-sm text-emerald-400">
-                          Soit {plan.annualPrice}€/mois • Économisez {parseInt(plan.price) * 3}€/an
-                        </p>
-                      )}
-                    {billingPeriod === "monthly" && plan.originalPrice && (
-                      <p className="mt-1 text-sm text-emerald-400">
-                        -{Math.round((1 - parseInt(plan.price) / parseInt(plan.originalPrice)) * 100)}% vs tarif normal
-                      </p>
-                    )}
-                  </div>
-
-                  <Link
-                    href={plan.href}
-                    className={`mb-6 flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
-                      plan.highlight
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/25"
-                        : "bg-white/5 text-white ring-1 ring-white/10 hover:bg-white/10"
-                    }`}
-                  >
-                    {plan.cta}
-                    <ArrowRight size={14} />
-                  </Link>
-
-                  <ul className="flex-1 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <Check
-                          size={16}
-                          className={`mt-0.5 shrink-0 ${colors.text}`}
-                        />
-                        <span className="text-sm text-slate-300">{feature}</span>
-                      </li>
-                    ))}
-                    {plan.limitations.map((limitation) => (
-                      <li
-                        key={limitation}
-                        className="flex items-start gap-3 text-slate-500"
-                      >
-                        <Lock size={14} className="mt-0.5 shrink-0" />
-                        <span className="text-sm">{limitation}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          TAB CONTENT: SOLUTIONS INDIVIDUELLES
-      ═══════════════════════════════════════════════════════════════════ */}
-      {activeTab === "individual" && (
-        <section className="relative py-12">
-          <Container>
-            <div className="mb-8 text-center">
-              <h2 className="mb-4 text-2xl font-bold text-white">
-                Démarrez avec une solution, étendez selon vos besoins
-              </h2>
-              <p className="text-slate-400">
-                Testez une solution individuellement avant de passer à un package complet
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6">
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="rounded-lg bg-emerald-500/20 p-2">
-                      <BarChart3 className="h-5 w-5 text-emerald-400" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white">
-                      Solution Finance seule
-                    </h3>
-                    <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-400">
-                      Disponible
-                    </span>
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-3">
-                    {moduleFinance.map((plan, i) => (
-                      <div
-                        key={i}
-                        className={`rounded-xl p-5 ${
-                          plan.highlight
-                            ? "border-2 border-emerald-500/50 bg-emerald-500/5"
-                            : "border border-white/10 bg-white/[0.02]"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-semibold text-white">
-                            {plan.name}
-                          </h4>
-                          <div className="text-right">
-                            <span className="text-lg font-bold text-white">
-                              {plan.price}
-                            </span>
-                            <span className="text-sm text-slate-400">
-                              {plan.period}
-                            </span>
-                            {plan.originalPrice && (
-                              <span className="ml-2 text-sm text-slate-500 line-through">
-                                {plan.originalPrice}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p className="mt-1 text-sm text-slate-400">
-                          {plan.description}
-                        </p>
-                        <ul className="mt-4 space-y-2">
-                          {plan.features.map((f, j) => (
-                            <li
-                              key={j}
-                              className="flex items-center gap-2 text-xs text-slate-300"
-                            >
-                              <Check size={12} className="text-emerald-400" />
-                              {f}
-                            </li>
-                          ))}
-                          {plan.limitations.map((l, j) => (
-                            <li
-                              key={j}
-                              className="flex items-center gap-2 text-xs text-slate-500"
-                            >
-                              <X size={12} />
-                              {l}
-                            </li>
-                          ))}
-                        </ul>
-                        <Link
-                          href={plan.href}
-                          className={`mt-4 block w-full rounded-lg py-2 text-center text-sm font-medium transition-all ${
-                            plan.highlight
-                              ? "bg-emerald-500 text-white hover:bg-emerald-400"
-                              : "bg-white/5 text-white hover:bg-white/10"
-                          }`}
-                        >
-                          {plan.cta}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Message différenciation */}
-                  <div className="mt-6 flex items-start gap-3 rounded-lg bg-indigo-500/10 p-4">
-                    <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-indigo-400" />
-                    <div>
-                      <p className="text-sm font-medium text-white">
-                        Les solutions individuelles sont parfaites pour tester.
-                      </p>
-                      <p className="mt-1 text-sm text-slate-400">
-                        La Suite débloque l&apos;IA avancée, l&apos;API
-                        complète, les intégrations 50+ apps et le
-                        multi-utilisateurs.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Comparatif Suite vs Module */}
-                  <button
-                    onClick={() => setShowComparison(!showComparison)}
-                    className="mt-4 flex items-center gap-2 text-sm text-indigo-400 transition-colors hover:text-indigo-300"
-                  >
-                    Voir le comparatif détaillé Suite vs Solution
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform ${showComparison ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  <AnimatePresence>
-                    {showComparison && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="mt-4 overflow-hidden"
-                      >
-                        <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="border-b border-white/10">
-                                <th className="py-2 text-left text-slate-400">
-                                  Fonctionnalité
-                                </th>
-                                <th className="py-2 text-center text-slate-400">
-                                  Solution seule
-                                </th>
-                                <th className="py-2 text-center text-indigo-400">
-                                  Suite Quelyos
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {suiteVsModuleComparison.map((row, i) => (
-                                <tr key={i} className="border-b border-white/5">
-                                  <td className="py-2 text-slate-300">
-                                    {row.feature}
-                                  </td>
-                                  <td className="py-2 text-center">
-                                    {row.moduleSeul === true ? (
-                                      <Check
-                                        size={16}
-                                        className="mx-auto text-emerald-400"
-                                      />
-                                    ) : row.moduleSeul === false ? (
-                                      <X
-                                        size={16}
-                                        className="mx-auto text-slate-600"
-                                      />
-                                    ) : (
-                                      <span className="text-slate-400">
-                                        {row.moduleSeul}
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="py-2 text-center">
-                                    {row.suite === true ? (
-                                      <Check
-                                        size={16}
-                                        className="mx-auto text-emerald-400"
-                                      />
-                                    ) : (
-                                      <span className="text-white">
-                                        {row.suite}
-                                      </span>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-          </Container>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          CALCULATEUR ROI (affiché pour tous les tabs)
+          CALCULATEUR ROI
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative py-16">
         <Container narrow>
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-white">
-              Combien allez-vous économiser ?
+              Combien allez-vous \u00E9conomiser ?
             </h2>
             <p className="mt-2 text-slate-400">
               Calculez votre ROI en quelques secondes
@@ -1096,11 +971,10 @@ export default function TarifsPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          SOCIAL PROOF - Trust Section
+          SOCIAL PROOF
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative border-y border-white/5 bg-slate-900/30 py-16">
         <Container>
-          {/* Metrics */}
           <div className="mb-12 grid gap-8 text-center md:grid-cols-3">
             {trustMetrics.map((metric, i) => (
               <motion.div
@@ -1110,38 +984,12 @@ export default function TarifsPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <div className="text-3xl font-bold text-white">
-                  {metric.value}
-                </div>
+                <div className="text-3xl font-bold text-white">{metric.value}</div>
                 <div className="mt-1 text-sm text-slate-400">{metric.label}</div>
               </motion.div>
             ))}
           </div>
 
-          {/* Logos */}
-          <div className="mb-12">
-            <p className="mb-6 text-center text-sm text-slate-500">
-              Ils nous font confiance
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-8">
-              {trustLogos.map((logo, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-4 py-2"
-                >
-                  <Building2 size={16} className="text-slate-500" />
-                  <div>
-                    <div className="text-sm font-medium text-white">
-                      {logo.name}
-                    </div>
-                    <div className="text-xs text-slate-500">{logo.type}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Testimonials */}
           <div className="grid gap-6 md:grid-cols-2">
             {testimonials.map((testimonial, i) => (
               <motion.div
@@ -1159,27 +1007,20 @@ export default function TarifsPage() {
                     <Users size={16} className="text-indigo-400" />
                   </div>
                   <div>
-                    <div className="font-medium text-white">
-                      {testimonial.author}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      {testimonial.role}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {testimonial.detail}
-                    </div>
+                    <div className="font-medium text-white">{testimonial.author}</div>
+                    <div className="text-sm text-slate-400">{testimonial.role}</div>
+                    <div className="text-xs text-slate-500">{testimonial.detail}</div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* RGPD Badge */}
           <div className="mt-8 flex items-center justify-center gap-4">
             <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2">
               <Shield size={16} className="text-emerald-400" />
               <span className="text-sm text-emerald-400">
-                Données hébergées de manière sécurisée (RGPD)
+                Donn\u00E9es h\u00E9berg\u00E9es de mani\u00E8re s\u00E9curis\u00E9e (RGPD)
               </span>
             </div>
           </div>
@@ -1187,12 +1028,12 @@ export default function TarifsPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          FAQ SECTION
+          FAQ
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative py-16">
         <Container narrow>
           <h2 className="mb-8 text-center text-2xl font-bold text-white">
-            Questions fréquentes
+            Questions fr\u00E9quentes
           </h2>
           <FAQSection />
         </Container>
@@ -1211,28 +1052,31 @@ export default function TarifsPage() {
           >
             <Zap className="mx-auto mb-4 h-12 w-12 text-indigo-400" />
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Prêt à économiser 70% de votre temps ?
+              Pr\u00EAt \u00E0 simplifier votre gestion ?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-              30 jours d&apos;essai gratuit. Sans carte bancaire. Sans engagement.
+              {grid.base.trialDays} jours d&apos;essai gratuit. Sans carte bancaire. Sans engagement.
             </p>
-            <p className="mt-2 text-emerald-400 font-semibold">
-              🚀 Offre -50% • Tarif verrouillé à vie
+            <p className="mt-2 font-semibold text-emerald-400">
+              {`\u00C0 partir de ${grid.base.price}\u20AC/mois \u2022 1 module offert`}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/register?plan=business"
+                href="/register"
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-lg font-bold text-white transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/25"
               >
-                Essayer Business à 49€/mois
+                Essayer gratuitement
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <Link
-                href={config.finance.app}
+              <button
+                onClick={() => {
+                  setViewMode("configurator");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 font-medium text-white transition-all hover:bg-white/10"
               >
-                Ou commencer gratuitement
-              </Link>
+                Configurer mon abonnement
+              </button>
             </div>
           </motion.div>
         </Container>

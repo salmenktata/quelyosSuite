@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Cookie, X, Settings2 } from "lucide-react";
 import Link from "next/link";
 

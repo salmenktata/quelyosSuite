@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Check, 
-  X, 
-  ArrowRight, 
-  Zap, 
-  Building2, 
-  Sparkles, 
+import {
+  Check,
+  X,
+  ArrowRight,
+  Zap,
+  Building2,
+  Sparkles,
   Calculator,
   ChevronDown,
   TrendingUp,
@@ -19,12 +19,24 @@ import {
   BarChart3,
   PiggyBank,
   Target,
-  HelpCircle
+  HelpCircle,
+  Layers,
+  Store,
+  Crown,
+  Rocket,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Header from "@/app/components/Header";
 
 import Footer from "@/app/components/Footer";
 import Container from "@/app/components/Container";
+
+// Mapping icônes dynamiques
+const iconMap: Record<string, LucideIcon> = {
+  PiggyBank, Target, BarChart3, Layers, Store, Crown, Rocket, Building2, Shield, Zap,
+};
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069";
 // ═══════════════════════════════════════════════════════════════════════════
 // DONNÉES DES PLANS
 // ═══════════════════════════════════════════════════════════════════════════
@@ -468,6 +480,42 @@ function FAQAccordion() {
 export default function PricingPage() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [showComparison, setShowComparison] = useState(false);
+  const [dynamicPlans, setDynamicPlans] = useState(plans);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/public/plans?plan_type=finance`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const mapped = data.data.map((p: Record<string, unknown>) => ({
+            id: p.id as string,
+            name: p.name as string,
+            description: p.description as string,
+            price: String(p.price || 0),
+            originalPrice: (p.originalPrice as number) ? `${p.originalPrice}` : undefined,
+            period: (p.period as string) || "par mois",
+            highlight: p.highlight as boolean,
+            badge: p.badge as string | undefined,
+            cta: p.cta as string,
+            ctaHref: p.href as string,
+            icon: iconMap[(p.icon as string)] || PiggyBank,
+            color: (p.color as string) || "emerald",
+            features: (p.features as string[]) || [],
+          }));
+          setDynamicPlans(mapped);
+        }
+      } catch {
+        // fallback silencieux
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const getPrice = (basePrice: string) => {
     if (basePrice === "0" || basePrice === "Sur mesure") return basePrice;
@@ -545,7 +593,7 @@ export default function PricingPage() {
       <section className="relative pb-16">
         <Container>
           <div className="grid gap-6 lg:grid-cols-3">
-            {plans.map((plan, index) => {
+            {dynamicPlans.map((plan, index) => {
               const Icon = plan.icon;
               const colorClasses = {
                 emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400" },

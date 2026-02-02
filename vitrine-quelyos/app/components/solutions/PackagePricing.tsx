@@ -9,6 +9,8 @@ interface PackagePricingProps {
   packageName: string;
   sectorName: string;
   basePrice: number;
+  annualPrice?: number;
+  savings?: number;
   features: string[];
   highlighted?: boolean;
   className?: string;
@@ -18,6 +20,8 @@ export default function PackagePricing({
   packageName,
   sectorName,
   basePrice,
+  annualPrice,
+  savings,
   features,
   highlighted = false,
   className = ""
@@ -61,8 +65,18 @@ export default function PackagePricing({
             /mois
           </span>
         </div>
+        {annualPrice && annualPrice < basePrice && (
+          <p className="mt-2 text-sm font-medium text-indigo-600 dark:text-indigo-400">
+            ou {annualPrice}€/mois en annuel
+          </p>
+        )}
+        {savings != null && savings > 0 && (
+          <span className="mt-2 inline-block rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+            Économisez {savings}% vs modules séparés
+          </span>
+        )}
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-500">
-          Hors taxes
+          Hors taxes • Plan de base (9€/mois) inclus
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getSolutionData } from '@/app/lib/solutions-data';
+import { getSolutionDataDynamic } from '@/app/lib/solutions-data';
 import PainPointsGrid from '@/app/components/solutions/PainPointsGrid';
 import { FeaturesGrid } from '@/app/components/solutions/SolutionFeatureCard';
 import { TestimonialsGrid } from '@/app/components/solutions/TestimonialCard';
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://quelyos.com/solutions/btp' },
 };
 
-export default function BtpSolutionPage() {
-  const solution = getSolutionData(SECTOR_ID);
+export default async function BtpSolutionPage() {
+  const solution = await getSolutionDataDynamic(SECTOR_ID);
   if (!solution) return <div>Solution non trouvée</div>;
 
   return (
@@ -51,7 +51,7 @@ export default function BtpSolutionPage() {
       <PainPointsGrid painPoints={solution.painPoints} className="bg-slate-50 dark:bg-slate-900/50" />
       <FeaturesGrid features={solution.features} title={`Tout ce qu'il faut pour ${solution.verb}`} />
       <TestimonialsGrid testimonials={solution.testimonials} className="bg-slate-50 dark:bg-slate-900/50" />
-      <section className="py-20"><div className="mx-auto max-w-7xl px-6 lg:px-8"><div className="mx-auto mt-16 max-w-2xl"><PackagePricing packageName={solution.name} sectorName={solution.sectorName} basePrice={solution.pricing.basePrice} features={solution.pricing.features} highlighted /></div></div></section>
+      <section className="py-20"><div className="mx-auto max-w-7xl px-6 lg:px-8"><div className="mx-auto mt-16 max-w-2xl"><PackagePricing packageName={solution.name} sectorName={solution.sectorName} basePrice={solution.pricing.basePrice} annualPrice={solution.pricing.annualPrice} savings={solution.pricing.savings} features={solution.pricing.features} highlighted /></div></div></section>
       <Footer />
     </div>
   );
