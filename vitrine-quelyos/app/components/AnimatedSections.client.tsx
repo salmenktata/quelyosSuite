@@ -1,14 +1,10 @@
 "use client";
 
-import { LazyMotion, domAnimation } from "framer-motion";
-
 const animationStyles = `
-  /* Animation fade-in pour hero */
   #hero-section > div {
     animation: fadeInUp 0.5s ease-out;
   }
 
-  /* Animation slide pour cards plateformes */
   #finance {
     animation: slideInLeft 0.5s ease-out;
   }
@@ -17,7 +13,6 @@ const animationStyles = `
     animation: slideInRight 0.5s ease-out;
   }
 
-  /* Animation fade pour sections */
   .animate-section {
     animation: fadeInUp 0.5s ease-out;
   }
@@ -55,7 +50,6 @@ const animationStyles = `
     }
   }
 
-  /* Désactiver animations si prefers-reduced-motion */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
@@ -65,11 +59,6 @@ const animationStyles = `
   }
 `;
 
-// Client Component pour animations progressives (lazy loaded)
 export default function AnimatedSections() {
-  return (
-    <LazyMotion features={domAnimation}>
-      <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
-    </LazyMotion>
-  );
+  return <style dangerouslySetInnerHTML={{ __html: animationStyles }} />;
 }
