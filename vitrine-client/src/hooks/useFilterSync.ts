@@ -3,7 +3,7 @@
  * Permet de partager des URLs avec filtres appliqués
  */
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import type { ProductFilters } from '@quelyos/types';
 
@@ -28,10 +28,20 @@ export const useFilterSync = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const mountedRef = useRef(false);
+  const filtersRef = useRef(filters);
+  const onFiltersChangeRef = useRef(onFiltersChange);
+
+  // Synchroniser les refs dans un effect pour éviter l'accès pendant le render
+  useEffect(() => {
+    filtersRef.current = filters;
+    onFiltersChangeRef.current = onFiltersChange;
+  });
 
   // Lecture des filtres depuis l'URL au mount
   useEffect(() => {
-    if (!enabled) return;
+    if (mountedRef.current || !enabled) return;
+    mountedRef.current = true;
 
     const urlFilters: Partial<ProductFilters> = {};
 
@@ -56,9 +66,9 @@ export const useFilterSync = ({
 
     // Appliquer les filtres si différents
     if (Object.keys(urlFilters).length > 0) {
-      onFiltersChange({ ...filters, ...urlFilters });
+      onFiltersChangeRef.current({ ...filtersRef.current, ...urlFilters });
     }
-  }, []); // Exécuté une seule fois au mount
+  }, [enabled, searchParams]);
 
   // Écriture des filtres dans l'URL à chaque changement
   useEffect(() => {

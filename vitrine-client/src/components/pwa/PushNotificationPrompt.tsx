@@ -36,25 +36,17 @@ export function PushNotificationPrompt() {
     }
   }, [isAuthenticated]);
 
-  const requestPermission = useCallback(async () => {
-    try {
-      const result = await Notification.requestPermission();
-      setPermission(result);
-
-      if (result === 'granted') {
-        // S'abonner aux push
-        await subscribeToPush();
-        setShowPrompt(false);
-      } else {
-        setShowPrompt(false);
-        localStorage.setItem('push_prompt_dismissed', Date.now().toString());
-      }
-    } catch (error) {
-      logger.error('Error requesting notification permission:', error);
+  const sendLocalNotification = useCallback((title: string, body: string) => {
+    if (Notification.permission === 'granted') {
+      new Notification(title, {
+        body,
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/icon-72x72.png',
+      });
     }
   }, []);
 
-  const subscribeToPush = async () => {
+  const subscribeToPush = useCallback(async () => {
     try {
       const registration = await navigator.serviceWorker.ready;
 
@@ -65,8 +57,6 @@ export function PushNotificationPrompt() {
         return existing;
       }
 
-      // Créer un nouvel abonnement (VAPID key serait nécessaire en production)
-      // Pour la démo, on utilise une clé factice
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
@@ -76,10 +66,6 @@ export function PushNotificationPrompt() {
 
       logger.info('Subscribed to push notifications:', subscription.endpoint);
 
-      // TODO: Envoyer l'abonnement au backend
-      // await backendClient.savePushSubscription(subscription);
-
-      // Notification de test locale
       sendLocalNotification(
         'Notifications activees !',
         'Vous recevrez maintenant des alertes pour les promotions et nouveautes.'
@@ -89,17 +75,24 @@ export function PushNotificationPrompt() {
     } catch (error) {
       logger.error('Error subscribing to push:', error);
     }
-  };
+  }, [sendLocalNotification]);
 
-  const sendLocalNotification = (title: string, body: string) => {
-    if (Notification.permission === 'granted') {
-      new Notification(title, {
-        body,
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png',
-      });
+  const requestPermission = useCallback(async () => {
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+
+      if (result === 'granted') {
+        await subscribeToPush();
+        setShowPrompt(false);
+      } else {
+        setShowPrompt(false);
+        localStorage.setItem('push_prompt_dismissed', Date.now().toString());
+      }
+    } catch (error) {
+      logger.error('Error requesting notification permission:', error);
     }
-  };
+  }, [subscribeToPush]);
 
   const dismissPrompt = () => {
     setShowPrompt(false);

@@ -39,7 +39,7 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
       // Produit sans variantes multiples : sélectionner le premier variant
       setSelectedVariantId(product.variants[0].id);
     }
-  }, [product?.id]);
+  }, [product]);
 
   const fetchVariants = async (productId: number) => {
     setIsLoadingVariants(true);

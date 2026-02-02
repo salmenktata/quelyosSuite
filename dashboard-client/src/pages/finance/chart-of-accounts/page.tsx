@@ -2,7 +2,7 @@
  * Page Plan Comptable
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button } from '@/components/common'
 import { Plus } from 'lucide-react'
@@ -21,11 +21,7 @@ export default function ChartOfAccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchAccounts()
-  }, [])
-
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     const response = await apiClient.post<{
       success: boolean;
       data: {
@@ -34,7 +30,11 @@ export default function ChartOfAccountsPage() {
     }>('/finance/accounts')
     if (response.data.success && response.data.data) setAccounts(response.data.data.accounts)
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchAccounts()
+  }, [fetchAccounts])
 
   return (
     <Layout>

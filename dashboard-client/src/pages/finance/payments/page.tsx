@@ -8,7 +8,7 @@
  * - Indicateurs : total encaissé, décaissé, en attente
  * - Export pour comptabilité et analyse
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
@@ -34,7 +34,7 @@ export default function PaymentsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  const fetchPayments = () => {
+  const fetchPayments = useCallback(() => {
     setLoading(true)
     setError(false)
     apiClient
@@ -53,12 +53,12 @@ export default function PaymentsPage() {
         setError(true)
         setLoading(false)
       })
-  }
+  }, [])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPayments()
-  }, [])
+  }, [fetchPayments])
 
   if (loading) {
     return (

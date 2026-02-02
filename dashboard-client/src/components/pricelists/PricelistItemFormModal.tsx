@@ -87,7 +87,9 @@ export function PricelistItemFormModal({
   const createMutation = useCreatePricelistItem();
   const updateMutation = useUpdatePricelistItem();
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const appliedOn = watch('applied_on');
+   
   const computePrice = watch('compute_price');
 
   // Reset formulaire à la fermeture

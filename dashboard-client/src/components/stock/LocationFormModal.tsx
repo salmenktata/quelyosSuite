@@ -162,7 +162,9 @@ export function LocationFormModal({
     }
   }, [isOpen, location, parentId, warehouseId, form])
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedWarehouseId = form.watch('warehouse_id')
+   
   const selectedParentId = form.watch('parent_id')
 
   // Construire la map pour preview path

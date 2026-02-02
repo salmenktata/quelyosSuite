@@ -5,7 +5,7 @@
  * pour mettre à jour le thème en temps réel
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { ThemeConfig } from '@/types/theme';
 import { Eye, RefreshCw, Maximize2 } from 'lucide-react';
 
@@ -23,12 +23,21 @@ export function PreviewFrame({ theme, className = '' }: PreviewFrameProps) {
   const previewUrl = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3001';
   const previewPath = `${previewUrl}/theme-preview`;
 
+  const sendThemeUpdate = useCallback((themeData: ThemeConfig) => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: 'THEME_UPDATE',
+          theme: themeData,
+        },
+        '*' // En production: spécifier l'origine exacte
+      );
+    }
+  }, []);
+
   useEffect(() => {
     // Écouter les messages de l'iframe
     function handleMessage(event: MessageEvent) {
-      // Vérifier l'origine (en production)
-      // if (event.origin !== previewUrl) return;
-
       if (event.data.type === 'PREVIEW_READY') {
         setIsReady(true);
         setIsLoading(false);
@@ -42,26 +51,14 @@ export function PreviewFrame({ theme, className = '' }: PreviewFrameProps) {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [theme, previewUrl]);
+  }, [theme, previewUrl, sendThemeUpdate]);
 
   // Envoyer les updates du thème à l'iframe
   useEffect(() => {
     if (isReady) {
       sendThemeUpdate(theme);
     }
-  }, [theme, isReady]);
-
-  const sendThemeUpdate = (themeData: ThemeConfig) => {
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        {
-          type: 'THEME_UPDATE',
-          theme: themeData,
-        },
-        '*' // En production: spécifier l'origine exacte
-      );
-    }
-  };
+  }, [theme, isReady, sendThemeUpdate]);
 
   const handleReload = () => {
     setIsLoading(true);

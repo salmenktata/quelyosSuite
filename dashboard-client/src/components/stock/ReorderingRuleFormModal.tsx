@@ -85,6 +85,7 @@ export function ReorderingRuleFormModal({
     }
   }, [isOpen, rule, form])
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedProductId = form.watch('product_id')
   const _selectedWarehouseId = form.watch('warehouse_id')
   const minQty = form.watch('product_min_qty')

@@ -2,7 +2,7 @@
  * Page Factures Fournisseurs
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button } from '@/components/common'
 import { Plus } from 'lucide-react'
@@ -21,11 +21,7 @@ export default function BillsPage() {
   const [bills, setBills] = useState<Bill[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchBills()
-  }, [])
-
-  const fetchBills = async () => {
+  const fetchBills = useCallback(async () => {
     const response = await apiClient.post<{
       success: boolean;
       data: {
@@ -34,7 +30,11 @@ export default function BillsPage() {
     }>('/finance/bills')
     if (response.data.success && response.data.data) setBills(response.data.data.bills)
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchBills()
+  }, [fetchBills])
 
   return (
     <Layout>

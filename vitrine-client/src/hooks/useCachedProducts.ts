@@ -3,7 +3,7 @@
  * Uses Redis-cached endpoints when available
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { backendClient } from '@/lib/backend/client';
 import type { Product } from '@quelyos/types';
 

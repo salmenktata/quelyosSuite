@@ -59,15 +59,6 @@ export default function POSKiosk() {
   })
   const { data: categories = [] } = usePOSCategories(configId || 0)
 
-  // Barcode scanning
-  useBarcodeScan((barcode) => {
-    // Find product by barcode and add to cart
-    const product = productsData?.products.find((p) => p.barcode === barcode)
-    if (product) {
-      addToCart(product)
-    }
-  }, step === 'browse')
-
   // Cart helpers
   const addToCart = useCallback((product: POSProduct) => {
     setCart((prev) => {
@@ -82,6 +73,15 @@ export default function POSKiosk() {
       return [...prev, { product, quantity: 1 }]
     })
   }, [])
+
+  // Barcode scanning
+  useBarcodeScan((barcode) => {
+    // Find product by barcode and add to cart
+    const product = productsData?.products.find((p) => p.barcode === barcode)
+    if (product) {
+      addToCart(product)
+    }
+  }, step === 'browse')
 
   const updateQuantity = useCallback((productId: number, delta: number) => {
     setCart((prev) => {
