@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { Breadcrumbs } from "@/components/common";
 import { useAuth } from "@/lib/finance/compat/auth";
@@ -14,7 +14,9 @@ import {
   Loader2,
   Copy,
   Monitor,
-  Clock
+  Clock,
+  Download,
+  RefreshCw,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { logger } from '@quelyos/logger';
@@ -26,6 +28,8 @@ type Session = {
   createdAt: string;
   isCurrent: boolean;
 };
+
+type TwoFAStep = 'idle' | 'setup' | 'confirm' | 'backup-codes' | 'disable' | 'regenerate';
 
 export default function SecurityPage() {
   const { user } = useAuth();
@@ -42,12 +46,16 @@ export default function SecurityPage() {
 
   // 2FA state
   const [twoFAEnabled, setTwoFAEnabled] = useState(false);
-  const [twoFASetupMode, setTwoFASetupMode] = useState(false);
+  const [twoFAStep, setTwoFAStep] = useState<TwoFAStep>('idle');
   const [twoFASecret, setTwoFASecret] = useState("");
   const [twoFAQRCode, setTwoFAQRCode] = useState("");
   const [twoFACode, setTwoFACode] = useState("");
   const [twoFALoading, setTwoFALoading] = useState(false);
   const [twoFAError, setTwoFAError] = useState<string | null>(null);
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  const [backupCodesRemaining, setBackupCodesRemaining] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const twoFAInputRef = useRef<HTMLInputElement>(null);
 
   // Sessions state
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -60,8 +68,9 @@ export default function SecurityPage() {
 
   async function fetchSecurityStatus() {
     try {
-      const data = await api<{ twoFAEnabled: boolean }>("/user/security/status");
-      setTwoFAEnabled(data.twoFAEnabled);
+      const data = await api<{ enabled: boolean; backup_codes_remaining?: number }>("/api/auth/2fa/status");
+      setTwoFAEnabled(data.enabled);
+      setBackupCodesRemaining(data.backup_codes_remaining ?? 0);
     } catch {
       // Silently fail - 2FA might not be implemented yet
     }
@@ -118,12 +127,12 @@ export default function SecurityPage() {
     setTwoFAError(null);
 
     try {
-      const data = await api<{ secret: string; qrCode: string }>("/user/2fa/setup", {
+      const data = await api<{ qr_code: string; secret: string }>("/api/auth/2fa/setup", {
         method: "POST",
       });
       setTwoFASecret(data.secret);
-      setTwoFAQRCode(data.qrCode);
-      setTwoFASetupMode(true);
+      setTwoFAQRCode(data.qr_code);
+      setTwoFAStep('setup');
     } catch (err) {
       logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la configuration 2FA");
@@ -132,7 +141,7 @@ export default function SecurityPage() {
     }
   }
 
-  async function handleVerify2FA() {
+  async function handleConfirm2FA() {
     if (twoFACode.length !== 6) {
       setTwoFAError("Le code doit contenir 6 chiffres");
       return;
@@ -142,34 +151,83 @@ export default function SecurityPage() {
     setTwoFAError(null);
 
     try {
-      await api("/user/2fa/verify", {
+      const data = await api<{ backup_codes: string[] }>("/api/auth/2fa/confirm", {
         method: "POST",
-        body: { code: twoFACode } as { code: string },
+        body: { code: twoFACode },
       });
-      setTwoFAEnabled(true);
-      setTwoFASetupMode(false);
+      setBackupCodes(data.backup_codes);
+      setTwoFAStep('backup-codes');
       setTwoFACode("");
+      setTwoFAEnabled(true);
     } catch (err) {
       logger.error("Erreur:", err);
       setTwoFAError(err instanceof Error ? err.message : "Code invalide");
+      setTwoFACode("");
     } finally {
       setTwoFALoading(false);
     }
   }
 
   async function handleDisable2FA() {
-    if (!confirm("Êtes-vous sûr de vouloir désactiver la 2FA ?")) return;
+    if (twoFACode.length !== 6) {
+      setTwoFAError("Saisissez votre code TOTP");
+      return;
+    }
 
     setTwoFALoading(true);
+    setTwoFAError(null);
     try {
-      await api("/user/2fa/disable", { method: "POST" });
+      await api("/api/auth/2fa/disable", {
+        method: "POST",
+        body: { code: twoFACode },
+      });
       setTwoFAEnabled(false);
+      setTwoFAStep('idle');
+      setTwoFACode("");
+      fetchSecurityStatus();
     } catch (err) {
       logger.error("Erreur:", err);
-      setTwoFAError(err instanceof Error ? err.message : "Erreur lors de la désactivation");
+      setTwoFAError(err instanceof Error ? err.message : "Code invalide");
+      setTwoFACode("");
     } finally {
       setTwoFALoading(false);
     }
+  }
+
+  async function handleRegenerateBackupCodes() {
+    if (twoFACode.length !== 6) {
+      setTwoFAError("Saisissez votre code TOTP");
+      return;
+    }
+
+    setTwoFALoading(true);
+    setTwoFAError(null);
+    try {
+      const data = await api<{ backup_codes: string[] }>("/api/auth/2fa/backup-codes/regenerate", {
+        method: "POST",
+        body: { code: twoFACode },
+      });
+      setBackupCodes(data.backup_codes);
+      setTwoFAStep('backup-codes');
+      setTwoFACode("");
+    } catch (err) {
+      logger.error("Erreur:", err);
+      setTwoFAError(err instanceof Error ? err.message : "Code invalide");
+      setTwoFACode("");
+    } finally {
+      setTwoFALoading(false);
+    }
+  }
+
+  function downloadBackupCodes() {
+    const text = `Codes de secours Quelyos 2FA\n${'='.repeat(30)}\n\n${backupCodes.join('\n')}\n\nConservez ces codes en lieu sûr.\nChaque code ne peut être utilisé qu'une seule fois.`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'quelyos-backup-codes.txt';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function handleRevokeSession(sessionId: number) {
@@ -366,7 +424,7 @@ export default function SecurityPage() {
             <div>
               <h2 className="text-lg font-semibold">Authentification 2FA</h2>
               <p className="text-sm text-slate-400">
-                {twoFAEnabled ? "Activée" : "Désactivée"} — Double sécurité avec TOTP
+                {twoFAEnabled ? `Activée — ${backupCodesRemaining} code(s) de secours restant(s)` : "Désactivée — Double sécurité avec TOTP"}
               </p>
             </div>
             {twoFAEnabled && (
@@ -376,7 +434,15 @@ export default function SecurityPage() {
             )}
           </div>
 
-          {!twoFAEnabled && !twoFASetupMode && (
+          {twoFAError && (
+            <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              <AlertTriangle className="h-4 w-4" />
+              {twoFAError}
+            </div>
+          )}
+
+          {/* Idle state — not enabled */}
+          {!twoFAEnabled && twoFAStep === 'idle' && (
             <div className="space-y-4">
               <Card>
                 <div className="flex items-start gap-3">
@@ -405,26 +471,18 @@ export default function SecurityPage() {
                   </>
                 )}
               </button>
-
-              {twoFAError && (
-                <Card>
-                  <div className="flex items-center gap-2 text-rose-200">
-                    <AlertTriangle size={16} />
-                    <span className="text-sm">{twoFAError}</span>
-                  </div>
-                </Card>
-              )}
             </div>
           )}
 
-          {twoFASetupMode && (
+          {/* Setup — QR Code */}
+          {twoFAStep === 'setup' && (
             <div className="space-y-4">
               <div className="text-center">
                 <p className="text-sm text-slate-300 mb-3">
                   Scannez ce QR code avec votre application d&apos;authentification
                 </p>
                 {twoFAQRCode && (
-                  <div className="inline-block rounded-xl bg-white dark:bg-gray-800 p-4">
+                  <div className="inline-block rounded-xl bg-white p-4">
                     <img src={twoFAQRCode} alt="QR Code 2FA" className="w-40 h-40" />
                   </div>
                 )}
@@ -433,7 +491,7 @@ export default function SecurityPage() {
               <div className="text-center">
                 <p className="text-xs text-slate-400 mb-2">Ou entrez ce code manuellement :</p>
                 <div className="flex items-center justify-center gap-2">
-                  <code className="rounded-lg bg-slate-800 px-3 py-2 text-sm font-mono text-indigo-300">
+                  <code className="rounded-lg bg-slate-800 px-3 py-2 text-sm font-mono text-indigo-300 break-all">
                     {twoFASecret}
                   </code>
                   <button
@@ -445,49 +503,202 @@ export default function SecurityPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Code de vérification</label>
-                <input
-                  type="text"
-                  value={twoFACode}
-                  onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-mono tracking-[0.5em] text-white placeholder:text-slate-500 focus:border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
-                  placeholder="000000"
-                  maxLength={6}
-                />
-              </div>
-
-              {twoFAError && (
-                <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-                  <AlertTriangle className="h-4 w-4" />
-                  {twoFAError}
-                </div>
-              )}
-
               <div className="flex gap-3">
                 <button
-                  onClick={() => {
-                    setTwoFASetupMode(false);
-                    setTwoFACode("");
-                    setTwoFAError(null);
-                  }}
+                  onClick={() => { setTwoFAStep('idle'); setTwoFAError(null); }}
                   className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
                 >
                   Annuler
                 </button>
                 <button
-                  onClick={handleVerify2FA}
-                  disabled={twoFALoading || twoFACode.length !== 6}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/25 transition hover:from-green-400 hover:to-emerald-400 disabled:opacity-50"
+                  onClick={() => { setTwoFAStep('confirm'); setTwoFAError(null); setTimeout(() => twoFAInputRef.current?.focus(), 100); }}
+                  className="flex-1 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-3 text-sm font-semibold text-white transition hover:from-indigo-400 hover:to-purple-400"
                 >
-                  {twoFALoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                  Vérifier
+                  Continuer
                 </button>
               </div>
             </div>
           )}
 
-          {twoFAEnabled && !twoFASetupMode && (
+          {/* Confirm — Enter code */}
+          {twoFAStep === 'confirm' && (
+            <div className="space-y-4">
+              <p className="text-sm text-slate-300 text-center">
+                Saisissez le code à 6 chiffres affiché dans votre application
+              </p>
+              <input
+                ref={twoFAInputRef}
+                type="text"
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-mono tracking-[0.5em] text-white placeholder:text-slate-500 focus:border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+                placeholder="000000"
+                maxLength={6}
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                onKeyDown={(e) => { if (e.key === 'Enter' && twoFACode.length === 6) handleConfirm2FA(); }}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setTwoFAStep('setup'); setTwoFACode(""); setTwoFAError(null); }}
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  Retour
+                </button>
+                <button
+                  onClick={handleConfirm2FA}
+                  disabled={twoFALoading || twoFACode.length !== 6}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/25 transition hover:from-green-400 hover:to-emerald-400 disabled:opacity-50"
+                >
+                  {twoFALoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                  Confirmer
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Backup Codes Display */}
+          {twoFAStep === 'backup-codes' && backupCodes.length > 0 && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <p className="text-sm font-medium text-white">Codes de secours</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Sauvegardez ces codes. Chaque code ne peut être utilisé qu&apos;une seule fois.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-slate-800/50 p-4">
+                <div className="grid grid-cols-2 gap-2">
+                  {backupCodes.map((bCode) => (
+                    <code
+                      key={bCode}
+                      className="text-center py-2 px-3 bg-slate-900/50 rounded border border-white/10 font-mono text-sm text-white"
+                    >
+                      {bCode}
+                    </code>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(backupCodes.join('\n'));
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10"
+                >
+                  {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
+                  {copied ? 'Copié' : 'Copier'}
+                </button>
+                <button
+                  onClick={downloadBackupCodes}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10"
+                >
+                  <Download className="h-4 w-4" />
+                  Télécharger
+                </button>
+              </div>
+
+              <Card>
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-200">
+                    Ces codes ne seront plus affichés. Conservez-les dans un endroit sûr.
+                  </p>
+                </div>
+              </Card>
+
+              <button
+                onClick={() => {
+                  setTwoFAStep('idle');
+                  setBackupCodes([]);
+                  fetchSecurityStatus();
+                }}
+                className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-3 text-sm font-semibold text-white transition hover:from-indigo-400 hover:to-purple-400"
+              >
+                {`J'ai sauvegardé mes codes`}
+              </button>
+            </div>
+          )}
+
+          {/* Disable 2FA — enter code */}
+          {twoFAStep === 'disable' && (
+            <div className="space-y-4">
+              <p className="text-sm text-slate-300 text-center">
+                Saisissez votre code TOTP pour confirmer la désactivation
+              </p>
+              <input
+                ref={twoFAInputRef}
+                type="text"
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-mono tracking-[0.5em] text-white placeholder:text-slate-500 focus:border-red-400/50 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+                placeholder="000000"
+                maxLength={6}
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                onKeyDown={(e) => { if (e.key === 'Enter' && twoFACode.length === 6) handleDisable2FA(); }}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setTwoFAStep('idle'); setTwoFACode(""); setTwoFAError(null); }}
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleDisable2FA}
+                  disabled={twoFALoading || twoFACode.length !== 6}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                >
+                  {twoFALoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  Désactiver
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Regenerate backup codes — enter code */}
+          {twoFAStep === 'regenerate' && (
+            <div className="space-y-4">
+              <p className="text-sm text-slate-300 text-center">
+                Saisissez votre code TOTP pour générer de nouveaux codes de secours
+              </p>
+              <input
+                ref={twoFAInputRef}
+                type="text"
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-mono tracking-[0.5em] text-white placeholder:text-slate-500 focus:border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+                placeholder="000000"
+                maxLength={6}
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                onKeyDown={(e) => { if (e.key === 'Enter' && twoFACode.length === 6) handleRegenerateBackupCodes(); }}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setTwoFAStep('idle'); setTwoFACode(""); setTwoFAError(null); }}
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleRegenerateBackupCodes}
+                  disabled={twoFALoading || twoFACode.length !== 6}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                >
+                  {twoFALoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  Régénérer
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Enabled idle state */}
+          {twoFAEnabled && twoFAStep === 'idle' && (
             <div className="space-y-4">
               <Card>
                 <div className="flex items-start gap-3">
@@ -501,14 +712,21 @@ export default function SecurityPage() {
                 </div>
               </Card>
 
-              <button
-                onClick={handleDisable2FA}
-                disabled={twoFALoading}
-                className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300 hover:bg-red-500/20 disabled:opacity-50"
-              >
-                {twoFALoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                Désactiver la 2FA
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setTwoFAStep('disable'); setTwoFAError(null); setTimeout(() => twoFAInputRef.current?.focus(), 100); }}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300 hover:bg-red-500/20"
+                >
+                  Désactiver
+                </button>
+                <button
+                  onClick={() => { setTwoFAStep('regenerate'); setTwoFAError(null); setTimeout(() => twoFAInputRef.current?.focus(), 100); }}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Codes secours
+                </button>
+              </div>
             </div>
           )}
         </section>

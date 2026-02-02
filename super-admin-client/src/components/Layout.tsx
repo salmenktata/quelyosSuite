@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/hooks/useAuth'
-import { LayoutDashboard, Users, Package, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut, Shield, FileText, MessageSquare, FilePlus, Sparkles, Map, Mail, Scale } from 'lucide-react'
+import { LayoutDashboard, Users, Package, CreditCard, DollarSign, Activity, Database, Settings, Moon, Sun, LogOut, Shield, ShieldCheck, FileText, MessageSquare, FilePlus, Sparkles, Map, Mail, Scale } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Facturation', path: '/billing', icon: DollarSign },
   { name: 'Monitoring', path: '/monitoring', icon: Activity },
   { name: 'Sécurité', path: '/security', icon: Shield },
+  { name: '2FA / TOTP', path: '/security/2fa', icon: ShieldCheck },
   { name: 'Configuration IA', path: '/ai-config', icon: Sparkles },
   { name: 'Support', path: '/support-tickets', icon: MessageSquare },
   { name: 'Templates', path: '/support-templates', icon: FilePlus },

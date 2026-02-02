@@ -33,6 +33,7 @@ const Sitemap = lazy(() => import('@/pages/Sitemap').then(m => ({ default: m.Sit
 const SeedData = lazy(() => import('@/pages/SeedData').then(m => ({ default: m.SeedData })))
 const InstallWizardPage = lazy(() => import('@/pages/InstallWizardPage').then(m => ({ default: m.InstallWizardPage })))
 const LegalSettings = lazy(() => import('@/pages/LegalSettings').then(m => ({ default: m.LegalSettings })))
+const SecuritySettings = lazy(() => import('@/pages/SecuritySettings').then(m => ({ default: m.SecuritySettings })))
 
 // Composant de chargement pour Suspense
 const PageLoader = () => (
@@ -61,6 +62,7 @@ function PageViewTracker() {
       '/billing': 'Billing',
       '/monitoring': 'Monitoring',
       '/security': 'Security',
+      '/security/2fa': 'Security 2FA Settings',
       '/ai-config': 'AI Configuration',
       '/support-tickets': 'Support Tickets',
       '/support-templates': 'Support Templates',
@@ -129,6 +131,7 @@ export function AuthenticatedApp() {
           <Route path="billing" element={<Billing />} />
           <Route path="monitoring" element={<Monitoring />} />
           <Route path="security" element={<Security />} />
+          <Route path="security/2fa" element={<SecuritySettings />} />
           <Route path="ai-config" element={<AiConfig />} />
           <Route path="support-tickets" element={<SupportTickets />} />
           <Route path="support-templates" element={<SupportTemplates />} />

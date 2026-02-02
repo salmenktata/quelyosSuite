@@ -29,6 +29,8 @@ interface AuthState {
   isLoading: boolean
   user: User | null
   error: string | null
+  requires2FA: boolean
+  pendingToken: string | null
 }
 
 interface LoginResponse {
@@ -37,6 +39,8 @@ interface LoginResponse {
   expires_in?: number
   user?: User
   error?: string
+  requires_2fa?: boolean
+  pending_token?: string
 }
 
 interface RefreshResponse {
@@ -80,6 +84,8 @@ export function useAuth() {
         tenant_domain: storedUser.tenantDomain,
       } : null,
       error: null,
+      requires2FA: false,
+      pendingToken: null,
     }
   })
 
@@ -89,12 +95,13 @@ export function useAuth() {
   const checkAuth = useCallback(async (): Promise<boolean> => {
     // Si pas de token, pas la peine de vérifier
     if (!tokenService.isAuthenticated()) {
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         isAuthenticated: false,
         isLoading: false,
         user: null,
         error: null,
-      })
+      }))
       return false
     }
 
@@ -108,12 +115,13 @@ export function useAuth() {
           tenant_domain: response.claims?.tenant_domain,
         }
 
-        setAuthState({
+        setAuthState((prev) => ({
+          ...prev,
           isAuthenticated: true,
           isLoading: false,
           user,
           error: null,
-        })
+        }))
 
         // Identifier dans Posthog
         identifyUser(response.user.id, {
@@ -127,23 +135,25 @@ export function useAuth() {
 
       // Token invalide
       tokenService.clear()
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         isAuthenticated: false,
         isLoading: false,
         user: null,
         error: response.error || 'Non authentifié',
-      })
+      }))
       return false
 
     } catch (error) {
       logger.error('[Auth] checkAuth error:', error)
       tokenService.clear()
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         isAuthenticated: false,
         isLoading: false,
         user: null,
         error: error instanceof Error ? error.message : 'Erreur',
-      })
+      }))
       return false
     }
   }, [identifyUser])
@@ -179,23 +189,25 @@ export function useAuth() {
       // Refresh failed
       logger.warn('[Auth] Token refresh failed:', response.error)
       tokenService.clear()
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         isAuthenticated: false,
         isLoading: false,
         user: null,
         error: response.error || 'Session expirée',
-      })
+      }))
       return false
 
     } catch (error) {
       logger.error('[Auth] Token refresh error:', error)
       tokenService.clear()
-      setAuthState({
+      setAuthState((prev) => ({
+        ...prev,
         isAuthenticated: false,
         isLoading: false,
         user: null,
         error: 'Erreur de refresh',
-      })
+      }))
       return false
     }
   }, [])
@@ -206,7 +218,7 @@ export function useAuth() {
   const loginWithCredentials = useCallback(async (
     login: string,
     password: string
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; error?: string; requires2FA?: boolean }> => {
     setAuthState((prev) => ({ ...prev, isLoading: true, error: null }))
 
     try {
@@ -214,6 +226,18 @@ export function useAuth() {
         login,
         password,
       })
+
+      // 2FA requis — stocker pending_token et signaler
+      if (response.requires_2fa && response.pending_token) {
+        setAuthState((prev) => ({
+          ...prev,
+          isLoading: false,
+          requires2FA: true,
+          pendingToken: response.pending_token!,
+          error: null,
+        }))
+        return { success: true, requires2FA: true }
+      }
 
       if (response.success && response.access_token && response.user) {
         // Stocker les tokens
@@ -228,6 +252,8 @@ export function useAuth() {
           isLoading: false,
           user: response.user,
           error: null,
+          requires2FA: false,
+          pendingToken: null,
         })
 
         // Identifier dans Posthog
@@ -260,6 +286,78 @@ export function useAuth() {
   }, [identifyUser, trackEvent])
 
   /**
+   * Vérifie le code TOTP 2FA
+   */
+  const verify2FA = useCallback(async (
+    code: string
+  ): Promise<{ success: boolean; error?: string }> => {
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      const response = await gateway.post<LoginResponse>('/api/auth/2fa/verify', {
+        pending_token: authState.pendingToken,
+        code,
+      })
+
+      if (response.success && response.access_token && response.user) {
+        tokenService.setTokens(
+          response.access_token,
+          response.expires_in || 900,
+          response.user
+        )
+
+        setAuthState({
+          isAuthenticated: true,
+          isLoading: false,
+          user: response.user,
+          error: null,
+          requires2FA: false,
+          pendingToken: null,
+        })
+
+        identifyUser(response.user.id, {
+          name: response.user.name,
+          email: response.user.email,
+          login: response.user.login,
+        })
+
+        trackEvent('login', { method: '2fa' })
+        return { success: true }
+      }
+
+      setAuthState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: response.error || 'Code invalide',
+      }))
+      return { success: false, error: response.error || 'Code invalide' }
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erreur de vérification'
+      setAuthState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: message,
+      }))
+      return { success: false, error: message }
+    }
+  }, [authState.pendingToken, identifyUser, trackEvent])
+
+  /**
+   * Annule le flow 2FA
+   */
+  const cancel2FA = useCallback(() => {
+    setAuthState({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      error: null,
+      requires2FA: false,
+      pendingToken: null,
+    })
+  }, [])
+
+  /**
    * Déconnecte l'utilisateur
    */
   const logout = useCallback(async () => {
@@ -276,6 +374,8 @@ export function useAuth() {
         isLoading: false,
         user: null,
         error: null,
+        requires2FA: false,
+        pendingToken: null,
       })
       navigate('/login', { replace: true })
     }
@@ -300,6 +400,8 @@ export function useAuth() {
           isLoading: false,
           user: null,
           error: 'Session expirée',
+          requires2FA: false,
+          pendingToken: null,
         })
         navigate('/login', { replace: true })
       }
@@ -321,5 +423,7 @@ export function useAuth() {
     refreshToken,
     logout,
     login: loginWithCredentials,
+    verify2FA,
+    cancel2FA,
   }
 }

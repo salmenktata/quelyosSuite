@@ -14,6 +14,7 @@ import {
   Upload,
   Archive,
   Settings,
+  ShieldCheck,
   Store,
   ShoppingCart,
   Package,
@@ -152,6 +153,7 @@ export const MODULES: Module[] = [
         tabGroup: 'Paramètres',
         items: [
           { name: 'Paramètres Généraux', path: '/settings', icon: Settings },
+          { name: 'Sécurité & 2FA', path: '/settings/security', icon: ShieldCheck },
         ],
       },
     ],
