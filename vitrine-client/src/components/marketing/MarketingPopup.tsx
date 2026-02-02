@@ -57,10 +57,26 @@ export function MarketingPopup() {
     enabled: popup?.trigger_type === 'exit_intent',
   });
 
+  const loadActivePopup = React.useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const response = await backendClient.getActivePopups(pathname);
+
+      if (response.success && response.data?.popup) {
+        setPopup(response.data.popup as unknown as PopupCampaign);
+      }
+    } catch (error) {
+      logger.error('Error loading popup:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pathname]);
+
   // Load active popup on mount and path change
   useEffect(() => {
     loadActivePopup();
-  }, [pathname]);
+  }, [loadActivePopup]);
 
   // Handle different trigger types
   useEffect(() => {
@@ -102,30 +118,14 @@ export function MarketingPopup() {
         // Handled by useExitIntent hook
         break;
     }
-  }, [popup]);
+  }, [popup, isVisible]);
 
   // Handle exit intent trigger
   useEffect(() => {
     if (exitIntentDetected && popup && !isVisible && shouldShowPopup(popup)) {
       showPopup();
     }
-  }, [exitIntentDetected]);
-
-  const loadActivePopup = async () => {
-    try {
-      setLoading(true);
-
-      const response = await backendClient.getActivePopups(pathname);
-
-      if (response.success && response.data?.popup) {
-        setPopup(response.data.popup as unknown as PopupCampaign);
-      }
-    } catch (error) {
-      logger.error('Error loading popup:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [exitIntentDetected, popup, isVisible]);
 
   const shouldShowPopup = (campaign: PopupCampaign): boolean => {
     const storageKey = `popup_shown_${campaign.id}`;

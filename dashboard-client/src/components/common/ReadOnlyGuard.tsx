@@ -14,6 +14,7 @@ const ReadOnlyContext = createContext<ReadOnlyContextType>({
   accessLevel: 'full',
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useReadOnly = () => useContext(ReadOnlyContext)
 
 /**

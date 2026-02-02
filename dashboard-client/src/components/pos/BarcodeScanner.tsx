@@ -15,6 +15,7 @@ interface BarcodeScannerProps {
  * Hook pour détecter les scans de codes-barres via clavier
  * Les scanners USB émulent des frappes clavier très rapides suivies de Enter
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useBarcodeScan(
   onScan: (barcode: string) => void,
   enabled: boolean = true

@@ -41,7 +41,7 @@ export function LeadTable({ leads }: LeadTableProps) {
     return 0
   })
 
-  const SortIcon = ({ field }: { field: SortField }) => {
+  const renderSortIcon = (field: SortField) => {
     if (sortField !== field) return <ChevronUp className="w-4 h-4 text-gray-400" />
     return sortOrder === 'asc' ? <ChevronUp className="w-4 h-4 text-blue-600" /> : <ChevronDown className="w-4 h-4 text-blue-600" />
   }

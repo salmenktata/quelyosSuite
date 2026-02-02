@@ -1,6 +1,7 @@
 import { Layout } from '@/components/Layout'
 import PaymentPlanningPage from "@/components/finance/suppliers/PaymentPlanningPage";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata = {
   title: "Planification des paiements - Quelyos",
   description: "Optimisez vos paiements fournisseurs et gérez votre trésorerie",

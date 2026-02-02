@@ -155,6 +155,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTenantContext(): TenantContextValue {
   const context = useContext(TenantContext)
   if (!context) {
@@ -166,6 +167,7 @@ export function useTenantContext(): TenantContextValue {
 /**
  * Hook simplifié pour récupérer juste le tenant_id
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCurrentTenantId(): number | null {
   const { tenantId } = useTenantContext()
   return tenantId
@@ -174,6 +176,7 @@ export function useCurrentTenantId(): number | null {
 /**
  * Hook simplifié pour récupérer juste le tenant domain
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCurrentTenantDomain(): string | null {
   const { tenantDomain } = useTenantContext()
   return tenantDomain

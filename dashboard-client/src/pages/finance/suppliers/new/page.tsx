@@ -11,6 +11,7 @@
 import { Layout } from '@/components/Layout'
 import SupplierForm from '@/components/finance/suppliers/SupplierForm'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata = {
   title: 'Nouveau fournisseur - Quelyos',
   description: 'Ajoutez un nouveau fournisseur',

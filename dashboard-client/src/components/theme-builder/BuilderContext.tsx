@@ -216,6 +216,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
 /**
  * Hook pour utiliser le BuilderContext
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useBuilder() {
   const context = useContext(BuilderContext);
   if (!context) {

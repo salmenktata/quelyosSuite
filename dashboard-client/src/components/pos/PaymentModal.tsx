@@ -3,7 +3,7 @@
  * Permet de diviser un paiement entre plusieurs méthodes
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import {
   X,
   Banknote,
@@ -45,6 +45,8 @@ export function PaymentModal({
   const [amount, setAmount] = useState('')
   const [payments, setPayments] = useState<SplitPayment[]>([])
   const [isSplitMode, setIsSplitMode] = useState(false)
+  const [paymentCounter, setPaymentCounter] = useState(0)
+  const baseId = useId()
 
   const paidAmount = payments.reduce((sum, p) => sum + p.amount, 0)
   const remaining = Math.max(0, total - paidAmount)
@@ -97,10 +99,11 @@ export function PaymentModal({
 
     const paymentAmount = parseFloat(amount)
     const newPayment: SplitPayment = {
-      id: `payment-${Date.now()}`,
+      id: `${baseId}-${paymentCounter}`,
       method: selectedMethod,
       amount: paymentAmount,
     }
+    setPaymentCounter((c) => c + 1)
     setPayments((prev) => [...prev, newPayment])
     setAmount('')
 
@@ -120,7 +123,7 @@ export function PaymentModal({
     const allPayments = [...payments]
     if (amount && parseFloat(amount) > 0 && selectedMethod) {
       allPayments.push({
-        id: `payment-${Date.now()}`,
+        id: `${baseId}-confirm`,
         method: selectedMethod,
         amount: parseFloat(amount),
       })
@@ -153,7 +156,7 @@ export function PaymentModal({
     for (let i = 0; i < numParts; i++) {
       const amount = i === numParts - 1 ? remainingTotal : partAmount
       newPayments.push({
-        id: `payment-${Date.now()}-${i}`,
+        id: `${baseId}-split-${i}`,
         method: selectedMethod,
         amount: Math.round(amount * 100) / 100,
       })

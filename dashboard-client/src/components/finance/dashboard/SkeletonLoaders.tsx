@@ -1,3 +1,6 @@
+// Pre-computed bar heights for skeleton chart (avoids Math.random during render)
+const SKELETON_BAR_HEIGHTS = Array.from({ length: 90 }, (_, i) => 40 + ((i * 37 + 13) % 40));
+
 // ============================================================================
 // Hero KPI Skeleton
 // ============================================================================
@@ -100,11 +103,11 @@ export function TimelineChartSkeleton() {
 
         {/* Chart bars skeleton */}
         <div className="flex h-48 items-end gap-1">
-          {Array.from({ length: 90 }).map((_, i) => (
+          {SKELETON_BAR_HEIGHTS.map((height, i) => (
             <div
               key={i}
               className="flex-1 animate-pulse rounded-t bg-white/20"
-              style={{ height: `${40 + Math.random() * 40}%` }}
+              style={{ height: `${height}%` }}
             />
           ))}
         </div>

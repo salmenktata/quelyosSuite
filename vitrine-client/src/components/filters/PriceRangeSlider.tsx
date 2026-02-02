@@ -46,7 +46,7 @@ export const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [localMin, localMax, isDragging]);
+  }, [localMin, localMax, isDragging, currentMin, currentMax, debounceDelay, onChange]);
 
   const handleMinChange = (value: number) => {
     const newMin = Math.min(value, localMax - 10);

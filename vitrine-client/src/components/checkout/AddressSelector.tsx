@@ -37,11 +37,7 @@ export function AddressSelector({
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState<Partial<Address>>({});
 
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = React.useCallback(async () => {
     try {
       const response = await backendClient.getAddresses();
       if (response.success && response.addresses) {
@@ -60,7 +56,11 @@ export function AddressSelector({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedAddressId, onAddressSelect]);
+
+  useEffect(() => {
+    fetchAddresses();
+  }, [fetchAddresses]);
 
   const handleAddAddress = async () => {
     if (!newAddress.name || !newAddress.street || !newAddress.city || !newAddress.zip) {

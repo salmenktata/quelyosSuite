@@ -30,6 +30,71 @@ interface OptimizedForecastChartProps {
   showScenarios: boolean;
 }
 
+function ForecastTooltip({ active, payload, currency, showConfidence, showScenarios }: {
+  active?: boolean;
+  payload?: Array<{ payload: Record<string, string | number | null> }>;
+  currency: string;
+  showConfidence: boolean;
+  showScenarios: boolean;
+}) {
+  if (!active || !payload || !payload.length) return null;
+
+  const data = payload[0].payload;
+  const fmt = (value: number) =>
+    new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  return (
+    <div className="rounded-lg border border-white/10 bg-slate-900/95 p-3 shadow-xl backdrop-blur-sm">
+      <p className="mb-2 text-xs font-medium text-slate-400">{String(data.fullDate ?? '')}</p>
+      <div className="space-y-1">
+        {showScenarios && (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-emerald-400">Optimiste</span>
+            <span className="text-xs font-semibold text-emerald-400">
+              {fmt(Number(data.optimistic ?? 0))}
+            </span>
+          </div>
+        )}
+        {showConfidence && (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-indigo-400">Borne sup.</span>
+            <span className="text-xs font-semibold text-indigo-400">
+              {fmt(Number(data.upperBound ?? 0))}
+            </span>
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-xs text-white">Prévu</span>
+          <span className="text-xs font-semibold text-white">
+            {fmt(Number(data.predicted ?? 0))}
+          </span>
+        </div>
+        {showConfidence && (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-indigo-400">Borne inf.</span>
+            <span className="text-xs font-semibold text-indigo-400">
+              {fmt(Number(data.lowerBound ?? 0))}
+            </span>
+          </div>
+        )}
+        {showScenarios && (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-red-400">Pessimiste</span>
+            <span className="text-xs font-semibold text-red-400">
+              {fmt(Number(data.pessimistic ?? 0))}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /**
  * Graphique de prévision optimisé avec Recharts
  * Remplace le SVG custom par une solution performante et maintenue
@@ -82,61 +147,6 @@ function OptimizedForecastChartComponent({
     }).format(value);
   };
 
-  // Tooltip personnalisé
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: Record<string, string | number | null> }> }) => {
-    if (!active || !payload || !payload.length) return null;
-
-    const data = payload[0].payload;
-
-    return (
-      <div className="rounded-lg border border-white/10 bg-slate-900/95 p-3 shadow-xl backdrop-blur-sm">
-        <p className="mb-2 text-xs font-medium text-slate-400">{String(data.fullDate ?? '')}</p>
-        <div className="space-y-1">
-          {showScenarios && (
-            <>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-xs text-emerald-400">Optimiste</span>
-                <span className="text-xs font-semibold text-emerald-400">
-                  {formatCurrency(Number(data.optimistic ?? 0))}
-                </span>
-              </div>
-            </>
-          )}
-          {showConfidence && (
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-xs text-indigo-400">Borne sup.</span>
-              <span className="text-xs font-semibold text-indigo-400">
-                {formatCurrency(Number(data.upperBound ?? 0))}
-              </span>
-            </div>
-          )}
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-xs text-white">Prévu</span>
-            <span className="text-xs font-semibold text-white">
-              {formatCurrency(Number(data.predicted ?? 0))}
-            </span>
-          </div>
-          {showConfidence && (
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-xs text-indigo-400">Borne inf.</span>
-              <span className="text-xs font-semibold text-indigo-400">
-                {formatCurrency(Number(data.lowerBound ?? 0))}
-              </span>
-            </div>
-          )}
-          {showScenarios && (
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-xs text-red-400">Pessimiste</span>
-              <span className="text-xs font-semibold text-red-400">
-                {formatCurrency(Number(data.pessimistic ?? 0))}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart
@@ -167,7 +177,7 @@ function OptimizedForecastChartComponent({
         />
 
         {/* Tooltip */}
-        <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#6366f1", strokeWidth: 1 }} />
+        <Tooltip content={<ForecastTooltip currency={currency} showConfidence={showConfidence} showScenarios={showScenarios} />} cursor={{ stroke: "#6366f1", strokeWidth: 1 }} />
 
         {/* Légende */}
         <Legend

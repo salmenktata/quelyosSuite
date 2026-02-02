@@ -51,6 +51,7 @@ export interface FeatureFlagsState {
  * Définition de tous les feature flags de l'application.
  * Ajouter ici les nouveaux flags.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
   // UI/UX
   DARK_MODE: {
@@ -174,6 +175,7 @@ interface FeatureFlagsStore extends FeatureFlagsState {
   getFlagsByTag: (tag: string) => FeatureFlag[]
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFeatureFlags = create<FeatureFlagsStore>()(
   persist(
     (set, get) => ({
@@ -279,6 +281,7 @@ export const useFeatureFlags = create<FeatureFlagsStore>()(
 /**
  * Hook simple pour vérifier un flag
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useFeatureFlag(key: string): boolean {
   return useFeatureFlags((state) => state.isEnabled(key))
 }

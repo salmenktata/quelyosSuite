@@ -13,7 +13,7 @@ export function LoyaltyBadge() {
 
   useEffect(() => {
     fetchBalance();
-  }, []);
+  }, [fetchBalance]);
 
   if (!balance) {
     return null;

@@ -26,6 +26,7 @@ interface WrapperProps {
   children: React.ReactNode
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function AllProviders({ children }: WrapperProps) {
   const queryClient = createTestQueryClient()
 
@@ -51,5 +52,6 @@ export function renderWithProviders(
 }
 
 // Re-export everything from testing-library
+// eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react'
 export { renderWithProviders as render }

@@ -295,6 +295,7 @@ export default function POSCustomerDisplay() {
  * Hook pour contrôler le Customer Display depuis le terminal
  * Utilise postMessage pour communiquer avec l'écran client
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCustomerDisplay() {
   const [displayWindow, setDisplayWindow] = useState<Window | null>(null)
 

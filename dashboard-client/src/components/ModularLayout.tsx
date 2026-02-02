@@ -106,6 +106,7 @@ interface ModuleContextType {
 
 const ModuleContext = createContext<ModuleContextType | null>(null)
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useModule = () => {
   const context = useContext(ModuleContext)
   if (!context) throw new Error('useModule must be used within ModularLayout')

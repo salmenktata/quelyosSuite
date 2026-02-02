@@ -14,7 +14,6 @@ import {
   Sparkles,
   QrCode,
   ShoppingCart,
-  Building2,
   TrendingUp,
   Target,
   Truck,

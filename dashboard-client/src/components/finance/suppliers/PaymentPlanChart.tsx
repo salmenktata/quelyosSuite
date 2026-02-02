@@ -34,6 +34,22 @@ interface PaymentPlanChartProps {
   targetCashReserve: number;
 }
 
+function PaymentPlanTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+        <p className="font-semibold mb-2 text-gray-900 dark:text-white">{label}</p>
+        {payload.map((entry: { name: string; value: number; color: string }, index: number) => (
+          <p key={index} style={{ color: entry.color }} className="text-sm">
+            {entry.name}: {entry.value.toFixed(2)} €
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
 export default function PaymentPlanChart({
   plan,
   availableCash,
@@ -110,22 +126,6 @@ export default function PaymentPlanChart({
     return null;
   }
 
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-          <p className="font-semibold mb-2 text-gray-900 dark:text-white">{label}</p>
-          {payload.map((entry: { name: string; value: number; color: string }, index: number) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
-              {entry.name}: {entry.value.toFixed(2)} €
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="space-y-6">
       {/* Graphique combiné: Paiements (barres) + Solde (ligne) */}
@@ -146,7 +146,7 @@ export default function PaymentPlanChart({
               orientation="right"
               label={{ value: "Solde (€)", angle: 90, position: "insideRight" }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<PaymentPlanTooltip />} />
             <Legend />
 
             {/* Barres pour les paiements */}
@@ -206,7 +206,7 @@ export default function PaymentPlanChart({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis label={{ value: "Montant (€)", angle: -90, position: "insideLeft" }} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<PaymentPlanTooltip />} />
             <Legend />
 
             <Bar dataKey="penalties" name="Pénalités" fill="#ef4444" />
