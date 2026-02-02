@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -72,6 +72,7 @@ export default function BreakEvenReportPage() {
   });
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -83,7 +84,7 @@ export default function BreakEvenReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -100,14 +101,14 @@ export default function BreakEvenReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.breakeven} />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
@@ -118,11 +119,11 @@ export default function BreakEvenReportPage() {
               showDetails={true}
               reportId="breakeven"
             />
-          </motion.div>
+          </m.div>
         )}
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -181,11 +182,11 @@ export default function BreakEvenReportPage() {
               )}
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -196,12 +197,12 @@ export default function BreakEvenReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </Card>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -221,7 +222,7 @@ export default function BreakEvenReportPage() {
                 </button>
               </div>
             </Card>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
@@ -229,7 +230,7 @@ export default function BreakEvenReportPage() {
         <>
         {/* Warning if unclassified costs */}
         {apiData.warning && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
@@ -241,10 +242,10 @@ export default function BreakEvenReportPage() {
                 <p className="text-sm text-amber-100">{apiData.warning}</p>
               </div>
             </Card>
-          </motion.div>
+          </m.div>
         )}
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -321,10 +322,10 @@ export default function BreakEvenReportPage() {
               <Percent className="h-8 w-8 text-purple-300" />
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Break-even Status */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -357,11 +358,11 @@ export default function BreakEvenReportPage() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Historical Trend */}
         {!loading && !error && historyData && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
@@ -395,11 +396,11 @@ export default function BreakEvenReportPage() {
             defaultMonths={historyMonths as 3 | 6 | 12}
             onMonthsChange={(months) => setHistoryMonths(months)}
           />
-        </motion.div>
+        </m.div>
         )}
 
         {/* Cost Structure */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -437,10 +438,10 @@ export default function BreakEvenReportPage() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Break-even Formula */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -485,10 +486,10 @@ export default function BreakEvenReportPage() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Category Breakdown */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -535,11 +536,11 @@ export default function BreakEvenReportPage() {
               </div>
             )}
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Unclassified Costs */}
         {apiData.categoriesBreakdown?.unclassified && apiData.categoriesBreakdown.unclassified.length > 0 && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
@@ -566,11 +567,11 @@ export default function BreakEvenReportPage() {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Recommendations */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -602,10 +603,11 @@ export default function BreakEvenReportPage() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
         </>
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }

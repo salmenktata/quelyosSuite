@@ -252,5 +252,6 @@ export default function ReportingHubPage() {
         </m.div>
       </div>
     </Layout>
+    </LazyMotion>
   )
 }

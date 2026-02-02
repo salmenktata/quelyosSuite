@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -72,6 +72,7 @@ export default function DSOReportPage() {
   });
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -83,7 +84,7 @@ export default function DSOReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -100,14 +101,14 @@ export default function DSOReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.dso} />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
@@ -118,11 +119,11 @@ export default function DSOReportPage() {
               showDetails={true}
               reportId="dso"
             />
-          </motion.div>
+          </m.div>
         )}
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -181,11 +182,11 @@ export default function DSOReportPage() {
               )}
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -196,12 +197,12 @@ export default function DSOReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -220,13 +221,13 @@ export default function DSOReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
         {!loading && !error && apiData && (
         <>
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -297,10 +298,10 @@ export default function DSOReportPage() {
               <FileText className="h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
-        </motion.div>
+        </m.div>
 
         {/* Health Indicator */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -327,11 +328,11 @@ export default function DSOReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Historical Trend */}
         {!loading && !error && historyData && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
@@ -354,12 +355,12 @@ export default function DSOReportPage() {
             defaultMonths={historyMonths as 3 | 6 | 12}
             onMonthsChange={(months) => setHistoryMonths(months)}
           />
-        </motion.div>
+        </m.div>
         )}
 
         {/* Top Customers by Receivables */}
         {!loading && !error && apiData && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -404,12 +405,12 @@ export default function DSOReportPage() {
               </div>
             )}
           </GlassPanel>
-        </motion.div>
+        </m.div>
         )}
 
         {/* Invoice Status Breakdown */}
         {!loading && !error && apiData && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -440,11 +441,11 @@ export default function DSOReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
         )}
 
         {/* Recommendations */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -476,10 +477,11 @@ export default function DSOReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
         </>
         )}
       </div>
     </Layout>
+    </LazyMotion>
   )
 }
