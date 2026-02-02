@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { Plus, Sparkles, Activity, TrendingUp, Loader2, CheckCircle2, XCircle, Settings, Trash2, TestTube, Save, X } from 'lucide-react'
+import { Plus, Sparkles, Activity, TrendingUp, Loader2, CheckCircle2, XCircle, Settings, Trash2, TestTube, Save, X, RotateCcw } from 'lucide-react'
 import { config } from '../lib/config'
 
 interface AiProvider {
@@ -56,6 +56,7 @@ export function AiConfig() {
   const [activeTab, setActiveTab] = useState<'providers' | 'metrics'>('providers')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState<AiProvider | null>(null)
+  const [seeding, setSeeding] = useState(false)
 
   useEffect(() => {
     loadProviders()
@@ -102,6 +103,26 @@ export function AiConfig() {
     }
   }
 
+  const handleSeedDefaults = async () => {
+    setSeeding(true)
+    try {
+      const response = await fetch(`${config.apiUrl}/api/super-admin/ai/seed-defaults`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const data = await response.json()
+      if (!data.success) throw new Error(data.error)
+      alert(`Configuration par défaut appliquée : ${data.created} créés, ${data.updated} mis à jour`)
+      await loadProviders()
+      await loadMetrics()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Erreur initialisation')
+    } finally {
+      setSeeding(false)
+    }
+  }
+
   const handleDelete = async (providerId: number) => {
     if (!confirm('Supprimer ce provider ?')) return
 
@@ -136,16 +157,27 @@ export function AiConfig() {
               Gérez les providers IA utilisés pour le chat assistant Quelyos
             </p>
           </div>
-          <button
-            onClick={() => {
-              setSelectedProvider(null)
-              setIsModalOpen(true)
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Ajouter un Provider
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSeedDefaults}
+              disabled={seeding}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              title="Insérer ou actualiser les providers par défaut (Groq principal, Groq fallback, Claude premium)"
+            >
+              {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+              Config par défaut
+            </button>
+            <button
+              onClick={() => {
+                setSelectedProvider(null)
+                setIsModalOpen(true)
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Ajouter un Provider
+            </button>
+          </div>
         </div>
       </div>
 
@@ -358,7 +390,7 @@ function ProviderCard({
 }
 
 // Metric Card Component
-function MetricCard({ title, value, icon: Icon, color }: { title: string; value: string; icon: any; color: string }) {
+function MetricCard({ title, value, icon: Icon, color }: { title: string; value: string; icon: React.ComponentType<{ className?: string }>; color: string }) {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-2">
