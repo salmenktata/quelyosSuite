@@ -831,7 +831,7 @@ class StoreExtendedController(BaseController):
             ticket = request.env['quelyos.ticket'].sudo().browse(ticket_id)
             if ticket.exists():
                 data = ticket.to_dict()
-                data['messages'] = [m.to_dict() for m in ticket.message_ids]
+                data['messages'] = [m.to_dict() for m in ticket.ticket_message_ids]
                 return {'success': True, 'ticket': data}
             return {'success': False, 'error': 'Ticket not found'}
         except Exception as e:

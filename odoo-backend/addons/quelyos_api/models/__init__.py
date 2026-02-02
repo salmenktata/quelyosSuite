@@ -15,6 +15,7 @@ from . import stock_reservation
 from . import sale_order
 from . import subscription_quota_mixin
 from . import subscription_plan
+from . import subscription_item
 from . import subscription
 from . import tenant
 from . import theme_preset

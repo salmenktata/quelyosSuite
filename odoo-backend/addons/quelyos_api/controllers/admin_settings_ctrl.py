@@ -72,26 +72,39 @@ class AdminSettingsController(SuperAdminController):
 
             Plan = request.env['quelyos.subscription.plan'].sudo()
 
-            # Vérifier doublon code
-            existing = Plan.search([('code', '=', data.get('code'))], limit=1)
+            # Vérifier doublon code + plan_type
+            existing = Plan.search([
+                ('code', '=', data.get('code')),
+                ('plan_type', '=', data.get('plan_type', 'module')),
+            ], limit=1)
             if existing:
                 return request.make_json_response(
-                    {'success': False, 'error': 'Code plan déjà utilisé'},
+                    {'success': False, 'error': 'Code plan déjà utilisé pour ce type'},
                     headers=cors_headers,
                     status=409
                 )
 
             features = data.get('features', {})
+            plan_type = data.get('plan_type', 'module')
             create_vals = {
                 'code': data.get('code'),
                 'name': data.get('name'),
                 'description': data.get('description'),
+                'plan_type': plan_type,
                 'price_monthly': data.get('price_monthly', 0),
                 'price_yearly': data.get('price_yearly', 0),
                 'max_users': data.get('max_users', 5),
                 'max_products': data.get('max_products', 100),
                 'max_orders_per_year': data.get('max_orders_per_year', 1000),
                 'trial_days': data.get('trial_days', 14),
+                'original_price': data.get('original_price', 0),
+                'badge_text': data.get('badge_text') or False,
+                'cta_text': data.get('cta_text', 'Essai gratuit 30 jours'),
+                'cta_href': data.get('cta_href', '/register'),
+                'yearly_discount_pct': data.get('yearly_discount_pct', 20),
+                'features_marketing': json.dumps(data.get('features_marketing', [])),
+                'icon_name': data.get('icon_name', 'Layers'),
+                'color_theme': data.get('color_theme', 'emerald'),
                 'feature_wishlist': features.get('wishlist_enabled', False),
                 'feature_reviews': features.get('reviews_enabled', False),
                 'feature_newsletter': features.get('newsletter_enabled', False),
@@ -103,6 +116,22 @@ class AdminSettingsController(SuperAdminController):
                 'active': True,
                 'is_default': data.get('is_default', False),
             }
+
+            # Champs modulaires selon le type de plan
+            if plan_type == 'module':
+                create_vals['module_key'] = data.get('module_key') or False
+                create_vals['limit_name'] = data.get('limit_name') or False
+                create_vals['limit_included'] = data.get('limit_included', 0)
+                create_vals['surplus_price'] = data.get('surplus_price', 0)
+                create_vals['surplus_unit'] = data.get('surplus_unit', 500)
+
+            if plan_type == 'user_pack':
+                create_vals['pack_size'] = data.get('pack_size', 5)
+
+            if plan_type == 'solution':
+                create_vals['solution_slug'] = data.get('solution_slug') or False
+                solution_modules = data.get('solution_modules', [])
+                create_vals['solution_modules'] = json.dumps(solution_modules) if isinstance(solution_modules, list) else solution_modules or '[]'
 
             # Gérer les groupes de sécurité
             if 'group_ids' in data:
@@ -163,15 +192,24 @@ class AdminSettingsController(SuperAdminController):
                 )
 
             features = data.get('features', {})
+            plan_type = data.get('plan_type', plan.plan_type)
             update_vals = {
                 'name': data.get('name', plan.name),
                 'description': data.get('description', plan.description),
+                'plan_type': plan_type,
                 'price_monthly': data.get('price_monthly', plan.price_monthly),
                 'price_yearly': data.get('price_yearly', plan.price_yearly),
                 'max_users': data.get('max_users', plan.max_users),
                 'max_products': data.get('max_products', plan.max_products),
                 'max_orders_per_year': data.get('max_orders_per_year', plan.max_orders_per_year),
                 'trial_days': data.get('trial_days', plan.trial_days),
+                'original_price': data.get('original_price', plan.original_price),
+                'badge_text': data.get('badge_text', plan.badge_text) or False,
+                'cta_text': data.get('cta_text', plan.cta_text),
+                'cta_href': data.get('cta_href', plan.cta_href),
+                'yearly_discount_pct': data.get('yearly_discount_pct', plan.yearly_discount_pct),
+                'icon_name': data.get('icon_name', plan.icon_name),
+                'color_theme': data.get('color_theme', plan.color_theme),
                 'feature_wishlist': features.get('wishlist_enabled', plan.feature_wishlist),
                 'feature_reviews': features.get('reviews_enabled', plan.feature_reviews),
                 'feature_newsletter': features.get('newsletter_enabled', plan.feature_newsletter),
@@ -182,6 +220,27 @@ class AdminSettingsController(SuperAdminController):
                 'feature_custom_domain': features.get('custom_domain', plan.feature_custom_domain),
                 'is_default': data.get('is_default', plan.is_default),
             }
+
+            # Champs modulaires selon le type de plan
+            if plan_type == 'module':
+                update_vals['module_key'] = data.get('module_key', plan.module_key) or False
+                update_vals['limit_name'] = data.get('limit_name', plan.limit_name) or False
+                update_vals['limit_included'] = data.get('limit_included', plan.limit_included)
+                update_vals['surplus_price'] = data.get('surplus_price', plan.surplus_price)
+                update_vals['surplus_unit'] = data.get('surplus_unit', plan.surplus_unit)
+
+            if plan_type == 'user_pack':
+                update_vals['pack_size'] = data.get('pack_size', plan.pack_size)
+
+            if plan_type == 'solution':
+                update_vals['solution_slug'] = data.get('solution_slug', plan.solution_slug) or False
+                if 'solution_modules' in data:
+                    solution_modules = data['solution_modules']
+                    update_vals['solution_modules'] = json.dumps(solution_modules) if isinstance(solution_modules, list) else solution_modules or '[]'
+
+            # features_marketing : seulement si fourni
+            if 'features_marketing' in data:
+                update_vals['features_marketing'] = json.dumps(data['features_marketing'])
 
             # Gérer les groupes de sécurité
             if 'group_ids' in data:
@@ -255,7 +314,7 @@ class AdminSettingsController(SuperAdminController):
             )
 
     def _serialize_plan(self, plan):
-        """Sérialise un plan pour l'API"""
+        """Sérialise un plan pour l'API super-admin"""
         # Compter les subscribers
         Subscription = request.env['quelyos.subscription'].sudo()
         subscribers_count = Subscription.search_count([
@@ -263,17 +322,31 @@ class AdminSettingsController(SuperAdminController):
             ('state', 'in', ['active', 'trial'])
         ])
 
-        return {
+        try:
+            features_marketing = json.loads(plan.features_marketing or '[]')
+        except (json.JSONDecodeError, TypeError):
+            features_marketing = []
+
+        result = {
             'id': plan.id,
             'code': plan.code,
             'name': plan.name,
             'description': plan.description or '',
+            'plan_type': plan.plan_type or 'module',
             'price_monthly': plan.price_monthly,
             'price_yearly': plan.price_yearly or plan.price_monthly * 12 * 0.8,
             'max_users': plan.max_users,
             'max_products': plan.max_products,
             'max_orders_per_year': plan.max_orders_per_year,
             'trial_days': plan.trial_days,
+            'original_price': plan.original_price or 0,
+            'badge_text': plan.badge_text or '',
+            'cta_text': plan.cta_text or 'Essai gratuit 30 jours',
+            'cta_href': plan.cta_href or '/register',
+            'yearly_discount_pct': plan.yearly_discount_pct or 20,
+            'features_marketing': features_marketing,
+            'icon_name': plan.icon_name or 'Layers',
+            'color_theme': plan.color_theme or 'emerald',
             'enabled_modules': plan.get_enabled_modules_list(),
             'features': {
                 'wishlist_enabled': getattr(plan, 'feature_wishlist', False),
@@ -291,7 +364,25 @@ class AdminSettingsController(SuperAdminController):
             'is_default': plan.is_default,
             'subscribers_count': subscribers_count,
             'created_at': plan.create_date.isoformat() if plan.create_date else None,
+            # Nouveaux champs modulaires
+            'module_key': plan.module_key or None,
+            'limit_name': plan.limit_name or None,
+            'limit_included': plan.limit_included,
+            'surplus_price': plan.surplus_price,
+            'surplus_unit': plan.surplus_unit,
+            'users_included': plan.users_included,
+            'pack_size': plan.pack_size,
+            'solution_slug': plan.solution_slug or None,
         }
+
+        # Modules inclus pour solutions métier
+        if plan.plan_type == 'solution':
+            try:
+                result['solution_modules'] = json.loads(plan.solution_modules or '[]')
+            except (json.JSONDecodeError, TypeError):
+                result['solution_modules'] = []
+
+        return result
 
     @http.route('/api/super-admin/users', type='http', auth='public',
                 methods=['GET', 'OPTIONS'], csrf=False)
@@ -315,10 +406,8 @@ class AdminSettingsController(SuperAdminController):
 
         try:
             # Récupérer tous les utilisateurs avec groupe system (super admins)
-            users = request.env['res.users'].sudo().search([
-                ('groups_id', 'in', request.env.ref('base.group_system').id),
-                ('active', '=', True)
-            ], order='name')
+            group = request.env.ref('base.group_system')
+            users = group.sudo().user_ids.filtered(lambda u: u.active).sorted('name')
 
             return request.make_json_response({
                 'success': True,

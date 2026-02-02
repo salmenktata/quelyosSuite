@@ -89,7 +89,7 @@ class SupportTicket(models.Model):
     )
 
     # Messages/Réponses
-    message_ids = fields.One2many(
+    ticket_message_ids = fields.One2many(
         'quelyos.ticket.message',
         'ticket_id',
         string='Messages'
@@ -205,10 +205,10 @@ class SupportTicket(models.Model):
 
         return tickets
 
-    @api.depends('message_ids')
+    @api.depends('ticket_message_ids')
     def _compute_message_count(self):
         for ticket in self:
-            ticket.message_count = len(ticket.message_ids)
+            ticket.message_count = len(ticket.ticket_message_ids)
 
     @api.depends('child_ticket_ids')
     def _compute_child_ticket_count(self):
@@ -222,7 +222,7 @@ class SupportTicket(models.Model):
         for ticket in self:
             ticket.has_parent = bool(ticket.parent_ticket_id)
 
-    @api.depends('create_date', 'message_ids', 'resolution_date')
+    @api.depends('create_date', 'ticket_message_ids', 'resolution_date')
     def _compute_times(self):
         for ticket in self:
             ticket.response_time = 0
@@ -230,7 +230,7 @@ class SupportTicket(models.Model):
 
             if ticket.create_date:
                 # Temps première réponse (premier message staff)
-                staff_messages = ticket.message_ids.filtered(lambda m: m.is_staff)
+                staff_messages = ticket.ticket_message_ids.filtered(lambda m: m.is_staff)
                 if staff_messages:
                     first_response = min(staff_messages, key=lambda m: m.create_date)
                     delta = first_response.create_date - ticket.create_date
@@ -269,7 +269,7 @@ class SupportTicket(models.Model):
                 ticket.sla_first_response_deadline = False
                 ticket.sla_resolution_deadline = False
 
-    @api.depends('response_time', 'resolution_time', 'sla_policy_id', 'sla_first_response_deadline', 'sla_resolution_deadline', 'message_ids', 'state')
+    @api.depends('response_time', 'resolution_time', 'sla_policy_id', 'sla_first_response_deadline', 'sla_resolution_deadline', 'ticket_message_ids', 'state')
     def _compute_sla_status(self):
         """Calcule le statut SLA (ok/warning/breached)"""
         from datetime import datetime, timezone

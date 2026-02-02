@@ -52,7 +52,7 @@ class TestTenantIsolation(TransactionCase):
             'email': 'user_a@tenant-a.com',
             'company_id': cls.company_a.id,
             'company_ids': [(6, 0, [cls.company_a.id])],
-            'groups_id': [(6, 0, [cls.env.ref('base.group_user').id])],
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id])],
         })
 
         # Créer User B (appartenant à Company B)
@@ -62,7 +62,7 @@ class TestTenantIsolation(TransactionCase):
             'email': 'user_b@tenant-b.com',
             'company_id': cls.company_b.id,
             'company_ids': [(6, 0, [cls.company_b.id])],
-            'groups_id': [(6, 0, [cls.env.ref('base.group_user').id])],
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id])],
         })
 
         # Forcer le calcul de tenant_id sur les utilisateurs
@@ -326,7 +326,7 @@ class TestSuperAdminAccess(TransactionCase):
             'email': 'superadmin@quelyos.com',
             'company_id': cls.company_a.id,
             'company_ids': [(6, 0, [cls.company_a.id, cls.company_b.id])],
-            'groups_id': [(6, 0, [
+            'group_ids': [(6, 0, [
                 cls.env.ref('base.group_system').id,
                 cls.env.ref('base.group_user').id,
             ])],

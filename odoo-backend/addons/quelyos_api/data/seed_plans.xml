@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SYSTÈME MODULAIRE UNIFIÉ — Quelyos Suite
+             4 types : module, solution, user_pack, enterprise
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- ─── Modules additionnels ────────────────────────────────── -->
+
+        <!-- Finance — 9€/mois -->
+        <record id="plan_mod_finance" model="quelyos.subscription.plan">
+            <field name="name">Finance</field>
+            <field name="code">mod_finance</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">finance</field>
+            <field name="price_monthly">9.0</field>
+            <field name="price_yearly">84.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Trésorerie, budgets, prévisions IA, export FEC</field>
+            <field name="display_order">10</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Wallet</field>
+            <field name="color_theme">emerald</field>
+            <field name="limit_name">transactions_per_month</field>
+            <field name="limit_included">500</field>
+            <field name="surplus_price">3.0</field>
+            <field name="surplus_unit">500</field>
+            <field name="features_marketing">["Trésorerie temps réel", "Budgets intelligents", "Prévisions IA 12 mois", "Export FEC comptable", "Rapports avancés"]</field>
+            <field name="features">["Trésorerie", "Budgets", "IA 12 mois", "FEC"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_finance_user')
+            ])]"/>
+        </record>
+
+        <!-- Boutique (E-commerce) — 19€/mois -->
+        <record id="plan_mod_store" model="quelyos.subscription.plan">
+            <field name="name">Boutique</field>
+            <field name="code">mod_store</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">store</field>
+            <field name="price_monthly">19.0</field>
+            <field name="price_yearly">180.0</field>
+            <field name="yearly_discount_pct">21</field>
+            <field name="max_users">0</field>
+            <field name="max_products">500</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Catalogue, commandes, promotions, thèmes</field>
+            <field name="display_order">20</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Store</field>
+            <field name="color_theme">indigo</field>
+            <field name="limit_name">products</field>
+            <field name="limit_included">500</field>
+            <field name="surplus_price">5.0</field>
+            <field name="surplus_unit">500</field>
+            <field name="features_marketing">["Catalogue produits", "Gestion commandes", "Promotions &amp; coupons", "Thèmes personnalisables", "Multi-devises"]</field>
+            <field name="features">["Catalogue", "Commandes", "Promos", "Thèmes"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_store_user')
+            ])]"/>
+        </record>
+
+        <!-- Stock — 9€/mois -->
+        <record id="plan_mod_stock" model="quelyos.subscription.plan">
+            <field name="name">Stock</field>
+            <field name="code">mod_stock</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">stock</field>
+            <field name="price_monthly">9.0</field>
+            <field name="price_yearly">84.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Inventaire, mouvements, valorisation</field>
+            <field name="display_order">30</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Package</field>
+            <field name="color_theme">emerald</field>
+            <field name="features_marketing">["Inventaire temps réel", "Mouvements de stock", "Valorisation FIFO/LIFO", "Alertes seuils", "Multi-entrepôts"]</field>
+            <field name="features">["Inventaire", "Mouvements", "Valorisation", "Alertes"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_stock_user')
+            ])]"/>
+        </record>
+
+        <!-- CRM — 12€/mois -->
+        <record id="plan_mod_crm" model="quelyos.subscription.plan">
+            <field name="name">CRM</field>
+            <field name="code">mod_crm</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">crm</field>
+            <field name="price_monthly">12.0</field>
+            <field name="price_yearly">108.0</field>
+            <field name="yearly_discount_pct">25</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Pipeline, opportunités, facturation</field>
+            <field name="display_order">40</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Users</field>
+            <field name="color_theme">indigo</field>
+            <field name="limit_name">contacts</field>
+            <field name="limit_included">1000</field>
+            <field name="surplus_price">3.0</field>
+            <field name="surplus_unit">1000</field>
+            <field name="features_marketing">["Pipeline commercial", "Gestion opportunités", "Facturation intégrée", "Suivi activités", "Rapports ventes"]</field>
+            <field name="features">["Pipeline", "Opportunités", "Facturation", "Rapports"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_crm_user')
+            ])]"/>
+        </record>
+
+        <!-- Marketing — 9€/mois -->
+        <record id="plan_mod_marketing" model="quelyos.subscription.plan">
+            <field name="name">Marketing</field>
+            <field name="code">mod_marketing</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">marketing</field>
+            <field name="price_monthly">9.0</field>
+            <field name="price_yearly">84.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Campagnes email/SMS, listes de diffusion</field>
+            <field name="display_order">50</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Megaphone</field>
+            <field name="color_theme">violet</field>
+            <field name="features_marketing">["Campagnes email", "Campagnes SMS", "Listes de diffusion", "Templates email", "Analytics campagnes"]</field>
+            <field name="features">["Emails", "SMS", "Listes", "Analytics"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_marketing_user')
+            ])]"/>
+        </record>
+
+        <!-- RH — 12€/mois -->
+        <record id="plan_mod_hr" model="quelyos.subscription.plan">
+            <field name="name">RH</field>
+            <field name="code">mod_hr</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">hr</field>
+            <field name="price_monthly">12.0</field>
+            <field name="price_yearly">108.0</field>
+            <field name="yearly_discount_pct">25</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Employés, congés, contrats, compétences</field>
+            <field name="display_order">60</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">UserCheck</field>
+            <field name="color_theme">indigo</field>
+            <field name="limit_name">employees</field>
+            <field name="limit_included">25</field>
+            <field name="surplus_price">5.0</field>
+            <field name="surplus_unit">25</field>
+            <field name="features_marketing">["Gestion employés", "Congés &amp; absences", "Contrats", "Compétences &amp; formations", "Tableau de bord RH"]</field>
+            <field name="features">["Employés", "Congés", "Contrats", "Compétences"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_hr_user')
+            ])]"/>
+        </record>
+
+        <!-- Support — 5€/mois -->
+        <record id="plan_mod_support" model="quelyos.subscription.plan">
+            <field name="name">Support</field>
+            <field name="code">mod_support</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">support</field>
+            <field name="price_monthly">5.0</field>
+            <field name="price_yearly">48.0</field>
+            <field name="yearly_discount_pct">20</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Tickets, FAQ, satisfaction client</field>
+            <field name="display_order">70</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">HeadphonesIcon</field>
+            <field name="color_theme">emerald</field>
+            <field name="limit_name">tickets_per_month</field>
+            <field name="limit_included">50</field>
+            <field name="surplus_price">2.0</field>
+            <field name="surplus_unit">50</field>
+            <field name="features_marketing">["Système de tickets", "FAQ intégrée", "SLA automatiques", "Satisfaction client", "Base de connaissances"]</field>
+            <field name="features">["Tickets", "FAQ", "SLA", "Satisfaction"]</field>
+        </record>
+
+        <!-- Point de Vente — 15€/mois -->
+        <record id="plan_mod_pos" model="quelyos.subscription.plan">
+            <field name="name">Point de Vente</field>
+            <field name="code">mod_pos</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">pos</field>
+            <field name="price_monthly">15.0</field>
+            <field name="price_yearly">144.0</field>
+            <field name="yearly_discount_pct">20</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Terminal, kiosk, cuisine, analytics</field>
+            <field name="display_order">80</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Monitor</field>
+            <field name="color_theme">violet</field>
+            <field name="features_marketing">["Terminal de vente", "Mode kiosque", "Écran cuisine", "Analytics POS", "Multi-caisses"]</field>
+            <field name="features">["Terminal", "Kiosque", "Cuisine", "Analytics"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_pos_user')
+            ])]"/>
+        </record>
+
+        <!-- GMAO — 9€/mois -->
+        <record id="plan_mod_maintenance" model="quelyos.subscription.plan">
+            <field name="name">GMAO</field>
+            <field name="code">mod_maintenance</field>
+            <field name="plan_type">module</field>
+            <field name="module_key">maintenance</field>
+            <field name="price_monthly">9.0</field>
+            <field name="price_yearly">84.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">Maintenance équipements, planning préventif</field>
+            <field name="display_order">90</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">Wrench</field>
+            <field name="color_theme">emerald</field>
+            <field name="limit_name">equipments</field>
+            <field name="limit_included">50</field>
+            <field name="surplus_price">3.0</field>
+            <field name="surplus_unit">50</field>
+            <field name="features_marketing">["Gestion équipements", "Planning préventif", "Historique interventions", "Indicateurs MTBF/MTTR", "Alertes maintenance"]</field>
+            <field name="features">["Équipements", "Préventif", "Historique", "KPI"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_maintenance_user')
+            ])]"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SOLUTIONS MÉTIER — Packs sectoriels (prix réduit vs modules individuels)
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Quelyos Resto — 39€/mois (vs 54€ en modules séparés = -28%) -->
+        <record id="plan_sol_restaurant" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Resto</field>
+            <field name="code">sol_restaurant</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">restaurant</field>
+            <field name="solution_modules">["pos", "stock", "finance", "crm", "marketing"]</field>
+            <field name="price_monthly">39.0</field>
+            <field name="price_yearly">360.0</field>
+            <field name="yearly_discount_pct">23</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">POS + Stock + Finance + CRM + Marketing pour restaurateurs</field>
+            <field name="display_order">110</field>
+            <field name="active" eval="True"/>
+            <field name="is_popular" eval="True"/>
+            <field name="badge_text">-28% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/restaurant</field>
+            <field name="icon_name">ChefHat</field>
+            <field name="color_theme">amber</field>
+            <field name="features_marketing">["Terminal de vente", "Gestion stock ingrédients", "Trésorerie temps réel", "Réservations clients", "Campagnes marketing"]</field>
+            <field name="features">["POS", "Stock", "Finance", "CRM", "Marketing"]</field>
+        </record>
+
+        <!-- Quelyos Commerce — 45€/mois (vs 61€ = -26%) -->
+        <record id="plan_sol_commerce" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Commerce</field>
+            <field name="code">sol_commerce</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">commerce</field>
+            <field name="solution_modules">["pos", "stock", "store", "finance", "marketing"]</field>
+            <field name="price_monthly">45.0</field>
+            <field name="price_yearly">420.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">POS + Stock + E-commerce + Finance + Marketing pour commerçants</field>
+            <field name="display_order">111</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-26% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/commerce</field>
+            <field name="icon_name">ShoppingBag</field>
+            <field name="color_theme">indigo</field>
+            <field name="features_marketing">["Point de vente", "Gestion stock", "Boutique en ligne", "Trésorerie", "Campagnes promotionnelles"]</field>
+            <field name="features">["POS", "Stock", "Store", "Finance", "Marketing"]</field>
+        </record>
+
+        <!-- Quelyos E-commerce — 42€/mois (vs 58€ = -28%) -->
+        <record id="plan_sol_ecommerce" model="quelyos.subscription.plan">
+            <field name="name">Quelyos E-commerce</field>
+            <field name="code">sol_ecommerce</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">ecommerce</field>
+            <field name="solution_modules">["store", "stock", "finance", "marketing", "crm"]</field>
+            <field name="price_monthly">42.0</field>
+            <field name="price_yearly">396.0</field>
+            <field name="yearly_discount_pct">21</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">Boutique + Stock + Finance + Marketing + CRM pour e-commerçants</field>
+            <field name="display_order">112</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-28% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/ecommerce</field>
+            <field name="icon_name">Globe</field>
+            <field name="color_theme">violet</field>
+            <field name="features_marketing">["Boutique en ligne", "Gestion stock", "Trésorerie", "Email marketing", "Gestion clients"]</field>
+            <field name="features">["Store", "Stock", "Finance", "Marketing", "CRM"]</field>
+        </record>
+
+        <!-- Quelyos Services — 29€/mois (vs 42€ = -31%) -->
+        <record id="plan_sol_services" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Services</field>
+            <field name="code">sol_services</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">services</field>
+            <field name="solution_modules">["crm", "finance", "hr", "marketing"]</field>
+            <field name="price_monthly">29.0</field>
+            <field name="price_yearly">276.0</field>
+            <field name="yearly_discount_pct">21</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">CRM + Finance + RH + Marketing pour prestataires B2B</field>
+            <field name="display_order">113</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-31% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/services</field>
+            <field name="icon_name">Briefcase</field>
+            <field name="color_theme">indigo</field>
+            <field name="features_marketing">["Pipeline commercial", "Facturation", "Gestion RH", "Campagnes marketing"]</field>
+            <field name="features">["CRM", "Finance", "HR", "Marketing"]</field>
+        </record>
+
+        <!-- Quelyos Santé — 19€/mois (vs 30€ = -37%) -->
+        <record id="plan_sol_sante" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Santé</field>
+            <field name="code">sol_sante</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">sante</field>
+            <field name="solution_modules">["crm", "finance", "marketing"]</field>
+            <field name="price_monthly">19.0</field>
+            <field name="price_yearly">180.0</field>
+            <field name="yearly_discount_pct">21</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">CRM + Finance + Marketing pour professionnels de santé</field>
+            <field name="display_order">114</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-37% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/sante</field>
+            <field name="icon_name">Heart</field>
+            <field name="color_theme">emerald</field>
+            <field name="features_marketing">["Gestion patients/clients", "Trésorerie", "Communication patients"]</field>
+            <field name="features">["CRM", "Finance", "Marketing"]</field>
+        </record>
+
+        <!-- Quelyos BTP — 29€/mois (vs 42€ = -31%) -->
+        <record id="plan_sol_btp" model="quelyos.subscription.plan">
+            <field name="name">Quelyos BTP</field>
+            <field name="code">sol_btp</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">btp</field>
+            <field name="solution_modules">["crm", "stock", "finance", "hr"]</field>
+            <field name="price_monthly">29.0</field>
+            <field name="price_yearly">276.0</field>
+            <field name="yearly_discount_pct">21</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">CRM + Stock + Finance + RH pour BTP et artisans</field>
+            <field name="display_order">115</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-31% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/btp</field>
+            <field name="icon_name">HardHat</field>
+            <field name="color_theme">amber</field>
+            <field name="features_marketing">["Devis &amp; chantiers", "Gestion matériaux", "Trésorerie", "Gestion équipes"]</field>
+            <field name="features">["CRM", "Stock", "Finance", "HR"]</field>
+        </record>
+
+        <!-- Quelyos Hôtellerie — 32€/mois (vs 45€ = -29%) -->
+        <record id="plan_sol_hotellerie" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Hôtellerie</field>
+            <field name="code">sol_hotellerie</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">hotellerie</field>
+            <field name="solution_modules">["crm", "pos", "finance", "marketing"]</field>
+            <field name="price_monthly">32.0</field>
+            <field name="price_yearly">300.0</field>
+            <field name="yearly_discount_pct">22</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_chat_24h</field>
+            <field name="description">CRM + POS + Finance + Marketing pour hôteliers</field>
+            <field name="display_order">116</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-29% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/hotellerie</field>
+            <field name="icon_name">Building</field>
+            <field name="color_theme">violet</field>
+            <field name="features_marketing">["Réservations", "Point de vente bar/resto", "Trésorerie", "Marketing clients"]</field>
+            <field name="features">["CRM", "POS", "Finance", "Marketing"]</field>
+        </record>
+
+        <!-- Quelyos Associations — 15€/mois (vs 30€ = -50%) -->
+        <record id="plan_sol_associations" model="quelyos.subscription.plan">
+            <field name="name">Quelyos Associations</field>
+            <field name="code">sol_associations</field>
+            <field name="plan_type">solution</field>
+            <field name="solution_slug">associations</field>
+            <field name="solution_modules">["crm", "finance", "marketing"]</field>
+            <field name="price_monthly">15.0</field>
+            <field name="price_yearly">144.0</field>
+            <field name="yearly_discount_pct">20</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">CRM + Finance + Marketing pour associations</field>
+            <field name="display_order">117</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">-50% vs modules</field>
+            <field name="cta_text">Essai gratuit 30 jours</field>
+            <field name="cta_href">/solutions/associations</field>
+            <field name="icon_name">HandHeart</field>
+            <field name="color_theme">emerald</field>
+            <field name="features_marketing">["Gestion membres", "Trésorerie associative", "Communication adhérents"]</field>
+            <field name="features">["CRM", "Finance", "Marketing"]</field>
+        </record>
+
+        <!-- ─── Pack utilisateurs (+5 users) ────────────────────────── -->
+        <record id="plan_user_pack_5" model="quelyos.subscription.plan">
+            <field name="name">Pack +5 utilisateurs</field>
+            <field name="code">user_pack_5</field>
+            <field name="plan_type">user_pack</field>
+            <field name="price_monthly">15.0</field>
+            <field name="price_yearly">144.0</field>
+            <field name="yearly_discount_pct">20</field>
+            <field name="pack_size">5</field>
+            <field name="max_users">5</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">0</field>
+            <field name="support_level">email_48h</field>
+            <field name="description">5 utilisateurs supplémentaires</field>
+            <field name="display_order">100</field>
+            <field name="active" eval="True"/>
+            <field name="icon_name">UsersRound</field>
+            <field name="color_theme">emerald</field>
+            <field name="features_marketing">["5 utilisateurs supplémentaires", "Mêmes droits que les utilisateurs inclus", "Cumulable plusieurs fois"]</field>
+            <field name="features">["5 users", "Droits complets", "Cumulable"]</field>
+        </record>
+
+        <!-- ─── Enterprise (sur devis) ──────────────────────────────── -->
+        <record id="plan_enterprise_modular" model="quelyos.subscription.plan">
+            <field name="name">Enterprise</field>
+            <field name="code">enterprise</field>
+            <field name="plan_type">enterprise</field>
+            <field name="price_monthly">0.0</field>
+            <field name="price_yearly">0.0</field>
+            <field name="yearly_discount_pct">0</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">0</field>
+            <field name="support_level">dedicated_2h</field>
+            <field name="description">Utilisateurs illimités, tous modules, SLA 99.9%</field>
+            <field name="display_order">200</field>
+            <field name="active" eval="True"/>
+            <field name="badge_text">Instance dédiée</field>
+            <field name="cta_text">Contacter commercial</field>
+            <field name="cta_href">/contact</field>
+            <field name="icon_name">Crown</field>
+            <field name="color_theme">amber</field>
+            <field name="features_marketing">["Utilisateurs illimités", "Tous les modules inclus", "Limites personnalisées", "SLA garanti 99.9%", "Account manager dédié", "Support téléphonique 24/7", "Intégrations sur mesure"]</field>
+            <field name="features">["Illimité", "Tous modules", "SLA 99.9%", "Account manager", "Support 24/7"]</field>
+            <field name="group_ids" eval="[(6, 0, [
+                ref('group_quelyos_home_manager'),
+                ref('group_quelyos_store_manager'),
+                ref('group_quelyos_stock_manager'),
+                ref('group_quelyos_crm_manager'),
+                ref('group_quelyos_marketing_manager'),
+                ref('group_quelyos_finance_manager'),
+                ref('group_quelyos_hr_manager'),
+                ref('group_quelyos_pos_manager'),
+                ref('group_quelyos_maintenance_manager')
+            ])]"/>
+        </record>
+
+    </data>
+</odoo>

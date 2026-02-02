@@ -1310,37 +1310,222 @@ class AdminSecurityController(SuperAdminController):
 
         try:
             Groups = request.env['res.groups'].sudo()
-            # Récupérer tous les groupes triés par nom
             groups = Groups.search([], order='name')
 
-            # Exclure certains groupes système trop techniques
             excluded_names = ['Portal', 'Public', 'Anonymous']
+
+            # Récupérer les plans pour la matrice groupes↔plans
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            plans = Plan.search([('active', '=', True)], order='sequence, id')
+
+            # Construire un index plan_ids par group_id
+            group_plan_map = {}
+            for plan in plans:
+                for g in plan.group_ids:
+                    if g.id not in group_plan_map:
+                        group_plan_map[g.id] = []
+                    group_plan_map[g.id].append({
+                        'id': plan.id,
+                        'code': plan.code,
+                        'name': plan.name,
+                    })
+
+            # Filtrer uniquement les groupes Quelyos si paramètre quelyos_only
+            quelyos_only = request.httprequest.args.get('quelyos_only', 'false') == 'true'
 
             result_groups = []
             for g in groups:
                 full_name = g.full_name or g.name
-                # Ignorer les groupes Portal/Public/Anonymous
                 if any(excl in full_name for excl in excluded_names):
                     continue
-                # Extraire la catégorie depuis full_name (format: "Module / Group")
+
+                is_quelyos = 'quelyos' in full_name.lower() or 'quelyos' in g.name.lower()
+                if quelyos_only and not is_quelyos:
+                    continue
+
                 category = 'Général'
                 if ' / ' in full_name:
                     category = full_name.split(' / ')[0]
+
+                users_count = len(g.user_ids)
+
                 result_groups.append({
                     'id': g.id,
                     'name': g.name,
                     'full_name': full_name,
                     'category': category,
+                    'is_quelyos': is_quelyos,
+                    'users_count': users_count,
+                    'comment': g.comment or '',
+                    'plans': group_plan_map.get(g.id, []),
+                    'implied_ids': [{'id': ig.id, 'name': ig.name} for ig in g.implied_ids],
                 })
+
+            plans_summary = [{
+                'id': p.id,
+                'code': p.code,
+                'name': p.name,
+                'group_count': len(p.group_ids),
+            } for p in plans]
 
             data = {
                 'success': True,
                 'data': result_groups,
+                'plans': plans_summary,
             }
             return request.make_json_response(data, headers=cors_headers)
 
         except Exception as e:
             _logger.error(f"List security groups error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/security-groups/<int:group_id>/users', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_security_group_users(self, group_id):
+        """Liste les utilisateurs d'un groupe de sécurité"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            group = request.env['res.groups'].sudo().browse(group_id)
+            if not group.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Groupe non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            users_data = []
+            for user in group.user_ids:
+                # Récupérer le tenant de l'utilisateur si disponible
+                tenant_name = ''
+                tenant_id = None
+                if hasattr(user, 'tenant_id') and user.tenant_id:
+                    tenant_name = user.tenant_id.name
+                    tenant_id = user.tenant_id.id
+
+                users_data.append({
+                    'id': user.id,
+                    'name': user.name,
+                    'login': user.login,
+                    'email': user.email or '',
+                    'active': user.active,
+                    'tenant_id': tenant_id,
+                    'tenant_name': tenant_name,
+                    'last_login': user.login_date.isoformat() if user.login_date else None,
+                })
+
+            return request.make_json_response({
+                'success': True,
+                'group': {
+                    'id': group.id,
+                    'name': group.name,
+                    'full_name': group.full_name or group.name,
+                    'comment': group.comment or '',
+                    'implied_ids': [{'id': ig.id, 'name': ig.name} for ig in group.implied_ids],
+                },
+                'users': users_data,
+                'total': len(users_data),
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Get security group users error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )
+
+    @http.route('/api/super-admin/security-groups/<int:group_id>/users', type='http', auth='public', methods=['POST'], csrf=False)
+    def manage_security_group_users(self, group_id):
+        """Ajouter ou retirer des utilisateurs d'un groupe de sécurité"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            data = json.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            action = data.get('action')  # 'add' ou 'remove'
+            user_ids = data.get('user_ids', [])
+
+            if action not in ('add', 'remove'):
+                return request.make_json_response(
+                    {'success': False, 'error': 'Action invalide (add/remove)'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            if not user_ids or not isinstance(user_ids, list):
+                return request.make_json_response(
+                    {'success': False, 'error': 'user_ids requis (liste)'},
+                    headers=cors_headers,
+                    status=400
+                )
+
+            group = request.env['res.groups'].sudo().browse(group_id)
+            if not group.exists():
+                return request.make_json_response(
+                    {'success': False, 'error': 'Groupe non trouvé'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            Users = request.env['res.users'].sudo()
+            users = Users.browse(user_ids).exists()
+
+            if len(users) != len(user_ids):
+                return request.make_json_response(
+                    {'success': False, 'error': 'Certains utilisateurs non trouvés'},
+                    headers=cors_headers,
+                    status=404
+                )
+
+            if action == 'add':
+                group.write({'user_ids': [(4, uid) for uid in user_ids]})
+                action_label = 'ajoutés à'
+            else:
+                group.write({'user_ids': [(3, uid) for uid in user_ids]})
+                action_label = 'retirés de'
+
+            _logger.info(
+                f"[AUDIT] Security group users updated - User: {request.env.user.login} | "
+                f"Group: {group.name} (ID: {group.id}) | Action: {action} | "
+                f"User IDs: {user_ids}"
+            )
+
+            return request.make_json_response({
+                'success': True,
+                'message': f'{len(user_ids)} utilisateur(s) {action_label} {group.name}',
+                'users_count': len(group.user_ids),
+            }, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Manage security group users error: {e}")
             return request.make_json_response(
                 {'success': False, 'error': 'Erreur serveur'},
                 headers=cors_headers,

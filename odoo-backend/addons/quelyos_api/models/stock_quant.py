@@ -80,9 +80,8 @@ class StockQuant(models.Model):
         Envoyer un email récapitulatif des stocks bas aux admins
         """
         # Récupérer tous les utilisateurs admin
-        admins = self.env['res.users'].search([
-            ('groups_id', 'in', self.env.ref('base.group_system').id)
-        ])
+        group = self.env.ref('base.group_system')
+        admins = group.sudo().user_ids.filtered(lambda u: u.active)
 
         if not admins:
             _logger.warning('Aucun administrateur trouvé pour envoyer les alertes stock')

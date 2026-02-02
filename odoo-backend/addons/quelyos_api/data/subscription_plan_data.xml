@@ -2,75 +2,63 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Plan Starter -->
+        <!-- ═══════════════════════════════════════════════════════════════
+             LEGACY PLANS — Désactivés, remplacés par seed_plans.xml
+             (système modulaire : module, solution, user_pack, enterprise)
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Plan Suite Starter (legacy — désactivé) -->
         <record id="plan_starter" model="quelyos.subscription.plan">
-            <field name="name">Starter</field>
-            <field name="code">starter</field>
-            <field name="price_monthly">29.0</field>
-            <field name="price_yearly">278.4</field> <!-- 29 * 12 * 0.8 = -20% -->
-            <field name="max_users">1</field>
-            <field name="max_products">1000</field>
-            <field name="max_orders_per_year">5000</field>
-            <field name="trial_days">7</field>
-            <field name="enabled_modules">["home", "store"]</field>
+            <field name="name">Starter (legacy)</field>
+            <field name="code">suite_starter</field>
+            <field name="plan_type">module</field>
+            <field name="price_monthly">19.0</field>
+            <field name="price_yearly">171.0</field>
+            <field name="original_price">49.0</field>
+            <field name="yearly_discount_pct">25</field>
+            <field name="max_users">3</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
             <field name="support_level">email_48h</field>
-            <field name="description">Parfait pour démarrer votre activité e-commerce</field>
+            <field name="description">Tout pour bien démarrer</field>
             <field name="is_popular" eval="False"/>
-            <field name="is_default" eval="True"/>
-            <field name="display_order">10</field>
-            <field name="active" eval="True"/>
-            <field name="features">[
-                "1 utilisateur",
-                "Jusqu'à 1 000 produits",
-                "5 000 commandes/an",
-                "Support email (48h)",
-                "Toutes fonctionnalités de base",
-                "Gestion produits et catégories",
-                "Gestion commandes",
-                "Gestion clients",
-                "Gestion stock de base",
-                "Dashboard analytics de base"
-            ]</field>
-            <!-- Droits d'accès Starter : Home et Store uniquement (User) -->
+            <field name="is_default" eval="False"/>
+            <field name="display_order">30</field>
+            <field name="active" eval="False"/>
+            <field name="icon_name">Layers</field>
+            <field name="color_theme">emerald</field>
+            <field name="features_marketing">[]</field>
+            <field name="features">[]</field>
             <field name="group_ids" eval="[(6, 0, [
                 ref('group_quelyos_home_user'),
                 ref('group_quelyos_store_user')
             ])]"/>
         </record>
 
-        <!-- Plan Pro -->
+        <!-- Plan Suite Business (legacy — désactivé) -->
         <record id="plan_pro" model="quelyos.subscription.plan">
-            <field name="name">Pro</field>
-            <field name="code">pro</field>
-            <field name="price_monthly">79.0</field>
-            <field name="price_yearly">758.4</field> <!-- 79 * 12 * 0.8 = -20% -->
-            <field name="max_users">5</field>
-            <field name="max_products">10000</field>
-            <field name="max_orders_per_year">50000</field>
-            <field name="trial_days">14</field>
-            <field name="enabled_modules">["home", "finance", "store", "stock", "crm", "marketing"]</field>
+            <field name="name">Business (legacy)</field>
+            <field name="code">suite_business</field>
+            <field name="plan_type">solution</field>
+            <field name="price_monthly">49.0</field>
+            <field name="price_yearly">441.0</field>
+            <field name="original_price">99.0</field>
+            <field name="yearly_discount_pct">25</field>
+            <field name="max_users">10</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">30</field>
             <field name="support_level">email_chat_24h</field>
-            <field name="description">Pour les e-commerçants en croissance</field>
-            <field name="is_popular" eval="True"/>
+            <field name="description">L&apos;ERP complet pour les PME ambitieuses</field>
+            <field name="is_popular" eval="False"/>
             <field name="is_default" eval="False"/>
             <field name="display_order">20</field>
-            <field name="active" eval="True"/>
-            <field name="features">[
-                "Jusqu'à 5 utilisateurs",
-                "Jusqu'à 10 000 produits",
-                "50 000 commandes/an",
-                "Support email + chat (24h)",
-                "Toutes fonctionnalités Starter +",
-                "Analytics avancés avec graphiques",
-                "Multi-entrepôts",
-                "API complète",
-                "Personnalisation thème",
-                "Exports CSV/Excel",
-                "Gestion coupons avancée",
-                "Gestion livraison multi-méthodes",
-                "Rapports personnalisés"
-            ]</field>
-            <!-- Droits d'accès Pro : Tous les modules (User) -->
+            <field name="active" eval="False"/>
+            <field name="icon_name">Rocket</field>
+            <field name="color_theme">indigo</field>
+            <field name="features_marketing">[]</field>
+            <field name="features">[]</field>
             <field name="group_ids" eval="[(6, 0, [
                 ref('group_quelyos_home_user'),
                 ref('group_quelyos_store_user'),
@@ -81,40 +69,29 @@
             ])]"/>
         </record>
 
-        <!-- Plan Enterprise -->
+        <!-- Plan Suite Enterprise (legacy — désactivé) -->
         <record id="plan_enterprise" model="quelyos.subscription.plan">
-            <field name="name">Enterprise</field>
-            <field name="code">enterprise</field>
-            <field name="price_monthly">0.0</field> <!-- Sur devis -->
+            <field name="name">Enterprise (legacy)</field>
+            <field name="code">suite_enterprise</field>
+            <field name="plan_type">enterprise</field>
+            <field name="price_monthly">0.0</field>
             <field name="price_yearly">0.0</field>
-            <field name="max_users">0</field> <!-- 0 = illimité -->
-            <field name="max_products">0</field> <!-- 0 = illimité -->
-            <field name="max_orders_per_year">0</field> <!-- 0 = illimité -->
-            <field name="trial_days">30</field>
-            <field name="enabled_modules">["home", "finance", "store", "stock", "crm", "marketing", "hr", "support", "pos"]</field>
+            <field name="original_price">0</field>
+            <field name="yearly_discount_pct">0</field>
+            <field name="max_users">0</field>
+            <field name="max_products">0</field>
+            <field name="max_orders_per_year">0</field>
+            <field name="trial_days">0</field>
             <field name="support_level">dedicated_2h</field>
-            <field name="description">Solutions sur-mesure pour grandes entreprises</field>
+            <field name="description">Solution sur mesure, support d&#233;di&#233;</field>
             <field name="is_popular" eval="False"/>
             <field name="is_default" eval="False"/>
-            <field name="display_order">30</field>
-            <field name="active" eval="True"/>
-            <field name="features">[
-                "Utilisateurs illimités",
-                "Produits illimités",
-                "Commandes illimitées",
-                "Support dédié (2h)",
-                "Toutes fonctionnalités Pro +",
-                "Onboarding personnalisé",
-                "SLA 99.9%",
-                "Environnement dédié (optionnel)",
-                "Développements custom",
-                "Formation équipe incluse",
-                "Account manager dédié",
-                "Intégrations sur-mesure",
-                "Audit sécurité",
-                "Backup quotidien dédié"
-            ]</field>
-            <!-- Droits d'accès Enterprise : Tous les modules (Manager) + HR + POS + Maintenance -->
+            <field name="display_order">10</field>
+            <field name="active" eval="False"/>
+            <field name="icon_name">Crown</field>
+            <field name="color_theme">amber</field>
+            <field name="features_marketing">[]</field>
+            <field name="features">[]</field>
             <field name="group_ids" eval="[(6, 0, [
                 ref('group_quelyos_home_manager'),
                 ref('group_quelyos_store_manager'),

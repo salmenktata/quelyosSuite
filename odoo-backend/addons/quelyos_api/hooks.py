@@ -163,7 +163,7 @@ def post_init_hook(env):
             access_group = Group.search([('name', 'like', '%Access Rights%')], limit=1)
 
             if access_group and access_group not in admin.group_ids:
-                admin.write({'groups_id': [(4, access_group.id)]})
+                admin.write({'group_ids': [(4, access_group.id)]})
                 _logger.info("   ✓ Groupe 'Access Rights' (super-admin) ajouté à l'utilisateur admin")
                 _logger.info("   ✓ L'utilisateur admin a maintenant accès à TOUS les modules du dashboard")
             elif access_group:

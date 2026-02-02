@@ -4,6 +4,7 @@ Contrôleur pour la facturation utilisateur (plans, subscription)
 Endpoints: /api/ecommerce/billing/*
 """
 import logging
+import json
 from odoo import http
 from odoo.http import request
 from ..config import get_cors_headers
@@ -15,32 +16,11 @@ _logger = logging.getLogger(__name__)
 class UserBillingController(BaseController):
     """API pour la facturation et subscription utilisateur"""
 
-    @http.route('/api/ecommerce/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
-    def get_billing_plans(self):
-        """
-        Retourne la liste des plans disponibles
+    # ─── Endpoint public : grille tarifaire modulaire ──────────────────
 
-        Returns:
-            {
-                "success": true,
-                "data": [
-                    {
-                        "id": "FREE",
-                        "name": "Gratuit",
-                        "description": "Pour démarrer",
-                        "price": 0,
-                        "priceYearly": 0,
-                        "interval": "month",
-                        "features": [...],
-                        "limits": {
-                            "users": 1,
-                            "accounts": 2,
-                            "transactionsPerMonth": 100
-                        }
-                    }
-                ]
-            }
-        """
+    @http.route('/api/public/pricing', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_public_pricing(self):
+        """Grille tarifaire modulaire pour la vitrine (configurateur)"""
         origin = request.httprequest.headers.get('Origin', '')
         cors_headers = get_cors_headers(origin)
 
@@ -50,91 +30,19 @@ class UserBillingController(BaseController):
             return response
 
         try:
-            # Plans statiques (à terme, les récupérer depuis quelyos.subscription.plan)
-            plans = [
-                {
-                    'id': 'FREE',
-                    'name': 'Gratuit',
-                    'description': 'Pour démarrer avec les fonctionnalités de base',
-                    'price': 0,
-                    'priceYearly': 0,
-                    'interval': 'month',
-                    'badge': None,
-                    'features': [
-                        '1 utilisateur',
-                        '2 comptes bancaires',
-                        '100 transactions/mois',
-                        'Catégories de base',
-                        'Rapports simples'
-                    ],
-                    'limits': {
-                        'users': 1,
-                        'accounts': 2,
-                        'transactionsPerMonth': 100
-                    }
-                },
-                {
-                    'id': 'PRO',
-                    'name': 'Pro',
-                    'description': 'Pour les TPE et freelances',
-                    'price': 19,
-                    'priceYearly': 190,
-                    'interval': 'month',
-                    'badge': 'Populaire',
-                    'features': [
-                        '3 utilisateurs',
-                        '10 comptes bancaires',
-                        'Transactions illimitées',
-                        'Catégories personnalisées',
-                        'Rapports avancés (DSO, BFR, EBITDA)',
-                        'Budgets et prévisions',
-                        'Export Excel/PDF',
-                        'Support email prioritaire'
-                    ],
-                    'limits': {
-                        'users': 3,
-                        'accounts': 10,
-                        'transactionsPerMonth': -1
-                    }
-                },
-                {
-                    'id': 'EXPERT',
-                    'name': 'Expert',
-                    'description': 'Pour les PME et cabinets comptables',
-                    'price': 49,
-                    'priceYearly': 490,
-                    'interval': 'month',
-                    'badge': None,
-                    'features': [
-                        'Utilisateurs illimités',
-                        'Comptes illimités',
-                        'Transactions illimitées',
-                        'Multi-entreprises',
-                        'Consolidation financière',
-                        'Scénarios et simulations',
-                        'Intégrations bancaires automatiques',
-                        'API et webhooks',
-                        'Support téléphone + email',
-                        'Onboarding personnalisé'
-                    ],
-                    'limits': {
-                        'users': -1,
-                        'accounts': -1,
-                        'transactionsPerMonth': -1
-                    }
-                }
-            ]
+            Plan = request.env['quelyos.subscription.plan'].sudo()
+            pricing_grid = Plan.get_pricing_grid()
 
             return request.make_json_response(
                 {
                     'success': True,
-                    'data': plans
+                    'data': pricing_grid
                 },
                 headers=cors_headers
             )
 
         except Exception as e:
-            _logger.error(f"Error fetching billing plans: {e}", exc_info=True)
+            _logger.error(f"Error fetching pricing grid: {e}", exc_info=True)
             return request.make_json_response(
                 {
                     'success': False,
@@ -144,6 +52,117 @@ class UserBillingController(BaseController):
                 headers=cors_headers,
                 status=500
             )
+
+    # ─── Endpoint public legacy (backward compat) ────────────────────
+
+    @http.route('/api/public/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_public_plans(self, plan_type=None):
+        """Plans publics pour la vitrine (backward compat + lecture dynamique depuis DB)"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        try:
+            domain = [('active', '=', True)]
+            if plan_type:
+                domain.append(('plan_type', '=', plan_type))
+
+            plans = request.env['quelyos.subscription.plan'].sudo().search(
+                domain, order='display_order, id'
+            )
+
+            return request.make_json_response(
+                {
+                    'success': True,
+                    'data': [self._serialize_public_plan(p) for p in plans]
+                },
+                headers=cors_headers
+            )
+
+        except Exception as e:
+            _logger.error(f"Error fetching public plans: {e}", exc_info=True)
+            return request.make_json_response(
+                {
+                    'success': False,
+                    'error': 'Server error',
+                    'error_code': 'SERVER_ERROR'
+                },
+                headers=cors_headers,
+                status=500
+            )
+
+    def _serialize_public_plan(self, plan):
+        """Sérialisation publique d'un plan (sans champs admin sensibles)"""
+        try:
+            features_marketing = json.loads(plan.features_marketing or '[]')
+        except (json.JSONDecodeError, TypeError):
+            features_marketing = []
+
+        price = plan.price_monthly
+        annual_price = None
+        if price > 0 and plan.yearly_discount_pct:
+            annual_price = round(price * (1 - plan.yearly_discount_pct / 100))
+
+        result = {
+            'id': plan.code,
+            'name': plan.name,
+            'description': plan.description or '',
+            'price': price,
+            'originalPrice': plan.original_price or None,
+            'period': '/mois' if price > 0 else '',
+            'annualPrice': annual_price,
+            'yearlyDiscountPct': plan.yearly_discount_pct,
+            'highlight': plan.is_popular,
+            'badge': plan.badge_text or None,
+            'cta': plan.cta_text or 'Essai gratuit',
+            'href': plan.cta_href or '/register',
+            'icon': plan.icon_name or 'Layers',
+            'color': plan.color_theme or 'emerald',
+            'features': features_marketing,
+            'limits': {
+                'users': plan.max_users,
+                'products': plan.max_products,
+                'ordersPerYear': plan.max_orders_per_year,
+            },
+            'trialDays': plan.trial_days,
+            'planType': plan.plan_type,
+        }
+
+        # Champs additionnels pour modules
+        if plan.plan_type == 'module':
+            result['moduleKey'] = plan.module_key
+            if plan.limit_name:
+                result['moduleLimits'] = {
+                    'name': plan.limit_name,
+                    'included': plan.limit_included,
+                    'surplusPrice': plan.surplus_price,
+                    'surplusUnit': plan.surplus_unit,
+                }
+
+        # Champs additionnels pour solutions métier
+        if plan.plan_type == 'solution':
+            try:
+                result['modules'] = json.loads(plan.solution_modules or '[]')
+            except (json.JSONDecodeError, TypeError):
+                result['modules'] = []
+            result['solutionSlug'] = plan.solution_slug
+
+        # Champs additionnels pour pack users
+        if plan.plan_type == 'user_pack':
+            result['packSize'] = plan.pack_size
+
+        return result
+
+    # ─── Ancien endpoint (compatibilité finance) ─────────────────────
+
+    @http.route('/api/ecommerce/billing/plans', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_billing_plans(self):
+        """Alias compatibilité : redirige vers plans finance dynamiques"""
+        return self.get_public_plans(plan_type='finance')
 
     @http.route('/api/ecommerce/billing/subscription', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_user_subscription(self):

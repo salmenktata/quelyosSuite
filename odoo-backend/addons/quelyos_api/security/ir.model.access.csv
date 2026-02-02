@@ -190,3 +190,6 @@ access_quelyos_maintenance_stage_user,quelyos.maintenance.stage user,model_quely
 access_quelyos_maintenance_stage_manager,quelyos.maintenance.stage manager,model_quelyos_maintenance_stage,group_quelyos_maintenance_manager,1,1,1,1
 access_quelyos_user_permission_user,quelyos.user.permission user,model_quelyos_user_permission,base.group_user,1,0,0,0
 access_quelyos_user_permission_system,quelyos.user.permission system,model_quelyos_user_permission,base.group_system,1,1,1,1
+access_quelyos_subscription_item_public,quelyos.subscription.item public,model_quelyos_subscription_item,,1,0,0,0
+access_quelyos_subscription_item_user,quelyos.subscription.item user,model_quelyos_subscription_item,group_quelyos_finance_user,1,1,0,0
+access_quelyos_subscription_item_manager,quelyos.subscription.item manager,model_quelyos_subscription_item,group_quelyos_finance_manager,1,1,1,1

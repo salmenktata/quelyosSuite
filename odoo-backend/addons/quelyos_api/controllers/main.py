@@ -417,7 +417,7 @@ class QuelyosAPI(BaseController):
                 'login': email,
                 'password': password,
                 'partner_id': partner.id,
-                'groups_id': [(6, 0, [request.env.ref('base.group_portal').id])],
+                'group_ids': [(6, 0, [request.env.ref('base.group_portal').id])],
             })
 
             return {

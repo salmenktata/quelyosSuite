@@ -150,7 +150,7 @@ class TicketController(BaseController):
                     'error': 'Ticket non trouvé'
                 }, headers=cors_headers, status=404)
 
-            messages = ticket.message_ids.sorted(key=lambda m: m.create_date)
+            messages = ticket.ticket_message_ids.sorted(key=lambda m: m.create_date)
 
             return request.make_json_response({
                 'success': True,

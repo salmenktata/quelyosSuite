@@ -17,12 +17,82 @@ class SubscriptionPlan(models.Model):
         help='Nom affiché au client (ex: Starter, Pro, Enterprise)'
     )
 
-    code = fields.Selection([
-        ('starter', 'Starter'),
-        ('pro', 'Pro'),
+    code = fields.Char(
+        string='Code',
+        required=True,
+        help='Code interne unique (ex: suite_starter, ecom_pro, fin_free)'
+    )
+
+    plan_type = fields.Selection([
+        ('module', 'Module additionnel'),
+        ('solution', 'Solution métier'),
+        ('user_pack', 'Pack utilisateurs'),
         ('enterprise', 'Enterprise'),
-        ('custom', 'Custom'),
-    ], string='Code', required=True, help='Code interne du plan')
+    ], string='Type de plan', default='module', required=True)
+
+    # Modules inclus dans la solution métier (JSON array de module_keys)
+    solution_modules = fields.Text(
+        string='Modules inclus (JSON)',
+        help='Liste des module_keys inclus dans cette solution métier (JSON array)',
+        default='[]'
+    )
+
+    # Référence vers la page solution (pour solutions métier)
+    solution_slug = fields.Char(
+        string='Slug solution',
+        help='Identifiant URL de la page solution (ex: restaurant, commerce)'
+    )
+
+    # Module associé (pour type='module')
+    module_key = fields.Selection([
+        ('finance', 'Finance'),
+        ('store', 'Boutique'),
+        ('stock', 'Stock'),
+        ('crm', 'CRM'),
+        ('marketing', 'Marketing'),
+        ('hr', 'RH'),
+        ('support', 'Support'),
+        ('pos', 'Point de Vente'),
+        ('maintenance', 'GMAO'),
+    ], string='Module associé', help='Module Quelyos associé (pour plan_type=module)')
+
+    # Limites spécifiques au module
+    limit_name = fields.Char(
+        string='Nom de la limite',
+        help='Ex: products, orders_per_month, transactions_per_month'
+    )
+
+    limit_included = fields.Integer(
+        string='Quantité incluse',
+        default=0,
+        help='Quantité incluse dans le prix du module (0 = illimité)'
+    )
+
+    surplus_price = fields.Float(
+        string='Prix surplus par tranche (€/mois)',
+        default=0.0,
+        help='Prix pour chaque tranche supplémentaire au-delà de la limite incluse'
+    )
+
+    surplus_unit = fields.Integer(
+        string='Taille tranche surplus',
+        default=500,
+        help='Nombre d\'unités par tranche de surplus'
+    )
+
+    # Users inclus (pour plan de base)
+    users_included = fields.Integer(
+        string='Utilisateurs inclus',
+        default=5,
+        help='Nombre d\'utilisateurs inclus dans le plan de base'
+    )
+
+    # Pack users
+    pack_size = fields.Integer(
+        string='Taille du pack',
+        default=5,
+        help='Nombre d\'utilisateurs par pack (pour type=user_pack)'
+    )
 
     # Tarification
     price_monthly = fields.Float(
@@ -120,6 +190,54 @@ class SubscriptionPlan(models.Model):
         help='Afficher badge "Le plus populaire" sur ce plan'
     )
 
+    # Champs marketing (affichage vitrine)
+    original_price = fields.Float(
+        string='Prix barré (€)',
+        help='Ancien prix affiché barré sur la vitrine'
+    )
+
+    badge_text = fields.Char(
+        string='Badge',
+        help='Ex: "Meilleure offre", "Le + populaire"'
+    )
+
+    cta_text = fields.Char(
+        string='Bouton CTA',
+        default='Essai gratuit 14 jours',
+        help='Texte du bouton call-to-action'
+    )
+
+    cta_href = fields.Char(
+        string='Lien CTA',
+        default='/register',
+        help='URL du bouton CTA'
+    )
+
+    yearly_discount_pct = fields.Integer(
+        string='Remise annuelle (%)',
+        default=20,
+        help='Pourcentage de réduction pour la facturation annuelle'
+    )
+
+    features_marketing = fields.Text(
+        string='Features marketing (JSON)',
+        default='[]',
+        help='Liste de strings marketing pour la vitrine (JSON array)'
+    )
+
+    icon_name = fields.Char(
+        string='Icône Lucide',
+        default='Layers',
+        help='Nom icône lucide-react (ex: Rocket, Crown, PiggyBank)'
+    )
+
+    color_theme = fields.Selection([
+        ('emerald', 'Emerald'),
+        ('indigo', 'Indigo'),
+        ('amber', 'Amber'),
+        ('violet', 'Violet'),
+    ], string='Couleur thème', default='emerald')
+
     is_default = fields.Boolean(
         string='Plan par défaut',
         default=False,
@@ -147,6 +265,10 @@ class SubscriptionPlan(models.Model):
     feature_api_access = fields.Boolean(string='Accès API', default=False)
     feature_priority_support = fields.Boolean(string='Support prioritaire', default=False)
     feature_custom_domain = fields.Boolean(string='Domaine personnalisé', default=False)
+
+    _sql_constraints = [
+        ('code_unique', 'UNIQUE(code)', 'Le code du plan doit être unique.'),
+    ]
 
     # Alias pour is_active
     is_active = fields.Boolean(related='active', string='Actif', store=False)
@@ -252,13 +374,97 @@ class SubscriptionPlan(models.Model):
     def get_default_plan(self):
         """
         Retourne le plan par défaut pour les nouveaux tenants.
-        Si aucun plan n'est marqué comme défaut, retourne le plan Starter.
+        Si aucun plan n'est marqué comme défaut, retourne le plan de base.
         """
         default_plan = self.search([('is_default', '=', True)], limit=1)
         if not default_plan:
-            # Fallback sur Starter si pas de plan par défaut
-            default_plan = self.search([('code', '=', 'starter')], limit=1)
+            default_plan = self.search([('plan_type', '=', 'module'), ('active', '=', True)], limit=1, order='display_order')
         return default_plan
+
+    @api.model
+    def get_module_plans(self):
+        """Retourne tous les plans de type module actifs."""
+        return self.search([
+            ('plan_type', '=', 'module'),
+            ('active', '=', True)
+        ], order='display_order, name')
+
+    @api.model
+    def get_pricing_grid(self):
+        """Retourne la grille tarifaire structurée pour l'API publique."""
+        module_plans = self.get_module_plans()
+        user_pack = self.search([('plan_type', '=', 'user_pack'), ('active', '=', True)], limit=1)
+
+        # Solutions métier
+        solution_plans = self.search([
+            ('plan_type', '=', 'solution'),
+            ('active', '=', True)
+        ], order='display_order, name')
+
+        # Calculer total all-in
+        all_in_regular = sum(m.price_monthly for m in module_plans)
+        all_in_discounted = round(all_in_regular * 0.9)  # -10%
+
+        return {
+            'modules': [{
+                'key': m.module_key,
+                'name': m.name,
+                'code': m.code,
+                'price': m.price_monthly,
+                'annualPrice': round(m.price_monthly * (1 - (m.yearly_discount_pct or 22) / 100)),
+                'description': m.description or '',
+                'icon': m.icon_name or 'Layers',
+                'features': m.get_features_marketing_list(),
+                'limits': {
+                    'name': m.limit_name,
+                    'included': m.limit_included,
+                    'surplusPrice': m.surplus_price,
+                    'surplusUnit': m.surplus_unit,
+                } if m.limit_name else None,
+            } for m in module_plans],
+            'userPacks': {
+                'size': user_pack.pack_size if user_pack else 5,
+                'price': user_pack.price_monthly if user_pack else 15,
+                'annualPrice': round(user_pack.price_monthly * (1 - (user_pack.yearly_discount_pct or 20) / 100)) if user_pack else 12,
+            },
+            'solutions': [{
+                'slug': s.solution_slug or s.code,
+                'name': s.name,
+                'code': s.code,
+                'price': s.price_monthly,
+                'annualPrice': round(s.price_monthly * (1 - (s.yearly_discount_pct or 22) / 100)),
+                'description': s.description or '',
+                'icon': s.icon_name or 'Layers',
+                'modules': json.loads(s.solution_modules or '[]'),
+                'modulesValue': self._compute_solution_modules_value(s),
+                'savings': self._compute_solution_savings(s),
+                'features': s.get_features_marketing_list(),
+            } for s in solution_plans],
+            'allInDiscount': {
+                'regularTotal': all_in_regular,
+                'discountedPrice': all_in_discounted,
+            },
+        }
+
+    def _compute_solution_modules_value(self, solution):
+        """Calcule la valeur individuelle des modules d'une solution."""
+        try:
+            module_keys = json.loads(solution.solution_modules or '[]')
+        except (json.JSONDecodeError, TypeError):
+            return 0
+        total = 0
+        for key in module_keys:
+            mod = self.search([('module_key', '=', key), ('plan_type', '=', 'module'), ('active', '=', True)], limit=1)
+            if mod:
+                total += mod.price_monthly
+        return total
+
+    def _compute_solution_savings(self, solution):
+        """Calcule l'économie d'une solution vs modules individuels."""
+        modules_value = self._compute_solution_modules_value(solution)
+        if modules_value <= 0:
+            return 0
+        return round(modules_value - solution.price_monthly)
 
     def get_features_list(self):
         """
@@ -276,6 +482,14 @@ class SubscriptionPlan(models.Model):
         """
         self.ensure_one()
         self.features = json.dumps(features_list)
+
+    def get_features_marketing_list(self):
+        """Retourne la liste des features marketing sous forme de liste Python."""
+        self.ensure_one()
+        try:
+            return json.loads(self.features_marketing) if self.features_marketing else []
+        except (json.JSONDecodeError, TypeError):
+            return []
 
     def get_enabled_modules_list(self):
         """
