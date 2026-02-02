@@ -42,6 +42,7 @@ import { useMaintenanceTabs, detectMaintenanceTab } from '../hooks/useMaintenanc
 
 // Components
 import { Button } from './common/Button'
+import { ReadOnlyProvider, ReadOnlyBanner } from './common/ReadOnlyGuard'
 import { SidebarMenuItem } from './navigation/SidebarMenuItem'
 import { AppLauncher } from './navigation/AppLauncher'
 import { TopNavbar } from './navigation/TopNavbar'
@@ -109,7 +110,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
   })
-  const { canAccessModule, getAccessLevel, canAccessPageByPath } = usePermissions()
+  const { canAccessModule, getAccessLevel, canAccessPageByPath, pathToPageId } = usePermissions()
   const [isNavbarVisible, setIsNavbarVisible] = useState(() => {
     return localStorage.getItem('navbar_visible') !== 'false'
   })
@@ -878,7 +879,17 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
             )}
 
             <div className={`transition-opacity duration-150 ${currentModule.id === 'finance' || currentModule.id === 'home' || currentModule.id === 'store' || currentModule.id === 'stock' || currentModule.id === 'crm' || currentModule.id === 'marketing' || currentModule.id === 'hr' || currentModule.id === 'support' || currentModule.id === 'pos' || currentModule.id === 'maintenance' ? 'pt-16' : ''}`}>
-              {children}
+              <ReadOnlyProvider
+                moduleId={currentModule.id}
+                pageId={pathToPageId(currentModule.id, location.pathname) ?? undefined}
+              >
+                {getAccessLevel(currentModule.id) === 'read' && (
+                  <div className="px-6 pt-4">
+                    <ReadOnlyBanner />
+                  </div>
+                )}
+                {children}
+              </ReadOnlyProvider>
             </div>
           </main>
         </div>
