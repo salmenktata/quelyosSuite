@@ -1,8 +1,34 @@
 import { useAuth } from '@/lib/finance/compat/auth'
 import { getCurrentEdition } from '@/lib/editionDetector'
 import type { AccessLevel } from '@/config/module-pages'
+import type { ModuleId } from '@/config/modules'
 
-type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support' | 'maintenance'
+/**
+ * Extrait le pageId à partir d'un chemin de route.
+ * Ex: '/finance/accounts' → 'accounts', '/store/flash-sales' → 'flash-sales'
+ * Routes spéciales: '/dashboard' → 'dashboard', '/analytics' → 'analytics'
+ */
+function pathToPageId(moduleId: ModuleId, path: string): string | null {
+  if (!path) return null
+  // Routes home spéciales (pas de préfixe /home/)
+  if (moduleId === 'home') {
+    if (path === '/dashboard') return 'dashboard'
+    if (path === '/analytics') return 'analytics'
+    if (path === '/dashboard/subscriptions') return 'subscriptions'
+    if (path === '/settings') return 'settings'
+    if (path === '/settings/security') return 'security'
+    if (path === '/settings/team') return 'team'
+    return null
+  }
+  // Routes standard: /<module>/<page>
+  const prefix = `/${moduleId}/`
+  if (path.startsWith(prefix)) {
+    return path.slice(prefix.length).split('/')[0] || null
+  }
+  // Route racine du module: /<module> → 'dashboard'
+  if (path === `/${moduleId}`) return 'dashboard'
+  return null
+}
 
 /**
  * Hook pour vérifier les permissions utilisateur basées sur les groupes backend
@@ -167,16 +193,37 @@ export function usePermissions() {
     return editionModules.filter(module => canAccessModule(module))
   }
 
+  /**
+   * Vérifie si l'utilisateur peut accéder à une page via son chemin de route.
+   */
+  const canAccessPageByPath = (moduleId: ModuleId, path: string): boolean => {
+    const pageId = pathToPageId(moduleId, path)
+    if (!pageId) return true // Pages non mappées : autoriser par défaut
+    return canAccessPage(moduleId, pageId)
+  }
+
+  /**
+   * Retourne le niveau d'accès d'une page via son chemin de route.
+   */
+  const getPageAccessLevelByPath = (moduleId: ModuleId, path: string): AccessLevel => {
+    const pageId = pathToPageId(moduleId, path)
+    if (!pageId) return getAccessLevel(moduleId)
+    return getPageAccessLevel(moduleId, pageId)
+  }
+
   return {
     hasGroup,
     canAccessModule,
     canAccessPage,
+    canAccessPageByPath,
     getAccessLevel,
     getPageAccessLevel,
+    getPageAccessLevelByPath,
     isManager,
     isSuperAdmin,
     isTenantManager,
     getAccessibleModules,
+    pathToPageId,
     userGroups: user?.groups || [],
     permissions,
     hasCustomPermissions,

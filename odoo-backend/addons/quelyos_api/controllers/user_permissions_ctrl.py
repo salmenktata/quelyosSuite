@@ -5,9 +5,11 @@ from odoo import http
 from odoo.http import request
 from ..config import get_cors_headers
 from ..lib.jwt_auth import require_jwt_auth
+from ..lib.audit_log import AuditLogger, AuditAction
 from ..models.user_permission import MODULE_PAGES
 
 _logger = logging.getLogger(__name__)
+_audit = AuditLogger()
 
 
 class UserPermissionsController(http.Controller):
@@ -67,6 +69,51 @@ class UserPermissionsController(http.Controller):
             group_names.append(name)
 
         return 'Access Rights' in group_names
+
+    def _send_invitation_email(self, new_user, email, temp_password, tenant, invited_by):
+        """Envoie un email d'invitation avec les identifiants temporaires."""
+        company = tenant.company_id
+        base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url', 'https://app.quelyos.com')
+        # Utiliser le domaine frontend du tenant si disponible
+        login_url = f"{base_url}/login"
+
+        subject = f"Invitation à rejoindre {tenant.name}"
+        body_html = f"""
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #333; margin-bottom: 20px;">Bienvenue dans l&apos;équipe !</h1>
+    <p style="color: #666; line-height: 1.6;">
+        Bonjour <strong>{new_user.name}</strong>,
+    </p>
+    <p style="color: #666; line-height: 1.6;">
+        <strong>{invited_by.name}</strong> vous a invité à rejoindre
+        l&apos;espace <strong>{tenant.name}</strong>.
+    </p>
+    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0 0 10px; color: #333; font-weight: bold;">Vos identifiants :</p>
+        <p style="margin: 5px 0; color: #666;">Email : <strong>{email}</strong></p>
+        <p style="margin: 5px 0; color: #666;">Mot de passe : <strong>{temp_password}</strong></p>
+    </div>
+    <p style="color: #e91e63; font-size: 13px;">
+        Nous vous recommandons de changer votre mot de passe lors de votre première connexion.
+    </p>
+    <a href="{login_url}" style="display: inline-block; background: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 10px;">
+        Se connecter
+    </a>
+    <p style="color: #999; font-size: 12px; margin-top: 30px;">
+        Cet email a été envoyé automatiquement par {tenant.name}.
+    </p>
+</div>
+"""
+
+        mail_values = {
+            'subject': subject,
+            'body_html': body_html,
+            'email_from': company.email or 'noreply@quelyos.com',
+            'email_to': email,
+            'auto_delete': True,
+        }
+        mail = request.env['mail.mail'].sudo().create(mail_values)
+        mail.send()
 
     # =========================================================================
     # GET /api/auth/my-permissions — Permissions de l'utilisateur connecté
@@ -300,6 +347,20 @@ class UserPermissionsController(http.Controller):
             # Retourner les permissions mises à jour
             updated = PermModel.get_user_permissions(target_user_id, tenant.id)
 
+            # Audit log
+            _audit.log(
+                action=AuditAction.USER_PERMISSION_CHANGE,
+                user_id=user_id,
+                user_login=user.login,
+                resource_type='res.users',
+                resource_id=target_user_id,
+                details={
+                    'target_user': target_user.name,
+                    'permissions': permissions,
+                },
+                request=request,
+            )
+
             return request.make_json_response({
                 'success': True,
                 'permissions': updated,
@@ -421,6 +482,30 @@ class UserPermissionsController(http.Controller):
                     granted_by=user_id,
                 )
 
+            # Envoyer l'email d'invitation
+            try:
+                self._send_invitation_email(
+                    new_user, email, temp_password, tenant, user
+                )
+            except Exception as mail_err:
+                _logger.warning(f"[invite] Email envoi échoué: {mail_err}")
+
+            # Audit log
+            _audit.log(
+                action=AuditAction.USER_CREATE,
+                user_id=user_id,
+                user_login=user.login,
+                resource_type='res.users',
+                resource_id=new_user.id,
+                details={
+                    'invited_email': email,
+                    'invited_name': new_user.name,
+                    'tenant': tenant.name,
+                    'permissions': permissions,
+                },
+                request=request,
+            )
+
             return request.make_json_response({
                 'success': True,
                 'user': {
@@ -484,6 +569,21 @@ class UserPermissionsController(http.Controller):
                 ('tenant_id', '=', tenant.id),
             ])
             perms.unlink()
+
+            # Audit log
+            _audit.log(
+                action=AuditAction.USER_DELETE,
+                user_id=user_id,
+                user_login=user.login,
+                resource_type='res.users',
+                resource_id=target_user_id,
+                details={
+                    'removed_user': target_user.name,
+                    'removed_email': target_user.login,
+                    'tenant': tenant.name,
+                },
+                request=request,
+            )
 
             return request.make_json_response({
                 'success': True,

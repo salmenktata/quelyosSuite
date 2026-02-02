@@ -109,7 +109,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
   })
-  const { canAccessModule, getAccessLevel } = usePermissions()
+  const { canAccessModule, getAccessLevel, canAccessPageByPath } = usePermissions()
   const [isNavbarVisible, setIsNavbarVisible] = useState(() => {
     return localStorage.getItem('navbar_visible') !== 'false'
   })
@@ -133,6 +133,17 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const accessibleModules = useMemo(() => {
     return MODULES.filter(module => canAccessModule(module.id))
   }, [canAccessModule])
+
+  // Filtrer les items de chaque section selon les permissions page-level
+  const filterSectionItems = useCallback((sections: Module['sections'], moduleId: ModuleId) => {
+    return sections.map(section => ({
+      ...section,
+      items: section.items.filter(item => {
+        if (!item.path) return true
+        return canAccessPageByPath(moduleId, item.path)
+      }),
+    })).filter(section => section.items.length > 0)
+  }, [canAccessPageByPath])
 
   // Detect current module from URL using custom hook
   const detectedModule = useDetectModule(accessibleModules, location.pathname)
@@ -465,7 +476,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 isCollapsed={isSidebarCollapsed}
               />
 
-              {(currentModule.id === 'finance' ? visibleSections
+              {filterSectionItems(
+                currentModule.id === 'finance' ? visibleSections
                 : currentModule.id === 'home' ? homeVisibleSections
                 : currentModule.id === 'store' ? storeVisibleSections
                 : currentModule.id === 'stock' ? stockVisibleSections
@@ -475,7 +487,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 : currentModule.id === 'support' ? supportVisibleSections
                 : currentModule.id === 'pos' ? posVisibleSections
                 : currentModule.id === 'maintenance' ? maintenanceVisibleSections
-                : currentModule.sections
+                : currentModule.sections,
+                currentModule.id
               ).map((section, index) => (
                 <div
                   key={section.title}
