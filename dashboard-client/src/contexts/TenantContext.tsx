@@ -87,7 +87,22 @@ export function TenantProvider({ children }: TenantProviderProps) {
     }
   }, [tenantDomain])
 
-  // tenant_id chargé depuis localStorage via lazy init du useState
+  // Re-hydrater manualTenantId quand le JWT devient disponible après login
+  useEffect(() => {
+    const unsubscribe = tokenService.subscribe((event) => {
+      if (event === 'login') {
+        const user = tokenService.getUser()
+        if (user?.tenantId) {
+          localStorage.setItem('tenant_id', String(user.tenantId))
+          setManualTenantId(user.tenantId)
+        }
+      }
+      if (event === 'logout') {
+        setManualTenantId(null)
+      }
+    })
+    return unsubscribe
+  }, [])
 
   const setTenantId = (id: number | null) => {
     setManualTenantId(id)

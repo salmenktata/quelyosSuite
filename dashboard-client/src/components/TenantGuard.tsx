@@ -18,6 +18,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTenantContext } from '@/contexts/TenantContext'
+import { tokenService } from '@/lib/tokenService'
 import { logger } from '@quelyos/logger'
 import { Loader2 } from 'lucide-react'
 
@@ -47,16 +48,28 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
   // Vérifier si la route courante est publique
   const isPublicRoute = publicRoutes.some((route) => location.pathname.startsWith(route))
 
+  const isAuthenticated = tokenService.isAuthenticated()
+
   useEffect(() => {
     // Ne rien faire pour les routes publiques
     if (isPublicRoute) {
-      logger.debug('[TenantGuard] Route publique, pas de vérification tenant:', location.pathname)
+      return
+    }
+
+    // Pas de session valide → redirection directe sans vérifier le tenant
+    if (!isAuthenticated) {
+      logger.debug('[TenantGuard] Pas de session valide → redirection /login')
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: location.pathname,
+        },
+      })
       return
     }
 
     // Attendre la fin du chargement
     if (isLoading) {
-      logger.debug('[TenantGuard] Chargement tenant en cours...')
       return
     }
 
@@ -66,7 +79,6 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
 
       // 404 = Tenant introuvable
       if (error.message.includes('404') || error.message.includes('Aucun tenant')) {
-        logger.warn('[TenantGuard] Tenant introuvable → redirection /login')
         navigate('/login', {
           replace: true,
           state: {
@@ -79,7 +91,6 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
 
       // 401 = Session expirée
       if (error.message.includes('401') || error.message.includes('Session expirée')) {
-        logger.warn('[TenantGuard] Session expirée → redirection /login')
         navigate('/login', {
           replace: true,
           state: {
@@ -91,7 +102,6 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
       }
 
       // Autre erreur = Erreur serveur
-      logger.error('[TenantGuard] Erreur serveur tenant → redirection /login')
       navigate('/login', {
         replace: true,
         state: {
@@ -105,11 +115,8 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
     // Vérification tenant_id et tenant_domain présents
     if (!tenantId || !tenantDomain) {
       logger.warn('[TenantGuard] Tenant manquant (id:', tenantId, 'domain:', tenantDomain, ')')
-      // Ne pas rediriger immédiatement, laisser une chance au chargement
-      // Seulement si on n'est pas déjà sur /login
       if (!location.pathname.startsWith('/login')) {
         const timer = setTimeout(() => {
-          logger.warn('[TenantGuard] Timeout tenant manquant → redirection /login')
           navigate('/login', {
             replace: true,
             state: {
@@ -117,15 +124,17 @@ export function TenantGuard({ children, publicRoutes = DEFAULT_PUBLIC_ROUTES }: 
               error: 'Contexte tenant manquant. Veuillez vous reconnecter.',
             },
           })
-        }, 5000) // Attendre 5 secondes avant de rediriger
+        }, 5000)
 
         return () => clearTimeout(timer)
       }
     }
+  }, [tenantId, tenantDomain, isLoading, error, isPublicRoute, isAuthenticated, location.pathname, navigate])
 
-    // Tout est OK
-    logger.debug('[TenantGuard] Tenant valide:', { tenantId, tenantDomain })
-  }, [tenantId, tenantDomain, isLoading, error, isPublicRoute, location.pathname, navigate])
+  // Pas authentifié sur route protégée → laisser le useEffect rediriger
+  if (!isPublicRoute && !isAuthenticated) {
+    return null
+  }
 
   // Afficher un loader pendant le chargement du tenant (sauf routes publiques)
   if (!isPublicRoute && isLoading) {
