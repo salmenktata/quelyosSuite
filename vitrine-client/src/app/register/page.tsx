@@ -320,7 +320,7 @@ export default function RegisterPage() {
                   className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-ring mt-0.5"
                 />
                 <label htmlFor="accept-terms" className="ml-2 text-sm text-gray-700">
-                  J'accepte les{' '}
+                  J&apos;accepte les{' '}
                   <Link href="/terms" className="text-primary hover:text-primary-dark font-semibold transition-colors">
                     conditions générales
                   </Link>

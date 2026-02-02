@@ -66,7 +66,7 @@ export function VolumePricing({
         </div>
 
         {/* Paliers de prix */}
-        {tiers.map((tier, index) => (
+        {tiers.map((tier, _index) => (
           <button
             key={tier.min_quantity}
             onClick={() => onQuantitySelect?.(tier.min_quantity)}

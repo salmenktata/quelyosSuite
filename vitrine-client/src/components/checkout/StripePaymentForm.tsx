@@ -11,7 +11,6 @@ import {
 } from '@stripe/react-stripe-js';
 import {
   loadStripe,
-  StripeElementStyleVariant,
   StripeCardNumberElementChangeEvent,
   StripeCardExpiryElementChangeEvent,
   StripeCardCvcElementChangeEvent,

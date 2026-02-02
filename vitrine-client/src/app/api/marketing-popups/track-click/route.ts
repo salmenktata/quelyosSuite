@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ success: false }, { status: 200 })
   }
 }

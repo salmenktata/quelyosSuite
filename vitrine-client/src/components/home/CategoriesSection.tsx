@@ -42,7 +42,7 @@ export function CategoriesSection({ categories, isLoading }: CategoriesSectionPr
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-3 text-gray-900">Explorez nos catégories</h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Trouvez l'équipement parfait pour votre activité sportive
+          Trouvez l&apos;équipement parfait pour votre activité sportive
         </p>
       </div>
 

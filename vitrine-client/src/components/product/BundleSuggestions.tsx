@@ -134,7 +134,7 @@ export function BundleSuggestions({ currentProduct, className = '' }: BundleSugg
         />
 
         {/* Produits suggérés */}
-        {bundleProducts.map((product, index) => (
+        {bundleProducts.map((product, _index) => (
           <React.Fragment key={product.id}>
             {/* Plus icon */}
             <div className="hidden md:flex items-center justify-center">

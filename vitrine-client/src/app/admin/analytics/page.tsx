@@ -150,7 +150,7 @@ export default function AnalyticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">
-                  Chiffre d'Affaires
+                  Chiffre d&apos;Affaires
                 </p>
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   {formatCurrency(data.revenue.total)}

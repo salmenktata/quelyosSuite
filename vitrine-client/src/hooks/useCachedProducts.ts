@@ -48,7 +48,7 @@ export function useCachedProducts(
       setError(null);
 
       // Use regular endpoint - caching is handled transparently by backend
-      const endpoint = '/products';
+      const _endpoint = '/products';
 
       const response = await backendClient.getProducts({
         limit,

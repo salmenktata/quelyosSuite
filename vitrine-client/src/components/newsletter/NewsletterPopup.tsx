@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
 
 interface NewsletterPopupProps {
@@ -22,7 +22,7 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
-  const config = useSiteConfig();
+  const _config = useSiteConfig();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +52,7 @@ export function NewsletterPopup({ isOpen, onClose }: NewsletterPopupProps) {
       setTimeout(() => {
         onClose();
       }, 2000);
-    } catch (err) {
+    } catch (_err) {
       setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);

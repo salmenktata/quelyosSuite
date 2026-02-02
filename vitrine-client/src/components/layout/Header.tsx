@@ -15,7 +15,7 @@ const Header: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { config } = useSiteConfig();
-  const { brand, shipping, currency } = config;
+  const { brand, shipping: _shipping, currency: _currency } = config;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const handleSearch = (query: string) => {

@@ -2,7 +2,7 @@
 
 import { NewsletterPopup } from './NewsletterPopup';
 import { useNewsletterPopup } from '@/hooks/useNewsletterPopup';
-import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
+
 
 /**
  * Provider for Newsletter Popup

@@ -11,12 +11,6 @@ export interface Currency {
   position: 'before' | 'after';
 }
 
-interface CurrenciesResponse {
-  success: boolean;
-  data: Currency[];
-  total: number;
-}
-
 async function fetchCurrencies(activeOnly: boolean = true): Promise<Currency[]> {
   const response = await fetch('/api/ecommerce/currencies', {
     method: 'POST',

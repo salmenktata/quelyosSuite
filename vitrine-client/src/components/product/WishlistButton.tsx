@@ -13,7 +13,7 @@ interface WishlistButtonProps {
 
 const WishlistButton: React.FC<WishlistButtonProps> = ({
   productId,
-  size = 'md',
+  size: _size = 'md',
   showLabel = false,
 }) => {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
@@ -22,13 +22,13 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
 
   const inWishlist = isInWishlist(productId);
 
-  const sizes = {
+  const _sizes = {
     sm: 'w-8 h-8',
     md: 'w-10 h-10',
     lg: 'w-12 h-12',
   };
 
-  const iconSizes = {
+  const _iconSizes = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
     lg: 'w-6 h-6',

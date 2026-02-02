@@ -3,7 +3,7 @@
  * Permet de partager des URLs avec filtres appliqués
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import type { ProductFilters } from '@quelyos/types';
 

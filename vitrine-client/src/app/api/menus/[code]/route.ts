@@ -32,7 +32,7 @@ export async function GET(
     return NextResponse.json(data.result, {
       headers: { 'Cache-Control': 'public, max-age=600' },
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ success: true, menu: null }, { status: 200 })
   }
 }

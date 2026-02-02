@@ -41,9 +41,9 @@ export default function LegalPage() {
             </h3>
             <div className="prose prose-gray max-w-none">
               <p>
-                L'interface utilisateur de Quelyos ERP, incluant la boutique en ligne
+                L&apos;interface utilisateur de Quelyos ERP, incluant la boutique en ligne
                 (Frontend Next.js) et le backoffice d&apos;administration (React), est
-                développée par l'équipe Quelyos.
+                développée par l&apos;équipe Quelyos.
               </p>
               <p className="mt-2">
                 <strong>Licence :</strong> Propriétaire<br />
@@ -73,14 +73,14 @@ export default function LegalPage() {
               </p>
               <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
                 <p className="text-sm">
-                  <strong>Note importante :</strong> Odoo est une marque déposée d'Odoo S.A.
+                  <strong>Note importante :</strong> Odoo est une marque déposée d&apos;Odoo S.A.
                   Quelyos ERP n&apos;est pas affilié, approuvé ou sponsorisé par Odoo S.A.
-                  L'utilisation d'Odoo Community Edition respecte intégralement les termes
+                  L&apos;utilisation d&apos;Odoo Community Edition respecte intégralement les termes
                   de la licence LGPL-3.0.
                 </p>
               </div>
               <p className="mt-4">
-                Le code source d'Odoo Community Edition est disponible sur :
+                Le code source d&apos;Odoo Community Edition est disponible sur :
                 <a
                   href="https://github.com/odoo/odoo"
                   target="_blank"
@@ -110,7 +110,7 @@ export default function LegalPage() {
               </p>
               <ul className="list-disc list-inside mt-2 space-y-1">
                 <li>Liberté d&apos;utiliser le logiciel à toute fin</li>
-                <li>Liberté d'étudier le fonctionnement du logiciel</li>
+                <li>Liberté d&apos;étudier le fonctionnement du logiciel</li>
                 <li>Liberté de redistribuer des copies</li>
                 <li>Liberté d&apos;améliorer le logiciel et de publier les améliorations</li>
                 <li>

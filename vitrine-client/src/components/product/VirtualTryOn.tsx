@@ -15,7 +15,7 @@ interface VirtualTryOnProps {
 export function VirtualTryOn({
   productName,
   productImage,
-  productType = 'accessory',
+  productType: _productType = 'accessory',
   onClose,
 }: VirtualTryOnProps) {
   const [cameraActive, setCameraActive] = useState(false);

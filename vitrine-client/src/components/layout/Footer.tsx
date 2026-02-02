@@ -126,7 +126,7 @@ const TRUST_BADGES_FALLBACK: TrustBadge[] = [
 // SUB-COMPONENTS
 // =============================================================================
 
-const TrustBadgeItem = memo(({ badge, index }: { badge: TrustBadge; index: number }) => (
+const TrustBadgeItem = memo(({ badge, index: _index }: { badge: TrustBadge; index: number }) => (
   <div
     className="group flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-secondary/30 transition-all duration-300"
   >

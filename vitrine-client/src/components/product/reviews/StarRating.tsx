@@ -15,7 +15,7 @@ interface StarRatingProps {
 const StarRating: React.FC<StarRatingProps> = ({
   rating,
   maxRating = 5,
-  size = 'md',
+  size: _size = 'md',
   interactive = false,
   onChange,
   showCount = false,
@@ -23,7 +23,7 @@ const StarRating: React.FC<StarRatingProps> = ({
 }) => {
   const [hoverRating, setHoverRating] = React.useState(0);
 
-  const sizes = {
+  const _sizes = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
     lg: 'w-6 h-6',
@@ -47,7 +47,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     }
   };
 
-  const getStarColor = (index: number) => {
+  const _getStarColor = (index: number) => {
     const currentRating = hoverRating || rating;
     if (index <= currentRating) {
       return 'text-yellow-400';

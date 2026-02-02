@@ -6,7 +6,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { backendClient } from '@/lib/backend/client';
 import { useCartStore } from '@/store/cartStore';

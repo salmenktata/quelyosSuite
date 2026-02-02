@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useToastStore, Toast as ToastType } from '@/store/toastStore';
 
 interface ToastProps {

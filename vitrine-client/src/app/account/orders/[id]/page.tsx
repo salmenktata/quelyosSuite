@@ -75,7 +75,7 @@ export default function OrderDetailPage() {
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-12 text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Commande introuvable</h1>
             <p className="text-gray-600 mb-6">
-              La commande #{orderId} n'existe pas ou vous n'y avez pas accès.
+              La commande #{orderId} n&apos;existe pas ou vous n&apos;y avez pas accès.
             </p>
             <Link href="/account/orders">
               <Button variant="primary" className="rounded-full">

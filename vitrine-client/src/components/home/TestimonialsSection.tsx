@@ -94,7 +94,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
       {/* Contenu */}
       <blockquote className="text-gray-700 dark:text-gray-300 mb-6 italic">
-        "{testimonial.content}"
+        &quot;{testimonial.content}&quot;
       </blockquote>
 
       {/* Auteur */}

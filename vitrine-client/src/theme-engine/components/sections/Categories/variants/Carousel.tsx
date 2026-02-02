@@ -28,7 +28,7 @@ export default function Carousel({ config, className = '', theme }: CarouselProp
   const title = (config?.title as string) || 'Nos Catégories';
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [_scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
     async function loadCategories() {

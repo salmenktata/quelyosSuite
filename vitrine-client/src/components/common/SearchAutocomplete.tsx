@@ -86,7 +86,7 @@ export function SearchAutocomplete({
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Search history store
-  const { searches, addSearch, removeSearch, clearHistory, getRecentSearches } =
+  const { searches: _searches, addSearch, removeSearch, clearHistory, getRecentSearches } =
     useSearchHistoryStore();
 
   // Fetch popular searches on mount
@@ -108,7 +108,7 @@ export function SearchAutocomplete({
           });
           setPopularSearches(searches);
         }
-      } catch (error) {
+      } catch (_error) {
         // Silently fail - popular searches are optional
         logger.debug('Popular searches not available');
       }
@@ -699,7 +699,7 @@ export function SearchAutocomplete({
                 onClick={handleSubmit}
                 className="flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10"
               >
-                <span>Voir tous les résultats pour "{query}"</span>
+                <span>Voir tous les résultats pour &quot;{query}&quot;</span>
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -730,7 +730,7 @@ export function SearchAutocomplete({
                   />
                 </svg>
                 <p className="mt-2 text-sm text-gray-500">
-                  Aucun résultat pour "{query}"
+                  Aucun résultat pour &quot;{query}&quot;
                 </p>
                 <div className="mt-3 space-y-2">
                   <p className="text-xs text-gray-400">Suggestions :</p>

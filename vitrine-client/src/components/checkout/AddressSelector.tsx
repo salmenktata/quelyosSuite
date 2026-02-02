@@ -30,7 +30,7 @@ export function AddressSelector({
   type,
   selectedAddressId,
   onAddressSelect,
-  onAddNew,
+  onAddNew: _onAddNew,
 }: AddressSelectorProps) {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState(true);

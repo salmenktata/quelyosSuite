@@ -19,7 +19,7 @@ interface Slide {
 export default function FullscreenAutoplay({ config, className = '', colors }: FullscreenAutoplayProps) {
   const height = (config?.height as string) || '90vh';
   const interval = (config?.interval as number) || 5000;
-  const animation = (config?.animation as string) || 'fade';
+  const _animation = (config?.animation as string) || 'fade';
 
   // Données par défaut (seront remplacées par données backend)
   const slides: Slide[] = (config?.slides as Slide[]) || [

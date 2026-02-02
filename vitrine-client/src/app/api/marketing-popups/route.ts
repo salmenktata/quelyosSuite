@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 'public, max-age=60' },
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: true, popups: [] },
       { status: 200 }

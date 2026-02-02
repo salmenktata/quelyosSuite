@@ -13,7 +13,7 @@ interface SocialShareProps {
 }
 
 export function SocialShare({
-  productId,
+  productId: _productId,
   productName,
   productUrl,
   productImage,

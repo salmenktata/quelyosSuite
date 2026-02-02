@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BlockRenderer } from './BlockRenderer';
-import type { CmsPage, CmsBlock, Breadcrumb } from '@/types/cms';
+import type { CmsPage, CmsBlock } from '@/types/cms';
 import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 interface CmsPageContentProps {

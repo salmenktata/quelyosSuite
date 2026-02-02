@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Input } from '@/components/common';
 import { GovernorateSelect } from './GovernorateSelect';
-import { AddressSelector } from './AddressSelector';
+
 import { backendClient } from '@/lib/backend/client';
 import { useAuthStore } from '@/store/authStore';
 import type { Address } from '@quelyos/types';

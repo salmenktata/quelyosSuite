@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useSiteConfig } from '@/lib/config/SiteConfigProvider';
 
 interface FreeShippingBarProps {
   cartTotal: number;

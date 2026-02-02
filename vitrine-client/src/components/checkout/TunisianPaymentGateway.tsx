@@ -154,7 +154,7 @@ export const TunisianPaymentGateway: React.FC<TunisianPaymentGatewayProps> = ({
               1
             </span>
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              Cliquez sur "Procéder au paiement" ci-dessous
+              Cliquez sur &quot;Procéder au paiement&quot; ci-dessous
             </span>
           </li>
           <li className="flex items-start gap-3">

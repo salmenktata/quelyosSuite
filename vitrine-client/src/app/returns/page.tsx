@@ -6,7 +6,7 @@ import { StaticPageContent } from '@/components/static/StaticPageContent';
 
 function ReturnsFallback() {
   const { config } = useSiteConfig();
-  const { brand, returns } = config;
+  const { brand: _brand, returns } = config;
 
   const steps = [
     {

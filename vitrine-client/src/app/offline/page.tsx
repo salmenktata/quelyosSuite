@@ -4,8 +4,6 @@
 
 'use client';
 
-import Link from 'next/link';
-
 export default function OfflinePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -34,7 +32,7 @@ export default function OfflinePage() {
 
         {/* Description */}
         <p className="text-gray-600 mb-8">
-          Il semble que vous n'ayez pas de connexion internet.
+          Il semble que vous n&apos;ayez pas de connexion internet.
           Vérifiez votre connexion et réessayez.
         </p>
 

@@ -13,7 +13,7 @@ import { Button } from '@/components/common/Button';
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
-  const { fetchCart, clearCart } = useCartStore();
+  const { clearCart } = useCartStore();
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -188,7 +188,7 @@ export default function CheckoutSuccessPage() {
                 <div>
                   <p className="font-semibold text-gray-900">Livraison</p>
                   <p className="text-sm text-gray-600">
-                    Vous recevez votre commande à l'adresse indiquée
+                    Vous recevez votre commande à l&apos;adresse indiquée
                   </p>
                 </div>
               </div>

@@ -115,7 +115,7 @@ export default function PublicWishlistPage() {
             <h1 className="mb-2 text-2xl font-bold text-red-900">Liste introuvable</h1>
             <p className="mb-6 text-red-800">{error}</p>
             <Link href="/">
-              <Button variant="primary">Retour à l'accueil</Button>
+              <Button variant="primary">Retour à l&apos;accueil</Button>
             </Link>
           </div>
         </div>

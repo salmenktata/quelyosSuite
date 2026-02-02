@@ -8,8 +8,6 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
-import { Button } from '@/components/common/Button';
-import { Input } from '@/components/common/Input';
 
 function LoginContent() {
   const router = useRouter();
@@ -42,7 +40,7 @@ function LoginContent() {
       } else {
         setError('Email ou mot de passe incorrect');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsLoading(false);

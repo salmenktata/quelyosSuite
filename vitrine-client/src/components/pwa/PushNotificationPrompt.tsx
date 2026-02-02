@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 
 export function PushNotificationPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [_permission, setPermission] = useState<NotificationPermission>('default');
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {

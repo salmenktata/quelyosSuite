@@ -118,7 +118,7 @@ export default function Featured({ config, className = '', theme }: FeaturedProp
               className="inline-flex items-center gap-2 font-semibold text-lg hover:gap-3 transition-all"
               style={{ color: theme.colors.primary }}
             >
-              Lire l'article complet
+              Lire l&apos;article complet
               <ArrowRight size={20} />
             </a>
           </div>

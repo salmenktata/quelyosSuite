@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { backendClient } from '@/lib/backend/client';
 import { useCartStore } from '@/store/cartStore';
@@ -12,7 +12,6 @@ import { logger } from '@/lib/logger';
  * Cart Recovery Content Component
  */
 function CartRecoverContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
@@ -107,7 +106,7 @@ function CartRecoverContent() {
             <p className="mb-6 text-red-800">{error}</p>
             <div className="flex justify-center gap-3">
               <Link href="/">
-                <Button variant="outline">Retour à l'accueil</Button>
+                <Button variant="outline">Retour à l&apos;accueil</Button>
               </Link>
               <Link href="/products">
                 <Button variant="primary">Voir nos produits</Button>

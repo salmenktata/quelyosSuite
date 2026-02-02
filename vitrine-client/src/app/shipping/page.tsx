@@ -6,7 +6,7 @@ import { StaticPageContent } from '@/components/static/StaticPageContent';
 
 function ShippingFallback() {
   const { config } = useSiteConfig();
-  const { brand, shipping, currency } = config;
+  const { brand: _brand, shipping, currency } = config;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

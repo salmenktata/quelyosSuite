@@ -209,7 +209,7 @@ export default function ComparePage() {
             <div>
               <h3 className="font-bold text-blue-900 mb-2">Conseil</h3>
               <p className="text-sm text-blue-800">
-                Vous pouvez comparer jusqu\'à 4 produits simultanément. Ajoutez des produits depuis les pages produits en cliquant sur l\'icône de comparaison.
+                Vous pouvez comparer jusqu&apos;à 4 produits simultanément. Ajoutez des produits depuis les pages produits en cliquant sur l&apos;icône de comparaison.
               </p>
             </div>
           </div>

@@ -105,7 +105,7 @@ export function WalletPaymentButton({
       setProcessing(true);
 
       // Get payment method from event
-      const { paymentMethod, shippingAddress, payerName, payerEmail } = event;
+      const { paymentMethod, shippingAddress, payerName: _payerName, payerEmail: _payerEmail } = event;
 
       // Create payment intent on backend
       const response = await backendClient.createWalletPayment({

@@ -99,7 +99,7 @@ export function EcoScore({ score, details, compact = false }: EcoScoreProps) {
 
       <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-700">
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          L'eco-score est calcule en fonction de l&apos;origine, l&apos;emballage et l&apos;impact carbone du produit.
+          L&apos;eco-score est calcule en fonction de l&apos;origine, l&apos;emballage et l&apos;impact carbone du produit.
         </p>
       </div>
     </div>

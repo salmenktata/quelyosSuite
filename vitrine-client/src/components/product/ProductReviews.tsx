@@ -141,7 +141,7 @@ export function ProductReviews({ productId, productName }: ProductReviewsProps) 
       } else {
         toast.error(response.error || 'Erreur lors de la soumission');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erreur lors de la soumission');
     } finally {
       setSubmitting(false);

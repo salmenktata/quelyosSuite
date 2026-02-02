@@ -24,7 +24,7 @@ const PromoBar: React.FC<PromoBarProps> = ({
   textColor = 'text-white',
   dismissible = true,
 }) => {
-  const { messages: apiMessages, loading } = usePromoMessages();
+  const { messages: apiMessages, loading: _loading } = usePromoMessages();
 
   // Priorité : props > API > fallback
   const messages = propMessages || (apiMessages.length > 0 ? apiMessages : fallbackMessages);

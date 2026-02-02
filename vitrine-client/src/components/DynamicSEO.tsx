@@ -2,7 +2,6 @@
 
 import { useSeoMetadata } from '@/hooks/useSeoMetadata'
 import { usePathname } from 'next/navigation'
-import Head from 'next/head'
 import { useEffect } from 'react'
 
 interface DynamicSEOProps {
@@ -12,7 +11,7 @@ interface DynamicSEOProps {
 export function DynamicSEO({ slug }: DynamicSEOProps) {
   const pathname = usePathname()
   const effectiveSlug = slug || pathname
-  const { metadata, loading } = useSeoMetadata(effectiveSlug)
+  const { metadata, loading: _loading } = useSeoMetadata(effectiveSlug)
 
   useEffect(() => {
     if (metadata) {

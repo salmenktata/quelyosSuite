@@ -12,7 +12,7 @@ interface MarqueeProps {
 
 const DEFAULT_BRANDS = Array.from({ length: 8 }, (_, i) => ({ name: `Brand ${i + 1}`, logo: '' }));
 
-export default function Marquee({ config, className = '', theme }: MarqueeProps) {
+export default function Marquee({ config, className = '', theme: _theme }: MarqueeProps) {
   const brands = (config?.brands as typeof DEFAULT_BRANDS) || DEFAULT_BRANDS;
 
   return (

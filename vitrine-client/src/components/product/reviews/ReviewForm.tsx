@@ -17,7 +17,7 @@ export interface ReviewFormData {
   comment: string;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit, onCancel }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ productId: _productId, onSubmit, onCancel }) => {
   const [rating, setRating] = useState(0);
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
