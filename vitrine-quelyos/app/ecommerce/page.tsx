@@ -101,7 +101,9 @@ export default function EcommercePage() {
         {/* Hero */}
         <div className="relative overflow-hidden border-b border-white/10">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5" />
-          <div className="absolute top-0 right-0 h-96 w-96 bg-gradient-to-br from-amber-500/10 to-transparent blur-3xl" />
+          <div className="absolute top-0 right-0 h-96 w-96 animate-pulse bg-gradient-to-br from-amber-500/10 to-transparent blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-96 w-96 animate-pulse bg-gradient-to-br from-orange-500/10 to-transparent blur-3xl [animation-delay:2s]" />
+          <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 animate-pulse bg-gradient-to-br from-yellow-500/5 to-transparent blur-3xl [animation-delay:4s]" />
 
           <Container className="py-20">
             <div className="flex items-center gap-4 mb-8">

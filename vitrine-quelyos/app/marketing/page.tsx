@@ -192,8 +192,9 @@ export default function MarketingPage() {
       {/* Hero */}
       <section className="relative py-20 sm:py-32">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -left-1/4 top-0 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl" />
-          <div className="absolute -right-1/4 bottom-0 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
+          <div className="absolute -left-1/4 top-0 h-96 w-96 animate-pulse rounded-full bg-pink-500/20 blur-3xl" />
+          <div className="absolute -right-1/4 bottom-0 h-96 w-96 animate-pulse rounded-full bg-purple-500/20 blur-3xl [animation-delay:2s]" />
+          <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-orange-500/10 blur-3xl [animation-delay:4s]" />
         </div>
         <Container className="relative">
           <m.div
