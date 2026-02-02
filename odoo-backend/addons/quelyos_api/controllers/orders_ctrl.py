@@ -1497,17 +1497,31 @@ class QuelyosOrdersAPI(BaseController):
 
             SaleOrder = request.env['sale.order'].sudo()
 
-            # Compter par priorité (exclure cancel/done)
+            # Compter par priorité (exclure cancel/done) — une seule requête via read_group
             base_domain = [('state', 'not in', ['cancel', 'done'])]
 
-            stats_by_priority = {}
+            priority_groups = SaleOrder.read_group(
+                base_domain,
+                fields=['fulfillment_priority'],
+                groupby=['fulfillment_priority'],
+            )
+            stats_by_priority = {g['fulfillment_priority']: g['fulfillment_priority_count'] for g in priority_groups if g['fulfillment_priority']}
             for priority in ['immediate', 'short', 'medium', 'long', 'backorder']:
-                count = SaleOrder.search_count(base_domain + [('fulfillment_priority', '=', priority)])
-                stats_by_priority[priority] = count
+                stats_by_priority.setdefault(priority, 0)
 
-            # Commandes prêtes vs en attente
-            ready_count = SaleOrder.search_count(base_domain + [('can_fulfill_now', '=', True)])
-            waiting_count = SaleOrder.search_count(base_domain + [('can_fulfill_now', '=', False)])
+            # Commandes prêtes vs en attente — une seule requête via read_group
+            fulfill_groups = SaleOrder.read_group(
+                base_domain,
+                fields=['can_fulfill_now'],
+                groupby=['can_fulfill_now'],
+            )
+            ready_count = 0
+            waiting_count = 0
+            for g in fulfill_groups:
+                if g['can_fulfill_now']:
+                    ready_count = g['can_fulfill_now_count']
+                else:
+                    waiting_count = g['can_fulfill_now_count']
 
             # Valeur totale bloquée
             blocked_orders = SaleOrder.search(base_domain + [('can_fulfill_now', '=', False)])

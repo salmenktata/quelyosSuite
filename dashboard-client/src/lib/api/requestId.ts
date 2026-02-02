@@ -148,6 +148,7 @@ export function useRequestId(): string {
 // Nécessite React (import conditionnel pour éviter les erreurs SSR)
 let React: typeof import('react')
 try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   React = require('react')
 } catch {
   // React non disponible

@@ -646,13 +646,18 @@ class QuelyosInventoryAPI(BaseController):
             results = []
             all_available = True
 
+            # Batch: charger tous les produits en une seule requête (évite N+1)
+            product_ids = [int(item.get('product_id', 0)) for item in items if item.get('product_id')]
+            products_batch = request.env['product.product'].sudo().browse(product_ids)
+            products_by_id = {p.id: p for p in products_batch.exists()}
+
             for item in items:
                 product_id = item.get('product_id')
                 quantity = float(item.get('quantity', 1))
 
-                product = request.env['product.product'].sudo().browse(int(product_id))
+                product = products_by_id.get(int(product_id)) if product_id else None
 
-                if not product.exists():
+                if not product:
                     results.append({
                         'product_id': product_id,
                         'available': False,

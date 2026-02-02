@@ -357,16 +357,23 @@ class QuelyosProductsAPI(BaseController):
             total = ProductTemplate.search_count(domain)
 
             # Construire les données enrichies
+            # Batch: récupérer tous les quants en une seule requête (évite N+1)
             StockQuant = request.env['stock.quant'].sudo()
+            all_variant_ids = []
+            for p in products:
+                all_variant_ids.extend(p.product_variant_ids.ids)
+            all_quants = StockQuant.search([
+                ('product_id', 'in', all_variant_ids),
+                ('location_id.usage', '=', 'internal')
+            ])
+            # Index par product_id pour lookup O(1)
+            qty_by_variant = {}
+            for q in all_quants:
+                qty_by_variant[q.product_id.id] = qty_by_variant.get(q.product_id.id, 0.0) + q.quantity
+
             data = []
             for p in products:
-                # Calculer le statut de stock en allant directement dans stock.quant
-                # (plus fiable avec auth='public' car qty_available dépend du contexte)
-                quants = StockQuant.search([
-                    ('product_id', 'in', p.product_variant_ids.ids),
-                    ('location_id.usage', '=', 'internal')
-                ])
-                qty = sum(quants.mapped('quantity')) if quants else 0.0
+                qty = sum(qty_by_variant.get(v_id, 0.0) for v_id in p.product_variant_ids.ids)
                 if qty <= 0:
                     p_stock_status = 'out_of_stock'
                 elif qty <= 5:

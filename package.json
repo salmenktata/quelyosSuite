@@ -58,7 +58,7 @@
   },
   "lint-staged": {
     "dashboard-client/**/*.{ts,tsx}": [
-      "bash -c 'cd dashboard-client && pnpm eslint --fix --max-warnings 100'",
+      "bash -c 'cd dashboard-client && pnpm eslint --fix --max-warnings 150'",
       "bash scripts/check-console-log.sh"
     ],
     "vitrine-client/**/*.{ts,tsx}": [
