@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      ...(mode === 'analyze' ? [visualizer({ open: false, filename: 'perf-reports/bundle-stats.html', gzipSize: true, brotliSize: true })] : []),
+      ...(mode === 'analyze' ? [visualizer({ open: true, filename: 'perf-reports/bundle-stats.html', gzipSize: true, brotliSize: true, template: 'treemap' })] : []),
     ],
     appType: 'spa',
     define: {
@@ -113,6 +113,18 @@ export default defineConfig(({ mode }) => {
             // Headless UI
             if (id.includes('@headlessui')) {
               return 'vendor-ui';
+            }
+            // Radix UI (composants)
+            if (id.includes('@radix-ui')) {
+              return 'vendor-radix';
+            }
+            // Zustand (state management)
+            if (id.includes('zustand')) {
+              return 'vendor-zustand';
+            }
+            // Axios (HTTP client)
+            if (id.includes('axios')) {
+              return 'vendor-axios';
             }
             // Autres node_modules (regroupés)
             if (id.includes('node_modules')) {
