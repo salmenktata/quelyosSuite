@@ -43,9 +43,17 @@ Type  Nom                   Valeur           TTL
 A     quelyos.com           184.174.32.177   300
 A     www.quelyos.com       184.174.32.177   300
 A     shop.quelyos.com      184.174.32.177   300
-A     dashboard.quelyos.com 184.174.32.177   300
-A     api.quelyos.com       184.174.32.177   300
+A     backoffice.quelyos.com 184.174.32.177  300
+A     admin.quelyos.com      184.174.32.177  300
+A     api.quelyos.com        184.174.32.177  300
 ```
+
+**⚠️ Sous-domaines réels (pas dashboard.quelyos.com)** :
+- `quelyos.com` / `www.quelyos.com` → Site vitrine (port 3000)
+- `shop.quelyos.com` → E-commerce (port 3001)
+- `backoffice.quelyos.com` → Dashboard ERP (port 5175)
+- `admin.quelyos.com` → Super Admin SaaS (port 9000)
+- `api.quelyos.com` → Backend API (port 8069)
 
 **⚠️ Attendre propagation DNS (5-30 min) AVANT de lancer cert-manager**
 
