@@ -10,7 +10,7 @@
  */
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from 'framer-motion'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice } from '@/components/common'
 import {
@@ -62,6 +62,7 @@ export default function ProfitabilityReportPage() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <Layout>
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
@@ -73,7 +74,7 @@ export default function ProfitabilityReportPage() {
         />
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -90,13 +91,13 @@ export default function ProfitabilityReportPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Report Notice */}
         <PageNotice config={financeNotices.profitability} className="mb-6" />
 
         {/* Controls */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -122,11 +123,11 @@ export default function ProfitabilityReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         {/* Loading State */}
         {loading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -137,12 +138,12 @@ export default function ProfitabilityReportPage() {
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mb-6"
@@ -162,13 +163,13 @@ export default function ProfitabilityReportPage() {
                 </button>
               </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* KPIs */}
         {!loading && !error && apiData && (
         <>
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -220,10 +221,10 @@ export default function ProfitabilityReportPage() {
               <Target className="h-8 w-8 text-rose-300" />
             </div>
           </GlassCard>
-        </motion.div>
+        </m.div>
 
         {/* Waterfall P&L */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -330,11 +331,11 @@ export default function ProfitabilityReportPage() {
               </div>
             </div>
           </GlassPanel>
-        </motion.div>
+        </m.div>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Benchmark Comparison */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -435,10 +436,10 @@ export default function ProfitabilityReportPage() {
                 </div>
               </div>
             </GlassPanel>
-          </motion.div>
+          </m.div>
 
           {/* Summary Breakdown */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
@@ -468,11 +469,12 @@ export default function ProfitabilityReportPage() {
                 </div>
               </div>
             </GlassPanel>
-          </motion.div>
+          </m.div>
         </div>
         </>
         )}
       </div>
     </Layout>
+    </LazyMotion>
     );
 }
