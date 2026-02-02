@@ -22,6 +22,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY dashboard-client/package.json ./dashboard-client/
 COPY packages/ ./packages/
+COPY packages/ ./shared/
 
 # Installation dépendances
 RUN pnpm install --frozen-lockfile

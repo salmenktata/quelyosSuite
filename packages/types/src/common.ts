@@ -215,6 +215,7 @@ export interface ProductVariant {
   sku: string
   price: number
   stock_quantity: number
+  in_stock?: boolean
   attributes: ProductAttribute[]
   image_url?: string
 }
