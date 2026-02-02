@@ -270,6 +270,60 @@ CREATE POLICY tenant_isolation_pos_session ON pos_session
   USING (tenant_id = get_current_tenant_id());
 
 -- =============================================================================
+-- RÔLE APPLICATIF NON-SUPERUSER (requis pour que RLS fonctionne)
+-- =============================================================================
+-- IMPORTANT: Le rôle 'odoo' est superuser et bypass TOUJOURS le RLS.
+-- Les requêtes tenant doivent utiliser 'quelyos_app' (NOBYPASSRLS).
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'quelyos_app') THEN
+    CREATE ROLE quelyos_app LOGIN PASSWORD 'quelyos_app_secure' NOBYPASSRLS;
+    GRANT CONNECT ON DATABASE quelyos TO quelyos_app;
+    GRANT USAGE ON SCHEMA public TO quelyos_app;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO quelyos_app;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO quelyos_app;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO quelyos_app;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO quelyos_app;
+  END IF;
+END;
+$$;
+
+-- Permettre à odoo de basculer vers quelyos_app via SET LOCAL ROLE
+GRANT quelyos_app TO odoo;
+
+-- =============================================================================
+-- FORCE RLS + ADMIN BYPASS (toutes les tables avec tenant_id)
+-- =============================================================================
+-- FORCE RLS: applique RLS même au propriétaire de la table
+-- admin_bypass: permet l'accès total quand app.current_tenant n'est pas défini
+--              (migrations, cron jobs, opérations admin)
+
+DO $$
+DECLARE
+    tbl TEXT;
+BEGIN
+    FOR tbl IN
+        SELECT table_name FROM information_schema.columns
+        WHERE column_name = 'tenant_id' AND table_schema = 'public'
+    LOOP
+        -- Force RLS même pour le propriétaire (non-superuser)
+        EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', tbl);
+
+        -- Policy admin bypass: accès total sans tenant défini
+        BEGIN
+            EXECUTE format(
+                'CREATE POLICY admin_bypass_%I ON %I USING (get_current_tenant_id() IS NULL OR get_current_tenant_id() = 0)',
+                tbl, tbl
+            );
+        EXCEPTION WHEN duplicate_object THEN
+            NULL; -- Policy existe déjà
+        END;
+    END LOOP;
+END;
+$$;
+
+-- =============================================================================
 -- INDEX COMPOSITES pour performances RLS
 -- =============================================================================
 -- Les policies RLS utilisent tenant_id intensivement, ces index améliorent les perfs
@@ -320,30 +374,25 @@ SELECT * FROM product_template;  -- Doit retourner 0 résultats ou erreur
 /*
 1. ACTIVATION BACKEND:
    Le code Python Odoo doit appeler au début de chaque requête HTTP:
+   set_rls_tenant(request.env.cr, tenant_id)
+   Voir: quelyos_api/lib/rls_context.py
 
-   @http.route(...)
-   def my_endpoint(self, **kwargs):
-       tenant_id = get_tenant_from_header()
-       if tenant_id:
-           request.env.cr.execute(
-               "SET LOCAL app.current_tenant = %s",
-               (tenant_id,)
-           )
-       # ... reste du code
+2. RÔLE APPLICATIF:
+   IMPORTANT: RLS ne fonctionne QUE avec le rôle 'quelyos_app' (NOBYPASSRLS).
+   Le rôle 'odoo' est superuser et bypass TOUJOURS le RLS.
+   Les requêtes API tenant doivent utiliser la connexion quelyos_app.
 
-2. SUPER-ADMIN:
-   Pour contourner RLS (admin global):
-   SET SESSION AUTHORIZATION postgres;  -- Postgres superuser
+3. ADMIN BYPASS:
+   Sans app.current_tenant défini → admin_bypass policy → accès total.
+   Avec app.current_tenant = 0 → admin_bypass policy → accès total.
+   Les migrations et cron jobs continuent de fonctionner normalement.
 
-3. ROLLBACK:
-   Pour désactiver RLS sur une table:
+4. ROLLBACK:
    ALTER TABLE table_name DISABLE ROW LEVEL SECURITY;
    DROP POLICY tenant_isolation_table_name ON table_name;
+   DROP POLICY admin_bypass_table_name ON table_name;
 
-4. MONITORING:
-   Vérifier les policies actives:
+5. MONITORING:
    SELECT schemaname, tablename, policyname, permissive, roles, qual
-   FROM pg_policies
-   WHERE schemaname = 'public'
-   ORDER BY tablename;
+   FROM pg_policies WHERE schemaname = 'public' ORDER BY tablename;
 */
