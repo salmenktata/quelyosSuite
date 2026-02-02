@@ -246,6 +246,7 @@ const GlobalSettingsSMS = lazy(() => import('./pages/settings/sms/page'))
 const GlobalSettingsSecurity = lazy(() => import('./pages/settings/security/page'))
 const GlobalSettingsDevise = lazy(() => import('./pages/settings/devise/page'))
 const GlobalSettingsTva = lazy(() => import('./pages/settings/tva/page'))
+const GlobalSettingsTeam = lazy(() => import('./pages/settings/team/page'))
 
 // Lazy loaded pages - Subscriptions (module Accueil)
 const Subscriptions = lazy(() => import('./pages/subscriptions/page'))
@@ -1850,6 +1851,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <GlobalSettingsTva />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/team"
+                element={
+                  <ProtectedRoute>
+                    <GlobalSettingsTeam />
                   </ProtectedRoute>
                 }
               />

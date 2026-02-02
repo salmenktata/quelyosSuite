@@ -100,3 +100,5 @@ from . import payment_planning_ctrl
 # User Settings & Billing
 from . import user_settings_ctrl
 from . import user_billing_ctrl
+# User Permissions (Manager → User)
+from . import user_permissions_ctrl

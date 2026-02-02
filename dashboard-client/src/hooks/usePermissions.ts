@@ -1,23 +1,19 @@
 import { useAuth } from '@/lib/finance/compat/auth'
 import { getCurrentEdition } from '@/lib/editionDetector'
+import type { AccessLevel } from '@/config/module-pages'
 
 type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support' | 'maintenance'
 
 /**
- * Hook pour vérifier les permissions utilisateur basées sur les groupes backend.
+ * Hook pour vérifier les permissions utilisateur basées sur les groupes backend
+ * et les permissions custom (Manager → User).
  *
- * Les groupes sont récupérés depuis l'API backend et stockés dans le profil utilisateur.
- * Chaque module du backoffice nécessite un groupe minimum pour être accessible.
- *
- * NOUVEAU : Filtrage édition intégré (whiteliste modules par édition)
+ * Logique : Si des permissions custom existent → les utiliser.
+ * Sinon → fallback sur les groupes backend (compatibilité existante).
  */
 export function usePermissions() {
   const { user } = useAuth()
 
-  /**
-   * Mapping des modules aux groupes de sécurité requis.
-   * Un utilisateur doit avoir AU MOINS un des groupes listés (User OU Manager).
-   */
   const MODULE_GROUP_MAP: Record<ModuleId, string[]> = {
     'home': ['Quelyos Home User', 'Quelyos Home Manager'],
     'finance': ['Quelyos Finance User', 'Quelyos Finance Manager'],
@@ -27,101 +23,162 @@ export function usePermissions() {
     'marketing': ['Quelyos Marketing User', 'Quelyos Marketing Manager'],
     'hr': ['Quelyos HR User', 'Quelyos HR Manager'],
     'pos': ['Quelyos POS User', 'Quelyos POS Manager'],
-    'support': ['Quelyos Store User', 'Quelyos Store Manager'], // Support accessible aux utilisateurs Store
+    'support': ['Quelyos Store User', 'Quelyos Store Manager'],
     'maintenance': ['Quelyos Maintenance User', 'Quelyos Maintenance Manager', 'Quelyos Maintenance Technician'],
   }
 
-  /**
-   * Vérifie si l'utilisateur possède un groupe spécifique.
-   *
-   * @param groupName - Nom exact du groupe (ex: 'Quelyos Stock User')
-   * @returns true si l'utilisateur a le groupe, false sinon
-   */
+  // Récupérer les permissions custom depuis le profil utilisateur
+  const permissions = user?.permissions ?? null
+  const hasCustomPermissions = permissions !== null && Object.keys(permissions.modules).length > 0
+
   const hasGroup = (groupName: string): boolean => {
     if (!user || !user.groups) return false
     return user.groups.includes(groupName)
   }
 
-  /**
-   * Vérifie si l'utilisateur est super-admin (accès complet à tout).
-   *
-   * @returns true si l'utilisateur a le groupe Access Rights (super-admin)
-   */
   const isSuperAdmin = (): boolean => {
     if (!user || !user.groups) return false
-    // Le groupe "Access Rights" donne un accès complet à TOUT (existant et futur)
     return user.groups.includes('Access Rights')
   }
 
   /**
+   * Vérifie si l'utilisateur est Manager du tenant.
+   * Basé sur les permissions custom ou les groupes Manager.
+   */
+  const isTenantManager = (): boolean => {
+    if (permissions?.is_manager) return true
+    if (!user || !user.groups) return false
+    return user.groups.some(g => g.includes('Manager') && g.includes('Quelyos'))
+  }
+
+  /**
+   * Retourne le niveau d'accès d'un module.
+   * Priorité : permissions custom > groupes backend > aucun accès
+   */
+  const getAccessLevel = (moduleId: ModuleId): AccessLevel => {
+    if (!user) return 'none'
+    if (isSuperAdmin() || isTenantManager()) return 'full'
+
+    // Permissions custom
+    if (hasCustomPermissions && permissions) {
+      const modulePerm = permissions.modules[moduleId]
+      if (modulePerm) return (modulePerm.level as AccessLevel) || 'none'
+      return 'none'
+    }
+
+    // Fallback groupes backend
+    const requiredGroups = MODULE_GROUP_MAP[moduleId]
+    if (!requiredGroups) return 'none'
+
+    const hasManager = requiredGroups.some(g => g.includes('Manager') && user.groups.includes(g))
+    if (hasManager) return 'full'
+
+    const hasUser = requiredGroups.some(g => user.groups.includes(g))
+    if (hasUser) return 'read'
+
+    return 'none'
+  }
+
+  /**
    * Vérifie si l'utilisateur peut accéder à un module.
-   *
-   * NOUVEAU : Double filtrage (édition + permissions utilisateur)
-   *
-   * @param moduleId - Identifiant du module (ex: 'stock', 'crm')
-   * @returns true si l'utilisateur a les permissions, false sinon
+   * Combine filtrage édition + permissions.
    */
   const canAccessModule = (moduleId: ModuleId): boolean => {
     if (!user || !user.groups) return false
 
-    // 1. Filtrage édition (whiteliste modules)
+    // 1. Filtrage édition
     const edition = getCurrentEdition()
-    if (!edition.modules.includes(moduleId)) {
-      // Module non disponible dans cette édition
-      return false
+    if (!edition.modules.includes(moduleId)) return false
+
+    // 2. Super-admin / Manager : accès complet
+    if (isSuperAdmin() || isTenantManager()) return true
+
+    // 3. Permissions custom
+    if (hasCustomPermissions && permissions) {
+      const modulePerm = permissions.modules[moduleId]
+      return modulePerm !== undefined && (modulePerm.level as AccessLevel) !== 'none'
     }
 
-    // 2. Filtrage permissions utilisateur (groupes backend)
-    // Super-admin : accès complet à TOUS les modules whitelistés
-    if (isSuperAdmin()) return true
-
+    // 4. Fallback groupes backend
     const requiredGroups = MODULE_GROUP_MAP[moduleId]
     if (!requiredGroups) return false
-
-    // L'utilisateur doit avoir AU MOINS un des groupes requis
     return requiredGroups.some(group => user.groups.includes(group))
   }
 
   /**
-   * Vérifie si l'utilisateur est Manager d'un domaine fonctionnel.
-   *
-   * @param moduleId - Identifiant du module
-   * @returns true si l'utilisateur a le groupe Manager, false sinon
+   * Vérifie si l'utilisateur peut accéder à une page spécifique dans un module.
    */
+  const canAccessPage = (moduleId: ModuleId, pageId: string): boolean => {
+    if (!user) return false
+    if (isSuperAdmin() || isTenantManager()) return true
+
+    // Sans permissions custom, toutes les pages du module sont accessibles
+    if (!hasCustomPermissions || !permissions) {
+      return canAccessModule(moduleId)
+    }
+
+    const modulePerm = permissions.modules[moduleId]
+    if (!modulePerm || (modulePerm.level as AccessLevel) === 'none') return false
+
+    // Vérifier les permissions par page si définies
+    const pagePerms = modulePerm.pages
+    if (pagePerms && Object.keys(pagePerms).length > 0) {
+      const pageLevel = pagePerms[pageId] as AccessLevel | undefined
+      if (pageLevel !== undefined) return pageLevel !== 'none'
+    }
+
+    // Si pas de permission spécifique par page, utiliser le niveau du module
+    return (modulePerm.level as AccessLevel) !== 'none'
+  }
+
+  /**
+   * Retourne le niveau d'accès d'une page spécifique.
+   */
+  const getPageAccessLevel = (moduleId: ModuleId, pageId: string): AccessLevel => {
+    if (!user) return 'none'
+    if (isSuperAdmin() || isTenantManager()) return 'full'
+
+    if (!hasCustomPermissions || !permissions) {
+      return getAccessLevel(moduleId)
+    }
+
+    const modulePerm = permissions.modules[moduleId]
+    if (!modulePerm || (modulePerm.level as AccessLevel) === 'none') return 'none'
+
+    const pagePerms = modulePerm.pages
+    if (pagePerms && pagePerms[pageId] !== undefined) {
+      return pagePerms[pageId] as AccessLevel
+    }
+
+    return modulePerm.level as AccessLevel
+  }
+
   const isManager = (moduleId: ModuleId): boolean => {
     if (!user || !user.groups) return false
-
     const managerGroup = `Quelyos ${moduleId.charAt(0).toUpperCase() + moduleId.slice(1)} Manager`
     return user.groups.includes(managerGroup)
   }
 
-  /**
-   * Retourne la liste des modules accessibles par l'utilisateur.
-   *
-   * NOUVEAU : Filtre modules selon édition avant permissions
-   *
-   * @returns Array des IDs de modules accessibles
-   */
   const getAccessibleModules = (): ModuleId[] => {
     const edition = getCurrentEdition()
     const allModules: ModuleId[] = ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support', 'maintenance']
-
-    // 1. Filtrer modules par édition
     const editionModules = allModules.filter(module => edition.modules.includes(module))
-
-    // 2. Super-admin : accès à TOUS les modules de l'édition
-    if (isSuperAdmin()) return editionModules
-
-    // 3. Filtrer par permissions utilisateur
+    if (isSuperAdmin() || isTenantManager()) return editionModules
     return editionModules.filter(module => canAccessModule(module))
   }
 
   return {
     hasGroup,
     canAccessModule,
+    canAccessPage,
+    getAccessLevel,
+    getPageAccessLevel,
     isManager,
     isSuperAdmin,
+    isTenantManager,
     getAccessibleModules,
     userGroups: user?.groups || [],
+    permissions,
+    hasCustomPermissions,
   }
 }

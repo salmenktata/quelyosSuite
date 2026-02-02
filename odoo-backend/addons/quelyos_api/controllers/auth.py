@@ -244,6 +244,15 @@ class AuthController(http.Controller):
             # DEBUG LOG
             _logger.info(f"[sso-login] User {user.id} ({user.login}) - Groups: {groups_list}")
 
+            # Charger les permissions custom (Manager → User)
+            user_permissions = {'modules': {}, 'is_manager': False}
+            if tenant_id:
+                try:
+                    PermModel = request.env['quelyos.user.permission']
+                    user_permissions = PermModel.get_user_permissions(user.id, tenant_id)
+                except Exception as perm_err:
+                    _logger.warning(f"[sso-login] Could not load permissions: {perm_err}")
+
             # Préparer la réponse avec tokens pour clients Bearer
             user_data = {
                 'success': True,
@@ -258,6 +267,7 @@ class AuthController(http.Controller):
                     'tenant_id': tenant_id,
                     'tenant_domain': tenant_domain,
                     'groups': groups_list,
+                    'permissions': user_permissions,
                 }
             }
 
@@ -522,6 +532,15 @@ class AuthController(http.Controller):
                     name = name.get('en_US') or name.get('fr_FR') or next(iter(name.values()), '')
                 group_names.append(name)
 
+            # Charger permissions custom
+            info_permissions = {'modules': {}, 'is_manager': False}
+            if hasattr(user, 'tenant_id') and user.tenant_id:
+                try:
+                    PermModel = request.env['quelyos.user.permission']
+                    info_permissions = PermModel.get_user_permissions(user.id, user.tenant_id.id)
+                except Exception as perm_err:
+                    _logger.warning(f"[user-info] Could not load permissions: {perm_err}")
+
             response_data = {
                 'success': True,
                 'user': {
@@ -530,6 +549,7 @@ class AuthController(http.Controller):
                     'email': user.email or '',
                     'login': user.login,
                     'groups': group_names,
+                    'permissions': info_permissions,
                 }
             }
             return request.make_json_response(response_data, headers=cors_headers)
@@ -579,6 +599,16 @@ class AuthController(http.Controller):
             # DEBUG LOG
             _logger.info(f"[/api/auth/me] User {user.id} ({user.login}) - Groups: {groups_list}")
 
+            # Charger permissions custom
+            me_tenant_id = claims.get('tenant_id')
+            user_permissions = {'modules': {}, 'is_manager': False}
+            if me_tenant_id:
+                try:
+                    PermModel = request.env['quelyos.user.permission']
+                    user_permissions = PermModel.get_user_permissions(user.id, me_tenant_id)
+                except Exception as perm_err:
+                    _logger.warning(f"[/api/auth/me] Could not load permissions: {perm_err}")
+
             response_data = {
                 'success': True,
                 'user': {
@@ -587,6 +617,7 @@ class AuthController(http.Controller):
                     'email': user.email or '',
                     'login': user.login,
                     'groups': groups_list,
+                    'permissions': user_permissions,
                 },
                 'claims': {
                     'tenant_id': claims.get('tenant_id'),

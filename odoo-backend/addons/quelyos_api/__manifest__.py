@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Quelyos API',
-    'version': '19.0.1.89.0',
+    'version': '19.0.1.92.0',
     'category': 'Quelyos/API',
     'summary': 'API REST pour frontend e-commerce et backoffice',
     'author': 'Quelyos',
@@ -48,6 +48,7 @@
         'data/stock_reservation_sequence.xml',
         'data/payment_sequence.xml',
         'data/subscription_plan_data.xml',
+        'data/seed_plans.xml',
         'data/default_admin_tenant.xml',
         # 'data/demo_tenants_data.xml',  # TEMPORAIREMENT DÉSACTIVÉ (conflit domaine localhost)
         'data/menu_data.xml',

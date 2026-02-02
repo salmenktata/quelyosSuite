@@ -154,6 +154,7 @@ export const MODULES: Module[] = [
         items: [
           { name: 'Paramètres Généraux', path: '/settings', icon: Settings },
           { name: 'Sécurité & 2FA', path: '/settings/security', icon: ShieldCheck },
+          { name: 'Équipe', path: '/settings/team', icon: Users },
         ],
       },
     ],

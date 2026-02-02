@@ -15,6 +15,10 @@ export interface User {
   login?: string
   role?: string
   groups: string[] // Groupes de sécurité backend (ex: ['Quelyos Stock User', ...])
+  permissions?: {
+    modules: Record<string, { level: string; pages: Record<string, string> }>
+    is_manager: boolean
+  }
 }
 
 export interface AuthContextType {
@@ -42,6 +46,7 @@ export function useAuth(): AuthContextType {
         email: storedUser.email || '',
         login: storedUser.login,
         groups: storedUser.groups || [],
+        permissions: storedUser.permissions,
       }
     }
     return null
@@ -60,7 +65,7 @@ export function useAuth(): AuthContextType {
     try {
       const response = await api.getUserInfo()
       // CORRECTIF: response.user directement, pas response.data.user
-      const userData = (response as { success: boolean; user?: { id: number; name: string; email: string; login?: string; groups?: string[] } }).user
+      const userData = (response as { success: boolean; user?: { id: number; name: string; email: string; login?: string; groups?: string[]; permissions?: User['permissions'] } }).user
 
       if (response.success && userData) {
         setUser({
@@ -69,6 +74,7 @@ export function useAuth(): AuthContextType {
           email: userData.email,
           login: userData.login,
           groups: userData.groups || [],
+          permissions: userData.permissions,
         })
         setIsLoading(false)
         return true
@@ -96,8 +102,8 @@ export function useAuth(): AuthContextType {
 
       try {
         const result = await api.login(email, password)
-        // Cast étendu car api.login() renvoie un user avec login et groups
-        const userData = result.user as { id: number; name: string; email: string; login?: string; groups?: string[] } | undefined
+        // Cast étendu car api.login() renvoie un user avec login, groups et permissions
+        const userData = result.user as { id: number; name: string; email: string; login?: string; groups?: string[]; permissions?: User['permissions'] } | undefined
 
         if (result.success && userData) {
           setUser({
@@ -106,6 +112,7 @@ export function useAuth(): AuthContextType {
             email: userData.email,
             login: userData.login,
             groups: userData.groups || [],
+            permissions: userData.permissions,
           })
           setIsLoading(false)
           return { success: true }

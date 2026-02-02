@@ -109,7 +109,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
   })
-  const { canAccessModule } = usePermissions()
+  const { canAccessModule, getAccessLevel } = usePermissions()
   const [isNavbarVisible, setIsNavbarVisible] = useState(() => {
     return localStorage.getItem('navbar_visible') !== 'false'
   })
@@ -429,7 +429,14 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                   })()}
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <h2 className={`font-semibold ${currentModule.color} truncate`}>{currentModule.name}</h2>
+                  <div className="flex items-center gap-1.5">
+                    <h2 className={`font-semibold ${currentModule.color} truncate`}>{currentModule.name}</h2>
+                    {getAccessLevel(currentModule.id) === 'read' && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                        Lecture
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{currentModule.description}</p>
                 </div>
               </div>

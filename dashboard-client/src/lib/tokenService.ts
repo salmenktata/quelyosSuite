@@ -29,6 +29,10 @@ interface TokenState {
     name?: string
     email?: string
     groups?: string[]
+    permissions?: {
+      modules: Record<string, { level: string; pages: Record<string, string> }>
+      is_manager: boolean
+    }
     tenantId?: number
     tenantDomain?: string
   } | null
@@ -72,6 +76,10 @@ class TokenService {
       login: string
       email?: string
       groups?: string[]
+      permissions?: {
+        modules: Record<string, { level: string; pages: Record<string, string> }>
+        is_manager: boolean
+      }
       tenant_id?: number
       tenant_domain?: string
     }
@@ -94,6 +102,7 @@ class TokenService {
             name: user.name,
             email: user.email,
             groups: user.groups,
+            permissions: user.permissions,
             tenantId: user.tenant_id,
             tenantDomain: user.tenant_domain,
           }

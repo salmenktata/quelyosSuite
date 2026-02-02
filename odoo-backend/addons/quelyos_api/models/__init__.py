@@ -113,5 +113,7 @@ from . import ai_unanswered
 from . import seed_job
 # Note: seed_generator n'est pas un modèle Odoo, pas besoin de l'importer ici
 from . import finance
+# User Permissions (Manager → User)
+from . import user_permission
 # GMAO (Maintenance) - Modèles personnalisés Quelyos
 from . import maintenance
