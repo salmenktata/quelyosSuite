@@ -25,12 +25,12 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useState } from 'react'
 
 export default function HRDashboard() {
   const navigate = useNavigate()
   const { tenant } = useMyTenant()
-  const now = useMemo(() => Date.now(), [])
+  const [now] = useState(() => Date.now())
   const {
     data: dashboardData,
     isLoading,

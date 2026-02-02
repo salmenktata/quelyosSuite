@@ -8,7 +8,7 @@
  * - Création de nouveaux contrats
  * - Visualisation des détails de contrat
  */
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
@@ -28,7 +28,7 @@ import {
 export default function ContractsPage() {
   const navigate = useNavigate()
   const { tenant } = useMyTenant()
-  const now = useMemo(() => Date.now(), [])
+  const [now] = useState(() => Date.now())
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [typeFilter, setTypeFilter] = useState<string | undefined>()

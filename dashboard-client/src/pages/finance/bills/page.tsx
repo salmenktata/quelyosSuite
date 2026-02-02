@@ -33,6 +33,7 @@ export default function BillsPage() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchBills()
   }, [fetchBills])
 

@@ -137,16 +137,6 @@ function OptimizedForecastChartComponent({
     pessimistic: Math.round(zone.pessimistic),
   }));
 
-  // Formatter les valeurs monétaires
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart

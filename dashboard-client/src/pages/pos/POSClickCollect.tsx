@@ -122,7 +122,7 @@ const mockOrders: ClickCollectOrder[] = [
 type FilterStatus = 'all' | 'pending' | 'ready' | 'collected'
 
 export default function POSClickCollect() {
-  const now = useMemo(() => Date.now(), [])
+  const [now] = useState(() => Date.now())
   const [orders, setOrders] = useState<ClickCollectOrder[]>(mockOrders)
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')

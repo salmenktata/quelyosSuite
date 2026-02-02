@@ -58,6 +58,7 @@ export function PaymentModal({
   useEffect(() => {
     if (isOpen) {
       const defaultMethod = paymentMethods.find((m) => m.code === 'cash') || paymentMethods[0] || null
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedMethod(defaultMethod)
       setAmount(total.toFixed(2))
       setPayments([])
@@ -68,6 +69,7 @@ export function PaymentModal({
   // Auto-fill remaining amount when in split mode
   useEffect(() => {
     if (isSplitMode && remaining > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAmount(remaining.toFixed(2))
     }
   }, [isSplitMode, remaining])
