@@ -10,7 +10,7 @@
  * - Séquence de tri personnalisable
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Plus, Trash2, X, Save, GripVertical } from 'lucide-react'
 import { Layout } from '../../components/Layout'
 import {
@@ -55,7 +55,7 @@ export default function Menus() {
   const reorderMutation = useReorderMenus()
   const toast = useToast()
 
-  const menus = (data?.data?.menus || []) as MenuItem[]
+  const menus = useMemo(() => (data?.data?.menus || []) as MenuItem[], [data])
 
   const handleNew = () => {
     setIsCreating(true)

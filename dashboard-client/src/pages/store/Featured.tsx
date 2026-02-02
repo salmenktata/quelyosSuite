@@ -8,7 +8,7 @@
  * - Badge statut stock (en stock, faible, rupture)
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Layout } from '../../components/Layout'
 import {
   useFeaturedProducts,
@@ -60,7 +60,7 @@ export default function Featured() {
   const reorderMutation = useReorderFeaturedProducts()
   const toast = useToast()
 
-  const featuredProducts = (data?.data?.products || []) as FeaturedProduct[]
+  const featuredProducts = useMemo(() => (data?.data?.products || []) as FeaturedProduct[], [data])
   const availableProducts = (availableData?.data?.products || []) as AvailableProduct[]
 
   const formatPrice = (price: number) => {
