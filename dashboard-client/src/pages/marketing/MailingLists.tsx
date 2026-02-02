@@ -2,7 +2,7 @@
  * Page Listes de Diffusion - Dashboard Quelyos
  * 
  * Fonctionnalités :
- * - Liste toutes les listes de diffusion marketing (mailing.list natif Odoo 19)
+ * - Liste toutes les listes de diffusion marketing
  * - Créer nouvelle liste de diffusion
  * - Visualiser contacts par liste
  * - Ajouter contacts à une liste (email + nom)

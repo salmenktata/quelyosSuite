@@ -1,5 +1,5 @@
 /**
- * Page de gestion des Groupes d'Inventaire OCA (stock_inventory module)
+ * Page de gestion des Groupes d'Inventaire
  *
  * Fonctionnalités :
  * - Liste des groupes d'inventaire avec workflow complet
@@ -138,7 +138,7 @@ export default function InventoryGroups() {
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
             { label: 'Stock', href: '/stock' },
-            { label: 'Groupes Inventaire OCA' },
+            { label: 'Groupes Inventaire' },
           ]}
         />
 
@@ -147,7 +147,7 @@ export default function InventoryGroups() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Groupes d&apos;Inventaire</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Groupement d&apos;ajustements inventaire (Module OCA)
+              Groupement d&apos;ajustements inventaire
             </p>
           </div>
           <Button variant="primary" icon={<Plus className="h-5 w-5" />} onClick={handleCreate} disabled={creating}>

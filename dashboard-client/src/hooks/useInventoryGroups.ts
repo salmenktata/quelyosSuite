@@ -1,5 +1,5 @@
 /**
- * Hooks React pour Groupes d'Inventaire OCA (stock_inventory module).
+ * Hooks React pour Groupes d'Inventaire.
  * 
  * Fonctionnalités:
  * - Liste groupes d'inventaire avec filtres

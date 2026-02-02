@@ -1,5 +1,5 @@
 /**
- * Page de gestion des Calendriers Entrepôts OCA (stock_warehouse_calendar module)
+ * Page de gestion des Calendriers Entrepôts
  *
  * Fonctionnalités :
  * - Liste entrepôts avec calendriers assignés
@@ -109,7 +109,7 @@ export default function WarehouseCalendars() {
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
             { label: 'Stock', href: '/stock' },
-            { label: 'Calendriers Entrepôts OCA' },
+            { label: 'Calendriers Entrepôts' },
           ]}
         />
 
@@ -117,7 +117,7 @@ export default function WarehouseCalendars() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Calendriers Entrepôts</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Gestion jours ouvrables et dates livraison (Module OCA)
+              Gestion jours ouvrables et dates livraison
             </p>
           </div>
           <div className="flex gap-2">

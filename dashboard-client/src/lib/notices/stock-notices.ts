@@ -223,8 +223,8 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
     }]
   },
 
-  inventoriesOCA: {
-    pageId: 'stock-inventories-oca',
+  inventoriesAdvanced: {
+    pageId: 'stock-inventories-advanced',
     title: 'Inventaires Avancés',
     purpose: "Version avancée de l'inventaire physique avec fonctionnalités étendues : inventaires par lots, validation multi-niveaux, historique détaillé. Pour organisations nécessitant un contrôle strict du stock.",
     icon: ClipboardList,
@@ -244,8 +244,8 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
 
   inventoryGroups: {
     pageId: 'stock-inventory-groups',
-    title: 'Groupes d\'Inventaire OCA',
-    purpose: "Organisez vos inventaires par groupes cohérents (emplacements, catégories) pour un comptage plus structuré. Module OCA permettant de gérer plusieurs inventaires parallèles avec workflow de validation.",
+    title: 'Groupes d\'Inventaire',
+    purpose: "Organisez vos inventaires par groupes cohérents (emplacements, catégories) pour un comptage plus structuré. Gérez plusieurs inventaires parallèles avec workflow de validation.",
     icon: ClipboardList,
     moduleColor: 'teal',
     sections: [{
@@ -263,7 +263,7 @@ export const stockNotices: Record<string, PageNoticeConfig> = {
 
   warehouseCalendars: {
     pageId: 'stock-warehouse-calendars',
-    title: 'Calendriers Entrepôts OCA',
+    title: 'Calendriers Entrepôts',
     purpose: "Configurez les jours et horaires de travail de vos entrepôts pour calculer des dates de livraison réalistes. Le système prend en compte les jours ouvrables, heures d'ouverture et congés.",
     icon: Warehouse,
     moduleColor: 'teal',

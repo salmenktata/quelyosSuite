@@ -1,5 +1,5 @@
 /**
- * Hooks React pour Calendriers Entrepôts OCA (stock_warehouse_calendar module).
+ * Hooks React pour Calendriers Entrepôts.
  * 
  * Fonctionnalités:
  * - Liste entrepôts avec calendriers assignés

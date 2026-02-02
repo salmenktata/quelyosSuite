@@ -2,7 +2,7 @@
  * Page Campagnes Marketing - Dashboard Quelyos
  * 
  * Fonctionnalités :
- * - Liste toutes les campagnes marketing (mass_mailing natif Odoo 19)
+ * - Liste toutes les campagnes marketing
  * - Créer nouvelle campagne (sujet, contenu HTML, modèle cible, domaine)
  * - Envoyer campagne ou tester sur email
  * - Visualiser statistiques (envoyés, livrés, ouverts, clics, bounces)
