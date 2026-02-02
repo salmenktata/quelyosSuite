@@ -54,7 +54,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
       } else {
         setError(response.data.error || 'Erreur lors du chargement des factures')
       }
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur réseau'
       setError(errorMessage)
     } finally {
@@ -74,7 +74,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
       } else {
         throw new Error(response.data.error)
       }
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
       alert(`Erreur: ${errorMessage}`)
     }
@@ -88,7 +88,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
       } else {
         throw new Error(response.data.error)
       }
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
       alert(`Erreur: ${errorMessage}`)
     }
@@ -115,7 +115,7 @@ export function useInvoices(params: UseInvoicesParams = {}) {
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
       alert(`Erreur: ${errorMessage}`)
     }

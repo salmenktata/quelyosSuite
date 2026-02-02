@@ -247,7 +247,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       try {
         await api("/forecast-events", { method: "POST", body: event as Record<string, unknown> });
         fetchForecast(selectedDays);
-      } catch (_err: unknown) {
+      } catch (err: unknown) {
         logger.error("Error adding event:", err);
         alert("Erreur lors de l'ajout de l'événement");
       }
@@ -261,7 +261,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
       try {
         await api(`/forecast-events/${id}`, { method: "DELETE" });
         fetchForecast(selectedDays);
-      } catch (_err: unknown) {
+      } catch (err: unknown) {
         logger.error("Error deleting event:", err);
         alert("Erreur lors de la suppression de l'événement");
       }
@@ -275,7 +275,7 @@ export function useForecast({ initialHorizon = 90 }: UseForecastOptions = {}): U
         await api("/forecast-events/import", { method: "POST", body: { events } as Record<string, unknown> });
         fetchForecast(selectedDays);
         alert(`${events.length} événements importés avec succès`);
-      } catch (_err: unknown) {
+      } catch (err: unknown) {
         logger.error("Error importing events:", err);
         alert("Erreur lors de l'import des événements");
       }

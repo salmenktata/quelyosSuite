@@ -260,7 +260,7 @@ export default function OptimizationPanel() {
 
       // Recharger l'optimisation pour voir les nouveaux statuts
       handleOptimize();
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       logger.error("Error executing payments:", err);
       alert(`Erreur: ${err instanceof Error ? err.message : 'Erreur inconnue'}`);
     } finally {

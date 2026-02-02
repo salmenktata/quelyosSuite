@@ -41,7 +41,7 @@ export function AccuracyMetrics({ horizonDays, currency }: AccuracyMetricsProps)
     try {
       const data = (await api(`/reporting/forecast-backtest?horizonDays=${horizonDays}`)) as MetricsData;
       setMetrics(data);
-    } catch (_err: unknown) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to load accuracy metrics");
     } finally {
       setLoading(false);
