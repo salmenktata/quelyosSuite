@@ -41,47 +41,48 @@ export function useCachedProducts(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cached, setCached] = useState(false);
-  const filtersRef = useRef(filters);
-  filtersRef.current = filters;
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await backendClient.getProducts({
-        limit,
-        offset,
-        ...filtersRef.current,
-        sort,
-      });
-
-      if (response.success && response.products) {
-        setProducts(response.products);
-        setCached(false);
-      } else {
-        setError('Failed to fetch products');
-      }
-    } catch (_err: unknown) {
-      const err = _err as Error;
-      setError(err.message || 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  }, [limit, offset, sort]);
+  const [refetchCounter, setRefetchCounter] = useState(0);
 
   const filtersKey = JSON.stringify(filters);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await backendClient.getProducts({
+          limit,
+          offset,
+          ...filters,
+          sort,
+        });
+
+        if (response.success && response.products) {
+          setProducts(response.products);
+          setCached(false);
+        } else {
+          setError('Failed to fetch products');
+        }
+      } catch (_err: unknown) {
+        const err = _err as Error;
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProducts();
-  }, [fetchProducts, filtersKey, useCache]);
+    // filtersKey is used instead of filters to avoid object reference changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limit, offset, filtersKey, sort, useCache, refetchCounter]);
 
   return {
     products,
     loading,
     error,
     cached,
-    refetch: fetchProducts,
+    refetch: () => setRefetchCounter(c => c + 1),
   };
 }
 
