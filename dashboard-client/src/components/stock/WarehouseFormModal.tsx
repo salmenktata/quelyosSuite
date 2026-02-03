@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { X, Check, ChevronRight, Building, MapPin, FileText } from 'lucide-react'
@@ -151,10 +151,11 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
     form2.reset()
   }
 
-  if (!isOpen) return null
+  // Utiliser useWatch au lieu de watch() pour éviter warning React Compiler
+  // IMPORTANT: Doit être appelé avant le early return (règle des hooks)
+  const useExistingPartner = useWatch({ control: form2.control, name: 'use_existing_partner' })
 
-  // Extraire la valeur watch() pour éviter warning React Compiler
-  const useExistingPartner = form2.watch('use_existing_partner')
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
