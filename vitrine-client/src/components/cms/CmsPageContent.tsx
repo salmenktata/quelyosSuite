@@ -310,7 +310,7 @@ const LandingTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
   );
 };
 
-// Template Contact - Design professionnel style lesportif.com.tn
+// Template Contact - Design professionnel moderne
 const ContactTemplate: React.FC<{ page: CmsPage }> = ({ page }) => {
   return (
     <div className="min-h-screen bg-gray-50">

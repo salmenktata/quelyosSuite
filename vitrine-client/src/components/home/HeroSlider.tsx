@@ -186,7 +186,7 @@ export function HeroSlider({ slides: propSlides = [] }: HeroSliderProps) {
                 </p>
               )}
 
-              {/* CTAs with lesportif.com.tn styling */}
+              {/* CTAs with modern e-commerce styling */}
               <div className="flex flex-wrap gap-4">
                 <Link href={slide.cta_link}>
                   <button className="group bg-primary text-white px-8 py-3.5 rounded-[20px] font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2">

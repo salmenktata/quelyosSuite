@@ -1,5 +1,5 @@
 /**
- * Homepage - Style Le Sportif
+ * Homepage - Style Quelyos Shop
  * Server-side rendered for optimal performance
  */
 
@@ -24,7 +24,7 @@ import { ThemeSections } from '@/components/theme/ThemeSections';
 
 // Server-side data fetching
 async function getHomeData(): Promise<{ products: Product[]; categories: Category[]; heroSlides: HeroSlide[]; promoBanners: PromoBanner[]; benefits: Benefit[] }> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
   try {
     const [productsRes, categoriesRes, heroSlidesRes, promoBannersRes, benefitsRes] = await Promise.all([

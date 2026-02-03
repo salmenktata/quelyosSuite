@@ -346,7 +346,7 @@ export default function ProductsClientView({
               <>
                 <ProductGrid viewMode={viewMode}>
                   {products.map((product, index) => (
-                    <ProductCardLeSportif key={product.id} product={product} viewMode={viewMode} priority={index < 6} />
+                    <ProductCardModern key={product.id} product={product} viewMode={viewMode} priority={index < 6} />
                   ))}
                 </ProductGrid>
 
@@ -463,7 +463,7 @@ function CompareProductButton({ product }: { product: Product }) {
 }
 
 // Carte produit (version simplifiée pour économiser tokens)
-function ProductCardLeSportif({ product, viewMode, priority = false }: { product: Product; viewMode: 'grid' | 'list'; priority?: boolean }) {
+function ProductCardModern({ product, viewMode, priority = false }: { product: Product; viewMode: 'grid' | 'list'; priority?: boolean }) {
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string>('');
 

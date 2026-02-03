@@ -1,5 +1,5 @@
 /**
- * Page d&apos;inscription - Style lesportif.com.tn
+ * Page d&apos;inscription - Style moderne e-commerce
  */
 
 'use client';

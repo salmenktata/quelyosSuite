@@ -1,5 +1,5 @@
 /**
- * Page détail produit - Design style lesportif.com.tn
+ * Page détail produit - Design moderne e-commerce
  */
 
 'use client';

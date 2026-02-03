@@ -1,5 +1,5 @@
 /**
- * Page de connexion - Style lesportif.com.tn
+ * Page de connexion - Style moderne e-commerce
  */
 
 'use client';
