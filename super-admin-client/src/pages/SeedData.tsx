@@ -16,11 +16,8 @@ import {
   Download,
   Play,
   Loader2,
-  AlertTriangle,
   CheckCircle,
   XCircle,
-  Clock,
-  Trash2,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { TenantsResponseSchema, validateApiResponse } from '@/lib/validators'

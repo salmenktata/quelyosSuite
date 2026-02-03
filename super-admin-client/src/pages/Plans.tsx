@@ -13,7 +13,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Package, Plus, Edit2, Archive, Check, X, Loader2, Users,
-  Clock, Blocks, Palette, Megaphone, Trash2, Layers,
+  Clock, Blocks, Palette, Megaphone, Trash2,
   DollarSign, ChevronDown, ChevronUp, AlertTriangle, RotateCcw,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
@@ -21,7 +21,7 @@ import { ModuleGroupSelector } from '@/components/common'
 import { useToast } from '@/hooks/useToast'
 import { z } from 'zod'
 import { validateApiResponse } from '@/lib/validators'
-import { QUELYOS_MODULES, type ModuleKey } from '@/config/modules'
+import { QUELYOS_MODULES } from '@/config/modules'
 
 // ─── Schemas Zod ────────────────────────────────────────────────────
 const SecurityGroupSchema = z.object({

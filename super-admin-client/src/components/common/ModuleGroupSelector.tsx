@@ -130,7 +130,7 @@ export function ModuleGroupSelector({
     const managerId = groupMap[module].manager
 
     // Retirer les anciens IDs de ce module
-    let newIds = selectedGroupIds.filter((id) => id !== userId && id !== managerId)
+    const newIds = selectedGroupIds.filter((id) => id !== userId && id !== managerId)
 
     // Ajouter le nouveau si pas "none"
     if (level === 'user' && userId) {

@@ -22,7 +22,6 @@ import {
   MessageSquare,
   Clock,
   Star,
-  TrendingUp,
   Search,
   Filter,
   Download,

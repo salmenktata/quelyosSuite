@@ -8,10 +8,10 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { Activity, CheckCircle, XCircle, AlertTriangle, RefreshCw } from 'lucide-react'
+import { CheckCircle, XCircle, RefreshCw } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
 import { ProvisioningJobsResponseSchema, SystemHealthSchema, validateApiResponse } from '@/lib/validators'
-import type { ProvisioningJobsResponse, ProvisioningJob, SystemHealth } from '@/lib/validators'
+import type { ProvisioningJobsResponse, SystemHealth } from '@/lib/validators'
 
 export function Monitoring() {
   const { data: jobsResponse, isLoading: jobsLoading } = useQuery({

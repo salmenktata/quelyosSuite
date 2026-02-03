@@ -28,7 +28,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { api } from '@/lib/api/gateway'
-import { BackupsResponseSchema, BackupScheduleSchema, TenantsResponseSchema, validateApiResponse } from '@/lib/validators'
+import { BackupsResponseSchema, TenantsResponseSchema, validateApiResponse } from '@/lib/validators'
 import type { Backup, BackupsResponse, BackupSchedule, TenantsResponse } from '@/lib/validators'
 import { ConfirmModal } from '@/components/common/ConfirmModal'
 import { useToast } from '@/hooks/useToast'

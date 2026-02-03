@@ -3,7 +3,7 @@
  * Permet de charger la librairie uniquement quand nécessaire (Dashboard)
  */
 
-import { Suspense, type ComponentType } from 'react'
+import { Suspense } from 'react'
 import { Loader2 } from 'lucide-react'
 
 // Re-export tous les composants Recharts de manière lazy
