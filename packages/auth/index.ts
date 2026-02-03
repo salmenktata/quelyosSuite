@@ -22,3 +22,7 @@ export type { User, AuthContextType, AuthProviderProps } from "./src/types";
 // Token Service - JWT Management
 export { tokenService } from "./src/tokenService";
 export type { TokenState, TokenPayload } from "./src/tokenService";
+
+// Tenant Guard - Multi-tenant protection
+export { useTenantGuard, useRequireTenant } from "./src/useTenantGuard";
+export type { TenantData, UseTenantGuardOptions, UseTenantGuardReturn } from "./src/useTenantGuard";

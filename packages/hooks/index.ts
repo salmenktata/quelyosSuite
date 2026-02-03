@@ -24,3 +24,12 @@ export { useMounted } from "./src/useMounted";
 export { useCopyToClipboard } from "./src/useCopyToClipboard";
 export { useOnline } from "./src/useOnline";
 export { useKeyPress } from "./src/useKeyPress";
+
+// Fetch & Async
+export {
+  useAbortController,
+  useAbortableFetch,
+  useDebouncedAbortFetch,
+  createAbortableFetch,
+} from "./src/useAbortController";
+export type { UseAbortControllerReturn } from "./src/useAbortController";
