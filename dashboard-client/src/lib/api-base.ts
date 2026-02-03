@@ -9,7 +9,7 @@ import {
 import { tokenService } from './tokenService'
 import { getBackendUrl } from '@quelyos/config'
 
-export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)
+export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as 'development' | 'production' | 'staging')
 
 /**
  * Options pour fetchApi

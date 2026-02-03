@@ -153,6 +153,9 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
 
   if (!isOpen) return null
 
+  // Extraire la valeur watch() pour éviter warning React Compiler
+  const useExistingPartner = form2.watch('use_existing_partner')
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-4">
@@ -283,7 +286,7 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
                   </label>
                 </div>
 
-                {form2.watch('use_existing_partner') ? (
+                {useExistingPartner ? (
                   <div>
                     <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                       Sélectionner un contact

@@ -4,8 +4,9 @@ import { api } from '../lib/api'
 import { tokenService } from '../lib/tokenService'
 import { logger } from '@quelyos/logger'
 import { getDefaultModulePath } from '../lib/defaultModule'
+import { getAppUrl } from '@quelyos/config'
 
-const SITE_URL = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3000'
+const SITE_URL = import.meta.env.VITE_VITRINE_URL || getAppUrl('vitrine', import.meta.env.MODE as 'development' | 'production' | 'staging')
 
 // Icônes inline
 const Shield = ({ className }: { className?: string }) => (

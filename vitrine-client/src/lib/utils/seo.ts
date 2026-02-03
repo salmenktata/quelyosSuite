@@ -3,9 +3,11 @@
  */
 
 import { Metadata } from 'next';
+import { getAppUrl } from '@quelyos/config';
 
 const SITE_NAME = 'Quelyos';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
 const SITE_DESCRIPTION = 'Découvrez notre sélection de produits de qualité chez Quelyos. Livraison rapide, paiement sécurisé et service client à votre écoute.';
 
 export interface SEOData {

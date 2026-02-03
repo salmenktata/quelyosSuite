@@ -86,7 +86,7 @@ function loadConfig(): AppConfig {
     debug: import.meta.env.VITE_DEBUG === 'true',
 
     // API
-    apiUrl: import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any),
+    apiUrl: import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as 'development' | 'production' | 'staging'),
     apiTimeout: TIMEOUTS.API_REQUEST,
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 

@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import type { ThemeConfig } from '@/lib/backend/client';
+import { APPS } from '@quelyos/config';
 
 // Thème par défaut
 const DEFAULT_THEME: ThemeConfig = {
@@ -83,7 +84,7 @@ export default function ThemePreviewPage() {
     // Écouter les messages du Theme Builder
     function handleMessage(event: MessageEvent) {
       // Vérifier l&apos;origine pour sécurité (en production)
-      // if (event.origin !== 'http://localhost:5175') return;
+      // if (event.origin !== APPS.dashboard.dev) return;
 
       if (event.data.type === 'THEME_UPDATE') {
         const newTheme = event.data.theme as ThemeConfig;

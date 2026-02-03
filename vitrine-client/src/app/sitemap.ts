@@ -1,12 +1,14 @@
 import { MetadataRoute } from 'next'
 import { backendClient } from '@/lib/backend/client'
 import { logger } from '@/lib/logger';
+import { getAppUrl } from '@quelyos/config';
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600 // Revalider toutes les heures
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env)
 
   // Pages statiques
   const staticRoutes: MetadataRoute.Sitemap = [

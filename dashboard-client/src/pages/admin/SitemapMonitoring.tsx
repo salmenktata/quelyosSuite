@@ -14,8 +14,9 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button } from '@/components/common';
 import { Search, ExternalLink, RefreshCw, FileText, TrendingUp, AlertCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
+import { getAppUrl } from '@quelyos/config';
 
-const SITE_URL = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3000';
+const SITE_URL = import.meta.env.VITE_VITRINE_URL || getAppUrl('vitrine', import.meta.env.MODE as 'development' | 'production' | 'staging');
 
 interface SitemapEntry {
   path: string;

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBackendUrl } from '@quelyos/config'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as 'development' | 'production' | 'staging')
 
 export function useHeroSlideImageUpload(slideId: number) {
   const queryClient = useQueryClient()

@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import type { ThemeConfig } from '@/types/theme';
 import { Eye, RefreshCw, Maximize2 } from 'lucide-react';
+import { getAppUrl } from '@quelyos/config';
 
 interface PreviewFrameProps {
   theme: ThemeConfig;
@@ -20,7 +21,7 @@ export function PreviewFrame({ theme, className = '' }: PreviewFrameProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   // URL de la page preview
-  const previewUrl = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3001';
+  const previewUrl = import.meta.env.VITE_VITRINE_URL || getAppUrl('ecommerce', import.meta.env.MODE as 'development' | 'production' | 'staging');
   const previewPath = `${previewUrl}/theme-preview`;
 
   const sendThemeUpdate = useCallback((themeData: ThemeConfig) => {

@@ -41,7 +41,7 @@ import {
 } from 'lucide-react'
 import { getBackendUrl } from '@quelyos/config'
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)
+const API_BASE = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as 'development' | 'production' | 'staging')
 
 interface TeamMember {
   id: number

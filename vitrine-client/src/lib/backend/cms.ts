@@ -13,12 +13,14 @@ import type {
   PagesResponse,
 } from '@/types/cms';
 import { logger } from '@/lib/logger';
+import { getAppUrl } from '@quelyos/config';
 
 // Use absolute URL for SSR, relative for client-side
 const getApiBase = () => {
   if (typeof window === 'undefined') {
     // Server-side: use absolute URL
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
     return `${siteUrl}/api/backend`;
   }
   // Client-side: use relative URL

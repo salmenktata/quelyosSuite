@@ -7,13 +7,15 @@ import { Metadata } from 'next';
 import { backendClient } from '@/lib/backend/client';
 import { siteConfig } from '@/lib/config/site';
 import { logger } from '@/lib/logger';
+import { getAppUrl } from '@quelyos/config';
 
 interface Props {
   params: Promise<{ slug: string }>;
   children: React.ReactNode;
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   // Await params in Next.js 15+

@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 import { logger } from '@/lib/logger';
 import { Category } from '@/types/api';
+import { getAppUrl } from '@quelyos/config';
 
 // Force SSR (pas de SSG) pour éviter timeout build
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
 
 async function getCategories(): Promise<Category[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
     const response = await fetch(`${baseUrl}/api/categories`, {
       next: { revalidate: 300 }, // Cache 5 minutes
     });

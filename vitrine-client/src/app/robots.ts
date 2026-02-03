@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next'
+import { getAppUrl } from '@quelyos/config'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env)
 
   return {
     rules: [
