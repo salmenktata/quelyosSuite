@@ -229,7 +229,7 @@ export default function ProductImport() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-700">
-                          {Object.keys(previewData[0]).slice(0, 6).map((header) => (
+                          {previewData[0] && Object.keys(previewData[0]!).slice(0, 6).map((header) => (
                             <th key={header} className="px-3 py-2 text-left text-gray-600 dark:text-gray-400">
                               {header}
                             </th>

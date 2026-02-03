@@ -1,21 +1,26 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { detectEdition, getCurrentEdition, isFullEdition, isSaasEdition } from './editionDetector'
 
+// Helper pour contourner les restrictions TypeScript sur les env vars en tests
+const stubEdition = (value: string | undefined) => {
+  vi.stubEnv('VITE_EDITION', value as any)
+}
+
 describe('editionDetector', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     // Reset env vars
-    import.meta.env.VITE_EDITION = undefined
+    stubEdition(undefined)
   })
 
   describe('detectEdition', () => {
     it('devrait détecter édition via env var (build-time)', () => {
-      import.meta.env.VITE_EDITION = 'finance'
+      stubEdition('finance')
       expect(detectEdition()).toBe('finance')
     })
 
     it('devrait détecter édition via subdomain (runtime)', () => {
-      delete import.meta.env.VITE_EDITION
+      stubEdition(undefined)
 
       // Mock window.location
       Object.defineProperty(window, 'location', {
@@ -30,7 +35,7 @@ describe('editionDetector', () => {
     })
 
     it('devrait détecter édition via port dev (localhost)', () => {
-      delete import.meta.env.VITE_EDITION
+      stubEdition(undefined)
 
       Object.defineProperty(window, 'location', {
         value: {
@@ -44,7 +49,7 @@ describe('editionDetector', () => {
     })
 
     it('devrait fallback sur "full" par défaut', () => {
-      delete import.meta.env.VITE_EDITION
+      stubEdition(undefined)
 
       Object.defineProperty(window, 'location', {
         value: {
@@ -58,7 +63,7 @@ describe('editionDetector', () => {
     })
 
     it('devrait prioriser env var sur subdomain', () => {
-      import.meta.env.VITE_EDITION = 'finance'
+      stubEdition('finance')
 
       Object.defineProperty(window, 'location', {
         value: {
@@ -73,7 +78,7 @@ describe('editionDetector', () => {
     })
 
     it('devrait détecter toutes éditions via ports', () => {
-      delete import.meta.env.VITE_EDITION
+      stubEdition(undefined)
 
       const portMap = [
         { port: '3010', edition: 'finance' },
@@ -98,7 +103,7 @@ describe('editionDetector', () => {
 
   describe('getCurrentEdition', () => {
     it('devrait retourner la configuration complète de l\'édition', () => {
-      import.meta.env.VITE_EDITION = 'finance'
+      stubEdition('finance')
 
       const edition = getCurrentEdition()
 
@@ -112,24 +117,24 @@ describe('editionDetector', () => {
 
   describe('isFullEdition', () => {
     it('devrait retourner true si édition full', () => {
-      import.meta.env.VITE_EDITION = 'full'
+      stubEdition('full')
       expect(isFullEdition()).toBe(true)
     })
 
     it('devrait retourner false si édition SaaS', () => {
-      import.meta.env.VITE_EDITION = 'finance'
+      stubEdition('finance')
       expect(isFullEdition()).toBe(false)
     })
   })
 
   describe('isSaasEdition', () => {
     it('devrait retourner true si édition SaaS', () => {
-      import.meta.env.VITE_EDITION = 'store'
+      stubEdition('store')
       expect(isSaasEdition()).toBe(true)
     })
 
     it('devrait retourner false si édition full', () => {
-      import.meta.env.VITE_EDITION = 'full'
+      stubEdition('full')
       expect(isSaasEdition()).toBe(false)
     })
   })

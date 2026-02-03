@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { APPS } from '@quelyos/config';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -12,14 +13,14 @@ export default defineConfig({
     ? [['github'], ['html', { open: 'never' }]]
     : [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || APPS.vitrine.dev,
     trace: 'on-first-retry',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    url: APPS.vitrine.dev,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

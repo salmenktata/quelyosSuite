@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { PORTS } from '@quelyos/config'
 
 /**
  * Configuration Playwright pour tests E2E Éditions
@@ -13,9 +14,9 @@ export default defineConfig({
   reporter: 'html',
   
   use: {
-    baseURL: process.env.VITE_EDITION 
+    baseURL: process.env.VITE_EDITION
       ? getUrlForEdition(process.env.VITE_EDITION)
-      : 'http://localhost:5175',
+      : `http://localhost:${PORTS.dashboard}`,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -33,7 +34,7 @@ export default defineConfig({
       : 'pnpm run dev',
     url: process.env.VITE_EDITION
       ? getUrlForEdition(process.env.VITE_EDITION)
-      : 'http://localhost:5175',
+      : `http://localhost:${PORTS.dashboard}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

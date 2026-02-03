@@ -6,6 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { API } from '@quelyos/config';
 
 test.describe('Parité Stock Backoffice ↔ Odoo', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +38,7 @@ test.describe('Parité Stock Backoffice ↔ Odoo', () => {
     const productLink = await firstProductRow.locator('a').first();
     const productName = await productLink.textContent();
 
-    const apiResponse = await request.post('http://localhost:8069/api/ecommerce/stock/products', {
+    const apiResponse = await request.post(`${API.backend.dev}/api/ecommerce/stock/products`, {
       data: {
         jsonrpc: '2.0',
         method: 'call',

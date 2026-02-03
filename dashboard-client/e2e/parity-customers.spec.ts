@@ -6,6 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { API } from '@quelyos/config';
 
 test.describe('Parité Clients Backoffice ↔ Odoo', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +29,7 @@ test.describe('Parité Clients Backoffice ↔ Odoo', () => {
     const clientEmail = await firstRow.locator('td').nth(1).textContent();
 
     // Vérifier via API
-    const apiResponse = await request.post('http://localhost:8069/api/ecommerce/customers', {
+    const apiResponse = await request.post(`${API.backend.dev}/api/ecommerce/customers`, {
       data: {
         jsonrpc: '2.0',
         method: 'call',

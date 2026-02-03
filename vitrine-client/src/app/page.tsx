@@ -21,10 +21,13 @@ import { SocialTrendingProducts } from '@/components/home/SocialTrendingProducts
 import { LivestreamShopping } from '@/components/live/LivestreamShopping';
 import { logger } from '@/lib/logger';
 import { ThemeSections } from '@/components/theme/ThemeSections';
+import { getAppUrl } from '@quelyos/config';
 
 // Server-side data fetching
 async function getHomeData(): Promise<{ products: Product[]; categories: Category[]; heroSlides: HeroSlide[]; promoBanners: PromoBanner[]; benefits: Benefit[] }> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+  // Server-side: fetch nécessite une URL absolue
+  const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
 
   try {
     const [productsRes, categoriesRes, heroSlidesRes, promoBannersRes, benefitsRes] = await Promise.all([
@@ -89,7 +92,8 @@ async function getHomeData(): Promise<{ products: Product[]; categories: Categor
 
     return { products, categories, heroSlides, promoBanners, benefits };
   } catch (error) {
-    logger.error('Error fetching home data:', error);
+    // Log uniquement le message pour éviter les erreurs de sérialisation React Server Components
+    logger.error('Error fetching home data:', error instanceof Error ? error.message : String(error));
     return { products: [], categories: [], heroSlides: [], promoBanners: [], benefits: [] };
   }
 }

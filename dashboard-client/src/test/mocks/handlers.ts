@@ -2,8 +2,9 @@
  * MSW Handlers - Mock API pour les tests
  */
 import { http, HttpResponse } from 'msw'
+import { API } from '@quelyos/config'
 
-const API_URL = 'http://localhost:8069/api'
+const API_URL = `${API.backend.dev}/api`
 
 // Données de test
 export const mockContactLists = [
