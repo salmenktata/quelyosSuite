@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@quelyos/config';
 /**
  * Utilitaires de formatage
  */
@@ -47,7 +48,7 @@ export function truncate(text: string, maxLength: number): string {
  * Génère une URL d'image backend
  */
 export function getBackendImageUrl(path: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+  const backendUrl = getBackendUrl(process.env.NODE_ENV as any);
   return `${backendUrl}${path}`;
 }
 

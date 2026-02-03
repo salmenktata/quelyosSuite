@@ -17,6 +17,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
+    "@quelyos/config": "workspace:*",
     "@sentry/react": "^10.38.0",
     "@tanstack/react-query": "^5.90.20",
     "@tanstack/react-table": "^8.21.0",

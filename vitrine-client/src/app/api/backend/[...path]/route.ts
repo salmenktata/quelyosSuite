@@ -8,8 +8,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { anonymizeResponse, shouldAnonymize } from '@/lib/api-anonymizer';
+import { getBackendApiUrl } from '@/lib/backend';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+const BACKEND_URL = getBackendApiUrl();
 
 export async function POST(
   request: NextRequest,

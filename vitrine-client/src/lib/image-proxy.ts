@@ -3,6 +3,9 @@
  * Encodes backend image URLs to anonymize infrastructure patterns
  */
 
+import { isBackendUrl } from './backend';
+import { getBackendUrl } from '@quelyos/config';
+
 /**
  * Encode URL to base64 for anonymization
  */
@@ -28,12 +31,12 @@ export function getProxiedImageUrl(url: string | undefined): string {
   if (url.startsWith('/') && !url.includes('/web/image')) return url;
 
   // External URLs (CDN, etc.)
-  if (url.startsWith('http') && !url.includes('localhost:8069') && !url.includes('/web/image')) {
+  if (url.startsWith('http') && !isBackendUrl(url)) {
     return url;
   }
 
   // Backend image: encode URL to hide patterns like /web/image
-  const isBackendImage = url.includes('/web/image') || url.includes('localhost:8069');
+  const isBackendImage = isBackendUrl(url);
 
   if (isBackendImage) {
     // Use 'id' param with base64-encoded URL (anonymized)
@@ -50,7 +53,7 @@ export function getProxiedImageUrl(url: string | undefined): string {
  * @returns Full backend URL
  */
 export function getBackendImageUrl(path: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || getBackendUrl(process.env.NODE_ENV as any);
 
   if (path.startsWith('http')) return path;
   if (path.startsWith('/')) return `${backendUrl}${path}`;

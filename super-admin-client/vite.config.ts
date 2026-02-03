@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
+import { PORTS, getViteProxyConfig } from '@quelyos/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -45,18 +46,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: 9000,
+    port: PORTS.superadmin,
     host: true,
     fs: {
       allow: [fileURLToPath(new URL('..', import.meta.url))],
     },
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8069',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    proxy: getViteProxyConfig(),
     headers: {
       'X-Frame-Options': 'DENY',
       'X-Content-Type-Options': 'nosniff',

@@ -29,12 +29,14 @@ export { odooRpc, OdooRpcClient } from './rpc';
 // Export configuration utilities
 export {
   detectEnvironment,
-  getOdooConfig,
+  getBackendConfig,
+  getOdooConfig, // @deprecated Utiliser getBackendConfig (anonymisation)
   getSessionId,
   setSessionId,
   clearSession,
   type Environment,
-  type OdooConfig,
+  type BackendConfig,
+  type OdooConfig, // @deprecated Utiliser BackendConfig (anonymisation)
 } from './config';
 
 // Export all types

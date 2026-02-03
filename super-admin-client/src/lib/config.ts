@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod'
+import { getBackendUrl, TIMEOUTS, STORAGE_KEYS } from '@quelyos/config'
 
 const configSchema = z.object({
   appName: z.string().default('Quelyos Super Admin'),
@@ -48,11 +49,11 @@ function loadConfig(): AppConfig {
     debug: import.meta.env.VITE_DEBUG === 'true',
 
     // En dev, utiliser le proxy Vite (URL vide = même origine)
-    apiUrl: import.meta.env.DEV ? '' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8069'),
-    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
+    apiUrl: import.meta.env.DEV ? '' : (import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)),
+    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || String(TIMEOUTS.API_REQUEST)),
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 
-    authTokenKey: import.meta.env.VITE_AUTH_TOKEN_KEY,
+    authTokenKey: import.meta.env.VITE_AUTH_TOKEN_KEY || STORAGE_KEYS.AUTH_TOKEN,
     sessionTimeout: parseInt(import.meta.env.VITE_SESSION_TIMEOUT || '1800000'),
 
     features: {
@@ -64,10 +65,10 @@ function loadConfig(): AppConfig {
     defaultPageSize: parseInt(import.meta.env.VITE_DEFAULT_PAGE_SIZE || '50'),
     maxPageSize: parseInt(import.meta.env.VITE_MAX_PAGE_SIZE || '200'),
 
-    cacheTtl: parseInt(import.meta.env.VITE_CACHE_TTL || '300000'),
+    cacheTtl: parseInt(import.meta.env.VITE_CACHE_TTL || String(TIMEOUTS.TOKEN_REFRESH)),
     cacheEnabled: import.meta.env.VITE_CACHE_ENABLED !== 'false',
 
-    toastDuration: parseInt(import.meta.env.VITE_TOAST_DURATION || '4000'),
+    toastDuration: parseInt(import.meta.env.VITE_TOAST_DURATION || String(TIMEOUTS.TOAST_DURATION)),
   }
 
   const result = configSchema.safeParse(rawConfig)

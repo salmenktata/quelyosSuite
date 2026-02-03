@@ -1,32 +1,40 @@
 /**
  * Configuration environnement intelligent
  * Détecte automatiquement SSR (Next.js server), Client (browser), ou Vite
+ *
+ * Utilise @quelyos/config pour la détection d'environnement centralisée
  */
+
+import {
+  detectPlatform,
+  isServer,
+  getBackendUrl,
+  getAppUrl,
+  TIMEOUTS,
+  STORAGE_KEYS,
+  type RuntimePlatform,
+} from '@quelyos/config';
 
 export type Environment = 'server' | 'client' | 'vite';
 
 /**
  * Détecte l'environnement d'exécution actuel
+ * @deprecated Utiliser detectPlatform() de @quelyos/config à la place
  */
 export function detectEnvironment(): Environment {
-  // SSR Next.js (typeof window === 'undefined')
-  if (typeof window === 'undefined') {
-    return 'server';
-  }
+  const platform = detectPlatform();
 
-  // Vite (import.meta.env existe)
-  if (typeof (import.meta as any).env !== 'undefined') {
-    return 'vite';
-  }
-
-  // Client Next.js (browser)
+  if (platform === 'vite') return 'vite';
+  if (isServer()) return 'server';
   return 'client';
 }
 
 /**
- * Configuration Odoo selon environnement
+ * Configuration Backend selon environnement
+ *
+ * ANONYMISATION : Ne mentionne jamais "Odoo" dans les noms exports
  */
-export interface OdooConfig {
+export interface BackendConfig {
   baseURL: string;
   database: string;
   timeout: number;
@@ -34,20 +42,20 @@ export interface OdooConfig {
 }
 
 /**
- * Retourne la configuration Odoo appropriée selon l'environnement
+ * Retourne la configuration Backend appropriée selon l'environnement
  */
-export function getOdooConfig(): OdooConfig {
+export function getBackendConfig(): BackendConfig {
   const env = detectEnvironment();
 
   switch (env) {
     case 'server':
       // Next.js SSR - Utiliser l'URL complète du site
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3006';
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', 'development');
       return {
-        baseURL: `${siteUrl}/api/odoo`,
-        database: process.env.ODOO_DATABASE || 'quelyos',
-        timeout: 30000,
-        useProxy: true, // Utilise proxy Next.js /api/odoo
+        baseURL: `${siteUrl}/api/backend`,
+        database: process.env.BACKEND_DATABASE || 'quelyos',
+        timeout: TIMEOUTS.API_REQUEST,
+        useProxy: true, // Utilise proxy Next.js /api/backend
       };
 
     case 'vite':
@@ -55,8 +63,8 @@ export function getOdooConfig(): OdooConfig {
       const viteApiUrl = (import.meta as any).env?.VITE_API_URL || '';
       return {
         baseURL: viteApiUrl, // '' = proxy Vite, ou URL complète
-        database: (import.meta as any).env?.VITE_ODOO_DATABASE || 'quelyos',
-        timeout: 30000,
+        database: (import.meta as any).env?.VITE_BACKEND_DATABASE || 'quelyos',
+        timeout: TIMEOUTS.API_REQUEST,
         useProxy: false, // Appels JSON-RPC directs
       };
 
@@ -64,19 +72,29 @@ export function getOdooConfig(): OdooConfig {
     default:
       // Client Next.js - Utiliser le proxy relatif
       return {
-        baseURL: '/api/odoo',
+        baseURL: '/api/backend',
         database: 'quelyos',
-        timeout: 30000,
+        timeout: TIMEOUTS.API_REQUEST,
         useProxy: true,
       };
   }
 }
 
 /**
+ * @deprecated Utiliser getBackendConfig() à la place (anonymisation)
+ */
+export const getOdooConfig = getBackendConfig;
+
+/**
+ * @deprecated Utiliser BackendConfig à la place (anonymisation)
+ */
+export type OdooConfig = BackendConfig;
+
+/**
  * Récupère le session_id depuis localStorage (si disponible)
  */
 export function getSessionId(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (isServer()) return null;
 
   const sessionId = localStorage.getItem('session_id');
   if (!sessionId || sessionId === 'null' || sessionId === 'undefined') {
@@ -90,7 +108,7 @@ export function getSessionId(): string | null {
  * Stocke le session_id dans localStorage
  */
 export function setSessionId(sessionId: string | null): void {
-  if (typeof window === 'undefined') return;
+  if (isServer()) return;
 
   if (sessionId) {
     localStorage.setItem('session_id', sessionId);
@@ -101,10 +119,13 @@ export function setSessionId(sessionId: string | null): void {
 
 /**
  * Nettoie la session (logout)
+ * Utilise STORAGE_KEYS de @quelyos/config pour cohérence
  */
 export function clearSession(): void {
-  if (typeof window === 'undefined') return;
+  if (isServer()) return;
 
   localStorage.removeItem('session_id');
-  localStorage.removeItem('user');
+  localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
 }

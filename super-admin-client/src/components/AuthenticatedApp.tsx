@@ -18,6 +18,7 @@ const Plans = lazy(() => import('@/pages/Plans').then(m => ({ default: m.Plans }
 const Subscriptions = lazy(() => import('@/pages/Subscriptions').then(m => ({ default: m.Subscriptions })))
 const Billing = lazy(() => import('@/pages/Billing').then(m => ({ default: m.Billing })))
 const Monitoring = lazy(() => import('@/pages/Monitoring').then(m => ({ default: m.Monitoring })))
+const DatabasePerformance = lazy(() => import('@/pages/DatabasePerformance').then(m => ({ default: m.DatabasePerformance })))
 const Backups = lazy(() => import('@/pages/Backups').then(m => ({ default: m.Backups })))
 const BackupSchedules = lazy(() => import('@/pages/BackupSchedules').then(m => ({ default: m.BackupSchedules })))
 const Security = lazy(() => import('@/pages/Security').then(m => ({ default: m.Security })))
@@ -64,6 +65,7 @@ function PageViewTracker() {
       '/subscriptions': 'Subscriptions',
       '/billing': 'Billing',
       '/monitoring': 'Monitoring',
+      '/database-performance': 'Database Performance',
       '/security': 'Security',
       '/security/2fa': 'Security 2FA Settings',
       '/security/groups': 'Security Groups',
@@ -136,6 +138,7 @@ export function AuthenticatedApp() {
           <Route path="subscriptions" element={<Subscriptions />} />
           <Route path="billing" element={<Billing />} />
           <Route path="monitoring" element={<Monitoring />} />
+          <Route path="database-performance" element={<DatabasePerformance />} />
           <Route path="security" element={<Security />} />
           <Route path="security/2fa" element={<SecuritySettings />} />
           <Route path="security/groups" element={<SecurityGroups />} />

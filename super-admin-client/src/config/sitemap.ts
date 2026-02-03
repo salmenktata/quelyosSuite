@@ -1,4 +1,5 @@
 import { Globe, LayoutDashboard, ShieldCheck, ShoppingBag, type LucideIcon } from 'lucide-react'
+import { APPS, PORTS } from '@quelyos/config'
 
 const isDev = import.meta.env.DEV
 
@@ -36,8 +37,8 @@ export const sitemapData: AppSection[] = [
   {
     id: 'vitrine-quelyos',
     name: 'Vitrine Quelyos',
-    baseUrl: isDev ? 'http://localhost:3000' : 'https://quelyos.com',
-    port: 3000,
+    baseUrl: isDev ? APPS.vitrine.dev : APPS.vitrine.prod,
+    port: PORTS.vitrine,
     icon: Globe,
     color: 'text-blue-600 dark:text-blue-400',
     bgColor: 'bg-blue-50',
@@ -112,8 +113,8 @@ export const sitemapData: AppSection[] = [
   {
     id: 'dashboard-client',
     name: 'Dashboard Client',
-    baseUrl: isDev ? 'http://localhost:5175' : 'https://backoffice.quelyos.com',
-    port: 5175,
+    baseUrl: isDev ? APPS.dashboard.dev : APPS.dashboard.prod,
+    port: PORTS.dashboard,
     icon: LayoutDashboard,
     color: 'text-emerald-600 dark:text-emerald-400',
     bgColor: 'bg-emerald-50',
@@ -241,8 +242,8 @@ export const sitemapData: AppSection[] = [
   {
     id: 'super-admin-client',
     name: 'Super Admin Client',
-    baseUrl: isDev ? 'http://localhost:9000' : 'https://admin.quelyos.com',
-    port: 9000,
+    baseUrl: isDev ? APPS.superadmin.dev : APPS.superadmin.prod,
+    port: PORTS.superadmin,
     icon: ShieldCheck,
     color: 'text-teal-600 dark:text-teal-400',
     bgColor: 'bg-teal-50',
@@ -268,8 +269,8 @@ export const sitemapData: AppSection[] = [
   {
     id: 'vitrine-client',
     name: 'Boutique E-commerce',
-    baseUrl: isDev ? 'http://localhost:3001' : 'https://shop.quelyos.com',
-    port: 3001,
+    baseUrl: isDev ? APPS.ecommerce.dev : APPS.ecommerce.prod,
+    port: PORTS.ecommerce,
     icon: ShoppingBag,
     color: 'text-purple-600 dark:text-purple-400',
     bgColor: 'bg-purple-50',

@@ -3,9 +3,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendApiUrl } from '@/lib/backend';
 import { logger } from '@/lib/logger';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+const BACKEND_URL = getBackendApiUrl();
 
 export async function GET(_request: NextRequest) {
   try {

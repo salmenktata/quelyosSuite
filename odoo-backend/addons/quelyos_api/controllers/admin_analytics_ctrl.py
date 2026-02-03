@@ -257,3 +257,130 @@ class AdminAnalyticsController(SuperAdminController):
                 headers=cors_headers,
                 status=500
             )
+
+    @http.route('/api/super-admin/database/performance', type='http', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def database_performance(self):
+        """Retourne les métriques de performance PostgreSQL"""
+        origin = request.httprequest.headers.get('Origin', '')
+        cors_headers = get_cors_headers(origin)
+
+        if request.httprequest.method == 'OPTIONS':
+            response = request.make_response('', headers=list(cors_headers.items()))
+            response.status_code = 204
+            return response
+
+        try:
+            self._check_super_admin()
+        except AccessDenied as e:
+            return request.make_json_response(
+                {'success': False, 'error': str(e)},
+                headers=cors_headers,
+                status=403
+            )
+
+        try:
+            cr = request.env.cr
+
+            # 1. Utilisation indexes composites tenant
+            cr.execute("""
+                SELECT
+                    schemaname || '.' || relname AS table_name,
+                    indexrelname AS index_name,
+                    idx_scan AS scans,
+                    idx_tup_read AS tuples_read,
+                    idx_tup_fetch AS tuples_fetched,
+                    ROUND((idx_tup_fetch::numeric / NULLIF(idx_tup_read, 0)) * 100, 2) AS efficiency_pct
+                FROM pg_stat_user_indexes
+                WHERE indexrelname LIKE 'idx_%%tenant%%'
+                ORDER BY idx_scan DESC, relname
+                LIMIT 15
+            """)
+            tenant_indexes = []
+            for row in cr.fetchall():
+                tenant_indexes.append({
+                    'table': row[0],
+                    'index_name': row[1],
+                    'scans': row[2],
+                    'tuples_read': row[3],
+                    'tuples_fetched': row[4],
+                    'efficiency_pct': float(row[5]) if row[5] else 0.0,
+                })
+
+            # 2. Top requêtes lentes (si pg_stat_statements activé)
+            slow_queries = []
+            try:
+                cr.execute("""
+                    SELECT
+                        ROUND(mean_exec_time::numeric, 2) AS avg_time_ms,
+                        calls,
+                        ROUND((total_exec_time / 1000)::numeric, 2) AS total_time_sec,
+                        LEFT(query, 150) AS query_text
+                    FROM pg_stat_statements
+                    WHERE query NOT LIKE '%%pg_stat%%'
+                      AND query NOT LIKE '%%information_schema%%'
+                    ORDER BY mean_exec_time DESC
+                    LIMIT 10
+                """)
+                for row in cr.fetchall():
+                    slow_queries.append({
+                        'avg_time_ms': float(row[0]) if row[0] else 0.0,
+                        'calls': row[1],
+                        'total_time_sec': float(row[2]) if row[2] else 0.0,
+                        'query': row[3],
+                    })
+            except Exception as pg_stat_error:
+                _logger.info(f"pg_stat_statements not available: {pg_stat_error}")
+
+            # 3. Statistiques tables volumineuses
+            cr.execute("""
+                SELECT
+                    schemaname || '.' || relname AS table_name,
+                    pg_size_pretty(pg_total_relation_size(schemaname||'.'||relname)) AS total_size,
+                    pg_size_pretty(pg_indexes_size(schemaname||'.'||relname)) AS indexes_size,
+                    n_tup_ins + n_tup_upd + n_tup_del AS operations,
+                    seq_scan,
+                    idx_scan,
+                    ROUND((idx_scan::numeric / NULLIF(seq_scan + idx_scan, 0)) * 100, 2) AS index_usage_pct
+                FROM pg_stat_user_tables
+                WHERE relname IN ('product_template', 'sale_order', 'res_partner', 'stock_quant', 'account_move', 'crm_lead')
+                ORDER BY pg_total_relation_size(schemaname||'.'||relname) DESC
+            """)
+            large_tables = []
+            for row in cr.fetchall():
+                large_tables.append({
+                    'table': row[0],
+                    'total_size': row[1],
+                    'indexes_size': row[2],
+                    'operations': row[3],
+                    'seq_scans': row[4],
+                    'index_scans': row[5],
+                    'index_usage_pct': float(row[6]) if row[6] else 0.0,
+                })
+
+            # 4. Cache hit ratio
+            cr.execute("""
+                SELECT
+                    ROUND(
+                        (sum(heap_blks_hit) / NULLIF(sum(heap_blks_hit) + sum(heap_blks_read), 0)) * 100,
+                        2
+                    ) AS cache_hit_ratio_pct
+                FROM pg_statio_user_tables
+            """)
+            cache_hit_ratio = cr.fetchone()[0]
+
+            data = {
+                'success': True,
+                'tenant_indexes': tenant_indexes,
+                'slow_queries': slow_queries,
+                'large_tables': large_tables,
+                'cache_hit_ratio_pct': float(cache_hit_ratio) if cache_hit_ratio else 0.0,
+            }
+            return request.make_json_response(data, headers=cors_headers)
+
+        except Exception as e:
+            _logger.error(f"Database performance error: {e}")
+            return request.make_json_response(
+                {'success': False, 'error': 'Erreur serveur'},
+                headers=cors_headers,
+                status=500
+            )

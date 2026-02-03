@@ -6,6 +6,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Product, VariantsResponse, ExtendedProductVariant, ProductImage } from '@quelyos/types';
 import { logger } from '@/lib/logger';
+import { getBackendUrl } from '@quelyos/config';
 
 interface UseProductVariantsReturn {
   // État
@@ -45,7 +46,7 @@ export function useProductVariants(product: Product | null): UseProductVariantsR
     setIsLoadingVariants(true);
     try {
       // Appel direct à l'API via proxy Next.js
-      const apiBase = typeof window !== 'undefined' ? '/api/backend' : process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+      const apiBase = typeof window !== 'undefined' ? '/api/backend' : getBackendUrl(process.env.NODE_ENV as any);
       const url = `${apiBase}/products/${productId}/variants`;
 
       const res = await fetch(url, {

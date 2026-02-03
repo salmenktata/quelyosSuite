@@ -46,6 +46,7 @@ const SECTIONS: NavSection[] = [
     icon: '🔧',
     items: [
       { name: 'Monitoring', path: '/monitoring', icon: Activity },
+      { name: 'Database Performance', path: '/database-performance', icon: Database },
       { name: 'Backups', path: '/backups', icon: Database },
       { name: 'Planifications', path: '/backup-schedules', icon: Calendar },
       { name: 'Données Seed', path: '/seed-data', icon: Database },

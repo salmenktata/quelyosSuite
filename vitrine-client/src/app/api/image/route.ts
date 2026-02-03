@@ -5,9 +5,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendApiUrl } from '@/lib/backend';
 import { logger } from '@/lib/logger';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+const BACKEND_URL = getBackendApiUrl();
 
 // Decode base64 URL (anonymized)
 function decodeImageUrl(encoded: string): string {
@@ -49,9 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if it's a valid backend image URL
-    const isBackendUrl = url.includes('/web/image') ||
-                         url.includes('localhost:8069') ||
-                         url.startsWith(BACKEND_URL);
+    const isBackendUrl = url.includes('/web/image') || url.startsWith(BACKEND_URL);
 
     if (!isBackendUrl) {
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });

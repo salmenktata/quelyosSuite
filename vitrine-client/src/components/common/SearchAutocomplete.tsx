@@ -8,6 +8,7 @@ import { useSearchHistoryStore } from '@/store/searchHistoryStore';
 import { logger } from '@/lib/logger';
 import { sanitizeHighlight } from '@/lib/utils/sanitize';
 import { VisualSearch } from '@/components/search/VisualSearch';
+import { getBackendUrl } from '@quelyos/config';
 
 interface SearchProduct {
   id: number;
@@ -48,7 +49,7 @@ const getImageUrl = (imagePath: string | null | undefined): string => {
   // If already a full URL, return as is
   if (imagePath.startsWith('http')) return imagePath;
   // Prefix with backend URL
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+  const backendUrl = getBackendUrl(process.env.NODE_ENV as any);
   return `${backendUrl}${imagePath}`;
 };
 

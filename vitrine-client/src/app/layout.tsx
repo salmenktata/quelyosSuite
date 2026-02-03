@@ -11,6 +11,7 @@ import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistr
 import { PushNotificationPrompt } from "@/components/pwa/PushNotificationPrompt";
 import { FAQChatbot } from "@/components/chat/FAQChatbot";
 import { ThemeProvider } from "@/theme-engine/ThemeProvider";
+import { getBackendUrlForPreload } from "@/lib/backend";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,8 +59,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
 
         {/* Preconnect to backend API for faster data fetching */}
-        <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069"} />
-        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069"} />
+        <link rel="preconnect" href={getBackendUrlForPreload()} />
+        <link rel="dns-prefetch" href={getBackendUrlForPreload()} />
 
         {/* Organization Schema.org JSON-LD */}
         <script

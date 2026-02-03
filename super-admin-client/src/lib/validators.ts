@@ -574,3 +574,46 @@ export type PlansResponse = z.infer<typeof PlansResponseSchema>
 export type SecurityAlert = z.infer<typeof SecurityAlertSchema>
 export type SecurityAlertsSummary = z.infer<typeof SecurityAlertsSummarySchema>
 export type SecurityAlertsResponse = z.infer<typeof SecurityAlertsResponseSchema>
+
+// ============================================================================
+// DATABASE PERFORMANCE
+// ============================================================================
+
+export const TenantIndexSchema = z.object({
+  table: z.string(),
+  index_name: z.string(),
+  scans: z.number(),
+  tuples_read: z.number(),
+  tuples_fetched: z.number(),
+  efficiency_pct: z.number(),
+})
+
+export const SlowQuerySchema = z.object({
+  avg_time_ms: z.number(),
+  calls: z.number(),
+  total_time_sec: z.number(),
+  query: z.string(),
+})
+
+export const LargeTableSchema = z.object({
+  table: z.string(),
+  total_size: z.string(),
+  indexes_size: z.string(),
+  operations: z.number(),
+  seq_scans: z.number(),
+  index_scans: z.number(),
+  index_usage_pct: z.number(),
+})
+
+export const DatabasePerformanceSchema = z.object({
+  success: z.boolean(),
+  tenant_indexes: z.array(TenantIndexSchema),
+  slow_queries: z.array(SlowQuerySchema),
+  large_tables: z.array(LargeTableSchema),
+  cache_hit_ratio_pct: z.number(),
+})
+
+export type TenantIndex = z.infer<typeof TenantIndexSchema>
+export type SlowQuery = z.infer<typeof SlowQuerySchema>
+export type LargeTable = z.infer<typeof LargeTableSchema>
+export type DatabasePerformance = z.infer<typeof DatabasePerformanceSchema>

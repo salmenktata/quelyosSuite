@@ -29,6 +29,10 @@ const routeBreadcrumbs: Record<string, BreadcrumbItem[]> = {
     { label: 'Opérations', path: '/monitoring' },
     { label: 'Monitoring' },
   ],
+  '/database-performance': [
+    { label: 'Opérations', path: '/monitoring' },
+    { label: 'Database Performance' },
+  ],
   '/backups': [
     { label: 'Opérations', path: '/backups' },
     { label: 'Backups' },

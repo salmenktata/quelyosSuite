@@ -1,10 +1,12 @@
 /**
- * Client JSON-RPC Odoo bas niveau
- * Gère les appels JSON-RPC directs vers Odoo
+ * Client JSON-RPC Backend bas niveau
+ * Gère les appels JSON-RPC directs vers le backend
+ *
+ * ANONYMISATION : Utilise getBackendConfig au lieu de getOdooConfig
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { getOdooConfig, getSessionId, detectEnvironment } from './config';
+import { getBackendConfig, getSessionId, detectEnvironment } from './config';
 import type { OdooResponse } from './types';
 
 /**
@@ -17,12 +19,12 @@ export interface RpcOptions {
 }
 
 /**
- * Client JSON-RPC Odoo unifié
+ * Client JSON-RPC Backend unifié
  * Supporte SSR Next.js, Client Next.js, et Vite
  */
 export class OdooRpcClient {
   private api: AxiosInstance;
-  private config = getOdooConfig();
+  private config = getBackendConfig();
 
   constructor() {
     this.api = axios.create({
