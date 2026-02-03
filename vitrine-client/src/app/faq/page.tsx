@@ -24,8 +24,8 @@ interface FAQCategory {
 }
 
 // FAQ par défaut (fallback)
-const getDefaultFAQs = (config: { shipping?: Record<string, unknown>; returns?: Record<string, unknown> }): FAQItem[] => {
-  const { shipping, returns } = config;
+const getDefaultFAQs = (config: { shipping?: Record<string, unknown>; returns?: Record<string, unknown>; currency?: { symbol: string } }): FAQItem[] => {
+  const { shipping, returns, currency } = config;
   return [
     {
       categoryCode: 'commandes',
@@ -43,25 +43,25 @@ const getDefaultFAQs = (config: { shipping?: Record<string, unknown>; returns?: 
       categoryCode: 'livraison',
       categoryName: 'Livraison',
       question: 'Quels sont les delais de livraison?',
-      answer: `La livraison standard prend entre ${shipping.standardDaysMin} et ${shipping.standardDaysMax} jours ouvrables. La livraison express est disponible en ${shipping.expressDaysMin}-${shipping.expressDaysMax} jours ouvrables.`,
+      answer: `La livraison standard prend entre ${shipping?.standardDaysMin ?? 3} et ${shipping?.standardDaysMax ?? 5} jours ouvrables. La livraison express est disponible en ${shipping?.expressDaysMin ?? 1}-${shipping?.expressDaysMax ?? 2} jours ouvrables.`,
     },
     {
       categoryCode: 'livraison',
       categoryName: 'Livraison',
       question: 'La livraison est-elle gratuite?',
-      answer: `Oui, la livraison est gratuite pour toute commande superieure a ${shipping.freeThreshold} ${config.currency.symbol}. En dessous de ce montant, des frais de livraison s&apos;appliquent.`,
+      answer: `Oui, la livraison est gratuite pour toute commande superieure a ${shipping?.freeThreshold ?? 50} ${currency?.symbol ?? '€'}. En dessous de ce montant, des frais de livraison s&apos;appliquent.`,
     },
     {
       categoryCode: 'retours',
       categoryName: 'Retours',
       question: 'Quelle est votre politique de retour?',
-      answer: `Vous disposez de ${returns.windowDays} jours apres reception pour retourner un article. Le produit doit etre dans son etat d&apos;origine, non utilise et dans son emballage d&apos;origine.`,
+      answer: `Vous disposez de ${returns?.windowDays ?? 14} jours apres reception pour retourner un article. Le produit doit etre dans son etat d&apos;origine, non utilise et dans son emballage d&apos;origine.`,
     },
     {
       categoryCode: 'retours',
       categoryName: 'Retours',
       question: 'Quand serai-je rembourse?',
-      answer: `Le remboursement est effectue dans un delai de ${returns.refundDaysMin} a ${returns.refundDaysMax} jours ouvrables apres reception et verification du produit retourne.`,
+      answer: `Le remboursement est effectue dans un delai de ${returns?.refundDaysMin ?? 5} a ${returns?.refundDaysMax ?? 10} jours ouvrables apres reception et verification du produit retourne.`,
     },
     {
       categoryCode: 'paiement',
