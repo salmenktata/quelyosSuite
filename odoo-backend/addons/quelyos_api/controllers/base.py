@@ -68,10 +68,8 @@ class BaseController(http.Controller):
     def _authenticate_from_header(self):
         """
         Authentifie l'utilisateur via le header Authorization (Bearer token).
+        Supporte JWT tokens et legacy session_id Odoo.
         Utilisé pour les endpoints auth='public' qui nécessitent une authentification.
-
-        Cette méthode restaure la session Odoo à partir du session_id envoyé
-        dans le header Authorization, permettant aux requêtes sans cookies de fonctionner.
 
         Returns:
             dict d'erreur si authentification échouée, None si succès
@@ -82,18 +80,20 @@ class BaseController(http.Controller):
                 return error
             # L'utilisateur est maintenant authentifié dans request.env
         """
-        # Récupérer le session_id du header Authorization (format: Bearer <session_id>)
+        from ..lib.jwt_auth import validate_jwt_request, TokenExpiredError, InvalidTokenError
+
+        # Récupérer le token du header Authorization (format: Bearer <token>)
         auth_header = request.httprequest.headers.get('Authorization', '')
-        session_id = None
+        token = None
 
         if auth_header.startswith('Bearer '):
-            session_id = auth_header[7:]  # Enlever "Bearer "
+            token = auth_header[7:]  # Enlever "Bearer "
 
         # Fallback sur X-Session-Id pour compatibilité
-        if not session_id:
-            session_id = request.httprequest.headers.get('X-Session-Id')
+        if not token:
+            token = request.httprequest.headers.get('X-Session-Id')
 
-        if not session_id or session_id in ('null', 'undefined', ''):
+        if not token or token in ('null', 'undefined', ''):
             _logger.warning("No valid Authorization header provided")
             return {
                 'success': False,
@@ -101,51 +101,110 @@ class BaseController(http.Controller):
                 'error_code': 'AUTH_REQUIRED'
             }
 
-        try:
-            # Charger la session Odoo à partir du session_id
-            from odoo.http import root
+        # Détecter si c'est un JWT ou un session_id Odoo
+        # JWT commence par "eyJ" (base64 de {"alg"...)
+        is_jwt = token.startswith('eyJ')
 
-            # Récupérer le store de sessions
-            session_store = root.session_store
-
-            # Charger la session - gérer les erreurs de format d'ID
+        if is_jwt:
+            # Authentification JWT
             try:
-                session = session_store.get(session_id)
-            except Exception as store_error:
-                _logger.warning(f"Session store error for id {session_id[:20]}...: {store_error}")
+                jwt_claims = validate_jwt_request(request.httprequest)
+                if not jwt_claims:
+                    _logger.warning("Invalid JWT token")
+                    return {
+                        'success': False,
+                        'error': 'Token invalide',
+                        'error_code': 'INVALID_TOKEN'
+                    }
+
+                # Charger l'utilisateur depuis les claims JWT
+                user_id = jwt_claims.get('uid')
+                if not user_id:
+                    _logger.warning("JWT missing uid claim")
+                    return {
+                        'success': False,
+                        'error': 'Token invalide',
+                        'error_code': 'INVALID_TOKEN'
+                    }
+
+                # Mettre à jour l'environnement avec l'utilisateur authentifié
+                request.update_env(user=user_id)
+
+                # Stocker les claims JWT pour accès ultérieur
+                request.jwt_claims = jwt_claims
+
+                _logger.debug(f"JWT authentication successful for user {user_id}")
+                return None
+
+            except TokenExpiredError:
+                _logger.warning("JWT token expired")
                 return {
                     'success': False,
-                    'error': 'Session invalide. Veuillez vous reconnecter.',
-                    'error_code': 'SESSION_INVALID'
+                    'error': 'Token expiré',
+                    'error_code': 'TOKEN_EXPIRED'
                 }
 
-            if not session or not session.uid:
-                _logger.warning(f"Invalid or expired session: {session_id[:20]}...")
+            except InvalidTokenError as e:
+                _logger.warning(f"Invalid JWT token: {e}")
                 return {
                     'success': False,
-                    'error': 'Session expirée. Veuillez vous reconnecter.',
-                    'error_code': 'SESSION_EXPIRED'
+                    'error': 'Token invalide',
+                    'error_code': 'INVALID_TOKEN'
                 }
 
-            # Restaurer la session dans la requête courante
-            request.session.update(session)
-            request.session.uid = session.uid
-            request.session.login = session.login
-            request.session.db = session.db
+            except Exception as e:
+                _logger.error(f"JWT authentication error: {e}")
+                return {
+                    'success': False,
+                    'error': 'Erreur d\'authentification',
+                    'error_code': 'AUTH_ERROR'
+                }
+        else:
+            # Legacy: Authentification par session_id Odoo
+            try:
+                from odoo.http import root
 
-            # Mettre à jour l'environnement avec l'utilisateur authentifié
-            request.update_env(user=session.uid)
+                # Récupérer le store de sessions
+                session_store = root.session_store
 
-            _logger.debug(f"Session restored for user {session.uid} from header")
-            return None
+                # Charger la session
+                try:
+                    session = session_store.get(token)
+                except Exception as store_error:
+                    _logger.warning(f"Session store error for id {token[:20]}...: {store_error}")
+                    return {
+                        'success': False,
+                        'error': 'Session invalide. Veuillez vous reconnecter.',
+                        'error_code': 'SESSION_INVALID'
+                    }
 
-        except Exception as e:
-            _logger.error(f"Failed to authenticate from header: {e}")
-            return {
-                'success': False,
-                'error': 'Erreur d\'authentification',
-                'error_code': 'AUTH_ERROR'
-            }
+                if not session or not session.uid:
+                    _logger.warning(f"Invalid or expired session: {token[:20]}...")
+                    return {
+                        'success': False,
+                        'error': 'Session expirée. Veuillez vous reconnecter.',
+                        'error_code': 'SESSION_EXPIRED'
+                    }
+
+                # Restaurer la session dans la requête courante
+                request.session.update(session)
+                request.session.uid = session.uid
+                request.session.login = session.login
+                request.session.db = session.db
+
+                # Mettre à jour l'environnement avec l'utilisateur authentifié
+                request.update_env(user=session.uid)
+
+                _logger.debug(f"Session restored for user {session.uid} from header")
+                return None
+
+            except Exception as e:
+                _logger.error(f"Failed to authenticate from header: {e}")
+                return {
+                    'success': False,
+                    'error': 'Erreur d\'authentification',
+                    'error_code': 'AUTH_ERROR'
+                }
 
     def _check_cors(self):
         """
