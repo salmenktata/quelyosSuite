@@ -227,20 +227,20 @@ export const FONT_FAMILIES: Record<TenantTypography['fontFamily'], { label: stri
 };
 
 /**
- * Couleurs par défaut (thème Le Sportif)
+ * Couleurs par défaut (thème Vert Émeraude)
  */
 export const DEFAULT_TENANT_COLORS: TenantColors = {
-  primary: '#01613a',
-  primaryDark: '#004d2e',
-  primaryLight: '#028a52',
-  secondary: '#c9c18f',
-  secondaryDark: '#b4ac7a',
-  secondaryLight: '#ddd5a4',
-  accent: '#f59e0b',
+  primary: '#10b981',
+  primaryDark: '#059669',
+  primaryLight: '#34d399',
+  secondary: '#6ee7b7',
+  secondaryDark: '#4ade80',
+  secondaryLight: '#a7f3d0',
+  accent: '#34d399',
   background: '#ffffff',
   foreground: '#171717',
   muted: '#f5f5f5',
   mutedForeground: '#737373',
   border: '#e5e5e5',
-  ring: '#01613a',
+  ring: '#10b981',
 };

@@ -128,8 +128,8 @@ const defaultConfig: SiteConfig = {
   },
   assets: {
     logoUrl: '',
-    primaryColor: '#01613a',
-    secondaryColor: '#c9c18f',
+    primaryColor: '#10b981',
+    secondaryColor: '#6ee7b7',
   },
 };
 

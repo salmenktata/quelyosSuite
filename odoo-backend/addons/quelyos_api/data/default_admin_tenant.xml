@@ -17,20 +17,20 @@
             <!-- Branding par défaut -->
             <field name="font_family">inter</field>
 
-            <!-- Couleurs Thème Indigo (couleur admin Quelyos) -->
-            <field name="primary_color">#4f46e5</field>
-            <field name="primary_dark">#4338ca</field>
-            <field name="primary_light">#6366f1</field>
-            <field name="secondary_color">#0ea5e9</field>
-            <field name="secondary_dark">#0284c7</field>
-            <field name="secondary_light">#38bdf8</field>
-            <field name="accent_color">#f59e0b</field>
+            <!-- Couleurs Thème Vert Émeraude (nouveau thème par défaut) -->
+            <field name="primary_color">#10b981</field>
+            <field name="primary_dark">#059669</field>
+            <field name="primary_light">#34d399</field>
+            <field name="secondary_color">#6ee7b7</field>
+            <field name="secondary_dark">#4ade80</field>
+            <field name="secondary_light">#a7f3d0</field>
+            <field name="accent_color">#34d399</field>
             <field name="background_color">#ffffff</field>
             <field name="foreground_color">#0f172a</field>
             <field name="muted_color">#f1f5f9</field>
             <field name="muted_foreground">#64748b</field>
             <field name="border_color">#e2e8f0</field>
-            <field name="ring_color">#4f46e5</field>
+            <field name="ring_color">#10b981</field>
 
             <!-- Contact admin par défaut -->
             <field name="email">admin@quelyos.tn</field>

@@ -139,7 +139,7 @@ export default function CampaignDetailPage() {
                 )}
                 <span className="capitalize">{campaign.channel}</span>
                 <span>·</span>
-                <span>Créée le {formatDate(campaign.created_at || null)}</span>
+                <span>Créée le {formatDate(campaign.create_date || null)}</span>
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function CampaignDetailPage() {
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Stats (si envoyée) */}
-            {campaign.status === 'sent' && (
+            {campaign.status === 'done' && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-pink-500" />

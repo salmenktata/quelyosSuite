@@ -479,6 +479,7 @@ export interface Ticket {
   id: number
   subject: string
   description: string
+  reference?: string  // Numéro de référence du ticket
   state: TicketState
   priority: TicketPriority
   category?: TicketCategory
@@ -486,6 +487,11 @@ export interface Ticket {
   partner_name: string
   user_id?: number
   user_name?: string
+  messageCount?: number  // Nombre de messages
+  slaFirstResponseStatus?: 'met' | 'failed' | 'pending'  // Statut SLA première réponse
+  slaResolutionStatus?: 'met' | 'failed' | 'pending'  // Statut SLA résolution
+  slaFirstResponseDeadline?: string  // Deadline SLA première réponse
+  slaResolutionDeadline?: string  // Deadline SLA résolution
   create_date: string
   write_date?: string
   closed_date?: string
@@ -495,10 +501,13 @@ export interface TicketMessage {
   id: number
   ticket_id: number
   body: string
+  content?: string  // Alias pour body
   author_id: number
   author_name: string
   date: string
+  createdAt?: string  // Alias pour date
   is_internal?: boolean
+  isStaff?: boolean  // Si l'auteur est un membre du staff
 }
 
 export interface CreateTicketData {
@@ -520,6 +529,14 @@ export interface MarketingCampaign {
   type: CampaignType
   channel: string  // Canal de distribution (email, sms, social, etc.)
   status: CampaignStatus
+  state?: string  // État de la campagne
+  subject?: string  // Sujet (email)
+  content?: string  // Contenu HTML
+  sms_message?: string  // Message SMS
+  contact_list_name?: string  // Nom de la liste de contacts
+  recipient_count?: number  // Nombre de destinataires
+  scheduled_date?: string  // Date programmée
+  sent_date?: string  // Date d'envoi
   start_date?: string
   end_date?: string
   target_audience?: string
@@ -528,6 +545,14 @@ export interface MarketingCampaign {
   impressions?: number
   clicks?: number
   conversions?: number
+  stats?: {
+    sent?: number
+    delivered?: number
+    opened?: number
+    clicked?: number
+    bounced?: number
+    unsubscribed?: number
+  }
   rates?: {
     open_rate?: number
     click_rate?: number
@@ -547,4 +572,9 @@ export interface CampaignStats {
   average_conversion_rate: number
   total_budget: number
   total_spent: number
+  sent?: number  // Nombre d'envois
+  delivered?: number  // Nombre de livraisons réussies
+  opened?: number  // Nombre d'ouvertures
+  clicked?: number  // Nombre de clics
+  bounced?: number  // Nombre de rebonds
 }

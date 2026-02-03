@@ -35,15 +35,15 @@ interface ThemeProviderProps {
   tenantId?: number;
 }
 
-// Thème par défaut (fallback)
+// Thème par défaut (fallback) - Palette verte moderne
 const DEFAULT_THEME: ThemeConfig = {
   id: 'default',
   name: 'Thème par défaut',
   category: 'general',
   colors: {
-    primary: '#dc2626',
-    secondary: '#64748b',
-    accent: '#f59e0b',
+    primary: '#10b981', // Vert émeraude moderne
+    secondary: '#6ee7b7',
+    accent: '#34d399',
     background: '#ffffff',
     text: '#1e293b',
     muted: '#94a3b8',

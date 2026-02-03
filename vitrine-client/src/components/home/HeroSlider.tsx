@@ -25,9 +25,9 @@ const AUTO_RESUME_DELAY = 10000; // Resume auto-play after manual navigation (ms
 const fallbackSlides: Slide[] = [
   {
     id: 1,
-    title: 'Bienvenue sur Le Sportif',
-    subtitle: 'Votre boutique sport en ligne',
-    description: 'Decouvrez notre collection de produits de sport et d\'equipements de qualite. Des prix competitifs et une livraison rapide partout en Tunisie.',
+    title: 'Bienvenue sur Quelyos Shop',
+    subtitle: 'Votre boutique e-commerce en ligne',
+    description: 'Decouvrez notre collection de produits de qualite. Des prix competitifs et une livraison rapide partout en Tunisie.',
     image_url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=600&fit=crop',
     cta_text: 'Voir nos produits',
     cta_link: '/products',

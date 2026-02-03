@@ -311,5 +311,102 @@
 }]]></field>
         </record>
 
+        <!-- ═══════════════════════════════════════════════════════════════════════════
+             THÈME 4 : Emerald Green (Défaut)
+        ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <record id="theme_emerald_green" model="quelyos.theme">
+            <field name="code">emerald-green</field>
+            <field name="name">Vert Émeraude</field>
+            <field name="description">Thème vert moderne et écologique pour tous types de boutiques</field>
+            <field name="category">general</field>
+            <field name="version">1.0.0</field>
+            <field name="sequence">5</field>
+            <field name="is_public" eval="True"/>
+            <field name="is_premium" eval="False"/>
+            <field name="price">0.0</field>
+            <field name="config_json"><![CDATA[{
+  "id": "emerald-green",
+  "name": "Vert Émeraude",
+  "category": "general",
+  "description": "Thème vert moderne et écologique",
+  "version": "1.0.0",
+  "colors": {
+    "primary": "#10b981",
+    "secondary": "#6ee7b7",
+    "accent": "#34d399",
+    "background": "#ffffff",
+    "text": "#1e293b",
+    "muted": "#94a3b8"
+  },
+  "typography": {
+    "headings": "Inter",
+    "body": "Inter"
+  },
+  "layouts": {
+    "homepage": {
+      "sections": [
+        {
+          "type": "hero",
+          "variant": "centered",
+          "config": {
+            "title": "Bienvenue",
+            "subtitle": "Découvrez nos produits",
+            "cta": {
+              "text": "Explorer",
+              "url": "/shop"
+            }
+          }
+        },
+        {
+          "type": "featured-products",
+          "variant": "grid-4cols",
+          "config": {
+            "title": "Produits Vedettes",
+            "limit": 8,
+            "sortBy": "featured"
+          }
+        },
+        {
+          "type": "newsletter",
+          "variant": "centered-minimal",
+          "config": {
+            "title": "Restez Informés",
+            "subtitle": "Recevez nos offres exclusives"
+          }
+        }
+      ]
+    },
+    "productPage": {
+      "layout": "standard",
+      "gallery": {
+        "type": "standard"
+      },
+      "sections": [
+        {
+          "type": "product-info",
+          "variant": "standard"
+        }
+      ]
+    },
+    "categoryPage": {
+      "layout": "sidebar-left",
+      "grid": "3cols",
+      "filters": ["price", "category"]
+    }
+  },
+  "components": {
+    "productCard": "standard",
+    "header": "standard",
+    "footer": "standard",
+    "buttons": "standard"
+  },
+  "spacing": {
+    "sectionPadding": "medium",
+    "containerWidth": "1280px"
+  }
+}]]></field>
+        </record>
+
     </data>
 </odoo>
