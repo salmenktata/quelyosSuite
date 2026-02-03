@@ -1,5 +1,8 @@
 # Quelyos Suite
 
+[![Validate Configuration URLs](https://github.com/salmenktata/quelyosSuite/actions/workflows/validate-config.yml/badge.svg)](https://github.com/salmenktata/quelyosSuite/actions/workflows/validate-config.yml)
+[![No Odoo Check](https://github.com/salmenktata/quelyosSuite/actions/workflows/no-odoo-check.yml/badge.svg)](https://github.com/salmenktata/quelyosSuite/actions/workflows/no-odoo-check.yml)
+
 Suite ERP modulaire avec backend unique et puissant.
 
 ## Vision

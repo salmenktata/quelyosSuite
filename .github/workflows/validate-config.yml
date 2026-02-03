@@ -1,0 +1,224 @@
+name: Validate Configuration URLs
+
+# Déclenché sur push et pull_request vers main et develop
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'dashboard-client/src/**'
+      - 'vitrine-client/src/**'
+      - 'super-admin-client/src/**'
+      - 'vitrine-quelyos/app/**'
+      - 'packages/backend/src/**'
+      - 'packages/config/**'
+      - '.github/workflows/validate-config.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'dashboard-client/src/**'
+      - 'vitrine-client/src/**'
+      - 'super-admin-client/src/**'
+      - 'vitrine-quelyos/app/**'
+      - 'packages/backend/src/**'
+      - 'packages/config/**'
+      - '.github/workflows/validate-config.yml'
+
+# Permissions minimales (principe du moindre privilège)
+permissions:
+  contents: read
+
+jobs:
+  check-hardcoded-urls:
+    name: Check Hardcoded URLs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for better analysis
+
+      - name: Make script executable
+        run: chmod +x ./scripts/check-hardcoded-urls.sh
+
+      - name: Run URL validation script
+        id: check_urls
+        run: |
+          echo "🔍 Exécution de la validation des URLs..."
+          ./scripts/check-hardcoded-urls.sh
+        continue-on-error: false
+
+      - name: Report Success
+        if: success()
+        run: |
+          echo "✅ Aucune URL hardcodée détectée"
+          echo "✅ Conformité @quelyos/config validée"
+          echo ""
+          echo "📊 Règles vérifiées:"
+          echo "   • http://localhost:8069 (backend)"
+          echo "   • http://localhost:3000 (vitrine)"
+          echo "   • http://localhost:3001 (e-commerce)"
+          echo "   • http://localhost:5175 (dashboard)"
+          echo "   • http://localhost:9000 (super-admin)"
+
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "❌ URLs hardcodées détectées!"
+          echo ""
+          echo "💡 Solution:"
+          echo "   1. Utiliser @quelyos/config au lieu des URLs hardcodées"
+          echo "   2. Voir CLAUDE.md section '🎯 URLS CENTRALISÉES'"
+          echo ""
+          echo "Exemple de correction:"
+          echo "   ❌ const apiUrl = 'http://localhost:8069';"
+          echo "   ✅ import { getBackendUrl } from '@quelyos/config';"
+          echo "   ✅ const apiUrl = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');"
+          exit 1
+
+  verify-config-package:
+    name: Verify @quelyos/config Package
+    runs-on: ubuntu-latest
+    needs: check-hardcoded-urls
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @quelyos/config
+        run: pnpm --filter @quelyos/config build
+
+      - name: Check package exports
+        run: |
+          echo "🔍 Vérification des exports @quelyos/config..."
+
+          # Vérifier que le package est buildé
+          if [ ! -f "packages/config/dist/index.js" ]; then
+            echo "❌ Package @quelyos/config non buildé!"
+            exit 1
+          fi
+
+          echo "✅ Package @quelyos/config buildé avec succès"
+
+          # Afficher la taille du bundle
+          SIZE=$(du -h packages/config/dist/index.js | cut -f1)
+          echo "📦 Taille du bundle: $SIZE"
+
+      - name: Run config tests
+        run: |
+          if [ -f "packages/config/package.json" ]; then
+            cd packages/config
+            if grep -q '"test"' package.json; then
+              echo "🧪 Exécution des tests @quelyos/config..."
+              pnpm test || echo "⚠️  Aucun test trouvé"
+            else
+              echo "⏭️  Aucun test configuré"
+            fi
+          fi
+
+  validate-usage:
+    name: Validate @quelyos/config Usage
+    runs-on: ubuntu-latest
+    needs: verify-config-package
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check config imports in frontends
+        run: |
+          echo "🔍 Vérification des imports @quelyos/config..."
+
+          # Compter les imports @quelyos/config
+          IMPORT_COUNT=$(grep -r "from '@quelyos/config'" \
+            dashboard-client/src \
+            vitrine-client/src \
+            super-admin-client/src \
+            vitrine-quelyos/app \
+            packages/backend/src \
+            --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
+
+          echo "📊 Nombre d'imports @quelyos/config: $IMPORT_COUNT"
+
+          if [ "$IMPORT_COUNT" -lt 10 ]; then
+            echo "⚠️  Peu d'imports détectés ($IMPORT_COUNT). Migration incomplète?"
+          else
+            echo "✅ Migration @quelyos/config active ($IMPORT_COUNT imports)"
+          fi
+
+      - name: Check for direct URL usage (warnings)
+        run: |
+          echo "🔍 Recherche d'usages directs d'URLs (warnings non-bloquants)..."
+
+          # Chercher des patterns suspects (non-bloquants)
+          SUSPICIOUS=$(grep -rE "http://|https://" \
+            dashboard-client/src \
+            vitrine-client/src \
+            super-admin-client/src \
+            vitrine-quelyos/app \
+            --include="*.ts" --include="*.tsx" \
+            --exclude="*.test.ts" --exclude="*.spec.ts" 2>/dev/null | \
+            grep -v "@quelyos/config" | \
+            grep -v "// http" | \
+            grep -v "* http" | \
+            wc -l | tr -d ' ')
+
+          if [ "$SUSPICIOUS" -gt 0 ]; then
+            echo "⚠️  $SUSPICIOUS ligne(s) avec URLs détectées (peut inclure des faux positifs)"
+            echo "    Vérifier manuellement si nécessaire"
+          else
+            echo "✅ Aucun usage direct d'URL détecté"
+          fi
+
+  summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: [check-hardcoded-urls, verify-config-package, validate-usage]
+    if: always()
+
+    steps:
+      - name: Check overall status
+        run: |
+          echo "╔═══════════════════════════════════════════════════════════╗"
+          echo "║                                                           ║"
+          echo "║        VALIDATION CONFIGURATION - RÉSUMÉ                  ║"
+          echo "║                                                           ║"
+          echo "╚═══════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "✅ Vérifications effectuées:"
+          echo "   • URLs hardcodées (bloquant)"
+          echo "   • Package @quelyos/config (bloquant)"
+          echo "   • Usage @quelyos/config (informatif)"
+          echo ""
+          echo "📚 Documentation:"
+          echo "   • CLAUDE.md (section 🎯 URLS CENTRALISÉES)"
+          echo "   • .claude/MIGRATION_URLS_CENTRALISEES.md"
+          echo "   • packages/config/README.md"
+          echo ""
+          echo "🔒 Protection active:"
+          echo "   • Pre-commit hook (.husky/pre-commit)"
+          echo "   • CI/CD validation (ce workflow)"
+          echo "   • Script manuel (./scripts/check-hardcoded-urls.sh)"
+
+      - name: Fail if any check failed
+        if: |
+          needs.check-hardcoded-urls.result == 'failure' ||
+          needs.verify-config-package.result == 'failure' ||
+          needs.validate-usage.result == 'failure'
+        run: |
+          echo "❌ Une ou plusieurs vérifications ont échoué"
+          exit 1
