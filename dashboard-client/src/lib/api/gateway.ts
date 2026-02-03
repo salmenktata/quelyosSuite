@@ -260,7 +260,7 @@ class APIGateway {
   private getServiceKey(path: string): string {
     // Extraire le service du path (ex: /api/products -> products)
     const parts = path.split('/').filter(Boolean)
-    return parts[1] || 'default'
+    return parts[1] ?? 'default'
   }
 
   private getCircuitBreaker(serviceKey: string): CircuitBreaker {

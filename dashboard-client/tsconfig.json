@@ -21,7 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@quelyos/logger": ["../shared/logger/src"],
-      "@quelyos/types": ["../packages/types"],
+      "@quelyos/types": ["../shared/types/src"],
       "@quelyos/ui/animated": ["./src/lib/finance/compat/animated.tsx"]
     }
   },

@@ -82,7 +82,7 @@ export function ImportProductsModal({
     }
 
     // Détecter le séparateur (virgule ou point-virgule)
-    const firstLine = lines[0]
+    const firstLine = lines[0]!
     const separator = firstLine.includes(';') ? ';' : ','
 
     const headers = firstLine.split(separator).map((h) => h.trim().toLowerCase().replace(/"/g, ''))

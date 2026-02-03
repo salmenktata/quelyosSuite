@@ -5,7 +5,7 @@
  */
 
 import { PORTS } from './ports';
-import { type RuntimeEnvironment } from './env';
+import type { RuntimeEnvironment } from './env';
 
 /**
  * Configuration URL pour une application

@@ -262,7 +262,7 @@ class TokenService {
       const parts = token.split('.')
       if (parts.length !== 3) return null
 
-      const payload = JSON.parse(atob(parts[1]))
+      const payload = JSON.parse(atob(parts[1]!))
       return payload as TokenPayload
     } catch {
       return null
