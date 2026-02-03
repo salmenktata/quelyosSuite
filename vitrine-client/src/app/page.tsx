@@ -19,7 +19,6 @@ import { FlashSalesSection } from '@/components/home/FlashSalesSection';
 import { ContinueShoppingSection } from '@/components/home/ContinueShoppingSection';
 import { SocialTrendingProducts } from '@/components/home/SocialTrendingProducts';
 import { LivestreamShopping } from '@/components/live/LivestreamShopping';
-import { logger } from '@/lib/logger';
 import { ThemeSections } from '@/components/theme/ThemeSections';
 import { getAppUrl } from '@quelyos/config';
 
@@ -91,9 +90,8 @@ async function getHomeData(): Promise<{ products: Product[]; categories: Categor
     }
 
     return { products, categories, heroSlides, promoBanners, benefits };
-  } catch (error) {
-    // Log uniquement le message pour éviter les erreurs de sérialisation React Server Components
-    logger.error('Error fetching home data:', error instanceof Error ? error.message : String(error));
+  } catch (_error) {
+    // Silently fail and return empty data (SSR context)
     return { products: [], categories: [], heroSlides: [], promoBanners: [], benefits: [] };
   }
 }

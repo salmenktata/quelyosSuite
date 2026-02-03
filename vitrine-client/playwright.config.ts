@@ -14,7 +14,7 @@ export default defineConfig({
   reporter: 'html',
 
   use: {
-    baseURL: '${APPS.ecommerce.dev}',
+    baseURL: APPS.ecommerce.dev,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -44,7 +44,7 @@ export default defineConfig({
 
   webServer: {
     command: 'npm run dev',
-    url: '${APPS.ecommerce.dev}',
+    url: APPS.ecommerce.dev,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

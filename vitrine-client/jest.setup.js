@@ -3,9 +3,10 @@
  */
 
 import '@testing-library/jest-dom';
+import { API } from '@quelyos/config';
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_ODOO_URL = 'http://localhost:8069';
+process.env.NEXT_PUBLIC_ODOO_URL = API.backend.dev;
 process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3000';
 process.env.NEXT_PUBLIC_PRIMARY_COLOR = '#01613a';
 process.env.NEXT_PUBLIC_SECONDARY_COLOR = '#c9c18f';
