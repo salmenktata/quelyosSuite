@@ -5,7 +5,7 @@ import { tokenService } from '../lib/tokenService'
 import { logger } from '@quelyos/logger'
 import { getDefaultModulePath } from '../lib/defaultModule'
 
-const SITE_URL = import.meta.env.VITE_SITE_URL || 'http://localhost:3000'
+const SITE_URL = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3000'
 
 // Icônes inline
 const Shield = ({ className }: { className?: string }) => (

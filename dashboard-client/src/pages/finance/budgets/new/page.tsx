@@ -38,7 +38,7 @@ export default function NewBudgetPage() {
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [period, setPeriod] = useState<"WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY" | "CUSTOM">("MONTHLY");
-  const [startDate, setStartDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().split("T")[0]!);
   const [endDate, setEndDate] = useState("");
   
   const [categories, setCategories] = useState<Category[]>([]);

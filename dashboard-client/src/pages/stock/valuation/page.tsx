@@ -40,7 +40,7 @@ const TIME_RANGES: TimeRange[] = [
 
 export default function StockValuationPage() {
   const { formatAmount } = useCurrency()
-  const [selectedDate, setSelectedDate] = useState<string>(TIME_RANGES[0].value)
+  const [selectedDate, setSelectedDate] = useState<string>(TIME_RANGES[0]!.value)
   const [selectedWarehouse, _setSelectedWarehouse] = useState<number | undefined>()
   const [selectedCategory, _setSelectedCategory] = useState<number | undefined>()
 

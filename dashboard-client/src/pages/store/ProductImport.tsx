@@ -88,7 +88,7 @@ export default function ProductImport() {
     const lines = text.split('\n').filter(line => line.trim());
     if (lines.length < 2) return;
 
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const headers = lines[0]!.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
     const data = lines.slice(1, 11).map(line => {
       const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
       const obj: Record<string, string> = {};
@@ -109,7 +109,10 @@ export default function ProductImport() {
 
     try {
       const lines = csvData.split('\n').filter(line => line.trim());
-      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+      if (lines.length < 2) {
+        throw new Error('Le fichier CSV doit contenir au moins un en-tête et une ligne de données');
+      }
+      const headers = lines[0]!.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
 
       const products = lines.slice(1).map(line => {
         const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];

@@ -57,7 +57,7 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [kind, setKind] = useState<CategoryKind>("EXPENSE");
-  const [color, setColor] = useState(DEFAULT_COLORS[0]);
+  const [color, setColor] = useState(DEFAULT_COLORS[0]!);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);

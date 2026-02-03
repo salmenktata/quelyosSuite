@@ -7,8 +7,8 @@ import { logger } from '@/lib/logger'
 import { tokenService } from '@/lib/tokenService'
 
 // En dev, le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
-// En prod, VITE_API_URL pointe vers le domaine API (ex: https://api.quelyos.com)
-const API_BASE_URL = import.meta.env.VITE_API_URL || ''
+// En prod, VITE_BACKEND_URL pointe vers le domaine API (ex: https://api.quelyos.com)
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

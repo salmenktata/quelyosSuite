@@ -30,7 +30,7 @@ export default function NewInvoicePage() {
   
   // Formulaire
   const [customerId, setCustomerId] = useState<number | null>(null)
-  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0])
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]!)
   const [dueDate, setDueDate] = useState('')
   const [reference, setReference] = useState('')
   const [note, setNote] = useState('')

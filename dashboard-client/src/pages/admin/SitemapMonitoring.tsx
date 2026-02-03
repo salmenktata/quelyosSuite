@@ -15,7 +15,7 @@ import { Breadcrumbs, Button } from '@/components/common';
 import { Search, ExternalLink, RefreshCw, FileText, TrendingUp, AlertCircle } from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
-const SITE_URL = import.meta.env.VITE_SITE_URL || 'http://localhost:3000';
+const SITE_URL = import.meta.env.VITE_VITRINE_URL || 'http://localhost:3000';
 
 interface SitemapEntry {
   path: string;
