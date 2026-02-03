@@ -104,7 +104,7 @@ export default async function CollectionPage({ params }: PageProps) {
               {products.length} produit{products.length > 1 ? 's' : ''} dans cette collection
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product: { id: number; name: string; slug: string; price: number; image_url?: string }) => (
+              {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
