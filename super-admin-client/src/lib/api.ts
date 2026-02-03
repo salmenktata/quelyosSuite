@@ -226,7 +226,11 @@ class ApiGateway {
 
     logger.debug('[API] login() result:', result)
 
-    return result
+    return result as {
+      success: boolean
+      error?: string
+      user?: { id: number; name: string; email: string; login: string }
+    }
   }
 }
 

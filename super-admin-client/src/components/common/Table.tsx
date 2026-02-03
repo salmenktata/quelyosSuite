@@ -57,7 +57,8 @@ export function Table<T>({
 
     if (aValue === bValue) return 0
 
-    const comparison = aValue < bValue ? -1 : 1
+    // Type safety pour la comparaison
+    const comparison = String(aValue) < String(bValue) ? -1 : 1
     return sortDirection === 'asc' ? comparison : -comparison
   })
 
@@ -142,7 +143,7 @@ export function Table<T>({
                 >
                   {columns.map((column) => (
                     <td key={column.key} className="px-6 py-4 whitespace-nowrap">
-                      {column.render ? column.render(item) : (item as Record<string, unknown>)[column.key]}
+                      {column.render ? column.render(item) : String((item as Record<string, unknown>)[column.key] ?? '')}
                     </td>
                   ))}
                   {hoverActions && (
