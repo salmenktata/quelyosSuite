@@ -13,6 +13,10 @@ import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { Button } from '@/components/common/Button';
 
 export const ComparisonBar: React.FC = () => {
+  // Fonctionnalité de comparaison désactivée
+  return null;
+
+  /* DÉSACTIVÉ - Code original
   const router = useRouter();
   const { products, removeProduct, clearComparison, maxProducts } = useComparisonStore();
   const { data: siteConfig } = useSiteConfig();
@@ -21,6 +25,7 @@ export const ComparisonBar: React.FC = () => {
   if (!siteConfig?.compare_enabled || products.length === 0) {
     return null;
   }
+  */
 
   const handleCompare = () => {
     router.push('/compare');

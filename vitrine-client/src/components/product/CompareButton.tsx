@@ -16,6 +16,10 @@ interface CompareButtonProps {
 }
 
 const CompareButton: React.FC<CompareButtonProps> = ({ product, size = 'md' }) => {
+  // Fonctionnalité de comparaison désactivée
+  return null;
+
+  /* DÉSACTIVÉ - Code original
   const { addProduct, removeProduct, isInComparison, canAdd } = useComparisonStore();
   const { data: siteConfig } = useSiteConfig();
 
@@ -25,6 +29,7 @@ const CompareButton: React.FC<CompareButtonProps> = ({ product, size = 'md' }) =
   if (!siteConfig?.compare_enabled) {
     return null;
   }
+  */
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

@@ -16,6 +16,15 @@ import { formatPrice } from '@/lib/utils/formatting';
 
 export default function ComparePage() {
   const router = useRouter();
+
+  // Fonctionnalité désactivée - rediriger vers les produits
+  useEffect(() => {
+    router.push('/products');
+  }, [router]);
+
+  return null;
+
+  /* DÉSACTIVÉ - Code original
   const { products, removeProduct, clearComparison } = useComparisonStore();
   const { addToCart } = useCartStore();
   const { data: siteConfig, isLoading } = useSiteConfig();
@@ -26,6 +35,7 @@ export default function ComparePage() {
       router.push('/products');
     }
   }, [siteConfig, isLoading, router]);
+  */
 
   // Rediriger si aucun produit
   useEffect(() => {
