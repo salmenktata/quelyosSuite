@@ -7,6 +7,8 @@
  * - Analyse de performance
  */
 
+/* eslint-disable no-console -- Fichier de traçabilité/logging, console.log nécessaire en dev */
+
 import { useState } from 'react'
 
 // Use native crypto.randomUUID() instead of uuid package
@@ -78,7 +80,7 @@ export async function fetchWithRequestId(
     const response = await fetch(input, { ...init, headers })
 
     const duration = performance.now() - startTime
-    const responseRequestId = getRequestIdFromResponse(response)
+    const _responseRequestId = getRequestIdFromResponse(response)
 
     // Log en dev
     if (import.meta.env.DEV) {

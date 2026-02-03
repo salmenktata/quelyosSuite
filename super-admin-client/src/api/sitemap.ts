@@ -116,6 +116,7 @@ export async function healthcheckApp(
 ): Promise<AppSectionDynamic> {
   // SÉCURITÉ : Log healthcheck uniquement en dev
   if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console -- Debug logging for healthcheck progress
     console.log(`🏥 Healthchecking ${app.name}...`)
   }
 
@@ -151,6 +152,7 @@ export async function healthcheckApp(
 
   // SÉCURITÉ : Log résultats uniquement en dev
   if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console -- Debug logging for healthcheck results
     console.log(`  ✅ ${healthStats.ok}/${healthStats.total} routes OK`)
   }
 

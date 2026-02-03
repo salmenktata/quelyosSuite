@@ -343,6 +343,7 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
       const details = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
       // SÉCURITÉ : Masquer détails données en production (éviter exposition structure API)
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console -- Error logging API validation failures with data in dev
         console.error('Validation API failed:', details, '\nData received:', JSON.stringify(data, null, 2).slice(0, 500))
       }
       throw new Error(`Invalid API response: ${details}`)
@@ -359,6 +360,7 @@ export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown
   if (!result.success) {
     // SÉCURITÉ : Masquer détails erreurs en production
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console -- Error logging API validation failures in dev
       console.error('Validation API failed (safe):', result.error.issues)
     }
     return null

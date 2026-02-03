@@ -34,6 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // SÉCURITÉ : Log console uniquement en dev (Sentry capture en prod)
     if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console -- Error logging for React errors in dev (Sentry handles prod)
       console.error('ErrorBoundary caught an error:', error, errorInfo)
     }
     this.setState({ errorInfo })

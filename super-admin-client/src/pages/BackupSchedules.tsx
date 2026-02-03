@@ -34,7 +34,7 @@ export function BackupSchedules() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [editingSchedule, setEditingSchedule] = useState<BackupScheduleRecord | null>(null)
+  const [_editingSchedule, setEditingSchedule] = useState<BackupScheduleRecord | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<BackupScheduleRecord | null>(null)
 
   // Form state

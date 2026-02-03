@@ -109,6 +109,7 @@ export function Step5Progress({ config }: Step5ProgressProps) {
     if (provisioningStatus && (provisioningStatus.status === 'completed' || provisioningStatus.status === 'failed')) {
       provisioningQuery.refetch()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- provisioningQuery.refetch is stable
   }, [provisioningStatus?.status])
 
   // Mutation génération seed data
@@ -181,6 +182,7 @@ export function Step5Progress({ config }: Step5ProgressProps) {
     if (seedStatus && (seedStatus.status === 'completed' || seedStatus.status === 'error')) {
       seedQuery.refetch()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- seedQuery.refetch is stable
   }, [seedStatus?.status])
 
   // Lancer création tenant au montage
@@ -208,6 +210,7 @@ export function Step5Progress({ config }: Step5ProgressProps) {
     } else if (provisioningStatus?.status === 'failed') {
       setPhase('error')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- generateSeed.mutate is stable, config/provisioningStatus fields already tracked via status
   }, [provisioningStatus?.status])
 
   // Gérer fin seed
@@ -221,6 +224,7 @@ export function Step5Progress({ config }: Step5ProgressProps) {
     } else if (seedStatus?.status === 'error') {
       setPhase('error')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- seedStatus.results tracked via status change
   }, [seedStatus?.status])
 
   // Rendu par phase

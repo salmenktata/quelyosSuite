@@ -852,7 +852,7 @@ export function SupportTickets() {
 }
 
 // Composants auxiliaires
-function StatCard({ label, value, color, icon: Icon }: { label: string; value: number; color: string; icon: any }) {
+function StatCard({ label, value, color, icon: Icon }: { label: string; value: number; color: string; icon: React.ComponentType<{ className?: string }> }) {
   const colors = {
     blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
     yellow: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',

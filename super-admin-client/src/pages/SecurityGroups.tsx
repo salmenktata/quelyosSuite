@@ -104,7 +104,7 @@ const GroupUsersResponseSchema = z.object({
 })
 
 type SecurityGroup = z.infer<typeof SecurityGroupSchema>
-type GroupUser = z.infer<typeof GroupUserSchema>
+type _GroupUser = z.infer<typeof GroupUserSchema>
 type PlanSummary = z.infer<typeof PlanSummarySchema>
 
 type TabType = 'quelyos' | 'all' | 'matrix'
@@ -233,7 +233,7 @@ export function SecurityGroups() {
 
   // --- Computed ---
 
-  const groups = groupsData?.data || []
+  const groups = useMemo(() => groupsData?.data || [], [groupsData?.data])
   const plans = groupsData?.plans || []
 
   const quelyosGroups = useMemo(() => groups.filter(g => g.is_quelyos), [groups])
@@ -725,7 +725,7 @@ function GroupDetailPanel({
 // --- Matrice Plans ↔ Groupes ---
 
 function MatrixView({
-  groups,
+  groups: _groups,
   plans,
   groupedByModule,
 }: {

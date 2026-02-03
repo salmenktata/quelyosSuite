@@ -148,7 +148,7 @@ export function isRetryable(
   }
 
   // Vérifier si l'erreur a un status HTTP (même si ce n'est pas une Response)
-  const status = (error as any).status
+  const status = (error as { status?: unknown }).status
   if (typeof status === 'number') {
     return config.retryableStatuses.includes(status)
   }
@@ -255,6 +255,7 @@ export async function withRetry<T>(
 
       // Log en développement
       if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console -- Debug logging retry attempts
         console.log(
           `[Retry] Attempt ${attempt}/${mergedConfig.maxRetries} failed. ` +
             `Retrying in ${delay}ms...`,
@@ -293,9 +294,9 @@ export async function fetchWithRetry(
 
       // Traiter les erreurs HTTP comme des erreurs
       if (!response.ok) {
-        const error = new Error(`HTTP ${response.status}: ${response.statusText}`)
-        ;(error as any).status = response.status
-        ;(error as any).response = response
+        const error = new Error(`HTTP ${response.status}: ${response.statusText}`) as Error & { status: number; response: Response }
+        error.status = response.status
+        error.response = response
         throw error
       }
 
@@ -314,6 +315,7 @@ export async function fetchWithRetry(
 /**
  * Décorateur pour ajouter retry à une fonction
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Generic function wrapper needs flexible signature
 export function retryable<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   config?: Partial<RetryConfig>

@@ -52,7 +52,7 @@ export function Backups() {
   const [deleteTarget, setDeleteTarget] = useState<Backup | null>(null)
   const [backupType, setBackupType] = useState<'full' | 'incremental'>('full')
   const [selectedTenant, setSelectedTenant] = useState<number | null>(null)
-  const [showSchedulePanel, setShowSchedulePanel] = useState(false)
+  const [_showSchedulePanel, _setShowSchedulePanel] = useState(false)
   const [schedule, setSchedule] = useState<BackupSchedule>(DEFAULT_SCHEDULE)
   const restoreStartTimeRef = useRef<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)

@@ -214,7 +214,7 @@ class ApiGateway {
   }> {
     logger.debug('[API] login() called with:', login)
 
-    const response = await this.post<any>('/api/auth/sso-login', {
+    const response = await this.post<{ result?: unknown; [key: string]: unknown }>('/api/auth/sso-login', {
       jsonrpc: '2.0',
       method: 'call',
       params: { login, password },

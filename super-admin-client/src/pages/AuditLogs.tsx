@@ -156,6 +156,7 @@ export function AuditLogs() {
     } catch (error) {
       // SÉCURITÉ : Log erreur uniquement en dev
       if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console -- Error logging for CSV export failures in dev
         console.error('Export error:', error)
       }
       // TODO : Afficher notification utilisateur en cas d'erreur export

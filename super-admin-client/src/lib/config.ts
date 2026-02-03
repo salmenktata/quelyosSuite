@@ -75,7 +75,9 @@ function loadConfig(): AppConfig {
   if (!result.success) {
     // SÉCURITÉ : Masquer détails validation config en production
     if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console -- Error logging config validation failures in dev
       console.error('Configuration validation failed:', result.error.flatten())
+      // eslint-disable-next-line no-console -- Warning about using default values in dev
       console.warn('Using default values for invalid config fields')
       return configSchema.parse({
         ...rawConfig,

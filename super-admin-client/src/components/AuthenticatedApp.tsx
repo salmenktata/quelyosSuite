@@ -111,6 +111,7 @@ export function AuthenticatedApp() {
     },
     onLogout: () => {
       // Logout via API (révoque refresh token + clear cookies)
+      // eslint-disable-next-line no-console -- Info logging for inactivity logout event
       console.info('[Auth] Session expirée pour inactivité')
       logout()
     },

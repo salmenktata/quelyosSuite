@@ -47,7 +47,7 @@ interface MockSeedStatus {
 class MockProvisioning {
   private jobs = new Map<string, { startTime: number; completed: boolean }>()
 
-  start(tenantName: string): MockProvisioningResponse {
+  start(_tenantName: string): MockProvisioningResponse {
     const jobId = `prov-mock-${Date.now()}`
     this.jobs.set(jobId, { startTime: Date.now(), completed: false })
 
@@ -180,7 +180,7 @@ class MockSeedData {
       const baseCount = counts[job.volumetry] || 250
 
       const results: Record<string, { count: number; duration_seconds: number }> = {}
-      job.modules.forEach((module, idx) => {
+      job.modules.forEach((module, _idx) => {
         results[module] = {
           count: baseCount + Math.floor(Math.random() * 50),
           duration_seconds: 3 + Math.random() * 5,

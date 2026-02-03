@@ -91,7 +91,7 @@ export function useInactivityLogout(options: UseInactivityLogoutOptions = {}) {
 
       throttleTimeout = setTimeout(() => {
         resetInactivityTimer()
-        throttleTimeout = undefined as any
+        throttleTimeout = undefined as unknown as NodeJS.Timeout
       }, 1000)
     }
 

@@ -158,6 +158,7 @@ export class CircuitBreaker {
 
     // SÉCURITÉ : Log debugging uniquement en dev
     if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console -- Debug logging circuit breaker state transitions
       console.log(
         `[CircuitBreaker] ${previousState} -> ${newState}`,
         `(failures: ${this.failureCount}, successes: ${this.successCount})`
@@ -241,6 +242,7 @@ export function getCircuitBreaker(
         onStateChange: (state, prev) => {
           // SÉCURITÉ : Log uniquement en dev (éviter exposition nom services)
           if (import.meta.env.DEV) {
+            // eslint-disable-next-line no-console -- Warning circuit breaker state change
             console.warn(
               `[${serviceName}] Circuit breaker: ${prev} -> ${state}`
             )

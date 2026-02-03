@@ -250,5 +250,6 @@ export function SidebarNav({ collapsed, onOpenCommandPalette, ticketCount }: Sid
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Exports constants/helpers with component (standard pattern)
 export { SECTIONS, STORAGE_KEY_COLLAPSED, getInitialCollapsed }
 export type { NavItem, NavSection }
