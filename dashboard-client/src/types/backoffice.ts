@@ -177,23 +177,22 @@ export interface InvoiceLine {
   tax_ids: number[]
 }
 
-// NOTE: Invoice est déjà exporté par @quelyos/types/common
-// On ne le redéfinit pas ici pour éviter les duplications
-// export interface Invoice {
-//   id: number
-//   name: string
-//   partner_id: number
-//   partner_name: string
-//   invoice_date: string | null
-//   invoice_date_due: string | null
-//   amount_untaxed: number
-//   amount_tax: number
-//   amount_total: number
-//   amount_residual: number
-//   state: 'draft' | 'posted' | 'cancel'
-//   payment_state: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
-//   invoice_line_ids?: InvoiceLine[]
-// }
+// NOTE: Invoice temporairement redéfini ici car manquant dans @quelyos/types
+export interface Invoice {
+  id: number
+  name: string
+  partner_id: number
+  partner_name: string
+  invoice_date: string | null
+  invoice_date_due: string | null
+  amount_untaxed: number
+  amount_tax: number
+  amount_total: number
+  amount_residual: number
+  state: 'draft' | 'posted' | 'cancel'
+  payment_state: 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'reversed'
+  invoice_line_ids?: InvoiceLine[]
+}
 
 export interface InvoicesQueryParams {
   limit?: number
@@ -291,13 +290,12 @@ export interface PaginatedData<T> {
   [key: string]: T[] | number
 }
 
-// NOTE: PaginatedResponse est déjà exporté par @quelyos/types/common
-// On ne le redéfinit pas ici pour éviter les duplications
-// export interface PaginatedResponse<T> {
-//   success: boolean
-//   data: PaginatedData<T>
-//   error?: string
-// }
+// NOTE: PaginatedResponse temporairement redéfini ici car manquant dans @quelyos/types
+export interface PaginatedResponse<T> {
+  success: boolean
+  data: PaginatedData<T>
+  error?: string
+}
 
 export interface ShippingTrackingInfo {
   status: 'tracked' | 'no_tracking'
@@ -466,4 +464,78 @@ export interface Lead extends LeadListItem {
   phone?: string
   mobile?: string
   write_date?: string
+}
+
+// ==================== SUPPORT TICKETS ====================
+
+export type TicketState = 'new' | 'open' | 'pending' | 'solved' | 'closed'
+export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type TicketCategory = 'bug' | 'feature' | 'question' | 'other'
+
+export interface Ticket {
+  id: number
+  subject: string
+  description: string
+  state: TicketState
+  priority: TicketPriority
+  category?: TicketCategory
+  partner_id: number
+  partner_name: string
+  user_id?: number
+  user_name?: string
+  create_date: string
+  write_date?: string
+  closed_date?: string
+}
+
+export interface TicketMessage {
+  id: number
+  ticket_id: number
+  body: string
+  author_id: number
+  author_name: string
+  date: string
+  is_internal?: boolean
+}
+
+export interface CreateTicketData {
+  subject: string
+  description: string
+  priority: TicketPriority
+  category?: TicketCategory
+  partner_id?: number
+}
+
+// ==================== MARKETING CAMPAIGNS ====================
+
+export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'done' | 'cancelled'
+export type CampaignType = 'email' | 'sms' | 'social' | 'ads'
+
+export interface MarketingCampaign {
+  id: number
+  name: string
+  type: CampaignType
+  status: CampaignStatus
+  start_date?: string
+  end_date?: string
+  target_audience?: string
+  budget?: number
+  spent?: number
+  impressions?: number
+  clicks?: number
+  conversions?: number
+  create_date: string
+  write_date?: string
+}
+
+export interface CampaignStats {
+  total_campaigns: number
+  active_campaigns: number
+  total_impressions: number
+  total_clicks: number
+  total_conversions: number
+  average_ctr: number
+  average_conversion_rate: number
+  total_budget: number
+  total_spent: number
 }

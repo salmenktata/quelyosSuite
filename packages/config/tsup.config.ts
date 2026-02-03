@@ -5,7 +5,7 @@ export default defineConfig({
   format: ['esm'],
   dts: false, // Bug Rollup avec type imports - utiliser index.d.ts manuel
   sourcemap: true,
-  clean: true,
+  clean: false, // Désactivé pour conserver index.d.ts manuel
   treeshake: true,
   splitting: false,
   skipNodeModulesBundle: true,
