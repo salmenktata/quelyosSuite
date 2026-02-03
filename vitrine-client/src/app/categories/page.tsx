@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { logger } from '@/lib/logger';
+import { Category } from '@/types/api';
 
 // Force SSR (pas de SSG) pour éviter timeout build
 export const dynamic = 'force-dynamic'
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   description: 'Explorez toutes nos catégories de produits',
 };
 
-async function getCategories() {
+async function getCategories(): Promise<Category[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/categories`, {
@@ -85,7 +86,7 @@ export default async function CategoriesPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {categories.map((category: { id: number; name: string; image_url?: string; product_count?: number; slug?: string }) => (
+              {categories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/products?category=${category.id}`}
