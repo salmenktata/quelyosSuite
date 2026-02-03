@@ -77,14 +77,14 @@ export default function NewCampaignPage() {
   const nextStep = () => {
     const idx = stepIndex + 1;
     if (idx < steps.length) {
-      setStep(steps[idx].key);
+      setStep(steps[idx]!.key);
     }
   };
 
   const prevStep = () => {
     const idx = stepIndex - 1;
     if (idx >= 0) {
-      setStep(steps[idx].key);
+      setStep(steps[idx]!.key);
     }
   };
 

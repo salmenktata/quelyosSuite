@@ -65,7 +65,7 @@ export default function Coupons() {
 
   const formatDateForInput = (dateString: string | null | undefined) => {
     if (!dateString) return ''
-    return dateString.split('T')[0]
+    return dateString.split('T')[0]!
   }
 
   const getDiscountLabel = (coupon: Coupon) => {
@@ -206,7 +206,7 @@ export default function Coupons() {
             <div className="p-8 text-center text-red-600 dark:text-red-400">
               Erreur lors du chargement des coupons
             </div>
-          ) : data?.items || data && (data.items || data.data || [] as Coupon[]).length > 0 ? (
+          ) : data && (Array.isArray(data) ? data : []).length > 0 ? (
             <>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -233,7 +233,7 @@ export default function Coupons() {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {(data.items || data.data || [] as Coupon[]).map((coupon) => (
+                    {(Array.isArray(data) ? data : []).map((coupon: Coupon) => (
                       <tr
                         key={coupon.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

@@ -52,7 +52,9 @@ export default function NewInvoicePage() {
 
   const updateLine = (index: number, field: keyof InvoiceLine, value: string | number | number[]) => {
     const newLines = [...lines]
-    newLines[index] = { ...newLines[index], [field]: value }
+    const currentLine = newLines[index]
+    if (!currentLine) return
+    newLines[index] = { ...currentLine, [field]: value }
     setLines(newLines)
   }
 

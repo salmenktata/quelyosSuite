@@ -159,8 +159,8 @@ export default function ByCategoryReportPage() {
       from.setDate(from.getDate() - parseInt(timeRange));
 
       const params = new URLSearchParams({
-        from: from.toISOString().split('T')[0],
-        to: today.toISOString().split('T')[0],
+        from: from.toISOString().split('T')[0]!,
+        to: today.toISOString().split('T')[0]!,
       });
 
       if (categoryId !== null) {

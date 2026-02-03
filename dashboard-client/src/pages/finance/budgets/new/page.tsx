@@ -63,7 +63,7 @@ export default function NewBudgetPage() {
       setAmount(data.amount?.toString() || "");
       if (data.categoryId) setCategoryId(data.categoryId.toString());
       if (data.period) setPeriod(data.period as "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY" | "CUSTOM");
-      if (data.startDate) setStartDate(data.startDate.split("T")[0]);
+      if (data.startDate) setStartDate(data.startDate.split("T")[0]!);
     } catch (err) {
       logger.error("Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement du budget");

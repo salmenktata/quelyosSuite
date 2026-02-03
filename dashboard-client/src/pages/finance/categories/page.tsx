@@ -95,7 +95,7 @@ export default function CategoriesPage() {
 
       setCategories([...categories, newCategory]);
       setName("");
-      setColor(DEFAULT_COLORS[0]);
+      setColor(DEFAULT_COLORS[0]!);
       setKind("EXPENSE");
       setShowForm(false);
     } catch (err) {

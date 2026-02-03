@@ -121,6 +121,7 @@ export function BuilderProvider({ children }: { children: ReactNode }) {
     setState((prev) => {
       const newSections = [...prev.sections];
       const [removed] = newSections.splice(oldIndex, 1);
+      if (!removed) return prev;
       newSections.splice(newIndex, 0, removed);
       return { ...prev, sections: newSections };
     });

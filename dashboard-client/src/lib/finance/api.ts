@@ -6,8 +6,8 @@
 import { logger } from '@/lib/logger'
 import { tokenService } from '@/lib/tokenService'
 
-// En dev, le proxy Vite gère /api/ecommerce -> http://localhost:8069/api/ecommerce
-// En prod, VITE_BACKEND_URL pointe vers le domaine API (ex: https://api.quelyos.com)
+// En dev, le proxy Vite gère /api/ecommerce -> backend local
+// En prod, VITE_BACKEND_URL pointe vers le domaine API (ex: api.quelyos.com)
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 interface ApiOptions {
@@ -248,7 +248,7 @@ export const financeApi = {
     const query = params ? '?' + new URLSearchParams(
       Object.entries(params)
         .filter(([_, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => [k, String(v)])
+        .map(([k, v]) => [k, String(v)] as [string, string])
         .reduce((acc, [k, v]) => ({ ...acc, [k as string]: v }), {} as Record<string, string>)
     ).toString() : ''
     return api(`/finance/stock/valuation${query}`)
@@ -265,7 +265,7 @@ export const financeApi = {
     const query = params ? '?' + new URLSearchParams(
       Object.entries(params)
         .filter(([_, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => [k, String(v)])
+        .map(([k, v]) => [k, String(v)] as [string, string])
         .reduce((acc, [k, v]) => ({ ...acc, [k as string]: v }), {} as Record<string, string>)
     ).toString() : ''
     return api(`/finance/stock/turnover${query}`)

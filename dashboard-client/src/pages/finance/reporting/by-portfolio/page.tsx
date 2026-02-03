@@ -88,7 +88,7 @@ export default function ByPortfolioReportPage() {
       totalDebit: p.totalDebit,
       avgIncome: p.movements > 0 ? p.totalCredit / p.movements : 0,
       avgExpense: p.movements > 0 ? p.totalDebit / p.movements : 0,
-      color: portfolioColors[index % portfolioColors.length],
+      color: portfolioColors[index % portfolioColors.length]!,
     }));
   }, [apiData]);
 

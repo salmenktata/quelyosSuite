@@ -232,8 +232,8 @@ export function ImageSearcher({ onSelectImage, currentImageUrl }: ImageSearcherP
         // Mélanger les résultats (alterner)
         const maxLen = Math.max(unsplashImgs.length, pexelsImgs.length)
         for (let i = 0; i < maxLen; i++) {
-          if (unsplashImgs[i]) results.push(unsplashImgs[i])
-          if (pexelsImgs[i]) results.push(pexelsImgs[i])
+          if (unsplashImgs[i]) results.push(unsplashImgs[i]!)
+          if (pexelsImgs[i]) results.push(pexelsImgs[i]!)
         }
       }
 

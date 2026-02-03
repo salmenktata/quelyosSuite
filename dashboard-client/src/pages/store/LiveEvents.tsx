@@ -214,11 +214,11 @@ export default function LiveEvents() {
         </div>
 
         <PageNotice
-          config={storeNotices.liveEvents || {
+          config={storeNotices.liveEvents ?? [{
             type: 'info',
             title: 'Live Shopping',
             message: 'Créez des événements de vente en direct pour engager vos clients et booster vos ventes.',
-          }}
+          }]}
           className="mb-6"
         />
 
@@ -247,7 +247,7 @@ export default function LiveEvents() {
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {events?.map((event) => {
-                    const stateInfo = STATE_LABELS[event.state] || STATE_LABELS.draft
+                    const stateInfo = STATE_LABELS[event.state] ?? STATE_LABELS.draft!
                     return (
                       <tr
                         key={event.id}

@@ -89,7 +89,7 @@ export default function ByAccountReportPage() {
       evolution: acc.evolution,
       totalCredit: acc.totalCredit,
       totalDebit: acc.totalDebit,
-      color: accountColors[index % accountColors.length],
+      color: accountColors[index % accountColors.length]!,
     }));
   }, [apiData]);
 
