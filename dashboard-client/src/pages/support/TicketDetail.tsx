@@ -162,7 +162,7 @@ export default function TicketDetail() {
             { label: 'Accueil', href: '/' },
             { label: 'Support' },
             { label: 'Mes Tickets', href: '/support/tickets' },
-            { label: ticket.reference ?? 'Ticket' },
+            { label: ticket.reference || `Ticket #${ticket.id}` },
           ]}
         />
 
@@ -184,14 +184,14 @@ export default function TicketDetail() {
                 <div className="flex items-center gap-3 mt-3">
                   {ticket.slaFirstResponseStatus && ticket.state === 'new' && (
                     <SLABadge
-                      status={ticket.slaFirstResponseStatus}
+                      status={ticket.slaFirstResponseStatus === 'met' ? 'ok' : ticket.slaFirstResponseStatus === 'failed' ? 'breached' : 'on_track'}
                       deadline={ticket.slaFirstResponseDeadline}
                       label="Première réponse"
                     />
                   )}
-                  {ticket.slaResolutionStatus && ticket.state !== 'closed' && ticket.state !== 'resolved' && (
+                  {ticket.slaResolutionStatus && ticket.state !== 'closed' && ticket.state !== 'solved' && (
                     <SLABadge
-                      status={ticket.slaResolutionStatus}
+                      status={ticket.slaResolutionStatus === 'met' ? 'ok' : ticket.slaResolutionStatus === 'failed' ? 'breached' : 'on_track'}
                       deadline={ticket.slaResolutionDeadline}
                       label="Résolution"
                     />
@@ -400,7 +400,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
         <div className="flex items-center gap-2 mb-1">
           {isStaff && <User className="w-4 h-4 text-purple-600" />}
           <span className="text-sm font-medium text-gray-900 dark:text-white">
-            {message.authorName}
+            {message.author_name}
           </span>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {message.createdAt ? new Date(message.createdAt).toLocaleString('fr-FR') : 'Date inconnue'}

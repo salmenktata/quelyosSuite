@@ -10,7 +10,7 @@
     "noUnusedLocals": false, // TODO: 200 erreurs restantes à corriger manuellement
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false, // TODO CRITIQUE: 341 erreurs undefined à corriger (risque bugs runtime)
+    "noUncheckedIndexedAccess": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
