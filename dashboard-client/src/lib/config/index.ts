@@ -6,6 +6,7 @@
 
 import { z } from 'zod'
 import { logger } from '@quelyos/logger'
+import { getBackendUrl, TIMEOUTS, STORAGE_KEYS } from '@quelyos/config'
 
 // =============================================================================
 // SCHÉMA DE CONFIGURATION
@@ -85,8 +86,8 @@ function loadConfig(): AppConfig {
     debug: import.meta.env.VITE_DEBUG === 'true',
 
     // API
-    apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:8069',
-    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
+    apiUrl: import.meta.env.VITE_API_URL || getBackendUrl(import.meta.env.MODE as any),
+    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || String(TIMEOUTS.API_REQUEST)),
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 
     // WebSocket
@@ -94,8 +95,8 @@ function loadConfig(): AppConfig {
     wsReconnectDelay: parseInt(import.meta.env.VITE_WS_RECONNECT_DELAY || '3000'),
 
     // Auth
-    authTokenKey: import.meta.env.VITE_AUTH_TOKEN_KEY,
-    authRefreshInterval: parseInt(import.meta.env.VITE_AUTH_REFRESH_INTERVAL || '300000'),
+    authTokenKey: import.meta.env.VITE_AUTH_TOKEN_KEY || STORAGE_KEYS.AUTH_TOKEN,
+    authRefreshInterval: parseInt(import.meta.env.VITE_AUTH_REFRESH_INTERVAL || String(TIMEOUTS.TOKEN_REFRESH)),
     sessionTimeout: parseInt(import.meta.env.VITE_SESSION_TIMEOUT || '1800000'),
 
     // Features
@@ -139,7 +140,7 @@ function loadConfig(): AppConfig {
       logger.warn('Using default values for invalid config fields')
       return configSchema.parse({
         ...rawConfig,
-        apiUrl: rawConfig.apiUrl || 'http://localhost:8069',
+        apiUrl: rawConfig.apiUrl || getBackendUrl('development'),
       })
     }
 

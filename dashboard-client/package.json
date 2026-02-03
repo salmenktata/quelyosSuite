@@ -42,6 +42,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@headlessui/react": "^2.2.9",
     "@hookform/resolvers": "^5.2.2",
+    "@quelyos/config": "workspace:*",
     "@quelyos/types": "workspace:*",
     "@stripe/stripe-js": "^8.6.4",
     "@tanstack/react-query": "^5.90.20",

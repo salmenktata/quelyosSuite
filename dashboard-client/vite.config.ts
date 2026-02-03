@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { PORTS, getViteProxyConfig } from '@quelyos/config'
 
 export default defineConfig(({ mode }) => {
   // Détection édition (env var VITE_EDITION)
@@ -144,7 +145,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       // Port dynamique selon édition (dev)
-      port: edition === 'full' ? 5175 : {
+      port: edition === 'full' ? PORTS.dashboard : {
         'finance': 3010,
         'store': 3011,
         'copilote': 3012,
@@ -152,19 +153,13 @@ export default defineConfig(({ mode }) => {
         'retail': 3014,
         'team': 3015,
         'support': 3016,
-      }[edition] || 5175,
+      }[edition] || PORTS.dashboard,
       open: true,
       host: true,
       fs: {
         allow: [fileURLToPath(new URL('..', import.meta.url))],
       },
-      proxy: {
-        '/api': {
-          target: 'http://localhost:8069',
-          changeOrigin: true,
-          secure: false,
-        },
-      },
+      proxy: getViteProxyConfig(),
       headers: {
         'X-Frame-Options': 'DENY',
         'X-Content-Type-Options': 'nosniff',

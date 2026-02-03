@@ -1,3 +1,5 @@
+import { getProxiedImageUrl } from '@quelyos/config'
+
 interface BackendImageProps {
   src: string | null
   alt: string
@@ -10,10 +12,6 @@ interface BackendImageProps {
  * Gère automatiquement le préfixe de l'URL et le fallback
  */
 export function BackendImage({ src, alt, className, fallback }: BackendImageProps) {
-  // En développement, utiliser l'URL complète du backend
-  // En production, les images passeront par le même domaine
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8069'
-
   if (!src) {
     if (fallback) {
       return <>{fallback}</>
@@ -37,9 +35,8 @@ export function BackendImage({ src, alt, className, fallback }: BackendImageProp
     )
   }
 
-  // Si l'URL commence déjà par http, l'utiliser telle quelle
-  // Sinon, préfixer avec l'URL backend
-  const imageUrl = src.startsWith('http') ? src : `${BACKEND_URL}${src}`
+  // Utiliser getProxiedImageUrl pour masquer backend (anonymisation)
+  const imageUrl = getProxiedImageUrl(src)
 
   return <img src={imageUrl} alt={alt} className={className} />
 }

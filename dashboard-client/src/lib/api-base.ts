@@ -7,8 +7,9 @@ import {
   CircuitBreakerError,
 } from './api/circuitBreaker'
 import { tokenService } from './tokenService'
+import { getBackendUrl } from '@quelyos/config'
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8069'
+export const API_BASE_URL = import.meta.env.VITE_API_URL || getBackendUrl(import.meta.env.MODE as any)
 
 /**
  * Options pour fetchApi

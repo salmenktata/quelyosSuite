@@ -39,8 +39,9 @@ import {
   X,
   Loader2,
 } from 'lucide-react'
+import { getBackendUrl } from '@quelyos/config'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8069'
+const API_BASE = import.meta.env.VITE_API_URL || getBackendUrl(import.meta.env.MODE as any)
 
 interface TeamMember {
   id: number

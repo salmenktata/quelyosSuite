@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { getBackendUrl } from '@quelyos/config'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8069'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)
 
 export function useHeroSlideImageUpload(slideId: number) {
   const queryClient = useQueryClient()
