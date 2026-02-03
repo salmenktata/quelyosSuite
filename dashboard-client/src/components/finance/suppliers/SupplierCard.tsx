@@ -51,7 +51,7 @@ export default function SupplierCard({ supplier, onRefresh }: SupplierCardProps)
       REGULAR: { variant: "default", label: "Régulier" },
       OCCASIONAL: { variant: "secondary", label: "Occasionnel" },
     };
-    const config = variants[category] || variants.REGULAR;
+    const config = variants[category] ?? variants.REGULAR!;
     return (
       <Badge variant={config.variant} className="text-xs">
         {config.label}
@@ -66,7 +66,7 @@ export default function SupplierCard({ supplier, onRefresh }: SupplierCardProps)
       NORMAL: { color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800", label: "Normale" },
       LOW: { color: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700", label: "Basse" },
     };
-    const config = variants[importance] || variants.NORMAL;
+    const config = variants[importance] ?? variants.NORMAL!;
     return (
       <Badge variant="outline" className={`text-xs ${config.color}`}>
         {config.label}

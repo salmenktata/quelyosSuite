@@ -90,7 +90,7 @@ export function ExportButton({ accountId, className = "" }: ExportButtonProps) {
       let filename = `transactions_${new Date().toISOString().split("T")[0]!}.${format}`;
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="?([^"]+)"?/);
-        if (match) filename = match[1];
+        if (match) filename = match[1]!;
       }
 
       // Download file

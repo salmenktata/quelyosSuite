@@ -42,7 +42,7 @@ export function ImageGallery({
       reader.readAsDataURL(file)
       reader.onload = () => {
         // Extraire seulement la partie base64 (sans le préfixe data:image/...)
-        const base64 = (reader.result as string).split(',')[1]
+        const base64 = (reader.result as string).split(',')[1]!
         resolve(base64)
       }
       reader.onerror = reject

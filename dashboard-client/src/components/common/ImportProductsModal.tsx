@@ -136,17 +136,17 @@ export function ImportProductsModal({
     // Parser les lignes de données
     const rows: ImportRow[] = []
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(separator).map((v) => v.trim().replace(/^"|"$/g, ''))
+      const values = lines[i]!.split(separator).map((v) => v.trim().replace(/^"|"$/g, ''))
 
       const row: ImportRow = {
         name: values[columnIndices.name!] || '',
       }
 
       if (columnIndices.price !== undefined && values[columnIndices.price]) {
-        row.price = parseFloat(values[columnIndices.price].replace(',', '.')) || 0
+        row.price = parseFloat((values[columnIndices.price] ?? '').replace(',', '.')) || 0
       }
       if (columnIndices.standard_price !== undefined && values[columnIndices.standard_price]) {
-        row.standard_price = parseFloat(values[columnIndices.standard_price].replace(',', '.')) || 0
+        row.standard_price = parseFloat((values[columnIndices.standard_price] ?? '').replace(',', '.')) || 0
       }
       if (columnIndices.description !== undefined) {
         row.description = values[columnIndices.description] || ''
@@ -158,7 +158,7 @@ export function ImportProductsModal({
         row.barcode = values[columnIndices.barcode] || ''
       }
       if (columnIndices.weight !== undefined && values[columnIndices.weight]) {
-        row.weight = parseFloat(values[columnIndices.weight].replace(',', '.')) || 0
+        row.weight = parseFloat((values[columnIndices.weight] ?? '').replace(',', '.')) || 0
       }
       if (columnIndices.category !== undefined) {
         row.category = values[columnIndices.category] || ''

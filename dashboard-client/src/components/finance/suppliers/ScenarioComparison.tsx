@@ -117,7 +117,7 @@ export default function ScenarioComparison() {
     // Pour certaines métriques, plus c'est bas, mieux c'est
     const lowerIsBetter = ["totalPenalties", "totalCost", "averagePaymentDelay"];
 
-    let best = comparisonData[0];
+    let best = comparisonData[0]!;
     comparisonData.forEach((scenario) => {
       if (!scenario.metrics || !best.metrics) return;
 

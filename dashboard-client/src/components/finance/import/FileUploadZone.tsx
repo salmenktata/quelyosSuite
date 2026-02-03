@@ -56,7 +56,7 @@ export function FileUploadZone({
 
       const files = Array.from(e.dataTransfer.files);
       if (files.length > 0) {
-        handleFile(files[0]);
+        handleFile(files[0]!);
       }
     },
     [disabled, handleFile]
@@ -65,7 +65,7 @@ export function FileUploadZone({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      handleFile(files[0]);
+      handleFile(files[0]!);
     }
   };
 

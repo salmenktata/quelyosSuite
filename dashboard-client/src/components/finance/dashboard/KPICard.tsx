@@ -126,7 +126,7 @@ function Sparkline({ data, width = 80, height = 24 }: SparklineProps) {
   const pathD = `M ${points.join(' L ')}`;
 
   // Déterminer la couleur basée sur tendance globale
-  const trend = data[data.length - 1] >= data[0] ? 'up' : 'down';
+  const trend = (data[data.length - 1] ?? 0) >= (data[0] ?? 0) ? 'up' : 'down';
   const strokeColor =
     trend === 'up'
       ? 'rgb(34, 197, 94)' // green-500

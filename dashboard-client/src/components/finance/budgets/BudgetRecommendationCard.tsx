@@ -191,7 +191,7 @@ export default function BudgetRecommendationCard({
                       style={{ height: `${height}%` }}
                     />
                     <span className="text-[8px] text-slate-500">
-                      {new Date(2000, Number(month) - 1).toLocaleString('fr-FR', { month: 'short' })[0].toUpperCase()}
+                      {new Date(2000, Number(month) - 1).toLocaleString('fr-FR', { month: 'short' })[0]!.toUpperCase()}
                     </span>
                   </div>
                 );

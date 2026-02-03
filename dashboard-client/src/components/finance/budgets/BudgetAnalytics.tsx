@@ -59,7 +59,7 @@ function CustomTooltip({ active, payload, formatCurrency }: CustomTooltipProps) 
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-indigo-950/95 backdrop-blur-xl border border-gray-200 dark:border-white/15 rounded-lg p-3 shadow-xl">
-        <p className="font-medium text-gray-900 dark:text-white mb-2">{payload[0].payload?.name}</p>
+        <p className="font-medium text-gray-900 dark:text-white mb-2">{payload[0]!.payload?.name}</p>
         {payload.map((entry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {formatCurrency(entry.value || 0)}

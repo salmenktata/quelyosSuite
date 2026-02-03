@@ -110,7 +110,7 @@ export function AiProviderCard({
     }
   };
 
-  const colors = PROVIDER_COLORS[provider.provider] || PROVIDER_COLORS.groq;
+  const colors = PROVIDER_COLORS[provider.provider] ?? PROVIDER_COLORS.groq!;
 
   return (
     <div
