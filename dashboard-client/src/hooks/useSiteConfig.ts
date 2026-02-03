@@ -4,7 +4,7 @@ import { backendRpc } from '@/lib/backend-rpc'
 import { tokenService } from '@/lib/tokenService'
 
 // URL de l'API (même config que api.ts)
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 export interface SiteConfig {
   // Fonctionnalités

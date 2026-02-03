@@ -31,7 +31,7 @@ export default function SEPADirectDebitsPage() {
   }, [])
 
   const exportPain008 = () => {
-    window.open(`${import.meta.env.VITE_API_URL}/finance/sepa/direct-debits/export`, '_blank')
+    window.open(`${import.meta.env.VITE_BACKEND_URL}/finance/sepa/direct-debits/export`, '_blank')
   }
 
   if (loading) return <Layout><div>Chargement...</div></Layout>

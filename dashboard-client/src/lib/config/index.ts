@@ -86,8 +86,8 @@ function loadConfig(): AppConfig {
     debug: import.meta.env.VITE_DEBUG === 'true',
 
     // API
-    apiUrl: import.meta.env.VITE_API_URL || getBackendUrl(import.meta.env.MODE as any),
-    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || String(TIMEOUTS.API_REQUEST)),
+    apiUrl: import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any),
+    apiTimeout: parseInt(TIMEOUTS.API_REQUEST),
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 
     // WebSocket

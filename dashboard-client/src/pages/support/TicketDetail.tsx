@@ -279,7 +279,7 @@ export default function TicketDetail() {
                     </div>
                     <div className="flex items-center gap-2">
                       <a
-                        href={`${import.meta.env.VITE_API_URL || ''}${att.url}`}
+                        href={`${import.meta.env.VITE_BACKEND_URL || ''}${att.url}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"

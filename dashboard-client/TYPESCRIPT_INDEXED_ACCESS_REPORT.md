@@ -267,13 +267,14 @@ return value.toUpperCase()
 | 2026-02-03 | hooks | 11 | 193 |
 | 2026-02-03 | lib | 9 | 184 |
 | 2026-02-03 | pages | 17 | 167 |
-| (À faire) | components | ~106 | ~61 |
+| 2026-02-03 | pages (batch 2) | 5 | 162 |
+| (À faire) | components | ~106 | ~56 |
 
 **✅ Quick Wins terminés** : 13/217 erreurs corrigées (6%) en ~20 minutes
 **✅ Hooks terminés** : 11/19 erreurs corrigées (8 erreurs de types manquants)
 **✅ Lib terminé** : 9/29 erreurs corrigées (20 erreurs types/overload)
-**✅ Pages en cours** : 17/~50 erreurs corrigées (33 restantes)
-**📊 Progression totale** : 50/217 erreurs corrigées (23%)
+**✅ Pages partiellement terminé** : 22/~50 erreurs corrigées (28 restantes)
+**📊 Progression totale** : 55/217 erreurs corrigées (25.3%)
 
 ---
 

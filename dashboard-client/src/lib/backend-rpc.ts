@@ -3,7 +3,7 @@ import { tokenService } from './tokenService'
 
 // En développement, utiliser le proxy Vite (pas de CORS)
 // En production, utiliser l'URL complète
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 interface BackendRpcResponse<T = unknown> {
   success: boolean

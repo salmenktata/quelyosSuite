@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { getAppUrl } from '@quelyos/config'
 
-const SITE_URL = import.meta.env.VITE_SITE_URL || getAppUrl('vitrine', import.meta.env.MODE as any)
+const SITE_URL = import.meta.env.VITE_VITRINE_URL || getAppUrl('vitrine', import.meta.env.MODE as any)
 
 // Icônes inline
 const Sparkles = ({ className }: { className?: string }) => (

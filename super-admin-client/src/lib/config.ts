@@ -50,7 +50,7 @@ function loadConfig(): AppConfig {
 
     // En dev, utiliser le proxy Vite (URL vide = même origine)
     apiUrl: import.meta.env.DEV ? '' : (import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)),
-    apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || String(TIMEOUTS.API_REQUEST)),
+    apiTimeout: parseInt(TIMEOUTS.API_REQUEST || String(TIMEOUTS.API_REQUEST)),
     apiRetryAttempts: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
 
     authTokenKey: import.meta.env.VITE_AUTH_TOKEN_KEY || STORAGE_KEYS.AUTH_TOKEN,

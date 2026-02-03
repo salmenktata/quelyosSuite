@@ -13,7 +13,7 @@ import { logger } from '@quelyos/logger'
 import { tokenService } from '@/lib/tokenService'
 import type { TenantConfig, TenantFormData } from './useTenants'
 
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 function getAuthHeaders(): HeadersInit {
   const headers: HeadersInit = {

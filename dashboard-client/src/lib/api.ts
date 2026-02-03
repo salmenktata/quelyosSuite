@@ -55,9 +55,9 @@ interface JWTLoginResponse {
   pending_token?: string
 }
 
-// Développement : accès direct au backend via VITE_API_URL
+// Développement : accès direct au backend via VITE_BACKEND_URL
 // Production : URL backend configurée dans .env.production
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 class ApiClient {
   private baseUrl: string

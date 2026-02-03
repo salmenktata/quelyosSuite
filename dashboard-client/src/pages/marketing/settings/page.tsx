@@ -60,7 +60,7 @@ export default function MarketingSettingsPage() {
               to={section.href}
               className={`flex items-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 transition group`}
             >
-              <div className={`p-3 rounded-lg ${colorClasses[section.color as keyof typeof colorClasses].split(' hover:')[0]}`}>
+              <div className={`p-3 rounded-lg ${colorClasses[section.color as keyof typeof colorClasses].split(' hover:')[0]!}`}>
                 <Icon className="w-6 h-6" />
               </div>
               <div className="flex-1">

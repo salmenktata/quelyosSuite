@@ -41,7 +41,7 @@ import {
 } from 'lucide-react'
 import { getBackendUrl } from '@quelyos/config'
 
-const API_BASE = import.meta.env.VITE_API_URL || getBackendUrl(import.meta.env.MODE as any)
+const API_BASE = import.meta.env.VITE_BACKEND_URL || getBackendUrl(import.meta.env.MODE as any)
 
 interface TeamMember {
   id: number
@@ -195,7 +195,7 @@ export default function TeamManagement() {
   const handleModuleLevelChange = (moduleId: string, level: AccessLevel) => {
     setEditingPermissions((prev) => ({
       ...prev,
-      [moduleId]: { ...prev[moduleId], level },
+      [moduleId]: { ...(prev[moduleId] || { level: 'none', pages: {} }), level },
     }))
   }
 
@@ -203,7 +203,7 @@ export default function TeamManagement() {
     setEditingPermissions((prev) => ({
       ...prev,
       [moduleId]: {
-        ...prev[moduleId],
+        ...(prev[moduleId] || { level: 'none', pages: {} }),
         pages: { ...prev[moduleId]?.pages, [pageId]: level },
       },
     }))

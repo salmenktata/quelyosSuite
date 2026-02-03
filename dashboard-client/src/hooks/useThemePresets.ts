@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@quelyos/logger'
 import { tokenService } from '@/lib/tokenService'
 
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_BACKEND_URL || ''
 
 export interface ThemePresetColors {
   primary: string
