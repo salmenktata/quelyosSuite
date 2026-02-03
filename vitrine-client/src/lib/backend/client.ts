@@ -75,13 +75,15 @@ import type {
   ReviewHelpfulResponse,
 } from '@/types/api';
 import { logger } from '@/lib/logger';
+import { getAppUrl } from '@quelyos/config';
 
 // Use Next.js API proxy to avoid CORS issues
 // The proxy at /api/backend/* forwards requests to backend server-side
 const getApiBase = () => {
   // Côté serveur (SSR), utiliser l'URL complète
   if (typeof window === 'undefined') {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const env = (process.env.NODE_ENV === 'production' ? 'production' : 'development') as 'development' | 'production';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || getAppUrl('ecommerce', env);
     return `${baseUrl}/api/backend`;
   }
   // Côté client, utiliser le chemin relatif
@@ -118,9 +120,12 @@ export class BackendClient {
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
-        logger.error('API Error:', error);
-        if (error.response?.data?.error) {
-          logger.error('Détails:', error.response.data.error);
+        // Ne pas logger les 404 qui sont des fonctionnalités non implémentées
+        if (error.response?.status !== 404) {
+          logger.error('API Error:', error);
+          if (error.response?.data?.error) {
+            logger.error('Détails:', error.response.data.error);
+          }
         }
         return Promise.reject(error);
       }
@@ -134,9 +139,9 @@ export class BackendClient {
   private async jsonrpc<T = unknown>(
     endpoint: string,
     params: Record<string, unknown> | object = {},
-    options: { throwOn404?: boolean } = {}
+    options: { throwOn404?: boolean; silent404?: boolean } = {}
   ): Promise<T> {
-    const { throwOn404 = false } = options;
+    const { throwOn404 = false, silent404 = false } = options;
 
     try {
       // The Next.js proxy handles JSON-RPC wrapping, so we send just params
@@ -147,10 +152,14 @@ export class BackendClient {
     } catch (_error: unknown) {
       const error = _error as { response?: { status?: number; data?: { error?: string; message?: string } }; message?: string };
       // Gestion gracieuse des 404 pour les endpoints non implémentés
-      if (error.response?.status === 404 && !throwOn404) {
-        logger.warn(`Endpoint non implémenté: ${endpoint}`);
-        // Retourner une structure par défaut selon le type de réponse attendu
-        return { success: false, error: 'Not implemented' } as T;
+      if (error.response?.status === 404) {
+        if (!silent404 && !throwOn404) {
+          logger.warn(`Endpoint non implémenté: ${endpoint}`);
+        }
+        if (!throwOn404) {
+          // Retourner une structure par défaut selon le type de réponse attendu
+          return { success: false, error: 'Not implemented' } as T;
+        }
       }
 
       logger.error(`Erreur API [${endpoint}]:`, error);
@@ -265,23 +274,23 @@ export class BackendClient {
   }
 
   async getUpsellProducts(productId: number, limit: number = 3): Promise<UpsellProductsResponse> {
-    return this.jsonrpc<UpsellProductsResponse>(`/products/${productId}/upsell`, { limit });
+    return this.jsonrpc<UpsellProductsResponse>(`/products/${productId}/upsell`, { limit }, { silent404: true });
   }
 
   async getRecommendations(productId: number, limit: number = 8): Promise<ApiResponse<{ products: Product[] }>> {
-    return this.jsonrpc<ApiResponse<{ products: Product[] }>>(`/products/${productId}/recommendations`, { limit });
+    return this.jsonrpc<ApiResponse<{ products: Product[] }>>(`/products/${productId}/recommendations`, { limit }, { silent404: true });
   }
 
   async getFrequentlyBoughtTogether(productId: number, limit: number = 4): Promise<ApiResponse<FrequentlyBoughtTogetherData>> {
-    return this.jsonrpc<ApiResponse<FrequentlyBoughtTogetherData>>(`/products/${productId}/frequently-bought-together`, { limit });
+    return this.jsonrpc<ApiResponse<FrequentlyBoughtTogetherData>>(`/products/${productId}/frequently-bought-together`, { limit }, { silent404: true });
   }
 
   async getUserPurchasedProducts(): Promise<ApiResponse<{ product_ids: number[] }>> {
-    return this.jsonrpc<ApiResponse<{ product_ids: number[] }>>('/user/purchased-products', {});
+    return this.jsonrpc<ApiResponse<{ product_ids: number[] }>>('/user/purchased-products', {}, { silent404: true });
   }
 
   async getProductVolumePricing(productId: number, pricelistId?: number): Promise<ApiResponse<VolumePricingData>> {
-    return this.jsonrpc<ApiResponse<VolumePricingData>>(`/products/${productId}/volume-pricing`, { pricelist_id: pricelistId });
+    return this.jsonrpc<ApiResponse<VolumePricingData>>(`/products/${productId}/volume-pricing`, { pricelist_id: pricelistId }, { silent404: true });
   }
 
   // ========================================

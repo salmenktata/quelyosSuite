@@ -13,7 +13,6 @@ import { useToast } from '@/store/toastStore';
 import { Button } from '@/components/common/Button';
 import { formatPrice } from '@/lib/utils/formatting';
 import { getProxiedImageUrl } from '@/lib/image-proxy';
-import { logger } from '@/lib/logger';
 
 interface FrequentlyBoughtProduct {
   id: number;
@@ -66,8 +65,9 @@ export function FrequentlyBoughtTogether({
           });
           setSelectedProducts(new Set(response.data.products.map((p: FrequentlyBoughtProduct) => p.id)));
         }
-      } catch (error) {
-        logger.error('Error fetching frequently bought together:', error);
+      } catch (_error: unknown) {
+        // Ignorer silencieusement - l'endpoint n'est pas encore implémenté
+        // Le composant ne s'affichera simplement pas (return null)
       } finally {
         setIsLoading(false);
       }
@@ -106,8 +106,7 @@ export function FrequentlyBoughtTogether({
       }
 
       toast.success(`${1 + selectedProducts.size} produit(s) ajouté(s) au panier !`);
-    } catch (error) {
-      logger.error('Error adding bundle to cart:', error);
+    } catch (_error) {
       toast.error('Une erreur est survenue');
     } finally {
       setIsAddingToCart(false);

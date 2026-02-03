@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { backendClient } from '@/lib/backend/client';
 import { formatPrice } from '@/lib/utils/formatting';
-import { logger } from '@/lib/logger';
 
 interface VolumeTier {
   min_quantity: number;
@@ -35,8 +34,9 @@ export function VolumePricing({
         if (response.success && response.data && response.data.tiers.length > 0) {
           setTiers(response.data.tiers);
         }
-      } catch (error) {
-        logger.error('Error fetching volume pricing:', error);
+      } catch (_error: unknown) {
+        // Ignorer silencieusement - l'endpoint n'est pas encore implémenté
+        // Le composant ne s'affichera simplement pas (return null)
       } finally {
         setIsLoading(false);
       }
