@@ -100,40 +100,41 @@ export default async function Home() {
   const { products, categories, heroSlides, promoBanners, benefits } = await getHomeData();
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 dark:bg-gray-900">
       {/* THEME SECTIONS - Rendu dynamique selon le thème actif */}
       <ThemeSections />
 
       {/* FALLBACK - Structure par défaut si pas de sections dans le thème */}
       {/* HERO SLIDER */}
-      <HeroSlider slides={heroSlides} />
+      {heroSlides.length > 0 && <HeroSlider slides={heroSlides} />}
 
       {/* FLASH SALES - Affiche uniquement si vente flash active */}
       <FlashSalesSection />
 
       {/* CATEGORIES */}
-      <CategoriesSection categories={categories} isLoading={false} />
+      {categories.length > 0 && <CategoriesSection categories={categories} isLoading={false} />}
 
       {/* FEATURED PRODUCTS */}
-      <section className="bg-white py-12">
+      <section className="bg-white dark:bg-gray-800 py-12">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Produits phares</h2>
-            <Link href="/products?is_featured=true">
-              <button className="text-primary font-semibold hover:underline">
-                Voir tout →
-              </button>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Produits phares</h2>
+            <Link
+              href="/products?is_featured=true"
+              className="text-primary dark:text-primary-light font-semibold hover:underline inline-flex items-center gap-1"
+            >
+              Voir tout →
             </Link>
           </div>
 
           {products.length > 0 ? (
-            <ProductGrid viewMode="grid" className="grid-cols-2 md:grid-cols-4">
+            <ProductGrid viewMode="grid" className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCardHome key={product.id} product={product} />
               ))}
             </ProductGrid>
           ) : (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               Aucun produit phare pour le moment
             </div>
           )}
@@ -144,10 +145,10 @@ export default async function Home() {
       <SocialTrendingProducts />
 
       {/* PROMO BANNERS */}
-      <PromoBanners banners={promoBanners} />
+      {promoBanners.length > 0 && <PromoBanners banners={promoBanners} />}
 
       {/* BENEFITS SECTION - Dynamic from API */}
-      <BenefitsSection benefits={benefits} />
+      {benefits.length > 0 && <BenefitsSection benefits={benefits} />}
 
       {/* CONTINUE SHOPPING - Produits récemment consultés */}
       <ContinueShoppingSection />
@@ -160,9 +161,9 @@ export default async function Home() {
 
       {/* NEWSLETTER */}
       <section className="container mx-auto px-4 max-w-7xl py-12">
-        <div className="relative bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-8 md:p-16 text-white overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="relative bg-gradient-to-br from-primary to-primary-dark dark:from-primary-dark dark:to-gray-800 rounded-3xl p-8 md:p-16 text-white overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 dark:bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 dark:bg-white/10 rounded-full blur-3xl"></div>
 
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-6">
@@ -171,9 +172,9 @@ export default async function Home() {
               </svg>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Restez informe</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Restez informé</h2>
             <p className="mb-8 text-white/90 max-w-2xl mx-auto text-lg">
-              Inscrivez-vous a notre newsletter et recevez en exclusivite nos offres speciales, nouveautes et conseils
+              {`Inscrivez-vous à notre newsletter et recevez en exclusivité nos offres spéciales, nouveautés et conseils`}
             </p>
 
             <NewsletterForm />

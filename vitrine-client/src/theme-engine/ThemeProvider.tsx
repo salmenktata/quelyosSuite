@@ -92,7 +92,15 @@ export function ThemeProvider({ children, tenantId = 1 }: ThemeProviderProps) {
         setLoading(true);
         setError(null);
 
-        const response = await backendClient.getActiveTheme(tenantId);
+        // Timeout de 3 secondes pour éviter blocage infini
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Theme loading timeout')), 3000)
+        );
+
+        const response = await Promise.race([
+          backendClient.getActiveTheme(tenantId),
+          timeoutPromise
+        ]);
 
         // La réponse API a la structure : { success, theme: { config: {...} } }
         if (response.success && response.theme?.config) {
