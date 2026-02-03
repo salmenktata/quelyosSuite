@@ -10,7 +10,7 @@ import { getBackendUrl, getProxiedImageUrl as configGetProxiedImageUrl } from '@
  * Récupère l'URL backend selon l'environnement
  *
  * - Server-side : URL env ou URL centralisée depuis @quelyos/config
- * - Client-side : Utilise le proxy Next.js relatif
+ * - Client-side : Utilise NEXT_PUBLIC_BACKEND_URL pour CORS
  */
 export function getBackendApiUrl(): string {
   // Server-side : utiliser URL complète
@@ -18,8 +18,8 @@ export function getBackendApiUrl(): string {
     return process.env.NEXT_PUBLIC_BACKEND_URL || getBackendUrl(process.env.NODE_ENV as any);
   }
 
-  // Client-side : utiliser proxy relatif Next.js
-  return '';
+  // Client-side : utiliser NEXT_PUBLIC_BACKEND_URL (CORS configuré dans le backend)
+  return process.env.NEXT_PUBLIC_BACKEND_URL || getBackendUrl('development');
 }
 
 /**

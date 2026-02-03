@@ -12,6 +12,7 @@ export function TicketStatusBadge({ state }: TicketStatusBadgeProps) {
     open: 'warning',
     pending: 'warning',
     solved: 'success',
+    resolved: 'success',
     closed: 'neutral',
   }
 
@@ -20,6 +21,7 @@ export function TicketStatusBadge({ state }: TicketStatusBadgeProps) {
     open: 'En cours',
     pending: 'En attente',
     solved: 'Résolu',
+    resolved: 'Résolu',
     closed: 'Fermé',
   }
 

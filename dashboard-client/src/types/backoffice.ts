@@ -492,13 +492,11 @@ export interface Ticket {
   user_id?: number
   user_name?: string
   messageCount?: number  // Nombre de messages
-  slaFirstResponseStatus?: 'ok' | 'warning' | 'breached' | 'on_track' | null  // Statut SLA première réponse
-  slaResolutionStatus?: 'ok' | 'warning' | 'breached' | 'on_track' | null  // Statut SLA résolution
+  slaFirstResponseStatus?: 'met' | 'failed' | 'pending'  // Statut SLA première réponse
+  slaResolutionStatus?: 'met' | 'failed' | 'pending'  // Statut SLA résolution
   slaFirstResponseDeadline?: string  // Deadline SLA première réponse
   slaResolutionDeadline?: string  // Deadline SLA résolution
   create_date: string
-  created_at?: string  // Alias pour create_date
-  createdAt?: string  // Alias camelCase
   createdAt?: string  // Alias pour create_date
   write_date?: string
   closed_date?: string
