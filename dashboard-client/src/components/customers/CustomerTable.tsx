@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../common'
 import { Eye, ArrowUp, ArrowDown } from 'lucide-react'
-import type { CustomerListItem } from '@/types'
+import type { CustomerListItem } from '@quelyos/types'
 import { formatDate, formatPrice } from '../../lib/utils/formatters'
 
 type SortField = 'name' | 'email' | 'orders_count' | 'total_spent' | 'create_date'

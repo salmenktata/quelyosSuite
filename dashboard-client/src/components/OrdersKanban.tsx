@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Badge } from './common'
 import { useUpdateOrderStatus } from '../hooks/useOrders'
 import { useToast } from '../hooks/useToast'
-import type { Order } from '@/types'
+import type { Order } from '@quelyos/types'
 
 interface OrdersKanbanProps {
   orders: Order[]

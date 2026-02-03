@@ -53,7 +53,7 @@ import { useToast } from '../../hooks/useToast'
 import { ToastContainer } from '../../components/common/Toast'
 import { api } from '../../lib/api'
 import { logger } from '@quelyos/logger'
-import type { ProductsQueryParams, Product, Category } from '@/types'
+import type { ProductsQueryParams, Product, Category } from '@quelyos/types'
 
 type SortField = 'name' | 'price' | 'qty_available' | 'default_code'
 type SortOrder = 'asc' | 'desc'

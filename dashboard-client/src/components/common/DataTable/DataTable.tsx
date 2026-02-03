@@ -5,7 +5,7 @@ import { DataTableRow } from './DataTableRow'
 import { DataTableMobile } from './DataTableMobile'
 import { DataTablePagination } from './DataTablePagination'
 import { Button } from '../Button'
-import type { DataTableProps, SortOrder } from '@/types'
+import type { DataTableProps, SortOrder } from '@quelyos/types'
 
 /**
  * DataTable générique avec tri, pagination, recherche, et responsive

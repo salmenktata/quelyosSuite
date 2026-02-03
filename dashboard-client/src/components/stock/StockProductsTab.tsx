@@ -6,7 +6,7 @@ import {
   X,
   LayoutGrid,
 } from 'lucide-react'
-import type { StockProduct } from '@/types'
+import type { StockProduct } from '@quelyos/types'
 
 interface StockProductsTabProps {
   products: StockProduct[]

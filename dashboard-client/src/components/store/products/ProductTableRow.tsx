@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Image as ImageIcon, Copy, Archive, RefreshCw } from 'lucide-react'
 import { Button, Badge, BackendImage } from '@/components/common'
-import type { Product } from '@/types'
+import type { Product } from '@quelyos/types'
 
 interface ProductTableRowProps {
   product: Product

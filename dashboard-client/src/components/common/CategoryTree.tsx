@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Category } from '@/types'
+import { Category } from '@quelyos/types'
 import { Badge, Button } from './index'
 
 interface CategoryTreeProps {

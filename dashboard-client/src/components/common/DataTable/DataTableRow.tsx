@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import type { DataTableColumn } from '@/types'
+import type { DataTableColumn } from '@quelyos/types'
 
 interface DataTableRowProps<T> {
   row: T

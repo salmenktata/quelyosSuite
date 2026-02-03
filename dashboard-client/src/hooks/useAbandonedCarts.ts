@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { AbandonedCartsQueryParams } from '@/types'
+import type { AbandonedCartsQueryParams } from '@quelyos/types'
 
 export function useAbandonedCarts(params?: AbandonedCartsQueryParams) {
   return useQuery({
