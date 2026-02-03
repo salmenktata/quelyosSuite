@@ -23,7 +23,7 @@ export type {
   Cart,
   Coupon,
   Ribbon,
-} from '@quelyos/types'
+} from '@/types'
 
 export type {
   PaginatedResponse,
@@ -45,7 +45,7 @@ export type {
   Stage,
   LeadListItem,
   Lead,
-} from '@quelyos/types'
+} from '@/types'
 
 // Note: Pour des imports optimisés (tree-shakeable), utilisez:
 // import { login, logout } from '@/lib/api/modules/auth'

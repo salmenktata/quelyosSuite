@@ -9,7 +9,7 @@ import {
   type Attribute,
 } from '@/components/common'
 import { Image as ImageIcon } from 'lucide-react'
-import type { Product, Category } from '@quelyos/types'
+import type { Product, Category } from '@/types'
 
 interface ProductFiltersProps {
   searchInput: string

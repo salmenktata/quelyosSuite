@@ -2,8 +2,8 @@
  * Module Auth - Authentification et gestion session
  */
 
-import type { APIResponse, LoginResponse, SessionResponse } from '@quelyos/types'
-import type { Customer } from '@quelyos/types'
+import type { APIResponse, LoginResponse, SessionResponse } from '@/types'
+import type { Customer } from '@/types'
 import { logger } from '@quelyos/logger'
 import { tokenService } from '../../tokenService'
 
@@ -215,7 +215,7 @@ export async function logout(baseUrl: string): Promise<APIResponse> {
  */
 export async function checkSession(baseUrl: string): Promise<SessionResponse> {
   if (!tokenService.isAuthenticated()) {
-    return { success: false, authenticated: false, is_authenticated: false }
+    return { success: false, is_authenticated: false }
   }
 
   try {
@@ -223,14 +223,13 @@ export async function checkSession(baseUrl: string): Promise<SessionResponse> {
     if (userInfo.success && userInfo.data?.user) {
       return {
         success: true,
-        authenticated: true,
         is_authenticated: true,
         user: userInfo.data.user,
       }
     }
-    return { success: false, authenticated: false, is_authenticated: false }
+    return { success: false, is_authenticated: false }
   } catch {
-    return { success: false, authenticated: false, is_authenticated: false }
+    return { success: false, is_authenticated: false }
   }
 }
 

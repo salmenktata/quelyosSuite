@@ -24,7 +24,7 @@ import {
   Filter,
   X,
 } from 'lucide-react'
-import type { StockMove } from '@quelyos/types'
+import type { StockMove } from '@/types'
 
 export default function StockMoves() {
   const [page, setPage] = useState(0)

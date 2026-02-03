@@ -36,7 +36,7 @@ import {
   Download,
   LayoutGrid,
 } from 'lucide-react'
-import type { StockProduct } from '@quelyos/types'
+import type { StockProduct } from '@/types'
 import { stockNotices } from '@/lib/notices'
 
 type TabType = 'products' | 'alerts' | 'variants'

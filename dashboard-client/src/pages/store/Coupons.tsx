@@ -5,7 +5,7 @@ import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '../../hooks/useCou
 import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { useToast } from '../../hooks/useToast'
-import type { Coupon as BaseCoupon } from '@quelyos/types'
+import type { Coupon as BaseCoupon } from '@/types'
 import { logger } from '@quelyos/logger';
 
 interface CouponReward {

@@ -1,6 +1,6 @@
 import { Badge } from '@/components/common'
 import { AlertCircle } from 'lucide-react'
-import type { TicketState, TicketPriority } from '@quelyos/types'
+import type { TicketState, TicketPriority } from '@/types'
 
 interface TicketStatusBadgeProps {
   state: TicketState
@@ -11,18 +11,16 @@ export function TicketStatusBadge({ state }: TicketStatusBadgeProps) {
     new: 'info',
     open: 'warning',
     pending: 'warning',
-    resolved: 'success',
+    solved: 'success',
     closed: 'neutral',
-    cancelled: 'neutral',
   }
 
   const labels: Record<TicketState, string> = {
     new: 'Nouveau',
     open: 'En cours',
     pending: 'En attente',
-    resolved: 'Résolu',
+    solved: 'Résolu',
     closed: 'Fermé',
-    cancelled: 'Annulé',
   }
 
   return <Badge variant={variants[state]}>{labels[state]}</Badge>

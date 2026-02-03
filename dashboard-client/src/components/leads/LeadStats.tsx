@@ -1,5 +1,5 @@
 import { TrendingUp, DollarSign, Target } from 'lucide-react'
-import type { LeadListItem } from '@quelyos/types'
+import type { LeadListItem } from '@/types'
 
 interface LeadStatsProps {
   leads: LeadListItem[]

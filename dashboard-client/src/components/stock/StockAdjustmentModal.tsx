@@ -17,7 +17,7 @@ import { Badge } from '../common/Badge'
 import { useUpdateProductStock } from '../../hooks/useStock'
 import { useToast } from '../../contexts/ToastContext'
 import { logger } from '@quelyos/logger'
-import type { StockProduct } from '@quelyos/types'
+import type { StockProduct } from '@/types'
 
 interface StockAdjustmentModalProps {
   isOpen: boolean

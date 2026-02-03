@@ -7,7 +7,7 @@ import { DashboardKPIs } from '../components/dashboard/DashboardKPIs'
 import { DashboardRecentOrders } from '../components/dashboard/DashboardRecentOrders'
 import { DashboardQuickActions } from '../components/dashboard/DashboardQuickActions'
 import { AlertTriangle } from 'lucide-react'
-import type { AnalyticsStats } from '@quelyos/types'
+import type { AnalyticsStats } from '@/types'
 
 type StockAlert = AnalyticsStats['stock_alerts'][number]
 

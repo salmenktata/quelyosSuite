@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronUp, ChevronDown } from 'lucide-react'
-import type { LeadListItem } from '@quelyos/types'
+import type { LeadListItem } from '@/types'
 
 interface LeadTableProps {
   leads: LeadListItem[]

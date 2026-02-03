@@ -7,7 +7,7 @@ import { useCreateReorderingRule, useUpdateReorderingRule } from '@/hooks/financ
 import { useWarehouses } from '@/hooks/useWarehouses'
 import { useProducts } from '@/hooks/useProducts'
 import type { ReorderingRule } from '@/types/stock'
-import type { Product } from '@quelyos/types'
+import type { Product } from '@/types'
 import { logger } from '@quelyos/logger'
 
 // ═══════════════════════════════════════════════════════════════════════════

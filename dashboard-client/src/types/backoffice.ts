@@ -269,17 +269,16 @@ export interface OrderHistoryTrackingValue {
   newvalue: string
 }
 
-// NOTE: OrderHistoryItem est déjà exporté par @quelyos/types/common
-// On ne le redéfinit pas ici pour éviter les duplications
-// export interface OrderHistoryItem {
-//   id: number
-//   date: string | null
-//   author: string
-//   body: string
-//   message_type: string
-//   subtype: string | null
-//   trackingvalues: OrderHistoryTrackingValue[]
-// }
+// NOTE: OrderHistoryItem temporairement redéfini ici car manquant dans @quelyos/types
+export interface OrderHistoryItem {
+  id: number
+  date: string | null
+  author: string
+  body: string
+  message_type: string
+  subtype: string | null
+  trackingvalues: OrderHistoryTrackingValue[]
+}
 
 // ==================== PAGINATION ====================
 
@@ -293,7 +292,11 @@ export interface PaginatedData<T> {
 // NOTE: PaginatedResponse temporairement redéfini ici car manquant dans @quelyos/types
 export interface PaginatedResponse<T> {
   success: boolean
-  data: PaginatedData<T>
+  items?: T[]  // Liste d'items (format standard)
+  data?: T | T[]  // Fallback (format alternatif)
+  total: number
+  limit?: number
+  offset?: number
   error?: string
 }
 
@@ -515,6 +518,7 @@ export interface MarketingCampaign {
   id: number
   name: string
   type: CampaignType
+  channel: string  // Canal de distribution (email, sms, social, etc.)
   status: CampaignStatus
   start_date?: string
   end_date?: string
@@ -524,6 +528,11 @@ export interface MarketingCampaign {
   impressions?: number
   clicks?: number
   conversions?: number
+  rates?: {
+    open_rate?: number
+    click_rate?: number
+    conversion_rate?: number
+  }
   create_date: string
   write_date?: string
 }

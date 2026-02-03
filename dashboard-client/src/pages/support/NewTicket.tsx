@@ -29,7 +29,7 @@ import {
   User,
   MoreHorizontal,
 } from 'lucide-react'
-import type { TicketCategory, TicketPriority } from '@quelyos/types'
+import type { TicketCategory, TicketPriority } from '@/types'
 import { logger } from '@quelyos/logger';
 
 const CATEGORIES = [

@@ -5,7 +5,7 @@ import { useWarehouses } from '../../hooks/useWarehouses'
 import { useStockProducts } from '../../hooks/useStock'
 import { useToast } from '../../contexts/ToastContext'
 import { ArrowLeftRight, Search, AlertTriangle } from 'lucide-react'
-import type { StockProduct, StockLocation } from '@quelyos/types'
+import type { StockProduct, StockLocation } from '@/types'
 
 interface TransferModalProps {
   onClose: () => void

@@ -9,7 +9,7 @@ import {
 import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { Mail as EnvelopeIcon, ShoppingCart as ShoppingCartIcon } from 'lucide-react'
-import type { AbandonedCart } from '@quelyos/types'
+import type { AbandonedCart } from '@/types'
 import { logger } from '@quelyos/logger';
 
 export default function AbandonedCarts() {

@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { ArrowUp, ArrowDown } from 'lucide-react'
-import type { DataTableColumn, SortOrder } from '@quelyos/types'
+import type { DataTableColumn, SortOrder } from '@/types'
 
 interface DataTableHeaderProps<T> {
   columns: DataTableColumn<T>[]

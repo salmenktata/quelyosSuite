@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { StockTransfer, StockLocation, CreateTransferParams, TransferState } from '@quelyos/types'
+import type { StockTransfer, StockLocation, CreateTransferParams, TransferState } from '@/types'
 
 interface TransfersResponse {
   success: boolean

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { CouponCreate } from '@quelyos/types'
+import type { CouponCreate } from '@/types'
 
 export function useCoupons(params?: { limit?: number; offset?: number; active_only?: boolean }) {
   return useQuery({

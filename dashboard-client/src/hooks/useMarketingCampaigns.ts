@@ -12,7 +12,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import type { MarketingCampaign, CampaignStats } from '@quelyos/types';
+import type { MarketingCampaign, CampaignStats } from '@/types';
 
 export interface CampaignsQueryParams {
   tenant_id?: number;

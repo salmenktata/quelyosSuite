@@ -1,4 +1,4 @@
-import type { DataTableColumn, MobileCardConfig } from '@quelyos/types'
+import type { DataTableColumn, MobileCardConfig } from '@/types'
 
 interface DataTableMobileProps<T> {
   data: T[]

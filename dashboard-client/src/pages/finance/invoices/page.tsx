@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { useInvoices } from '@/hooks/useInvoices'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import type { Invoice } from '@quelyos/types'
+import type { Invoice } from '@/types'
 
 type InvoiceStatus = 'draft' | 'posted' | 'cancel' | 'all'
 type PaymentState = 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'all'

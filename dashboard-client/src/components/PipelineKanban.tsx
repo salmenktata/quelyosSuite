@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { LeadListItem, Stage } from '@quelyos/types'
+import type { LeadListItem, Stage } from '@/types'
 
 interface PipelineKanbanProps {
   leads: LeadListItem[]

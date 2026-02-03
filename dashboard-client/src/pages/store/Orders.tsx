@@ -6,7 +6,7 @@ import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../com
 import { ecommerceNotices } from '@/lib/notices'
 import { OrdersKanban } from '../../components/OrdersKanban'
 import { LayoutGrid as Squares2X2Icon, Table as TableCellsIcon } from 'lucide-react'
-import type { Order } from '@quelyos/types'
+import type { Order } from '@/types'
 
 export default function Orders() {
   const [page, setPage] = useState(0)

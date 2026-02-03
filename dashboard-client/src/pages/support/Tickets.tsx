@@ -23,7 +23,7 @@ import {
   CheckCircle,
   Search,
 } from 'lucide-react'
-import type { Ticket } from '@quelyos/types'
+import type { Ticket } from '@/types'
 
 export default function Tickets() {
   const navigate = useNavigate()

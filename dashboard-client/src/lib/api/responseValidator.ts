@@ -11,7 +11,7 @@
  * Ce helper centralise la logique et ajoute un typage strict.
  */
 
-import type { APIResponse } from '@quelyos/types'
+import type { APIResponse } from '@/types'
 import { logger } from '@quelyos/logger'
 
 export class ApiError extends Error {

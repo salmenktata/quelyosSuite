@@ -18,7 +18,7 @@ import type {
   Stage,
   LeadListItem,
   Lead,
-} from '@quelyos/types'
+} from '@/types'
 import type {
   APIResponse,
   LoginResponse,
@@ -32,7 +32,7 @@ import type {
   Cart,
   Coupon,
   Ribbon,
-} from '@quelyos/types'
+} from '@/types'
 import { logger } from '@quelyos/logger'
 import { tokenService } from './tokenService'
 
@@ -420,21 +420,21 @@ class ApiClient {
    */
   async checkSession(): Promise<SessionResponse> {
     if (!tokenService.isAuthenticated()) {
-      return { success: false, authenticated: false, is_authenticated: false }
+      return { success: false, is_authenticated: false }
     }
 
     try {
       const userInfo = await this.getUserInfo()
       if (userInfo.success && userInfo.data?.user) {
         return {
-          success: true, authenticated: true,
+          success: true,
           is_authenticated: true,
           user: userInfo.data.user,
         }
       }
-      return { success: false, authenticated: false, is_authenticated: false }
+      return { success: false, is_authenticated: false }
     } catch {
-      return { success: false, authenticated: false, is_authenticated: false }
+      return { success: false, is_authenticated: false }
     }
   }
 

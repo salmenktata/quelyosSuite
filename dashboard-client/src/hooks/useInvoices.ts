@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { apiClient } from '@/lib/api'
 import { tokenService } from '@/lib/tokenService'
-import type { Invoice } from '@quelyos/types'
+import type { Invoice } from '@/types'
 
 interface UseInvoicesParams {
   status?: string

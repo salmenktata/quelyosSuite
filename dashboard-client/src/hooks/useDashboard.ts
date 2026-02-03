@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { Order } from '@quelyos/types'
+import type { Order } from '@/types'
 
 export interface DashboardStats {
   revenue: {

@@ -20,7 +20,7 @@ import { Badge, Button, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '..
 import { stockNotices } from '@/lib/notices'
 import { useToast } from '../contexts/ToastContext'
 import { TransferModal } from '../components/stock/TransferModal'
-import type { StockTransfer, TransferState } from '@quelyos/types'
+import type { StockTransfer, TransferState } from '@/types'
 import { logger } from '@quelyos/logger';
 import {
   ArrowLeftRight,

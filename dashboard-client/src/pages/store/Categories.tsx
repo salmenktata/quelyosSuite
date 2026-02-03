@@ -35,7 +35,7 @@ import { useToast } from '../../hooks/useToast'
 import { useDebounce } from '../../hooks/useDebounce'
 import { ToastContainer } from '../../components/common/Toast'
 import { useImageUpload } from '../../hooks/useImageUpload'
-import { Category } from '@quelyos/types'
+import { Category } from '@/types'
 import { logger } from '@quelyos/logger';
 
 interface CategoryFormData {

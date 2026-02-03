@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { ProductsQueryParams, ProductCreateData, ProductUpdateData } from '@quelyos/types'
+import type { ProductsQueryParams, ProductCreateData, ProductUpdateData } from '@/types'
 
 export function useProducts(params?: ProductsQueryParams) {
   return useQuery({

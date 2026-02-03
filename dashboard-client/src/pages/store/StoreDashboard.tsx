@@ -3,7 +3,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Badge, Skeleton } from '@/components/common'
 import { useDashboardStats, useDashboardRecentOrders } from '@/hooks/useDashboard'
 import { useProducts } from '@/hooks/useProducts'
-import type { ProductWithSales } from '@quelyos/types'
+import type { ProductWithSales } from '@/types'
 import {
   TrendingUp,
   TrendingDown,

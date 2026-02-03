@@ -21,7 +21,7 @@ import { SearchAutocomplete, type SearchSuggestion } from '../common/SearchAutoc
 import { useToast } from '../../hooks/useToast';
 import { api } from '../../lib/api';
 import { logger } from '@quelyos/logger';
-import type { Product } from '@quelyos/types';
+import type { Product } from '@/types';
 
 interface PricelistItemFormData {
   applied_on: '3_global' | '2_product_category' | '1_product' | '0_product_variant';
