@@ -5,7 +5,7 @@ export type ExportFormat = "csv" | "xlsx" | "excel" | "pdf";
  */
 export function formatDateForExport(date: Date | string = new Date()): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toISOString().split("T")[0];
+  return d.toISOString().split("T")[0]!;
 }
 
 /**
@@ -27,7 +27,7 @@ export async function exportData<T extends Record<string, unknown>>(
 
   if (format === "csv") {
     if (data.length === 0) return;
-    const headers = Object.keys(data[0]);
+    const headers = Object.keys(data[0]!);
     const csvContent = [
       headers.join(","),
       ...data.map((row) =>
@@ -40,7 +40,7 @@ export async function exportData<T extends Record<string, unknown>>(
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet("Data");
     if (data.length > 0) {
-      ws.columns = Object.keys(data[0]).map((key) => ({ header: key, key }));
+      ws.columns = Object.keys(data[0]!).map((key) => ({ header: key, key }));
       data.forEach((row) => ws.addRow(row));
     }
     const buffer = await wb.xlsx.writeBuffer();

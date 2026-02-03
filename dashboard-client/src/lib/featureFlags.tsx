@@ -198,7 +198,7 @@ export const useFeatureFlags = create<FeatureFlagsStore>()(
 
         // Override local a la priorité
         if (key in state.overrides) {
-          return state.overrides[key]
+          return state.overrides[key]!
         }
 
         // Vérifier l'environnement

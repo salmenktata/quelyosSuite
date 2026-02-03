@@ -265,13 +265,14 @@ return value.toUpperCase()
 | 2026-02-03 | stores | 5 | 210 |
 | 2026-02-03 | test | 6 | 204 |
 | 2026-02-03 | hooks | 11 | 193 |
-| (À faire) | lib | 29 | ~164 |
-| (À faire) | pages | 50 | ~114 |
-| (À faire) | components | 106 | ~8 |
+| 2026-02-03 | lib | 9 | 184 |
+| (À faire) | pages | ~50 | ~134 |
+| (À faire) | components | ~106 | ~28 |
 
 **✅ Quick Wins terminés** : 13/217 erreurs corrigées (6%) en ~20 minutes
-**✅ Hooks terminés** : 11/19 erreurs corrigées (8 erreurs de types manquants restent)
-**📊 Progression totale** : 24/217 erreurs corrigées (11%)
+**✅ Hooks terminés** : 11/19 erreurs corrigées (8 erreurs de types manquants)
+**✅ Lib terminé** : 9/29 erreurs corrigées (20 erreurs types/overload)
+**📊 Progression totale** : 33/217 erreurs corrigées (15%)
 
 ---
 

@@ -148,5 +148,5 @@ export function formatValidationErrors(errors: ValidationError[]): Record<string
  * Extrait le premier message d'erreur
  */
 export function getFirstError(errors: ValidationError[]): string | null {
-  return errors.length > 0 ? errors[0].message : null
+  return errors.length > 0 ? errors[0]!.message : null
 }

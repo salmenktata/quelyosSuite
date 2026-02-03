@@ -249,7 +249,7 @@ export const financeApi = {
       Object.entries(params)
         .filter(([_, v]) => v !== undefined && v !== null)
         .map(([k, v]) => [k, String(v)])
-        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+        .reduce((acc, [k, v]) => ({ ...acc, [k as string]: v }), {} as Record<string, string>)
     ).toString() : ''
     return api(`/finance/stock/valuation${query}`)
   },
@@ -266,7 +266,7 @@ export const financeApi = {
       Object.entries(params)
         .filter(([_, v]) => v !== undefined && v !== null)
         .map(([k, v]) => [k, String(v)])
-        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+        .reduce((acc, [k, v]) => ({ ...acc, [k as string]: v }), {} as Record<string, string>)
     ).toString() : ''
     return api(`/finance/stock/turnover${query}`)
   },
