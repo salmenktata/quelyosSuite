@@ -55,7 +55,9 @@ export interface StockTransfer {
   products: TransferProduct[]
   products_count: number
   note: string
-  create_date: string | null
+  create_date: string
+  created_at?: string  // Alias pour create_date
+  createdAt?: string  // Alias camelCase | null
   user_name: string | null
 }
 
@@ -459,6 +461,8 @@ export interface LeadListItem {
   user_name?: string
   date_deadline?: string
   create_date: string
+  created_at?: string  // Alias pour create_date
+  createdAt?: string  // Alias camelCase
 }
 
 export interface Lead extends LeadListItem {
@@ -471,7 +475,7 @@ export interface Lead extends LeadListItem {
 
 // ==================== SUPPORT TICKETS ====================
 
-export type TicketState = 'new' | 'open' | 'pending' | 'solved' | 'closed'
+export type TicketState = 'new' | 'open' | 'pending' | 'solved' | 'resolved' | 'closed'
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
 export type TicketCategory = 'bug' | 'feature' | 'question' | 'other'
 
@@ -488,11 +492,14 @@ export interface Ticket {
   user_id?: number
   user_name?: string
   messageCount?: number  // Nombre de messages
-  slaFirstResponseStatus?: 'met' | 'failed' | 'pending'  // Statut SLA première réponse
-  slaResolutionStatus?: 'met' | 'failed' | 'pending'  // Statut SLA résolution
+  slaFirstResponseStatus?: 'ok' | 'warning' | 'breached' | 'on_track' | null  // Statut SLA première réponse
+  slaResolutionStatus?: 'ok' | 'warning' | 'breached' | 'on_track' | null  // Statut SLA résolution
   slaFirstResponseDeadline?: string  // Deadline SLA première réponse
   slaResolutionDeadline?: string  // Deadline SLA résolution
   create_date: string
+  created_at?: string  // Alias pour create_date
+  createdAt?: string  // Alias camelCase
+  createdAt?: string  // Alias pour create_date
   write_date?: string
   closed_date?: string
 }
@@ -504,6 +511,7 @@ export interface TicketMessage {
   content?: string  // Alias pour body
   author_id: number
   author_name: string
+  authorName?: string  // Alias camelCase pour author_name
   date: string
   createdAt?: string  // Alias pour date
   is_internal?: boolean
@@ -520,7 +528,7 @@ export interface CreateTicketData {
 
 // ==================== MARKETING CAMPAIGNS ====================
 
-export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'done' | 'cancelled'
+export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'done' | 'cancelled' | 'sent'
 export type CampaignType = 'email' | 'sms' | 'social' | 'ads'
 
 export interface MarketingCampaign {
@@ -559,6 +567,8 @@ export interface MarketingCampaign {
     conversion_rate?: number
   }
   create_date: string
+  created_at?: string  // Alias pour create_date
+  createdAt?: string  // Alias camelCase
   write_date?: string
 }
 

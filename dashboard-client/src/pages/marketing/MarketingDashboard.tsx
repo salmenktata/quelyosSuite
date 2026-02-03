@@ -286,7 +286,7 @@ export default function MarketingDashboard() {
                           <span>{campaign.recipient_count ?? 0} destinataires</span>
                         )}
                       </div>
-                      {campaign.status === 'sent' && campaign.channel === 'email' && (
+                      {campaign.status === 'done' && campaign.channel === 'email' && (
                         <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                           {campaign.rates?.open_rate ?? 0}% ouvert · {campaign.rates?.click_rate ?? 0}% clics
                         </div>

@@ -228,7 +228,7 @@ export default function CampaignsPage() {
                         {(campaign.stats?.sent ?? 0) > 0 ? (campaign.stats?.sent ?? 0).toLocaleString('fr-FR') : '-'}
                       </td>
                       <td className="px-6 py-4">
-                        {campaign.status === 'sent' && campaign.channel === 'email' ? (
+                        {campaign.status === 'done' && campaign.channel === 'email' ? (
                           <div className="text-sm">
                             <span className="text-emerald-600 dark:text-emerald-400">{campaign.rates?.open_rate ?? 0}% ouvert</span>
                             <span className="text-gray-400 mx-1">·</span>
@@ -239,7 +239,7 @@ export default function CampaignsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                        {campaign.sent_date ? formatDate(campaign.sent_date) : formatDate(campaign.created_at || campaign.create_date || null)}
+                        {campaign.sent_date ? formatDate(campaign.sent_date) : formatDate(campaign.create_date || campaign.create_date || null)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="relative">

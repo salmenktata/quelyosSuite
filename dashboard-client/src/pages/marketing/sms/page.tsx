@@ -28,7 +28,7 @@ export default function SMSCampaignsPage() {
   const { data: smsQuota } = useSMSQuota();
 
   const campaigns = data?.campaigns || [];
-  const sentCampaigns = campaigns.filter((c) => c.status === 'sent');
+  const sentCampaigns = campaigns.filter((c) => c.status === 'done');
   const totalSMS = sentCampaigns.reduce((sum, c) => sum + (c.stats?.sent ?? 0), 0);
   const totalDelivered = sentCampaigns.reduce((sum, c) => sum + (c.stats?.delivered ?? 0), 0);
   const deliveryRate = totalSMS > 0 ? (totalDelivered / totalSMS) * 100 : 0;
@@ -183,7 +183,7 @@ export default function SMSCampaignsPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-6 ml-4">
-                      {campaign.status === 'sent' && (
+                      {campaign.status === 'done' && (
                         <div className="text-right">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {(campaign.stats?.sent ?? 0).toLocaleString('fr-FR')} envoyés
@@ -194,7 +194,7 @@ export default function SMSCampaignsPage() {
                         </div>
                       )}
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(campaign.sent_date || campaign.created_at || null)}
+                        {formatDate(campaign.sent_date || campaign.create_date || null)}
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-400" />
                     </div>
