@@ -40,7 +40,7 @@ export function ExportStockModal({ isOpen, onClose }: ExportStockModalProps) {
 
       if (response.success && response.data) {
         // Générer et télécharger le CSV
-        const filename = `stock_${new Date().toISOString().split('T')[0]}.csv`
+        const filename = `stock_${new Date().toISOString().split('T')[0]!}.csv`
         exportToCSV(
           response.data.data as Record<string, unknown>[],
           filename,

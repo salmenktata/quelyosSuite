@@ -77,8 +77,10 @@ export function AiProviderModal({ provider, onClose }: AiProviderModalProps) {
   useEffect(() => {
     // Mettre à jour le modèle par défaut quand le provider change
     if (!isEdit && formData.provider) {
-      const defaultModel = DEFAULT_MODELS[formData.provider][0];
-      setFormData(prev => ({ ...prev, model: defaultModel }));
+      const defaultModel = DEFAULT_MODELS[formData.provider]?.[0];
+      if (defaultModel) {
+        setFormData(prev => ({ ...prev, model: defaultModel }));
+      }
     }
   }, [formData.provider, isEdit]);
 

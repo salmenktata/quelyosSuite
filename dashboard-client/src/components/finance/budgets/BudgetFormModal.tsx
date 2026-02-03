@@ -42,7 +42,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
       amount: "",
       categoryId: null,
       period: "MONTHLY",
-      startDate: new Date().toISOString().split("T")[0],
+      startDate: new Date().toISOString().split("T")[0]!,
       endDate: ""
     }
   );
@@ -80,7 +80,7 @@ export const BudgetFormModal = memo(function BudgetFormModal({
       amount: "",
       categoryId: null,
       period: "MONTHLY",
-      startDate: new Date().toISOString().split("T")[0],
+      startDate: new Date().toISOString().split("T")[0]!,
       endDate: ""
     });
   };

@@ -16,7 +16,7 @@ export const TimelineChart = memo(function TimelineChart({
 
   const handleBarClick = (date: string, isForecast: boolean) => {
     if (isForecast) return;
-    const formattedDate = new Date(date).toISOString().split('T')[0];
+    const formattedDate = new Date(date).toISOString().split('T')[0]!;
     navigate(`/finance/transactions?date=${formattedDate}`);
   };
 

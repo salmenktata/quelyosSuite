@@ -31,7 +31,7 @@ describe('AppLauncher', () => {
     it('ne devrait rien afficher si isOpen=false', () => {
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={false}
           onSelect={vi.fn()}
@@ -45,7 +45,7 @@ describe('AppLauncher', () => {
     it('devrait afficher le modal si isOpen=true', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -61,7 +61,7 @@ describe('AppLauncher', () => {
     it('devrait afficher tous les modules fournis', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -81,7 +81,7 @@ describe('AppLauncher', () => {
     it('devrait afficher les icônes des modules', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -95,11 +95,11 @@ describe('AppLauncher', () => {
     })
 
     it('devrait n\'afficher que les modules accessibles', () => {
-      const limitedModules = [mockModules[0], mockModules[1]] // Seulement home et finance
+      const limitedModules = [mockModules[0]!, mockModules[1]!] // Seulement home et finance
 
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={limitedModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -118,7 +118,7 @@ describe('AppLauncher', () => {
     it('devrait appliquer un style spécial au module actif', () => {
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[1]} // Finance actif
+          currentModule={mockModules[1]!} // Finance actif
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -134,7 +134,7 @@ describe('AppLauncher', () => {
     it('ne devrait pas appliquer le style actif aux autres modules', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[1]} // Finance actif
+          currentModule={mockModules[1]!} // Finance actif
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -154,7 +154,7 @@ describe('AppLauncher', () => {
 
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={onSelect}
@@ -173,7 +173,7 @@ describe('AppLauncher', () => {
 
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -192,7 +192,7 @@ describe('AppLauncher', () => {
 
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={onSelect}
@@ -211,7 +211,7 @@ describe('AppLauncher', () => {
 
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -235,7 +235,7 @@ describe('AppLauncher', () => {
 
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -259,7 +259,7 @@ describe('AppLauncher', () => {
     it('devrait afficher un input de recherche', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -275,7 +275,7 @@ describe('AppLauncher', () => {
     it('devrait permettre de taper dans la recherche', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -294,7 +294,7 @@ describe('AppLauncher', () => {
     it('ne devrait pas filtrer les modules pour l\'instant (Phase 3)', () => {
       render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -316,7 +316,7 @@ describe('AppLauncher', () => {
     it('devrait utiliser une grille 3 colonnes', () => {
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -331,7 +331,7 @@ describe('AppLauncher', () => {
     it('devrait limiter la hauteur avec overflow', () => {
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}
@@ -349,7 +349,7 @@ describe('AppLauncher', () => {
     it('devrait avoir les classes dark mode sur les éléments principaux', () => {
       const { container } = render(
         <AppLauncher
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isOpen={true}
           onSelect={vi.fn()}

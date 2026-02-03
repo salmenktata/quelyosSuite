@@ -39,7 +39,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
     amount: "",
     categoryId: null,
     period: "MONTHLY",
-    startDate: new Date().toISOString().split("T")[0],
+    startDate: new Date().toISOString().split("T")[0]!,
     endDate: ""
   });
   const [loading, setLoading] = useState(false);
@@ -61,8 +61,8 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
         amount: budget.amount?.toString() || "",
         categoryId: budget.categoryId || null,
         period: budget.period || "MONTHLY",
-        startDate: budget.startDate ? budget.startDate.split("T")[0] : new Date().toISOString().split("T")[0],
-        endDate: budget.endDate ? budget.endDate.split("T")[0] : ""
+        startDate: budget.startDate ? budget.startDate.split("T")[0]! : new Date().toISOString().split("T")[0]!,
+        endDate: budget.endDate ? budget.endDate.split("T")[0]! : ""
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de chargement");
@@ -82,7 +82,7 @@ export function BudgetModal({ isOpen, onClose, onSuccess, editingId, categories 
         amount: "",
         categoryId: null,
         period: "MONTHLY",
-        startDate: new Date().toISOString().split("T")[0],
+        startDate: new Date().toISOString().split("T")[0]!,
         endDate: ""
       });
       setError(null);

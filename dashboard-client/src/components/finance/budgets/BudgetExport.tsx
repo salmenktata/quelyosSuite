@@ -99,12 +99,12 @@ export function BudgetExport({ allBudgets, filteredBudgets, formatCurrency: _for
   };
 
   const handleExportAll = () => {
-    const date = new Date().toISOString().split("T")[0];
+    const date = new Date().toISOString().split("T")[0]!;
     exportToCSV(allBudgets, `budgets_tous_${date}.csv`);
   };
 
   const handleExportFiltered = () => {
-    const date = new Date().toISOString().split("T")[0];
+    const date = new Date().toISOString().split("T")[0]!;
     exportToCSV(filteredBudgets, `budgets_filtres_${date}.csv`);
   };
 

@@ -50,7 +50,7 @@ describe('TopNavbar', () => {
     it('devrait afficher le bouton App Launcher', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -67,7 +67,7 @@ describe('TopNavbar', () => {
     it('devrait afficher le bouton toggle theme', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -86,7 +86,7 @@ describe('TopNavbar', () => {
     it('devrait afficher 5 modules principaux (home, finance, store, crm, stock)', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -107,7 +107,7 @@ describe('TopNavbar', () => {
     it('ne devrait PAS afficher marketing et hr dans quick access', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -127,11 +127,11 @@ describe('TopNavbar', () => {
 
     it('devrait filtrer selon les modules accessibles', () => {
       // Utilisateur n'a accès qu'à home et finance
-      const limitedModules = [mockModules[0], mockModules[1]]
+      const limitedModules = [mockModules[0]!, mockModules[1]!]
 
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={limitedModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -151,7 +151,7 @@ describe('TopNavbar', () => {
     it('devrait surligner le module actif', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[1]} // Finance actif
+          currentModule={mockModules[1]!} // Finance actif
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -169,7 +169,7 @@ describe('TopNavbar', () => {
     it('ne devrait pas surligner les modules inactifs', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[1]} // Finance actif
+          currentModule={mockModules[1]!} // Finance actif
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -190,7 +190,7 @@ describe('TopNavbar', () => {
     it('devrait afficher un spinner sur le module actif si isModuleChanging=true', () => {
       const { container } = renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[1]} // Finance actif
+          currentModule={mockModules[1]!} // Finance actif
           modules={mockModules}
           isModuleChanging={true}
           isAppLauncherOpen={false}
@@ -213,7 +213,7 @@ describe('TopNavbar', () => {
 
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -234,7 +234,7 @@ describe('TopNavbar', () => {
 
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -253,7 +253,7 @@ describe('TopNavbar', () => {
     it('devrait appeler toggleTheme au clic sur le bouton theme', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -274,7 +274,7 @@ describe('TopNavbar', () => {
 
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -295,7 +295,7 @@ describe('TopNavbar', () => {
     it('devrait surligner le bouton App Launcher si ouvert', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={true}
@@ -313,7 +313,7 @@ describe('TopNavbar', () => {
     it('ne devrait pas surligner le bouton App Launcher si fermé', () => {
       renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -333,7 +333,7 @@ describe('TopNavbar', () => {
     it('devrait avoir les classes responsive appropriées', () => {
       const { container } = renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -359,7 +359,7 @@ describe('TopNavbar', () => {
     it('devrait afficher le module actuel sur mobile', () => {
       const { container } = renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[1]} // Finance
+          currentModule={mockModules[1]!} // Finance
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}
@@ -379,7 +379,7 @@ describe('TopNavbar', () => {
     it('devrait avoir les classes dark mode', () => {
       const { container } = renderWithRouter(
         <TopNavbar
-          currentModule={mockModules[0]}
+          currentModule={mockModules[0]!}
           modules={mockModules}
           isModuleChanging={false}
           isAppLauncherOpen={false}

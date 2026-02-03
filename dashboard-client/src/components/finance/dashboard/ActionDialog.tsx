@@ -237,7 +237,7 @@ export const ActionDialog = memo(function ActionDialog({
                       type="date"
                       value={snoozeDate}
                       onChange={(e) => setSnoozeDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={new Date().toISOString().split("T")[0]!}
                       className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
                     />
                     <button
