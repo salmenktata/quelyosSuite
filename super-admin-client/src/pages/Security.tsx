@@ -146,8 +146,8 @@ interface SecuritySummary {
 
 export function Security() {
   const [activeTab, setActiveTab] = useState<TabType>('overview')
-  const queryClient = useQueryClient()
-  const toast = useToast()
+  const _queryClient = useQueryClient()
+  const _toast = useToast()
 
   const tabs = [
     { id: 'overview' as const, name: 'Vue d\'ensemble', icon: Shield },

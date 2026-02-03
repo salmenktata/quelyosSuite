@@ -24,7 +24,7 @@ export function SitemapDynamic() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [healthchecking, setHealthchecking] = useState(false)
-  const [selectedApp, setSelectedApp] = useState<string | null>(null)
+  const [selectedApp, _setSelectedApp] = useState<string | null>(null)
 
   // Charger sitemap au mount
   useEffect(() => {

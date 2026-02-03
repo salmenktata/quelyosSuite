@@ -68,7 +68,7 @@ interface SeedJobStatus {
 }
 
 export function SeedData() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
   const toast = useToast()
 
   // État configuration
@@ -218,7 +218,7 @@ export function SeedData() {
       document.body.removeChild(a)
 
       toast.success('Rapport téléchargé')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erreur téléchargement rapport')
     }
   }
@@ -234,7 +234,7 @@ export function SeedData() {
 
   const isGenerating = jobStatus?.status === 'running' || jobStatus?.status === 'pending'
   const isCompleted = jobStatus?.status === 'completed'
-  const isError = jobStatus?.status === 'error'
+  const _isError = jobStatus?.status === 'error'
 
   return (
     <div className="p-6 max-w-7xl mx-auto">

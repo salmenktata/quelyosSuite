@@ -90,7 +90,7 @@ export function SupportTickets() {
   const toast = useToast()
 
   const [search, setSearch] = useState('')
-  const [tenantFilter, setTenantFilter] = useState<string>('all')
+  const [tenantFilter, _setTenantFilter] = useState<string>('all')
   const [stateFilter, setStateFilter] = useState<string>('all')
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
