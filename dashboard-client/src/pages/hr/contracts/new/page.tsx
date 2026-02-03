@@ -37,7 +37,7 @@ export default function NewContractPage() {
     contract_type: 'cdi',
     department_id: '',
     job_id: '',
-    date_start: new Date().toISOString().split('T')[0],
+    date_start: new Date().toISOString().split('T')[0]!,
     date_end: '',
     trial_date_end: '',
     wage: '',

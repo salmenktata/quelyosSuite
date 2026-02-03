@@ -24,8 +24,8 @@ export default function LeavesCalendarPage() {
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
 
-  const startDate = new Date(year, month, 1).toISOString().split('T')[0]
-  const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0]
+  const startDate = new Date(year, month, 1).toISOString().split('T')[0]!
+  const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0]!
 
   const { data: calendarData, isLoading } = useLeavesCalendar(
     tenant?.id || null,
@@ -47,7 +47,7 @@ export default function LeavesCalendarPage() {
       result.push({ day: null, date: null })
     }
     for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i).toISOString().split('T')[0]
+      const date = new Date(year, month, i).toISOString().split('T')[0]!
       result.push({ day: i, date })
     }
     return result

@@ -176,13 +176,13 @@ export default function RequestsEmergency() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-sm font-medium ${DOWNTIME_LABELS[request.downtime_impact].color}`}>
-                          {DOWNTIME_LABELS[request.downtime_impact].label}
+                        <span className={`text-sm font-medium ${DOWNTIME_LABELS[request.downtime_impact]?.color || 'text-gray-500'}`}>
+                          {DOWNTIME_LABELS[request.downtime_impact]?.label || request.downtime_impact}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${PRIORITY_LABELS[request.priority].color}`}>
-                          {PRIORITY_LABELS[request.priority].label}
+                        <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${PRIORITY_LABELS[request.priority]?.color || 'bg-gray-100 text-gray-800'}`}>
+                          {PRIORITY_LABELS[request.priority]?.label || request.priority}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

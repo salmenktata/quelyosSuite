@@ -116,9 +116,9 @@ export default function ScenariosPage() {
   const [error, setError] = useState<string | null>(null)
 
   const [scenarios, setScenarios] = useState<Scenario[]>([
-    { id: "baseline", name: "Scénario de base", adjustment: 0, color: SCENARIO_COLORS[0], visible: true },
-    { id: "pessimiste", name: "Pessimiste", adjustment: -20, color: SCENARIO_COLORS[1], visible: true },
-    { id: "optimiste", name: "Optimiste", adjustment: 20, color: SCENARIO_COLORS[2], visible: true },
+    { id: "baseline", name: "Scénario de base", adjustment: 0, color: SCENARIO_COLORS[0]!, visible: true },
+    { id: "pessimiste", name: "Pessimiste", adjustment: -20, color: SCENARIO_COLORS[1]!, visible: true },
+    { id: "optimiste", name: "Optimiste", adjustment: 20, color: SCENARIO_COLORS[2]!, visible: true },
   ])
 
   const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>([])
@@ -219,7 +219,7 @@ export default function ScenariosPage() {
         id: newId,
         name: `Scénario ${prev.length + 1}`,
         adjustment: 0,
-        color: SCENARIO_COLORS[colorIndex],
+        color: SCENARIO_COLORS[colorIndex]!,
         visible: true,
       },
     ])

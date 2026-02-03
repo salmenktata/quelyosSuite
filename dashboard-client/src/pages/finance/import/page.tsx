@@ -52,7 +52,7 @@ export default function ImportPage() {
         if (cancelled) return;
         setAccounts(data);
         if (data.length > 0 && !state.selectedAccountId) {
-          dispatch({ type: "SELECT_ACCOUNT", payload: data[0].id });
+          dispatch({ type: "SELECT_ACCOUNT", payload: data[0]!.id });
         }
       } catch (err) {
         if (cancelled) return;

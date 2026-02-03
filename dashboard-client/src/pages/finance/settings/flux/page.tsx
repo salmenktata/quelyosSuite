@@ -230,6 +230,7 @@ export default function FluxSettingsPage() {
           <div className="space-y-3">
             {flowTypeSettings.map((setting) => {
               const config = FLOW_TYPE_CONFIG[setting.type];
+              if (!config) return null;
               return (
                 <div
                   key={setting.type}
