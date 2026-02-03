@@ -56,25 +56,40 @@ BOLD='\033[1m'
 
 # ── Options ───────────────────────────────────────────────────────
 APP_FILTER=""
-SKIP_BACKUP=false
+SKIP_BACKUP=true   # Default: skip backup (use --safe for backup)
 SKIP_ODOO=false
 DRY_RUN=false
+FAST_MODE=true     # Default: fast mode (incremental build, short waits)
+NO_CACHE=false     # Default: use Docker cache
 
 for arg in "$@"; do
   case $arg in
     --app=*) APP_FILTER="${arg#*=}" ;;
     --skip-backup) SKIP_BACKUP=true ;;
+    --with-backup) SKIP_BACKUP=false ;;
     --skip-odoo) SKIP_ODOO=true ;;
+    --safe) FAST_MODE=false; SKIP_BACKUP=false; NO_CACHE=true ;;  # Mode safe: backup + no cache
+    --fast) FAST_MODE=true; SKIP_BACKUP=true; NO_CACHE=false ;;   # Mode fast (default)
+    --no-cache) NO_CACHE=true ;;
     --dry-run) DRY_RUN=true ;;
     --help|-h)
       echo "Usage: $0 [options]"
       echo ""
       echo "Options:"
       echo "  --app=NAME       Deploy une seule app (vitrine|ecommerce|dashboard|superadmin)"
-      echo "  --skip-backup    Skip backup PostgreSQL"
+      echo "  --fast           Mode rapide: skip backup, build cache (DEFAULT)"
+      echo "  --safe           Mode securise: backup + build from scratch"
+      echo "  --with-backup    Forcer backup PostgreSQL"
+      echo "  --skip-backup    Skip backup (default)"
       echo "  --skip-odoo      Skip upgrade module backend"
+      echo "  --no-cache       Force rebuild sans cache Docker"
       echo "  --dry-run        Simulation sans execution"
       echo "  --help           Afficher cette aide"
+      echo ""
+      echo "Exemples:"
+      echo "  $0                    # Deploy rapide (fast mode, default)"
+      echo "  $0 --safe             # Deploy securise avec backup"
+      echo "  $0 --app=dashboard    # Deploy uniquement dashboard (rapide)"
       exit 0
       ;;
     *) echo -e "${RED}Option inconnue: $arg${NC}"; exit 1 ;;
@@ -95,6 +110,23 @@ run_ssh() {
   fi
   ssh "$VPS_HOST" "$1"
 }
+
+# ── BANNER ───────────────────────────────────────────────────────
+echo ""
+echo -e "${BOLD}╔════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BOLD}║         DEPLOIEMENT VPS QUELYOS SUITE                 ║${NC}"
+echo -e "${BOLD}╚════════════════════════════════════════════════════════╝${NC}"
+if $FAST_MODE; then
+  echo -e "${GREEN}Mode: FAST${NC} (incremental build, skip backup, short waits)"
+else
+  echo -e "${YELLOW}Mode: SAFE${NC} (full rebuild, backup DB, long waits)"
+fi
+if [ -n "$APP_FILTER" ]; then
+  echo -e "Deploy: ${CYAN}$APP_FILTER${NC} uniquement"
+else
+  echo -e "Deploy: ${CYAN}ALL apps${NC} (vitrine, ecommerce, dashboard, superadmin)"
+fi
+echo ""
 
 # ── STEP 1: PRE-FLIGHT ───────────────────────────────────────────
 step 1 "Pre-flight checks"
@@ -145,7 +177,14 @@ fi
 # ── STEP 3: SYNC ─────────────────────────────────────────────────
 step 3 "Sync fichiers vers VPS"
 
-RSYNC_OPTS="-avz --delete --exclude=node_modules --exclude=.next --exclude=dist --exclude=.git --exclude=.env.local --exclude=.turbo"
+RSYNC_BASE="-az --delete --exclude=node_modules --exclude=.next --exclude=dist --exclude=.git --exclude=.env.local --exclude=.turbo"
+if $FAST_MODE; then
+  # Mode fast: checksum pour skip unchanged + quiet
+  RSYNC_OPTS="$RSYNC_BASE --checksum -q"
+else
+  # Mode safe: verbose
+  RSYNC_OPTS="$RSYNC_BASE -v"
+fi
 
 sync_dir() {
   local src="$1"
@@ -216,8 +255,13 @@ else
       run_ssh "docker restart quelyos-odoo"
       ok "Module quelyos_api upgrade lance"
       # Attendre que le backend soit pret
-      echo -e "  ${YELLOW}Attente backend (30s)...${NC}"
-      if ! $DRY_RUN; then sleep 30; fi
+      if $FAST_MODE; then
+        echo -e "  ${YELLOW}Attente backend (10s)...${NC}"
+        if ! $DRY_RUN; then sleep 10; fi
+      else
+        echo -e "  ${YELLOW}Attente backend (30s)...${NC}"
+        if ! $DRY_RUN; then sleep 30; fi
+      fi
     fi
   else
     ok "Pas de modif backend - skip upgrade"
@@ -229,15 +273,29 @@ step 5 "Docker build sur VPS"
 
 COMPOSE_CMD="cd $VPS_DIR && docker compose -f deploy/vps/docker-compose.yml"
 
+# Options de build
+BUILD_OPTS=""
+if $NO_CACHE; then
+  BUILD_OPTS="--no-cache"
+  warn "Build from scratch (--no-cache)"
+else
+  ok "Build incremental (cache Docker active)"
+fi
+
+# Build parallele si multi-apps
+if [ -z "$APP_FILTER" ]; then
+  BUILD_OPTS="$BUILD_OPTS --parallel"
+fi
+
 if [ -n "$APP_FILTER" ]; then
   if ! dry "docker compose build $APP_FILTER"; then
-    run_ssh "$COMPOSE_CMD build --no-cache $APP_FILTER"
+    run_ssh "$COMPOSE_CMD build $BUILD_OPTS $APP_FILTER"
     ok "Build $APP_FILTER termine"
   fi
 else
-  if ! dry "docker compose build (all)"; then
-    run_ssh "$COMPOSE_CMD build --no-cache"
-    ok "Build all termine"
+  if ! dry "docker compose build --parallel (all)"; then
+    run_ssh "$COMPOSE_CMD build $BUILD_OPTS"
+    ok "Build all termine (parallele)"
   fi
 fi
 
@@ -288,8 +346,13 @@ if $DRY_RUN; then
 fi
 
 # Attendre que les conteneurs demarrent
-echo -e "  ${YELLOW}Attente demarrage (15s)...${NC}"
-sleep 15
+if $FAST_MODE; then
+  echo -e "  ${YELLOW}Attente demarrage (5s)...${NC}"
+  sleep 5
+else
+  echo -e "  ${YELLOW}Attente demarrage (15s)...${NC}"
+  sleep 15
+fi
 
 for svc in $APP_NAMES; do
   if [ -n "$APP_FILTER" ] && [ "$APP_FILTER" != "$svc" ]; then
