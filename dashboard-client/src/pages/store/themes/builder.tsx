@@ -93,7 +93,7 @@ function ActionsToolbar() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/themes/submissions/create`,
+        '/api/themes/submissions',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

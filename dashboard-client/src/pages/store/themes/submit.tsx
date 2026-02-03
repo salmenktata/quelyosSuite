@@ -87,7 +87,7 @@ export default function SubmitThemePage() {
         return;
       }
 
-      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/submissions`, {
+      const response = await tenantFetch(`/api/themes/submissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

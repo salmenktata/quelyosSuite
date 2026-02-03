@@ -71,7 +71,7 @@ export interface Product {
   available_quantity?: number;
   // Stock - Legacy aliases
   stock_qty?: number;
-  qty_available?: number;
+  qty_available: number;
   virtual_available?: number;
   stock_status?: 'in_stock' | 'low_stock' | 'out_of_stock';
   weight?: number;
@@ -108,7 +108,7 @@ export interface Product {
   updated_at?: string | null;
   // Dates - Legacy aliases
   create_date?: string | null;
-  write_date?: string | null;
+  write_date: string;
 }
 
 export interface ProductDetail extends Product {
@@ -127,7 +127,7 @@ export interface ProductVariant {
   stock_quantity?: number;
   // Legacy aliases
   stock_qty?: number;
-  qty_available?: number;
+  qty_available: number;
   // Standard name
   sku?: string;
   // Legacy alias
@@ -211,7 +211,7 @@ export interface ExtendedProductVariant extends ProductVariant {
   list_price?: number;
   default_code?: string;
   barcode?: string;
-  qty_available?: number;
+  // qty_available inherited as required from ProductVariant
   // Standard names
   sku?: string;
   stock_quantity?: number;

@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts'],
-  format: ['esm'],
+  format: ['esm', 'cjs'],
   dts: false, // Bug Rollup avec type imports - utiliser index.d.ts manuel
   sourcemap: true,
   clean: false, // Désactivé pour conserver index.d.ts manuel

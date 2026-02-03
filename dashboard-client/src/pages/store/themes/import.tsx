@@ -54,7 +54,7 @@ export default function ThemesImportPage() {
       );
 
       // Appeler endpoint batch import
-      const response = await tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/import-batch`, {
+      const response = await tenantFetch(`/api/themes/import-batch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

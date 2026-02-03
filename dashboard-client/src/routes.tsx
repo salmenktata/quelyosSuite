@@ -345,6 +345,7 @@ export default function AppRoutes() {
 
         {/* Store Themes */}
         <Route path="/store/themes" element={<P><ThemesMarketplace /></P>} />
+        <Route path="/store/themes/marketplace" element={<P><ThemesMarketplace /></P>} />
         <Route path="/store/themes/my-submissions" element={<P><ThemesMySubmissions /></P>} />
         <Route path="/store/themes/submit" element={<P><ThemesSubmit /></P>} />
         <Route path="/store/themes/import" element={<P><ThemesImport /></P>} />

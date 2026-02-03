@@ -105,6 +105,8 @@ export class BackendClient {
       },
       // No need for withCredentials since we're using our own proxy
       withCredentials: false,
+      // Timeout de 5 secondes pour éviter blocages
+      timeout: 5000,
     });
 
     // Intercepteur pour ajouter automatiquement le session_id

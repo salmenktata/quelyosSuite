@@ -99,7 +99,7 @@ export default function MySubmissionsPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/themes/submissions/my`,
+        `/api/themes/submissions/my`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

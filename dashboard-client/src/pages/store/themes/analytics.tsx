@@ -98,31 +98,31 @@ export default function AnalyticsPage() {
 
       // Récupérer toutes les données en parallèle
       const [overviewRes, themesRes, designersRes, categoriesRes, timelineRes] = await Promise.all([
-        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/overview`, {
+        tenantFetch(`/api/themes/analytics/overview`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {}, id: 1 }),
         }),
-        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-themes`, {
+        tenantFetch(`/api/themes/analytics/top-themes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: { limit: 5 }, id: 2 }),
         }),
-        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/top-designers`, {
+        tenantFetch(`/api/themes/analytics/top-designers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: { limit: 5 }, id: 3 }),
         }),
-        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/category-stats`, {
+        tenantFetch(`/api/themes/analytics/category-stats`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ jsonrpc: '2.0', method: 'call', params: {}, id: 4 }),
         }),
-        tenantFetch(`${import.meta.env.VITE_BACKEND_URL}/api/themes/analytics/sales-timeline`, {
+        tenantFetch(`/api/themes/analytics/sales-timeline`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

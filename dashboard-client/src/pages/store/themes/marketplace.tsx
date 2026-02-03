@@ -56,14 +56,26 @@ export default function MarketplacePage() {
   const loadThemes = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (selectedCategory !== 'all') params.append('category', selectedCategory);
-      if (priceFilter === 'free') params.append('is_premium', 'false');
-      if (priceFilter === 'premium') params.append('is_premium', 'true');
-      params.append('sort', sortBy);
+      const apiParams: {
+        category?: string;
+        is_premium?: boolean;
+        sort: string;
+      } = {
+        sort: sortBy,
+      };
+
+      if (selectedCategory !== 'all') {
+        apiParams.category = selectedCategory;
+      }
+
+      if (priceFilter === 'free') {
+        apiParams.is_premium = false;
+      } else if (priceFilter === 'premium') {
+        apiParams.is_premium = true;
+      }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/themes/marketplace?${params}`,
+        '/api/themes/marketplace',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -71,7 +83,7 @@ export default function MarketplacePage() {
           body: JSON.stringify({
             jsonrpc: '2.0',
             method: 'call',
-            params: {},
+            params: apiParams,
             id: 1,
           }),
         }
