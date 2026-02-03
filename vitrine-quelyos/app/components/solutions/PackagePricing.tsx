@@ -30,8 +30,8 @@ export default function PackagePricing({
     <div
       className={`relative rounded-3xl p-8 shadow-lg transition-all ${
         highlighted
-          ? 'border-2 border-indigo-500 bg-gradient-to-br from-indigo-50 to-violet-50 dark:border-indigo-500 dark:from-indigo-950/30 dark:to-violet-950/30'
-          : 'border border-slate-200/60 bg-white dark:border-slate-700/50 dark:bg-slate-900/50'
+          ? 'border-2 border-indigo-500 bg-gradient-to-br from-indigo-950/30 to-violet-950/30'
+          : 'border border-slate-700/50 bg-slate-900/50'
       } ${className}`}
     >
       {highlighted && (
@@ -47,10 +47,10 @@ export default function PackagePricing({
 
       {/* Header */}
       <div className="mb-8 text-center">
-        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h3 className="text-2xl font-bold text-white">
           {packageName}
         </h3>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-slate-400">
           Solution {sectorName}
         </p>
       </div>
@@ -58,24 +58,24 @@ export default function PackagePricing({
       {/* Prix */}
       <div className="mb-8 text-center">
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <span className="text-5xl font-bold tracking-tight text-white">
             {basePrice}€
           </span>
-          <span className="text-lg font-medium text-slate-600 dark:text-slate-400">
+          <span className="text-lg font-medium text-slate-400">
             /mois
           </span>
         </div>
         {annualPrice && annualPrice < basePrice && (
-          <p className="mt-2 text-sm font-medium text-indigo-600 dark:text-indigo-400">
+          <p className="mt-2 text-sm font-medium text-indigo-400">
             ou {annualPrice}€/mois en annuel
           </p>
         )}
         {savings != null && savings > 0 && (
-          <span className="mt-2 inline-block rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+          <span className="mt-2 inline-block rounded-full bg-emerald-900/30 px-3 py-0.5 text-xs font-semibold text-emerald-400">
             Économisez {savings}% vs modules séparés
           </span>
         )}
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-500">
+        <p className="mt-2 text-sm text-slate-400">
           Hors taxes • Plan de base (9€/mois) inclus
         </p>
       </div>
@@ -85,7 +85,7 @@ export default function PackagePricing({
         {features.map((feature, index) => (
           <li key={index} className="flex items-start gap-3">
             <svg
-              className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400"
+              className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-400"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="2"
@@ -97,7 +97,7 @@ export default function PackagePricing({
                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            <span className="text-sm leading-relaxed text-slate-300">
               {feature}
             </span>
           </li>
@@ -111,12 +111,12 @@ export default function PackagePricing({
           className={`block w-full rounded-lg px-6 py-3 text-center text-sm font-semibold transition-all ${
             highlighted
               ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:from-indigo-700 hover:to-violet-700 hover:shadow-xl'
-              : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100'
+              : 'bg-white text-slate-900 hover:bg-slate-100'
           }`}
         >
           Demander une démonstration
         </Link>
-        <p className="text-center text-xs text-slate-500 dark:text-slate-500">
+        <p className="text-center text-xs text-slate-400">
           Essai gratuit 30 jours • Sans engagement
         </p>
       </div>
@@ -148,11 +148,11 @@ export function PackagePricingGrid({
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             {title}
           </h2>
           {subtitle && (
-            <p className="mt-4 text-lg leading-8 text-slate-600 dark:text-slate-400">
+            <p className="mt-4 text-lg leading-8 text-slate-400">
               {subtitle}
             </p>
           )}
@@ -167,21 +167,21 @@ export function PackagePricingGrid({
 
         {/* Garanties */}
         <div className="mx-auto mt-12 max-w-2xl text-center">
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-slate-600 dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-slate-400">
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Support dédié</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Données hébergées de manière sécurisée</span>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Conformité RGPD garantie</span>

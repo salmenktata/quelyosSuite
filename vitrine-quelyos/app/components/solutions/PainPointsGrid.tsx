@@ -23,11 +23,11 @@ export default function PainPointsGrid({
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             {title}
           </h2>
           {subtitle && (
-            <p className="mt-4 text-lg leading-8 text-slate-600 dark:text-slate-400">
+            <p className="mt-4 text-lg leading-8 text-slate-400">
               {subtitle}
             </p>
           )}
@@ -38,28 +38,28 @@ export default function PainPointsGrid({
           {painPoints.map((painPoint, index) => (
             <div
               key={index}
-              className="group relative rounded-2xl border border-slate-200/60 bg-white p-8 transition-all hover:border-emerald-500/20 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-900/50 dark:hover:border-emerald-500/30"
+              className="group relative rounded-2xl border border-slate-700/50 bg-slate-900/50 p-8 transition-all hover:border-emerald-500/30 hover:shadow-lg"
             >
               {/* Problème */}
               <div className="mb-4">
                 <div className="mb-2 flex items-start gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/20">
-                    <svg className="h-5 w-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-900/20">
+                    <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                     </svg>
                   </div>
-                  <h3 className="flex-1 text-base font-semibold leading-tight text-slate-900 dark:text-white">
+                  <h3 className="flex-1 text-base font-semibold leading-tight text-white">
                     {painPoint.problem}
                   </h3>
                 </div>
               </div>
 
               {/* Solution */}
-              <div className="flex items-start gap-3 rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/20">
-                <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <div className="flex items-start gap-3 rounded-lg bg-emerald-950/20 p-4">
+                <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="flex-1 text-sm leading-relaxed text-emerald-900 dark:text-emerald-100">
+                <p className="flex-1 text-sm leading-relaxed text-emerald-50">
                   {painPoint.solution}
                 </p>
               </div>
