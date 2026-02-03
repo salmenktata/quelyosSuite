@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@quelyos/config';
 /**
  * Helper pour récupérer les plans tarifaires depuis l'API backend.
  * Utilisé en SSR (server components) avec revalidation ISR.
@@ -7,7 +8,7 @@
  * ET l'ancien format (suite/finance/ecommerce) pour backward compat.
  */
 
-const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069'
+const BACKEND_URL = process.env.BACKEND_URL || getBackendUrl(process.env.NODE_ENV as 'development' | 'production')
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INTERFACES — Nouveau système modulaire

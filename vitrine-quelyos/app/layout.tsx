@@ -4,6 +4,7 @@ import "./globals.css";
 import ChatBotWrapper from "./components/ChatBotWrapper";
 import { WebVitals } from "./components/WebVitals";
 import { OrganizationSchema } from "./components/StructuredData";
+import { getBackendUrl } from '@quelyos/config';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -86,11 +87,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
-        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.quelyos.com"} />
+        <link rel="preconnect" href={backendUrl} />
+        <link rel="dns-prefetch" href={backendUrl} />
         <OrganizationSchema />
       </head>
       <body

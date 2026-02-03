@@ -33,11 +33,12 @@ const nextConfig = {
   productionBrowserSourceMaps: false, // Désactiver sourcemaps en prod
 
   async rewrites() {
+    // Using dashboard app URL from @quelyos/config (port 5175)
     const financeTarget =
       process.env.NEXT_PUBLIC_FINANCE_APP_URL ||
       (process.env.NODE_ENV === "development"
         ? "http://localhost:5175"
-        : "https://finance-internal.quelyos.com");
+        : "https://backoffice.quelyos.com");
 
     return {
       beforeFiles: [

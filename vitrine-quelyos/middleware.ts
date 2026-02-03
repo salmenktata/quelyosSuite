@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getAppUrl } from '@quelyos/config';
 
 /**
  * Middleware pour proxy Finance et Marketing
@@ -34,7 +35,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to Finance
   if (shouldProxyFinance) {
-    const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
+    const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || getAppUrl('dashboard', process.env.NODE_ENV as 'development' | 'production');
 
     // Construire l'URL cible en remplaçant /finance par la racine Finance
     const targetPath = pathname.replace('/finance', '');
@@ -47,7 +48,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to Marketing
   if (shouldProxyMarketing) {
-    const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_APP_URL || 'http://localhost:5175';
+    const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_APP_URL || getAppUrl('dashboard', process.env.NODE_ENV as 'development' | 'production');
 
     // Construire l'URL cible en remplaçant /marketing par la racine Marketing
     // Construire l'URL cible en remplaçant /marketing par la racine Marketing

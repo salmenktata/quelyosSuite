@@ -3,6 +3,7 @@
  * Récupère la config active depuis le backend avec cache 5 minutes.
  */
 import { createApiLogger } from '@/lib/logger';
+import { getBackendUrl } from '@quelyos/config';
 
 const log = createApiLogger('AI Config');
 
@@ -37,7 +38,7 @@ export async function getAiConfig(): Promise<AiProviderConfig | null> {
   }
 
   try {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8069';
+    const backendUrl = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
 
     log.info('[AI Config] Fetching config from backend...');
 
@@ -99,7 +100,7 @@ export async function reportAiUsage(
   success: boolean
 ): Promise<void> {
   try {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8069';
+    const backendUrl = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
 
     await fetch(`${backendUrl}/api/ai/report-usage`, {
       method: 'POST',

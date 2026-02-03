@@ -1,4 +1,5 @@
 import { legalConfig } from './legal-config'
+import { getBackendUrl } from '@quelyos/config';
 
 export interface LegalConfig {
   company: {
@@ -64,7 +65,7 @@ interface LegalApiResponse {
   }
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069'
+const BACKEND_URL = getBackendUrl(process.env.NODE_ENV as 'development' | 'production')
 
 /**
  * Charge la config légale depuis le backend, avec fallback sur les valeurs statiques.

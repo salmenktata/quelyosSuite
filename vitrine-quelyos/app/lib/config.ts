@@ -1,3 +1,5 @@
+import { getAppUrl, getBackendUrl } from '@quelyos/config';
+
 // Configuration des URLs avec priorité aux variables d'environnement,
 // puis fallback dev/prod pour un comportement prévisible.
 const isDev = process.env.NODE_ENV === "development";
@@ -11,20 +13,20 @@ function join(base: string, path: string): string {
 
 const FINANCE_BASE =
   process.env.NEXT_PUBLIC_FINANCE_APP_URL ||
-  (isDev ? "http://localhost:5175" : "https://finance.quelyos.com");
+  getAppUrl('dashboard', isDev ? 'development' : 'production');
 const MARKETING_BASE =
   process.env.NEXT_PUBLIC_MARKETING_APP_URL ||
   (isDev ? "http://localhost:3002" : "https://marketing.quelyos.com");
 const SUPER_ADMIN_BASE =
   process.env.NEXT_PUBLIC_SUPER_ADMIN_URL ||
-  (isDev ? "http://localhost:3010" : "https://superadmin.quelyos.com");
+  getAppUrl('superadmin', isDev ? 'development' : 'production');
 
 const API_FINANCE_BASE =
   process.env.NEXT_PUBLIC_API_FINANCE_URL ||
-  (isDev ? "http://localhost:3004" : "https://api.quelyos.com");
+  getBackendUrl(isDev ? 'development' : 'production');
 const API_MARKETING_BASE =
   process.env.NEXT_PUBLIC_API_MARKETING_URL ||
-  (isDev ? "http://localhost:3004" : "https://api-marketing.quelyos.com");
+  getBackendUrl(isDev ? 'development' : 'production');
 
 export const config = {
   // URLs Finance

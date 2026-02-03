@@ -51,6 +51,7 @@ import {
   type SolutionPlan,
   FALLBACK_PRICING_GRID,
 } from "@/app/lib/plans-api";
+import { getBackendUrl } from '@quelyos/config';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ICÔNES MAPPING
@@ -72,7 +73,7 @@ function DynamicIcon({ name, className }: { name: string; className?: string }) 
 // ═══════════════════════════════════════════════════════════════════════════
 
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8069";
+  process.env.NEXT_PUBLIC_BACKEND_URL || getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
 
 function usePricingGrid(): PricingGrid {
   const [grid, setGrid] = useState<PricingGrid>(FALLBACK_PRICING_GRID);

@@ -21,8 +21,8 @@ describe('health', () => {
 
       const health = getHealthStatus()
       expect(health.errors).toHaveLength(1)
-      expect(health.errors[0].message).toBe('Test error')
-      expect(health.errors[0].component).toBe('TestComponent')
+      expect(health.errors[0]!.message).toBe('Test error')  // Safe: length vérifié avant
+      expect(health.errors[0]!.component).toBe('TestComponent')
     })
 
     it('devrait logger une erreur avec objet Error', () => {
@@ -54,8 +54,8 @@ describe('health', () => {
 
       const health = getHealthStatus()
       expect(health.warnings).toHaveLength(1)
-      expect(health.warnings[0].message).toBe('Test warning')
-      expect(health.warnings[0].component).toBe('TestComponent')
+      expect(health.warnings[0]!.message).toBe('Test warning')  // Safe: length vérifié avant
+      expect(health.warnings[0]!.component).toBe('TestComponent')
     })
   })
 

@@ -71,6 +71,65 @@
 - `package.json` (scripts dev)
 - Toute autre configuration de port
 
+## 🎯 URLS CENTRALISÉES - RÈGLE ABSOLUE
+
+**TOUJOURS utiliser `@quelyos/config`** pour toutes les URLs et ports.
+
+### Import obligatoire
+```typescript
+import { PORTS, APPS, API, getBackendUrl, getAppUrl } from '@quelyos/config';
+```
+
+### Exemples
+
+**❌ INTERDIT - URLs hardcodées**
+```typescript
+const apiUrl = 'http://localhost:8069';
+const dashboardUrl = 'http://localhost:5175';
+server: { port: 5175 }
+```
+
+**✅ OBLIGATOIRE - Config centralisée**
+```typescript
+import { PORTS, API, getBackendUrl, getAppUrl } from '@quelyos/config';
+
+const apiUrl = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
+const dashboardUrl = getAppUrl('dashboard', process.env.NODE_ENV as 'development' | 'production');
+server: { port: PORTS.dashboard }
+```
+
+### Fonctions disponibles
+- **`PORTS`** : Constantes de ports (vitrine, ecommerce, dashboard, superadmin, backend, postgres, redis)
+- **`APPS`** : URLs des 4 frontends (vitrine, ecommerce, dashboard, superadmin) avec dev/prod
+- **`API`** : URLs backend API (dev/prod)
+- **`getBackendUrl(env)`** : URL backend selon l'environnement
+- **`getAppUrl(app, env)`** : URL d'une app selon l'environnement
+- **`getViteProxyConfig()`** : Configuration proxy Vite
+- **`getProxiedImageUrl(url)`** : Anonymisation URLs images backend
+- **`TIMEOUTS`** : Timeouts standardisés (API_REQUEST, TOAST_DURATION, etc.)
+- **`STORAGE_KEYS`** : Clés localStorage standardisées
+
+### Vérification automatique
+```bash
+# OBLIGATOIRE avant chaque commit
+./scripts/check-hardcoded-urls.sh
+```
+
+**Bloquer si échec** : Ne PAS committer si le script détecte des URLs hardcodées.
+
+### Exceptions
+- **Fichiers .env** : Doivent contenir les URLs (BACKEND_URL, etc.)
+- **Fichiers de test** : Scripts de test (.sh), mocks, rapports de performance (.json)
+- **Documentation** : Exemples dans README.md, commentaires explicatifs
+- **Fichiers de configuration build** : `next.config.mjs`, `playwright.config.ts` (utiliser logique inline avec commentaire référençant @quelyos/config)
+
+### Migration depuis URLs hardcodées
+Si vous trouvez une URL hardcodée, remplacez immédiatement par :
+1. Ajouter import : `import { getBackendUrl } from '@quelyos/config'`
+2. Remplacer : `'http://localhost:8069'` → `getBackendUrl(process.env.NODE_ENV as 'development' | 'production')`
+3. Vérifier build : `pnpm build`
+4. Lancer script : `./scripts/check-hardcoded-urls.sh`
+
 ## Langue
 Français pour communications. Code en anglais.
 

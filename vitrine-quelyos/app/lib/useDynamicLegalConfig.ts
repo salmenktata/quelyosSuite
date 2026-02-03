@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { legalConfig } from "./legal-config";
 import type { LegalConfig } from "./legal-api";
+import { getBackendUrl } from '@quelyos/config';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+const BACKEND_URL = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
 
 export function useDynamicLegalConfig(): LegalConfig {
   const [cfg, setCfg] = useState<LegalConfig>(legalConfig as unknown as LegalConfig);

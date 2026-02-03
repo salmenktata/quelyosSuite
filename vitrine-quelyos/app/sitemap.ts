@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
+import { getAppUrl } from '@quelyos/config';
 
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || getAppUrl('vitrine', process.env.NODE_ENV as 'development' | 'production');
 const baseUrl = BASE_URL.replace(/\/$/, "");
 
 type Entry = Omit<MetadataRoute.Sitemap[number], "url"> & { path: string };

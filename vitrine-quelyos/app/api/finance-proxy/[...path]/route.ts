@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
+import { getAppUrl } from '@quelyos/config';
 
 /**
  * API Route Proxy pour Finance
@@ -9,7 +10,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
+  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || getAppUrl('dashboard', process.env.NODE_ENV as 'development' | 'production');
   const { path: pathSegments } = await params;
   const path = pathSegments?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;
@@ -42,7 +43,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || 'http://localhost:5175';
+  const financeUrl = process.env.NEXT_PUBLIC_FINANCE_APP_URL || getAppUrl('dashboard', process.env.NODE_ENV as 'development' | 'production');
   const { path: pathSegments } = await params;
   const path = pathSegments?.join('/') || '';
   const targetUrl = `${financeUrl}/${path}${request.nextUrl.search}`;

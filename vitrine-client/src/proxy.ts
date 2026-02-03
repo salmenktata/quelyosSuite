@@ -12,6 +12,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { logger } from '@/lib/logger';
+import { getBackendUrl } from '@quelyos/config';
 
 // Cache en mémoire pour éviter des appels API répétés
 // Note: Ce cache est par instance de serveur, pas partagé en serverless
@@ -31,7 +32,7 @@ async function lookupTenant(
   }
 
   try {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8069';
+    const backendUrl = getBackendUrl(process.env.NODE_ENV as any);
     const response = await fetch(
       `${backendUrl}/api/ecommerce/tenant/by-domain?domain=${encodeURIComponent(domain)}`,
       {

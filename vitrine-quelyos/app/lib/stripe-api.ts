@@ -8,8 +8,9 @@
  */
 
 import { logger } from './logger';
+import { getBackendUrl } from '@quelyos/config';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8069';
+const BACKEND_URL = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');
 
 interface CreateCheckoutSessionRequest {
   plan_code: string;

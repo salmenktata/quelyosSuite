@@ -86,12 +86,12 @@ function cleanOldLogs() {
   const cutoff = new Date(now - BUFFER_RETENTION_MS).toISOString();
 
   // Supprimer les erreurs trop anciennes
-  while (errorBuffer.length > 0 && errorBuffer[0].timestamp < cutoff) {
+  while (errorBuffer.length > 0 && errorBuffer[0]!.timestamp < cutoff) {  // Safe: length > 0
     errorBuffer.shift();
   }
 
   // Supprimer les warnings trop anciens
-  while (warningBuffer.length > 0 && warningBuffer[0].timestamp < cutoff) {
+  while (warningBuffer.length > 0 && warningBuffer[0]!.timestamp < cutoff) {  // Safe: length > 0
     warningBuffer.shift();
   }
 }
