@@ -24,7 +24,7 @@ import {
   Filter,
   X,
 } from 'lucide-react'
-import type { StockMove } from '@/types'
+import type { StockMove } from '@quelyos/types'
 
 export default function StockMoves() {
   const [page, setPage] = useState(0)
@@ -131,7 +131,7 @@ export default function StockMoves() {
       const link = document.createElement('a')
       const url = URL.createObjectURL(blob)
       link.setAttribute('href', url)
-      link.setAttribute('download', `mouvements_stock_${new Date().toISOString().split('T')[0]}.csv`)
+      link.setAttribute('download', `mouvements_stock_${new Date().toISOString().split('T')[0]!}.csv`)
       link.style.visibility = 'hidden'
       document.body.appendChild(link)
       link.click()

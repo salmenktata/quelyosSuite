@@ -3,7 +3,7 @@
  */
 
 import type { APIResponse, LoginResponse, SessionResponse } from '@quelyos/types'
-import type { Customer } from '@/types'
+import type { Customer } from '@quelyos/types'
 import { logger } from '@quelyos/logger'
 import { tokenService } from '../../tokenService'
 

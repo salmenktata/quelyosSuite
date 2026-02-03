@@ -45,7 +45,7 @@ export type {
   Stage,
   LeadListItem,
   Lead,
-} from '@/types'
+} from '@quelyos/types'
 
 // Note: Pour des imports optimisés (tree-shakeable), utilisez:
 // import { login, logout } from '@/lib/api/modules/auth'

@@ -36,8 +36,8 @@ export default function StockTurnoverPage() {
   const [dateRange, setDateRange] = useState(() => {
     const now = Date.now()
     return {
-      start_date: new Date(now - 90 * 86400000).toISOString().split('T')[0],
-      end_date: new Date(now).toISOString().split('T')[0],
+      start_date: new Date(now - 90 * 86400000).toISOString().split('T')[0]!,
+      end_date: new Date(now).toISOString().split('T')[0]!,
     }
   })
   const [statusFilter, setStatusFilter] = useState<TurnoverStatus | 'all'>('all')
@@ -175,8 +175,8 @@ export default function StockTurnoverPage() {
           <div className="mt-4 flex gap-2">
             <button
               onClick={() => setDateRange({
-                start_date: new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0],
-                end_date: new Date().toISOString().split('T')[0]
+                start_date: new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0]!,
+                end_date: new Date().toISOString().split('T')[0]!
               })}
               className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
             >
@@ -184,8 +184,8 @@ export default function StockTurnoverPage() {
             </button>
             <button
               onClick={() => setDateRange({
-                start_date: new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0],
-                end_date: new Date().toISOString().split('T')[0]
+                start_date: new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0]!,
+                end_date: new Date().toISOString().split('T')[0]!
               })}
               className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
             >
@@ -193,8 +193,8 @@ export default function StockTurnoverPage() {
             </button>
             <button
               onClick={() => setDateRange({
-                start_date: new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0],
-                end_date: new Date().toISOString().split('T')[0]
+                start_date: new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0]!,
+                end_date: new Date().toISOString().split('T')[0]!
               })}
               className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
             >

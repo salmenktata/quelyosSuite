@@ -32,10 +32,10 @@ interface TimeRange {
 }
 
 const TIME_RANGES: TimeRange[] = [
-  { label: "Aujourd'hui", value: new Date().toISOString().split('T')[0] },
-  { label: "Hier", value: new Date(Date.now() - 86400000).toISOString().split('T')[0] },
-  { label: "Il y a 7 jours", value: new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0] },
-  { label: "Il y a 30 jours", value: new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0] },
+  { label: "Aujourd'hui", value: new Date().toISOString().split('T')[0]! },
+  { label: "Hier", value: new Date(Date.now() - 86400000).toISOString().split('T')[0]! },
+  { label: "Il y a 7 jours", value: new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0]! },
+  { label: "Il y a 30 jours", value: new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0]! },
 ]
 
 export default function StockValuationPage() {

@@ -18,7 +18,7 @@ import type {
   Stage,
   LeadListItem,
   Lead,
-} from '@/types'
+} from '@quelyos/types'
 import type {
   APIResponse,
   LoginResponse,
