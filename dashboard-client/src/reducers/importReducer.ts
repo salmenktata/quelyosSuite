@@ -117,7 +117,7 @@ export function importReducer(state: ImportState, action: ImportAction): ImportS
       return {
         ...state,
         currentStep: currentIndex < STEP_ORDER.length - 1
-          ? STEP_ORDER[currentIndex + 1]
+          ? STEP_ORDER[currentIndex + 1]!  // Safe: index vérifié par condition
           : state.currentStep,
       };
     }
@@ -127,7 +127,7 @@ export function importReducer(state: ImportState, action: ImportAction): ImportS
       return {
         ...state,
         currentStep: currentIndexRev > 0
-          ? STEP_ORDER[currentIndexRev - 1]
+          ? STEP_ORDER[currentIndexRev - 1]!  // Safe: index vérifié par condition
           : state.currentStep,
       };
     }

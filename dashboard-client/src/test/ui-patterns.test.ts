@@ -89,7 +89,7 @@ describe('UI/UX Patterns - Dark/Light Mode', () => {
         let hasViolation = false
 
         while ((match = classNameRegex.exec(content)) !== null) {
-          const classes = match[1]
+          const classes = match[1]!  // Safe: capture group exists when match !== null
 
           // Si text-white présent dans cette className
           if (/\btext-white\b/.test(classes)) {
@@ -186,7 +186,7 @@ describe('UI/UX Patterns - Dark/Light Mode', () => {
         let hasViolation = false
 
         while ((match = inputWithBgWhiteRegex.exec(content)) !== null) {
-          const classes = match[1]
+          const classes = match[1]!  // Safe: capture group exists when match !== null
 
           // Vérifier si dark:bg- est présent dans cette className
           if (!/dark:bg-/.test(classes)) {

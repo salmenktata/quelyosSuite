@@ -6,6 +6,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { POSCartLine, POSProduct, POSCustomer } from '../../types/pos'
+import { assertArrayItem } from '../../lib/utils/safe-access'
 
 // ============================================================================
 // TYPES
@@ -154,7 +155,8 @@ export const usePOSCartStore = create<CartState>()(
           if (existingIndex >= 0) {
             // Produit existe, incrémenter quantité
             newLines = [...state.lines]
-            const line = { ...newLines[existingIndex] }
+            const existingLine = assertArrayItem(newLines, existingIndex, 'Ligne panier introuvable')
+            const line = { ...existingLine }
             line.quantity += quantity
             line.priceSubtotal = line.quantity * line.priceUnit * (1 - line.discount / 100)
             newLines[existingIndex] = line
