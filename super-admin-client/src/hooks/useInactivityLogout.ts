@@ -31,7 +31,14 @@ export function useInactivityLogout(options: UseInactivityLogoutOptions = {}) {
 
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const warningRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const lastActivityRef = useRef(Date.now())
+  const lastActivityRef = useRef<number>(0)
+
+  // Initialiser lastActivity au premier render
+  useEffect(() => {
+    if (lastActivityRef.current === 0) {
+      lastActivityRef.current = Date.now()
+    }
+  }, [])
 
   /**
    * Déconnecte l'utilisateur via callback

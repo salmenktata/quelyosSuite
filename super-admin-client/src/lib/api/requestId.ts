@@ -7,6 +7,8 @@
  * - Analyse de performance
  */
 
+import { useState } from 'react'
+
 // Use native crypto.randomUUID() instead of uuid package
 const uuidv4 = () => crypto.randomUUID()
 
@@ -147,14 +149,6 @@ export function createRequestContext(): {
  */
 export function useRequestId(): string {
   // Génère un ID stable pour le composant
-  const [requestId] = React.useState(() => generateRequestId())
+  const [requestId] = useState(() => generateRequestId())
   return requestId
-}
-
-// Nécessite React (import conditionnel pour éviter les erreurs SSR)
-let React: typeof import('react')
-try {
-  React = require('react')
-} catch {
-  // React non disponible
 }

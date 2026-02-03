@@ -64,6 +64,7 @@ export function Dashboard() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- Complex dependency pattern, manual memoization intentional
   const trends = useMemo(() => {
     if (!metrics?.mrr_history?.length) return { mrr: { value: 0, label: '0%' }, arr: { value: 0, label: '0%' } }
     const mrrTrend = computeTrend(metrics.mrr_history)
@@ -72,6 +73,7 @@ export function Dashboard() {
   }, [metrics?.mrr_history])
 
   // Sparkline data: last 6 months of MRR
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- Optional chaining in dependency, manual memoization intentional
   const sparklineData = useMemo(() => {
     if (!metrics?.mrr_history) return []
     return metrics.mrr_history.slice(-6)
