@@ -58,19 +58,19 @@ export function EventMarkers({
         );
 
         for (const match of eventMatches) {
-          const eventContent = match[1];
+          const eventContent = match[1]!;
           const dateMatch = eventContent.match(/DTSTART[;:](\d{8})/);
           const summaryMatch = eventContent.match(/SUMMARY:(.*)/);
 
           if (dateMatch && summaryMatch) {
-            const dateStr = dateMatch[1];
+            const dateStr = dateMatch[1]!;
             const date = `${dateStr.slice(0, 4)}-${dateStr.slice(
               4,
               6
             )}-${dateStr.slice(6, 8)}`;
             parsedEvents.push({
               date,
-              label: summaryMatch[1].trim(),
+              label: summaryMatch[1]!.trim(),
             });
           }
         }

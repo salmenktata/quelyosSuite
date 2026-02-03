@@ -270,15 +270,16 @@ return value.toUpperCase()
 | 2026-02-03 | pages (batch 2) | 5 | 162 |
 | 2026-02-03 | pages (batch 3) | 6 | 156 |
 | 2026-02-03 | components (batch 1) | ~40 | ~116 |
-| 2026-02-03 | mixed (batch 2) | 9 | ~107 |
-| (À faire) | remaining | ~57 | ~50 |
+| 2026-02-03 | mixed (batch 2) | 7 | ~109 |
+| 2026-02-03 | components (batch 2) | 4 | ~105 |
+| (À faire) | remaining | ~105 | ~0 |
 
 **✅ Quick Wins terminés** : 13/217 erreurs corrigées (6%) en ~20 minutes
 **✅ Hooks partiellement terminé** : 15/19 erreurs corrigées (4 restantes)
 **✅ Lib partiellement terminé** : 10/29 erreurs corrigées (19 restantes)
 **✅ Pages partiellement terminé** : 31/~50 erreurs corrigées (19 restantes)
-**✅ Components partiellement terminé** : ~41/~106 erreurs corrigées (65 restantes)
-**📊 Progression totale** : ~110/217 erreurs corrigées (50.7%)
+**✅ Components partiellement terminé** : ~45/~106 erreurs corrigées (61 restantes)
+**📊 Progression totale** : ~112/217 erreurs corrigées (51.6%) 🎉
 
 ---
 

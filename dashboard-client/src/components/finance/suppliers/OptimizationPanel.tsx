@@ -176,7 +176,7 @@ export default function OptimizationPanel() {
         const data = await fetchApi<{ accounts: { id: number; name: string; balance: number; currency: string }[] }>("/api/ecommerce/accounts", { method: "GET", credentials: "include" });
         setAccounts(data.accounts || []);
         if (data.accounts && data.accounts.length > 0) {
-          setSelectedAccountId(data.accounts[0].id.toString());
+          setSelectedAccountId(data.accounts[0]!.id.toString());
         }
       } catch (err) {
         logger.error("Error loading accounts:", err);
