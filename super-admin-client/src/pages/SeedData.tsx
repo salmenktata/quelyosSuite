@@ -9,7 +9,7 @@
  * - Option reset données avant génération
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Database,
@@ -84,7 +84,7 @@ export function SeedData() {
   // État génération
   const [currentJobId, setCurrentJobId] = useState<string | null>(null)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
-  const [startTime, setStartTime] = useState<number | null>(null)
+  const startTimeRef = useRef<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
 
   // Fetch tenants
@@ -123,20 +123,27 @@ export function SeedData() {
 
   // Timer elapsed
   useEffect(() => {
-    if (jobStatus?.status === 'running' && !startTime) {
-      setStartTime(Date.now())
-    } else if (jobStatus?.status !== 'running' && startTime) {
-      setStartTime(null)
-      setElapsedTime(0)
-    }
+    if (jobStatus?.status === 'running') {
+      if (!startTimeRef.current) {
+        startTimeRef.current = Date.now()
+      }
 
-    if (jobStatus?.status === 'running' && startTime) {
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000))
+        if (startTimeRef.current) {
+          setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000))
+        }
       }, 1000)
+
       return () => clearInterval(interval)
+    } else {
+      // Job terminé - reset en dehors du render cycle
+      if (startTimeRef.current) {
+        startTimeRef.current = null
+        // Reset elapsedTime de manière asynchrone
+        queueMicrotask(() => setElapsedTime(0))
+      }
     }
-  }, [jobStatus?.status, startTime])
+  }, [jobStatus?.status])
 
   // Mutation génération
   const generateSeed = useMutation({

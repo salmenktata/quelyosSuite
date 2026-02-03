@@ -83,7 +83,7 @@ export function LegalSettings() {
   }, [])
 
   useEffect(() => {
-    fetchData()
+    queueMicrotask(() => fetchData())
   }, [fetchData])
 
   const handleChange = (field: keyof LegalData, value: string) => {

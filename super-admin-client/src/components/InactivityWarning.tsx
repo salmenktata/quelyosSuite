@@ -16,7 +16,8 @@ export function InactivityWarning({ remainingTime, onStayActive }: InactivityWar
   const [timeLeft, setTimeLeft] = useState(Math.floor(remainingTime / 1000))
 
   useEffect(() => {
-    setTimeLeft(Math.floor(remainingTime / 1000))
+    // Mise à jour asynchrone pour éviter setState dans effect
+    queueMicrotask(() => setTimeLeft(Math.floor(remainingTime / 1000)))
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => Math.max(0, prev - 1))

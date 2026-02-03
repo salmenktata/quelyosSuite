@@ -119,10 +119,12 @@ export function SidebarNav({ collapsed, onOpenCommandPalette, ticketCount }: Sid
       s.items.some(item => location.pathname === item.path || location.pathname.startsWith(item.path + '/'))
     )
     if (activeSection && !openSections[activeSection.id]) {
-      setOpenSections(prev => {
-        const next = { ...prev, [activeSection.id]: true }
-        localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next))
-        return next
+      queueMicrotask(() => {
+        setOpenSections(prev => {
+          const next = { ...prev, [activeSection.id]: true }
+          localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next))
+          return next
+        })
       })
     }
   }, [location.pathname]) // eslint-disable-line react-hooks/exhaustive-deps

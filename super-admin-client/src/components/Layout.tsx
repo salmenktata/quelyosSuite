@@ -30,7 +30,7 @@ export function Layout() {
 
   // Fermer menu mobile au changement de route
   useEffect(() => {
-    setMobileOpen(false)
+    queueMicrotask(() => setMobileOpen(false))
   }, [location.pathname])
 
   const handleLogout = () => {

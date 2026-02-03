@@ -22,7 +22,7 @@ export function NoticeAnalytics() {
   useEffect(() => {
     // Charger les analytics au montage
     const data = getAllNoticeAnalytics();
-    setAnalytics(data);
+    queueMicrotask(() => setAnalytics(data));
   }, []);
 
   const handleExport = () => {

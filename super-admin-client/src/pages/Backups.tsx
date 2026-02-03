@@ -9,7 +9,7 @@
  * - Statut backup auto
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import {
@@ -54,10 +54,10 @@ export function Backups() {
   const [selectedTenant, setSelectedTenant] = useState<number | null>(null)
   const [showSchedulePanel, setShowSchedulePanel] = useState(false)
   const [schedule, setSchedule] = useState<BackupSchedule>(DEFAULT_SCHEDULE)
-  const [restoreStartTime, setRestoreStartTime] = useState<number | null>(null)
+  const restoreStartTimeRef = useRef<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isRestoringActive, setIsRestoringActive] = useState(false)
-  const [backupStartTime, setBackupStartTime] = useState<number | null>(null)
+  const backupStartTimeRef = useRef<number | null>(null)
   const [backupElapsedTime, setBackupElapsedTime] = useState(0)
 
   // Fetch tenants pour dropdown
@@ -99,37 +99,47 @@ export function Backups() {
 
   // Timer pour afficher le temps écoulé pendant la restauration
   useEffect(() => {
-    if (isRestoring && !restoreStartTime) {
-      setRestoreStartTime(Date.now())
-    } else if (!isRestoring && restoreStartTime) {
-      setRestoreStartTime(null)
-      setElapsedTime(0)
-    }
+    if (isRestoring) {
+      if (!restoreStartTimeRef.current) {
+        restoreStartTimeRef.current = Date.now()
+      }
 
-    if (isRestoring && restoreStartTime) {
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - restoreStartTime) / 1000))
+        if (restoreStartTimeRef.current) {
+          setElapsedTime(Math.floor((Date.now() - restoreStartTimeRef.current) / 1000))
+        }
       }, 1000)
+
       return () => clearInterval(interval)
+    } else {
+      if (restoreStartTimeRef.current) {
+        restoreStartTimeRef.current = null
+        queueMicrotask(() => setElapsedTime(0))
+      }
     }
-  }, [isRestoring, restoreStartTime])
+  }, [isRestoring])
 
   // Timer pour afficher le temps écoulé pendant la création de backup
   useEffect(() => {
-    if (isBackupRunning && !backupStartTime) {
-      setBackupStartTime(Date.now())
-    } else if (!isBackupRunning && backupStartTime) {
-      setBackupStartTime(null)
-      setBackupElapsedTime(0)
-    }
+    if (isBackupRunning) {
+      if (!backupStartTimeRef.current) {
+        backupStartTimeRef.current = Date.now()
+      }
 
-    if (isBackupRunning && backupStartTime) {
       const interval = setInterval(() => {
-        setBackupElapsedTime(Math.floor((Date.now() - backupStartTime) / 1000))
+        if (backupStartTimeRef.current) {
+          setBackupElapsedTime(Math.floor((Date.now() - backupStartTimeRef.current) / 1000))
+        }
       }, 1000)
+
       return () => clearInterval(interval)
+    } else {
+      if (backupStartTimeRef.current) {
+        backupStartTimeRef.current = null
+        queueMicrotask(() => setBackupElapsedTime(0))
+      }
     }
-  }, [isBackupRunning, backupStartTime])
+  }, [isBackupRunning])
 
   const triggerBackup = useMutation({
     mutationFn: async (params: { type: 'full' | 'incremental', tenant_id?: number }) => {
