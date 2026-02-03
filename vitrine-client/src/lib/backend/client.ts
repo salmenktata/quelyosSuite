@@ -116,20 +116,7 @@ export class BackendClient {
       return config;
     });
 
-    // Log errors for debugging (only in development)
-    this.api.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        // Ne pas logger les 404 qui sont des fonctionnalités non implémentées
-        if (error.response?.status !== 404) {
-          logger.error('API Error:', error);
-          if (error.response?.data?.error) {
-            logger.error('Détails:', error.response.data.error);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
+    // Pas d'intercepteur de logging - les erreurs sont gérées dans jsonrpc()
   }
 
   /**
