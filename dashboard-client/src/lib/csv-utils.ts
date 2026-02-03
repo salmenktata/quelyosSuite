@@ -14,7 +14,7 @@ export function generateCSV(data: Record<string, unknown>[], headers?: string[])
   }
 
   // Utiliser les clés du premier objet si pas d'headers fournis
-  const columnHeaders = headers || Object.keys(data[0])
+  const columnHeaders = headers || Object.keys(data[0]!)
 
   // En-tête CSV
   const csvHeaders = columnHeaders.join(',')

@@ -23,7 +23,7 @@ function pathToPageId(moduleId: ModuleId, path: string): string | null {
   // Routes standard: /<module>/<page>
   const prefix = `/${moduleId}/`
   if (path.startsWith(prefix)) {
-    return path.slice(prefix.length).split('/')[0] || null
+    return path.slice(prefix.length).split('/')[0] ?? null
   }
   // Route racine du module: /<module> → 'dashboard'
   if (path === `/${moduleId}`) return 'dashboard'

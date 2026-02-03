@@ -57,7 +57,7 @@ export function PaymentModal({
   // Reset on open
   useEffect(() => {
     if (isOpen) {
-      const defaultMethod = paymentMethods.find((m) => m.code === 'cash') || paymentMethods[0] || null
+      const defaultMethod = (paymentMethods.find((m) => m.code === 'cash') || paymentMethods[0]) ?? null
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedMethod(defaultMethod)
       setAmount(total.toFixed(2))

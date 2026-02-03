@@ -97,7 +97,7 @@ export function usePOSSync(options: UsePOSSyncOptions = {}) {
       if (response.data.success && response.data.data?.synced?.[0]) {
         return {
           success: true,
-          serverId: response.data.data.synced[0].server_id,
+          serverId: response.data.data.synced[0]!.server_id,
         }
       }
 

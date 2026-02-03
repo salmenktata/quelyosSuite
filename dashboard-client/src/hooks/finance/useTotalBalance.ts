@@ -88,7 +88,7 @@ export function useTotalBalance(): BalanceData {
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
           const transactions = await api.request<Array<{ type: string; amount: number; date: string }>>(
-            `/company/transactions?from=${yesterday.toISOString().split('T')[0]}`
+            `/company/transactions?from=${yesterday.toISOString().split('T')[0]!}`
           );
           
           variation24h = transactions.reduce((sum, tx) => {
