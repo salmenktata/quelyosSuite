@@ -39,7 +39,7 @@ function ForecastTooltip({ active, payload, currency, showConfidence, showScenar
 }) {
   if (!active || !payload || !payload.length) return null;
 
-  const data = payload[0].payload;
+  const data = payload[0]!.payload;
   const fmt = (value: number) =>
     new Intl.NumberFormat("fr-FR", {
       style: "currency",

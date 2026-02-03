@@ -137,7 +137,7 @@ export function SearchAutocomplete<T = unknown>({
       case 'Enter':
         e.preventDefault()
         if (highlightedIndex >= 0) {
-          handleSelectSuggestion(suggestions[highlightedIndex])
+          handleSelectSuggestion(suggestions[highlightedIndex]!)
         } else {
           handleSearch()
         }

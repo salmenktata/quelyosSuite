@@ -47,7 +47,7 @@ export function EventMarkers({
             const [date, label] = line.split(",");
             return { date: date?.trim(), label: label?.trim() };
           })
-          .filter((e) => e.date && e.label);
+          .filter((e): e is { date: string; label: string } => !!e.date && !!e.label);
 
         onImport(parsedEvents);
       } else if (file.name.endsWith(".ics")) {

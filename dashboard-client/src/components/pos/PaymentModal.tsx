@@ -87,7 +87,7 @@ export function PaymentModal({
       }
     } else {
       // Limit to 2 decimal places
-      if (amount.includes('.') && amount.split('.')[1].length >= 2) return
+      if (amount.includes('.') && (amount.split('.')[1]?.length ?? 0) >= 2) return
       setAmount((prev) => prev + value)
     }
   }

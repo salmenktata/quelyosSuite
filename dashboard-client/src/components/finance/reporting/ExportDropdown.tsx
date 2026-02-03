@@ -39,7 +39,7 @@ export function ExportDropdown({
       const data = await onExport();
       // Convert 2D array to array of objects for exportData
       if (data.length > 0) {
-        const headers = data[0];
+        const headers = data[0]!;
         const rows = data.slice(1).map(row => {
           const obj: Record<string, unknown> = {};
           headers.forEach((header, i) => {

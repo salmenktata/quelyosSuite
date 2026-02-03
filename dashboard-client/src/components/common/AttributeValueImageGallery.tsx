@@ -153,7 +153,7 @@ export function AttributeValueImageGallery({
     if (draggedIndex === null || draggedIndex === index) return
 
     const newImages = [...images]
-    const draggedImage = newImages[draggedIndex]
+    const draggedImage = newImages[draggedIndex]!
     newImages.splice(draggedIndex, 1)
     newImages.splice(index, 0, draggedImage)
 

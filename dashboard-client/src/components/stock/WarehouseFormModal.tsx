@@ -81,7 +81,7 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
     form1.setValue('name', name)
     // Générer code automatiquement (ex: "Entrepôt Paris" -> "PARIS")
     const words = name.trim().split(' ')
-    const lastWord = words[words.length - 1]
+    const lastWord = words[words.length - 1] ?? ''
     const autoCode = lastWord.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 5)
     if (autoCode && !form1.getValues('code')) {
       form1.setValue('code', autoCode)
@@ -283,7 +283,7 @@ export function WarehouseFormModal({ isOpen, onClose, onSuccess }: WarehouseForm
                   </label>
                 </div>
 
-                {useExistingPartner ? (
+                {form2.watch('use_existing_partner') ? (
                   <div>
                     <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                       Sélectionner un contact

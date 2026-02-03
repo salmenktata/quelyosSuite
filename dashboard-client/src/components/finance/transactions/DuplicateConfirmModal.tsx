@@ -38,12 +38,12 @@ export function DuplicateConfirmModal({
   onCancel,
 }: Props) {
   const topMatch = matches[0];
-  const confidencePercent = Math.round(topMatch?.similarity_score * 100);
+  const confidencePercent = Math.round((topMatch?.similarity_score ?? 0) * 100);
 
   return (
     <LazyMotion features={domAnimation}>
     <AnimatePresence>
-      {isOpen && matches.length > 0 && (
+      {isOpen && matches.length > 0 && topMatch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           {/* Overlay */}
           <m.div

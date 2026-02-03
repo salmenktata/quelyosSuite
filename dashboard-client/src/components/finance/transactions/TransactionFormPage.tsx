@@ -305,7 +305,7 @@ export function TransactionFormPage({ transactionType }: TransactionFormPageProp
 
       // Enregistrer que l'alerte est ignorée
       if (matches.length > 0) {
-        await api(`/finance/duplicates/${matches[0].transactionId}/ignore`, {
+        await api(`/finance/duplicates/${matches[0]!.transactionId}/ignore`, {
           method: "POST",
           body: {
             description: pending.description,

@@ -139,7 +139,7 @@ export function ImageGallery({
 
     // Réorganiser visuellement (optimistic UI)
     const newImages = [...images]
-    const draggedImage = newImages[draggedIndex]
+    const draggedImage = newImages[draggedIndex]!
     newImages.splice(draggedIndex, 1)
     newImages.splice(index, 0, draggedImage)
 

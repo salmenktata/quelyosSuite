@@ -164,7 +164,7 @@ export function SectionTabs({ tabs, activeTab, onTabChange, moduleName, moduleDe
   // Extraire la couleur du module depuis moduleColor (ex: "text-indigo-600" -> "indigo")
   const colorMatch = moduleColor?.match(/text-(\w+)-/)
   const colorName = colorMatch?.[1] || 'emerald'
-  const tabColors = TAB_COLOR_VARIANTS[colorName] || TAB_COLOR_VARIANTS.emerald
+  const tabColors = TAB_COLOR_VARIANTS[colorName] ?? TAB_COLOR_VARIANTS.emerald!
 
   return (
     <div className="relative flex items-stretch w-full bg-white dark:bg-gray-800">
