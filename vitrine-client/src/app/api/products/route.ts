@@ -18,9 +18,10 @@ export async function GET(request: NextRequest) {
     if (searchParams.get('category_id')) {
       params.category_id = parseInt(searchParams.get('category_id')!);
     }
-    if (searchParams.get('search')) {
-      params.search = searchParams.get('search');
-    }
+      if (searchParams.get('search')) {
+        const search = searchParams.get('search');
+        if (search) params.search = search;
+      }
     if (searchParams.get('min_price')) {
       params.min_price = parseFloat(searchParams.get('min_price')!);
     }
@@ -41,9 +42,10 @@ export async function GET(request: NextRequest) {
     }
     if (searchParams.get('offset')) {
       params.offset = parseInt(searchParams.get('offset')!);
-    }
-    if (searchParams.get('sort')) {
-      params.sort = searchParams.get('sort');
+      if (searchParams.get('sort')) {
+        const sort = searchParams.get('sort');
+        if (sort) params.sort = sort;
+      }
     }
 
     // Appeler l'API backend
