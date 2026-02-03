@@ -74,7 +74,7 @@ export function TrendChart({
             style={{ fontSize: "12px" }}
             tickFormatter={(value) => {
               // Format YYYY-MM to MMM YY
-              const [year, month] = value.split("-");
+              const [year = "2024", month = "1"] = value.split("-");
               const date = new Date(parseInt(year), parseInt(month) - 1);
               return date.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
             }}
