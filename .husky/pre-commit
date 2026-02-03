@@ -22,5 +22,83 @@ fi
 
 echo "✅ Anonymisation conforme (P0=0, P1=0)"
 
+# Vérification URLs hardcodées
+echo ""
+echo "🔍 Vérification URLs hardcodées..."
+
+# Patterns interdits
+FORBIDDEN_PATTERNS=(
+  "http://localhost:8069"
+  "http://localhost:3000"
+  "http://localhost:3001"
+  "http://localhost:5175"
+  "http://localhost:9000"
+)
+
+# Répertoires à scanner
+SCAN_DIRS=(
+  "dashboard-client/src"
+  "vitrine-client/src"
+  "super-admin-client/src"
+  "vitrine-quelyos/app"
+  "packages/backend/src"
+)
+
+# Fichiers stagés seulement
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(ts|tsx|js|jsx)$")
+
+if [ -n "$STAGED_FILES" ]; then
+  violations=0
+
+  for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
+    # Vérifier chaque fichier stagé
+    for file in $STAGED_FILES; do
+      # Vérifier si le fichier est dans un des répertoires à scanner
+      for scan_dir in "${SCAN_DIRS[@]}"; do
+        if [[ "$file" == "$scan_dir"* ]]; then
+          # Chercher le pattern dans le fichier
+          if grep -q "$pattern" "$file" 2>/dev/null; then
+            if [ $violations -eq 0 ]; then
+              echo ""
+              echo "❌ URLs hardcodées détectées dans les fichiers stagés :"
+              echo ""
+            fi
+            echo "   📄 $file"
+            echo "      Pattern : $pattern"
+            grep -n "$pattern" "$file" | head -3 | sed 's/^/      /'
+            echo ""
+            violations=$((violations + 1))
+          fi
+          break
+        fi
+      done
+    done
+  done
+
+  if [ $violations -gt 0 ]; then
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "❌ $violations violation(s) détectée(s)"
+    echo ""
+    echo "💡 Solution : Utiliser @quelyos/config"
+    echo ""
+    echo "   Avant :"
+    echo "   const apiUrl = 'http://localhost:8069';"
+    echo ""
+    echo "   Après :"
+    echo "   import { getBackendUrl } from '@quelyos/config';"
+    echo "   const apiUrl = getBackendUrl(process.env.NODE_ENV as 'development' | 'production');"
+    echo ""
+    echo "📖 Voir : CLAUDE.md section '🎯 URLS CENTRALISÉES'"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    exit 1
+  fi
+
+  echo "✅ Aucune URL hardcodée détectée"
+else
+  echo "⏭️  Aucun fichier .ts/.tsx stagé"
+fi
+
 # Run lint-staged
+echo ""
+echo "🔍 Lancement lint-staged..."
 pnpm exec lint-staged
