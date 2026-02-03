@@ -51,7 +51,7 @@ describe('useContactLists', () => {
     })
 
     expect(result.current.data?.lists).toHaveLength(2)
-    expect(result.current.data?.lists[0].name).toBe('VIP Clients')
+    expect(result.current.data?.lists[0]!.name).toBe('VIP Clients')  // Safe: length vérifié avant
   })
 
   it('handles fetch error', async () => {

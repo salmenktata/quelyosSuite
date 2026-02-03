@@ -74,7 +74,7 @@ describe('useTableData', () => {
     })
 
     expect(result.current.filteredData).toHaveLength(1)
-    expect(result.current.filteredData[0].name).toBe('Alpha')
+    expect(result.current.filteredData[0]!.name).toBe('Alpha')  // Safe: length vérifié avant
   })
 
   it('returns all data when search query is empty', async () => {
@@ -117,16 +117,16 @@ describe('useTableData', () => {
       result.current.setSort('amount', 'asc')
     })
 
-    expect(result.current.sortedData[0].amount).toBe(50)
-    expect(result.current.sortedData[3].amount).toBe(300)
+    expect(result.current.sortedData[0]!.amount).toBe(50)  // Safe: données mockées présentes
+    expect(result.current.sortedData[3]!.amount).toBe(300)
 
     // Sort by amount descending
     act(() => {
       result.current.setSort('amount', 'desc')
     })
 
-    expect(result.current.sortedData[0].amount).toBe(300)
-    expect(result.current.sortedData[3].amount).toBe(50)
+    expect(result.current.sortedData[0]!.amount).toBe(300)  // Safe: données mockées présentes
+    expect(result.current.sortedData[3]!.amount).toBe(50)
   })
 
   it('toggles sort direction on same column', async () => {

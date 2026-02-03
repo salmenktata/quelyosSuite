@@ -136,7 +136,7 @@ describe('useDetectModule', () => {
 
     it('devrait utiliser MODULES[0] si accessibleModules est vide', () => {
       const { result } = renderHook(() => useDetectModule([], '/finance'))
-      expect(result.current.id).toBe(MODULES[0].id)
+      expect(result.current.id).toBe(MODULES[0]!.id)  // Safe: MODULES est une constante non-vide
     })
   })
 

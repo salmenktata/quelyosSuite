@@ -206,8 +206,8 @@ export function useVoiceOrdering(options: UseVoiceOrderingOptions = {}): UseVoic
 
     recognition.onresult = (event) => {
       const results = event.results
-      const lastResult = results[results.length - 1]
-      const transcript = lastResult[0].transcript
+      const lastResult = results[results.length - 1]!  // Safe: onresult toujours avec résultats
+      const transcript = lastResult[0]!.transcript  // Safe: au moins 1 alternative
 
       setTranscript(transcript)
 
