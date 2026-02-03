@@ -3,7 +3,8 @@
 # Script pour basculer entre 2 comptes Claude Max Pro
 # Usage: ./scripts/switch-claude-account.sh [1|2]
 
-set -e
+set -eE
+trap 'echo "⚠️ Erreur ligne $LINENO"; exit 1' ERR
 
 ACCOUNTS_DIR="$HOME/.claude-accounts"
 CLAUDE_CONFIG="$HOME/.claude.json"
@@ -59,8 +60,17 @@ restore_account() {
     fi
 
     echo "🔄 Nettoyage des credentials actuelles..."
-    # Nettoyer le dossier .claude
-    rm -rf "$CLAUDE_DIR"
+    # Nettoyer le dossier .claude (force même si fichiers protégés)
+    if [ -d "$CLAUDE_DIR" ]; then
+        chmod -R u+w "$CLAUDE_DIR" 2>/dev/null || true
+        rm -rf "$CLAUDE_DIR" 2>/dev/null || true
+        # Si toujours présent, essayer avec sudo-less approach
+        if [ -d "$CLAUDE_DIR" ]; then
+            find "$CLAUDE_DIR" -type f -exec chmod u+w {} \; 2>/dev/null || true
+            find "$CLAUDE_DIR" -type d -exec chmod u+w {} \; 2>/dev/null || true
+            rm -rf "$CLAUDE_DIR" 2>/dev/null || true
+        fi
+    fi
     # Nettoyer le fichier de config
     rm -f "$CLAUDE_CONFIG"
     # Nettoyer le keychain
