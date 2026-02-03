@@ -162,7 +162,7 @@ export default function TicketDetail() {
             { label: 'Accueil', href: '/' },
             { label: 'Support' },
             { label: 'Mes Tickets', href: '/support/tickets' },
-            { label: ticket.reference },
+            { label: ticket.reference ?? 'Ticket' },
           ]}
         />
 
