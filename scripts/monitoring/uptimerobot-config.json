@@ -1,0 +1,68 @@
+{
+  "monitors": [
+    {
+      "friendly_name": "Quelyos Vitrine",
+      "url": "https://quelyos.com/",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200"
+    },
+    {
+      "friendly_name": "Quelyos E-commerce",
+      "url": "https://shop.quelyos.com/",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200"
+    },
+    {
+      "friendly_name": "Quelyos Dashboard",
+      "url": "https://backoffice.quelyos.com/",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200"
+    },
+    {
+      "friendly_name": "Quelyos Super Admin",
+      "url": "https://admin.quelyos.com/",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200"
+    },
+    {
+      "friendly_name": "Quelyos API Health",
+      "url": "https://api.quelyos.com/api/health",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200",
+      "keyword_type": "exists",
+      "keyword_value": "ok"
+    },
+    {
+      "friendly_name": "Quelyos E-commerce API Health",
+      "url": "https://shop.quelyos.com/api/health",
+      "type": "HTTP(s)",
+      "interval": 300,
+      "http_method": "GET",
+      "expected_status_code": "200",
+      "keyword_type": "exists",
+      "keyword_value": "healthy"
+    }
+  ],
+  "alert_contacts": [
+    {
+      "type": "email",
+      "friendly_name": "Email Alerts",
+      "value": "admin@quelyos.com"
+    }
+  ],
+  "settings": {
+    "check_interval": "5 minutes",
+    "retry_interval": "1 minute",
+    "alerting_threshold": "2 consecutive failures"
+  }
+}
