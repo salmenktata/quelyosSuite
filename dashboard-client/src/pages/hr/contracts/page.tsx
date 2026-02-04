@@ -10,7 +10,7 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useContracts, useExpiringContracts } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -78,12 +78,7 @@ export default function ContractsPage() {
       <Layout>
         <div className="p-4 md:p-8 space-y-6">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-20" />
-            ))}
-          </div>
+          <SkeletonTable rows={10} columns={5} />
         </div>
       </Layout>
     )

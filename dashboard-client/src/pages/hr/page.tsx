@@ -9,7 +9,7 @@
  * - Tableau des contrats arrivant à échéance
  */
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useHRDashboard } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -43,16 +43,9 @@ export default function HRDashboard() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48" />
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-              ))}
-            </div>
-          </div>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <SkeletonTable rows={10} columns={4} />
         </div>
       </Layout>
     )

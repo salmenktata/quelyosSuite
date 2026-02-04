@@ -10,7 +10,7 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useSkillTypes, useSkills, useCreateSkillType, useCreateSkill, type SkillType, type Skill } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -61,15 +61,7 @@ export default function SkillsPage() {
       <Layout>
         <div className="p-4 md:p-8 space-y-6">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-48" />
-            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-24" />
-              ))}
-            </div>
-          </div>
+          <SkeletonTable rows={10} columns={4} />
         </div>
       </Layout>
     )

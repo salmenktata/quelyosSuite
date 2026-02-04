@@ -10,7 +10,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import {
   useEmployee,
@@ -120,10 +120,8 @@ export default function EmployeeDetailPage() {
     return (
       <Layout>
         <div className="p-4 md:p-8 space-y-6">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
-            <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-          </div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <SkeletonTable rows={10} columns={4} />
         </div>
       </Layout>
     )

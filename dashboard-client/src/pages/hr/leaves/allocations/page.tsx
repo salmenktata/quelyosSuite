@@ -9,7 +9,7 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveAllocations, useLeaveBalances, useLeaveTypes, useBulkCreateAllocations } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -37,6 +37,17 @@ export default function AllocationsPage() {
       bulkCreate({ tenant_id: tenant.id, ...data })
       setShowBulkModal(false)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <SkeletonTable rows={10} columns={4} />
+        </div>
+      </Layout>
+    )
   }
 
   return (

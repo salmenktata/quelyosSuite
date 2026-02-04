@@ -9,7 +9,7 @@
  */
 import { useState, useMemo } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice } from '@/components/common'
+import { Breadcrumbs, PageNotice, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeavesCalendar, useDepartments } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -136,9 +136,7 @@ export default function LeavesCalendarPage() {
 
           {/* Grille des jours */}
           {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
-            </div>
+            <div className="p-4"><SkeletonTable rows={10} columns={7} /></div>
           ) : (
             <div className="grid grid-cols-7">
               {days.map((item, index) => {

@@ -9,7 +9,7 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveTypes, type LeaveType } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -62,13 +62,7 @@ export default function LeaveTypesPage() {
         <PageNotice config={hrNotices.leavesTypes} className="mb-2" />
 
         {/* Loading */}
-        {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-40" />
-            ))}
-          </div>
-        )}
+        {isLoading && <SkeletonTable rows={10} columns={4} />}
 
         {/* Liste des types */}
         {!isLoading && leaveTypes && leaveTypes.length > 0 && (

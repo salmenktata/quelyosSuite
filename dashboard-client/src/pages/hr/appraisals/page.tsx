@@ -9,7 +9,7 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, Button } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useAppraisals, useCreateAppraisal, useAppraisalAction, useEmployees } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
@@ -142,13 +142,7 @@ export default function AppraisalsPage() {
         </div>
 
         {/* Loading */}
-        {isLoading && (
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl h-20" />
-            ))}
-          </div>
-        )}
+        {isLoading && <SkeletonTable rows={10} columns={5} />}
 
         {/* Liste */}
         {!isLoading && appraisals.length > 0 && (
