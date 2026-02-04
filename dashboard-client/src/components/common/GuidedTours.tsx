@@ -291,10 +291,11 @@ export function GuidedTours({
 
     // Vérifier si tour déjà complété (sync si état change après mount)
     const completed = localStorage.getItem(tour.storageKey)
-    if (completed && !forceShow && run) {
+    if (completed && !forceShow) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRun(false)
     }
-  }, [tour, forceShow, run])
+  }, [tour, forceShow])
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, type } = data

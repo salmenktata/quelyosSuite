@@ -66,6 +66,7 @@ export function CustomerImpactTooltip({
   }, [])
 
   // Ajuster position si tooltip déborde
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!isVisible || !triggerRef.current || !tooltipRef.current) return
 
@@ -87,11 +88,9 @@ export function CustomerImpactTooltip({
       newPosition = 'left'
     }
 
-    // Ajuster seulement si différent (évite re-render inutile)
-    if (newPosition !== actualPosition) {
-      setActualPosition(newPosition)
-    }
-  }, [isVisible, position, actualPosition])
+    // Utiliser callback pour éviter dépendance cyclique
+    setActualPosition((prev) => (newPosition !== prev ? newPosition : prev))
+  }, [isVisible, position])
 
   const handleMouseEnter = () => {
     timeoutRef.current = setTimeout(() => {
