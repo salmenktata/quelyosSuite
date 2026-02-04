@@ -940,6 +940,133 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur bulk_remind_invoices: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
+    @http.route('/api/finance/invoices/bulk-remind-async', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def bulk_remind_async(self, **params):
+        """
+        Relances multiples ASYNCHRONES (job queue)
+
+        Retourne immédiatement job_id pour polling frontend
+
+        Body:
+        {
+          "invoice_ids": [1, 2, 3, ...],  # Optionnel, sinon toutes impayées
+          "overdue_only": true             # Optionnel, défaut false
+        }
+
+        Returns:
+        {
+          "success": true,
+          "data": {
+            "job_id": "bulk_reminder_abc123def",
+            "invoice_count": 150,
+            "message": "Job créé, traitement en cours..."
+          }
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            # Paramètres
+            data = request.jsonrequest
+            invoice_ids = data.get('invoice_ids', [])
+            overdue_only = data.get('overdue_only', False)
+
+            # Si aucun ID fourni, récupérer toutes factures impayées
+            if not invoice_ids:
+                domain = [
+                    ('tenant_id', '=', user.tenant_id.id),
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ['not_paid', 'partial']),
+                ]
+
+                if overdue_only:
+                    from datetime import date
+                    today = date.today()
+                    domain.append(('invoice_date_due', '<', today))
+
+                AccountMove = request.env['account.move'].sudo()
+                invoices = AccountMove.search(domain)
+                invoice_ids = invoices.ids
+
+            if not invoice_ids:
+                return self._error_response("Aucune facture à traiter", "VALIDATION_ERROR", 400)
+
+            # Créer job asynchrone
+            import json
+            BulkReminderJob = request.env['quelyos.bulk_reminder_job'].sudo()
+
+            job = BulkReminderJob.create({
+                'tenant_id': user.tenant_id.id,
+                'user_id': user.id,
+                'invoice_ids': json.dumps(invoice_ids),
+            })
+
+            # Démarrer traitement immédiatement (ou via cron)
+            # Pour l'instant, traitement synchrone après retour API
+            # TODO: Utiliser queue.job ou odoo cron
+            job.with_delay().action_process_job()  # Si queue_job installé
+            # Sinon : job.action_process_job()  # Synchrone mais dans commit séparé
+
+            _logger.info(
+                f"Job relances bulk créé : {job.job_id} "
+                f"({len(invoice_ids)} factures)"
+            )
+
+            return self._success_response({
+                'job_id': job.job_id,
+                'invoice_count': len(invoice_ids),
+                'message': f'Job créé, traitement de {len(invoice_ids)} facture(s) en cours...',
+            })
+
+        except Exception as e:
+            _logger.error(f"Erreur bulk_remind_async: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    @http.route('/api/finance/invoices/bulk-remind-status/<string:job_id>', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def bulk_remind_status(self, job_id, **params):
+        """
+        Récupérer status job relances (polling frontend)
+
+        Args:
+            job_id (str): Job ID retourné par /bulk-remind-async
+
+        Returns:
+        {
+          "success": true,
+          "data": {
+            "job_id": "bulk_reminder_abc123def",
+            "state": "processing",  # pending, processing, completed, failed
+            "progress": 65,         # 0-100
+            "invoice_count": 150,
+            "processed_count": 98,
+            "sent_count": 95,
+            "failed_count": 3,
+            "duration": 45,         # secondes
+            "results": [...]        # Si completed
+          }
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            # Récupérer status job
+            BulkReminderJob = request.env['quelyos.bulk_reminder_job'].sudo()
+            status = BulkReminderJob.get_job_status(job_id)
+
+            if not status.get('found'):
+                return self._error_response("Job introuvable", "NOT_FOUND", 404)
+
+            return self._success_response(status)
+
+        except Exception as e:
+            _logger.error(f"Erreur bulk_remind_status: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
     def _generate_reminder_email_body(self, context):
         """Générer le corps d'email de relance"""
         return f"""

@@ -6,6 +6,7 @@ from . import cash_alert
 from . import cash_flow_forecast
 from . import customer_risk_score
 from . import payment_reminder_sequence
+from . import bulk_reminder_job
 from . import bank_transaction
 from . import bank_connection
 from . import stripe_event
