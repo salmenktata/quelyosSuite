@@ -47,6 +47,8 @@ from . import email_builder
 # Newsletter Management
 from . import newsletter_subscriber
 from . import newsletter_campaign
+# Customer RFM Segmentation
+from . import res_partner_rfm
 # Store Extended Models
 from . import product_review
 from . import faq

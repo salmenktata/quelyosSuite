@@ -6,6 +6,7 @@ from . import main
 from . import products_ctrl
 from . import orders_ctrl
 from . import customers_ctrl
+from . import customer_rfm_ctrl
 from . import inventory_ctrl
 from . import finance_ctrl
 from . import invoices_ctrl
