@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Badge, Skeleton } from '@/components/common';
+import { Breadcrumbs, Badge, Skeleton, Button } from '@/components/common';
 import { useMarketingCampaigns } from '@/hooks/useMarketingCampaigns';
 import {
   Plus,
@@ -9,6 +9,8 @@ import {
   MousePointer,
   Send,
   ArrowRight,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 const getStatusBadge = (status: string) => {
@@ -23,7 +25,7 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function EmailCampaignsPage() {
-  const { data, isLoading } = useMarketingCampaigns();
+  const { data, isLoading, error, refetch } = useMarketingCampaigns();
 
   const campaigns = data?.campaigns || [];
   const sentCampaigns = campaigns.filter((c) => c.state === 'done');
@@ -41,6 +43,33 @@ export default function EmailCampaignsPage() {
       year: 'numeric',
     });
   };
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Accueil', href: '/dashboard' },
+              { label: 'Marketing', href: '/marketing' },
+              { label: 'Campagnes Email' },
+            ]}
+          />
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des campagnes email.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
