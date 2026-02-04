@@ -22,6 +22,7 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common'
@@ -50,7 +51,7 @@ const STATE_LABELS: Record<string, { label: string; color: string; icon: React.R
 export default function LiveEvents() {
   const [editing, setEditing] = useState<LiveEvent | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const { data: events, isLoading, error } = useLiveEvents()
+  const { data: events, isLoading, error, refetch } = useLiveEvents()
   const createMutation = useCreateLiveEvent()
   const updateMutation = useUpdateLiveEvent()
   const deleteMutation = useDeleteLiveEvent()
@@ -223,8 +224,16 @@ export default function LiveEvents() {
         />
 
         {error && (
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-700 dark:text-red-400">
-            Erreur lors du chargement des événements
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des événements live.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
           </div>
         )}
 

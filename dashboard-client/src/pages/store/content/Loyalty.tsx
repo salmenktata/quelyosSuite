@@ -9,7 +9,7 @@
  * - Création/modification du programme
  */
 import { useState, useEffect } from 'react';
-import { Award, Users, TrendingUp, Star, Gift, Truck, AlertCircle } from 'lucide-react';
+import { Award, Users, TrendingUp, Star, Gift, Truck, AlertCircle, RefreshCw } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
@@ -138,7 +138,7 @@ export default function Loyalty() {
             <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-red-700 dark:text-red-300">{error}</p>
-              <Button variant="secondary" size="sm" onClick={fetchProgram} className="mt-2">
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchProgram} className="mt-2">
                 Réessayer
               </Button>
             </div>

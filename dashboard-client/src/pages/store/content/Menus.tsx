@@ -11,7 +11,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react'
-import { Plus, Trash2, X, Save, GripVertical } from 'lucide-react'
+import { Plus, Trash2, X, Save, GripVertical, AlertCircle, RefreshCw } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import {
   useMenus,
@@ -48,7 +48,7 @@ export default function Menus() {
 
   const [formData, setFormData] = useState(defaultFormData)
 
-  const { data, isLoading, error } = useMenus()
+  const { data, isLoading, error, refetch } = useMenus()
   const createMutation = useCreateMenu()
   const updateMutation = useUpdateMenu()
   const deleteMutation = useDeleteMenu()
@@ -193,8 +193,16 @@ export default function Menus() {
         <PageNotice config={storeNotices.menus} className="mb-6" />
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-800 dark:text-red-300" role="alert">
-            Erreur lors du chargement des menus
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4" role="alert">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des menus.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
           </div>
         )}
 

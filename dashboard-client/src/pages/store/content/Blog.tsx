@@ -9,7 +9,7 @@
  * - Mise en avant d'articles
  */
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Eye, FileText, Clock, Tag, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, FileText, Clock, Tag, AlertCircle, RefreshCw } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
@@ -174,7 +174,7 @@ export default function Blog() {
             <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-red-700 dark:text-red-300">{error}</p>
-              <Button variant="secondary" size="sm" onClick={fetchPosts} className="mt-2">
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchPosts} className="mt-2">
                 Réessayer
               </Button>
             </div>
