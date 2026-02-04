@@ -228,3 +228,136 @@ export const DEFAULTS = {
   /** Image produit par défaut */
   PRODUCT_IMAGE_PLACEHOLDER: '/images/product-placeholder.png',
 } as const;
+
+/**
+ * Design Tokens - Tokens de design standardisés
+ * Centralise les valeurs de design réutilisées à travers les apps
+ */
+export const DESIGN_TOKENS = {
+  /** Couleurs de marque */
+  COLORS: {
+    /** Couleur primaire (indigo) */
+    PRIMARY: {
+      50: '#eef2ff',
+      100: '#e0e7ff',
+      200: '#c7d2fe',
+      300: '#a5b4fc',
+      400: '#818cf8',
+      500: '#6366f1',
+      600: '#4f46e5',
+      700: '#4338ca',
+      800: '#3730a3',
+      900: '#312e81',
+    },
+    /** Couleur succès (vert) */
+    SUCCESS: {
+      50: '#f0fdf4',
+      100: '#dcfce7',
+      500: '#22c55e',
+      600: '#16a34a',
+    },
+    /** Couleur erreur (rouge) */
+    ERROR: {
+      50: '#fef2f2',
+      100: '#fee2e2',
+      500: '#ef4444',
+      600: '#dc2626',
+    },
+    /** Couleur warning (jaune) */
+    WARNING: {
+      50: '#fefce8',
+      100: '#fef3c7',
+      500: '#eab308',
+      600: '#ca8a04',
+    },
+    /** Couleur info (bleu) */
+    INFO: {
+      50: '#eff6ff',
+      100: '#dbeafe',
+      500: '#3b82f6',
+      600: '#2563eb',
+    },
+  },
+
+  /** Rayons de bordure */
+  RADIUS: {
+    /** Petit rayon (boutons, badges) */
+    SM: '0.375rem', // 6px
+    /** Rayon moyen (cartes) */
+    MD: '0.5rem', // 8px
+    /** Grand rayon (modals) */
+    LG: '0.75rem', // 12px
+    /** Très grand rayon (sections) */
+    XL: '1rem', // 16px
+    /** Rayon complet (pills, cercles) */
+    FULL: '9999px',
+  },
+
+  /** Espacements */
+  SPACING: {
+    /** Espacement extra petit */
+    XS: '0.25rem', // 4px
+    /** Espacement petit */
+    SM: '0.5rem', // 8px
+    /** Espacement moyen */
+    MD: '1rem', // 16px
+    /** Espacement large */
+    LG: '1.5rem', // 24px
+    /** Espacement extra large */
+    XL: '2rem', // 32px
+    /** Espacement 2XL */
+    '2XL': '3rem', // 48px
+  },
+
+  /** Durées d'animation */
+  DURATION: {
+    /** Animation rapide */
+    FAST: '150ms',
+    /** Animation normale */
+    NORMAL: '300ms',
+    /** Animation lente */
+    SLOW: '500ms',
+  },
+
+  /** Breakpoints responsive */
+  BREAKPOINTS: {
+    /** Mobile small */
+    XS: '320px',
+    /** Mobile */
+    SM: '640px',
+    /** Tablet */
+    MD: '768px',
+    /** Desktop */
+    LG: '1024px',
+    /** Large desktop */
+    XL: '1280px',
+    /** Extra large desktop */
+    '2XL': '1536px',
+  },
+
+  /** Shadows (élévation) */
+  SHADOWS: {
+    /** Ombre légère */
+    SM: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    /** Ombre normale */
+    MD: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+    /** Ombre forte */
+    LG: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+    /** Ombre très forte */
+    XL: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+  },
+
+  /** Z-index layers */
+  Z_INDEX: {
+    /** Dropdown */
+    DROPDOWN: 1000,
+    /** Modal backdrop */
+    MODAL_BACKDROP: 1040,
+    /** Modal */
+    MODAL: 1050,
+    /** Toast notification */
+    TOAST: 1060,
+    /** Tooltip */
+    TOOLTIP: 1070,
+  },
+} as const;

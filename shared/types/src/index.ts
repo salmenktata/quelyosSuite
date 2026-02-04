@@ -508,3 +508,126 @@ export interface CustomerCategory {
   child_ids?: number[];
   active?: boolean;
 }
+
+// ==================== STOREFRONT / E-COMMERCE ====================
+
+/**
+ * Hero Slide - Diaporama accueil
+ */
+export interface HeroSlide {
+  id: number;
+  name: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  image_url: string;
+  cta_text?: string;
+  cta_link?: string;
+  cta_secondary_text?: string;
+  cta_secondary_link?: string;
+  active: boolean;
+  sequence?: number;
+}
+
+/**
+ * Promo Banner - Bannière promotionnelle
+ */
+export interface PromoBanner {
+  id: number;
+  name: string;
+  title: string;
+  tag?: string;
+  tag_color?: string;
+  subtitle?: string;
+  gradient: string;
+  button_text?: string;
+  button_link?: string;
+  active: boolean;
+  sequence?: number;
+}
+
+/**
+ * Flash Sale - Vente flash
+ */
+export interface FlashSale {
+  id: number;
+  name: string;
+  product_id: number;
+  product?: Product;
+  discount_percentage: number;
+  start_date: string;
+  end_date: string;
+  stock_limit?: number;
+  stock_remaining?: number;
+  active: boolean;
+}
+
+/**
+ * Testimonial - Témoignage client
+ */
+export interface Testimonial {
+  id: number;
+  name: string;
+  customer_name: string;
+  customer_role?: string;
+  customer_avatar?: string;
+  rating: number;
+  comment: string;
+  product_id?: number;
+  active: boolean;
+  sequence?: number;
+}
+
+/**
+ * Trust Badge - Badge de confiance
+ */
+export interface TrustBadge {
+  id: number;
+  name: string;
+  title: string;
+  icon: string;
+  description?: string;
+  active: boolean;
+  sequence?: number;
+}
+
+/**
+ * Newsletter Subscriber - Abonné newsletter
+ */
+export interface NewsletterSubscriber {
+  id: number;
+  email: string;
+  name?: string;
+  segment?: 'all' | 'customers' | 'prospects';
+  subscribed_at: string;
+  active: boolean;
+  stats?: {
+    open_rate?: number;
+    click_rate?: number;
+    last_opened?: string;
+  };
+}
+
+/**
+ * Newsletter Campaign - Campagne newsletter
+ */
+export interface NewsletterCampaign {
+  id: number;
+  name: string;
+  subject: string;
+  from_name: string;
+  from_email: string;
+  preview_text?: string;
+  html_body: string;
+  segment?: 'all' | 'customers' | 'prospects';
+  state: 'draft' | 'scheduled' | 'sending' | 'sent' | 'cancelled';
+  scheduled_at?: string;
+  sent_at?: string;
+  analytics?: {
+    sent_count?: number;
+    opened_count?: number;
+    clicked_count?: number;
+    open_rate?: number;
+    click_rate?: number;
+  };
+}
