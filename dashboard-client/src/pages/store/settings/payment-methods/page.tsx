@@ -14,7 +14,7 @@ import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
-import { Check, X, Settings, TestTube2, Loader2, Eye, EyeOff } from "lucide-react";
+import { Check, X, Settings, TestTube2, Loader2, Eye, EyeOff, AlertCircle, RefreshCw } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import {
   usePaymentProviders,
@@ -52,12 +52,40 @@ const STATE_BADGE = {
 
 export default function PaymentMethodsPage() {
   const toast = useToast();
-  const { data: providers, isLoading } = usePaymentProviders();
+  const { data: providers, isLoading, error, refetch } = usePaymentProviders();
   const updateProviderMutation = useUpdatePaymentProvider();
   const testProviderMutation = useTestPaymentProvider();
 
   const [editingProvider, setEditingProvider] = useState<PaymentProvider | null>(null);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Accueil", href: "/dashboard" },
+              { label: "Boutique", href: "/store" },
+              { label: "Paramètres", href: "/store/settings" },
+              { label: "Moyens de Paiement" },
+            ]}
+          />
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des moyens de paiement.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const handleStateToggle = async (provider: PaymentProvider) => {
     const newState = provider.state === 'enabled' ? 'disabled' : 'enabled';
