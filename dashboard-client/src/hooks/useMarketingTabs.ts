@@ -5,7 +5,7 @@ import type { MenuSection } from '@/config/modules'
 export function detectMarketingTab(pathname: string): string {
   // Tableau de bord
   if (pathname === '/marketing') {
-    return 'Tableau de bord'
+    return '__ALL__'
   }
 
   // Emails
@@ -28,7 +28,7 @@ export function detectMarketingTab(pathname: string): string {
     return 'Configuration'
   }
 
-  return 'Tableau de bord' // Default
+  return '__ALL__' // Default
 }
 
 export function useMarketingTabs(sections: MenuSection[], pathname: string) {

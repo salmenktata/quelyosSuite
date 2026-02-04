@@ -4,11 +4,11 @@ import type { MenuSection } from '@/config/modules'
 // Fonction utilitaire pour détecter le tab depuis un path
 export function detectHomeTab(pathname: string): string {
   if (pathname === '/dashboard' || pathname === '/analytics') {
-    return 'Tableau de bord'
+    return '__ALL__'
   } else if (pathname === '/settings') {
     return 'Paramètres'
   }
-  return 'Tableau de bord' // Default
+  return '__ALL__' // Default
 }
 
 export function useHomeTabs(sections: MenuSection[], pathname: string) {

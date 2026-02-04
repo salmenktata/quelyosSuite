@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 export function detectPosTab(pathname: string): string {
-  if (pathname === '/pos') return 'Tableau de bord'
+  if (pathname === '/pos') return '__ALL__'
   if (pathname.includes('/pos/terminal') || pathname.includes('/pos/rush') || pathname.includes('/pos/kiosk') || pathname.includes('/pos/mobile') || pathname.includes('/pos/kds') || pathname.includes('/pos/customer-display') || pathname.includes('/pos/session')) return 'Caisse'
   if (pathname.includes('/pos/orders') || pathname.includes('/pos/sessions') || pathname.includes('/pos/click-collect')) return 'Gestion'
   if (pathname.includes('/pos/reports') || pathname.includes('/pos/analytics')) return 'Rapports'
   if (pathname.includes('/pos/settings')) return 'Configuration'
-  return 'Tableau de bord'
+  return '__ALL__'
 }
 
 export function usePosTabs(sections: MenuSection[], pathname: string) {

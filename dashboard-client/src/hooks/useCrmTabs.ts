@@ -5,7 +5,7 @@ import type { MenuSection } from '@/config/modules'
 export function detectCrmTab(pathname: string): string {
   // Tableau de bord
   if (pathname === '/crm') {
-    return 'Tableau de bord'
+    return '__ALL__'
   }
 
   // Pipeline
@@ -38,7 +38,7 @@ export function detectCrmTab(pathname: string): string {
     return 'Configuration'
   }
 
-  return 'Tableau de bord' // Default
+  return '__ALL__' // Default
 }
 
 export function useCrmTabs(sections: MenuSection[], pathname: string) {

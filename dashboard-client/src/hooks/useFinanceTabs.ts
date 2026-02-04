@@ -4,7 +4,7 @@ import type { MenuSection } from '@/config/modules'
 // Fonction utilitaire pour détecter le tab depuis un path
 export function detectFinanceTab(pathname: string): string {
   if (pathname === '/finance') {
-    return 'Tableau de bord'
+    return '__ALL__'
   } else if (pathname.includes('/accounts') || pathname.includes('/portfolios')) {
     return 'Comptes'
   } else if (pathname.includes('/expenses') || pathname.includes('/incomes') || pathname.includes('/import')) {
@@ -16,26 +16,17 @@ export function detectFinanceTab(pathname: string): string {
   } else if (pathname.includes('/categories') || pathname.includes('/suppliers') || pathname.includes('/charts') || pathname.includes('/alerts') || pathname.includes('/archives') || pathname.includes('/settings')) {
     return 'Configuration'
   }
-  return 'Tableau de bord' // Default
+  return '__ALL__' // Default : afficher toutes les sections
 }
 
 export function useFinanceTabs(sections: MenuSection[], pathname: string) {
   // État spécial "__ALL__" pour afficher toutes les sections (par défaut)
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('finance_active_tab')
-      if (stored) return stored
-    }
-    return detectFinanceTab(pathname)
-  })
+  const [activeTab, setActiveTab] = useState<string>(() => detectFinanceTab(pathname))
 
-
-  // Persistance localStorage
+  // Auto-détection tab selon URL (sans localStorage)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('finance_active_tab', activeTab)
-    }
-  }, [activeTab])
+    setActiveTab(detectFinanceTab(pathname))
+  }, [pathname])
 
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {

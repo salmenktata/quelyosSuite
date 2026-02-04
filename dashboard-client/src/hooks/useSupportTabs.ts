@@ -2,9 +2,9 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 export function detectSupportTab(pathname: string): string {
-  if (pathname === '/support') return 'Tableau de bord'
+  if (pathname === '/support') return '__ALL__'
   if (pathname.includes('/support/tickets') || pathname.includes('/support/faq')) return 'Assistance'
-  return 'Tableau de bord'
+  return '__ALL__'
 }
 
 export function useSupportTabs(sections: MenuSection[], pathname: string) {

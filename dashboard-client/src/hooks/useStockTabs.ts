@@ -5,7 +5,7 @@ import type { MenuSection } from '@/config/modules'
 export function detectStockTab(pathname: string): string {
   // Tableau de bord
   if (pathname === '/stock') {
-    return 'Tableau de bord'
+    return '__ALL__'
   }
 
   // Stock
@@ -44,7 +44,7 @@ export function detectStockTab(pathname: string): string {
     return 'Configuration'
   }
 
-  return 'Tableau de bord' // Default
+  return '__ALL__' // Default
 }
 
 export function useStockTabs(sections: MenuSection[], pathname: string) {

@@ -12,12 +12,12 @@ export interface Tab {
  * Détecte le tab actif selon le path
  */
 export function detectMaintenanceTab(path: string): string {
-  if (path === '/maintenance') return 'Tableau de bord'
+  if (path === '/maintenance') return '__ALL__'
   if (path.startsWith('/maintenance/equipment')) return 'Équipements'
   if (path.startsWith('/maintenance/requests') || path.startsWith('/maintenance/calendar')) return 'Interventions'
   if (path.startsWith('/maintenance/reports') || path.startsWith('/maintenance/costs')) return 'Analyse'
   if (path.startsWith('/maintenance/categories') || path.startsWith('/maintenance/settings')) return 'Configuration'
-  return 'Tableau de bord'
+  return '__ALL__'
 }
 
 /**
