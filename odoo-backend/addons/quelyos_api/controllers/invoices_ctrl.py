@@ -1383,3 +1383,76 @@ class InvoicesController(BaseController):
         except Exception as e:
             _logger.error(f"Erreur create_supplier_invoice_from_ocr: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    @http.route('/api/finance/invoices/stats', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_invoice_stats(self, **params):
+        """
+        Statistiques agrégées factures clients (optimisé PostgreSQL)
+
+        Calcule côté backend pour éviter transfert massif données.
+        Réutilisable par modules Finance/CRM/Dashboard.
+
+        Returns:
+        {
+          "totalInvoiced": 150000.0,    // Total facturé (toutes factures validées)
+          "totalPaid": 120000.0,         // Total payé
+          "totalPending": 25000.0,       // Total en attente (non payé)
+          "totalOverdue": 5000.0,        // Total en retard (échéance dépassée)
+          "count": 142,                  // Nombre total factures
+          "avgAmount": 1056.34           // Montant moyen facture
+        }
+        """
+        try:
+            # Authentification
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            # Récupérer tenant_id (isolation SaaS)
+            tenant_id = self._get_tenant_id(user)
+            if not tenant_id:
+                return self._error_response("Tenant non trouvé", "FORBIDDEN", 403)
+
+            # Requête SQL optimisée (1 seule query au lieu de N)
+            # PostgreSQL calcule directement les agrégats
+            query = """
+                SELECT
+                    COUNT(id) as invoice_count,
+                    COALESCE(SUM(amount_total), 0) as total_invoiced,
+                    COALESCE(SUM(CASE WHEN payment_state = 'paid' THEN amount_total ELSE 0 END), 0) as total_paid,
+                    COALESCE(SUM(CASE WHEN payment_state IN ('not_paid', 'partial') THEN amount_residual ELSE 0 END), 0) as total_pending,
+                    COALESCE(SUM(CASE
+                        WHEN invoice_date_due < CURRENT_DATE
+                        AND payment_state != 'paid'
+                        AND state = 'posted'
+                        THEN amount_residual
+                        ELSE 0
+                    END), 0) as total_overdue,
+                    COALESCE(AVG(amount_total), 0) as avg_amount
+                FROM account_move
+                WHERE tenant_id = %s
+                  AND move_type = 'out_invoice'
+                  AND state = 'posted'
+            """
+
+            # Exécuter requête
+            request.env.cr.execute(query, (tenant_id,))
+            result = request.env.cr.dictfetchone()
+
+            # Formater réponse
+            stats = {
+                'totalInvoiced': float(result['total_invoiced']) if result['total_invoiced'] else 0.0,
+                'totalPaid': float(result['total_paid']) if result['total_paid'] else 0.0,
+                'totalPending': float(result['total_pending']) if result['total_pending'] else 0.0,
+                'totalOverdue': float(result['total_overdue']) if result['total_overdue'] else 0.0,
+                'count': int(result['invoice_count']) if result['invoice_count'] else 0,
+                'avgAmount': float(result['avg_amount']) if result['avg_amount'] else 0.0,
+            }
+
+            _logger.info(f"Stats factures calculées pour tenant {tenant_id}: {stats['count']} factures")
+
+            return self._success_response(stats)
+
+        except Exception as e:
+            _logger.error(f"Erreur get_invoice_stats: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)

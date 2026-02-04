@@ -39,6 +39,7 @@ from . import health
 from . import cms
 from . import static_pages_ctrl
 from . import checkout_config_ctrl
+from . import delivery_methods_ctrl
 from . import checkout
 from . import wishlist
 from . import search

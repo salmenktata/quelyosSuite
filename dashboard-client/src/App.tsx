@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
 import { TenantGuard } from './components/TenantGuard'
@@ -29,6 +30,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <ThemeProvider>
+          <Toaster position="top-right" richColors expand={true} closeButton />
           <ToastProvider>
             <TenantGuard>
               <SessionManager />

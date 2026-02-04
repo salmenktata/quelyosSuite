@@ -50,7 +50,7 @@ function MenuBar({ editor }: MenuBarProps) {
   if (!editor) return null
 
   const addImage = useCallback(() => {
-    const url = window.prompt('URL de l'image :')
+    const url = window.prompt("URL de l'image :")
     if (url) {
       editor.chain().focus().setImage({ src: url }).run()
     }

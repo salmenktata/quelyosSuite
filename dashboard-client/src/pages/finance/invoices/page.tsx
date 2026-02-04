@@ -27,11 +27,13 @@ import {
   Search,
   X
 } from 'lucide-react'
-import { useInvoices } from '@/hooks/useInvoices'
+import { useInvoices, useValidateInvoice, useSendInvoiceEmail, useDownloadInvoicePDF, useBulkRemindInvoices } from '@/hooks/useInvoices'
+import { useInvoiceStats } from '@/hooks/useInvoiceStats'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Invoice } from '@/types'
 import { apiClient } from '@/lib/api'
 import { logger } from '@quelyos/logger'
+import { toast } from 'sonner'
 
 type InvoiceStatus = 'draft' | 'posted' | 'cancel' | 'all'
 type PaymentState = 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'all'
@@ -53,7 +55,6 @@ export default function InvoicesPage() {
 
   // Multi-sélection pour relances
   const [selectedIds, setSelectedIds] = useState<number[]>([])
-  const [sendingReminders, setSendingReminders] = useState(false)
 
   // Recherche avec debounce
   useEffect(() => {
@@ -95,16 +96,27 @@ export default function InvoicesPage() {
     setSearchResults([])
   }
 
-  // Données
-  const {
-    invoices,
-    loading,
-    error,
-    stats,
-    sendEmail,
-    downloadPDF,
-    validate
-  } = useInvoices({ status, paymentState, dateFrom, dateTo })
+  // Données factures (TanStack Query)
+  const { data: invoicesData, isLoading, error: invoicesError } = useInvoices({
+    status,
+    paymentState,
+    dateFrom,
+    dateTo
+  })
+
+  // Stats séparées (endpoint optimisé backend)
+  const { data: stats } = useInvoiceStats()
+
+  // Mutations
+  const validateMutation = useValidateInvoice()
+  const sendEmailMutation = useSendInvoiceEmail()
+  const downloadPDFMutation = useDownloadInvoicePDF()
+  const bulkRemindMutation = useBulkRemindInvoices()
+
+  // Aliases pour compatibilité
+  const invoices = invoicesData?.invoices || []
+  const loading = isLoading
+  const error = invoicesError?.message
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -128,52 +140,32 @@ export default function InvoicesPage() {
 
   const handleBulkRemind = async () => {
     if (selectedIds.length === 0) {
-      alert('Veuillez sélectionner au moins une facture')
+      toast.error('Veuillez sélectionner au moins une facture')
       return
     }
 
-    const confirmed = window.confirm(
-      `Envoyer ${selectedIds.length} relance(s) de paiement par email ?`
-    )
-
-    if (!confirmed) return
-
-    try {
-      setSendingReminders(true)
-
-      const response = await apiClient.post<{
-        success: boolean;
-        data: {
-          sent: number;
-          failed: number;
-          total: number;
-          details: Array<{
-            invoiceId: number;
-            invoiceName: string;
-            status: string;
-          }>;
-        };
-        message?: string;
-        error?: string;
-      }>('/finance/invoices/bulk-remind', {
-        invoiceIds: selectedIds
-      })
-
-      if (response.data.success && response.data.data) {
-        alert(
-          response.data.message ||
-          `${response.data.data.sent} relance(s) envoyée(s) avec succès`
-        )
-        setSelectedIds([]) // Réinitialiser la sélection
-      } else {
-        alert(`Erreur: ${response.data.error}`)
+    // Confirmation via toast avec action
+    const toastId = toast.warning(
+      `Envoyer ${selectedIds.length} relance(s) de paiement par email ?`,
+      {
+        duration: 10000,
+        action: {
+          label: 'Confirmer',
+          onClick: () => {
+            toast.dismiss(toastId)
+            bulkRemindMutation.mutate(selectedIds, {
+              onSuccess: () => {
+                setSelectedIds([]) // Réinitialiser sélection
+              }
+            })
+          }
+        },
+        cancel: {
+          label: 'Annuler',
+          onClick: () => toast.dismiss(toastId)
+        }
       }
-    } catch (err) {
-      logger.error('Erreur envoi relances:', err)
-      alert("Erreur lors de l'envoi des relances")
-    } finally {
-      setSendingReminders(false)
-    }
+    )
   }
 
   const getStatusBadge = (invoice: Invoice) => {
@@ -261,9 +253,9 @@ export default function InvoicesPage() {
               variant="secondary"
               icon={<Send />}
               onClick={handleBulkRemind}
-              disabled={sendingReminders}
+              disabled={bulkRemindMutation.isPending}
             >
-              {sendingReminders
+              {bulkRemindMutation.isPending
                 ? 'Envoi...'
                 : `Relancer (${selectedIds.length})`}
             </Button>
@@ -591,8 +583,9 @@ export default function InvoicesPage() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
-                            validate(invoice.id)
+                            validateMutation.mutate(invoice.id)
                           }}
+                          disabled={validateMutation.isPending}
                           className="!p-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
                           aria-label="Valider la facture"
                         >
@@ -606,8 +599,9 @@ export default function InvoicesPage() {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation()
-                              sendEmail(invoice.id)
+                              sendEmailMutation.mutate(invoice.id)
                             }}
+                            disabled={sendEmailMutation.isPending}
                             className="!p-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                             aria-label="Envoyer par email"
                           >
@@ -618,8 +612,9 @@ export default function InvoicesPage() {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation()
-                              downloadPDF(invoice.id)
+                              downloadPDFMutation.mutate(invoice.id)
                             }}
+                            disabled={downloadPDFMutation.isPending}
                             className="!p-2 text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                             aria-label="Télécharger PDF"
                           >
