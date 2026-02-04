@@ -11,7 +11,7 @@
  * @module store/homepage-builder
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -39,19 +39,26 @@ import { useNavigate } from 'react-router-dom'
 interface Section {
   id: string
   name: string
+  description: string
   visible: boolean
-  link: string
+  icon: string
+  route: string
 }
 
-interface SectionsResponse {
+interface HomepageConfig {
+  id: number
+  sections_order: Section[]
+}
+
+interface ConfigResponse {
   success: boolean
-  sections: Section[]
+  config: HomepageConfig
 }
 
 interface SortableItemProps {
   section: Section
   onToggleVisibility: (id: string) => void
-  onNavigate: (link: string) => void
+  onNavigate: (route: string) => void
 }
 
 function SortableItem({ section, onToggleVisibility, onNavigate }: SortableItemProps) {
@@ -87,12 +94,17 @@ function SortableItem({ section, onToggleVisibility, onNavigate }: SortableItemP
 
       {/* Section Info */}
       <div className="flex-1">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-          {section.name}
-        </h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-          {section.id}
-        </p>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">{section.icon}</span>
+          <div>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+              {section.name}
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {section.description}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Visibility Badge */}
@@ -117,7 +129,7 @@ function SortableItem({ section, onToggleVisibility, onNavigate }: SortableItemP
           )}
         </button>
         <button
-          onClick={() => onNavigate(section.link)}
+          onClick={() => onNavigate(section.route)}
           className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
           title="Éditer cette section"
         >
@@ -140,23 +152,25 @@ export default function HomepageBuilder() {
     })
   )
 
-  const { isLoading, error, refetch } = useQuery<SectionsResponse>({
+  const { data, isLoading, error, refetch } = useQuery<ConfigResponse>({
     queryKey: ['homepage-sections'],
     queryFn: async () => {
-      const response = await api.post('/api/admin/homepage-builder', {})
-      return response.data as SectionsResponse
-    },
-    onSuccess: (data) => {
-      if (data.success && data.sections) {
-        setSections(data.sections)
-      }
+      const response = await api.post('/api/admin/homepage-builder/config', {})
+      return response.data as ConfigResponse
     }
   })
 
+  // Sync sections avec data
+  useEffect(() => {
+    if (data?.success && data?.config?.sections_order) {
+      setSections(data.config.sections_order)
+    }
+  }, [data])
+
   const saveMutation = useMutation({
     mutationFn: async (updatedSections: Section[]) => {
-      const response = await api.post('/api/admin/homepage-builder/save', {
-        sections: updatedSections
+      const response = await api.post('/api/admin/homepage-builder/config/save', {
+        sections_order: updatedSections
       })
       return response.data as { success: boolean; message?: string }
     },
@@ -165,31 +179,23 @@ export default function HomepageBuilder() {
     }
   })
 
-  if (error) {
-    return (
-      <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <Breadcrumbs
-            items={[
-              { label: 'Accueil', href: '/dashboard' },
-              { label: 'Boutique', href: '/store' },
-              { label: 'Homepage Builder' },
-            ]}
-          />
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
-                Une erreur est survenue lors du chargement du constructeur de homepage.
-              </p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
-                Réessayer
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/api/admin/homepage-builder/config/reset', {})
+      return response.data as ConfigResponse
+    },
+    onSuccess: (resetData) => {
+      if (resetData?.success && resetData?.config?.sections_order) {
+        setSections(resetData.config.sections_order)
+      }
+      queryClient.invalidateQueries({ queryKey: ['homepage-sections'] })
+    }
+  })
+
+  const handleReset = () => {
+    if (window.confirm("Voulez-vous vraiment réinitialiser la configuration à l'ordre par défaut ?")) {
+      resetMutation.mutate()
+    }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -220,19 +226,6 @@ export default function HomepageBuilder() {
     { label: 'Tableau de bord', path: '/store' },
     { label: 'Homepage Builder' }
   ]
-
-  if (error) {
-    return (
-      <Layout>
-        <Breadcrumbs items={breadcrumbItems} />
-        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4 mt-4">
-          <p className="text-sm text-red-800 dark:text-red-200">
-            Erreur de chargement des sections homepage
-          </p>
-        </div>
-      </Layout>
-    )
-  }
 
   return (
     <Layout>
