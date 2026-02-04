@@ -44,15 +44,12 @@ export function detectCrmTab(pathname: string): string {
 export function useCrmTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('crm_active_tab') || 'Tableau de bord'
+      const stored = localStorage.getItem('crm_active_tab')
+      if (stored) return stored
     }
-    return 'Tableau de bord'
+    return 'Pipeline'
   })
 
-  // Auto-détection tab selon URL (synchrone, sans debounce)
-  useEffect(() => {
-    setActiveTab(detectCrmTab(pathname))
-  }, [pathname])
 
   // Persistance localStorage
   useEffect(() => {
@@ -61,11 +58,13 @@ export function useCrmTabs(sections: MenuSection[], pathname: string) {
     }
   }, [activeTab])
 
-  // Filtrer sections visibles avec useMemo pour éviter re-calcul
-  const visibleSections = useMemo(() =>
-    sections.filter(section => section.title === activeTab),
-    [sections, activeTab]
-  )
+  // Filtrer sections visibles : si __ALL__, afficher toutes les sections
+  const visibleSections = useMemo(() => {
+    if (activeTab === '__ALL__') {
+      return sections
+    }
+    return sections.filter(section => section.title === activeTab)
+  }, [sections, activeTab])
 
   // Optimiser setActiveTab avec useCallback
   const handleSetActiveTab = useCallback((tabId: string) => {

@@ -43,6 +43,7 @@ export function usePermissions() {
   const MODULE_GROUP_MAP: Record<ModuleId, string[]> = {
     'home': ['Quelyos Home User', 'Quelyos Home Manager'],
     'finance': ['Quelyos Finance User', 'Quelyos Finance Manager'],
+    'invoicing': ['Quelyos Finance User', 'Quelyos Finance Manager'],
     'store': ['Quelyos Store User', 'Quelyos Store Manager'],
     'stock': ['Quelyos Stock User', 'Quelyos Stock Manager'],
     'crm': ['Quelyos CRM User', 'Quelyos CRM Manager'],

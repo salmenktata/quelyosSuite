@@ -13,13 +13,17 @@ export function detectPosTab(pathname: string): string {
 export function usePosTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('pos_active_tab') || 'Tableau de bord'
+      return localStorage.getItem('pos_active_tab') || '__ALL__'
     }
-    return 'Tableau de bord'
+    return '__ALL__'
   })
 
   useEffect(() => {
-    setActiveTab(detectPosTab(pathname))
+    if (pathname === '/pos') {
+      setActiveTab('__ALL__')
+    } else {
+      setActiveTab(detectPosTab(pathname))
+    }
   }, [pathname])
 
   useEffect(() => {
@@ -28,10 +32,12 @@ export function usePosTabs(sections: MenuSection[], pathname: string) {
     }
   }, [activeTab])
 
-  const visibleSections = useMemo(() =>
-    sections.filter(section => section.title === activeTab),
-    [sections, activeTab]
-  )
+  const visibleSections = useMemo(() => {
+    if (activeTab === '__ALL__') {
+      return sections
+    }
+    return sections.filter(section => section.title === activeTab)
+  }, [sections, activeTab])
 
   const handleSetActiveTab = useCallback((tabId: string) => {
     setActiveTab(tabId)

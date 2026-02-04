@@ -25,13 +25,17 @@ export function detectMaintenanceTab(path: string): string {
  */
 export function useMaintenanceTabs(sections: MenuSection[], currentPath: string) {
   const location = useLocation()
-  const [activeTab, setActiveTab] = useState(() => detectMaintenanceTab(currentPath))
+  const [activeTab, setActiveTab] = useState('__ALL__')
 
   // Mettre à jour activeTab quand le path change
   useEffect(() => {
-    const newTab = detectMaintenanceTab(location.pathname)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveTab(newTab)
+    if (location.pathname === '/maintenance') {
+      setActiveTab('__ALL__')
+    } else {
+      const newTab = detectMaintenanceTab(location.pathname)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab(newTab)
+    }
   }, [location.pathname])
 
   // Générer les tabs depuis les sections (groupes tabGroup)
@@ -48,8 +52,11 @@ export function useMaintenanceTabs(sections: MenuSection[], currentPath: string)
     }))
   }, [sections])
 
-  // Filtrer sections visibles selon tab actif
+  // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {
+    if (activeTab === '__ALL__') {
+      return sections
+    }
     return sections.filter(section => {
       if (!section.tabGroup) return true
       return section.tabGroup === activeTab

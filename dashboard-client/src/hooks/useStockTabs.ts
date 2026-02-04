@@ -50,15 +50,11 @@ export function detectStockTab(pathname: string): string {
 export function useStockTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('stock_active_tab') || 'Tableau de bord'
+      return localStorage.getItem('stock_active_tab') || '__ALL__'
     }
-    return 'Tableau de bord'
+    return '__ALL__'
   })
 
-  // Auto-détection tab selon URL (synchrone, sans debounce)
-  useEffect(() => {
-    setActiveTab(detectStockTab(pathname))
-  }, [pathname])
 
   // Persistance localStorage
   useEffect(() => {
@@ -67,11 +63,13 @@ export function useStockTabs(sections: MenuSection[], pathname: string) {
     }
   }, [activeTab])
 
-  // Filtrer sections visibles avec useMemo pour éviter re-calcul
-  const visibleSections = useMemo(() =>
-    sections.filter(section => section.title === activeTab),
-    [sections, activeTab]
-  )
+  // Filtrer sections visibles : si __ALL__, afficher toutes les sections
+  const visibleSections = useMemo(() => {
+    if (activeTab === '__ALL__') {
+      return sections
+    }
+    return sections.filter(section => section.title === activeTab)
+  }, [sections, activeTab])
 
   // Optimiser setActiveTab avec useCallback
   const handleSetActiveTab = useCallback((tabId: string) => {

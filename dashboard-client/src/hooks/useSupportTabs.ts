@@ -10,13 +10,17 @@ export function detectSupportTab(pathname: string): string {
 export function useSupportTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('support_active_tab') || 'Tableau de bord'
+      return localStorage.getItem('support_active_tab') || '__ALL__'
     }
-    return 'Tableau de bord'
+    return '__ALL__'
   })
 
   useEffect(() => {
-    setActiveTab(detectSupportTab(pathname))
+    if (pathname === '/support') {
+      setActiveTab('__ALL__')
+    } else {
+      setActiveTab(detectSupportTab(pathname))
+    }
   }, [pathname])
 
   useEffect(() => {
@@ -25,10 +29,12 @@ export function useSupportTabs(sections: MenuSection[], pathname: string) {
     }
   }, [activeTab])
 
-  const visibleSections = useMemo(() =>
-    sections.filter(section => section.title === activeTab),
-    [sections, activeTab]
-  )
+  const visibleSections = useMemo(() => {
+    if (activeTab === '__ALL__') {
+      return sections
+    }
+    return sections.filter(section => section.title === activeTab)
+  }, [sections, activeTab])
 
   const handleSetActiveTab = useCallback((tabId: string) => {
     setActiveTab(tabId)

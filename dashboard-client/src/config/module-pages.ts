@@ -44,6 +44,20 @@ export const MODULE_PAGES: Record<ModuleId, ModulePageConfig[]> = {
     { id: 'tva', label: 'TVA & fiscalité' },
     { id: 'settings', label: 'Paramètres' },
   ],
+  invoicing: [
+    { id: 'dashboard', label: 'Vue d\'ensemble' },
+    { id: 'invoices', label: 'Factures' },
+    { id: 'invoices-quick', label: 'Facture Express' },
+    { id: 'invoices-ocr', label: 'OCR Fournisseurs' },
+    { id: 'subscriptions', label: 'Abonnements' },
+    { id: 'approvals', label: 'Approbations' },
+    { id: 'quotes', label: 'Devis' },
+    { id: 'analytics-forecast', label: 'Prévisionnel CA' },
+    { id: 'payment-risk', label: 'Risques Paiement' },
+    { id: 'analytic-accounts', label: 'Compta Analytique' },
+    { id: 'currencies', label: 'Devises' },
+    { id: 'export-fec', label: 'Export FEC' },
+  ],
   store: [
     { id: 'dashboard', label: 'Tableau de bord' },
     { id: 'orders', label: 'Commandes' },
@@ -176,6 +190,7 @@ export const ACCESS_LEVEL_LABELS: Record<AccessLevel, string> = {
 export const MODULE_LABELS: Record<ModuleId, string> = {
   home: 'Accueil',
   finance: 'Finance',
+  invoicing: 'Facturation',
   store: 'Boutique',
   stock: 'Stock',
   crm: 'CRM',
