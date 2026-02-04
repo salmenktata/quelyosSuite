@@ -11,11 +11,12 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { CheckCircle, XCircle, Clock, RefreshCw, AlertCircle } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type PendingApproval = {
   id: number
@@ -166,6 +167,8 @@ export default function ApprovalsPage() {
             </Button>
           </div>
         </div>
+
+        <PageNotice config={financeNotices.approvals} className="![animation:none]" />
 
         {/* Error */}
         {error && (

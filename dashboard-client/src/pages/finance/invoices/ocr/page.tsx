@@ -11,11 +11,12 @@
  */
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { Upload, FileText, CheckCircle, Edit, AlertCircle, Loader } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { logger } from '@quelyos/logger'
 import { getBackendUrl } from '@quelyos/config'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type ExtractedData = {
   supplier: {
@@ -174,6 +175,8 @@ export default function OCRSupplierInvoicePage() {
             Extraction automatique des données depuis PDF ou image
           </p>
         </div>
+
+        <PageNotice config={financeNotices.invoicesOcr} className="![animation:none]" />
 
         {/* Steps Indicator */}
         <div className="flex items-center gap-4">
