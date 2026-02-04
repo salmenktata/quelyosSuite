@@ -25,7 +25,6 @@ import {
   useAddAuditNote,
   useExportAuditTrail,
   calculateAuditStats,
-  formatAuditChange,
   type AuditEntry,
   type AuditChange,
 } from '@/hooks/useInvoiceAudit';
