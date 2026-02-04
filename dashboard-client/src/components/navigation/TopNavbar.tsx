@@ -50,9 +50,9 @@ export const TopNavbar = memo(function TopNavbar({
   const { theme, toggleTheme } = useTheme()
   const Icon = currentModule.icon
 
-  // Afficher tous les modules accessibles (limité à 10 pour inclure POS et GMAO)
+  // Afficher tous les modules accessibles (limité à 11 pour inclure tous les modules)
   // Les modules sont déjà filtrés par permissions dans ModularLayout
-  const quickModules = modules.slice(0, 10)
+  const quickModules = modules.slice(0, 11)
 
   return (
     <header className={`h-14 bg-gray-900 border-b border-gray-800 flex items-center fixed top-0 left-0 right-0 z-50 transition-transform duration-100 ease-out ${isVisible ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>

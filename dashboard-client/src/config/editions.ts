@@ -51,7 +51,7 @@ export const EDITIONS: Record<EditionId, Edition> = {
     color: '#6366F1', // Indigo
     logo: '/favicon.svg',
     favicon: '/favicon.svg',
-    modules: ['home', 'finance', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support', 'maintenance'],
+    modules: ['home', 'finance', 'invoicing', 'store', 'stock', 'crm', 'marketing', 'hr', 'pos', 'support', 'maintenance'],
     port: 5175,
     features: {
       multiTenant: true,
