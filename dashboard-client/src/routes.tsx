@@ -270,6 +270,13 @@ const InvoicesList = lazy(() => import('./pages/finance/invoices/page'))
 const InvoiceDetail = lazy(() => import('./pages/finance/invoices/[id]/page'))
 const InvoiceNew = lazy(() => import('./pages/finance/invoices/new/page'))
 const InvoiceQuick = lazy(() => import('./pages/finance/invoices/quick/page'))
+const InvoiceOCR = lazy(() => import('./pages/finance/invoices/ocr/page'))
+const FinanceSubscriptions = lazy(() => import('./pages/finance/subscriptions/page'))
+const InvoiceFacturX = lazy(() => import('./pages/finance/invoices/[id]/facturx'))
+const AnalyticAccounts = lazy(() => import('./pages/finance/analytics/analytic-accounts/page'))
+const PaymentRisk = lazy(() => import('./pages/finance/payment-risk/page'))
+const FinanceSettingsCurrencies = lazy(() => import('./pages/finance/settings/currencies/page'))
+const FinanceApprovals = lazy(() => import('./pages/finance/approvals/page'))
 
 // Sales - Quotes
 const QuotesList = lazy(() => import('./pages/sales/quotes/page'))
@@ -562,6 +569,13 @@ export default function AppRoutes() {
         <Route path="/finance/invoices" element={<FP><InvoicesList /></FP>} />
         <Route path="/finance/invoices/new" element={<FP><InvoiceNew /></FP>} />
         <Route path="/finance/invoices/quick" element={<FP><InvoiceQuick /></FP>} />
+        <Route path="/finance/invoices/ocr" element={<FP><InvoiceOCR /></FP>} />
+        <Route path="/finance/subscriptions" element={<FP><FinanceSubscriptions /></FP>} />
+        <Route path="/finance/invoices/:id/facturx" element={<FP><InvoiceFacturX /></FP>} />
+        <Route path="/finance/analytics/analytic-accounts" element={<FP><AnalyticAccounts /></FP>} />
+        <Route path="/finance/payment-risk" element={<FP><PaymentRisk /></FP>} />
+        <Route path="/finance/settings/currencies" element={<FP><FinanceSettingsCurrencies /></FP>} />
+        <Route path="/finance/approvals" element={<FP><FinanceApprovals /></FP>} />
         <Route path="/finance/invoices/:id" element={<FP><InvoiceDetail /></FP>} />
 
         {/* ---- Sales - Quotes ---- */}

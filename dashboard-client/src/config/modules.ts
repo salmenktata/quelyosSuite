@@ -178,6 +178,27 @@ export const MODULES: Module[] = [
         ],
       },
       {
+        title: 'Facturation',
+        tabGroup: 'Facturation',
+        items: [
+          { name: 'Factures', path: '/finance/invoices', icon: Receipt },
+          { name: 'Facture Express', path: '/finance/invoices/quick', icon: Zap },
+          { name: 'OCR Fournisseurs', path: '/finance/invoices/ocr', icon: Upload },
+          { name: 'Abonnements', path: '/finance/subscriptions', icon: RefreshCw },
+          { name: 'Approbations', path: '/finance/approvals', icon: ShieldCheck },
+        ],
+      },
+      {
+        title: 'Analytique',
+        tabGroup: 'Analytique',
+        items: [
+          { name: 'Prévisionnel CA', path: '/finance/analytics/forecast', icon: TrendingUp },
+          { name: 'Risques Paiement', path: '/finance/payment-risk', icon: AlertTriangle },
+          { name: 'Compta Analytique', path: '/finance/analytics/analytic-accounts', icon: PieChart },
+          { name: 'Rapprochement Bancaire', path: '/finance/bank/reconcile', icon: ArrowRightLeft },
+        ],
+      },
+      {
         title: 'Comptes',
         tabGroup: 'Comptes',
         items: [
@@ -223,6 +244,8 @@ export const MODULES: Module[] = [
           { name: 'Fournisseurs', path: '/finance/suppliers', icon: Users },
           { name: 'Plan Comptable', path: '/finance/charts', icon: Coins },
           { name: 'TVA & fiscalité', path: '/settings/tva', icon: Receipt },
+          { name: 'Devises', path: '/finance/settings/currencies', icon: Coins },
+          { name: 'Export FEC', path: '/finance/settings/export-fec', icon: Download },
           { name: 'Flux de paiement', path: '/finance/settings/flux', icon: CreditCard },
           { name: 'Notifications', path: '/finance/settings/notifications', icon: Mail },
           { name: 'Alertes', path: '/finance/alerts', icon: Bell },
@@ -413,8 +436,9 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Facturation',
+        title: 'Ventes',
         items: [
+          { name: 'Devis', path: '/sales/quotes', icon: FileEdit },
           { name: 'Factures', path: '/invoices', icon: Receipt },
           { name: 'Paiements', path: '/payments', icon: BadgePercent },
         ],
