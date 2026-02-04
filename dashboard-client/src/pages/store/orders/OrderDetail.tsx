@@ -35,6 +35,7 @@ import { OrderLineItems } from '@/components/orders/OrderLineItems'
 import { OrderSummary } from '@/components/orders/OrderSummary'
 import { OrderHistory } from '@/components/orders/OrderHistory'
 import { OrderActions } from '@/components/orders/OrderActions'
+import { OrderClientView } from '@/components/orders/OrderClientView'
 import { logger } from '@quelyos/logger';
 
 export default function OrderDetail() {
@@ -225,6 +226,21 @@ export default function OrderDetail() {
               isUnlocking={unlockOrder.isPending}
             />
           </div>
+        </div>
+
+        {/* Vue Client */}
+        <div className="mt-8">
+          <OrderClientView
+            order={{
+              name: order.name,
+              state: order.state,
+              amount_total: order.amount_total ?? 0,
+              date_order: order.date_order || new Date().toISOString(),
+              partner_name: order.customer?.name || order.partner_name || 'Client',
+              partner_email: order.customer?.email || order.partner_email || 'email@exemple.com',
+              tracking_reference: (trackingData?.data?.tracking?.tracking_ref as string | undefined) || undefined,
+            }}
+          />
         </div>
 
         {/* Modal de confirmation */}
