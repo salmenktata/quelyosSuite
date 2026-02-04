@@ -15,8 +15,10 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, PageNotice, Button, SkeletonTable, Badge } from '@/components/common'
+import { CampaignModal } from '@/components/newsletter'
 import { storeNotices } from '@/lib/notices'
 import { Mail, Send, TrendingUp, Eye, Plus, Clock } from 'lucide-react'
 import { api } from '@/lib/api'
@@ -56,12 +58,17 @@ export default function NewsletterCampaigns() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
+
+  const handleCampaignCreated = (campaignId: number) => {
+    navigate(`/store/marketing/newsletter/compose?campaignId=${campaignId}`)
+  }
 
   const { data, isLoading, error } = useQuery<CampaignsResponse>({
     queryKey: ['newsletter-campaigns'],
     queryFn: async () => {
       const response = await api.post('/api/admin/newsletter/campaigns', {})
-      return response.data
+      return response.data as CampaignsResponse
     }
   })
 
@@ -69,7 +76,7 @@ export default function NewsletterCampaigns() {
     queryKey: ['newsletter-segments'],
     queryFn: async () => {
       const response = await api.post('/api/admin/newsletter/segments', {})
-      return response.data
+      return response.data as SegmentsResponse
     }
   })
 
@@ -151,7 +158,7 @@ export default function NewsletterCampaigns() {
         </Button>
       </div>
 
-      <PageNotice notices={storeNotices.marketing} />
+      <PageNotice config={storeNotices.marketing} />
 
       {/* Statistiques globales */}
       <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-4">
@@ -339,6 +346,13 @@ export default function NewsletterCampaigns() {
           </div>
         </div>
       )}
+
+      {/* Modal création campagne */}
+      <CampaignModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCampaignCreated}
+      />
     </Layout>
   )
 }

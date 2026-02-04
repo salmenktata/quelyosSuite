@@ -15,7 +15,7 @@
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button } from '@/components/common'
-import { EmailEditor, EmailPreview } from '@/components/newsletter'
+import { EmailEditor, EmailPreview, SendTestModal, ScheduleModal } from '@/components/newsletter'
 import { Save, Send, Clock, Eye } from 'lucide-react'
 
 export default function NewsletterCompose() {
@@ -36,6 +36,8 @@ export default function NewsletterCompose() {
     <p>À très bientôt,<br/>L'équipe {{entreprise}}</p>
   `)
   const [showPreview, setShowPreview] = useState(true)
+  const [showSendTestModal, setShowSendTestModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
 
   const breadcrumbItems = [
     { label: 'Tableau de bord', path: '/store' },
@@ -50,15 +52,11 @@ export default function NewsletterCompose() {
   }
 
   const handleSendTest = () => {
-    const testEmail = window.prompt('Adresse email pour le test :')
-    if (testEmail) {
-      // TODO: API call to send test
-      // logger.info('Envoi test vers', testEmail)
-    }
+    setShowSendTestModal(true)
   }
 
   const handleSchedule = () => {
-    // TODO: Modal pour sélectionner date/heure
+    setShowScheduleModal(true)
   }
 
   return (
@@ -201,6 +199,23 @@ export default function NewsletterCompose() {
           </div>
         )}
       </div>
+
+      {/* Modaux */}
+      <SendTestModal
+        isOpen={showSendTestModal}
+        onClose={() => setShowSendTestModal(false)}
+        subject={subject}
+        fromName={fromName}
+        fromEmail={fromEmail}
+        previewHtml={htmlBody}
+      />
+
+      <ScheduleModal
+        isOpen={showScheduleModal}
+        onClose={() => setShowScheduleModal(false)}
+        campaignName={subject}
+        recipientCount={0}
+      />
     </Layout>
   )
 }

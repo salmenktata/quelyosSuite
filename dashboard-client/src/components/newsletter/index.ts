@@ -1,2 +1,5 @@
 export { EmailEditor } from './EmailEditor'
 export { EmailPreview } from './EmailPreview'
+export { CampaignModal } from './CampaignModal'
+export { SendTestModal } from './SendTestModal'
+export { ScheduleModal } from './ScheduleModal'

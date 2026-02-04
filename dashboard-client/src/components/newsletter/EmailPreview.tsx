@@ -60,7 +60,7 @@ export function EmailPreview({
             Preview Email
           </span>
         </div>
-        <DeviceToggle device={device} onChange={setDevice} />
+        <DeviceToggle value={device} onChange={setDevice} />
       </div>
 
       {/* Preview Container */}

@@ -161,7 +161,7 @@ export default function CostCentersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-right">
-                        <GlassBadge variant={isOverBudget ? 'danger' : center.variancePercent > 80 ? 'warning' : 'success'}>
+                        <GlassBadge variant={isOverBudget ? 'error' : center.variancePercent > 80 ? 'warning' : 'success'}>
                           {center.variancePercent.toFixed(1)}%
                         </GlassBadge>
                       </td>

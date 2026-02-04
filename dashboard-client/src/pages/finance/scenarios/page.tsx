@@ -38,6 +38,7 @@ import {
   Download,
   GitBranch,
 } from "lucide-react"
+import { GlassCard } from '@/components/ui/glass'
 
 // Types
 type DailyRow = {
@@ -283,7 +284,7 @@ export default function ScenariosPage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: "Tableau de bord", href: "/dashboard" },
+            { label: "Accueil", href: "/" },
             { label: "Finance", href: "/finance" },
             { label: "Scénarios" },
           ]}
@@ -379,7 +380,7 @@ export default function ScenariosPage() {
         </div>
 
         {/* Scenarios config */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <GlassCard className="p-4">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Configuration des scénarios
@@ -456,7 +457,7 @@ export default function ScenariosPage() {
               </div>
             ))}
           </div>
-        </div>
+        </GlassCard>
 
         {/* KPIs */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -510,7 +511,7 @@ export default function ScenariosPage() {
             <Button variant="secondary" onClick={fetchForecast}>Réessayer</Button>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <GlassCard className="p-4">
             <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Comparaison sur {horizon} jours
             </h3>
@@ -554,12 +555,12 @@ export default function ScenariosPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </GlassCard>
         )}
 
         {/* Data table */}
         {chartData.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <GlassCard className="p-4">
             <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Données détaillées</h3>
             <div className="max-h-64 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
               <table className="w-full text-sm">
@@ -590,7 +591,7 @@ export default function ScenariosPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </GlassCard>
         )}
 
         {/* Save modal */}
