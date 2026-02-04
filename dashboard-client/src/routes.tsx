@@ -276,6 +276,7 @@ const InvoiceQuick = lazy(() => import('./pages/finance/invoices/quick/page'))
 const InvoiceOCR = lazy(() => import('./pages/finance/invoices/ocr/page'))
 const InvoicingSubscriptions = lazy(() => import('./pages/finance/subscriptions/page'))
 const InvoiceFacturX = lazy(() => import('./pages/finance/invoices/[id]/facturx'))
+const InvoiceTemplates = lazy(() => import('./pages/finance/invoices/settings/templates'))
 const AnalyticAccounts = lazy(() => import('./pages/finance/analytics/analytic-accounts/page'))
 const PaymentRisk = lazy(() => import('./pages/finance/payment-risk/page'))
 const InvoicingSettingsCurrencies = lazy(() => import('./pages/finance/settings/currencies/page'))
@@ -582,6 +583,7 @@ export default function AppRoutes() {
         <Route path="/invoicing/risk" element={<FP><PaymentRisk /></FP>} />
         <Route path="/invoicing/settings/currencies" element={<FP><InvoicingSettingsCurrencies /></FP>} />
         <Route path="/invoicing/settings/fec" element={<P><FinanceErrorBoundary><Suspense fallback={<PageLoader />}><FinanceSettingsExportFEC /></Suspense></FinanceErrorBoundary></P>} />
+        <Route path="/invoicing/invoices/settings/templates" element={<FP><InvoiceTemplates /></FP>} />
         <Route path="/invoicing/approvals" element={<FP><InvoicingApprovals /></FP>} />
         <Route path="/invoicing/invoices/:id" element={<FP><InvoiceDetail /></FP>} />
         <Route path="/invoicing/analytics/forecast" element={<FP><RevenueForecast /></FP>} />
