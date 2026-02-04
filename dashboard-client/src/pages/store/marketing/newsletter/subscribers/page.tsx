@@ -61,16 +61,16 @@ export default function NewsletterSubscribers() {
         segment: segment || undefined,
         status
       })
-      return response.data
+      return response.data as SubscribersResponse
     }
   })
 
   const exportMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.post('/api/admin/newsletter/subscribers/export', {}, {
-        responseType: 'blob'
-      })
-      const blob = new Blob([response.data], { type: 'text/csv' })
+      const response = await api.post('/api/admin/newsletter/subscribers/export', {})
+      // Response.data contient le CSV dans la propriété data
+      const csvData = (response.data as { data?: string }).data || ''
+      const blob = new Blob([csvData], { type: 'text/csv' })
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
@@ -131,7 +131,7 @@ export default function NewsletterSubscribers() {
             Abonnés Newsletter
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {data?.total || 0} abonnés • {data?.subscribers.filter(s => s.status === 'subscribed').length || 0} actifs
+            {data?.total || 0} abonnés • {data?.subscribers.filter((s: Subscriber) => s.status === 'subscribed').length || 0} actifs
           </p>
         </div>
         <div className="flex gap-3">
@@ -150,7 +150,7 @@ export default function NewsletterSubscribers() {
         </div>
       </div>
 
-      <PageNotice notices={storeNotices.marketing} />
+      <PageNotice config={storeNotices.marketing} />
 
       {/* Filtres */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -227,7 +227,7 @@ export default function NewsletterSubscribers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {data?.subscribers.map((subscriber) => (
+              {data?.subscribers.map((subscriber: Subscriber) => (
                 <tr key={subscriber.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/30">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
