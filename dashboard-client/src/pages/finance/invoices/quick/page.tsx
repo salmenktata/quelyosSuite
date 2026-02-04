@@ -209,8 +209,8 @@ export default function QuickInvoicePage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
-            { label: 'Factures', href: '/finance/invoices' },
+            { label: 'Facturation', href: '/invoicing' },
+            { label: 'Factures', href: '/invoicing/invoices' },
             { label: 'Création Express' },
           ]}
         />

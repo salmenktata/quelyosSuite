@@ -196,8 +196,8 @@ export default function InvoiceDetailPage() {
         <div className="p-4 md:p-8 space-y-6">
           <Breadcrumbs
             items={[
-              { label: 'Finance', href: '/finance' },
-              { label: 'Factures', href: '/finance/invoices' },
+              { label: 'Facturation', href: '/invoicing' },
+              { label: 'Factures', href: '/invoicing/invoices' },
               { label: 'Détail' },
             ]}
           />
@@ -231,7 +231,7 @@ export default function InvoiceDetailPage() {
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
-            { label: 'Factures', href: '/finance/invoices' },
+            { label: 'Factures', href: '/invoicing/invoices' },
             { label: invoice.name },
           ]}
         />

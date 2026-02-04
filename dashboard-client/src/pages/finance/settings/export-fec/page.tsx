@@ -101,7 +101,7 @@ export default function ExportFECPage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
+            { label: 'Facturation', href: '/invoicing' },
             { label: 'Paramètres', href: '/finance/settings' },
             { label: 'Export FEC' },
           ]}

@@ -108,7 +108,7 @@ export default function NewInvoicePage() {
         }
 
         alert(`Facture ${response.data.data.name} créée avec succès`)
-        navigate('/finance/invoices')
+        navigate('/invoicing/invoices')
       } else {
         alert(`Erreur: ${response.data.error}`)
       }
@@ -126,8 +126,8 @@ export default function NewInvoicePage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
-            { label: 'Factures', href: '/finance/invoices' },
+            { label: 'Facturation', href: '/invoicing' },
+            { label: 'Factures', href: '/invoicing/invoices' },
             { label: 'Nouvelle' },
           ]}
         />
@@ -314,7 +314,7 @@ export default function NewInvoicePage() {
         <div className="flex items-center justify-end gap-3">
           <Button
             variant="secondary"
-            onClick={() => navigate('/finance/invoices')}
+            onClick={() => navigate('/invoicing/invoices')}
           >
             Annuler
           </Button>

@@ -84,7 +84,7 @@ import {
 // TYPES
 // ============================================================================
 
-export type ModuleId = 'home' | 'finance' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support' | 'maintenance'
+export type ModuleId = 'home' | 'finance' | 'invoicing' | 'store' | 'stock' | 'crm' | 'marketing' | 'hr' | 'pos' | 'support' | 'maintenance'
 
 export interface SubMenuItem {
   name: string
@@ -178,27 +178,6 @@ export const MODULES: Module[] = [
         ],
       },
       {
-        title: 'Facturation',
-        tabGroup: 'Facturation',
-        items: [
-          { name: 'Factures', path: '/finance/invoices', icon: Receipt },
-          { name: 'Facture Express', path: '/finance/invoices/quick', icon: Zap },
-          { name: 'OCR Fournisseurs', path: '/finance/invoices/ocr', icon: Upload },
-          { name: 'Abonnements', path: '/finance/subscriptions', icon: RefreshCw },
-          { name: 'Approbations', path: '/finance/approvals', icon: ShieldCheck },
-        ],
-      },
-      {
-        title: 'Analytique',
-        tabGroup: 'Analytique',
-        items: [
-          { name: 'Prévisionnel CA', path: '/finance/analytics/forecast', icon: TrendingUp },
-          { name: 'Risques Paiement', path: '/finance/payment-risk', icon: AlertTriangle },
-          { name: 'Compta Analytique', path: '/finance/analytics/analytic-accounts', icon: PieChart },
-          { name: 'Rapprochement Bancaire', path: '/finance/bank/reconcile', icon: ArrowRightLeft },
-        ],
-      },
-      {
         title: 'Comptes',
         tabGroup: 'Comptes',
         items: [
@@ -244,13 +223,65 @@ export const MODULES: Module[] = [
           { name: 'Fournisseurs', path: '/finance/suppliers', icon: Users },
           { name: 'Plan Comptable', path: '/finance/charts', icon: Coins },
           { name: 'TVA & fiscalité', path: '/settings/tva', icon: Receipt },
-          { name: 'Devises', path: '/finance/settings/currencies', icon: Coins },
-          { name: 'Export FEC', path: '/finance/settings/export-fec', icon: Download },
           { name: 'Flux de paiement', path: '/finance/settings/flux', icon: CreditCard },
           { name: 'Notifications', path: '/finance/settings/notifications', icon: Mail },
           { name: 'Alertes', path: '/finance/alerts', icon: Bell },
           { name: 'Archives', path: '/finance/archives', icon: Archive },
           { name: 'Paramètres', path: '/finance/settings', icon: Settings },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'invoicing',
+    name: 'Facturation',
+    shortName: 'Facturation',
+    icon: Receipt,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+    description: 'Factures & Devis',
+    basePath: '/invoicing',
+    sections: [
+      {
+        title: 'Tableau de bord',
+        tabGroup: 'Tableau de bord',
+        items: [
+          { name: 'Vue d\'ensemble', path: '/invoicing', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Facturation',
+        tabGroup: 'Facturation',
+        items: [
+          { name: 'Factures', path: '/invoicing/invoices', icon: Receipt },
+          { name: 'Facture Express', path: '/invoicing/invoices/quick', icon: Zap },
+          { name: 'OCR Fournisseurs', path: '/invoicing/invoices/ocr', icon: Upload },
+          { name: 'Abonnements', path: '/invoicing/subscriptions', icon: RefreshCw },
+          { name: 'Approbations', path: '/invoicing/approvals', icon: ShieldCheck },
+        ],
+      },
+      {
+        title: 'Devis',
+        tabGroup: 'Devis',
+        items: [
+          { name: 'Tous les Devis', path: '/invoicing/quotes', icon: FileEdit },
+        ],
+      },
+      {
+        title: 'Analytique',
+        tabGroup: 'Analytique',
+        items: [
+          { name: 'Prévisionnel CA', path: '/invoicing/analytics/forecast', icon: TrendingUp },
+          { name: 'Risques Paiement', path: '/invoicing/risk', icon: AlertTriangle },
+          { name: 'Compta Analytique', path: '/invoicing/analytics/analytic-accounts', icon: PieChart },
+        ],
+      },
+      {
+        title: 'Configuration',
+        tabGroup: 'Configuration',
+        items: [
+          { name: 'Devises', path: '/invoicing/settings/currencies', icon: Coins },
+          { name: 'Export FEC', path: '/invoicing/settings/fec', icon: Download },
         ],
       },
     ],
@@ -438,7 +469,6 @@ export const MODULES: Module[] = [
       {
         title: 'Ventes',
         items: [
-          { name: 'Devis', path: '/sales/quotes', icon: FileEdit },
           { name: 'Factures', path: '/invoices', icon: Receipt },
           { name: 'Paiements', path: '/payments', icon: BadgePercent },
         ],

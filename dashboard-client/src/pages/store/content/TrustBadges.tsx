@@ -30,7 +30,7 @@ const ICON_OPTIONS = [
 export default function TrustBadges() {
   const [editingBadge, setEditingBadge] = useState<TrustBadge | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const { data: badges, isLoading } = useTrustBadges()
+  const { data: badges, isLoading, error, refetch } = useTrustBadges()
   const createMutation = useCreateTrustBadge()
   const updateMutation = useUpdateTrustBadge()
   const deleteMutation = useDeleteTrustBadge()

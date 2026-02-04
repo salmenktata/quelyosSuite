@@ -134,7 +134,7 @@ export default function RevenueForecastPage() {
       <Layout>
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
+            { label: 'Facturation', href: '/invoicing' },
             { label: 'Analytics', href: '/finance/analytics' },
             { label: 'Prévisionnel CA' },
           ]}
@@ -154,7 +154,7 @@ export default function RevenueForecastPage() {
       <Layout>
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
+            { label: 'Facturation', href: '/invoicing' },
             { label: 'Analytics', href: '/finance/analytics' },
             { label: 'Prévisionnel CA' },
           ]}
@@ -169,7 +169,7 @@ export default function RevenueForecastPage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Finance', href: '/finance' },
+            { label: 'Facturation', href: '/invoicing' },
             { label: 'Analytics', href: '/finance/analytics' },
             { label: 'Prévisionnel CA' },
           ]}

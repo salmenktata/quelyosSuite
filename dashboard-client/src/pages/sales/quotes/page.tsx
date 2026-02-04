@@ -76,8 +76,8 @@ export default function QuotesPage() {
       <Layout>
         <Breadcrumbs
           items={[
-            { label: 'Ventes', path: '/sales' },
-            { label: 'Devis', path: '/sales/quotes' },
+            { label: 'Facturation', path: '/invoicing' },
+            { label: 'Devis', path: '/invoicing/quotes' },
           ]}
         />
         <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -91,8 +91,8 @@ export default function QuotesPage() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Ventes', path: '/sales' },
-          { label: 'Devis', path: '/sales/quotes' },
+          { label: 'Facturation', path: '/invoicing' },
+          { label: 'Devis', path: '/invoicing/quotes' },
         ]}
       />
 
@@ -109,7 +109,7 @@ export default function QuotesPage() {
         <Button
           variant="primary"
           icon={<Plus />}
-          onClick={() => navigate('/sales/quotes/new')}
+          onClick={() => navigate('/invoicing/quotes/new')}
         >
           Nouveau Devis
         </Button>

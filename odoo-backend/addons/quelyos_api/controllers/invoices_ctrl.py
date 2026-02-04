@@ -1097,3 +1097,289 @@ class InvoicesController(BaseController):
         except Exception as e:
             _logger.error(f"Erreur bulk_remind_whatsapp: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    @http.route('/api/finance/invoices/ocr-extract', type='http', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def ocr_extract_supplier_invoice(self, **params):
+        """
+        OCR extraction facture fournisseur depuis PDF/image
+        Upload fichier → extraction texte → parsing données structurées
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+
+            # Récupérer fichier uploadé
+            file_upload = request.httprequest.files.get('file')
+            if not file_upload:
+                return self._error_response("Fichier requis", "VALIDATION_ERROR", 400)
+
+            # Vérifier type MIME
+            allowed_types = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg']
+            if file_upload.content_type not in allowed_types:
+                return self._error_response("Type fichier non supporté (PDF, PNG, JPG uniquement)", "VALIDATION_ERROR", 400)
+
+            # Lire contenu fichier
+            file_content = file_upload.read()
+            file_name = file_upload.filename
+
+            extracted_data = {}
+            extraction_method = 'none'
+
+            # Tentative 1 : Extraction avec pytesseract (OCR open-source)
+            try:
+                import pytesseract
+                from PIL import Image
+                import io
+
+                if file_upload.content_type == 'application/pdf':
+                    # Convertir PDF en images
+                    try:
+                        from pdf2image import convert_from_bytes
+                        images = convert_from_bytes(file_content, first_page=1, last_page=1, dpi=300)
+                        if images:
+                            image = images[0]
+                        else:
+                            raise Exception("PDF vide")
+                    except ImportError:
+                        return self._error_response("pdf2image non installé (requis pour OCR PDF)", "OCR_UNAVAILABLE", 503)
+                else:
+                    # Image directe
+                    image = Image.open(io.BytesIO(file_content))
+
+                # Extraction texte OCR
+                text = pytesseract.image_to_string(image, lang='fra')
+                extracted_data = self._parse_invoice_text(text)
+                extraction_method = 'tesseract'
+
+            except ImportError as e:
+                _logger.warning(f"pytesseract non disponible: {e}")
+                # Tentative 2 : Google Vision API (si configuré)
+                try:
+                    vision_key = request.env['ir.config_parameter'].sudo().get_param('google.vision_api_key')
+                    if vision_key:
+                        import base64
+                        import requests as req
+
+                        # Encoder fichier base64
+                        file_b64 = base64.b64encode(file_content).decode('utf-8')
+
+                        # Appel Google Vision API
+                        vision_url = f"https://vision.googleapis.com/v1/images:annotate?key={vision_key}"
+                        payload = {
+                            "requests": [{
+                                "image": {"content": file_b64},
+                                "features": [{"type": "DOCUMENT_TEXT_DETECTION"}]
+                            }]
+                        }
+
+                        response = req.post(vision_url, json=payload, timeout=30)
+                        if response.status_code == 200:
+                            result = response.json()
+                            if 'responses' in result and result['responses']:
+                                text_annotations = result['responses'][0].get('textAnnotations', [])
+                                if text_annotations:
+                                    text = text_annotations[0].get('description', '')
+                                    extracted_data = self._parse_invoice_text(text)
+                                    extraction_method = 'google_vision'
+                        else:
+                            _logger.error(f"Google Vision API error: {response.text}")
+
+                except Exception as vision_err:
+                    _logger.error(f"Google Vision fallback failed: {vision_err}")
+
+            except Exception as ocr_err:
+                _logger.error(f"OCR extraction failed: {ocr_err}", exc_info=True)
+
+            # Si aucune extraction réussie, retourner données vides pour saisie manuelle
+            if not extracted_data or extraction_method == 'none':
+                extracted_data = {
+                    'supplier': {'name': '', 'vat': '', 'address': ''},
+                    'invoiceNumber': '',
+                    'invoiceDate': '',
+                    'dueDate': '',
+                    'totalAmount': 0.0,
+                    'taxAmount': 0.0,
+                    'untaxedAmount': 0.0,
+                    'lines': [],
+                    'raw_text': '',
+                }
+                extraction_method = 'manual'
+
+            return json.dumps({
+                'success': True,
+                'data': {
+                    'extractedData': extracted_data,
+                    'extractionMethod': extraction_method,
+                    'fileName': file_name,
+                    'confidence': 'high' if extraction_method in ['tesseract', 'google_vision'] else 'manual',
+                }
+            })
+
+        except Exception as e:
+            _logger.error(f"Erreur ocr_extract: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    def _parse_invoice_text(self, text):
+        """
+        Parse texte OCR pour extraire données structurées facture
+        Regex + heuristiques pour identifier numéro, dates, montants, fournisseur
+        """
+        import re
+        from datetime import datetime
+
+        data = {
+            'supplier': {'name': '', 'vat': '', 'address': ''},
+            'invoiceNumber': '',
+            'invoiceDate': '',
+            'dueDate': '',
+            'totalAmount': 0.0,
+            'taxAmount': 0.0,
+            'untaxedAmount': 0.0,
+            'lines': [],
+            'raw_text': text,
+        }
+
+        lines = text.split('\n')
+
+        # Extraction numéro de facture (patterns courants)
+        invoice_patterns = [
+            r'(?:facture|invoice|n°|no|num|#)\s*:?\s*([A-Z0-9\-]+)',
+            r'(?:FA|INV|F)\s*(\d{4,})',
+        ]
+        for pattern in invoice_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                data['invoiceNumber'] = match.group(1).strip()
+                break
+
+        # Extraction dates (format français DD/MM/YYYY ou DD-MM-YYYY)
+        date_pattern = r'(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})'
+        dates_found = re.findall(date_pattern, text)
+        if len(dates_found) >= 1:
+            data['invoiceDate'] = dates_found[0]
+        if len(dates_found) >= 2:
+            data['dueDate'] = dates_found[1]
+
+        # Extraction montants (patterns TTC, HT, TVA)
+        amount_patterns = [
+            (r'(?:total\s*TTC|montant\s*total)\s*:?\s*([0-9\s,.]+)\s*€?', 'totalAmount'),
+            (r'(?:total\s*HT|sous-total)\s*:?\s*([0-9\s,.]+)\s*€?', 'untaxedAmount'),
+            (r'(?:TVA|tva)\s*:?\s*([0-9\s,.]+)\s*€?', 'taxAmount'),
+        ]
+
+        for pattern, key in amount_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                amount_str = match.group(1).replace(' ', '').replace(',', '.')
+                try:
+                    data[key] = float(amount_str)
+                except:
+                    pass
+
+        # Extraction fournisseur (première ligne non vide souvent = nom société)
+        for line in lines[:10]:  # Chercher dans les 10 premières lignes
+            line = line.strip()
+            if len(line) > 3 and not re.match(r'^\d', line):  # Pas une ligne commençant par chiffre
+                data['supplier']['name'] = line
+                break
+
+        # Extraction TVA intra (pattern FR + 11 chiffres)
+        vat_match = re.search(r'(FR\s?\d{11})', text)
+        if vat_match:
+            data['supplier']['vat'] = vat_match.group(1).replace(' ', '')
+
+        # Extraction lignes de facture (optionnel, complexe)
+        # Pour simplifier, on ne parse pas les lignes individuelles ici
+        # L'utilisateur pourra les saisir manuellement après validation
+
+        return data
+
+    @http.route('/api/finance/invoices/create-from-ocr', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def create_supplier_invoice_from_ocr(self, **params):
+        """
+        Créer facture fournisseur (account.move in_invoice) depuis données OCR validées
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            data = request.jsonrequest
+
+            # Données requises
+            supplier_name = data.get('supplierName')
+            invoice_number = data.get('invoiceNumber')
+            invoice_date = data.get('invoiceDate')
+            total_amount = data.get('totalAmount', 0.0)
+
+            if not all([supplier_name, invoice_number, invoice_date]):
+                return self._error_response("Fournisseur, numéro et date requis", "VALIDATION_ERROR", 400)
+
+            Partner = request.env['res.partner'].sudo()
+            AccountMove = request.env['account.move'].sudo()
+
+            # Rechercher ou créer fournisseur
+            supplier = Partner.search([
+                ('name', '=', supplier_name),
+                ('tenant_id', '=', tenant_id),
+            ], limit=1)
+
+            if not supplier:
+                supplier = Partner.create({
+                    'name': supplier_name,
+                    'supplier_rank': 1,
+                    'customer_rank': 0,
+                    'tenant_id': tenant_id,
+                    'vat': data.get('supplierVat', ''),
+                })
+
+            # Créer facture fournisseur (in_invoice)
+            invoice_vals = {
+                'move_type': 'in_invoice',
+                'partner_id': supplier.id,
+                'tenant_id': tenant_id,
+                'ref': invoice_number,  # Référence fournisseur
+                'invoice_date': invoice_date,
+                'invoice_date_due': data.get('dueDate') or invoice_date,
+                'invoice_line_ids': [],
+            }
+
+            # Ajouter lignes si fournies
+            lines_data = data.get('lines', [])
+            if lines_data:
+                for line in lines_data:
+                    invoice_vals['invoice_line_ids'].append((0, 0, {
+                        'name': line.get('description', 'Prestation'),
+                        'quantity': line.get('quantity', 1.0),
+                        'price_unit': line.get('unitPrice', 0.0),
+                    }))
+            else:
+                # Si pas de lignes, créer une ligne générique avec montant total
+                invoice_vals['invoice_line_ids'].append((0, 0, {
+                    'name': 'Facture fournisseur (à détailler)',
+                    'quantity': 1.0,
+                    'price_unit': total_amount,
+                }))
+
+            invoice = AccountMove.create(invoice_vals)
+
+            return self._success_response({
+                'invoice': {
+                    'id': invoice.id,
+                    'name': invoice.name,
+                    'ref': invoice.ref,
+                    'supplierId': supplier.id,
+                    'supplierName': supplier.name,
+                    'invoiceDate': str(invoice.invoice_date),
+                    'state': invoice.state,
+                    'amountTotal': float(invoice.amount_total),
+                }
+            }, message="Facture fournisseur créée avec succès")
+
+        except Exception as e:
+            _logger.error(f"Erreur create_supplier_invoice_from_ocr: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)

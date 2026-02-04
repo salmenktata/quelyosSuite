@@ -156,8 +156,8 @@ export default function QuoteDetailPage() {
         <div className="p-4 md:p-8 space-y-6">
           <Breadcrumbs
             items={[
-              { label: 'Ventes', href: '/sales' },
-              { label: 'Devis', href: '/sales/quotes' },
+              { label: 'Facturation', href: '/invoicing' },
+              { label: 'Devis', href: '/invoicing/quotes' },
               { label: 'Détail' },
             ]}
           />
@@ -192,8 +192,8 @@ export default function QuoteDetailPage() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Ventes', href: '/sales' },
-            { label: 'Devis', href: '/sales/quotes' },
+            { label: 'Facturation', href: '/invoicing' },
+            { label: 'Devis', href: '/invoicing/quotes' },
             { label: quote.name },
           ]}
         />

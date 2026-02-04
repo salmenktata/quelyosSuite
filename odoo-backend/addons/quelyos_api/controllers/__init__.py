@@ -25,6 +25,10 @@ from . import sepa_direct_debit_ctrl
 from . import cfo_dashboards_ctrl
 from . import consolidation_ctrl
 from . import analytics_accounting_ctrl
+from . import analytic_accounting_ctrl
+from . import payment_risk_ml_ctrl
+from . import multicurrency_ctrl
+from . import approval_workflows_ctrl
 from . import cost_centers_ctrl
 from . import budgets_ctrl
 from . import cart_ctrl
@@ -40,6 +44,8 @@ from . import seo
 from . import marketing
 from . import newsletter
 from . import subscription
+from . import subscriptions_ctrl
+from . import facturx_ctrl
 from . import tenant
 from . import theme_preset
 from . import theme

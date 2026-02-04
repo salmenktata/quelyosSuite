@@ -265,18 +265,18 @@ const Subscriptions = lazy(() => import('./pages/subscriptions/page'))
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Invoices = lazy(() => import('./pages/Invoices'))
 
-// Finance - Invoices
+// Invoicing - Factures & Devis
 const InvoicesList = lazy(() => import('./pages/finance/invoices/page'))
 const InvoiceDetail = lazy(() => import('./pages/finance/invoices/[id]/page'))
 const InvoiceNew = lazy(() => import('./pages/finance/invoices/new/page'))
 const InvoiceQuick = lazy(() => import('./pages/finance/invoices/quick/page'))
 const InvoiceOCR = lazy(() => import('./pages/finance/invoices/ocr/page'))
-const FinanceSubscriptions = lazy(() => import('./pages/finance/subscriptions/page'))
+const InvoicingSubscriptions = lazy(() => import('./pages/finance/subscriptions/page'))
 const InvoiceFacturX = lazy(() => import('./pages/finance/invoices/[id]/facturx'))
 const AnalyticAccounts = lazy(() => import('./pages/finance/analytics/analytic-accounts/page'))
 const PaymentRisk = lazy(() => import('./pages/finance/payment-risk/page'))
-const FinanceSettingsCurrencies = lazy(() => import('./pages/finance/settings/currencies/page'))
-const FinanceApprovals = lazy(() => import('./pages/finance/approvals/page'))
+const InvoicingSettingsCurrencies = lazy(() => import('./pages/finance/settings/currencies/page'))
+const InvoicingApprovals = lazy(() => import('./pages/finance/approvals/page'))
 
 // Sales - Quotes
 const QuotesList = lazy(() => import('./pages/sales/quotes/page'))
@@ -523,7 +523,6 @@ export default function AppRoutes() {
         <Route path="/finance/forecast" element={<FP><FinanceForecast /></FP>} />
         <Route path="/finance/archives" element={<FP><FinanceArchives /></FP>} />
         <Route path="/finance/payment-planning" element={<FP><FinancePaymentPlanning /></FP>} />
-        <Route path="/finance/analytics/forecast" element={<FP><RevenueForecast /></FP>} />
         <Route path="/finance/expenses" element={<FP><FinanceExpenses /></FP>} />
         <Route path="/finance/expenses/new" element={<FP><FinanceExpenseNew /></FP>} />
         <Route path="/finance/incomes" element={<FP><FinanceIncomes /></FP>} />
@@ -565,22 +564,40 @@ export default function AppRoutes() {
           <Route path="export-fec" element={<FinanceSettingsExportFEC />} />
         </Route>
 
-        {/* ---- Finance - Invoices ---- */}
-        <Route path="/finance/invoices" element={<FP><InvoicesList /></FP>} />
-        <Route path="/finance/invoices/new" element={<FP><InvoiceNew /></FP>} />
-        <Route path="/finance/invoices/quick" element={<FP><InvoiceQuick /></FP>} />
-        <Route path="/finance/invoices/ocr" element={<FP><InvoiceOCR /></FP>} />
-        <Route path="/finance/subscriptions" element={<FP><FinanceSubscriptions /></FP>} />
-        <Route path="/finance/invoices/:id/facturx" element={<FP><InvoiceFacturX /></FP>} />
-        <Route path="/finance/analytics/analytic-accounts" element={<FP><AnalyticAccounts /></FP>} />
-        <Route path="/finance/payment-risk" element={<FP><PaymentRisk /></FP>} />
-        <Route path="/finance/settings/currencies" element={<FP><FinanceSettingsCurrencies /></FP>} />
-        <Route path="/finance/approvals" element={<FP><FinanceApprovals /></FP>} />
-        <Route path="/finance/invoices/:id" element={<FP><InvoiceDetail /></FP>} />
+        {/* ---- Invoicing ---- */}
+        <Route path="/invoicing" element={<Navigate to="/invoicing/invoices" replace />} />
+        <Route path="/invoicing/invoices" element={<FP><InvoicesList /></FP>} />
+        <Route path="/invoicing/invoices/new" element={<FP><InvoiceNew /></FP>} />
+        <Route path="/invoicing/invoices/quick" element={<FP><InvoiceQuick /></FP>} />
+        <Route path="/invoicing/invoices/ocr" element={<FP><InvoiceOCR /></FP>} />
+        <Route path="/invoicing/subscriptions" element={<FP><InvoicingSubscriptions /></FP>} />
+        <Route path="/invoicing/invoices/:id/facturx" element={<FP><InvoiceFacturX /></FP>} />
+        <Route path="/invoicing/analytics/analytic-accounts" element={<FP><AnalyticAccounts /></FP>} />
+        <Route path="/invoicing/risk" element={<FP><PaymentRisk /></FP>} />
+        <Route path="/invoicing/settings/currencies" element={<FP><InvoicingSettingsCurrencies /></FP>} />
+        <Route path="/invoicing/settings/fec" element={<P><FinanceErrorBoundary><Suspense fallback={<PageLoader />}><FinanceSettingsExportFEC /></Suspense></FinanceErrorBoundary></P>} />
+        <Route path="/invoicing/approvals" element={<FP><InvoicingApprovals /></FP>} />
+        <Route path="/invoicing/invoices/:id" element={<FP><InvoiceDetail /></FP>} />
+        <Route path="/invoicing/analytics/forecast" element={<FP><RevenueForecast /></FP>} />
+        <Route path="/invoicing/quotes" element={<P><QuotesList /></P>} />
+        <Route path="/invoicing/quotes/:id" element={<P><QuoteDetail /></P>} />
 
-        {/* ---- Sales - Quotes ---- */}
-        <Route path="/sales/quotes" element={<P><QuotesList /></P>} />
-        <Route path="/sales/quotes/:id" element={<P><QuoteDetail /></P>} />
+        {/* Redirects - Old routes to new Invoicing module */}
+        <Route path="/finance/invoices" element={<Navigate to="/invoicing/invoices" replace />} />
+        <Route path="/finance/invoices/new" element={<Navigate to="/invoicing/invoices/new" replace />} />
+        <Route path="/finance/invoices/quick" element={<Navigate to="/invoicing/invoices/quick" replace />} />
+        <Route path="/finance/invoices/ocr" element={<Navigate to="/invoicing/invoices/ocr" replace />} />
+        <Route path="/finance/invoices/:id" element={<Navigate to="/invoicing/invoices/:id" replace />} />
+        <Route path="/finance/invoices/:id/facturx" element={<Navigate to="/invoicing/invoices/:id/facturx" replace />} />
+        <Route path="/finance/subscriptions" element={<Navigate to="/invoicing/subscriptions" replace />} />
+        <Route path="/finance/approvals" element={<Navigate to="/invoicing/approvals" replace />} />
+        <Route path="/finance/analytics/forecast" element={<Navigate to="/invoicing/analytics/forecast" replace />} />
+        <Route path="/finance/analytics/analytic-accounts" element={<Navigate to="/invoicing/analytics/analytic-accounts" replace />} />
+        <Route path="/finance/payment-risk" element={<Navigate to="/invoicing/risk" replace />} />
+        <Route path="/finance/settings/currencies" element={<Navigate to="/invoicing/settings/currencies" replace />} />
+        <Route path="/finance/settings/export-fec" element={<Navigate to="/invoicing/settings/fec" replace />} />
+        <Route path="/sales/quotes" element={<Navigate to="/invoicing/quotes" replace />} />
+        <Route path="/sales/quotes/:id" element={<Navigate to="/invoicing/quotes/:id" replace />} />
 
         {/* ---- Marketing ---- */}
         <Route path="/marketing" element={<P><Module name="Marketing"><MarketingDashboard /></Module></P>} />

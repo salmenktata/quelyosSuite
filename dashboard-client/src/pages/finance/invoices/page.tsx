@@ -226,7 +226,7 @@ export default function InvoicesPage() {
         <Breadcrumbs
           items={[
             { label: 'Finance', path: '/finance' },
-            { label: 'Factures Clients', path: '/finance/invoices' },
+            { label: 'Factures Clients', path: '/invoicing/invoices' },
           ]}
         />
         <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -240,8 +240,8 @@ export default function InvoicesPage() {
     <Layout>
       <Breadcrumbs
         items={[
-          { label: 'Finance', path: '/finance' },
-          { label: 'Factures Clients', path: '/finance/invoices' },
+          { label: 'Facturation', path: '/invoicing' },
+          { label: 'Factures Clients', path: '/invoicing/invoices' },
         ]}
       />
 
@@ -271,14 +271,14 @@ export default function InvoicesPage() {
           <Button
             variant="secondary"
             icon={<Zap />}
-            onClick={() => navigate('/finance/invoices/quick')}
+            onClick={() => navigate('/invoicing/invoices/quick')}
           >
             Création Express
           </Button>
           <Button
             variant="primary"
             icon={<Plus />}
-            onClick={() => navigate('/finance/invoices/new')}
+            onClick={() => navigate('/invoicing/invoices/new')}
           >
             Nouvelle Facture
           </Button>
