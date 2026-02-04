@@ -47,9 +47,8 @@ interface MenuBarProps {
 }
 
 function MenuBar({ editor }: MenuBarProps) {
-  if (!editor) return null
-
   const addImage = useCallback(() => {
+    if (!editor) return
     const url = window.prompt("URL de l'image :")
     if (url) {
       editor.chain().focus().setImage({ src: url }).run()
@@ -57,11 +56,14 @@ function MenuBar({ editor }: MenuBarProps) {
   }, [editor])
 
   const addLink = useCallback(() => {
+    if (!editor) return
     const url = window.prompt('URL du lien :')
     if (url) {
       editor.chain().focus().setLink({ href: url }).run()
     }
   }, [editor])
+
+  if (!editor) return null
 
   return (
     <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-t-lg">
