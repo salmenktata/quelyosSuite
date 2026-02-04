@@ -13,7 +13,7 @@ import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, DollarSign, Percent, Calendar, AlertCircle, RefreshCw } from 'lucide-react'
 import { Layout } from '@/components/Layout'
-import { SkeletonTable, Button } from '@/components/common'
+import { SkeletonTable, Button, Breadcrumbs } from '@/components/common'
 import { useLead } from '@/hooks/useLead'
 import { useUpdateLead } from '@/hooks/useUpdateLead'
 import { toast } from 'sonner'
@@ -144,21 +144,14 @@ export default function LeadDetail() {
     <Layout>
       <div className="space-y-6">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-          <Link to="/" className="hover:text-gray-900 dark:hover:text-white">
-            Accueil
-          </Link>
-          <span>/</span>
-          <Link to="/crm" className="hover:text-gray-900 dark:hover:text-white">
-            CRM
-          </Link>
-          <span>/</span>
-          <Link to="/crm/leads" className="hover:text-gray-900 dark:hover:text-white">
-            Opportunités
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 dark:text-white">{lead.name}</span>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { label: 'Accueil', href: '/' },
+            { label: 'CRM', href: '/crm' },
+            { label: 'Opportunités', href: '/crm/leads' },
+            { label: lead.name },
+          ]}
+        />
 
         {/* Header */}
         <div className="flex items-center justify-between">
