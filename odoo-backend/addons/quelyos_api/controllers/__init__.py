@@ -46,6 +46,7 @@ from . import search
 from . import seo
 from . import marketing
 from . import newsletter
+from . import newsletter_ctrl
 from . import subscription
 from . import subscriptions_ctrl
 from . import facturx_ctrl
