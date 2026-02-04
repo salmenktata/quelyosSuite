@@ -24,7 +24,7 @@ import {
   Image as ImageIcon,
   Package,
 } from 'lucide-react'
-import { Layout } from '../../components/Layout'
+import { Layout } from '@/components/Layout'
 import {
   useProducts,
   useDeleteProduct,
@@ -32,8 +32,8 @@ import {
   useDuplicateProduct,
   useExportProducts,
   useImportProducts,
-} from '../../hooks/useProducts'
-import { useCategories } from '../../hooks/useCategories'
+} from '@/hooks/useProducts'
+import { useCategories } from '@/hooks/useCategories'
 import {
   Button,
   Badge,
@@ -46,12 +46,12 @@ import {
   PageNotice,
   type SearchSuggestion,
   type Attribute,
-} from '../../components/common'
+} from '@/components/common'
 import { ProductFilters, ProductBulkActions, ProductTableRow } from '@/components/store/products'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../../hooks/useToast'
-import { ToastContainer } from '../../components/common/Toast'
-import { api } from '../../lib/api'
+import { useToast } from '@/hooks/useToast'
+import { ToastContainer } from '@/components/common/Toast'
+import { api } from '@/lib/api'
 import { logger } from '@quelyos/logger'
 import type { ProductsQueryParams, Product, Category } from '@/types'
 

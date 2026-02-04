@@ -13,7 +13,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Button } from '@/components/common';
+import { Breadcrumbs, Button, SkeletonTable } from '@/components/common';
 import { Star, Download, DollarSign, User, Check, ExternalLink, ShoppingCart, Sparkles } from 'lucide-react';
 import type { ThemeCategory } from '@/types/theme';
 import { logger } from '@quelyos/logger';
@@ -48,14 +48,16 @@ export default function MarketplaceThemeDetailPage() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<ThemeDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [purchased, setPurchased] = useState(false);
 
   const loadTheme = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/themes/${id}`,
+        `/api/themes/${id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -72,10 +74,12 @@ export default function MarketplaceThemeDetailPage() {
       const data = await response.json();
       if (data.result?.success && data.result.theme) {
         setTheme(data.result.theme);
+      } else {
+        setError('Impossible de charger le thème. Veuillez réessayer.');
       }
-    } catch (error) {
-      logger.error("Erreur:", error);
-      // Error loading theme - silently fail
+    } catch (err) {
+      logger.error("Erreur:", err);
+      setError('Impossible de charger le thème. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +98,7 @@ export default function MarketplaceThemeDetailPage() {
       const tenantId = 1; // Placeholder
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/themes/${theme.id}/purchase`,
+        `/api/themes/${theme.id}/purchase`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -137,10 +141,30 @@ export default function MarketplaceThemeDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-          <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div className="space-y-6">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse"></div>
+          <SkeletonTable rows={5} columns={1} />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div
+          role="alert"
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-2xl mx-auto mt-12"
+        >
+          <p className="text-red-900 dark:text-red-100 mb-4 text-lg">{error}</p>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={loadTheme}>
+              Réessayer
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/store/themes/marketplace')}>
+              Retour au Marketplace
+            </Button>
+          </div>
         </div>
       </Layout>
     );
@@ -187,16 +211,29 @@ export default function MarketplaceThemeDetailPage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Boutique', href: '/store' },
-          { label: 'Thèmes', href: '/store/themes' },
-          { label: 'Marketplace', href: '/store/themes/marketplace' },
-          { label: theme.name, href: `/store/themes/marketplace/${theme.id}` },
-        ]}
-      />
+      <div className="p-4 md:p-8">
+        <Breadcrumbs
+          items={[
+            { label: 'Boutique', href: '/store' },
+            { label: 'Thèmes', href: '/store/themes' },
+            { label: 'Marketplace', href: '/store/themes/marketplace' },
+            { label: theme.name, href: `/store/themes/marketplace/${theme.id}` },
+          ]}
+        />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`mb-6 rounded-lg border p-4 ${
+          theme.is_premium
+            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+            : 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+        }`}>
+          <p className={theme.is_premium ? 'text-blue-900 dark:text-blue-100' : 'text-green-900 dark:text-green-100'}>
+            Ce thème est <strong>{theme.is_premium ? 'premium' : 'gratuit'}</strong>.
+            {theme.is_premium && ' Paiement sécurisé via Stripe.'}
+            {!theme.is_premium && ' Aucune carte bancaire requise.'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Colonne principale */}
         <div className="lg:col-span-2 space-y-6">
           {/* Header */}
@@ -216,7 +253,7 @@ export default function MarketplaceThemeDetailPage() {
               <span className="font-semibold text-gray-900 dark:text-white">
                 {theme.rating.toFixed(1)}
               </span>
-              <span className="text-gray-500 dark:text-gray-500">
+              <span className="text-gray-500 dark:text-gray-400">
                 ({theme.reviews_count} avis)
               </span>
             </div>
@@ -399,6 +436,7 @@ export default function MarketplaceThemeDetailPage() {
             </span>
           </div>
         </div>
+      </div>
       </div>
     </Layout>
   );

@@ -17,39 +17,47 @@ import Dashboard from './pages/Dashboard'
 // Lazy loaded pages
 // ---------------------------------------------------------------------------
 
-// Store
+// Store - Tableau de bord
 const StoreDashboard = lazy(() => import('./pages/store/StoreDashboard'))
-const Orders = lazy(() => import('./pages/store/Orders'))
-const OrderDetail = lazy(() => import('./pages/store/OrderDetail'))
-const Products = lazy(() => import('./pages/store/Products'))
-const ProductDetail = lazy(() => import('./pages/store/ProductDetail'))
-const ProductForm = lazy(() => import('./pages/store/ProductForm'))
-const Categories = lazy(() => import('./pages/store/Categories'))
-const Coupons = lazy(() => import('./pages/store/Coupons'))
-const CouponForm = lazy(() => import('./pages/store/CouponForm'))
-const Featured = lazy(() => import('./pages/store/Featured'))
-const AbandonedCarts = lazy(() => import('./pages/store/AbandonedCarts'))
-const Menus = lazy(() => import('./pages/store/Menus'))
-const HeroSlides = lazy(() => import('./pages/store/HeroSlides'))
-const PromoBanners = lazy(() => import('./pages/store/PromoBanners'))
-const PromoMessages = lazy(() => import('./pages/store/PromoMessages'))
-const TrustBadges = lazy(() => import('./pages/store/TrustBadges'))
-const MarketingPopups = lazy(() => import('./pages/store/MarketingPopups'))
-const StaticPages = lazy(() => import('./pages/store/StaticPages'))
-const Reviews = lazy(() => import('./pages/store/Reviews'))
-const FAQ = lazy(() => import('./pages/store/FAQ'))
-const Collections = lazy(() => import('./pages/store/Collections'))
-const FlashSales = lazy(() => import('./pages/store/FlashSales'))
-const Bundles = lazy(() => import('./pages/store/Bundles'))
-const Testimonials = lazy(() => import('./pages/store/Testimonials'))
-const LiveEvents = lazy(() => import('./pages/store/LiveEvents'))
-const TrendingProducts = lazy(() => import('./pages/store/TrendingProducts'))
-const Blog = lazy(() => import('./pages/store/Blog'))
-const Loyalty = lazy(() => import('./pages/store/Loyalty'))
-const SalesReports = lazy(() => import('./pages/store/SalesReports'))
-const StoreStockAlerts = lazy(() => import('./pages/store/StockAlerts'))
-const Attributes = lazy(() => import('./pages/store/Attributes'))
-const ProductImport = lazy(() => import('./pages/store/ProductImport'))
+// Store - Orders
+const Orders = lazy(() => import('./pages/store/orders/Orders'))
+const OrderDetail = lazy(() => import('./pages/store/orders/OrderDetail'))
+const AbandonedCarts = lazy(() => import('./pages/store/orders/AbandonedCarts'))
+// Store - Catalog
+const Products = lazy(() => import('./pages/store/catalog/Products'))
+const ProductDetail = lazy(() => import('./pages/store/catalog/ProductDetail'))
+const ProductForm = lazy(() => import('./pages/store/catalog/ProductForm'))
+const Categories = lazy(() => import('./pages/store/catalog/Categories'))
+const Collections = lazy(() => import('./pages/store/catalog/Collections'))
+const Bundles = lazy(() => import('./pages/store/catalog/Bundles'))
+const Attributes = lazy(() => import('./pages/store/catalog/Attributes'))
+const ProductImport = lazy(() => import('./pages/store/catalog/ProductImport'))
+// Store - Marketing
+const Coupons = lazy(() => import('./pages/store/marketing/Coupons'))
+const CouponForm = lazy(() => import('./pages/store/marketing/CouponForm'))
+const FlashSales = lazy(() => import('./pages/store/marketing/FlashSales'))
+const Featured = lazy(() => import('./pages/store/marketing/Featured'))
+const TrendingProducts = lazy(() => import('./pages/store/marketing/TrendingProducts'))
+const PromoBanners = lazy(() => import('./pages/store/marketing/PromoBanners'))
+const MarketingPopups = lazy(() => import('./pages/store/marketing/MarketingPopups'))
+const PromoMessages = lazy(() => import('./pages/store/marketing/PromoMessages'))
+const NewsletterCampaigns = lazy(() => import('./pages/store/marketing/newsletter/campaigns/page'))
+const NewsletterSubscribers = lazy(() => import('./pages/store/marketing/newsletter/subscribers/page'))
+const NewsletterCompose = lazy(() => import('./pages/store/marketing/newsletter/compose/page'))
+// Store - Content
+const HeroSlides = lazy(() => import('./pages/store/content/HeroSlides'))
+const Reviews = lazy(() => import('./pages/store/content/Reviews'))
+const Testimonials = lazy(() => import('./pages/store/content/Testimonials'))
+const Loyalty = lazy(() => import('./pages/store/content/Loyalty'))
+const FAQ = lazy(() => import('./pages/store/content/FAQ'))
+const StaticPages = lazy(() => import('./pages/store/content/StaticPages'))
+const Blog = lazy(() => import('./pages/store/content/Blog'))
+const Menus = lazy(() => import('./pages/store/content/Menus'))
+const TrustBadges = lazy(() => import('./pages/store/content/TrustBadges'))
+const LiveEvents = lazy(() => import('./pages/store/content/LiveEvents'))
+// Store - Reports
+const SalesReports = lazy(() => import('./pages/store/reports/SalesReports'))
+const StoreStockAlerts = lazy(() => import('./pages/store/reports/StockAlerts'))
 
 // Store Themes
 const ThemesMarketplace = lazy(() => import('./pages/store/themes/marketplace'))
@@ -310,38 +318,80 @@ export default function AppRoutes() {
 
         {/* ---- Store ---- */}
         <Route path="/store" element={<P><Module name="Boutique"><StoreDashboard /></Module></P>} />
+
+        {/* Store - Orders */}
         <Route path="/store/orders" element={<P><Orders /></P>} />
         <Route path="/store/orders/:id" element={<P><OrderDetail /></P>} />
-        <Route path="/store/products" element={<P><Products /></P>} />
-        <Route path="/store/products/create" element={<P><ProductForm /></P>} />
-        <Route path="/store/products/:id" element={<P><ProductDetail /></P>} />
-        <Route path="/store/products/:id/edit" element={<P><ProductForm /></P>} />
-        <Route path="/store/categories" element={<P><Categories /></P>} />
-        <Route path="/store/coupons" element={<P><Coupons /></P>} />
-        <Route path="/store/coupons/create" element={<P><CouponForm /></P>} />
-        <Route path="/store/featured" element={<P><Featured /></P>} />
-        <Route path="/store/abandoned-carts" element={<P><AbandonedCarts /></P>} />
-        <Route path="/store/menus" element={<P><Menus /></P>} />
-        <Route path="/store/hero-slides" element={<P><HeroSlides /></P>} />
-        <Route path="/store/promo-banners" element={<P><PromoBanners /></P>} />
-        <Route path="/store/promo-messages" element={<P><PromoMessages /></P>} />
-        <Route path="/store/trust-badges" element={<P><TrustBadges /></P>} />
-        <Route path="/store/marketing-popups" element={<P><MarketingPopups /></P>} />
-        <Route path="/store/static-pages" element={<P><StaticPages /></P>} />
-        <Route path="/store/reviews" element={<P><Reviews /></P>} />
-        <Route path="/store/faq" element={<P><FAQ /></P>} />
-        <Route path="/store/collections" element={<P><Collections /></P>} />
-        <Route path="/store/flash-sales" element={<P><FlashSales /></P>} />
-        <Route path="/store/bundles" element={<P><Bundles /></P>} />
-        <Route path="/store/testimonials" element={<P><Testimonials /></P>} />
-        <Route path="/store/live-events" element={<P><LiveEvents /></P>} />
-        <Route path="/store/trending-products" element={<P><TrendingProducts /></P>} />
-        <Route path="/store/blog" element={<P><Blog /></P>} />
-        <Route path="/store/loyalty" element={<P><Loyalty /></P>} />
-        <Route path="/store/sales-reports" element={<P><SalesReports /></P>} />
-        <Route path="/store/stock-alerts" element={<P><StoreStockAlerts /></P>} />
-        <Route path="/store/attributes" element={<P><Attributes /></P>} />
-        <Route path="/store/import-export" element={<P><ProductImport /></P>} />
+        <Route path="/store/orders/abandoned-carts" element={<P><AbandonedCarts /></P>} />
+
+        {/* Store - Catalog */}
+        <Route path="/store/catalog/products" element={<P><Products /></P>} />
+        <Route path="/store/catalog/products/create" element={<P><ProductForm /></P>} />
+        <Route path="/store/catalog/products/:id" element={<P><ProductDetail /></P>} />
+        <Route path="/store/catalog/products/:id/edit" element={<P><ProductForm /></P>} />
+        <Route path="/store/catalog/categories" element={<P><Categories /></P>} />
+        <Route path="/store/catalog/collections" element={<P><Collections /></P>} />
+        <Route path="/store/catalog/bundles" element={<P><Bundles /></P>} />
+        <Route path="/store/catalog/attributes" element={<P><Attributes /></P>} />
+        <Route path="/store/catalog/import-export" element={<P><ProductImport /></P>} />
+
+        {/* Store - Marketing */}
+        <Route path="/store/marketing/coupons" element={<P><Coupons /></P>} />
+        <Route path="/store/marketing/coupons/create" element={<P><CouponForm /></P>} />
+        <Route path="/store/marketing/flash-sales" element={<P><FlashSales /></P>} />
+        <Route path="/store/marketing/featured" element={<P><Featured /></P>} />
+        <Route path="/store/marketing/trending" element={<P><TrendingProducts /></P>} />
+        <Route path="/store/marketing/banners" element={<P><PromoBanners /></P>} />
+        <Route path="/store/marketing/popups" element={<P><MarketingPopups /></P>} />
+        <Route path="/store/marketing/messages" element={<P><PromoMessages /></P>} />
+        <Route path="/store/marketing/newsletter/campaigns" element={<P><NewsletterCampaigns /></P>} />
+        <Route path="/store/marketing/newsletter/subscribers" element={<P><NewsletterSubscribers /></P>} />
+        <Route path="/store/marketing/newsletter/compose" element={<P><NewsletterCompose /></P>} />
+
+        {/* Store - Content */}
+        <Route path="/store/content/hero-slides" element={<P><HeroSlides /></P>} />
+        <Route path="/store/content/reviews" element={<P><Reviews /></P>} />
+        <Route path="/store/content/testimonials" element={<P><Testimonials /></P>} />
+        <Route path="/store/content/loyalty" element={<P><Loyalty /></P>} />
+        <Route path="/store/content/faq" element={<P><FAQ /></P>} />
+        <Route path="/store/content/pages" element={<P><StaticPages /></P>} />
+        <Route path="/store/content/blog" element={<P><Blog /></P>} />
+        <Route path="/store/content/menus" element={<P><Menus /></P>} />
+        <Route path="/store/content/trust-badges" element={<P><TrustBadges /></P>} />
+        <Route path="/store/content/live-events" element={<P><LiveEvents /></P>} />
+
+        {/* Store - Reports */}
+        <Route path="/store/reports/sales" element={<P><SalesReports /></P>} />
+        <Route path="/store/reports/stock-alerts" element={<P><StoreStockAlerts /></P>} />
+
+        {/* Compatibility redirects (old URLs -> new URLs) */}
+        <Route path="/store/products" element={<Navigate to="/store/catalog/products" replace />} />
+        <Route path="/store/products/:id" element={<Navigate to="/store/catalog/products/:id" replace />} />
+        <Route path="/store/categories" element={<Navigate to="/store/catalog/categories" replace />} />
+        <Route path="/store/collections" element={<Navigate to="/store/catalog/collections" replace />} />
+        <Route path="/store/bundles" element={<Navigate to="/store/catalog/bundles" replace />} />
+        <Route path="/store/attributes" element={<Navigate to="/store/catalog/attributes" replace />} />
+        <Route path="/store/import-export" element={<Navigate to="/store/catalog/import-export" replace />} />
+        <Route path="/store/coupons" element={<Navigate to="/store/marketing/coupons" replace />} />
+        <Route path="/store/flash-sales" element={<Navigate to="/store/marketing/flash-sales" replace />} />
+        <Route path="/store/featured" element={<Navigate to="/store/marketing/featured" replace />} />
+        <Route path="/store/trending-products" element={<Navigate to="/store/marketing/trending" replace />} />
+        <Route path="/store/promo-banners" element={<Navigate to="/store/marketing/banners" replace />} />
+        <Route path="/store/marketing-popups" element={<Navigate to="/store/marketing/popups" replace />} />
+        <Route path="/store/promo-messages" element={<Navigate to="/store/marketing/messages" replace />} />
+        <Route path="/store/hero-slides" element={<Navigate to="/store/content/hero-slides" replace />} />
+        <Route path="/store/reviews" element={<Navigate to="/store/content/reviews" replace />} />
+        <Route path="/store/testimonials" element={<Navigate to="/store/content/testimonials" replace />} />
+        <Route path="/store/loyalty" element={<Navigate to="/store/content/loyalty" replace />} />
+        <Route path="/store/faq" element={<Navigate to="/store/content/faq" replace />} />
+        <Route path="/store/static-pages" element={<Navigate to="/store/content/pages" replace />} />
+        <Route path="/store/blog" element={<Navigate to="/store/content/blog" replace />} />
+        <Route path="/store/menus" element={<Navigate to="/store/content/menus" replace />} />
+        <Route path="/store/trust-badges" element={<Navigate to="/store/content/trust-badges" replace />} />
+        <Route path="/store/live-events" element={<Navigate to="/store/content/live-events" replace />} />
+        <Route path="/store/abandoned-carts" element={<Navigate to="/store/orders/abandoned-carts" replace />} />
+        <Route path="/store/sales-reports" element={<Navigate to="/store/reports/sales" replace />} />
+        <Route path="/store/stock-alerts" element={<Navigate to="/store/reports/stock-alerts" replace />} />
 
         {/* Store Themes */}
         <Route path="/store/themes" element={<P><ThemesMarketplace /></P>} />

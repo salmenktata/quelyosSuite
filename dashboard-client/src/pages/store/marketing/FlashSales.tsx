@@ -14,6 +14,7 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
 import { apiFetchJson } from '@/lib/apiFetch';
+import { FlashSalePreview } from '@/components/FlashSalePreview';
 import { logger } from '@quelyos/logger';
 
 interface FlashSale {
@@ -279,12 +280,15 @@ export default function FlashSales() {
         </div>
 
         {editing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                 {editing.id ? 'Modifier la vente flash' : 'Nouvelle vente flash'}
               </h3>
-              <div className="space-y-4">
+
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* Formulaire */}
+                <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 dark:text-white dark:text-gray-300 mb-1">
                     Nom
@@ -342,16 +346,23 @@ export default function FlashSales() {
                     className="w-20 h-10 rounded cursor-pointer"
                   />
                 </div>
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button variant="secondary" onClick={() => setEditing(null)}>
+                    Annuler
+                  </Button>
+                  <Button onClick={() => { setEditing(null); fetchSales(); }} className="bg-red-600 hover:bg-red-700">
+                    Enregistrer
+                  </Button>
+                </div>
               </div>
-              <div className="flex justify-end gap-2 mt-6">
-                <Button variant="secondary" onClick={() => setEditing(null)}>
-                  Annuler
-                </Button>
-                <Button onClick={() => { setEditing(null); fetchSales(); }} className="bg-red-600 hover:bg-red-700">
-                  Enregistrer
-                </Button>
+
+              {/* Preview */}
+              <div>
+                <FlashSalePreview formData={editing} />
               </div>
             </div>
+          </div>
           </div>
         )}
       </div>

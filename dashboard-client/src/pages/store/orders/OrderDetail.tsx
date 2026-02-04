@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
-import { Layout } from '../../components/Layout'
+import { Layout } from '@/components/Layout'
 import {
   useOrder,
   useUpdateOrderStatus,
@@ -10,18 +10,18 @@ import {
   useSendQuotation,
   useCreateInvoice,
   useUnlockOrder,
-} from '../../hooks/useOrders'
-import { Breadcrumbs, Modal, PageNotice, SkeletonTable } from '../../components/common'
-import { useToast } from '../../contexts/ToastContext'
-import { storeNotices } from '../../lib/notices/store-notices'
-import { api } from '../../lib/api'
-import { OrderHeader } from '../../components/orders/OrderHeader'
-import { OrderCustomerInfo } from '../../components/orders/OrderCustomerInfo'
-import { OrderTracking } from '../../components/orders/OrderTracking'
-import { OrderLineItems } from '../../components/orders/OrderLineItems'
-import { OrderSummary } from '../../components/orders/OrderSummary'
-import { OrderHistory } from '../../components/orders/OrderHistory'
-import { OrderActions } from '../../components/orders/OrderActions'
+} from '@/hooks/useOrders'
+import { Breadcrumbs, Modal, PageNotice, SkeletonTable } from '@/components/common'
+import { useToast } from '@/contexts/ToastContext'
+import { storeNotices } from '@/lib/notices/store-notices'
+import { api } from '@/lib/api'
+import { OrderHeader } from '@/components/orders/OrderHeader'
+import { OrderCustomerInfo } from '@/components/orders/OrderCustomerInfo'
+import { OrderTracking } from '@/components/orders/OrderTracking'
+import { OrderLineItems } from '@/components/orders/OrderLineItems'
+import { OrderSummary } from '@/components/orders/OrderSummary'
+import { OrderHistory } from '@/components/orders/OrderHistory'
+import { OrderActions } from '@/components/orders/OrderActions'
 import { logger } from '@quelyos/logger';
 
 export default function OrderDetail() {

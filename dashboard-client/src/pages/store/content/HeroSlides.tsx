@@ -11,13 +11,14 @@
 
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { Layout } from '../../components/Layout'
-import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '../../hooks/useHeroSlides'
-import { Button, PageNotice, Breadcrumbs } from '../../components/common'
-import { useToast } from '../../hooks/useToast'
+import { Layout } from '@/components/Layout'
+import { useHeroSlides, useCreateHeroSlide, useUpdateHeroSlide, useDeleteHeroSlide, HeroSlide } from '@/hooks/useHeroSlides'
+import { Button, PageNotice, Breadcrumbs } from '@/components/common'
+import { useToast } from '@/hooks/useToast'
 import { storeNotices } from '@/lib/notices'
-import { HeroSlideTable } from '../../components/HeroSlideTable'
-import { HeroSlideForm, HeroSlideFormData } from '../../components/HeroSlideForm'
+import { HeroSlideTable } from '@/components/HeroSlideTable'
+import { HeroSlideForm, HeroSlideFormData } from '@/components/HeroSlideForm'
+import { HeroSlidePreview } from '@/components/HeroSlidePreview'
 import { logger } from '@quelyos/logger';
 
 const DEFAULT_FORM_DATA: HeroSlideFormData = {
@@ -140,13 +141,16 @@ export default function HeroSlides() {
           />
 
           {showForm && (
-            <HeroSlideForm
-              formData={formData}
-              isCreating={isCreating}
-              onFormDataChange={setFormData}
-              onSave={handleSave}
-              onCancel={handleCancel}
-            />
+            <div className="space-y-6">
+              <HeroSlideForm
+                formData={formData}
+                isCreating={isCreating}
+                onFormDataChange={setFormData}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+              <HeroSlidePreview formData={formData} />
+            </div>
           )}
         </div>
       </div>

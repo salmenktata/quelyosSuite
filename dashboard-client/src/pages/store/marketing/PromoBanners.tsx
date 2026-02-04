@@ -11,14 +11,14 @@
 
 import { useState } from 'react'
 import { Plus, X, Save } from 'lucide-react'
-import { Layout } from '../../components/Layout'
-import { usePromoBanners, useCreatePromoBanner, useUpdatePromoBanner, useDeletePromoBanner, PromoBanner } from '../../hooks/usePromoBanners'
-import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
+import { Layout } from '@/components/Layout'
+import { usePromoBanners, useCreatePromoBanner, useUpdatePromoBanner, useDeletePromoBanner, PromoBanner } from '@/hooks/usePromoBanners'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '@/components/common'
 import { storeNotices } from '@/lib/notices'
-import { useToast } from '../../hooks/useToast'
-import { BannerFormInputs } from '../../components/store/promo-banners/BannerFormInputs'
-import { BannerTableRow } from '../../components/store/promo-banners/BannerTableRow'
-import { BannerPreview } from '../../components/store/promo-banners/BannerPreview'
+import { useToast } from '@/hooks/useToast'
+import { BannerFormInputs } from '@/components/store/promo-banners/BannerFormInputs'
+import { BannerTableRow } from '@/components/store/promo-banners/BannerTableRow'
+import { BannerPreview } from '@/components/store/promo-banners/BannerPreview'
 import { logger } from '@quelyos/logger';
 
 export default function PromoBanners() {

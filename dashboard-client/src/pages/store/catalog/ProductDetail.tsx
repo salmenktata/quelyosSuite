@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { Layout } from '../../components/Layout'
-import { useProduct } from '../../hooks/useProducts'
-import { useProductImages } from '../../hooks/useProductImages'
-import { Button, Breadcrumbs, Badge, PageNotice, SkeletonTable } from '../../components/common'
+import { Layout } from '@/components/Layout'
+import { useProduct } from '@/hooks/useProducts'
+import { useProductImages } from '@/hooks/useProductImages'
+import { Button, Breadcrumbs, Badge, PageNotice, SkeletonTable } from '@/components/common'
 import type { ProductImage } from '@/types'
-import { storeNotices } from '../../lib/notices/store-notices'
+import { storeNotices } from '@/lib/notices/store-notices'
 import {
   Pencil as PencilIcon,
   Tag as TagIcon,

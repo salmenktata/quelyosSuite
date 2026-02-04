@@ -1,85 +1,81 @@
 /**
- * Page Badges de Confiance - Gestion des trust badges
+ * Page Messages Promotionnels - Gestion de la barre de messages
  *
  * Fonctionnalités :
- * - Liste des badges de confiance (paiement sécurisé, livraison, garantie, etc.)
- * - Création/édition/suppression de badges
- * - Choix de l'icône (carte bancaire, livraison, bouclier, etc.)
- * - Activation/désactivation des badges
+ * - Liste des messages promo affichés en barre supérieure
+ * - Création/édition/suppression de messages
+ * - Choix de l'icône (camion, cadeau, étoile, etc.)
+ * - Activation/désactivation des messages
  */
-
 
 import { useState } from 'react'
 import { Plus, Trash2, X, Save } from 'lucide-react'
-import { Layout } from '../../components/Layout'
-import { useTrustBadges, useCreateTrustBadge, useUpdateTrustBadge, useDeleteTrustBadge, TrustBadge } from '../../hooks/useTrustBadges'
-import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
-import { useToast } from '../../hooks/useToast'
+import { Layout } from '@/components/Layout'
+import { usePromoMessages, useCreatePromoMessage, useUpdatePromoMessage, useDeletePromoMessage, PromoMessage } from '@/hooks/usePromoMessages'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '@/components/common'
+import { useToast } from '@/hooks/useToast'
 import { storeNotices } from '@/lib/notices'
 import { logger } from '@quelyos/logger';
 
 const ICON_OPTIONS = [
-  { value: 'creditcard', label: 'Carte bancaire (Paiement sécurisé)' },
-  { value: 'delivery', label: 'Livraison' },
-  { value: 'shield', label: 'Bouclier (Garantie)' },
-  { value: 'support', label: 'Support client' },
-  { value: 'return', label: 'Retour gratuit' },
-  { value: 'quality', label: 'Qualité' },
+  { value: 'truck', label: 'Camion (Livraison)' },
+  { value: 'gift', label: 'Cadeau' },
+  { value: 'star', label: 'Étoile' },
+  { value: 'clock', label: 'Horloge' },
+  { value: 'shield', label: 'Bouclier' },
+  { value: 'percent', label: 'Pourcentage' },
 ]
 
-export default function TrustBadges() {
-  const [editingBadge, setEditingBadge] = useState<TrustBadge | null>(null)
+export default function PromoMessages() {
+  const [editingMessage, setEditingMessage] = useState<PromoMessage | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const { data: badges, isLoading } = useTrustBadges()
-  const createMutation = useCreateTrustBadge()
-  const updateMutation = useUpdateTrustBadge()
-  const deleteMutation = useDeleteTrustBadge()
+  const { data: messages, isLoading } = usePromoMessages()
+  const createMutation = useCreatePromoMessage()
+  const updateMutation = useUpdatePromoMessage()
+  const deleteMutation = useDeletePromoMessage()
   const toast = useToast()
   const [formData, setFormData] = useState<{
     name: string
-    title: string
-    subtitle: string
-    icon: TrustBadge['icon']
+    text: string
+    icon: PromoMessage['icon']
     active: boolean
   }>({
     name: '',
-    title: '',
-    subtitle: '',
-    icon: 'creditcard',
+    text: '',
+    icon: 'truck',
     active: true
   })
 
   const handleNew = () => {
     setIsCreating(true)
-    setEditingBadge(null)
-    setFormData({ name: '', title: '', subtitle: '', icon: 'creditcard', active: true })
+    setEditingMessage(null)
+    setFormData({ name: '', text: '', icon: 'truck', active: true })
   }
 
-  const handleEdit = (badge: TrustBadge) => {
-    setEditingBadge(badge)
+  const handleEdit = (message: PromoMessage) => {
+    setEditingMessage(message)
     setIsCreating(false)
     setFormData({
-      name: badge.name || '',
-      title: badge.title || '',
-      subtitle: badge.subtitle || '',
-      icon: badge.icon || 'creditcard',
-      active: badge.active
+      name: message.name || '',
+      text: message.text || '',
+      icon: message.icon || 'truck',
+      active: message.active
     })
   }
 
   const handleCancel = () => {
     setIsCreating(false)
-    setEditingBadge(null)
+    setEditingMessage(null)
   }
 
   const handleSave = async () => {
     try {
       if (isCreating) {
         await createMutation.mutateAsync(formData)
-        toast.success('Badge créé')
-      } else if (editingBadge) {
-        await updateMutation.mutateAsync({ id: editingBadge.id, ...formData })
-        toast.success('Badge mis à jour')
+        toast.success('Message créé')
+      } else if (editingMessage) {
+        await updateMutation.mutateAsync({ id: editingMessage.id, ...formData })
+        toast.success('Message mis à jour')
       }
       handleCancel()
     } catch {
@@ -89,18 +85,18 @@ export default function TrustBadges() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Supprimer ce badge ?')) return
+    if (!confirm('Supprimer ce message ?')) return
     try {
       await deleteMutation.mutateAsync(id)
-      toast.success('Badge supprimé')
-      if (editingBadge?.id === id) handleCancel()
+      toast.success('Message supprimé')
+      if (editingMessage?.id === id) handleCancel()
     } catch {
       logger.error("Erreur attrapée");
       toast.error('Erreur lors de la suppression')
     }
   }
 
-  const showForm = isCreating || editingBadge
+  const showForm = isCreating || editingMessage
 
   return (
     <Layout>
@@ -109,15 +105,15 @@ export default function TrustBadges() {
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
             { label: 'Store', href: '/store' },
-            { label: 'Badges Confiance' },
+            { label: 'Messages Promo' },
           ]}
         />
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Trust Badges</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Messages PromoBar</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Badges affichés sur le site e-commerce
+              Messages affichés en barre supérieure du site
             </p>
           </div>
           {!showForm && (
@@ -127,7 +123,7 @@ export default function TrustBadges() {
           )}
         </div>
 
-        <PageNotice config={storeNotices.trustBadges} className="mb-6" />
+        <PageNotice config={storeNotices.promoMessages} className="mb-6" />
 
         <div className={`grid gap-6 ${showForm ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Liste */}
@@ -137,28 +133,28 @@ export default function TrustBadges() {
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nom</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Titre</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Texte</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actif</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {badges?.map(b => (
+                  {messages?.map(m => (
                     <tr
-                      key={b.id}
-                      className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${editingBadge?.id === b.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''}`}
-                      onClick={() => handleEdit(b)}
+                      key={m.id}
+                      className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${editingMessage?.id === m.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''}`}
+                      onClick={() => handleEdit(m)}
                     >
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white dark:text-gray-100">{b.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{b.title}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white dark:text-gray-100">{m.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{m.text}</td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex px-2 py-1 text-xs rounded-full ${b.active ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
-                          {b.active ? 'Oui' : 'Non'}
+                        <span className={`inline-flex px-2 py-1 text-xs rounded-full ${m.active ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                          {m.active ? 'Oui' : 'Non'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Button
-                          onClick={(e) => { e.stopPropagation(); handleDelete(b.id) }}
+                          onClick={(e) => { e.stopPropagation(); handleDelete(m.id) }}
                           size="sm"
                           variant="danger"
                           icon={<Trash2 className="h-3.5 w-3.5" />}
@@ -168,10 +164,10 @@ export default function TrustBadges() {
                       </td>
                     </tr>
                   ))}
-                  {(!badges || badges.length === 0) && (
+                  {(!messages || messages.length === 0) && (
                     <tr>
                       <td colSpan={4} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                        Aucun badge. Cliquez sur "Nouveau" pour en créer un.
+                        Aucun message. Cliquez sur "Nouveau" pour en créer un.
                       </td>
                     </tr>
                   )}
@@ -184,7 +180,7 @@ export default function TrustBadges() {
           {showForm && (
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white dark:text-gray-100 mb-4">
-                {isCreating ? 'Nouveau Badge' : 'Modifier le Badge'}
+                {isCreating ? 'Nouveau Message' : 'Modifier le Message'}
               </h2>
 
               <div className="space-y-4">
@@ -200,24 +196,13 @@ export default function TrustBadges() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Titre *</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Texte affiché *</label>
                   <input
                     type="text"
-                    value={formData.title}
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                    value={formData.text}
+                    onChange={e => setFormData({ ...formData, text: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Paiement sécurisé"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Sous-titre</label>
-                  <input
-                    type="text"
-                    value={formData.subtitle}
-                    onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Par CB, PayPal, etc."
+                    placeholder="Livraison gratuite dès 50€"
                   />
                 </div>
 
@@ -225,7 +210,7 @@ export default function TrustBadges() {
                   <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">Icône</label>
                   <select
                     value={formData.icon}
-                    onChange={e => setFormData({ ...formData, icon: e.target.value as TrustBadge['icon'] })}
+                    onChange={e => setFormData({ ...formData, icon: e.target.value as PromoMessage['icon'] })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
                   >
                     {ICON_OPTIONS.map(opt => (
@@ -242,7 +227,7 @@ export default function TrustBadges() {
                     onChange={e => setFormData({ ...formData, active: e.target.checked })}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <label htmlFor="active" className="text-sm text-gray-900 dark:text-white">Actif</label>
+                  <label htmlFor="active" className="text-sm text-gray-900 dark:text-white dark:text-gray-300">Actif</label>
                 </div>
               </div>
 
@@ -250,7 +235,7 @@ export default function TrustBadges() {
                 <Button onClick={handleCancel} variant="secondary" icon={<X className="h-4 w-4" />}>
                   Annuler
                 </Button>
-                <Button onClick={handleSave} disabled={!formData.name || !formData.title} icon={<Save className="h-4 w-4" />}>
+                <Button onClick={handleSave} disabled={!formData.name || !formData.text} icon={<Save className="h-4 w-4" />}>
                   Sauvegarder
                 </Button>
               </div>

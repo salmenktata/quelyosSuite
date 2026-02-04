@@ -12,10 +12,10 @@
 
 import { useState } from 'react'
 import { Plus, Trash2, X, Save } from 'lucide-react'
-import { Layout } from '../../components/Layout'
-import { useStaticPages, useCreateStaticPage, useUpdateStaticPage, useDeleteStaticPage, StaticPage } from '../../hooks/useStaticPages'
-import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '../../components/common'
-import { useToast } from '../../hooks/useToast'
+import { Layout } from '@/components/Layout'
+import { useStaticPages, useCreateStaticPage, useUpdateStaticPage, useDeleteStaticPage, StaticPage } from '@/hooks/useStaticPages'
+import { Button, SkeletonTable, PageNotice, Breadcrumbs } from '@/components/common'
+import { useToast } from '@/hooks/useToast'
 import { storeNotices } from '@/lib/notices'
 import { logger } from '@quelyos/logger';
 

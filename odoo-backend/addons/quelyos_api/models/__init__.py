@@ -42,6 +42,9 @@ from . import marketing_blacklist
 from . import link_tracker
 from . import sms_template
 from . import email_builder
+# Newsletter Management
+from . import newsletter_subscriber
+from . import newsletter_campaign
 # Store Extended Models
 from . import product_review
 from . import faq

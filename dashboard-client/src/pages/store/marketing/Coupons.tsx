@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Layout } from '../../components/Layout'
-import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '../../hooks/useCoupons'
-import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '../../components/common'
+import { Layout } from '@/components/Layout'
+import { useCoupons, useUpdateCoupon, useDeleteCoupon } from '@/hooks/useCoupons'
+import { Button, Badge, Breadcrumbs, SkeletonTable, Modal, PageNotice } from '@/components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../../hooks/useToast'
+import { useToast } from '@/hooks/useToast'
 import type { Coupon as BaseCoupon } from '@/types'
 import { logger } from '@quelyos/logger';
 

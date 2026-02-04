@@ -6,9 +6,11 @@
  * - Le tag avec sa couleur
  * - Le titre et la description
  * - Le bouton avec sa couleur personnalisée
+ * - Support multi-device (mobile/tablet/desktop)
  */
 
-import { Eye } from 'lucide-react'
+import { useState } from 'react'
+import { PreviewPanel, DeviceToggle, LiveIndicator, DeviceType } from '@quelyos/preview-components'
 
 interface BannerPreviewProps {
   formData: {
@@ -26,73 +28,90 @@ interface BannerPreviewProps {
 }
 
 export function BannerPreview({ formData }: BannerPreviewProps) {
+  const [device, setDevice] = useState<DeviceType>('desktop')
+
   return (
-    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl">
-      <div className="flex items-center gap-2 mb-4">
-        <Eye className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+    <div className="space-y-4">
+      {/* Header avec contrôles */}
+      <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Prévisualisation
+          Aperçu Bannière Promo
         </h3>
+        <div className="flex items-center gap-3">
+          <LiveIndicator />
+          <DeviceToggle value={device} onChange={setDevice} />
+        </div>
       </div>
 
-      <div
-        className={`relative rounded-xl overflow-hidden bg-gradient-to-r ${formData.gradient} p-8 min-h-[240px] flex flex-col justify-center`}
-      >
-        {formData.tag && (
-          <div className="mb-3">
-            <span
-              className="inline-flex px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full"
-              style={{
-                backgroundColor: formData.tag_color,
-                color: getContrastColor(formData.tag_color),
-              }}
+      {/* Panel de preview */}
+      <PreviewPanel device={device} height="350px" showUrlBar url="https://votreboutique.com">
+        <div className="p-6 bg-gray-50 dark:bg-gray-900 h-full flex items-center justify-center">
+          <div className="w-full max-w-4xl">
+            <div
+              className={`relative rounded-xl overflow-hidden bg-gradient-to-r ${formData.gradient} p-8 min-h-[240px] flex flex-col justify-center shadow-2xl`}
             >
-              {formData.tag}
-            </span>
+              {formData.tag && (
+                <div className="mb-3">
+                  <span
+                    className="inline-flex px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full"
+                    style={{
+                      backgroundColor: formData.tag_color,
+                      color: getContrastColor(formData.tag_color),
+                    }}
+                  >
+                    {formData.tag}
+                  </span>
+                </div>
+              )}
+
+              {formData.title && (
+                <h2 className="text-3xl font-bold text-white mb-3 drop-shadow-lg">
+                  {formData.title}
+                </h2>
+              )}
+
+              {formData.description && (
+                <p className="text-white/90 text-lg mb-6 drop-shadow-md">
+                  {formData.description}
+                </p>
+              )}
+
+              {formData.button_text && (
+                <div>
+                  <button
+                    type="button"
+                    className="px-6 py-3 rounded-lg font-semibold text-sm transition hover:opacity-90 cursor-default shadow-lg"
+                    style={{
+                      backgroundColor: formData.button_bg,
+                      color: getContrastColor(formData.button_bg),
+                    }}
+                  >
+                    {formData.button_text}
+                  </button>
+                </div>
+              )}
+
+              {!formData.active && (
+                <div className="absolute top-3 right-3">
+                  <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+                    Désactivée
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
+      </PreviewPanel>
 
-        {formData.title && (
-          <h2 className="text-3xl font-bold text-white mb-3 drop-shadow-lg">
-            {formData.title}
-          </h2>
-        )}
-
-        {formData.description && (
-          <p className="text-white/90 text-lg mb-6 drop-shadow-md">
-            {formData.description}
+      {/* Informations */}
+      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <p>💡 Les modifications sont visibles instantanément</p>
+        {formData.button_link && (
+          <p>
+            <span className="font-medium">Lien :</span> {formData.button_link}
           </p>
         )}
-
-        {formData.button_text && (
-          <div>
-            <button
-              type="button"
-              className="px-6 py-3 rounded-lg font-semibold text-sm transition hover:opacity-90 cursor-default"
-              style={{
-                backgroundColor: formData.button_bg,
-                color: getContrastColor(formData.button_bg),
-              }}
-            >
-              {formData.button_text}
-            </button>
-          </div>
-        )}
-
-        {!formData.active && (
-          <div className="absolute top-3 right-3">
-            <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
-              Désactivée
-            </span>
-          </div>
-        )}
       </div>
-
-      {formData.button_link && (
-        <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-          <span className="font-medium">Lien :</span> {formData.button_link}
-        </div>
-      )}
     </div>
   )
 }

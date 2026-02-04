@@ -12,7 +12,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { Plus, Trash2, X, Save, GripVertical } from 'lucide-react'
-import { Layout } from '../../components/Layout'
+import { Layout } from '@/components/Layout'
 import {
   useMenus,
   useCreateMenu,
@@ -20,11 +20,11 @@ import {
   useDeleteMenu,
   useReorderMenus,
   type MenuItem,
-} from '../../hooks/useMenus'
-import { PageNotice, Breadcrumbs } from '../../components/common'
+} from '@/hooks/useMenus'
+import { PageNotice, Breadcrumbs } from '@/components/common'
 import { storeNotices } from '@/lib/notices'
-import { Badge, Button, SkeletonTable } from '../../components/common'
-import { useToast } from '../../hooks/useToast'
+import { Badge, Button, SkeletonTable } from '@/components/common'
+import { useToast } from '@/hooks/useToast'
 import { logger } from '@quelyos/logger';
 
 export default function Menus() {

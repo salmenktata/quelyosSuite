@@ -10,7 +10,7 @@
  */
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { Layout } from '../../components/Layout'
+import { Layout } from '@/components/Layout'
 import {
   useCategoriesTree,
   useCategories,
@@ -18,7 +18,7 @@ import {
   useUpdateCategory,
   useDeleteCategory,
   useMoveCategory,
-} from '../../hooks/useCategories'
+} from '@/hooks/useCategories'
 import {
   Button,
   Input,
@@ -29,12 +29,12 @@ import {
   CategoryTree,
   ImageUpload,
   PageNotice,
-} from '../../components/common'
+} from '@/components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { useToast } from '../../hooks/useToast'
-import { useDebounce } from '../../hooks/useDebounce'
-import { ToastContainer } from '../../components/common/Toast'
-import { useImageUpload } from '../../hooks/useImageUpload'
+import { useToast } from '@/hooks/useToast'
+import { useDebounce } from '@/hooks/useDebounce'
+import { ToastContainer } from '@/components/common/Toast'
+import { useImageUpload } from '@/hooks/useImageUpload'
 import { Category } from '@/types'
 import { logger } from '@quelyos/logger';
 
