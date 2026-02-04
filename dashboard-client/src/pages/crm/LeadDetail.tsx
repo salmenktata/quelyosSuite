@@ -11,9 +11,9 @@
  */
 import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, DollarSign, Percent, Calendar } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, DollarSign, Percent, Calendar, AlertCircle, RefreshCw } from 'lucide-react'
 import { Layout } from '@/components/Layout'
-import { SkeletonTable } from '@/components/common'
+import { SkeletonTable, Button } from '@/components/common'
 import { useLead } from '@/hooks/useLead'
 import { useUpdateLead } from '@/hooks/useUpdateLead'
 import { toast } from 'sonner'
@@ -24,7 +24,7 @@ export default function LeadDetail() {
   const navigate = useNavigate()
   const leadId = id ? parseInt(id) : undefined
 
-  const { data: lead, isLoading } = useLead(leadId)
+  const { data: lead, isLoading, isError, refetch } = useLead(leadId)
   const updateMutation = useUpdateLead()
 
   const [isEditing, setIsEditing] = useState(false)
@@ -89,6 +89,34 @@ export default function LeadDetail() {
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 animate-pulse" />
           <SkeletonTable rows={6} columns={2} />
+        </div>
+      </Layout>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8">
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement de l'opportunité.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
         </div>
       </Layout>
     )

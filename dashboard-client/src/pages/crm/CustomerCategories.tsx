@@ -18,10 +18,11 @@ import {
   useDeleteCustomerCategory,
   type CustomerCategory,
 } from '../../hooks/useCustomerCategories';
-import { SkeletonTable, PageNotice } from '../../components/common';
+import { SkeletonTable, PageNotice, Button } from '../../components/common';
 import { crmNotices } from '@/lib/notices';
 import { useToast } from '../../contexts/ToastContext';
 import { logger } from '@quelyos/logger';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function CustomerCategories() {
   // Toast
@@ -41,7 +42,7 @@ export default function CustomerCategories() {
   const [selectedColor, setSelectedColor] = useState(0);
 
   // Queries & Mutations
-  const { data: categories, isLoading, error } = useCustomerCategories();
+  const { data: categories, isLoading, error, refetch } = useCustomerCategories();
   const createMutation = useCreateCustomerCategory();
   const updateMutation = useUpdateCustomerCategory();
   const deleteMutation = useDeleteCustomerCategory();
@@ -226,8 +227,26 @@ export default function CustomerCategories() {
   if (error) {
     return (
       <Layout>
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 m-4">
-          <p className="text-red-800 dark:text-red-200">Erreur : {error.message}</p>
+        <div className="p-4 md:p-8">
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des catégories clients.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
         </div>
       </Layout>
     );
