@@ -29,16 +29,7 @@ import { useMenuState } from '../hooks/useMenuState'
 import { useAutoOpenMenus } from '../hooks/useAutoOpenMenus'
 import { useSectionState } from '../hooks/useSectionState'
 import { useNavigationHistory } from '../hooks/useNavigationHistory'
-import { useFinanceTabs, detectFinanceTab } from '../hooks/useFinanceTabs'
-import { useHomeTabs, detectHomeTab } from '../hooks/useHomeTabs'
-import { useStoreTabs, detectStoreTab } from '../hooks/useStoreTabs'
-import { useStockTabs, detectStockTab } from '../hooks/useStockTabs'
-import { useCrmTabs, detectCrmTab } from '../hooks/useCrmTabs'
-import { useMarketingTabs, detectMarketingTab } from '../hooks/useMarketingTabs'
-import { useHrTabs, detectHrTab } from '../hooks/useHrTabs'
-import { useSupportTabs, detectSupportTab } from '../hooks/useSupportTabs'
-import { usePosTabs, detectPosTab } from '../hooks/usePosTabs'
-import { useMaintenanceTabs, detectMaintenanceTab } from '../hooks/useMaintenanceTabs'
+// Hooks de tabs supprimés : obsolètes (tabs = favoris, sidebar = toutes pages)
 
 // Components
 import { Button } from './common/Button'
@@ -199,199 +190,15 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     currentModule.sections
   )
 
-  // Finance tabs logic
-  const { activeTab, setActiveTab, visibleSections: _visibleSections } = useFinanceTabs(
-    currentModule.sections,
-    location.pathname
-  )
+  // ============================================================================
+  // TABS NAVIGATION - Basée sur les FAVORIS (plus les sections)
+  // ============================================================================
 
-  // Handler pour changement de tab (navigation vers page favorite)
-  const _handleTabChange = useCallback((tabId: string) => {
-    // tabId est maintenant un path (page favorite)
-    // Naviguer vers cette page
+  // Handler unique pour changement de tab : navigation vers page favorite
+  const handleTabChange = useCallback((tabId: string) => {
+    // tabId est le path de la page favorite
     navigate(tabId)
   }, [navigate])
-
-  // Handler pour navigation sidebar Finance (change tab AVANT navigation React Router)
-  const handleFinanceSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'finance') {
-      // Détecte et change le tab immédiatement (synchrone)
-      const targetTab = detectFinanceTab(path)
-      setActiveTab(targetTab)
-    }
-  }, [currentModule.id, setActiveTab])
-
-  // Home tabs logic
-  const {
-    activeTab: homeActiveTab,
-    setActiveTab: setHomeActiveTab,
-    visibleSections: _homeVisibleSections
-  } = useHomeTabs(currentModule.sections, location.pathname)
-
-  // Handler pour changement de tab Home
-  const handleHomeTabChange = useCallback((tabId: string) => {
-    setHomeActiveTab(tabId)
-  }, [setHomeActiveTab])
-
-  // Handler pour navigation sidebar Home
-  const handleHomeSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'home') {
-      const targetTab = detectHomeTab(path)
-      setHomeActiveTab(targetTab)
-    }
-  }, [currentModule.id, setHomeActiveTab])
-
-  // Store tabs logic
-  const {
-    activeTab: storeActiveTab,
-    setActiveTab: setStoreActiveTab,
-    visibleSections: _storeVisibleSections
-  } = useStoreTabs(currentModule.sections, location.pathname)
-
-  // Handler pour changement de tab Store
-  const handleStoreTabChange = useCallback((tabId: string) => {
-    setStoreActiveTab(tabId)
-  }, [setStoreActiveTab])
-
-  // Handler pour navigation sidebar Store
-  const handleStoreSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'store') {
-      const targetTab = detectStoreTab(path)
-      setStoreActiveTab(targetTab)
-    }
-  }, [currentModule.id, setStoreActiveTab])
-
-  // Stock tabs logic
-  const {
-    activeTab: stockActiveTab,
-    setActiveTab: setStockActiveTab,
-    visibleSections: _stockVisibleSections
-  } = useStockTabs(currentModule.sections, location.pathname)
-
-  // Handler pour changement de tab Stock
-  const handleStockTabChange = useCallback((tabId: string) => {
-    setStockActiveTab(tabId)
-  }, [setStockActiveTab])
-
-  // Handler pour navigation sidebar Stock
-  const handleStockSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'stock') {
-      const targetTab = detectStockTab(path)
-      setStockActiveTab(targetTab)
-    }
-  }, [currentModule.id, setStockActiveTab])
-
-  // CRM tabs logic
-  const {
-    activeTab: crmActiveTab,
-    setActiveTab: setCrmActiveTab,
-    visibleSections: _crmVisibleSections
-  } = useCrmTabs(currentModule.sections, location.pathname)
-
-  // Handler pour changement de tab CRM
-  const handleCrmTabChange = useCallback((tabId: string) => {
-    setCrmActiveTab(tabId)
-  }, [setCrmActiveTab])
-
-  // Handler pour navigation sidebar CRM
-  const handleCrmSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'crm') {
-      const targetTab = detectCrmTab(path)
-      setCrmActiveTab(targetTab)
-    }
-  }, [currentModule.id, setCrmActiveTab])
-
-  // Marketing tabs logic
-  const {
-    activeTab: marketingActiveTab,
-    setActiveTab: setMarketingActiveTab,
-    visibleSections: _marketingVisibleSections
-  } = useMarketingTabs(currentModule.sections, location.pathname)
-
-  // Handler pour changement de tab Marketing
-  const handleMarketingTabChange = useCallback((tabId: string) => {
-    setMarketingActiveTab(tabId)
-  }, [setMarketingActiveTab])
-
-  // Handler pour navigation sidebar Marketing
-  const handleMarketingSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'marketing') {
-      const targetTab = detectMarketingTab(path)
-      setMarketingActiveTab(targetTab)
-    }
-  }, [currentModule.id, setMarketingActiveTab])
-
-  // HR tabs logic
-  const {
-    activeTab: hrActiveTab,
-    setActiveTab: setHrActiveTab,
-    visibleSections: _hrVisibleSections
-  } = useHrTabs(currentModule.sections, location.pathname)
-
-  const handleHrTabChange = useCallback((tabId: string) => {
-    setHrActiveTab(tabId)
-  }, [setHrActiveTab])
-
-  const handleHrSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'hr') {
-      const targetTab = detectHrTab(path)
-      setHrActiveTab(targetTab)
-    }
-  }, [currentModule.id, setHrActiveTab])
-
-  // Support tabs logic
-  const {
-    activeTab: supportActiveTab,
-    setActiveTab: setSupportActiveTab,
-    visibleSections: _supportVisibleSections
-  } = useSupportTabs(currentModule.sections, location.pathname)
-
-  const handleSupportTabChange = useCallback((tabId: string) => {
-    setSupportActiveTab(tabId)
-  }, [setSupportActiveTab])
-
-  const handleSupportSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'support') {
-      const targetTab = detectSupportTab(path)
-      setSupportActiveTab(targetTab)
-    }
-  }, [currentModule.id, setSupportActiveTab])
-
-  // POS tabs logic
-  const {
-    activeTab: posActiveTab,
-    setActiveTab: setPosActiveTab,
-    visibleSections: _posVisibleSections
-  } = usePosTabs(currentModule.sections, location.pathname)
-
-  const handlePosTabChange = useCallback((tabId: string) => {
-    setPosActiveTab(tabId)
-  }, [setPosActiveTab])
-
-  const handlePosSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'pos') {
-      const targetTab = detectPosTab(path)
-      setPosActiveTab(targetTab)
-    }
-  }, [currentModule.id, setPosActiveTab])
-
-  // Maintenance tabs logic
-  const {
-    activeTab: maintenanceActiveTab,
-    setActiveTab: setMaintenanceActiveTab,
-    visibleSections: _maintenanceVisibleSections
-  } = useMaintenanceTabs(currentModule.sections, location.pathname)
-
-  const handleMaintenanceTabChange = useCallback((tabId: string) => {
-    setMaintenanceActiveTab(tabId)
-  }, [setMaintenanceActiveTab])
-
-  const handleMaintenanceSidebarNavigate = useCallback((path: string) => {
-    if (currentModule.id === 'maintenance') {
-      const targetTab = detectMaintenanceTab(path)
-      setMaintenanceActiveTab(targetTab)
-    }
-  }, [currentModule.id, setMaintenanceActiveTab])
 
   // Navigation history & favorites (doit être appelé AVANT génération tabs)
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
@@ -568,19 +375,6 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                         isCollapsed={isSidebarCollapsed}
                         isFavorite={item.path ? isFavorite(item.path) : false}
                         onToggleFavorite={item.path ? () => toggleFavorite(item.path!) : undefined}
-                        onNavigate={
-                          currentModule.id === 'finance' ? handleFinanceSidebarNavigate
-                          : currentModule.id === 'home' ? handleHomeSidebarNavigate
-                          : currentModule.id === 'store' ? handleStoreSidebarNavigate
-                          : currentModule.id === 'stock' ? handleStockSidebarNavigate
-                          : currentModule.id === 'crm' ? handleCrmSidebarNavigate
-                          : currentModule.id === 'marketing' ? handleMarketingSidebarNavigate
-                          : currentModule.id === 'hr' ? handleHrSidebarNavigate
-                          : currentModule.id === 'support' ? handleSupportSidebarNavigate
-                          : currentModule.id === 'pos' ? handlePosSidebarNavigate
-                          : currentModule.id === 'maintenance' ? handleMaintenanceSidebarNavigate
-                          : undefined
-                        }
                       />
                     ))}
                   </div>

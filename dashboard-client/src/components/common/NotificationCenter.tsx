@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Bell, BellRing, CheckCircle, AlertCircle, Package, FileText } from 'lucide-react';
+import { Bell, BellRing, CheckCircle, Package, FileText } from 'lucide-react';
 import { useInvoiceNotifications, useWebSocketStatus } from '@/hooks/useInvoiceNotifications';
 import type { WSMessage } from '@/lib/websocket';
 
