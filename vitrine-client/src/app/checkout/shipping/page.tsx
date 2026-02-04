@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 import { CheckoutStepper } from '@/components/checkout/CheckoutStepper';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { ShippingForm, ShippingAddress } from '@/components/checkout/ShippingForm';
+import { DeliverySelector } from '@/components/checkout/DeliverySelector';
 import { LoadingPage } from '@/components/common/Loading';
 import { logger } from '@/lib/logger';
 
@@ -20,6 +21,9 @@ export default function CheckoutShippingPage() {
   const { cart, fetchCart, isLoading: cartLoading } = useCartStore();
   const { isAuthenticated, user } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCarrierId, setSelectedCarrierId] = useState<number | null>(null);
+  const [selectedZoneCode, setSelectedZoneCode] = useState<string | null>(null);
+  const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
 
   useEffect(() => {
     fetchCart();
@@ -40,12 +44,22 @@ export default function CheckoutShippingPage() {
   }, [cart, cartLoading, router]);
 
   const handleSubmit = async (data: ShippingAddress) => {
+    // Vérifier qu'une méthode de livraison a été sélectionnée
+    if (!selectedCarrierId || !selectedZoneCode) {
+      alert('Veuillez sélectionner une méthode de livraison');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       // Sauvegarder les informations de livraison dans le localStorage
-      // L'adresse sera envoyée à l'API lors de la confirmation de la commande
       localStorage.setItem('checkout_shipping', JSON.stringify(data));
+      localStorage.setItem('checkout_delivery', JSON.stringify({
+        carrier_id: selectedCarrierId,
+        zone_code: selectedZoneCode,
+        price: deliveryPrice,
+      }));
 
       // Rediriger vers le paiement
       router.push('/checkout/payment');
@@ -55,6 +69,12 @@ export default function CheckoutShippingPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleDeliverySelect = (carrierId: number, zoneCode: string, price: number) => {
+    setSelectedCarrierId(carrierId);
+    setSelectedZoneCode(zoneCode);
+    setDeliveryPrice(price);
   };
 
   const handleBack = () => {
@@ -103,13 +123,24 @@ export default function CheckoutShippingPage() {
         {/* Contenu */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Formulaire */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">Adresse de livraison</h2>
               <ShippingForm
                 initialData={shippingData}
                 onSubmit={handleSubmit}
                 onBack={handleBack}
                 isLoading={isSubmitting}
+              />
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">Méthode de livraison</h2>
+              <DeliverySelector
+                orderAmount={cart?.total || 0}
+                onSelect={handleDeliverySelect}
+                selectedCarrierId={selectedCarrierId}
+                selectedZoneCode={selectedZoneCode}
               />
             </div>
           </div>
