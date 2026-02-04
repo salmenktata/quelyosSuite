@@ -1,13 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 // Fonction utilitaire pour détecter le tab depuis un path
 export function detectStoreTab(pathname: string): string {
+  // Afficher tout le menu par défaut
+  if (pathname === '/store') {
+    return '__ALL__'
+  }
+
   // Vue d'ensemble
-  if (
-    pathname === '/store' ||
-    pathname.includes('/orders')
-  ) {
+  if (pathname.includes('/orders')) {
     return 'Vue d\'ensemble'
   }
 
@@ -68,25 +70,16 @@ export function detectStoreTab(pathname: string): string {
     return 'Configuration'
   }
 
-  return 'Vue d\'ensemble' // Default
+  return '__ALL__' // Default : afficher toutes les sections
 }
 
 export function useStoreTabs(sections: MenuSection[], pathname: string) {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('store_active_tab')
-      if (stored) return stored
-    }
-    return '__ALL__'
-  })
+  const [activeTab, setActiveTab] = useState<string>(() => detectStoreTab(pathname))
 
-
-  // Persistance localStorage
+  // Auto-détection tab selon URL (sans localStorage)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('store_active_tab', activeTab)
-    }
-  }, [activeTab])
+    setActiveTab(detectStoreTab(pathname))
+  }, [pathname])
 
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {

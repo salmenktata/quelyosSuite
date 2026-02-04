@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import type { MenuSection } from '@/config/modules'
 
@@ -23,20 +23,11 @@ export function detectMaintenanceTab(path: string): string {
 /**
  * Hook pour gérer les tabs du module Maintenance
  */
-export function useMaintenanceTabs(sections: MenuSection[], currentPath: string) {
+export function useMaintenanceTabs(sections: MenuSection[], _currentPath: string) {
   const location = useLocation()
-  const [activeTab, setActiveTab] = useState('__ALL__')
-
-  // Mettre à jour activeTab quand le path change
-  useEffect(() => {
-    if (location.pathname === '/maintenance') {
-      setActiveTab('__ALL__')
-    } else {
-      const newTab = detectMaintenanceTab(location.pathname)
-       
-      setActiveTab(newTab)
-    }
-  }, [location.pathname])
+  const [activeTab, setActiveTab] = useState(() => {
+    return location.pathname === '/maintenance' ? '__ALL__' : detectMaintenanceTab(location.pathname)
+  })
 
   // Générer les tabs depuis les sections (groupes tabGroup)
   const tabs = useMemo(() => {

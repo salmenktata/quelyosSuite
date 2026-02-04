@@ -10,18 +10,11 @@ export function detectSupportTab(pathname: string): string {
 export function useSupportTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('support_active_tab') || '__ALL__'
+      const stored = localStorage.getItem('support_active_tab')
+      if (stored) return stored
     }
-    return '__ALL__'
+    return pathname === '/support' ? '__ALL__' : detectSupportTab(pathname)
   })
-
-  useEffect(() => {
-    if (pathname === '/support') {
-      setActiveTab('__ALL__')
-    } else {
-      setActiveTab(detectSupportTab(pathname))
-    }
-  }, [pathname])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -48,20 +48,12 @@ export function detectStockTab(pathname: string): string {
 }
 
 export function useStockTabs(sections: MenuSection[], pathname: string) {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('stock_active_tab') || '__ALL__'
-    }
-    return '__ALL__'
-  })
+  const [activeTab, setActiveTab] = useState<string>(() => detectStockTab(pathname))
 
-
-  // Persistance localStorage
+  // Auto-détection tab selon URL (sans localStorage)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('stock_active_tab', activeTab)
-    }
-  }, [activeTab])
+    setActiveTab(detectStockTab(pathname))
+  }, [pathname])
 
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {

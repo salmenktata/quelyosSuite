@@ -32,20 +32,12 @@ export function detectMarketingTab(pathname: string): string {
 }
 
 export function useMarketingTabs(sections: MenuSection[], pathname: string) {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('marketing_active_tab') || '__ALL__'
-    }
-    return '__ALL__'
-  })
+  const [activeTab, setActiveTab] = useState<string>(() => detectMarketingTab(pathname))
 
-
-  // Persistance localStorage
+  // Auto-détection tab selon URL (sans localStorage)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('marketing_active_tab', activeTab)
-    }
-  }, [activeTab])
+    setActiveTab(detectMarketingTab(pathname))
+  }, [pathname])
 
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {

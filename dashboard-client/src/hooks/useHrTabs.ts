@@ -13,18 +13,11 @@ export function detectHrTab(pathname: string): string {
 export function useHrTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('hr_active_tab') || '__ALL__'
+      const stored = localStorage.getItem('hr_active_tab')
+      if (stored) return stored
     }
-    return '__ALL__'
+    return pathname === '/hr' ? '__ALL__' : detectHrTab(pathname)
   })
-
-  useEffect(() => {
-    if (pathname === '/hr') {
-      setActiveTab('__ALL__')
-    } else {
-      setActiveTab(detectHrTab(pathname))
-    }
-  }, [pathname])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

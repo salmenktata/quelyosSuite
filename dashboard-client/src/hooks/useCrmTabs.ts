@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 // Fonction utilitaire pour détecter le tab depuis un path
-export function detectCrmTab(pathname: string): string {
+export function detectCrmTab(_pathname: string): string {
   // Tableau de bord
   if (pathname === '/crm') {
     return '__ALL__'
@@ -42,21 +42,12 @@ export function detectCrmTab(pathname: string): string {
 }
 
 export function useCrmTabs(sections: MenuSection[], pathname: string) {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('crm_active_tab')
-      if (stored) return stored
-    }
-    return 'Pipeline'
-  })
+  const [activeTab, setActiveTab] = useState<string>(() => detectCrmTab(pathname))
 
-
-  // Persistance localStorage
+  // Auto-détection tab selon URL (sans localStorage)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('crm_active_tab', activeTab)
-    }
-  }, [activeTab])
+    setActiveTab(detectCrmTab(pathname))
+  }, [pathname])
 
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {
