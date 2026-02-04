@@ -9,12 +9,12 @@
  */
 import { useState, useMemo } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, PageNotice, SkeletonTable, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeavesCalendar, useDepartments } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
 import { colorIndexToHex } from '@/lib/colorPalette'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertCircle, RefreshCw } from 'lucide-react'
 
 export default function LeavesCalendarPage() {
   const { tenant } = useMyTenant()
@@ -27,7 +27,7 @@ export default function LeavesCalendarPage() {
   const startDate = new Date(year, month, 1).toISOString().split('T')[0]!
   const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0]!
 
-  const { data: calendarData, isLoading } = useLeavesCalendar(
+  const { data: calendarData, isLoading, isError, refetch } = useLeavesCalendar(
     tenant?.id || null,
     startDate,
     endDate,
@@ -103,6 +103,29 @@ export default function LeavesCalendarPage() {
 
         {/* PageNotice */}
         <PageNotice config={hrNotices.leavesCalendar} className="mb-2" />
+
+        {/* Error State */}
+        {isError && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement du calendrier.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Navigation mois */}
         <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">

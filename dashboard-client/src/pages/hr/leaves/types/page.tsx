@@ -14,14 +14,14 @@ import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveTypes, type LeaveType } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
 import { colorIndexToHex } from '@/lib/colorPalette'
-import { Tag, Plus, Edit } from 'lucide-react'
+import { Tag, Plus, Edit, AlertCircle, RefreshCw } from 'lucide-react'
 
 export default function LeaveTypesPage() {
   const { tenant } = useMyTenant()
   const [_showModal, setShowModal] = useState(false)
   const [_editingType, setEditingType] = useState<LeaveType | null>(null)
 
-  const { data: leaveTypes, isLoading } = useLeaveTypes(tenant?.id || null)
+  const { data: leaveTypes, isLoading, isError, refetch } = useLeaveTypes(tenant?.id || null)
 
   return (
     <Layout>
@@ -60,6 +60,29 @@ export default function LeaveTypesPage() {
 
         {/* PageNotice */}
         <PageNotice config={hrNotices.leavesTypes} className="mb-2" />
+
+        {/* Error State */}
+        {isError && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des types de congés.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Loading */}
         {isLoading && <SkeletonTable rows={10} columns={4} />}

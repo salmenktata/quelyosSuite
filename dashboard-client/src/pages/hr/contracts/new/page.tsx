@@ -14,7 +14,7 @@ import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useCreateContract, useEmployees, useDepartments, useJobs } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { Save } from 'lucide-react'
+import { Save, AlertCircle } from 'lucide-react'
 
 export default function NewContractPage() {
   const navigate = useNavigate()
@@ -24,9 +24,9 @@ export default function NewContractPage() {
 
   const preselectedEmployeeId = searchParams.get('employee_id')
 
-  const { data: employeesData } = useEmployees({ tenant_id: tenant?.id || 0, limit: 500 })
-  const { data: departmentsData } = useDepartments(tenant?.id || null)
-  const { data: jobsData } = useJobs(tenant?.id || null)
+  const { data: employeesData, isError: isEmployeesError } = useEmployees({ tenant_id: tenant?.id || 0, limit: 500 })
+  const { data: departmentsData, isError: isDepartmentsError } = useDepartments(tenant?.id || null)
+  const { data: jobsData, isError: isJobsError } = useJobs(tenant?.id || null)
 
   const employees = employeesData?.employees || []
   const departments = departmentsData?.departments || []
@@ -126,6 +126,21 @@ export default function NewContractPage() {
 
         {/* PageNotice */}
         <PageNotice config={hrNotices.contractNew} className="mb-2" />
+
+        {/* Error State */}
+        {(isEmployeesError || isDepartmentsError || isJobsError) && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Erreur lors du chargement des données auxiliaires (employés, départements, postes). Le formulaire reste accessible.
+              </p>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="max-w-3xl">
           {/* Employé et Type */}

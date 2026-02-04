@@ -38,6 +38,8 @@ import {
   UserCheck,
   UserX,
   AlertTriangle,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 
 export default function EmployeeDetailPage() {
@@ -49,7 +51,7 @@ export default function EmployeeDetailPage() {
   const [activeTab, setActiveTab] = useState('info')
   const [isEditing, setIsEditing] = useState(false)
 
-  const { data: employee, isLoading } = useEmployee(employeeId)
+  const { data: employee, isLoading, isError, refetch } = useEmployee(employeeId)
   const { data: leavesData } = useEmployeeLeaves(employeeId)
   const { data: attendanceData } = useEmployeeAttendance(employeeId)
   const { data: contractsData } = useContracts({
@@ -122,6 +124,36 @@ export default function EmployeeDetailPage() {
         <div className="p-4 md:p-8 space-y-6">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
           <SkeletonTable rows={10} columns={4} />
+        </div>
+      </Layout>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8">
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <div className="flex-1">
+                <p className="text-red-800 dark:text-red-200">
+                  Une erreur est survenue lors du chargement de l'employé.
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
         </div>
       </Layout>
     )

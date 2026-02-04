@@ -14,14 +14,14 @@ import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { useMyTenant } from '@/hooks/useMyTenant'
 import { useCreateEmployee, useDepartments, useJobs } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
-import { Save, User, Briefcase, Phone, MapPin } from 'lucide-react'
+import { Save, User, Briefcase, Phone, MapPin, AlertCircle } from 'lucide-react'
 
 export default function NewEmployeePage() {
   const navigate = useNavigate()
   const { tenant } = useMyTenant()
   const { mutate: createEmployee, isPending } = useCreateEmployee()
-  const { data: departmentsData } = useDepartments(tenant?.id || null)
-  const { data: jobsData } = useJobs(tenant?.id || null)
+  const { data: departmentsData, isError: isDepartmentsError } = useDepartments(tenant?.id || null)
+  const { data: jobsData, isError: isJobsError } = useJobs(tenant?.id || null)
 
   const departments = departmentsData?.departments || []
   const jobs = jobsData?.jobs || []
@@ -113,6 +113,21 @@ export default function NewEmployeePage() {
 
         {/* PageNotice */}
         <PageNotice config={hrNotices.employeeNew} className="mb-2" />
+
+        {/* Error State */}
+        {(isDepartmentsError || isJobsError) && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Erreur lors du chargement des données auxiliaires (départements, postes). Le formulaire reste accessible.
+              </p>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {/* Tabs */}

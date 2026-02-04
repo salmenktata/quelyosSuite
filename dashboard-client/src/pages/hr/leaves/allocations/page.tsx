@@ -14,14 +14,14 @@ import { useMyTenant } from '@/hooks/useMyTenant'
 import { useLeaveAllocations, useLeaveBalances, useLeaveTypes, useBulkCreateAllocations } from '@/hooks/hr'
 import { hrNotices } from '@/lib/notices'
 import { colorIndexToHex } from '@/lib/colorPalette'
-import { PieChart, Users, Calendar, X } from 'lucide-react'
+import { PieChart, Users, Calendar, X, AlertCircle, RefreshCw } from 'lucide-react'
 
 export default function AllocationsPage() {
   const { tenant } = useMyTenant()
   const [showBulkModal, setShowBulkModal] = useState(false)
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear())
 
-  const { data: allocationsData, isLoading } = useLeaveAllocations({
+  const { data: allocationsData, isLoading, isError, refetch } = useLeaveAllocations({
     tenant_id: tenant?.id || 0,
   })
 
@@ -95,6 +95,29 @@ export default function AllocationsPage() {
 
         {/* PageNotice */}
         <PageNotice config={hrNotices.leavesAllocations} className="mb-2" />
+
+        {/* Error State */}
+        {isError && (
+          <div
+            role="alert"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des allocations.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Résumé des soldes par type */}
         {balances.length > 0 && (
