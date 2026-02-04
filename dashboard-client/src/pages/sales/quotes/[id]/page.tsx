@@ -10,11 +10,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { FileText, AlertCircle, RefreshCw, User, Calendar, FileInvoice } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type QuoteLine = {
   id: number
@@ -197,6 +198,8 @@ export default function QuoteDetailPage() {
             { label: quote.name },
           ]}
         />
+
+        <PageNotice config={financeNotices.quoteDetail} />
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

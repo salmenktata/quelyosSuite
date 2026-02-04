@@ -9,9 +9,9 @@
  * - Graphiques interactifs avec données historiques et prévisions
  */
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, PageNotice } from '@/components/common'
+import { Breadcrumbs, PageNotice, Button } from '@/components/common'
 import { financeNotices } from '@/lib/notices/finance-notices'
-import { Zap, Info } from 'lucide-react'
+import { Zap, Info, AlertCircle, RefreshCw } from 'lucide-react'
 import { useRequireAuth } from '@/lib/finance/compat/auth'
 import { useState } from 'react'
 import { useCurrency } from '@/lib/finance/CurrencyContext'
@@ -30,6 +30,7 @@ export default function KPIForecastsPage() {
     data: dsoForecast,
     loading: dsoLoading,
     error: dsoError,
+    refetch: refetchDso,
   } = useApiData<KPIForecastResponse>({
     fetcher: () => reportingClient.dsoForecast({ horizonDays }),
     cacheKey: `dso-forecast-${horizonDays}`,
@@ -41,6 +42,7 @@ export default function KPIForecastsPage() {
     data: ebitdaForecast,
     loading: ebitdaLoading,
     error: ebitdaError,
+    refetch: refetchEbitda,
   } = useApiData<KPIForecastResponse>({
     fetcher: () => reportingClient.ebitdaForecast({ horizonDays }),
     cacheKey: `ebitda-forecast-${horizonDays}`,
@@ -52,12 +54,18 @@ export default function KPIForecastsPage() {
     data: bfrForecast,
     loading: bfrLoading,
     error: bfrError,
+    refetch: refetchBfr,
   } = useApiData<KPIForecastResponse>({
     fetcher: () => reportingClient.bfrForecast({ horizonDays }),
     cacheKey: `bfr-forecast-${horizonDays}`,
     cacheTime: 30 * 60 * 1000,
     deps: [horizonDays],
   })
+
+  const hasError = dsoError || ebitdaError || bfrError
+  const handleRefetchAll = async () => {
+    await Promise.all([refetchDso(), refetchEbitda(), refetchBfr()])
+  }
 
   return (
     <Layout>
@@ -86,6 +94,21 @@ export default function KPIForecastsPage() {
 
         {/* Notice */}
         <PageNotice config={financeNotices.forecasts} />
+
+        {/* Error Message */}
+        {hasError && (
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des prédictions.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={handleRefetchAll}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Info Box */}
         <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">

@@ -89,15 +89,18 @@ export default function QuotesPage() {
 
   return (
     <Layout>
-      <Breadcrumbs
-        items={[
-          { label: 'Facturation', path: '/invoicing' },
-          { label: 'Devis', path: '/invoicing/quotes' },
-        ]}
-      />
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Facturation', path: '/invoicing' },
+            { label: 'Devis', path: '/invoicing/quotes' },
+          ]}
+        />
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+        <PageNotice config={financeNotices.quotes} />
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Devis
@@ -191,6 +194,7 @@ export default function QuotesPage() {
           </table>
         </div>
       )}
+      </div>
     </Layout>
   )
 }
