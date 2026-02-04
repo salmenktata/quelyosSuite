@@ -39,6 +39,7 @@ export const storeNotices: Record<string, Notice[]> = {
   promoBanners: [{ type: 'info' as const, message: 'Créez des bannières promotionnelles.' }],
   promoMessages: [{ type: 'info' as const, message: 'Configurez vos messages promotionnels.' }],
   staticPages: [{ type: 'info' as const, message: 'Gérez vos pages statiques.' }],
+  checkoutConfig: [{ type: 'info' as const, message: 'Personnalisez le processus de commande : étapes, messages, options.' }],
   stockAlerts: [{ type: 'info' as const, message: 'Configurez les alertes de stock.' }],
   trendingProducts: [{ type: 'info' as const, message: 'Gérez les produits tendance.' }],
   tickets: [{ type: 'info' as const, message: 'Support client e-commerce.' }],

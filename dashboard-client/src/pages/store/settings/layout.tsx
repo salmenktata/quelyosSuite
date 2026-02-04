@@ -7,6 +7,7 @@ const navItems = [
   { href: "/store/settings/shipping", label: "Livraison" },
   { href: "/store/settings/shipping-zones", label: "Zones de livraison" },
   { href: "/store/settings/payment-methods", label: "Moyens de paiement" },
+  { href: "/store/settings/checkout-config", label: "Configuration Checkout" },
   { href: "/store/settings/notifications", label: "Notifications" },
   { href: "/store/settings/features", label: "Fonctionnalités" },
   { href: "/store/settings/returns", label: "Retours & Garantie" },
