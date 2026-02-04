@@ -97,6 +97,141 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur get_invoices: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
+    @http.route('/api/finance/invoices/cursor', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_invoices_cursor(self, **params):
+        """
+        Liste factures clients avec CURSOR-BASED PAGINATION (performance constante)
+
+        Avantages vs offset-based :
+        - Performance constante O(1) quelle que soit profondeur (vs O(n) offset)
+        - Pas de duplicatas si nouvelles factures créées pendant scroll
+        - Infinite scroll natif
+        - PostgreSQL optimisé (index sur ID)
+
+        Query params:
+        - cursor: int (ID dernière facture vue, optionnel)
+        - limit: int (default: 50, max: 100)
+        - status: draft|posted|cancel|all (default: all)
+        - payment_state: not_paid|in_payment|paid|partial|all (default: all)
+        - customer_id: int
+        - date_from: YYYY-MM-DD
+        - date_to: YYYY-MM-DD
+        - sort_field: id|invoice_date|amount_total (default: id)
+        - sort_direction: asc|desc (default: desc)
+
+        Returns:
+        {
+          "success": true,
+          "data": {
+            "invoices": [...],
+            "has_more": true,
+            "next_cursor": 12345,  # ID dernière facture (pour next page)
+            "count": 50
+          }
+        }
+        """
+        try:
+            # Authentification
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            if not tenant_id:
+                return self._error_response("Tenant non trouvé", "FORBIDDEN", 403)
+
+            # Paramètres
+            cursor = params.get('cursor')  # ID dernière facture
+            limit = min(int(params.get('limit', 50)), 100)  # Max 100
+            status = params.get('status', 'all')
+            payment_state = params.get('payment_state', 'all')
+            customer_id = params.get('customer_id')
+            date_from = params.get('date_from')
+            date_to = params.get('date_to')
+            sort_field = params.get('sort_field', 'id')
+            sort_direction = params.get('sort_direction', 'desc')
+
+            # Valider sort_field (sécurité injection SQL)
+            allowed_sort_fields = ['id', 'invoice_date', 'amount_total', 'create_date']
+            if sort_field not in allowed_sort_fields:
+                sort_field = 'id'
+
+            sort_direction = 'DESC' if sort_direction.lower() == 'desc' else 'ASC'
+
+            # Construire domain de base
+            domain = [
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+            ]
+
+            # Filtres
+            if status != 'all':
+                domain.append(('state', '=', status))
+
+            if payment_state != 'all':
+                domain.append(('payment_state', '=', payment_state))
+
+            if customer_id:
+                domain.append(('partner_id', '=', int(customer_id)))
+
+            if date_from:
+                domain.append(('invoice_date', '>=', date_from))
+
+            if date_to:
+                domain.append(('invoice_date', '<=', date_to))
+
+            # ═══════════════════════════════════════════════════════════════
+            # CURSOR PAGINATION : WHERE id < cursor (si DESC) ou id > cursor (si ASC)
+            # ═══════════════════════════════════════════════════════════════
+            if cursor:
+                cursor_id = int(cursor)
+                if sort_direction == 'DESC':
+                    # Pagination descendante (standard) : id < cursor
+                    domain.append((sort_field, '<', cursor_id))
+                else:
+                    # Pagination ascendante : id > cursor
+                    domain.append((sort_field, '>', cursor_id))
+
+            # Ordre de tri
+            order = f"{sort_field} {sort_direction}"
+
+            # Récupérer factures (limit + 1 pour détecter has_more)
+            AccountMove = request.env['account.move'].sudo()
+            invoices = AccountMove.search(domain, limit=limit + 1, order=order)
+
+            # Détecter si page suivante existe
+            has_more = len(invoices) > limit
+            if has_more:
+                invoices = invoices[:-1]  # Retirer dernière facture (sentinel)
+
+            # Calculer next_cursor (ID dernière facture retournée)
+            next_cursor = None
+            if invoices:
+                last_invoice = invoices[-1]
+                # Cursor = valeur du champ de tri (généralement ID)
+                if sort_field == 'id':
+                    next_cursor = last_invoice.id
+                elif sort_field == 'invoice_date':
+                    next_cursor = last_invoice.invoice_date.isoformat() if last_invoice.invoice_date else None
+                elif sort_field == 'amount_total':
+                    next_cursor = float(last_invoice.amount_total)
+                elif sort_field == 'create_date':
+                    next_cursor = last_invoice.create_date.isoformat() if last_invoice.create_date else None
+
+            # Sérialiser
+            data = {
+                'invoices': [self._serialize_invoice(inv) for inv in invoices],
+                'has_more': has_more,
+                'next_cursor': next_cursor,
+                'count': len(invoices),
+            }
+
+            return self._success_response(data)
+
+        except Exception as e:
+            _logger.error(f"Erreur get_invoices_cursor: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
     @http.route('/api/finance/invoices/<int:invoice_id>', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
     def get_invoice(self, invoice_id, **params):
         """Détail d'une facture client"""
