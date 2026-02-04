@@ -64,3 +64,6 @@ export { ModuleErrorBoundary } from './ModuleErrorBoundary'
 export { PageNotice } from './PageNotice'
 
 export { ReadOnlyProvider, ReadOnlyBanner, ReadOnlyBlock, useReadOnly } from './ReadOnlyGuard'
+
+export { EmailTemplatePreview } from './EmailTemplatePreview'
+export type { EmailTemplatePreviewProps } from './EmailTemplatePreview'
