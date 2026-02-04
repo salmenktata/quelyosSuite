@@ -798,4 +798,313 @@ export const financeNotices: Record<string, PageNoticeConfig> = {
       },
     ],
   },
+
+  // Facturation - Détails
+  invoiceDetail: {
+    pageId: 'invoicing-detail',
+    title: 'Détail Facture',
+    purpose:
+      "Consultez tous les détails d'une facture avec ses lignes, montants, statut de paiement et historique complet. Exportez en PDF ou Factur-X.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Vue complète : numéro, date, client, montants TTC/HT, échéance, statut',
+          'Lignes détaillées : produits/services avec quantités, prix unitaires, TVA',
+          'Historique paiements : suivi des règlements et solde restant',
+          'Export multi-format : PDF classique, Factur-X (PDF + XML embarqué)',
+          'Actions rapides : annuler, dupliquer, envoyer par email',
+        ],
+      },
+    ],
+  },
+
+  facturx: {
+    pageId: 'invoicing-facturx',
+    title: 'Export Factur-X',
+    purpose:
+      "Exportez vos factures au format Factur-X (PDF/A-3 avec XML embarqué) conforme à la norme européenne EN 16931 pour automatiser les échanges B2B.",
+    icon: Archive as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Format Factur-X',
+        icon: Lightbulb,
+        items: [
+          'Norme européenne : conforme EN 16931 pour facturation électronique',
+          'Double format : PDF lisible + XML structuré embarqué',
+          'Automatisation : import automatique chez vos clients équipés',
+          'Conformité fiscale : respecte obligations légales 2024-2026',
+          'Traçabilité : signature électronique et horodatage',
+        ],
+      },
+    ],
+  },
+
+  invoicesNew: {
+    pageId: 'invoicing-new',
+    title: 'Nouvelle Facture',
+    purpose:
+      "Créez une facture complète avec formulaire détaillé : client, lignes multiples, TVA, conditions de paiement et personnalisation avancée.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Formulaire complet : toutes options disponibles (mentions légales, remises, etc.)',
+          'Lignes multiples : ajoutez produits/services avec calcul automatique',
+          'Gestion TVA : taux multiples, exonérations, régimes spéciaux',
+          'Conditions paiement : échéances, escompte, pénalités de retard',
+          'Prévisualisation : aperçu PDF avant validation',
+        ],
+      },
+    ],
+  },
+
+  invoicesQuick: {
+    pageId: 'invoicing-quick',
+    title: 'Facture Express',
+    purpose:
+      "Créez une facture simple en quelques clics avec formulaire allégé. Idéal pour facturation rapide sans options avancées.",
+    icon: ArrowUpCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Mode Express',
+        icon: Lightbulb,
+        items: [
+          'Formulaire simplifié : champs essentiels uniquement (client, montant, date)',
+          'Création rapide : moins de 30 secondes pour facturer',
+          'Valeurs par défaut : TVA standard, échéance 30 jours',
+          'Conversion possible : transformez en facture complète si besoin',
+          'Idéal pour : prestations ponctuelles, clients récurrents',
+        ],
+      },
+    ],
+  },
+
+  invoicesOcr: {
+    pageId: 'invoicing-ocr',
+    title: 'OCR Factures Fournisseurs',
+    purpose:
+      "Numérisez automatiquement vos factures fournisseurs papier avec OCR. Extrayez les données clés (montant, date, fournisseur) et créez les écritures comptables.",
+    icon: ArrowDownCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Reconnaissance automatique',
+        icon: Lightbulb,
+        items: [
+          'Upload photo/scan : JPEG, PNG, PDF acceptés',
+          'Extraction OCR : numéro facture, date, montant TTC/HT, TVA, fournisseur',
+          'Validation manuelle : vérifiez et corrigez avant enregistrement',
+          'Comptabilisation auto : écriture générée automatiquement',
+          'Archivage : image attachée à la facture pour traçabilité',
+        ],
+      },
+    ],
+  },
+
+  subscriptions: {
+    pageId: 'invoicing-subscriptions',
+    title: 'Abonnements & Facturation Récurrente',
+    purpose:
+      "Gérez vos abonnements clients avec facturation automatique récurrente (mensuelle, annuelle). Suivez renouvellements, résiliations et revenus prévisibles.",
+    icon: Calendar as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Cycles personnalisables : mensuel, trimestriel, annuel ou sur-mesure',
+          'Facturation automatique : génération et envoi à chaque échéance',
+          'Suivi MRR/ARR : revenus récurrents mensuels et annuels',
+          'Gestion lifecycle : activation, pause, résiliation avec prorata',
+          'Alertes renouvellement : notification avant échéance pour relances',
+        ],
+      },
+    ],
+  },
+
+  approvals: {
+    pageId: 'invoicing-approvals',
+    title: 'Validation Factures',
+    purpose:
+      "Centralisez les factures en attente de validation avec workflow d&apos;approbation. Approuvez, rejetez ou demandez modifications avant comptabilisation.",
+    icon: Bell as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Workflow validation',
+        icon: Lightbulb,
+        items: [
+          'File approbation : toutes factures en attente avec informations clés',
+          'Actions rapides : approuver, rejeter, demander modification',
+          'Niveaux validation : simple ou multi-niveaux selon montant',
+          'Notifications : alertes email pour validateurs',
+          'Historique : traçabilité complète des décisions',
+        ],
+      },
+    ],
+  },
+
+  forecastAnalytics: {
+    pageId: 'invoicing-forecast-analytics',
+    title: 'Prévisions Revenus',
+    purpose:
+      "Analysez et prévoyez vos revenus futurs avec modèles ML. Détectez tendances, saisonnalité et anticipez votre chiffre d&apos;affaires.",
+    icon: TrendingUp as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Analytics avancés',
+        icon: Lightbulb,
+        items: [
+          'Prévisions ML : algorithmes de projection basés sur historique',
+          'Détection saisonnalité : identifiez cycles et pics d&apos;activité',
+          'Scénarios multiples : optimiste, réaliste, pessimiste',
+          'Graphiques interactifs : visualisez historique et projections',
+          'Export rapports : PDF, Excel avec tableaux détaillés',
+        ],
+      },
+    ],
+  },
+
+  analyticAccounts: {
+    pageId: 'invoicing-analytic-accounts',
+    title: 'Comptes Analytiques',
+    purpose:
+      "Organisez votre comptabilité analytique par projet, département ou client. Suivez rentabilité et affectez automatiquement les revenus/dépenses.",
+    icon: FolderOpen as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Arborescence flexible : projets, départements, clients, activités',
+          'Affectation automatique : règles de dispatch selon critères',
+          'Rentabilité par axe : revenus vs coûts pour chaque compte',
+          'Budget vs réalisé : suivi écarts et alertes dépassement',
+          'Rapports cross-axes : analysez par combinaisons',
+        ],
+      },
+    ],
+  },
+
+  paymentRisk: {
+    pageId: 'invoicing-payment-risk',
+    title: 'Risque de Paiement (ML)',
+    purpose:
+      "Évaluez le risque de retard ou impayé pour chaque client avec machine learning. Priorisez relances et sécurisez trésorerie.",
+    icon: AlertCircle as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Scoring ML',
+        icon: Lightbulb,
+        items: [
+          'Score risque 0-100 : probabilité retard/impayé par client',
+          'Facteurs explicatifs : historique paiement, montants, secteur',
+          'Alertes prédictives : notification avant échéance pour clients risqués',
+          'Actions recommandées : relance préventive, escompte, garanties',
+          'Amélioration continue : modèle s&apos;affine avec nouveaux paiements',
+        ],
+      },
+    ],
+  },
+
+  currencies: {
+    pageId: 'invoicing-currencies',
+    title: 'Devises Multi-Currency',
+    purpose:
+      "Gérez vos factures en devises étrangères avec taux de change automatiques. Suivez gains/pertes de change et conformité comptable multi-devises.",
+    icon: DollarSign as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Gestion multi-devises',
+        icon: Lightbulb,
+        items: [
+          'Devises multiples : EUR, USD, GBP, CHF + 150 autres',
+          'Taux automatiques : mise à jour quotidienne via API (ECB, Open Exchange)',
+          'Conversion intelligente : taux du jour facture ou personnalisé',
+          'Gains/pertes change : calcul automatique selon normes comptables',
+          'Reporting consolidé : tout ramené à devise de référence',
+        ],
+      },
+    ],
+  },
+
+  exportFec: {
+    pageId: 'invoicing-export-fec',
+    title: 'Export FEC (Fichier Écritures Comptables)',
+    purpose:
+      "Exportez votre comptabilité au format FEC réglementaire pour contrôles fiscaux. Conforme norme DGFiP avec validation intégrée.",
+    icon: Archive as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Export réglementaire',
+        icon: Lightbulb,
+        items: [
+          'Format officiel : conforme article A47 A-1 du Livre des Procédures Fiscales',
+          'Période personnalisable : exercice complet ou plage de dates',
+          'Validation pré-export : vérification cohérence et complétude',
+          'Encodage UTF-8 : respect norme DGFiP pour caractères spéciaux',
+          'Archivage : historique exports pour audits futurs',
+        ],
+      },
+    ],
+  },
+
+  quotes: {
+    pageId: 'sales-quotes',
+    title: 'Devis Clients',
+    purpose:
+      "Gérez tous vos devis commerciaux : création, envoi, suivi, conversion en facture. Tableau complet avec filtres, recherche et actions en masse.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Liste complète : tous devis avec statut, montant, client, échéance',
+          'Filtres avancés : par statut (brouillon, envoyé, accepté, refusé), date, montant',
+          'Recherche rapide : par numéro, nom client ou référence',
+          'Actions en masse : envoi groupé, export PDF multiple',
+          'Conversion facture : transformer devis accepté en facture en 1 clic',
+        ],
+      },
+    ],
+  },
+
+  quoteDetail: {
+    pageId: 'sales-quote-detail',
+    title: 'Détail Devis',
+    purpose:
+      "Consultez tous les détails d&apos;un devis commercial avec lignes, conditions, validité et historique. Convertissez en facture ou duplicabilité rapide.",
+    icon: FileText as LucideIcon,
+    moduleColor: 'emerald',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Lightbulb,
+        items: [
+          'Vue complète : numéro, date, client, montants, validité, statut',
+          'Lignes détaillées : produits/services, quantités, remises, TVA',
+          'Conditions commerciales : modalités paiement, livraison, garanties',
+          'Historique événements : envoi, ouverture, acceptation/refus client',
+          'Actions : envoyer, convertir facture, dupliquer, annuler',
+        ],
+      },
+    ],
+  },
 };

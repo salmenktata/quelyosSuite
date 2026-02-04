@@ -11,10 +11,11 @@
 
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { FileDown, Calendar } from 'lucide-react'
 import { logger } from '@quelyos/logger'
 import { getBackendUrl } from '@quelyos/config'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 export default function ExportFECPage() {
   const [loading, setLoading] = useState(false)
@@ -106,6 +107,8 @@ export default function ExportFECPage() {
             { label: 'Export FEC' },
           ]}
         />
+
+        <PageNotice config={financeNotices.exportFec} />
 
         {/* Header */}
         <div>

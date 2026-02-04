@@ -12,11 +12,12 @@
  */
 import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { AlertTriangle, TrendingUp, Shield, RefreshCw, AlertCircle } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type RiskPrediction = {
   customerId: number
@@ -135,6 +136,8 @@ export default function PaymentRiskPage() {
             { label: 'Risques Paiement ML' },
           ]}
         />
+
+        <PageNotice config={financeNotices.paymentRisk} />
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Switch } from "@/components/ui/Switch";
-import { Plus, Trash2, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, AlertCircle, MoreHorizontal, Check, X } from "lucide-react";
+import { Button } from "@/components/common";
+import { Plus, Trash2, CreditCard, Banknote, FileText, ArrowLeftRight, Landmark, Receipt, Briefcase, AlertCircle, MoreHorizontal, Check, X, RefreshCw } from "lucide-react";
 import type { FlowType } from "@/types/paymentFlow";
 import { logger } from '@quelyos/logger';
 
@@ -210,8 +211,16 @@ export default function FluxSettingsPage() {
       <div className="space-y-6">
         {/* Messages */}
       {error && (
-        <div role="alert" className="rounded-lg border border-red-300/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {error}
+        <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">
+              {error}
+            </p>
+            <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => loadSettings()}>
+              Réessayer
+            </Button>
+          </div>
         </div>
       )}
       {success && (

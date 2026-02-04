@@ -12,10 +12,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { ChevronLeft, ChevronRight, FileText, Check } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type Customer = {
   id: number
@@ -214,6 +215,8 @@ export default function QuickInvoicePage() {
             { label: 'Création Express' },
           ]}
         />
+
+        <PageNotice config={financeNotices.invoicesQuick} />
 
         {/* Stepper */}
         <div className="flex items-center justify-center space-x-4 mb-8">

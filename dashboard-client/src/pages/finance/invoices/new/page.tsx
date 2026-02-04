@@ -12,10 +12,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { Plus, Trash2, Save, Send } from 'lucide-react'
 import { apiClient } from '@/lib/api'
-import { logger } from '@quelyos/logger';
+import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 interface InvoiceLine {
   productId: number | null
@@ -132,16 +133,18 @@ export default function NewInvoicePage() {
           ]}
         />
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Nouvelle Facture Client
-        </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Créez une nouvelle facture de vente
-        </p>
-      </div>
+        <PageNotice config={financeNotices.invoicesNew} />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Nouvelle Facture Client
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Créez une nouvelle facture de vente
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         {/* En-tête facture */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>

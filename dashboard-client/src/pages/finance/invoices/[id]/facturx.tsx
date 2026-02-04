@@ -12,11 +12,12 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { Download, CheckCircle, AlertCircle, FileText, Loader } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { logger } from '@quelyos/logger'
 import { getBackendUrl } from '@quelyos/config'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type ValidationResult = {
   valid: boolean
@@ -121,6 +122,8 @@ export default function FacturXPage() {
             { label: 'Factur-X' },
           ]}
         />
+
+        <PageNotice config={financeNotices.facturx} />
 
         {/* Header */}
         <div>

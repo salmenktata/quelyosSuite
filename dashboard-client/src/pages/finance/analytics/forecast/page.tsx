@@ -11,11 +11,12 @@
 
 import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { TrendingUp, TrendingDown, Minus, Download, AlertCircle } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { logger } from '@quelyos/logger'
 import { formatCurrency } from '@/lib/utils'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type Forecast = {
   customerId: number
@@ -174,6 +175,8 @@ export default function RevenueForecastPage() {
             { label: 'Prévisionnel CA' },
           ]}
         />
+
+        <PageNotice config={financeNotices.forecastAnalytics} />
 
         {/* Header */}
         <div className="flex items-center justify-between">

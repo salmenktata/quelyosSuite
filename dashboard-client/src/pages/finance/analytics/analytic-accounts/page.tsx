@@ -12,11 +12,12 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { Plus, TrendingUp, TrendingDown, BarChart3, RefreshCw, AlertCircle } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type AnalyticAccount = {
   id: number
@@ -110,6 +111,8 @@ export default function AnalyticAccountsPage() {
             { label: 'Comptes Analytiques' },
           ]}
         />
+
+        <PageNotice config={financeNotices.analyticAccounts} />
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

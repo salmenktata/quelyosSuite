@@ -13,11 +13,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
+import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
 import { Download, Mail, CheckCircle, FileText, AlertCircle, RefreshCw, User, Calendar, CreditCard } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 type InvoiceLine = {
   description: string
@@ -235,6 +236,8 @@ export default function InvoiceDetailPage() {
             { label: invoice.name },
           ]}
         />
+
+        <PageNotice config={financeNotices.invoiceDetail} />
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
