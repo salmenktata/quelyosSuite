@@ -4,12 +4,11 @@
 
 import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, PageNotice } from '@/components/common'
+import { Breadcrumbs, Button } from '@/components/common'
 import { apiClient } from '@/lib/api'
 import { TrendingUp, Brain } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
-import { financeNotices } from '@/lib/notices/finance-notices'
 
 interface ForecastPrediction {
   date: string
@@ -79,8 +78,6 @@ export default function ForecastingPage() {
           Ré-entraîner
         </Button>
       </div>
-
-      <PageNotice config={financeNotices.forecasting} className="![animation:none] mb-6" />
 
       {summary && (
         <div className="grid grid-cols-3 gap-6 mb-6">
