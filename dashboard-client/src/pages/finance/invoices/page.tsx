@@ -8,7 +8,7 @@
  * - Indicateurs: total facturé, payé, en attente
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice, SkeletonTable } from '@/components/common'
@@ -21,34 +21,160 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  Filter
+  Filter,
+  Send,
+  Zap,
+  Search,
+  X
 } from 'lucide-react'
 import { useInvoices } from '@/hooks/useInvoices'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Invoice } from '@/types'
+import { apiClient } from '@/lib/api'
+import { logger } from '@quelyos/logger'
 
 type InvoiceStatus = 'draft' | 'posted' | 'cancel' | 'all'
 type PaymentState = 'not_paid' | 'in_payment' | 'paid' | 'partial' | 'all'
 
 export default function InvoicesPage() {
   const navigate = useNavigate()
-  
+
+  // Recherche
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Invoice[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false)
+
   // Filtres
   const [status, setStatus] = useState<InvoiceStatus>('all')
   const [paymentState, setPaymentState] = useState<PaymentState>('all')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
-  
+
+  // Multi-sélection pour relances
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [sendingReminders, setSendingReminders] = useState(false)
+
+  // Recherche avec debounce
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      const timer = setTimeout(() => {
+        performSearch(searchQuery)
+      }, 300)
+      return () => clearTimeout(timer)
+    } else {
+      setShowSearchResults(false)
+      setSearchResults([])
+    }
+  }, [searchQuery])
+
+  const performSearch = async (query: string) => {
+    try {
+      setIsSearching(true)
+      const response = await apiClient.get<{
+        success: boolean
+        data: { invoices: Invoice[]; total: number }
+      }>('/finance/invoices/search', {
+        params: { q: query, limit: 10 },
+      })
+
+      if (response.data.success) {
+        setSearchResults(response.data.data.invoices)
+        setShowSearchResults(true)
+      }
+    } catch (err) {
+      logger.error('Erreur recherche factures:', err)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const clearSearch = () => {
+    setSearchQuery('')
+    setShowSearchResults(false)
+    setSearchResults([])
+  }
+
   // Données
-  const { 
-    invoices, 
-    loading, 
-    error, 
+  const {
+    invoices,
+    loading,
+    error,
     stats,
-    sendEmail, 
+    sendEmail,
     downloadPDF,
     validate
   } = useInvoices({ status, paymentState, dateFrom, dateTo })
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      // Sélectionner uniquement les factures impayées
+      const unpaidIds = invoices
+        .filter(inv => inv.state === 'posted' && inv.payment_state !== 'paid')
+        .map(inv => inv.id)
+      setSelectedIds(unpaidIds)
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  const handleSelectInvoice = (invoiceId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, invoiceId])
+    } else {
+      setSelectedIds(prev => prev.filter(id => id !== invoiceId))
+    }
+  }
+
+  const handleBulkRemind = async () => {
+    if (selectedIds.length === 0) {
+      alert('Veuillez sélectionner au moins une facture')
+      return
+    }
+
+    const confirmed = window.confirm(
+      `Envoyer ${selectedIds.length} relance(s) de paiement par email ?`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setSendingReminders(true)
+
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          sent: number;
+          failed: number;
+          total: number;
+          details: Array<{
+            invoiceId: number;
+            invoiceName: string;
+            status: string;
+          }>;
+        };
+        message?: string;
+        error?: string;
+      }>('/finance/invoices/bulk-remind', {
+        invoiceIds: selectedIds
+      })
+
+      if (response.data.success && response.data.data) {
+        alert(
+          response.data.message ||
+          `${response.data.data.sent} relance(s) envoyée(s) avec succès`
+        )
+        setSelectedIds([]) // Réinitialiser la sélection
+      } else {
+        alert(`Erreur: ${response.data.error}`)
+      }
+    } catch (err) {
+      logger.error('Erreur envoi relances:', err)
+      alert("Erreur lors de l'envoi des relances")
+    } finally {
+      setSendingReminders(false)
+    }
+  }
 
   const getStatusBadge = (invoice: Invoice) => {
     if (invoice.state === 'draft') {
@@ -129,13 +255,113 @@ export default function InvoicesPage() {
             Gérez vos factures de vente et suivez les paiements
           </p>
         </div>
-        <Button
-          variant="primary"
-          icon={<Plus />}
-          onClick={() => navigate('/finance/invoices/new')}
-        >
-          Nouvelle Facture
-        </Button>
+        <div className="flex gap-3">
+          {selectedIds.length > 0 && (
+            <Button
+              variant="secondary"
+              icon={<Send />}
+              onClick={handleBulkRemind}
+              disabled={sendingReminders}
+            >
+              {sendingReminders
+                ? 'Envoi...'
+                : `Relancer (${selectedIds.length})`}
+            </Button>
+          )}
+          <Button
+            variant="secondary"
+            icon={<Zap />}
+            onClick={() => navigate('/finance/invoices/quick')}
+          >
+            Création Express
+          </Button>
+          <Button
+            variant="primary"
+            icon={<Plus />}
+            onClick={() => navigate('/finance/invoices/new')}
+          >
+            Nouvelle Facture
+          </Button>
+        </div>
+      </div>
+
+      {/* Barre de recherche */}
+      <div className="mb-6 relative">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher une facture (numéro, client, montant)..."
+            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+
+        {/* Résultats recherche */}
+        {showSearchResults && (
+          <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto">
+            {isSearching ? (
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                Recherche en cours...
+              </div>
+            ) : searchResults.length > 0 ? (
+              <div>
+                {searchResults.map((invoice) => (
+                  <div
+                    key={invoice.id}
+                    onClick={() => {
+                      navigate(`/finance/invoices/${invoice.id}`)
+                      clearSearch()
+                    }}
+                    className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {invoice.name}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {invoice.partner_name}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          {formatCurrency(invoice.amount_total, '€')}
+                        </p>
+                        <div className="flex items-center gap-2 justify-end mt-1">
+                          {invoice.payment_state === 'paid' ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                              <CheckCircle className="h-3 w-3" />
+                              Payée
+                            </span>
+                          ) : invoice.payment_state === 'not_paid' ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                              <Clock className="h-3 w-3" />
+                              Non payée
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                Aucun résultat trouvé
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <PageNotice config={financeNotices.invoices} />
@@ -244,6 +470,21 @@ export default function InvoicesPage() {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
+                <th className="px-4 py-3 text-center">
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedIds.length > 0 &&
+                      selectedIds.length ===
+                        invoices.filter(
+                          inv =>
+                            inv.state === 'posted' && inv.payment_state !== 'paid'
+                        ).length
+                    }
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
+                  />
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Numéro
                 </th>
@@ -268,45 +509,75 @@ export default function InvoicesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {invoices.map((invoice) => (
-                <tr
-                  key={invoice.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
-                  onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <FileText className="w-5 h-5 text-gray-400 mr-2" />
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {invoice.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      {invoice.partner_name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(invoice.invoice_date || '')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(invoice.invoice_date_due || '')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(invoice.amount_total, '€')}
-                    </div>
-                    {invoice.amount_residual > 0 && (
-                      <div className="text-xs text-orange-600 dark:text-orange-400">
-                        Reste {formatCurrency(invoice.amount_residual, '€')}
+              {invoices.map((invoice) => {
+                const isUnpaid = invoice.state === 'posted' && invoice.payment_state !== 'paid'
+                const isSelected = selectedIds.includes(invoice.id)
+
+                return (
+                  <tr
+                    key={invoice.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  >
+                    <td className="px-4 py-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      {isUnpaid ? (
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => handleSelectInvoice(invoice.id, e.target.checked)}
+                          className="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500"
+                        />
+                      ) : (
+                        <div className="w-4 h-4" />
+                      )}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap cursor-pointer"
+                      onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
+                    >
+                      <div className="flex items-center">
+                        <FileText className="w-5 h-5 text-gray-400 mr-2" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {invoice.name}
+                        </span>
                       </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(invoice)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    </td>
+                    <td
+                      className="px-6 py-4 cursor-pointer"
+                      onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
+                    >
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {invoice.partner_name}
+                      </div>
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 cursor-pointer"
+                      onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
+                    >
+                      {formatDate(invoice.invoice_date || '')}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 cursor-pointer"
+                      onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
+                    >
+                      {formatDate(invoice.invoice_date_due || '')}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-right cursor-pointer"
+                      onClick={() => navigate(`/finance/invoices/${invoice.id}`)}
+                    >
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {formatCurrency(invoice.amount_total, '€')}
+                      </div>
+                      {invoice.amount_residual > 0 && (
+                        <div className="text-xs text-orange-600 dark:text-orange-400">
+                          Reste {formatCurrency(invoice.amount_residual, '€')}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getStatusBadge(invoice)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
                       {invoice.state === 'draft' && (
                         <button
@@ -347,7 +618,8 @@ export default function InvoicesPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )
+              })}
             </tbody>
           </table>
         </div>

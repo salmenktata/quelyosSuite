@@ -14,7 +14,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable } from '@/components/common'
-import { Download, Mail, CheckCircle, FileText, AlertCircle, RefreshCw, User, Calendar } from 'lucide-react'
+import { Download, Mail, CheckCircle, FileText, AlertCircle, RefreshCw, User, Calendar, CreditCard } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
@@ -36,10 +36,12 @@ type Invoice = {
   }
   invoiceDate: string
   dueDate?: string
-  status: 'draft' | 'validated' | 'paid' | 'cancelled'
+  state: 'draft' | 'posted' | 'cancel'
+  paymentState: 'not_paid' | 'in_payment' | 'paid' | 'partial'
   amountUntaxed: number
   amountTax: number
   amountTotal: number
+  amountResidual: number
   lines: InvoiceLine[]
   note?: string
 }
@@ -50,6 +52,7 @@ export default function InvoiceDetailPage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [loadingPayment, setLoadingPayment] = useState(false)
 
   const fetchInvoice = useCallback(async () => {
     try {
@@ -77,23 +80,75 @@ export default function InvoiceDetailPage() {
     if (id) fetchInvoice()
   }, [id, fetchInvoice])
 
-  const getStatusBadge = (status: Invoice['status']) => {
-    const styles = {
-      draft: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
-      validated: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-      paid: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-      cancelled: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
+  const handlePayNow = async () => {
+    if (!invoice) return
+
+    try {
+      setLoadingPayment(true)
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          paymentUrl: string;
+          paymentLinkId: string;
+          amount: number;
+          currency: string;
+        };
+        error?: string;
+      }>(`/finance/invoices/${invoice.id}/payment-link`)
+
+      if (response.data.success && response.data.data) {
+        // Rediriger vers Stripe Checkout
+        window.location.href = response.data.data.paymentUrl
+      } else {
+        alert(`Erreur: ${response.data.error}`)
+      }
+    } catch (err) {
+      logger.error('Erreur génération lien paiement:', err)
+      alert('Erreur lors de la génération du lien de paiement')
+    } finally {
+      setLoadingPayment(false)
     }
-    const labels = {
-      draft: 'Brouillon',
-      validated: 'Validée',
-      paid: 'Payée',
-      cancelled: 'Annulée',
+  }
+
+  const getStatusBadge = (state: Invoice['state'], paymentState: Invoice['paymentState']) => {
+    if (state === 'draft') {
+      return (
+        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
+          Brouillon
+        </span>
+      )
     }
+
+    if (state === 'cancel') {
+      return (
+        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800">
+          <AlertCircle className="h-4 w-4" />
+          Annulée
+        </span>
+      )
+    }
+
+    // Facture validée (posted)
+    if (paymentState === 'paid') {
+      return (
+        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+          <CheckCircle className="h-4 w-4" />
+          Payée
+        </span>
+      )
+    }
+
+    if (paymentState === 'partial') {
+      return (
+        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800">
+          Paiement partiel
+        </span>
+      )
+    }
+
     return (
-      <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border ${styles[status]}`}>
-        {status === 'paid' && <CheckCircle className="h-4 w-4" />}
-        {labels[status]}
+      <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800">
+        En attente de paiement
       </span>
     )
   }
@@ -164,18 +219,30 @@ export default function InvoiceDetailPage() {
               Facture client • {formatDate(invoice.invoiceDate)}
             </p>
           </div>
-          <div>{getStatusBadge(invoice.status)}</div>
+          <div>{getStatusBadge(invoice.state, invoice.paymentState)}</div>
         </div>
 
         {/* Actions */}
         <div className="flex flex-wrap gap-3">
-          <Button variant="primary" icon={<Download />}>
+          {/* Bouton Payer (si facture validée et non payée) */}
+          {invoice.state === 'posted' && invoice.paymentState !== 'paid' && invoice.amountResidual > 0 && (
+            <Button
+              variant="primary"
+              icon={<CreditCard />}
+              onClick={handlePayNow}
+              disabled={loadingPayment}
+            >
+              {loadingPayment ? 'Chargement...' : `Payer ${formatCurrency(invoice.amountResidual, '€')}`}
+            </Button>
+          )}
+
+          <Button variant="secondary" icon={<Download />}>
             Télécharger PDF
           </Button>
           <Button variant="secondary" icon={<Mail />}>
             Envoyer par email
           </Button>
-          {invoice.status === 'draft' && (
+          {invoice.state === 'draft' && (
             <Button variant="secondary" icon={<CheckCircle />}>
               Valider la facture
             </Button>

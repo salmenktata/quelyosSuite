@@ -305,7 +305,7 @@ export default function ByCategoryReportPage() {
             animate={{ opacity: 1 }}
             className="mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
+            <GlassCard className="border-red-400/40 bg-red-500/10 p-4" role="alert">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-red-400" />
                 <div className="flex-1">
