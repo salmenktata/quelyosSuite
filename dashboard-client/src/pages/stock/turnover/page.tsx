@@ -12,7 +12,7 @@
 
 import { useState } from "react"
 import { Layout } from "@/components/Layout"
-import { Breadcrumbs, Badge, PageNotice } from "@/components/common"
+import { Breadcrumbs, Badge, PageNotice, Button } from "@/components/common"
 import { stockNotices } from "@/lib/notices"
 import {
   Package,
@@ -20,7 +20,9 @@ import {
   Clock,
   AlertTriangle,
   Download,
-  Filter
+  Filter,
+  AlertCircle,
+  RefreshCw
 } from "lucide-react"
 import { useStockTurnover } from "@/hooks/finance/useStockTurnover"
 import type { TurnoverStatus } from "@/types/stock"
@@ -45,7 +47,7 @@ export default function StockTurnoverPage() {
   const [page, setPage] = useState(0)
   const limit = 50
 
-  const { data, isLoading, error } = useStockTurnover({
+  const { data, isLoading, error, refetch } = useStockTurnover({
     start_date: dateRange.start_date,
     end_date: dateRange.end_date,
     category_id: categoryFilter,
@@ -211,8 +213,24 @@ export default function StockTurnoverPage() {
             ))}
           </div>
         ) : error ? (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-            <p className="text-red-800 dark:text-red-200">Erreur : {error.message}</p>
+          <div
+            role="alert"
+            className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement de la rotation du stock.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => refetch()}
+              >
+                Réessayer
+              </Button>
+            </div>
           </div>
         ) : kpis ? (
           <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
