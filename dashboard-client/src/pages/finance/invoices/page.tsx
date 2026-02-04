@@ -364,37 +364,43 @@ export default function InvoicesPage() {
         )}
       </div>
 
-      <PageNotice config={financeNotices.invoices} />
+      <PageNotice config={financeNotices.invoices} className="![animation:none]" />
 
       {/* Statistiques */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Facturé</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {formatCurrency(stats.totalInvoiced, '€')}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Payé</p>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {formatCurrency(stats.totalPaid, '€')}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400">En Attente</p>
-            <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-              {formatCurrency(stats.totalPending, '€')}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400">En Retard</p>
-            <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-              {formatCurrency(stats.totalOverdue, '€')}
-            </p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Total Facturé</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            {stats ? formatCurrency(stats.totalInvoiced, '€') : (
+              <span className="inline-block h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            )}
+          </p>
         </div>
-      )}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Payé</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {stats ? formatCurrency(stats.totalPaid, '€') : (
+              <span className="inline-block h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            )}
+          </p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400">En Attente</p>
+          <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+            {stats ? formatCurrency(stats.totalPending, '€') : (
+              <span className="inline-block h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            )}
+          </p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400">En Retard</p>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+            {stats ? formatCurrency(stats.totalOverdue, '€') : (
+              <span className="inline-block h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            )}
+          </p>
+        </div>
+      </div>
 
       {/* Filtres */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
