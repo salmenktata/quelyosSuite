@@ -164,3 +164,7 @@ docs/audits/
 # Performance reports (générés par outils d'analyse)
 perf-reports/
 **/perf-reports/
+
+# Audit reports (générés par scripts d'audit navigation)
+audit-reports/
+**/audit-reports/

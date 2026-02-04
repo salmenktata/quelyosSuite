@@ -8,7 +8,7 @@
  */
 
 import { logger } from '@quelyos/logger'
-import { getBackendUrl } from '@quelyos/config'
+import { getBackendUrl, STORAGE_KEYS } from '@quelyos/config'
 
 const BACKEND_URL = getBackendUrl(import.meta.env.MODE as 'development' | 'production')
 const POLL_INTERVAL = 5000 // 5 secondes
@@ -46,7 +46,7 @@ export class LongPollingAdapter {
     this._readyState = WebSocket.CONNECTING
 
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
       if (!token) {
         throw new Error('No auth token')
       }
@@ -57,7 +57,7 @@ export class LongPollingAdapter {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token!}`,
         },
         body: JSON.stringify({ session_id: sessionId }),
       })
@@ -114,7 +114,7 @@ export class LongPollingAdapter {
     }
 
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
       if (!token) {
         return
       }
@@ -123,7 +123,7 @@ export class LongPollingAdapter {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token!}`,
         },
         body: JSON.stringify({
           connection_id: this.connectionId,
@@ -198,13 +198,13 @@ export class LongPollingAdapter {
 
     if (this.connectionId) {
       try {
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
         if (token) {
           await fetch(`${BACKEND_URL}/websocket/disconnect`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
+              'Authorization': `Bearer ${token!}`,
             },
             body: JSON.stringify({ connection_id: this.connectionId }),
           })
