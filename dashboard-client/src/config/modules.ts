@@ -340,7 +340,8 @@ export const MODULES: Module[] = [
           { name: 'Bannières Promo', path: '/store/marketing/banners', icon: Image },
           { name: 'Popups', path: '/store/marketing/popups', icon: Zap },
           { name: 'Messages Promo', path: '/store/marketing/messages', icon: MessageSquare },
-          { name: 'Newsletter', path: '/store/marketing/newsletter/campaigns', icon: Mail },
+          { name: 'Campagnes Newsletter', path: '/store/marketing/newsletter/campaigns', icon: Mail },
+          { name: 'Abonnés Newsletter', path: '/store/marketing/newsletter/subscribers', icon: Users },
         ],
       },
       {
