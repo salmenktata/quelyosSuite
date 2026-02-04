@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
-import { MapPin, Save, Loader2, Gift, Info, Truck } from "lucide-react";
+import { MapPin, Save, Loader2, Gift, Info, Truck, AlertCircle, RefreshCw } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
@@ -51,7 +51,7 @@ export default function ShippingZonesPage() {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["shipping-zones"],
     queryFn: fetchShippingZones,
   });
@@ -90,6 +90,32 @@ export default function ShippingZonesPage() {
       toast.error("Erreur lors de la mise à jour");
     },
   });
+
+  if (error) {
+    return (
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Accueil", href: "/dashboard" },
+            { label: "Boutique", href: "/store" },
+            { label: "Paramètres", href: "/store/settings" },
+            { label: "Zones de Livraison" },
+          ]}
+        />
+        <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">
+              Une erreur est survenue lors du chargement des zones de livraison.
+            </p>
+            <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+              Réessayer
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSave = () => {
     updateMutation.mutate({
