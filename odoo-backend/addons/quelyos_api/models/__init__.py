@@ -49,6 +49,8 @@ from . import newsletter_subscriber
 from . import newsletter_campaign
 # Customer RFM Segmentation
 from . import res_partner_rfm
+# Homepage Builder
+from . import homepage_config
 # Store Extended Models
 from . import product_review
 from . import faq
