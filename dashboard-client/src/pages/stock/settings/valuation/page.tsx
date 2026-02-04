@@ -1,3 +1,14 @@
+/**
+ * Valorisation Stock - Méthodes comptables et calcul valeur inventaire
+ *
+ * Fonctionnalités :
+ * - Sélection méthode de valorisation (FIFO, LIFO, coût moyen, standard)
+ * - Calcul automatique ou manuel de la valeur stock
+ * - Inclusion coûts d'acquisition (landed costs) optionnelle
+ * - Impact sur les écritures comptables
+ * - Configuration par défaut pour nouveaux produits
+ * - Interface de choix avec descriptions détaillées
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

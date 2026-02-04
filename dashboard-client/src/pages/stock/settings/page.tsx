@@ -1,3 +1,14 @@
+/**
+ * Paramètres Stock - Hub central de configuration inventaire
+ *
+ * Fonctionnalités :
+ * - Navigation vers toutes les sections de configuration Stock
+ * - Valorisation et méthodes comptables (FIFO, LIFO, coût moyen)
+ * - Réapprovisionnement automatique et règles de seuils
+ * - Alertes stock et notifications de rupture
+ * - Unités de mesure et conversions
+ * - Interface organisée par groupe thématique
+ */
 import { Link } from "react-router-dom";
 import { Breadcrumbs } from "@/components/common";
 import {

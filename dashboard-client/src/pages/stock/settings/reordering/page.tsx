@@ -1,3 +1,14 @@
+/**
+ * Réapprovisionnement Automatique - Configuration règles de commande
+ *
+ * Fonctionnalités :
+ * - Activation/désactivation réapprovisionnement automatique
+ * - Configuration quantités minimum et maximum par défaut
+ * - Délais de livraison (lead time) et stock de sécurité
+ * - Fréquence de vérification (quotidienne, hebdomadaire)
+ * - Règles de commande automatique basées sur seuils
+ * - Interface de configuration centralisée
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

@@ -1,3 +1,14 @@
+/**
+ * Alertes Stock - Configuration notifications et seuils d'alerte
+ *
+ * Fonctionnalités :
+ * - Alertes stock faible avec seuil personnalisable
+ * - Notifications rupture de stock automatiques
+ * - Alertes surstock pour optimiser l'espace
+ * - Alertes expiration produits (délai configurable)
+ * - Canaux de notification multiples (email, dashboard, SMS)
+ * - Configuration destinataires email pour alertes critiques
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

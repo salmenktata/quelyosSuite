@@ -1,3 +1,14 @@
+/**
+ * Unités de Mesure - Gestion catégories et conversions
+ *
+ * Fonctionnalités :
+ * - Gestion 4 catégories (Poids, Longueur, Volume, Unité)
+ * - Configuration ratios de conversion entre unités
+ * - Identification unité de base par catégorie
+ * - Ajout/suppression unités personnalisées
+ * - Conversions automatiques dans le système
+ * - Interface organisée par catégorie d'unité
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
