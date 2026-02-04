@@ -705,7 +705,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={activeTab}
+                    activeTab={location.pathname}
                     onTabChange={handleTabChange}
                   />
                 </div>
