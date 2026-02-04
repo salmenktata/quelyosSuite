@@ -13,18 +13,11 @@ export function detectPosTab(pathname: string): string {
 export function usePosTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('pos_active_tab') || '__ALL__'
+      const stored = localStorage.getItem('pos_active_tab')
+      if (stored) return stored
     }
-    return '__ALL__'
+    return pathname === '/pos' ? '__ALL__' : detectPosTab(pathname)
   })
-
-  useEffect(() => {
-    if (pathname === '/pos') {
-      setActiveTab('__ALL__')
-    } else {
-      setActiveTab(detectPosTab(pathname))
-    }
-  }, [pathname])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
