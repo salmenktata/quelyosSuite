@@ -165,7 +165,7 @@ export function getJobStatusMessage(status: BulkReminderJobStatus): {
         variant: 'info',
       };
 
-    case 'completed':
+    case 'completed': {
       const successRate = calculateSuccessRate(status);
       if (successRate === 100) {
         return {
@@ -183,6 +183,7 @@ export function getJobStatusMessage(status: BulkReminderJobStatus): {
           variant: 'error',
         };
       }
+    }
 
     case 'failed':
       return {

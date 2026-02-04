@@ -17,12 +17,12 @@
 
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice } from '@/components/common'
-import { Save, Eye } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { storeNotices } from '@/lib/notices'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import clsx from 'clsx'
+import { CheckoutPreviewEnhanced } from '@/components/store/CheckoutPreviewEnhanced'
 
 interface CheckoutConfig {
   id: number
@@ -48,62 +48,6 @@ interface CheckoutConfig {
   allow_guest_checkout: boolean
   require_phone: boolean
   require_company: boolean
-}
-
-interface CheckoutStepPreviewProps {
-  steps: Array<{ number: number; label: string; icon: string }>
-  currentStep: number
-  showProgressBar: boolean
-}
-
-function CheckoutStepPreview({ steps, currentStep, showProgressBar }: CheckoutStepPreviewProps) {
-  const getStepClass = (stepNum: number) => {
-    if (stepNum < currentStep) return 'bg-green-500 text-white'
-    if (stepNum === currentStep) return 'bg-indigo-600 text-white ring-4 ring-indigo-600/20'
-    return 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-  }
-
-  const getLineWidth = (stepNum: number) => {
-    return stepNum < currentStep ? 'w-full' : 'w-0'
-  }
-
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-      <div className="flex items-center justify-between mb-4">
-        {steps.map((step, index) => (
-          <div key={step.number} className="flex items-center flex-1">
-            <div className="flex flex-col items-center flex-1">
-              <div className={clsx('w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all', getStepClass(step.number))}>
-                {step.number < currentStep ? '✓' : step.icon}
-              </div>
-              <span className={clsx('mt-2 text-sm font-medium transition-colors', step.number <= currentStep ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400')}>
-                {step.label}
-              </span>
-            </div>
-            {index < steps.length - 1 && (
-              <div className="flex-1 h-1 mx-4 -mt-8">
-                <div className="h-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className={clsx('h-full bg-green-500 transition-all duration-500', getLineWidth(step.number))} />
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {showProgressBar && (
-        <div className="mt-6">
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
-            <span>Étape {currentStep} sur {steps.length}</span>
-            <span>{Math.round((currentStep / steps.length) * 100)}%</span>
-          </div>
-          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div className="h-full bg-indigo-600 transition-all duration-500" style={{ width: `${(currentStep / steps.length) * 100}%` }} />
-          </div>
-        </div>
-      )}
-    </div>
-  )
 }
 
 export default function CheckoutConfigPage() {
@@ -163,10 +107,10 @@ export default function CheckoutConfigPage() {
 
   // Construire les étapes pour le preview
   const previewSteps = [
-    { number: 1, label: config.step1_label, icon: config.step1_icon },
-    ...(config.step2_active ? [{ number: 2, label: config.step2_label, icon: config.step2_icon }] : []),
-    { number: config.step2_active ? 3 : 2, label: config.step3_label, icon: config.step3_icon },
-    { number: config.step2_active ? 4 : 3, label: config.step4_label, icon: config.step4_icon },
+    { number: 1, label: config.step1_label, icon: config.step1_icon, message: config.step1_message },
+    ...(config.step2_active ? [{ number: 2, label: config.step2_label, icon: config.step2_icon, message: config.step2_message }] : []),
+    { number: config.step2_active ? 3 : 2, label: config.step3_label, icon: config.step3_icon, message: config.step3_message },
+    { number: config.step2_active ? 4 : 3, label: config.step4_label, icon: config.step4_icon, message: config.step4_message },
   ]
 
   return (
@@ -447,59 +391,14 @@ export default function CheckoutConfigPage() {
           </div>
         </div>
 
-        {/* Preview */}
+        {/* Preview Enhanced */}
         <div className="lg:sticky lg:top-24 h-fit">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Eye className="h-5 w-5" />
-                Preview Stepper
-              </h3>
-              <div className="flex gap-2">
-                {previewSteps.map((step) => (
-                  <button
-                    key={step.number}
-                    onClick={() => setPreviewStep(step.number)}
-                    className={clsx(
-                      'px-3 py-1 rounded text-sm font-medium transition-colors',
-                      previewStep === step.number
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    )}
-                  >
-                    {step.number}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <CheckoutStepPreview
-              steps={previewSteps}
-              currentStep={previewStep}
-              showProgressBar={config.show_progress_bar}
-            />
-          </div>
-
-          {/* Message preview */}
-          {previewStep === 1 && config.step1_message && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <p className="text-sm text-blue-900 dark:text-blue-100">{config.step1_message}</p>
-            </div>
-          )}
-          {previewStep === 2 && config.step2_active && config.step2_message && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <p className="text-sm text-blue-900 dark:text-blue-100">{config.step2_message}</p>
-            </div>
-          )}
-          {previewStep === (config.step2_active ? 3 : 2) && config.step3_message && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <p className="text-sm text-blue-900 dark:text-blue-100">{config.step3_message}</p>
-            </div>
-          )}
-          {previewStep === (config.step2_active ? 4 : 3) && config.step4_message && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-              <p className="text-sm text-green-900 dark:text-green-100">{config.step4_message}</p>
-            </div>
-          )}
+          <CheckoutPreviewEnhanced
+            steps={previewSteps}
+            currentStep={previewStep}
+            showProgressBar={config.show_progress_bar}
+            onStepChange={setPreviewStep}
+          />
         </div>
       </div>
     </Layout>
