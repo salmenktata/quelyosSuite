@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 // Fonction utilitaire pour détecter le tab depuis un path
