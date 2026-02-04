@@ -23,6 +23,8 @@ import {
   Plus,
   Image as ImageIcon,
   Package,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import {
@@ -111,7 +113,7 @@ export default function Products() {
     return attributesData.data.attributes.filter((attr: Attribute) => attr.values.length > 0)
   }, [attributesData])
 
-  const { data: productsData, isLoading, error } = useProducts(queryParams)
+  const { data: productsData, isLoading, error, refetch } = useProducts(queryParams)
   const { data: categoriesData } = useCategories()
   const deleteProductMutation = useDeleteProduct()
   const duplicateProductMutation = useDuplicateProduct()
@@ -448,9 +450,16 @@ export default function Products() {
           {isLoading ? (
             <SkeletonTable rows={5} columns={6} />
           ) : error ? (
-            <div className="p-8 text-center" role="alert">
-              <p className="text-red-600 dark:text-red-400 mb-2">Erreur lors du chargement des produits</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : 'Erreur inconnue'}</p>
+            <div role="alert" className="p-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-3 justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-red-800 dark:text-red-200 text-center">
+                  Une erreur est survenue lors du chargement des produits.
+                </p>
+                <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                  Réessayer
+                </Button>
+              </div>
             </div>
           ) : products.length === 0 ? (
             <div className="p-8 text-center">

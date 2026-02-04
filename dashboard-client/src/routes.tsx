@@ -55,6 +55,8 @@ const Blog = lazy(() => import('./pages/store/content/Blog'))
 const Menus = lazy(() => import('./pages/store/content/Menus'))
 const TrustBadges = lazy(() => import('./pages/store/content/TrustBadges'))
 const LiveEvents = lazy(() => import('./pages/store/content/LiveEvents'))
+// Store - Homepage Builder
+const HomepageBuilder = lazy(() => import('./pages/store/HomepageBuilder'))
 // Store - Reports
 const SalesReports = lazy(() => import('./pages/store/reports/SalesReports'))
 const StoreStockAlerts = lazy(() => import('./pages/store/reports/StockAlerts'))
@@ -160,6 +162,7 @@ const FinanceIncomeNew = lazy(() => import('./pages/finance/incomes/new/page'))
 const FinanceCategories = lazy(() => import('./pages/finance/categories/page'))
 const FinanceSuppliers = lazy(() => import('./pages/finance/suppliers/page'))
 const FinanceSupplierNew = lazy(() => import('./pages/finance/suppliers/new/page'))
+const RevenueForecast = lazy(() => import('./pages/finance/analytics/forecast/page'))
 const FinancePortfolios = lazy(() => import('./pages/finance/portfolios/page'))
 const FinanceScenarios = lazy(() => import('./pages/finance/scenarios/page'))
 const FinanceAlerts = lazy(() => import('./pages/finance/alerts/page'))
@@ -186,6 +189,8 @@ const FinanceSettings = lazy(() => import('./pages/finance/settings/page'))
 const FinanceSettingsFlux = lazy(() => import('./pages/finance/settings/flux/page'))
 const FinanceSettingsNotifications = lazy(() => import('./pages/finance/settings/notifications/page'))
 const FinanceSettingsIntegrations = lazy(() => import('./pages/finance/settings/integrations/page'))
+const FinanceSettingsInvoicing = lazy(() => import('./pages/finance/settings/invoicing/page'))
+const FinanceSettingsExportFEC = lazy(() => import('./pages/finance/settings/export-fec/page'))
 
 // Marketing
 const MarketingDashboard = lazy(() => import('./pages/marketing/MarketingDashboard'))
@@ -259,6 +264,16 @@ const Subscriptions = lazy(() => import('./pages/subscriptions/page'))
 // Others
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Invoices = lazy(() => import('./pages/Invoices'))
+
+// Finance - Invoices
+const InvoicesList = lazy(() => import('./pages/finance/invoices/page'))
+const InvoiceDetail = lazy(() => import('./pages/finance/invoices/[id]/page'))
+const InvoiceNew = lazy(() => import('./pages/finance/invoices/new/page'))
+const InvoiceQuick = lazy(() => import('./pages/finance/invoices/quick/page'))
+
+// Sales - Quotes
+const QuotesList = lazy(() => import('./pages/sales/quotes/page'))
+const QuoteDetail = lazy(() => import('./pages/sales/quotes/[id]/page'))
 const Payments = lazy(() => import('./pages/Payments'))
 const Pricelists = lazy(() => import('./pages/Pricelists'))
 const PricelistDetail = lazy(() => import('./pages/PricelistDetail'))
@@ -359,6 +374,9 @@ export default function AppRoutes() {
         <Route path="/store/content/menus" element={<P><Menus /></P>} />
         <Route path="/store/content/trust-badges" element={<P><TrustBadges /></P>} />
         <Route path="/store/content/live-events" element={<P><LiveEvents /></P>} />
+
+        {/* Store - Homepage Builder */}
+        <Route path="/store/homepage-builder" element={<P><HomepageBuilder /></P>} />
 
         {/* Store - Reports */}
         <Route path="/store/reports/sales" element={<P><SalesReports /></P>} />
@@ -498,6 +516,7 @@ export default function AppRoutes() {
         <Route path="/finance/forecast" element={<FP><FinanceForecast /></FP>} />
         <Route path="/finance/archives" element={<FP><FinanceArchives /></FP>} />
         <Route path="/finance/payment-planning" element={<FP><FinancePaymentPlanning /></FP>} />
+        <Route path="/finance/analytics/forecast" element={<FP><RevenueForecast /></FP>} />
         <Route path="/finance/expenses" element={<FP><FinanceExpenses /></FP>} />
         <Route path="/finance/expenses/new" element={<FP><FinanceExpenseNew /></FP>} />
         <Route path="/finance/incomes" element={<FP><FinanceIncomes /></FP>} />
@@ -535,7 +554,19 @@ export default function AppRoutes() {
           <Route path="flux" element={<FinanceSettingsFlux />} />
           <Route path="notifications" element={<FinanceSettingsNotifications />} />
           <Route path="integrations" element={<FinanceSettingsIntegrations />} />
+          <Route path="invoicing" element={<FinanceSettingsInvoicing />} />
+          <Route path="export-fec" element={<FinanceSettingsExportFEC />} />
         </Route>
+
+        {/* ---- Finance - Invoices ---- */}
+        <Route path="/finance/invoices" element={<FP><InvoicesList /></FP>} />
+        <Route path="/finance/invoices/new" element={<FP><InvoiceNew /></FP>} />
+        <Route path="/finance/invoices/quick" element={<FP><InvoiceQuick /></FP>} />
+        <Route path="/finance/invoices/:id" element={<FP><InvoiceDetail /></FP>} />
+
+        {/* ---- Sales - Quotes ---- */}
+        <Route path="/sales/quotes" element={<P><QuotesList /></P>} />
+        <Route path="/sales/quotes/:id" element={<P><QuoteDetail /></P>} />
 
         {/* ---- Marketing ---- */}
         <Route path="/marketing" element={<P><Module name="Marketing"><MarketingDashboard /></Module></P>} />

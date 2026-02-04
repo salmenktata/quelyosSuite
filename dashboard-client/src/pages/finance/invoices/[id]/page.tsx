@@ -80,6 +80,31 @@ export default function InvoiceDetailPage() {
     if (id) fetchInvoice()
   }, [id, fetchInvoice])
 
+  const handleCreateCreditNote = async () => {
+    const reason = prompt('Raison de l\'avoir (optionnel):')
+    if (reason === null) return // Annulé
+
+    if (!confirm(`Créer un avoir total pour la facture ${invoice?.name} ?`)) return
+
+    try {
+      const response = await apiClient.post<{
+        success: boolean
+        data: { creditNote: { id: number; name: string } }
+        message?: string
+      }>(`/finance/invoices/${id}/create-credit-note`, {
+        reason: reason || 'Avoir sur facture',
+      })
+
+      if (response.data.success && response.data.data) {
+        alert(response.data.message || 'Avoir créé avec succès')
+        fetchInvoice() // Refresh
+      }
+    } catch (err) {
+      logger.error('Erreur création avoir:', err)
+      alert('Erreur lors de la création de l\'avoir')
+    }
+  }
+
   const handlePayNow = async () => {
     if (!invoice) return
 
@@ -245,6 +270,11 @@ export default function InvoiceDetailPage() {
           {invoice.state === 'draft' && (
             <Button variant="secondary" icon={<CheckCircle />}>
               Valider la facture
+            </Button>
+          )}
+          {invoice.state === 'posted' && (
+            <Button variant="secondary" icon={<FileText />} onClick={handleCreateCreditNote}>
+              Créer avoir
             </Button>
           )}
         </div>

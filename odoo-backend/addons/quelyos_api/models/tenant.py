@@ -224,6 +224,24 @@ class QuelyosTenant(models.Model):
     )
 
     # ═══════════════════════════════════════════════════════════════════════════
+    # BRANDING FACTURES/DOCUMENTS
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    x_invoice_logo_url = fields.Char(
+        string='URL Logo Facture',
+        help="URL du logo à afficher sur les factures (si différent du logo principal)"
+    )
+    x_invoice_primary_color = fields.Char(
+        string='Couleur primaire factures',
+        default='#01613a',
+        help="Couleur principale utilisée dans les PDFs de factures"
+    )
+    x_invoice_footer_text = fields.Text(
+        string='Pied de page factures',
+        help="Texte personnalisé affiché en bas des factures (mentions légales, coordonnées bancaires, etc.)"
+    )
+
+    # ═══════════════════════════════════════════════════════════════════════════
     # COULEURS (13 CSS Variables)
     # ═══════════════════════════════════════════════════════════════════════════
 

@@ -186,6 +186,105 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur create_invoice: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
+    @http.route('/api/finance/invoices/quick-create', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def quick_create_invoice(self, **params):
+        """
+        Création rapide de facture (wizard 3 étapes)
+
+        Body:
+        {
+          "customerId": 123,  // OU customerData pour création rapide
+          "customerData": {   // Optionnel si customerId fourni
+            "name": "Client Express",
+            "email": "client@example.com",
+            "phone": "+33612345678"
+          },
+          "invoiceDate": "2026-02-04",
+          "dueDate": "2026-03-04",
+          "reference": "REF-001",
+          "note": "Merci pour votre confiance",
+          "lines": [
+            {
+              "productId": 456,  // Optionnel
+              "description": "Service de conseil",
+              "quantity": 2,
+              "unitPrice": 100.0,
+              "taxIds": [1]
+            }
+          ],
+          "validate": false  // true pour valider directement
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            if not tenant_id:
+                return self._error_response("Tenant non trouvé", "FORBIDDEN", 403)
+
+            data = request.jsonrequest
+
+            # Valider lignes
+            if not data.get('lines'):
+                return self._error_response("Au moins une ligne de facture requise", "VALIDATION_ERROR", 400)
+
+            # Gérer client (existant ou création rapide)
+            customer_id = data.get('customerId')
+
+            if not customer_id and data.get('customerData'):
+                # Création rapide d'un client
+                Partner = request.env['res.partner'].sudo()
+                customer_data = data['customerData']
+
+                # Vérifier si le client existe déjà par email
+                existing = Partner.search([
+                    ('email', '=', customer_data.get('email')),
+                    ('tenant_id', '=', tenant_id)
+                ], limit=1)
+
+                if existing:
+                    customer_id = existing.id
+                else:
+                    # Créer nouveau client
+                    customer = Partner.create({
+                        'name': customer_data.get('name'),
+                        'email': customer_data.get('email'),
+                        'phone': customer_data.get('phone', ''),
+                        'tenant_id': tenant_id,
+                        'customer_rank': 1,
+                    })
+                    customer_id = customer.id
+                    _logger.info(f"Client {customer.name} créé rapidement (ID: {customer.id})")
+
+            if not customer_id:
+                return self._error_response("customerId ou customerData requis", "VALIDATION_ERROR", 400)
+
+            # Préparer valeurs facture
+            data['customerId'] = customer_id
+            vals = self._prepare_invoice_values(data, tenant_id)
+
+            # Créer facture
+            AccountMove = request.env['account.move'].sudo()
+            invoice = AccountMove.create(vals)
+
+            _logger.info(f"Facture express {invoice.name} créée (ID: {invoice.id})")
+
+            # Valider si demandé
+            if data.get('validate', False):
+                invoice.action_post()
+                _logger.info(f"Facture {invoice.name} validée automatiquement")
+
+            return self._success_response(
+                self._serialize_invoice(invoice, include_lines=True),
+                message=f"Facture {invoice.name} créée avec succès"
+            )
+
+        except Exception as e:
+            _logger.error(f"Erreur quick_create_invoice: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
     @http.route('/api/finance/invoices/<int:invoice_id>/update', type='json', auth='user', methods=['PUT', 'OPTIONS'], csrf=False)
     def update_invoice(self, invoice_id, **params):
         """Modifier une facture client (état brouillon uniquement)"""
@@ -310,6 +409,89 @@ class InvoicesController(BaseController):
             _logger.error(f"Erreur duplicate_invoice {invoice_id}: {e}", exc_info=True)
             return self._error_response(str(e), "SERVER_ERROR", 500)
 
+    @http.route('/api/finance/invoices/<int:invoice_id>/create-credit-note', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def create_credit_note(self, invoice_id, **params):
+        """
+        Créer avoir (credit note) depuis facture
+
+        Body:
+        {
+          "amount": 1234.56,  // Optionnel, si partiel
+          "reason": "Retour marchandise"
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            data = request.jsonrequest
+
+            # Récupérer facture origine
+            AccountMove = request.env['account.move'].sudo()
+            invoice = AccountMove.search([
+                ('id', '=', invoice_id),
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+            ], limit=1)
+
+            if not invoice:
+                return self._error_response("Facture introuvable ou non validée", "NOT_FOUND", 404)
+
+            # Montant avoir (total ou partiel)
+            credit_amount = float(data.get('amount')) if data.get('amount') else float(invoice.amount_total)
+            reason = data.get('reason', 'Avoir sur facture')
+
+            # Créer avoir
+            credit_note_vals = {
+                'move_type': 'out_refund',
+                'partner_id': invoice.partner_id.id,
+                'invoice_date': invoice.invoice_date,
+                'tenant_id': tenant_id,
+                'ref': f"Avoir facture {invoice.name}",
+                'narration': reason,
+                'reversed_entry_id': invoice.id,  # Lien facture origine
+            }
+
+            # Si avoir partiel, ajuster lignes
+            if credit_amount < float(invoice.amount_total):
+                # Créer ligne unique avec montant partiel
+                credit_note_vals['invoice_line_ids'] = [(0, 0, {
+                    'name': f'Avoir partiel sur {invoice.name}',
+                    'quantity': 1,
+                    'price_unit': credit_amount,
+                })]
+            else:
+                # Avoir total: copier lignes facture avec quantités négatives
+                lines = []
+                for line in invoice.invoice_line_ids:
+                    lines.append((0, 0, {
+                        'product_id': line.product_id.id if line.product_id else False,
+                        'name': line.name,
+                        'quantity': line.quantity,
+                        'price_unit': line.price_unit,
+                        'tax_ids': [(6, 0, line.tax_ids.ids)],
+                    }))
+                credit_note_vals['invoice_line_ids'] = lines
+
+            credit_note = AccountMove.create(credit_note_vals)
+
+            _logger.info(f"Avoir {credit_note.name} créé depuis facture {invoice.name}")
+
+            return self._success_response(
+                {
+                    'creditNote': self._serialize_invoice(credit_note, include_lines=True),
+                    'originInvoice': self._serialize_invoice(invoice),
+                },
+                message=f"Avoir {credit_note.name} créé avec succès"
+            )
+
+        except Exception as e:
+            _logger.error(f"Erreur create_credit_note {invoice_id}: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
     # ─────────────────────────────────────────────────────────────────────
     # HELPER METHODS
     # ─────────────────────────────────────────────────────────────────────
@@ -416,3 +598,502 @@ class InvoicesController(BaseController):
             ]
 
         return data
+
+    @http.route('/api/finance/invoices/<int:invoice_id>/payment-link', type='json', auth='public', methods=['GET', 'OPTIONS'], csrf=False)
+    def get_invoice_payment_link(self, invoice_id, **params):
+        """
+        Générer un Payment Link Stripe pour payer une facture
+
+        Returns:
+        {
+          "paymentUrl": "https://checkout.stripe.com/...",
+          "paymentLinkId": "plink_...",
+          "expiresAt": "2026-02-10T12:00:00Z"
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            if not tenant_id:
+                return self._error_response("Tenant non trouvé", "FORBIDDEN", 403)
+
+            # Récupérer la facture
+            AccountMove = request.env['account.move'].sudo()
+            invoice = AccountMove.search([
+                ('id', '=', invoice_id),
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),  # Seulement factures validées
+            ], limit=1)
+
+            if not invoice:
+                return self._error_response("Facture introuvable ou non validée", "NOT_FOUND", 404)
+
+            # Vérifier si déjà payée
+            if invoice.payment_state == 'paid':
+                return self._error_response("Cette facture est déjà payée", "ALREADY_PAID", 400)
+
+            # Importer Stripe
+            try:
+                import stripe
+            except ImportError:
+                return self._error_response("Stripe non configuré", "STRIPE_NOT_CONFIGURED", 503)
+
+            # Récupérer clé Stripe
+            stripe_key = request.env['ir.config_parameter'].sudo().get_param('payment.stripe.secret_key')
+            if not stripe_key:
+                return self._error_response("Stripe non configuré", "STRIPE_NOT_CONFIGURED", 503)
+
+            stripe.api_key = stripe_key
+
+            # Calculer montant restant à payer
+            amount_residual = float(invoice.amount_residual)
+            if amount_residual <= 0:
+                return self._error_response("Aucun montant à payer", "NO_AMOUNT_DUE", 400)
+
+            amount_cents = int(amount_residual * 100)
+
+            # Créer Payment Link Stripe
+            payment_link = stripe.PaymentLink.create(
+                line_items=[{
+                    'price_data': {
+                        'currency': invoice.currency_id.name.lower(),
+                        'product_data': {
+                            'name': f'Facture {invoice.name}',
+                            'description': f'Client: {invoice.partner_id.name}',
+                        },
+                        'unit_amount': amount_cents,
+                    },
+                    'quantity': 1,
+                }],
+                metadata={
+                    'invoice_id': invoice.id,
+                    'invoice_name': invoice.name,
+                    'tenant_id': tenant_id,
+                    'customer_id': invoice.partner_id.id,
+                },
+                after_completion={
+                    'type': 'redirect',
+                    'redirect': {
+                        'url': f'{request.httprequest.host_url}payment-success?invoice={invoice.name}',
+                    },
+                },
+            )
+
+            _logger.info(f"Payment Link créé pour facture {invoice.name}: {payment_link.id}")
+
+            return self._success_response({
+                'paymentUrl': payment_link.url,
+                'paymentLinkId': payment_link.id,
+                'amount': amount_residual,
+                'currency': invoice.currency_id.name,
+            })
+
+        except Exception as e:
+            _logger.error(f"Erreur get_invoice_payment_link {invoice_id}: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    @http.route('/api/finance/invoices/stripe-webhook', type='http', auth='none', methods=['POST'], csrf=False)
+    def invoice_payment_webhook(self, **kwargs):
+        """
+        Webhook Stripe pour paiements de factures
+        Gère checkout.session.completed pour Payment Links
+        """
+        payload = request.httprequest.data
+        sig_header = request.httprequest.headers.get('Stripe-Signature')
+
+        # Récupérer clés Stripe
+        stripe_key = request.env['ir.config_parameter'].sudo().get_param('payment.stripe.secret_key')
+        webhook_secret = request.env['ir.config_parameter'].sudo().get_param('payment.stripe.webhook_secret')
+
+        if not stripe_key or not webhook_secret:
+            _logger.error("Stripe webhook: Configuration manquante")
+            return request.make_response('Webhook configuration error', status=400)
+
+        try:
+            import stripe
+            stripe.api_key = stripe_key
+
+            # Vérifier signature Stripe
+            event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+        except ValueError:
+            _logger.error("Stripe webhook: Payload invalide")
+            return request.make_response('Invalid payload', status=400)
+        except stripe.error.SignatureVerificationError:
+            _logger.error("Stripe webhook: Signature invalide")
+            return request.make_response('Invalid signature', status=400)
+        except ImportError:
+            _logger.error("Stripe webhook: Librairie stripe manquante")
+            return request.make_response('Stripe not configured', status=503)
+
+        # Traiter événement
+        event_type = event['type']
+        _logger.info(f"Stripe webhook facture reçu: {event_type}")
+
+        if event_type == 'checkout.session.completed':
+            session = event['data']['object']
+            self._handle_invoice_payment_success(session)
+
+        return request.make_response('Success', status=200)
+
+    def _handle_invoice_payment_success(self, session):
+        """
+        Gérer succès paiement facture via Payment Link
+
+        Actions:
+        1. Créer account.payment
+        2. Réconcilier avec la facture
+        3. Logger transaction
+        """
+        try:
+            metadata = session.get('metadata', {})
+            invoice_id = metadata.get('invoice_id')
+
+            if not invoice_id:
+                _logger.warning("Webhook: invoice_id manquant dans metadata")
+                return
+
+            invoice_id = int(invoice_id)
+
+            # Récupérer la facture
+            invoice = request.env['account.move'].sudo().browse(invoice_id)
+            if not invoice.exists():
+                _logger.warning(f"Webhook: Facture {invoice_id} introuvable")
+                return
+
+            # Vérifier si déjà payée
+            if invoice.payment_state == 'paid':
+                _logger.info(f"Webhook: Facture {invoice.name} déjà payée")
+                return
+
+            # Récupérer montant payé (en centimes)
+            amount_cents = session.get('amount_total', 0)
+            amount = amount_cents / 100.0
+
+            # Créer le paiement
+            payment_vals = {
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'partner_id': invoice.partner_id.id,
+                'amount': amount,
+                'currency_id': invoice.currency_id.id,
+                'date': request.env['fields'].Date.today(),
+                'ref': f"Paiement Stripe - {invoice.name}",
+                'journal_id': self._get_stripe_journal_id(),
+            }
+
+            payment = request.env['account.payment'].sudo().create(payment_vals)
+            payment.action_post()
+
+            # Réconcilier avec la facture
+            lines_to_reconcile = (payment.line_ids + invoice.line_ids).filtered(
+                lambda l: l.account_id.account_type in ('asset_receivable', 'liability_payable') and not l.reconciled
+            )
+
+            if lines_to_reconcile:
+                lines_to_reconcile.reconcile()
+
+            _logger.info(
+                f"Paiement Stripe créé et réconcilié pour facture {invoice.name}: "
+                f"{amount} {invoice.currency_id.name}"
+            )
+
+        except Exception as e:
+            _logger.error(f"Erreur handling invoice payment: {e}", exc_info=True)
+
+    def _get_stripe_journal_id(self):
+        """Récupérer le journal Stripe (ou journal banque par défaut)"""
+        # Chercher journal nommé "Stripe"
+        journal = request.env['account.journal'].sudo().search([
+            ('name', 'ilike', 'stripe'),
+            ('type', '=', 'bank'),
+        ], limit=1)
+
+        if journal:
+            return journal.id
+
+        # Sinon, prendre premier journal banque
+        journal = request.env['account.journal'].sudo().search([
+            ('type', '=', 'bank'),
+        ], limit=1)
+
+        return journal.id if journal else False
+
+    @http.route('/api/finance/invoices/bulk-remind', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def bulk_remind_invoices(self, **params):
+        """
+        Envoyer des relances automatiques pour plusieurs factures impayées
+
+        Body:
+        {
+          "invoiceIds": [123, 456, 789],
+          "templateId": 42  // Optionnel, sinon utilise template par défaut
+        }
+
+        Returns:
+        {
+          "success": true,
+          "sent": 3,
+          "failed": 0,
+          "details": [...]
+        }
+        """
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            if not tenant_id:
+                return self._error_response("Tenant non trouvé", "FORBIDDEN", 403)
+
+            data = request.jsonrequest
+            invoice_ids = data.get('invoiceIds', [])
+
+            if not invoice_ids:
+                return self._error_response("Aucune facture sélectionnée", "VALIDATION_ERROR", 400)
+
+            # Récupérer les factures
+            AccountMove = request.env['account.move'].sudo()
+            invoices = AccountMove.search([
+                ('id', 'in', invoice_ids),
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', '!=', 'paid'),
+            ])
+
+            if not invoices:
+                return self._error_response("Aucune facture impayée trouvée", "NOT_FOUND", 404)
+
+            sent_count = 0
+            failed_count = 0
+            details = []
+
+            for invoice in invoices:
+                try:
+                    # Calculer jours de retard
+                    days_overdue = 0
+                    if invoice.invoice_date_due:
+                        from datetime import date
+                        today = date.today()
+                        due_date = invoice.invoice_date_due
+                        if due_date < today:
+                            days_overdue = (today - due_date).days
+
+                    # Préparer contexte email
+                    email_context = {
+                        'invoice_name': invoice.name,
+                        'customer_name': invoice.partner_id.name,
+                        'amount_residual': invoice.amount_residual,
+                        'currency': invoice.currency_id.symbol,
+                        'due_date': invoice.invoice_date_due.strftime('%d/%m/%Y') if invoice.invoice_date_due else 'Non définie',
+                        'days_overdue': days_overdue,
+                    }
+
+                    # Email simple (sans template pour l'instant)
+                    email_values = {
+                        'email_to': invoice.partner_id.email,
+                        'email_from': user.email or 'noreply@quelyos.com',
+                        'subject': f'Relance facture {invoice.name}',
+                        'body_html': self._generate_reminder_email_body(email_context),
+                        'model': 'account.move',
+                        'res_id': invoice.id,
+                        'author_id': user.partner_id.id,
+                    }
+
+                    # Envoyer l'email
+                    mail = request.env['mail.mail'].sudo().create(email_values)
+                    mail.send()
+
+                    sent_count += 1
+                    details.append({
+                        'invoiceId': invoice.id,
+                        'invoiceName': invoice.name,
+                        'customerEmail': invoice.partner_id.email,
+                        'status': 'sent'
+                    })
+
+                    _logger.info(f"Relance envoyée pour facture {invoice.name} à {invoice.partner_id.email}")
+
+                except Exception as e:
+                    failed_count += 1
+                    details.append({
+                        'invoiceId': invoice.id,
+                        'invoiceName': invoice.name,
+                        'status': 'failed',
+                        'error': str(e)
+                    })
+                    _logger.error(f"Erreur envoi relance facture {invoice.name}: {e}")
+
+            return self._success_response({
+                'sent': sent_count,
+                'failed': failed_count,
+                'total': len(invoices),
+                'details': details
+            }, message=f"{sent_count} relance(s) envoyée(s) avec succès")
+
+        except Exception as e:
+            _logger.error(f"Erreur bulk_remind_invoices: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    def _generate_reminder_email_body(self, context):
+        """Générer le corps d'email de relance"""
+        return f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #e74c3c;">Relance de paiement</h2>
+            <p>Bonjour {context['customer_name']},</p>
+            <p>Nous vous contactons concernant la facture <strong>{context['invoice_name']}</strong> d'un montant de <strong>{context['amount_residual']:.2f} {context['currency']}</strong>.</p>
+            <p>Date d'échéance : <strong>{context['due_date']}</strong></p>
+            {f"<p style='color: #e74c3c;'><strong>Cette facture est en retard de {context['days_overdue']} jour(s).</strong></p>" if context['days_overdue'] > 0 else ""}
+            <p>Nous vous remercions de bien vouloir procéder au règlement dans les meilleurs délais.</p>
+            <p>Pour toute question, n'hésitez pas à nous contacter.</p>
+            <p>Cordialement,<br/>L'équipe Quelyos</p>
+        </body>
+        </html>
+        """
+
+    @http.route('/api/finance/invoices/bulk-remind-sms', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def bulk_remind_sms(self, **params):
+        """Relances SMS multiples (nécessite Twilio configuré)"""
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            data = request.jsonrequest
+            invoice_ids = data.get('invoiceIds', [])
+
+            if not invoice_ids:
+                return self._error_response("invoiceIds requis", "VALIDATION_ERROR", 400)
+
+            # Vérifier config Twilio
+            twilio_sid = request.env['ir.config_parameter'].sudo().get_param('twilio.account_sid')
+            twilio_token = request.env['ir.config_parameter'].sudo().get_param('twilio.auth_token')
+            twilio_phone = request.env['ir.config_parameter'].sudo().get_param('twilio.phone_number')
+
+            if not all([twilio_sid, twilio_token, twilio_phone]):
+                return self._error_response("Twilio non configuré", "TWILIO_NOT_CONFIGURED", 503)
+
+            # Récupérer factures
+            invoices = request.env['account.move'].sudo().search([
+                ('id', 'in', invoice_ids),
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', '!=', 'paid'),
+            ])
+
+            sent_count = 0
+            failed_count = 0
+
+            try:
+                from twilio.rest import Client
+                twilio_client = Client(twilio_sid, twilio_token)
+            except ImportError:
+                return self._error_response("Librairie twilio non installée", "TWILIO_NOT_INSTALLED", 503)
+
+            for invoice in invoices:
+                if not invoice.partner_id.mobile:
+                    failed_count += 1
+                    continue
+
+                try:
+                    message_body = f"Relance facture {invoice.name} : {float(invoice.amount_residual):.2f} EUR. Échéance : {invoice.invoice_date_due.strftime('%d/%m/%Y') if invoice.invoice_date_due else 'Non définie'}."
+
+                    twilio_client.messages.create(
+                        body=message_body,
+                        from_=twilio_phone,
+                        to=invoice.partner_id.mobile
+                    )
+
+                    sent_count += 1
+                    _logger.info(f"SMS envoyé pour facture {invoice.name} à {invoice.partner_id.mobile}")
+                except Exception as e:
+                    failed_count += 1
+                    _logger.error(f"Erreur envoi SMS facture {invoice.name}: {e}")
+
+            return self._success_response({
+                'sent': sent_count,
+                'failed': failed_count,
+                'total': len(invoices),
+            }, message=f"{sent_count} SMS envoyé(s)")
+
+        except Exception as e:
+            _logger.error(f"Erreur bulk_remind_sms: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)
+
+    @http.route('/api/finance/invoices/bulk-remind-whatsapp', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def bulk_remind_whatsapp(self, **params):
+        """Relances WhatsApp multiples (nécessite Twilio WhatsApp configuré)"""
+        try:
+            user = self._authenticate_from_header()
+            if not user:
+                return self._error_response("Session expirée", "UNAUTHORIZED", 401)
+
+            tenant_id = self._get_tenant_id(user)
+            data = request.jsonrequest
+            invoice_ids = data.get('invoiceIds', [])
+
+            if not invoice_ids:
+                return self._error_response("invoiceIds requis", "VALIDATION_ERROR", 400)
+
+            # Vérifier config
+            twilio_sid = request.env['ir.config_parameter'].sudo().get_param('twilio.account_sid')
+            twilio_token = request.env['ir.config_parameter'].sudo().get_param('twilio.auth_token')
+            twilio_whatsapp = request.env['ir.config_parameter'].sudo().get_param('twilio.whatsapp_number')
+
+            if not all([twilio_sid, twilio_token, twilio_whatsapp]):
+                return self._error_response("Twilio WhatsApp non configuré", "TWILIO_NOT_CONFIGURED", 503)
+
+            invoices = request.env['account.move'].sudo().search([
+                ('id', 'in', invoice_ids),
+                ('tenant_id', '=', tenant_id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', '!=', 'paid'),
+            ])
+
+            sent_count = 0
+            failed_count = 0
+
+            try:
+                from twilio.rest import Client
+                twilio_client = Client(twilio_sid, twilio_token)
+            except ImportError:
+                return self._error_response("Librairie twilio non installée", "TWILIO_NOT_INSTALLED", 503)
+
+            for invoice in invoices:
+                if not invoice.partner_id.mobile:
+                    failed_count += 1
+                    continue
+
+                try:
+                    message_body = f"Bonjour,\n\nRelance de paiement\nFacture : {invoice.name}\nMontant : {float(invoice.amount_residual):.2f} EUR\nÉchéance : {invoice.invoice_date_due.strftime('%d/%m/%Y') if invoice.invoice_date_due else 'Non définie'}\n\nMerci de procéder au règlement."
+
+                    twilio_client.messages.create(
+                        body=message_body,
+                        from_=f'whatsapp:{twilio_whatsapp}',
+                        to=f'whatsapp:{invoice.partner_id.mobile}'
+                    )
+
+                    sent_count += 1
+                    _logger.info(f"WhatsApp envoyé pour facture {invoice.name}")
+                except Exception as e:
+                    failed_count += 1
+                    _logger.error(f"Erreur WhatsApp facture {invoice.name}: {e}")
+
+            return self._success_response({
+                'sent': sent_count,
+                'failed': failed_count,
+                'total': len(invoices),
+            }, message=f"{sent_count} WhatsApp envoyé(s)")
+
+        except Exception as e:
+            _logger.error(f"Erreur bulk_remind_whatsapp: {e}", exc_info=True)
+            return self._error_response(str(e), "SERVER_ERROR", 500)

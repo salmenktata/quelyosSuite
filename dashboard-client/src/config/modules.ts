@@ -74,6 +74,7 @@ import {
   Palette,
   Paintbrush,
   FolderKanban,
+  LayoutGrid,
   // Maintenance Icons
   Wrench,
   BarChart2,
@@ -246,6 +247,12 @@ export const MODULES: Module[] = [
         tabGroup: 'Tableau de bord',
         items: [
           { name: 'Vue d\'ensemble', path: '/store', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Homepage',
+        items: [
+          { name: 'Gestionnaire Homepage', path: '/store/homepage-builder', icon: LayoutGrid },
         ],
       },
       {

@@ -1541,3 +1541,142 @@ class QuelyosOrdersAPI(BaseController):
         except Exception as e:
             _logger.error(f"Get fulfillment stats error: {e}", exc_info=True)
             return {'success': False, 'error': 'Une erreur est survenue'}
+
+    @http.route('/api/sales/orders/<int:order_id>/convert-to-invoice', type='json', auth='public', methods=['POST', 'OPTIONS'], csrf=False)
+    def convert_quote_to_invoice(self, order_id, **kwargs):
+        """
+        Convertir un devis (sale.order) en facture (account.move)
+
+        Workflow:
+        1. Confirmer le devis (si draft/sent) → state='sale'
+        2. Créer la facture depuis la commande
+        3. Retourner l'ID de la facture créée
+
+        Returns:
+        {
+          "success": true,
+          "invoice": {
+            "id": 123,
+            "name": "INV/2026/00001",
+            "amount_total": 1250.00,
+            "state": "draft"
+          },
+          "order": {
+            "id": 456,
+            "name": "S00042",
+            "state": "sale"
+          }
+        }
+        """
+        try:
+            # Authentification
+            error = self._authenticate_from_header()
+            if error:
+                return error
+
+            # Récupérer le devis/commande
+            order = request.env['sale.order'].sudo().browse(order_id)
+
+            if not order.exists():
+                return {
+                    'success': False,
+                    'error': 'Devis/commande introuvable',
+                    'error_code': 'ORDER_NOT_FOUND'
+                }
+
+            # Vérifier que l'utilisateur a les droits (admin ou propriétaire)
+            is_admin = request.env.user.has_group('base.group_system')
+            is_owner = order.partner_id.id == request.env.user.partner_id.id
+
+            if not is_admin and not is_owner:
+                return {
+                    'success': False,
+                    'error': 'Permissions insuffisantes',
+                    'error_code': 'INSUFFICIENT_PERMISSIONS'
+                }
+
+            # Étape 1 : Confirmer le devis si nécessaire
+            if order.state in ('draft', 'sent'):
+                try:
+                    order.action_confirm()
+                    _logger.info(f"Devis {order.name} confirmé → état 'sale'")
+                except Exception as e:
+                    _logger.error(f"Erreur confirmation devis {order.name}: {e}")
+                    return {
+                        'success': False,
+                        'error': f"Erreur lors de la confirmation du devis: {str(e)}",
+                        'error_code': 'CONFIRM_ERROR'
+                    }
+
+            # Vérifier que la commande est confirmée
+            if order.state != 'sale':
+                return {
+                    'success': False,
+                    'error': f"La commande doit être confirmée (état actuel: {order.state})",
+                    'error_code': 'INVALID_STATE'
+                }
+
+            # Étape 2 : Créer la facture
+            try:
+                # Vérifier qu'aucune facture n'existe déjà
+                existing_invoices = order.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
+                if existing_invoices:
+                    return {
+                        'success': False,
+                        'error': f"Une facture existe déjà pour cette commande: {existing_invoices[0].name}",
+                        'error_code': 'INVOICE_ALREADY_EXISTS',
+                        'existing_invoice_id': existing_invoices[0].id
+                    }
+
+                # Créer la facture
+                invoice = order._create_invoices()
+
+                if not invoice:
+                    return {
+                        'success': False,
+                        'error': "Erreur lors de la création de la facture",
+                        'error_code': 'INVOICE_CREATION_FAILED'
+                    }
+
+                # Prendre la première facture créée (normalement une seule)
+                invoice = invoice[0] if isinstance(invoice, list) else invoice
+
+                _logger.info(f"Facture {invoice.name} créée depuis commande {order.name}")
+
+                return {
+                    'success': True,
+                    'message': f"Facture {invoice.name} créée avec succès",
+                    'data': {
+                        'invoice': {
+                            'id': invoice.id,
+                            'name': invoice.name,
+                            'state': invoice.state,
+                            'paymentState': invoice.payment_state,
+                            'amountTotal': float(invoice.amount_total),
+                            'amountResidual': float(invoice.amount_residual),
+                            'currency': invoice.currency_id.name,
+                        },
+                        'order': {
+                            'id': order.id,
+                            'name': order.name,
+                            'state': order.state,
+                            'invoiceStatus': order.invoice_status,
+                        }
+                    }
+                }
+
+            except Exception as e:
+                _logger.error(f"Erreur création facture depuis commande {order.name}: {e}", exc_info=True)
+                return {
+                    'success': False,
+                    'error': f"Erreur lors de la création de la facture: {str(e)}",
+                    'error_code': 'INVOICE_CREATION_ERROR'
+                }
+
+        except Exception as e:
+            _logger.error(f"Erreur convert_quote_to_invoice {order_id}: {e}", exc_info=True)
+            return {
+                'success': False,
+                'error': 'Une erreur est survenue',
+                'error_code': 'SERVER_ERROR'
+            }
