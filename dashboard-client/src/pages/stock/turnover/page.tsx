@@ -47,7 +47,7 @@ export default function StockTurnoverPage() {
   const [page, setPage] = useState(0)
   const limit = 50
 
-  const { data, isLoading, error,refetch, refetch } = useStockTurnover({
+  const { data, isLoading, error, refetch } = useStockTurnover({
     start_date: dateRange.start_date,
     end_date: dateRange.end_date,
     category_id: categoryFilter,

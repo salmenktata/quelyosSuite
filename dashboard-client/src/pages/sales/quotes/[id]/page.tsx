@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common'
-import { FileText, AlertCircle, RefreshCw, User, Calendar, FileInvoice } from 'lucide-react'
+import { FileText, AlertCircle, RefreshCw, User, Calendar, FileText } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { logger } from '@quelyos/logger'
@@ -229,7 +229,7 @@ export default function QuoteDetailPage() {
           {canConvert && (
             <Button
               variant="primary"
-              icon={<FileInvoice />}
+              icon={<FileText />}
               onClick={handleConvertToInvoice}
               disabled={converting}
             >

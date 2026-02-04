@@ -8,9 +8,8 @@
  * @module components/orders
  */
 
-import { CustomerViewTooltip } from '@quelyos/preview-components'
 import { Package, Truck, CheckCircle, Mail, Clock } from 'lucide-react'
-import { Badge } from '@/components/common'
+import { Badge, PreviewTooltip } from '@/components/common'
 
 interface OrderData {
   name: string
@@ -80,10 +79,14 @@ export function OrderClientView({ order }: OrderClientViewProps) {
             Ce que vos clients voient sur leur espace compte
           </p>
         </div>
-        <CustomerViewTooltip>
-          Cette section montre exactement ce que le client voit sur son espace personnel,
-          incluant la timeline de sa commande et les emails qu&apos;il reçoit.
-        </CustomerViewTooltip>
+        <PreviewTooltip
+          content="Cette section montre exactement ce que le client voit sur son espace personnel, incluant la timeline de sa commande et les emails qu'il reçoit."
+          position="bottom"
+        >
+          <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <Package className="w-4 h-4" />
+          </button>
+        </PreviewTooltip>
       </div>
 
       {/* Timeline Client */}

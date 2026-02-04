@@ -25,7 +25,7 @@ const breadcrumbItems = [
 ];
 
 export default function MailingLists() {
-  const { data, isLoading, error,refetch, refetch } = useMarketingLists({ limit: 100 });
+  const { data, isLoading, error, refetch } = useMarketingLists({ limit: 100 });
   const createMailingListMutation = useCreateMailingList();
   const deleteMailingListMutation = useDeleteMailingList();
 

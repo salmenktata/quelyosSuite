@@ -41,7 +41,7 @@ const stateColors: Record<string, string> = {
 export default function MarketingCampaigns() {
   const [stateFilter, setStateFilter] = useState<string>('');
 
-  const { data, isLoading, error,refetch, refetch } = useMarketingCampaigns({
+  const { data, isLoading, error, refetch } = useMarketingCampaigns({
     state: stateFilter || undefined,
     limit: 100
   });
