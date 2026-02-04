@@ -111,6 +111,7 @@ const MaintenanceSettings = lazy(() => import('./pages/maintenance/Settings'))
 // CRM
 const Customers = lazy(() => import('./pages/crm/Customers'))
 const CustomerDetail = lazy(() => import('./pages/crm/CustomerDetail'))
+const CustomerSegmentation = lazy(() => import('./pages/crm/CustomerSegmentation'))
 const Pipeline = lazy(() => import('./pages/crm/Pipeline'))
 const Leads = lazy(() => import('./pages/crm/Leads'))
 const LeadDetail = lazy(() => import('./pages/crm/LeadDetail'))
@@ -479,6 +480,7 @@ export default function AppRoutes() {
         <Route path="/crm" element={<Navigate to="/crm/customers" replace />} />
         <Route path="/crm/customers" element={<P><Module name="CRM"><Customers /></Module></P>} />
         <Route path="/crm/customers/:id" element={<P><CustomerDetail /></P>} />
+        <Route path="/crm/customer-segmentation" element={<P><CustomerSegmentation /></P>} />
         <Route path="/crm/customer-categories" element={<P><CustomerCategories /></P>} />
         <Route path="/crm/pipeline" element={<P><Pipeline /></P>} />
         <Route path="/crm/leads" element={<P><Leads /></P>} />
