@@ -25,6 +25,67 @@ import type { PageNoticeConfig } from './types';
  * Couleur: indigo (violet)
  */
 export const storeNotices: Record<string, PageNoticeConfig> = {
+  dashboard: {
+    pageId: 'store-dashboard',
+    title: 'Dashboard Boutique',
+    purpose:
+      'Suivez vos ventes, commandes et alertes stock en temps réel. Consultez les KPIs, les dernières commandes et les produits populaires.',
+    icon: Store,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: TrendingUp,
+        items: [
+          'KPIs ventes (revenu, commandes, panier moyen, clients)',
+          'Variations mensuelles avec tendances',
+          '5 dernières commandes avec statuts temps réel',
+          'Système alertes intelligent (rupture stock, stock faible)',
+          'Top 5 produits populaires',
+          'Actions rapides (produits, commandes, catégories)',
+        ],
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Surveiller alertes stock : Réapprovisionner produits en rupture',
+          'Analyser KPIs : Comparer évolution mensuelle',
+          'Traiter commandes : Gérer commandes en attente',
+          'Optimiser catalogue : Mettre en avant produits populaires',
+        ],
+      },
+    ],
+  },
+  homepageBuilder: {
+    pageId: 'store-homepage-builder',
+    title: 'Homepage Builder',
+    purpose:
+      'Organisez l\'ordre et la visibilité des sections de votre homepage e-commerce avec drag & drop.',
+    icon: Navigation,
+    moduleColor: 'indigo',
+    sections: [
+      {
+        title: 'Fonctionnalités',
+        icon: Settings,
+        items: [
+          'Drag & drop sections homepage',
+          'Toggle visibilité sections',
+          'Preview ordre temps réel',
+          'Sauvegarde configuration tenant',
+          'Liens directs vers édition sections',
+        ],
+      },
+      {
+        title: 'Actions recommandées',
+        items: [
+          'Réorganiser sections : Glisser-déposer pour changer ordre',
+          'Masquer sections : Désactiver sections non utilisées',
+          'Sauvegarder : Enregistrer configuration personnalisée',
+          'Réinitialiser : Revenir à l\'ordre par défaut si besoin',
+        ],
+      },
+    ],
+  },
   myShop: {
     pageId: 'store-my-shop',
     title: 'Ma Boutique - Personnalisation',

@@ -1,8 +1,25 @@
+/**
+ * Dashboard Boutique E-commerce - Vue d'ensemble activité
+ *
+ * Fonctionnalités :
+ * - KPIs ventes (revenu mensuel, commandes totales, panier moyen, clients)
+ * - Variations mensuelles avec tendances (▲/▼)
+ * - 5 dernières commandes avec statuts temps réel
+ * - Système alertes intelligent (rupture stock, stock faible, commandes en attente)
+ * - Top 5 produits populaires avec compteur ventes
+ * - Actions rapides (produits, commandes, catégories, paramètres)
+ * - Formatage monétaire TND (Dinar Tunisien)
+ * - Error handling robuste avec refetch
+ * - Loading states Skeleton partout
+ * - Dark mode complet (80+ occurrences)
+ */
+
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Badge, Skeleton, Button } from '@/components/common'
+import { Breadcrumbs, Badge, Skeleton, Button, PageNotice } from '@/components/common'
 import { useDashboardStats, useDashboardRecentOrders } from '@/hooks/useDashboard'
 import { useProducts } from '@/hooks/useProducts'
+import { storeNotices } from '@/lib/notices'
 import type { ProductWithSales } from '@/types'
 import {
   TrendingUp,
@@ -123,7 +140,7 @@ export default function StoreDashboard() {
   if (error) {
     return (
       <Layout>
-        <Breadcrumbs items={[{ label: 'Accueil', path: '/' }, { label: 'Boutique' }]} />
+        <Breadcrumbs items={[{ label: 'Boutique', href: '/store' }]} />
         <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
@@ -155,10 +172,11 @@ export default function StoreDashboard() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Accueil', href: '/dashboard' },
-            { label: 'Boutique' },
+            { label: 'Boutique', href: '/store' },
           ]}
         />
+
+        <PageNotice notices={storeNotices} currentPath="/store" />
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

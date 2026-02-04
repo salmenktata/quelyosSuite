@@ -55,7 +55,6 @@ export default function TrustBadges() {
         <div className="p-4 md:p-8 space-y-6">
           <Breadcrumbs
             items={[
-              { label: 'Accueil', href: '/dashboard' },
               { label: 'Boutique', href: '/store' },
               { label: 'Contenu', href: '/store/content' },
               { label: 'Badges de Confiance' },
@@ -135,8 +134,8 @@ export default function TrustBadges() {
       <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Tableau de bord', href: '/dashboard' },
-            { label: 'Store', href: '/store' },
+            { label: 'Boutique', href: '/store' },
+            { label: 'Contenu', href: '/store/content' },
             { label: 'Badges Confiance' },
           ]}
         />

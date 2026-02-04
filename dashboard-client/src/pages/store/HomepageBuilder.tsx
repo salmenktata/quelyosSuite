@@ -31,7 +31,8 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button, Badge } from '@/components/common'
+import { Breadcrumbs, Button, Badge, PageNotice } from '@/components/common'
+import { storeNotices } from '@/lib/notices'
 import { GripVertical, Eye, EyeOff, ExternalLink, Save } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useNavigate } from 'react-router-dom'
@@ -241,6 +242,8 @@ export default function HomepageBuilder() {
   return (
     <Layout>
       <Breadcrumbs items={breadcrumbItems} />
+
+      <PageNotice notices={storeNotices} currentPath="/store/homepage-builder" />
 
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
