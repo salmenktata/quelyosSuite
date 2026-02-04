@@ -11,11 +11,13 @@
  * @component
  */
 
+import { useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import { api } from '@/lib/api'
 import {
   Bold,
   Italic,
@@ -26,6 +28,7 @@ import {
   ListOrdered,
   Link2,
   ImageIcon,
+  Upload,
   Code,
   Undo,
   Redo
@@ -44,6 +47,8 @@ export function EmailEditor({
   placeholder = 'Composez votre email...',
   minHeight = '400px'
 }: EmailEditorProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -81,6 +86,38 @@ export function EmailEditor({
     const url = window.prompt('URL de l\'image :')
     if (url) {
       editor.chain().focus().setImage({ src: url }).run()
+    }
+  }
+
+  const handleUploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Vérifier que c'est une image
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner un fichier image')
+      return
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+
+      const response = await api.post('/api/admin/newsletter/upload-image', formData)
+      const data = response.data as { success: boolean; url?: string; error?: string }
+
+      if (data.success && data.url) {
+        editor.chain().focus().setImage({ src: data.url }).run()
+      } else {
+        alert(`Erreur upload: ${data.error || 'Erreur inconnue'}`)
+      }
+    } catch (error) {
+      alert('Erreur lors de l\'upload de l\'image')
+    } finally {
+      // Reset input pour permettre re-upload même fichier
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
   }
 
@@ -216,10 +253,24 @@ export function EmailEditor({
         <button
           onClick={addImage}
           className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-          title="Insérer une image"
+          title="Insérer une image (URL)"
         >
           <ImageIcon className="h-4 w-4" />
         </button>
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+          title="Upload une image"
+        >
+          <Upload className="h-4 w-4" />
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleUploadImage}
+          className="hidden"
+        />
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2" />
 

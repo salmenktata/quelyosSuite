@@ -17,10 +17,12 @@ Endpoints :
 - POST /api/admin/newsletter/campaigns/<id>/send-test - Envoyer un test
 
 - GET /api/admin/newsletter/segments - Liste des segments
+- POST /api/admin/newsletter/upload-image - Upload image (multipart/form-data)
 """
 
 import json
 import csv
+import base64
 from io import StringIO
 from odoo import http
 from odoo.http import request, Response
@@ -318,3 +320,51 @@ class NewsletterController(http.Controller):
             }
         except Exception as e:
             return {'success': False, 'error': str(e)}
+
+    @http.route('/api/admin/newsletter/upload-image', type='http', auth='public', methods=['POST'], csrf=False)
+    def upload_image(self, **kwargs):
+        """Upload image pour newsletter"""
+        try:
+            self._check_admin_auth()
+            tenant_id = request.env.user.x_tenant_id.id if hasattr(request.env.user, 'x_tenant_id') and request.env.user.x_tenant_id else None
+            if not tenant_id:
+                return request.make_json_response({'success': False, 'error': 'Tenant non trouvé'})
+
+            # Récupérer le fichier uploadé
+            uploaded_file = request.httprequest.files.get('image')
+            if not uploaded_file:
+                return request.make_json_response({'success': False, 'error': 'Aucun fichier fourni'})
+
+            # Vérifier le type MIME
+            allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+            if uploaded_file.content_type not in allowed_types:
+                return request.make_json_response({'success': False, 'error': 'Type de fichier non autorisé'})
+
+            # Lire le contenu du fichier
+            file_content = uploaded_file.read()
+
+            # Créer l'attachment
+            attachment = request.env['ir.attachment'].sudo().create({
+                'name': uploaded_file.filename,
+                'type': 'binary',
+                'datas': base64.b64encode(file_content),
+                'res_model': 'quelyos.newsletter.campaign',
+                'res_id': 0,
+                'public': True,
+                'mimetype': uploaded_file.content_type
+            })
+
+            # Construire l'URL de l'image
+            base_url = request.httprequest.host_url.rstrip('/')
+            image_url = f"{base_url}/web/content/{attachment.id}?download=true"
+
+            return request.make_json_response({
+                'success': True,
+                'url': image_url,
+                'attachment_id': attachment.id
+            })
+
+        except AccessDenied:
+            return request.make_json_response({'success': False, 'error': 'Accès non autorisé'}, status=401)
+        except Exception as e:
+            return request.make_json_response({'success': False, 'error': str(e)}, status=500)
