@@ -63,7 +63,24 @@ export { ModuleErrorBoundary } from './ModuleErrorBoundary'
 
 export { PageNotice } from './PageNotice'
 
+export { NotificationCenter, NotificationIcon, NotificationSidebar } from './NotificationCenter'
+export type { NotificationCenterProps } from './NotificationCenter'
+
 export { ReadOnlyProvider, ReadOnlyBanner, ReadOnlyBlock, useReadOnly } from './ReadOnlyGuard'
 
 export { EmailTemplatePreview } from './EmailTemplatePreview'
 export type { EmailTemplatePreviewProps } from './EmailTemplatePreview'
+
+export { MerchantChecklist } from './MerchantChecklist'
+export type { MerchantChecklistProps } from './MerchantChecklist'
+
+export { GuidedTours, useGuidedTour, shouldShowTour } from './GuidedTours'
+export type { GuidedToursProps, TourId } from './GuidedTours'
+
+export {
+  CustomerImpactTooltip,
+  ImpactTooltip,
+  PreviewTooltip,
+  InfoTooltip,
+} from './CustomerImpactTooltip'
+export type { CustomerImpactTooltipProps, TooltipPosition, TooltipVariant } from './CustomerImpactTooltip'

@@ -121,3 +121,5 @@ from . import user_settings_ctrl
 from . import user_billing_ctrl
 # User Permissions (Manager → User)
 from . import user_permissions_ctrl
+# WebSocket Notifications Temps Réel
+from . import websocket_ctrl

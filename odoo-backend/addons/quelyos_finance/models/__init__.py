@@ -15,3 +15,4 @@ from . import accountant_portal_access
 from . import accountant_comment
 from . import account_account
 from . import res_partner
+from . import account_move_websocket
