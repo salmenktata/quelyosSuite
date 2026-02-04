@@ -284,6 +284,24 @@ class QuelyosTenant(models.Model):
     )
 
     # ═══════════════════════════════════════════════════════════════════════════
+    # CUSTOMIZATION HOMEPAGE
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    x_homepage_sections_order = fields.Json(
+        string='Ordre sections homepage',
+        default=lambda self: [
+            {'id': 'hero-slider', 'name': 'Hero Slider', 'visible': True, 'link': '/store/content/hero-slides'},
+            {'id': 'trust-badges', 'name': 'Badges de confiance', 'visible': True, 'link': '/store/content/trust-badges'},
+            {'id': 'flash-sales', 'name': 'Ventes Flash', 'visible': True, 'link': '/store/marketing/flash-sales'},
+            {'id': 'categories', 'name': 'Catégories', 'visible': True, 'link': '/store/catalog/categories'},
+            {'id': 'featured-products', 'name': 'Produits vedette', 'visible': True, 'link': '/store/catalog/products'},
+            {'id': 'promo-banners', 'name': 'Bannières promo', 'visible': True, 'link': '/store/marketing/banners'},
+            {'id': 'testimonials', 'name': 'Témoignages', 'visible': True, 'link': '/store/content/testimonials'}
+        ],
+        help="Ordre et visibilité des sections de la homepage e-commerce"
+    )
+
+    # ═══════════════════════════════════════════════════════════════════════════
     # TYPOGRAPHIE
     # ═══════════════════════════════════════════════════════════════════════════
 

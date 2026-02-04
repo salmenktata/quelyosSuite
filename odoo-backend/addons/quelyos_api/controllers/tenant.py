@@ -897,3 +897,62 @@ class TenantController(BaseController):
                 'success': False,
                 'error': 'Erreur serveur',
             }, status=500, headers=cors_headers)
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # HOMEPAGE BUILDER
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    @http.route('/api/admin/homepage-builder', type='json', auth='public', methods=['POST'], csrf=False)
+    def get_homepage_sections(self, **kwargs):
+        """Récupérer l'ordre et visibilité des sections homepage"""
+        try:
+            tenant_id = request.env.context.get('tenant_id')
+            if not tenant_id:
+                return {'success': False, 'error': 'Tenant non trouvé'}
+
+            Tenant = request.env['quelyos.tenant'].sudo()
+            tenant = Tenant.browse(tenant_id)
+
+            if not tenant.exists():
+                return {'success': False, 'error': 'Tenant invalide'}
+
+            return {
+                'success': True,
+                'sections': tenant.x_homepage_sections_order or []
+            }
+        except Exception as e:
+            _logger.error(f"Error getting homepage sections: {e}")
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/admin/homepage-builder/save', type='json', auth='public', methods=['POST'], csrf=False)
+    def save_homepage_sections(self, sections, **kwargs):
+        """Sauvegarder l'ordre et visibilité des sections homepage"""
+        try:
+            tenant_id = request.env.context.get('tenant_id')
+            if not tenant_id:
+                return {'success': False, 'error': 'Tenant non trouvé'}
+
+            Tenant = request.env['quelyos.tenant'].sudo()
+            tenant = Tenant.browse(tenant_id)
+
+            if not tenant.exists():
+                return {'success': False, 'error': 'Tenant invalide'}
+
+            # Validation des sections
+            if not isinstance(sections, list):
+                return {'success': False, 'error': 'Format invalide'}
+
+            for section in sections:
+                if not isinstance(section, dict) or 'id' not in section:
+                    return {'success': False, 'error': 'Section invalide'}
+
+            tenant.write({'x_homepage_sections_order': sections})
+
+            return {
+                'success': True,
+                'message': 'Configuration sauvegardée',
+                'sections': sections
+            }
+        except Exception as e:
+            _logger.error(f"Error saving homepage sections: {e}")
+            return {'success': False, 'error': str(e)}
