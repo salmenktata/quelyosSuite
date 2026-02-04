@@ -1,3 +1,15 @@
+/**
+ * Formulaire Coupon - Création/édition codes promo
+ *
+ * Fonctionnalités :
+ * - Code personnalisé ou généré automatiquement
+ * - Type réduction (pourcentage, montant fixe, livraison gratuite)
+ * - Conditions application (montant minimum, produits éligibles)
+ * - Limites utilisation (nombre max, un par client)
+ * - Validité temporelle avec sélecteur dates
+ * - Prévisualisation impact sur panier exemple
+ */
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'

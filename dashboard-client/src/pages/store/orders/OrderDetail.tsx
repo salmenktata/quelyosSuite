@@ -1,3 +1,16 @@
+/**
+ * Détail Commande - Vue complète commande client
+ *
+ * Fonctionnalités :
+ * - Informations client (nom, email, adresse livraison/facturation)
+ * - Liste produits avec quantités et prix unitaires
+ * - Calculs détaillés (sous-total, livraison, taxes, réductions, total)
+ * - Historique statuts avec horodatage
+ * - Actions rapides (confirmer, expédier, annuler, rembourser)
+ * - Impression facture PDF
+ * - Notes internes et commentaires
+ */
+
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Layout } from '@/components/Layout'

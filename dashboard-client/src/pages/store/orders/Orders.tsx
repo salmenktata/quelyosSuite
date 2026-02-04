@@ -1,3 +1,15 @@
+/**
+ * Commandes - Gestion complète des commandes client
+ *
+ * Fonctionnalités :
+ * - Liste complète commandes avec pagination
+ * - Vue Kanban par statut (brouillon, envoyé, confirmé, terminé, annulé)
+ * - Filtres multiples (statut, date, recherche client)
+ * - Badges statut colorés avec transitions
+ * - Détail commande avec drill-down
+ * - Export CSV des commandes
+ */
+
 import { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'

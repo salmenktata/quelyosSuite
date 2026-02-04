@@ -1,3 +1,16 @@
+/**
+ * Formulaire Produit - Création/édition produits catalogue
+ *
+ * Fonctionnalités :
+ * - Formulaire complet (nom, description, prix, SKU, stock)
+ * - Upload images multiple avec drag & drop
+ * - Gestion variantes (tailles, couleurs, attributs)
+ * - Catégorisation et tags
+ * - SEO (meta title, description, slug URL)
+ * - Validation en temps réel avec messages erreur
+ * - Prévisualisation produit avant publication
+ */
+
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Layout } from '@/components/Layout'

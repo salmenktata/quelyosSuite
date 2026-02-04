@@ -1,3 +1,15 @@
+/**
+ * Coupons - Gestion codes promotionnels et réductions
+ *
+ * Fonctionnalités :
+ * - Création/édition coupons avec codes personnalisés
+ * - Types de réduction (pourcentage, montant fixe)
+ * - Validité temporelle (date début/fin)
+ * - Activation/désactivation rapide
+ * - Statistiques utilisation (nombre utilisations, CA généré)
+ * - Filtrage par statut actif/inactif
+ */
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'

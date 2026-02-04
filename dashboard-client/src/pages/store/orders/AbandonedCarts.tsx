@@ -1,3 +1,15 @@
+/**
+ * Paniers Abandonnés - Récupération des ventes perdues
+ *
+ * Fonctionnalités :
+ * - Liste paniers abandonnés avec montant total
+ * - Informations client (email, téléphone si disponible)
+ * - Durée depuis abandon (minutes, heures, jours)
+ * - Actions de relance (email automatique, rappel manuel)
+ * - Taux de conversion paniers récupérés
+ * - Filtres par montant et ancienneté
+ */
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
