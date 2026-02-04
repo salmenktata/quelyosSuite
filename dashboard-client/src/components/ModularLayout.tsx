@@ -80,17 +80,44 @@ const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed'
 // ============================================================================
 
 /**
- * Génère automatiquement les tabs à partir des sections d'un module
- * Les groupes du menu sidebar (section.title) deviennent des tabs
- * @param sections - Sections du module
- * @returns Array de tabs avec id, label et count (nombre d'items dans la section)
+ * Génère les tabs à partir des pages favorites de l'utilisateur
+ * Affiche les pages mises en favoris pour un accès rapide
+ * @param favorites - Liste des paths favoris
+ * @param currentModule - Module actif
+ * @returns Array de tabs avec id (path), label (nom page), count (toujours 1)
  */
-function generateTabsFromSections(sections: Module['sections']) {
-  return sections.map(section => ({
-    id: section.title,
-    label: section.title,
-    count: section.items.length
-  }))
+function generateTabsFromFavorites(favorites: string[], currentModule: Module) {
+  const favoriteTabs: { id: string; label: string; count: number; icon?: React.ComponentType<{ className?: string }> }[] = []
+
+  // Parcourir les sections du module pour trouver les items favoris
+  for (const section of currentModule.sections) {
+    for (const item of section.items) {
+      // Item simple
+      if (item.path && favorites.includes(item.path)) {
+        favoriteTabs.push({
+          id: item.path,
+          label: item.name,
+          count: 1,
+          icon: item.icon
+        })
+      }
+      // Sub-items
+      if (item.subItems) {
+        for (const subItem of item.subItems) {
+          if (subItem.path && favorites.includes(subItem.path)) {
+            favoriteTabs.push({
+              id: subItem.path,
+              label: subItem.name,
+              count: 1,
+              icon: subItem.icon || item.icon
+            })
+          }
+        }
+      }
+    }
+  }
+
+  return favoriteTabs
 }
 
 // ============================================================================
@@ -173,16 +200,17 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   )
 
   // Finance tabs logic
-  const { activeTab, setActiveTab, visibleSections } = useFinanceTabs(
+  const { activeTab, setActiveTab, visibleSections: _visibleSections } = useFinanceTabs(
     currentModule.sections,
     location.pathname
   )
 
-  // Handler pour changement de tab (filtre sidebar uniquement, sans navigation auto)
-  const handleFinanceTabChange = useCallback((tabId: string) => {
-    setActiveTab(tabId)
-    // Pas de navigation automatique : l'utilisateur choisit la page dans le sidebar filtré
-  }, [setActiveTab])
+  // Handler pour changement de tab (navigation vers page favorite)
+  const _handleTabChange = useCallback((tabId: string) => {
+    // tabId est maintenant un path (page favorite)
+    // Naviguer vers cette page
+    navigate(tabId)
+  }, [navigate])
 
   // Handler pour navigation sidebar Finance (change tab AVANT navigation React Router)
   const handleFinanceSidebarNavigate = useCallback((path: string) => {
@@ -197,7 +225,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: homeActiveTab,
     setActiveTab: setHomeActiveTab,
-    visibleSections: homeVisibleSections
+    visibleSections: _homeVisibleSections
   } = useHomeTabs(currentModule.sections, location.pathname)
 
   // Handler pour changement de tab Home
@@ -217,7 +245,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: storeActiveTab,
     setActiveTab: setStoreActiveTab,
-    visibleSections: storeVisibleSections
+    visibleSections: _storeVisibleSections
   } = useStoreTabs(currentModule.sections, location.pathname)
 
   // Handler pour changement de tab Store
@@ -237,7 +265,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: stockActiveTab,
     setActiveTab: setStockActiveTab,
-    visibleSections: stockVisibleSections
+    visibleSections: _stockVisibleSections
   } = useStockTabs(currentModule.sections, location.pathname)
 
   // Handler pour changement de tab Stock
@@ -257,7 +285,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: crmActiveTab,
     setActiveTab: setCrmActiveTab,
-    visibleSections: crmVisibleSections
+    visibleSections: _crmVisibleSections
   } = useCrmTabs(currentModule.sections, location.pathname)
 
   // Handler pour changement de tab CRM
@@ -277,7 +305,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: marketingActiveTab,
     setActiveTab: setMarketingActiveTab,
-    visibleSections: marketingVisibleSections
+    visibleSections: _marketingVisibleSections
   } = useMarketingTabs(currentModule.sections, location.pathname)
 
   // Handler pour changement de tab Marketing
@@ -297,7 +325,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: hrActiveTab,
     setActiveTab: setHrActiveTab,
-    visibleSections: hrVisibleSections
+    visibleSections: _hrVisibleSections
   } = useHrTabs(currentModule.sections, location.pathname)
 
   const handleHrTabChange = useCallback((tabId: string) => {
@@ -315,7 +343,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: supportActiveTab,
     setActiveTab: setSupportActiveTab,
-    visibleSections: supportVisibleSections
+    visibleSections: _supportVisibleSections
   } = useSupportTabs(currentModule.sections, location.pathname)
 
   const handleSupportTabChange = useCallback((tabId: string) => {
@@ -333,7 +361,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: posActiveTab,
     setActiveTab: setPosActiveTab,
-    visibleSections: posVisibleSections
+    visibleSections: _posVisibleSections
   } = usePosTabs(currentModule.sections, location.pathname)
 
   const handlePosTabChange = useCallback((tabId: string) => {
@@ -351,7 +379,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
   const {
     activeTab: maintenanceActiveTab,
     setActiveTab: setMaintenanceActiveTab,
-    visibleSections: maintenanceVisibleSections
+    visibleSections: _maintenanceVisibleSections
   } = useMaintenanceTabs(currentModule.sections, location.pathname)
 
   const handleMaintenanceTabChange = useCallback((tabId: string) => {
@@ -365,22 +393,28 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
     }
   }, [currentModule.id, setMaintenanceActiveTab])
 
-  // Mémoriser les tabs pour éviter régénération inutile
-  const currentModuleTabs = useMemo(() => {
-    const tabs = generateTabsFromSections(currentModule.sections)
-    // Ajouter un premier tab "Tout afficher" avec le nom du module
-    return [
-      {
-        id: '__ALL__',
-        label: currentModule.name,
-        count: currentModule.sections.reduce((acc, section) => acc + section.items.length, 0)
-      },
-      ...tabs
-    ]
-  }, [currentModule.sections, currentModule.name])
-
-  // Navigation history & favorites
+  // Navigation history & favorites (doit être appelé AVANT génération tabs)
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
+
+  // Générer les tabs depuis les pages FAVORITES de l'utilisateur
+  const currentModuleTabs = useMemo(() => {
+    const favoriteTabs = generateTabsFromFavorites(favorites, currentModule)
+
+    // Si aucun favori, retourner seulement le tab "Vue d'ensemble"
+    if (favoriteTabs.length === 0) {
+      return [
+        {
+          id: currentModule.basePath,
+          label: 'Vue d\'ensemble',
+          count: 0,
+          icon: currentModule.icon
+        }
+      ]
+    }
+
+    // Retourner les favoris comme tabs
+    return favoriteTabs
+  }, [favorites, currentModule])
 
   useEffect(() => {
     setCurrentModule(detectedModule)
@@ -502,18 +536,9 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                 isCollapsed={isSidebarCollapsed}
               />
 
+              {/* SIDEBAR : Affiche TOUJOURS toutes les pages du module (sans filtrage par tab) */}
               {filterSectionItems(
-                currentModule.id === 'finance' ? visibleSections
-                : currentModule.id === 'home' ? homeVisibleSections
-                : currentModule.id === 'store' ? storeVisibleSections
-                : currentModule.id === 'stock' ? stockVisibleSections
-                : currentModule.id === 'crm' ? crmVisibleSections
-                : currentModule.id === 'marketing' ? marketingVisibleSections
-                : currentModule.id === 'hr' ? hrVisibleSections
-                : currentModule.id === 'support' ? supportVisibleSections
-                : currentModule.id === 'pos' ? posVisibleSections
-                : currentModule.id === 'maintenance' ? maintenanceVisibleSections
-                : currentModule.sections,
+                currentModule.sections, // ✅ Affiche TOUTES les sections, pas filtré par tab
                 currentModule.id
               ).map((section, index) => (
                 <div

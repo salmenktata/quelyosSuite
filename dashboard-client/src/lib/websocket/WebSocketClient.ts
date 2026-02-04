@@ -10,8 +10,10 @@
 
 import { create } from 'zustand'
 import { logger } from '@quelyos/logger'
+import { LongPollingAdapter } from './LongPollingAdapter'
 
 // Configuration
+const USE_LONG_POLLING = true // Backend utilise long-polling HTTP, pas WebSocket natif
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8069/websocket'
 const HEARTBEAT_INTERVAL = 30000 // 30 secondes
 const RECONNECT_BASE_DELAY = 1000
@@ -74,7 +76,7 @@ export const useWebSocketStore = create<WSStore>((set) => ({
  * Client WebSocket singleton
  */
 class WebSocketClient {
-  private socket: WebSocket | null = null
+  private socket: WebSocket | LongPollingAdapter | null = null
   private reconnectAttempts = 0
   private heartbeatInterval: ReturnType<typeof setInterval> | null = null
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null
@@ -102,7 +104,7 @@ class WebSocketClient {
   }
 
   /**
-   * Connecte au serveur WebSocket
+   * Connecte au serveur WebSocket (ou long-polling)
    */
   connect(): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
@@ -112,12 +114,27 @@ class WebSocketClient {
     useWebSocketStore.getState().setConnectionState('connecting')
 
     try {
-      this.socket = new WebSocket(WS_URL)
+      if (USE_LONG_POLLING) {
+        // Utiliser adaptateur long-polling
+        const adapter = new LongPollingAdapter()
+        adapter.onopen = this.handleOpen.bind(this)
+        adapter.onmessage = this.handleMessage.bind(this)
+        adapter.onclose = this.handleClose.bind(this)
+        adapter.onerror = this.handleError.bind(this)
 
-      this.socket.onopen = this.handleOpen.bind(this)
-      this.socket.onmessage = this.handleMessage.bind(this)
-      this.socket.onclose = this.handleClose.bind(this)
-      this.socket.onerror = this.handleError.bind(this)
+        this.socket = adapter
+        adapter.connect().catch((error) => {
+          logger.error('[WS] Connection error:', error)
+          this.scheduleReconnect()
+        })
+      } else {
+        // WebSocket natif (désactivé car backend ne le supporte pas)
+        this.socket = new WebSocket(WS_URL)
+        this.socket.onopen = this.handleOpen.bind(this)
+        this.socket.onmessage = this.handleMessage.bind(this)
+        this.socket.onclose = this.handleClose.bind(this)
+        this.socket.onerror = this.handleError.bind(this)
+      }
     } catch (error) {
       logger.error('[WS] Connection error:', error)
       this.scheduleReconnect()

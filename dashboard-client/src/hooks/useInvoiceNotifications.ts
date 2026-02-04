@@ -47,7 +47,7 @@ export function useInvoiceNotifications(callbacks: InvoiceNotificationCallbacks 
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    // Connexion WebSocket si pas déjà connecté
+    // Connexion WebSocket si pas déjà connecté (utilise long-polling HTTP)
     if (!wsClient.isConnected()) {
       wsClient.connect()
     }

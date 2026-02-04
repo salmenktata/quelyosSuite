@@ -17,7 +17,7 @@ export function useWebSocket() {
   const connectionState = useWebSocketStore((state) => state.connectionState)
 
   useEffect(() => {
-    // Connecter au montage si pas déjà connecté
+    // Connecter au montage si pas déjà connecté (utilise long-polling HTTP)
     if (connectionState === 'disconnected') {
       wsClient.connect()
     }
