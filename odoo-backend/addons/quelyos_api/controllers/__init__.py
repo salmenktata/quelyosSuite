@@ -10,6 +10,7 @@ from . import customer_rfm_ctrl
 from . import inventory_ctrl
 from . import finance_ctrl
 from . import invoices_ctrl
+from . import invoice_audit_ctrl
 from . import cash_flow_ctrl
 from . import customer_risk_ctrl
 from . import bills_ctrl

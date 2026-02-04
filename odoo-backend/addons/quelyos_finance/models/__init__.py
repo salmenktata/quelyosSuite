@@ -8,6 +8,7 @@ from . import customer_risk_score
 from . import payment_reminder_sequence
 from . import bank_transaction
 from . import bank_connection
+from . import stripe_event
 from . import accountant_portal_access
 from . import accountant_comment
 from . import account_account

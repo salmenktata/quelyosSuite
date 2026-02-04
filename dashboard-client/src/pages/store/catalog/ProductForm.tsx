@@ -80,7 +80,7 @@ export default function ProductForm() {
   const [selectedRibbonId, setSelectedRibbonId] = useState<number | null>(null)
 
   // Onglet actif
-  const [activeTab, setActiveTab] = useState<'general' | 'variants' | 'stock'>('general')
+  const [activeTab, setActiveTab] = useState<'general' | 'variants' | 'stock' | 'preview'>('general')
 
   const [formData, setFormData] = useState({
     name: '',

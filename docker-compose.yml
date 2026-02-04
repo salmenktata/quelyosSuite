@@ -48,12 +48,13 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      HOST: postgres
+      HOST: quelyos-db
       USER: ${POSTGRES_USER:-quelyos}
       PASSWORD: ${POSTGRES_PASSWORD:-quelyos_secure_pwd}
       QUELYOS_ENCRYPTION_KEY: RCeQ7cey5OCvTrl0NEUKnETt42k342GPL5u7xxOZ0Xs=
     volumes:
       - ./odoo-backend/addons:/mnt/extra-addons
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
       - odoo_data:/var/lib/odoo
     ports:
       - "8069:8069"

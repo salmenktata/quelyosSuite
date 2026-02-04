@@ -185,17 +185,33 @@ class StripePaymentController(http.Controller):
             _logger.error("Stripe webhook: Invalid signature")
             return request.make_response('Invalid signature', status=400)
 
-        # Traiter événement
+        # ═════════════════════════════════════════════════════════════════════
+        # IDEMPOTENCE : Vérifier si event déjà traité
+        # ═════════════════════════════════════════════════════════════════════
+        event_id = event['id']
         event_type = event['type']
-        _logger.info(f"Stripe webhook received: {event_type}")
 
-        if event_type == 'payment_intent.succeeded':
-            payment_intent = event['data']['object']
-            self._handle_payment_success(payment_intent)
+        StripeEvent = request.env['quelyos.stripe_event'].sudo()
 
-        elif event_type == 'payment_intent.payment_failed':
-            payment_intent = event['data']['object']
-            self._handle_payment_failed(payment_intent)
+        # Vérifier idempotence
+        if StripeEvent.is_event_processed(event_id):
+            _logger.info(f"Stripe event {event_id} already processed (idempotence)")
+            return request.make_response('Success (idempotent)', status=200)
+
+        # Créer record event (garantit idempotence via contrainte unique)
+        try:
+            stripe_event = StripeEvent.create_from_webhook(event)
+        except Exception as e:
+            _logger.error(f"Error creating Stripe event record: {e}")
+            # Si échec création (ex: duplicate key), event déjà traité
+            return request.make_response('Success (duplicate)', status=200)
+
+        # Traiter événement de manière asynchrone
+        # TODO: Utiliser queue job pour parallélisation
+        # Pour l'instant, traitement synchrone
+        stripe_event.action_process_event()
+
+        _logger.info(f"Stripe webhook processed: {event_type} (event {event_id})")
 
         return request.make_response('Success', status=200)
 
