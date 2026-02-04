@@ -139,7 +139,7 @@ export default function InvoiceDetailPage() {
   const getStatusBadge = (state: Invoice['state'], paymentState: Invoice['paymentState']) => {
     if (state === 'draft') {
       return (
-        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
+        <span className="![animation:none] inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
           Brouillon
         </span>
       )
@@ -147,8 +147,8 @@ export default function InvoiceDetailPage() {
 
     if (state === 'cancel') {
       return (
-        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800">
-          <AlertCircle className="h-4 w-4" />
+        <span className="![animation:none] inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800">
+          <AlertCircle className="![animation:none] h-4 w-4" />
           Annulée
         </span>
       )
@@ -157,8 +157,8 @@ export default function InvoiceDetailPage() {
     // Facture validée (posted)
     if (paymentState === 'paid') {
       return (
-        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
-          <CheckCircle className="h-4 w-4" />
+        <span className="![animation:none] inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+          <CheckCircle className="![animation:none] h-4 w-4" />
           Payée
         </span>
       )
@@ -166,14 +166,14 @@ export default function InvoiceDetailPage() {
 
     if (paymentState === 'partial') {
       return (
-        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800">
+        <span className="![animation:none] inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800">
           Paiement partiel
         </span>
       )
     }
 
     return (
-      <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800">
+      <span className="![animation:none] inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium border bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800">
         En attente de paiement
       </span>
     )
@@ -182,9 +182,9 @@ export default function InvoiceDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
           <SkeletonTable rows={5} columns={4} />
         </div>
       </Layout>
@@ -194,7 +194,7 @@ export default function InvoiceDetailPage() {
   if (error || !invoice) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
           <Breadcrumbs
             items={[
               { label: 'Facturation', href: '/invoicing' },
@@ -205,18 +205,18 @@ export default function InvoiceDetailPage() {
 
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 {error || 'Facture introuvable'}
               </p>
               <button
                 onClick={() => fetchInvoice()}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
+                className="![animation:none] inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="![animation:none] w-4 h-4" />
                 Réessayer
               </button>
             </div>
@@ -228,7 +228,7 @@ export default function InvoiceDetailPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -237,13 +237,13 @@ export default function InvoiceDetailPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.invoiceDetail} />
+        <PageNotice config={financeNotices.invoiceDetail} className="![animation:none]" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="![animation:none] flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{invoice.name}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">{invoice.name}</h1>
+            <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400 mt-1">
               Facture client • {formatDate(invoice.invoiceDate)}
             </p>
           </div>
@@ -251,7 +251,7 @@ export default function InvoiceDetailPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap gap-3">
+        <div className="![animation:none] flex flex-wrap gap-3">
           {/* Bouton Payer (si facture validée et non payée) */}
           {invoice.state === 'posted' && invoice.paymentState !== 'paid' && invoice.amountResidual > 0 && (
             <Button
@@ -283,38 +283,38 @@ export default function InvoiceDetailPage() {
         </div>
 
         {/* Client Info */}
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <User className="h-5 w-5" />
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <User className="![animation:none] h-5 w-5" />
             Client
           </h2>
-          <div className="space-y-2">
-            <p className="text-gray-900 dark:text-white font-medium">{invoice.customer.name}</p>
+          <div className="![animation:none] space-y-2">
+            <p className="![animation:none] text-gray-900 dark:text-white font-medium">{invoice.customer.name}</p>
             {invoice.customer.email && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{invoice.customer.email}</p>
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">{invoice.customer.email}</p>
             )}
           </div>
         </div>
 
         {/* Dates */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Date de facture</h3>
+        <div className="![animation:none] grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-2 mb-2">
+              <Calendar className="![animation:none] h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <h3 className="![animation:none] text-sm font-medium text-gray-500 dark:text-gray-400">Date de facture</h3>
             </div>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            <p className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
               {formatDate(invoice.invoiceDate)}
             </p>
           </div>
 
           {invoice.dueDate && (
-            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Date d'échéance</h3>
+            <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="![animation:none] flex items-center gap-2 mb-2">
+                <Calendar className="![animation:none] h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <h3 className="![animation:none] text-sm font-medium text-gray-500 dark:text-gray-400">Date d'échéance</h3>
               </div>
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              <p className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
                 {formatDate(invoice.dueDate)}
               </p>
             </div>
@@ -322,70 +322,70 @@ export default function InvoiceDetailPage() {
         </div>
 
         {/* Lines */}
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <FileText className="![animation:none] h-5 w-5" />
             Lignes de facture
           </h2>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] overflow-x-auto">
+            <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Description
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Quantité
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Prix unitaire
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Total
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {invoice.lines.map((line, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-4 py-3 text-sm text-gray-900 dark:text-white">
                       {line.description}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white text-right">
+                    <td className="![animation:none] px-4 py-3 text-sm text-gray-900 dark:text-white text-right">
                       {line.quantity}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white text-right">
+                    <td className="![animation:none] px-4 py-3 text-sm text-gray-900 dark:text-white text-right">
                       {formatCurrency(line.unitPrice, '€')}
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                    <td className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                       {formatCurrency(line.total, '€')}
                     </td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-gray-50 dark:bg-gray-900">
+              <tfoot className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <td colSpan={3} className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                  <td colSpan={3} className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                     Total HT
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                  <td className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                     {formatCurrency(invoice.amountUntaxed, '€')}
                   </td>
                 </tr>
                 <tr>
-                  <td colSpan={3} className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                  <td colSpan={3} className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                     TVA
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                  <td className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                     {formatCurrency(invoice.amountTax, '€')}
                   </td>
                 </tr>
                 <tr>
-                  <td colSpan={3} className="px-4 py-3 text-lg font-bold text-gray-900 dark:text-white text-right">
+                  <td colSpan={3} className="![animation:none] px-4 py-3 text-lg font-bold text-gray-900 dark:text-white text-right">
                     Total TTC
                   </td>
-                  <td className="px-4 py-3 text-lg font-bold text-emerald-600 dark:text-emerald-400 text-right">
+                  <td className="![animation:none] px-4 py-3 text-lg font-bold text-emerald-600 dark:text-emerald-400 text-right">
                     {formatCurrency(invoice.amountTotal, '€')}
                   </td>
                 </tr>
@@ -396,9 +396,9 @@ export default function InvoiceDetailPage() {
 
         {/* Note */}
         {invoice.note && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Note</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300">{invoice.note}</p>
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-2">Note</h2>
+            <p className="![animation:none] text-sm text-gray-700 dark:text-gray-300">{invoice.note}</p>
           </div>
         )}
       </div>

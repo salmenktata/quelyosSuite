@@ -61,9 +61,9 @@ export default function BudgetsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
           <SkeletonTable rows={5} columns={6} />
         </div>
       </Layout>
@@ -72,7 +72,7 @@ export default function BudgetsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -80,38 +80,38 @@ export default function BudgetsPage() {
           ]}
         />
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="![animation:none] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+            <p className="![animation:none] text-gray-500 dark:text-gray-400 mt-1">
               Définissez et suivez vos budgets prévisionnels par catégorie
             </p>
           </div>
           <Button
             variant="primary"
-            icon={<Plus className="w-4 h-4" />}
+            icon={<Plus className="![animation:none] w-4 h-4" />}
             onClick={() => navigate('/finance/budgets/new')}
           >
             Nouveau Budget
           </Button>
         </div>
 
-        <PageNotice config={financeNotices.budgets} />
+        <PageNotice config={financeNotices.budgets} className="![animation:none]" />
 
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Une erreur est survenue lors du chargement des budgets.
               </p>
               <Button
                 variant="ghost"
                 size="sm"
-                icon={<RefreshCw className="w-4 h-4" />}
+                icon={<RefreshCw className="![animation:none] w-4 h-4" />}
                 onClick={fetchBudgets}
               >
                 Réessayer
@@ -121,17 +121,17 @@ export default function BudgetsPage() {
         )}
 
         {!error && budgets.length === 0 && (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <Target className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+          <div className="![animation:none] text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <Target className="![animation:none] w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="![animation:none] text-lg font-medium text-gray-900 dark:text-white">
               Aucun budget trouvé
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-gray-500 dark:text-gray-400 mt-1">
               Commencez par créer votre premier budget prévisionnel.
             </p>
             <Button
               variant="primary"
-              className="mt-4"
+              className="![animation:none] mt-4"
               onClick={() => navigate('/finance/budgets/new')}
             >
               Créer un budget
@@ -140,54 +140,54 @@ export default function BudgetsPage() {
         )}
 
         {!error && budgets.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <table className="min-w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <table className="![animation:none] min-w-full">
+              <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Nom
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Période
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Budget
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Réalisé
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Taux
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Statut
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {budgets.map((budget) => (
                   <tr
                     key={budget.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
+                    className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
                     onClick={() => navigate(`/finance/budgets/${budget.id}`)}
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                       {budget.name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-6 py-4 text-sm text-gray-900 dark:text-white">
                       {budget.period}
                     </td>
-                    <td className="px-6 py-4 text-sm text-right text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-6 py-4 text-sm text-right text-gray-900 dark:text-white">
                       {formatCurrency(budget.totalBudget, '€')}
                     </td>
-                    <td className="px-6 py-4 text-sm text-right text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-6 py-4 text-sm text-right text-gray-900 dark:text-white">
                       {formatCurrency(budget.totalActual, '€')}
                     </td>
-                    <td className="px-6 py-4 text-sm text-right text-gray-600 dark:text-gray-400">
+                    <td className="![animation:none] px-6 py-4 text-sm text-right text-gray-600 dark:text-gray-400">
                       {budget.completionRate}%
                     </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
+                    <td className="![animation:none] px-6 py-4 text-sm">
+                      <span className="![animation:none] px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
                         {budget.status}
                       </span>
                     </td>

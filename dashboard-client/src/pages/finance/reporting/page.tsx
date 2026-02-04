@@ -147,7 +147,7 @@ export default function ReportingHubPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -159,27 +159,27 @@ export default function ReportingHubPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 p-3 shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/20">
-              <BarChart3 className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3 mb-4">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 p-3 shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/20">
+              <BarChart3 className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Reporting</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">Reporting</h1>
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Analysez vos finances sous tous les angles
               </p>
             </div>
           </div>
         </m.div>
 
-        <PageNotice config={financeNotices.reporting} />
+        <PageNotice config={financeNotices.reporting} className="![animation:none]" />
 
         <m.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           data-guide="reports-grid"
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="![animation:none] grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           {reports.map(report => {
             const Icon = report.icon
@@ -187,13 +187,13 @@ export default function ReportingHubPage() {
               <m.div key={report.id} variants={itemVariants}>
                 <Link to={report.href}>
                   <GlassPanel
-                    className="group relative h-full cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+                    className="![animation:none] group relative h-full cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
                     gradient="none"
                   >
                     {report.badge && (
-                      <div className="absolute right-4 top-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/20 dark:bg-indigo-500/30 px-2 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                          <Sparkles className="h-3 w-3" />
+                      <div className="![animation:none] absolute right-4 top-4">
+                        <span className="![animation:none] inline-flex items-center gap-1 rounded-full bg-indigo-500/20 dark:bg-indigo-500/30 px-2 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                          <Sparkles className="![animation:none] h-3 w-3" />
                           {report.badge}
                         </span>
                       </div>
@@ -202,22 +202,22 @@ export default function ReportingHubPage() {
                     <div
                       className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${report.color} shadow-lg`}
                     >
-                      <Icon className="h-6 w-6 text-white" />
+                      <Icon className="![animation:none] h-6 w-6 text-white" />
                     </div>
 
-                    <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
+                    <h3 className="![animation:none] mb-2 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                       {report.title}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400 mb-4">
                       {report.description}
                     </p>
 
-                    <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-sm font-medium">Accéder</span>
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <div className="![animation:none] flex items-center gap-2 text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="![animation:none] text-sm font-medium">Accéder</span>
+                      <ArrowRight className="![animation:none] h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
 
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-purple-500/0 to-indigo-500/0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                    <div className="![animation:none] absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-purple-500/0 to-indigo-500/0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
                   </GlassPanel>
                 </Link>
               </m.div>
@@ -230,22 +230,22 @@ export default function ReportingHubPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <GlassPanel gradient="purple" className="p-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <GlassPanel gradient="purple" className="![animation:none] p-6">
+            <div className="![animation:none] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-1">
                   Rapport complet
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="![animation:none] text-sm text-gray-600 dark:text-gray-300">
                   Générez un PDF consolidé de tous vos rapports
                 </p>
               </div>
               <button
                 data-guide="report-export"
-                className="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 transition-all hover:scale-105 hover:shadow-md"
+                className="![animation:none] flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 transition-all hover:scale-105 hover:shadow-md"
               >
                 Télécharger PDF
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="![animation:none] h-4 w-4" />
               </button>
             </div>
           </GlassPanel>

@@ -75,9 +75,9 @@ export default function BFRReportPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
           <SkeletonTable rows={5} columns={4} />
         </div>
       </Layout>
@@ -86,7 +86,7 @@ export default function BFRReportPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -97,16 +97,16 @@ export default function BFRReportPage() {
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-amber-100 dark:bg-amber-900/20 p-3">
-              <Wallet className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+        <div className="![animation:none] flex items-center justify-between">
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-lg bg-amber-100 dark:bg-amber-900/20 p-3">
+              <Wallet className="![animation:none] h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                 BFR - Besoin en Fonds de Roulement
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
                 Working Capital Requirement - Analyse du cycle d&apos;exploitation
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function BFRReportPage() {
           <button
             onClick={refetch}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            className="![animation:none] inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Actualiser
@@ -123,7 +123,7 @@ export default function BFRReportPage() {
         </div>
 
         {/* Notice */}
-        <PageNotice config={financeNotices.bfr} />
+        <PageNotice config={financeNotices.bfr} className="![animation:none]" />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
@@ -134,16 +134,16 @@ export default function BFRReportPage() {
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-              <div className="flex-1">
-                <p className="font-semibold text-red-900 dark:text-red-100">{error}</p>
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="![animation:none] flex-1">
+                <p className="![animation:none] font-semibold text-red-900 dark:text-red-100">{error}</p>
               </div>
               <button
                 onClick={refetch}
-                className="px-3 py-1 text-sm bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
+                className="![animation:none] px-3 py-1 text-sm bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
               >
                 Réessayer
               </button>
@@ -152,9 +152,9 @@ export default function BFRReportPage() {
         )}
 
         {/* Controls */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex gap-2">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] flex items-center justify-between gap-4">
+            <div className="![animation:none] flex gap-2">
               {(['7', '30', '60', '90'] as TimeRange[]).map((range) => (
                 <button
                   key={range}
@@ -206,60 +206,60 @@ export default function BFRReportPage() {
         {/* KPIs */}
         {!loading && !error && apiData && (
           <>
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+            <div className="![animation:none] grid gap-4 md:grid-cols-4">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">BFR Total</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">BFR Total</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(apiData.bfr)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {apiData.bfrDays} jours de CA
                     </p>
                   </div>
-                  <Wallet className="h-8 w-8 text-amber-500" />
+                  <Wallet className="![animation:none] h-8 w-8 text-amber-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Créances clients</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Créances clients</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(apiData.components.receivables)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">À encaisser</p>
+                    <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400 mt-1">À encaisser</p>
                   </div>
-                  <Users className="h-8 w-8 text-emerald-500" />
+                  <Users className="![animation:none] h-8 w-8 text-emerald-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Dettes fournisseurs</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Dettes fournisseurs</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(apiData.components.payables)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">À payer</p>
+                    <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400 mt-1">À payer</p>
                   </div>
-                  <Building2 className="h-8 w-8 text-rose-500" />
+                  <Building2 className="![animation:none] h-8 w-8 text-rose-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Stock</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Stock</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(apiData.components.inventory)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {apiData.components.inventory === 0 ? 'Non tracé' : 'Valeur'}
                     </p>
                   </div>
-                  <Package className="h-8 w-8 text-indigo-500" />
+                  <Package className="![animation:none] h-8 w-8 text-indigo-500" />
                 </div>
               </div>
             </div>
@@ -300,24 +300,24 @@ export default function BFRReportPage() {
                     : 'bg-rose-50 dark:bg-rose-900/10 border-rose-200 dark:border-rose-800'
               }`}
             >
-              <div className="flex items-start gap-3">
+              <div className="![animation:none] flex items-start gap-3">
                 {apiData.bfrDays < 30 ? (
-                  <TrendingUp className="h-6 w-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <TrendingUp className="![animation:none] h-6 w-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                 ) : apiData.bfrDays < 60 ? (
-                  <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                  <AlertCircle className="![animation:none] h-6 w-6 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                 ) : (
-                  <TrendingDown className="h-6 w-6 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                  <TrendingDown className="![animation:none] h-6 w-6 text-rose-600 dark:text-rose-400 flex-shrink-0" />
                 )}
                 <div>
-                  <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
+                  <h3 className="![animation:none] mb-1 font-semibold text-gray-900 dark:text-white">
                     {apiData.bfrDays < 30
                       ? '✅ BFR Sain'
                       : apiData.bfrDays < 60
                         ? '⚠️ BFR Modéré'
                         : '❌ BFR Élevé'}
                   </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{apiData.recommendation}</p>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <p className="![animation:none] text-sm text-gray-700 dark:text-gray-300">{apiData.recommendation}</p>
+                  <p className="![animation:none] mt-2 text-sm text-gray-600 dark:text-gray-400">
                     Trend:{' '}
                     {apiData.trend === 'decreasing'
                       ? '↓ En réduction'
@@ -330,51 +330,51 @@ export default function BFRReportPage() {
             </div>
 
             {/* BFR Formula Breakdown */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Calcul du BFR</h2>
-              <div className="space-y-4">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">Calcul du BFR</h2>
+              <div className="![animation:none] space-y-4">
                 {/* Receivables */}
-                <div className="flex items-center justify-between rounded-lg bg-emerald-50 dark:bg-emerald-900/10 p-4">
-                  <div className="flex items-center gap-3">
-                    <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                    <span className="font-medium text-gray-900 dark:text-white">Créances clients</span>
+                <div className="![animation:none] flex items-center justify-between rounded-lg bg-emerald-50 dark:bg-emerald-900/10 p-4">
+                  <div className="![animation:none] flex items-center gap-3">
+                    <Users className="![animation:none] h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="![animation:none] font-medium text-gray-900 dark:text-white">Créances clients</span>
                   </div>
-                  <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="![animation:none] text-xl font-bold text-emerald-600 dark:text-emerald-400">
                     +{formatAmount(apiData.components.receivables)}
                   </span>
                 </div>
 
                 {/* Inventory */}
-                <div className="flex items-center justify-between rounded-lg bg-indigo-50 dark:bg-indigo-900/10 p-4">
-                  <div className="flex items-center gap-3">
-                    <Package className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                    <span className="font-medium text-gray-900 dark:text-white">Stock</span>
+                <div className="![animation:none] flex items-center justify-between rounded-lg bg-indigo-50 dark:bg-indigo-900/10 p-4">
+                  <div className="![animation:none] flex items-center gap-3">
+                    <Package className="![animation:none] h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                    <span className="![animation:none] font-medium text-gray-900 dark:text-white">Stock</span>
                   </div>
-                  <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                  <span className="![animation:none] text-xl font-bold text-indigo-600 dark:text-indigo-400">
                     +{formatAmount(apiData.components.inventory)}
                   </span>
                 </div>
 
                 {/* Payables */}
-                <div className="flex items-center justify-between rounded-lg bg-rose-50 dark:bg-rose-900/10 p-4">
-                  <div className="flex items-center gap-3">
-                    <Building2 className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                    <span className="font-medium text-gray-900 dark:text-white">Dettes fournisseurs</span>
+                <div className="![animation:none] flex items-center justify-between rounded-lg bg-rose-50 dark:bg-rose-900/10 p-4">
+                  <div className="![animation:none] flex items-center gap-3">
+                    <Building2 className="![animation:none] h-5 w-5 text-rose-600 dark:text-rose-400" />
+                    <span className="![animation:none] font-medium text-gray-900 dark:text-white">Dettes fournisseurs</span>
                   </div>
-                  <span className="text-xl font-bold text-rose-600 dark:text-rose-400">
+                  <span className="![animation:none] text-xl font-bold text-rose-600 dark:text-rose-400">
                     -{formatAmount(apiData.components.payables)}
                   </span>
                 </div>
 
                 {/* BFR Result */}
-                <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-5 border-2 border-amber-500 dark:border-amber-600">
-                  <div className="flex items-center gap-3">
-                    <Wallet className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                    <span className="text-lg font-bold text-gray-900 dark:text-white">
+                <div className="![animation:none] flex items-center justify-between rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-5 border-2 border-amber-500 dark:border-amber-600">
+                  <div className="![animation:none] flex items-center gap-3">
+                    <Wallet className="![animation:none] h-6 w-6 text-amber-600 dark:text-amber-400" />
+                    <span className="![animation:none] text-lg font-bold text-gray-900 dark:text-white">
                       BFR = Créances + Stock - Dettes
                     </span>
                   </div>
-                  <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                  <span className="![animation:none] text-2xl font-bold text-amber-600 dark:text-amber-400">
                     {formatAmount(apiData.bfr)}
                   </span>
                 </div>
@@ -382,34 +382,34 @@ export default function BFRReportPage() {
             </div>
 
             {/* BFR Metrics */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Métriques BFR</h2>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
-                  <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">BFR en jours de CA</p>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{apiData.bfrDays}</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">Métriques BFR</h2>
+              <div className="![animation:none] grid gap-4 md:grid-cols-2">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
+                  <p className="![animation:none] mb-2 text-sm text-gray-600 dark:text-gray-400">BFR en jours de CA</p>
+                  <p className="![animation:none] text-4xl font-bold text-gray-900 dark:text-white mb-2">{apiData.bfrDays}</p>
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                     Nombre de jours de chiffre d&apos;affaires immobilisés
                   </p>
-                  <div className="mt-3 h-2 rounded-full bg-gray-200 dark:bg-gray-600">
+                  <div className="![animation:none] mt-3 h-2 rounded-full bg-gray-200 dark:bg-gray-600">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400"
+                      className="![animation:none] h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400"
                       style={{ width: `${Math.min((apiData.bfrDays / 90) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
-                  <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">Ratio BFR / CA</p>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
+                  <p className="![animation:none] mb-2 text-sm text-gray-600 dark:text-gray-400">Ratio BFR / CA</p>
+                  <p className="![animation:none] text-4xl font-bold text-gray-900 dark:text-white mb-2">
                     {apiData.ratio.toFixed(1)}%
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                     Pourcentage du CA immobilisé dans le cycle d&apos;exploitation
                   </p>
-                  <div className="mt-3 h-2 rounded-full bg-gray-200 dark:bg-gray-600">
+                  <div className="![animation:none] mt-3 h-2 rounded-full bg-gray-200 dark:bg-gray-600">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400"
+                      className="![animation:none] h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400"
                       style={{ width: `${Math.min(apiData.ratio, 100)}%` }}
                     />
                   </div>
@@ -418,77 +418,77 @@ export default function BFRReportPage() {
             </div>
 
             {/* Cycle Analysis */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                 Cycle d&apos;exploitation
               </h2>
-              <div className="space-y-3">
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-900 dark:text-white font-medium">1. Achats fournisseurs</span>
-                    <span className="text-gray-600 dark:text-gray-400">Délai de paiement DPO</span>
+              <div className="![animation:none] space-y-3">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
+                  <div className="![animation:none] flex items-center justify-between mb-2">
+                    <span className="![animation:none] text-gray-900 dark:text-white font-medium">1. Achats fournisseurs</span>
+                    <span className="![animation:none] text-gray-600 dark:text-gray-400">Délai de paiement DPO</span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                     Temps entre la réception de la facture et le paiement fournisseur
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-900 dark:text-white font-medium">2. Stock (si applicable)</span>
-                    <span className="text-gray-600 dark:text-gray-400">Rotation des stocks</span>
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
+                  <div className="![animation:none] flex items-center justify-between mb-2">
+                    <span className="![animation:none] text-gray-900 dark:text-white font-medium">2. Stock (si applicable)</span>
+                    <span className="![animation:none] text-gray-600 dark:text-gray-400">Rotation des stocks</span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                     Temps de détention du stock avant vente
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-900 dark:text-white font-medium">3. Ventes clients</span>
-                    <span className="text-gray-600 dark:text-gray-400">Délai d&apos;encaissement DSO</span>
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4">
+                  <div className="![animation:none] flex items-center justify-between mb-2">
+                    <span className="![animation:none] text-gray-900 dark:text-white font-medium">3. Ventes clients</span>
+                    <span className="![animation:none] text-gray-600 dark:text-gray-400">Délai d&apos;encaissement DSO</span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                     Temps entre l&apos;émission de la facture et l&apos;encaissement client
                   </p>
                 </div>
               </div>
-              <div className="mt-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] mt-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>BFR = DSO + Rotation stock - DPO</strong>
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Plus le cycle est court, moins vous avez besoin de financement pour le faire tourner.
                 </p>
               </div>
             </div>
 
             {/* Recommendations */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                 💡 Comment optimiser le BFR
               </h2>
-              <div className="space-y-3">
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
-                  <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] space-y-3">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
+                  <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                     <strong>1. Réduire le DSO</strong> - Relances clients, pénalités de retard, acomptes,
                     facturation immédiate.
                   </p>
                 </div>
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
-                  <p className="text-sm text-gray-900 dark:text-white">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
+                  <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                     <strong>2. Négocier le DPO</strong> - Allonger les délais de paiement fournisseurs (sans
                     dégrader la relation).
                   </p>
                 </div>
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
-                  <p className="text-sm text-gray-900 dark:text-white">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
+                  <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                     <strong>3. Optimiser le stock</strong> - Flux tendu, rotation rapide, commandes
                     just-in-time.
                   </p>
                 </div>
-                <div className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
-                  <p className="text-sm text-gray-900 dark:text-white">
+                <div className="![animation:none] rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
+                  <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                     <strong>4. Affacturage</strong> - Céder les créances clients à un factor pour encaisser
                     immédiatement.
                   </p>

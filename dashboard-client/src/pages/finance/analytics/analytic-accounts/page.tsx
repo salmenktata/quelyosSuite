@@ -92,9 +92,9 @@ export default function AnalyticAccountsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
           <SkeletonTable rows={8} columns={6} />
         </div>
       </Layout>
@@ -103,7 +103,7 @@ export default function AnalyticAccountsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -112,19 +112,19 @@ export default function AnalyticAccountsPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.analyticAccounts} />
+        <PageNotice config={financeNotices.analyticAccounts} className="![animation:none]" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="![animation:none] flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
               Comptabilité Analytique
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400 mt-1">
               Centres de coûts, projets, départements et axes analytiques
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="![animation:none] flex gap-3">
             <Button
               variant="secondary"
               icon={<BarChart3 />}
@@ -143,37 +143,37 @@ export default function AnalyticAccountsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
-                <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+        <div className="![animation:none] grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+                <TrendingUp className="![animation:none] h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total Débit</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Total Débit</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(stats.totalDebit, '€')}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
-                <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
+                <TrendingDown className="![animation:none] h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total Crédit</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Total Crédit</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(stats.totalCredit, '€')}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
               <div className={`p-3 rounded-lg ${
                 stats.totalBalance >= 0
                   ? 'bg-blue-100 dark:bg-blue-900/30'
@@ -186,8 +186,8 @@ export default function AnalyticAccountsPage() {
                 }`} />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Solde Global</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Solde Global</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(stats.totalBalance, '€')}
                 </p>
               </div>
@@ -199,16 +199,16 @@ export default function AnalyticAccountsPage() {
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="flex-1 text-red-800 dark:text-red-200">{error}</p>
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">{error}</p>
               <button
                 onClick={() => fetchAccounts()}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
+                className="![animation:none] inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="![animation:none] w-4 h-4" />
                 Réessayer
               </button>
             </div>
@@ -217,35 +217,35 @@ export default function AnalyticAccountsPage() {
 
         {/* Table */}
         {!error && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            <div className="![animation:none] overflow-x-auto">
+              <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Compte
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Plan
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Groupe
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Débit
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Crédit
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Solde
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                   {accounts.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                      <td colSpan={6} className="![animation:none] px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                         Aucun compte analytique trouvé
                       </td>
                     </tr>
@@ -253,29 +253,29 @@ export default function AnalyticAccountsPage() {
                     accounts.map((account) => (
                       <tr
                         key={account.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
+                        className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
                         onClick={() => window.location.href = `/finance/analytics/analytic-accounts/${account.id}`}
                       >
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">
                               {account.name}
                             </p>
                             {account.code && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{account.code}</p>
+                              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">{account.code}</p>
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="![animation:none] px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                           {account.plan.name || '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="![animation:none] px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                           {account.group.name || '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-green-600 dark:text-green-400 text-right font-medium">
+                        <td className="![animation:none] px-4 py-3 text-sm text-green-600 dark:text-green-400 text-right font-medium">
                           {formatCurrency(account.debit, '€')}
                         </td>
-                        <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 text-right font-medium">
+                        <td className="![animation:none] px-4 py-3 text-sm text-red-600 dark:text-red-400 text-right font-medium">
                           {formatCurrency(account.credit, '€')}
                         </td>
                         <td className={`px-4 py-3 text-sm text-right font-bold ${
@@ -289,15 +289,15 @@ export default function AnalyticAccountsPage() {
                     ))
                   )}
                 </tbody>
-                <tfoot className="bg-gray-50 dark:bg-gray-900">
+                <tfoot className="![animation:none] bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <td colSpan={3} className="px-4 py-3 text-sm font-bold text-gray-900 dark:text-white text-right">
+                    <td colSpan={3} className="![animation:none] px-4 py-3 text-sm font-bold text-gray-900 dark:text-white text-right">
                       Total
                     </td>
-                    <td className="px-4 py-3 text-sm font-bold text-green-600 dark:text-green-400 text-right">
+                    <td className="![animation:none] px-4 py-3 text-sm font-bold text-green-600 dark:text-green-400 text-right">
                       {formatCurrency(stats.totalDebit, '€')}
                     </td>
-                    <td className="px-4 py-3 text-sm font-bold text-red-600 dark:text-red-400 text-right">
+                    <td className="![animation:none] px-4 py-3 text-sm font-bold text-red-600 dark:text-red-400 text-right">
                       {formatCurrency(stats.totalCredit, '€')}
                     </td>
                     <td className={`px-4 py-3 text-sm font-bold text-right ${
@@ -315,11 +315,11 @@ export default function AnalyticAccountsPage() {
         )}
 
         {/* Info */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+        <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <h3 className="![animation:none] text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
             Comptabilité Analytique
           </h3>
-          <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+          <ul className="![animation:none] text-xs text-blue-800 dark:text-blue-400 space-y-1">
             <li>• <strong>Centres de coûts</strong> : Répartition des dépenses par département, projet ou activité</li>
             <li>• <strong>Axes analytiques</strong> : Multi-dimensionnel (ex: Produit × Région × Client)</li>
             <li>• <strong>Ventilation</strong> : Allocation automatique ou manuelle des factures sur les axes</li>

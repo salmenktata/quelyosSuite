@@ -74,7 +74,7 @@ export default function BreakEvenReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -88,15 +88,15 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-3 shadow-lg shadow-purple-500/30 dark:shadow-purple-500/20">
-              <Target className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-3 shadow-lg shadow-purple-500/30 dark:shadow-purple-500/20">
+              <Target className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 Point Mort - Seuil de Rentabilité
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Break-even Analysis - Analyse des coûts fixes et variables
               </p>
             </div>
@@ -104,7 +104,7 @@ export default function BreakEvenReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.breakeven} />
+        <PageNotice config={financeNotices.breakeven} className="![animation:none]" />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
@@ -112,7 +112,7 @@ export default function BreakEvenReportPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
             <ReliabilityBadge
               reliability={apiData.reliability}
@@ -127,11 +127,11 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <Card className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex gap-2">
+          <Card className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between gap-4">
+              <div className="![animation:none] flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
                   <button
                     key={range}
@@ -189,11 +189,11 @@ export default function BreakEvenReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <Card className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <Card className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
             </Card>
@@ -205,18 +205,18 @@ export default function BreakEvenReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
             role="alert"
           >
-            <Card className="border-red-400/40 bg-red-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-red-400" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <Card className="![animation:none] border-red-400/40 bg-red-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertCircle className="![animation:none] h-5 w-5 text-red-400" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -234,12 +234,12 @@ export default function BreakEvenReportPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <Card className="border-amber-400/40 bg-amber-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-400" />
-                <p className="text-sm text-amber-100">{apiData.warning}</p>
+            <Card className="![animation:none] border-amber-400/40 bg-amber-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertCircle className="![animation:none] h-5 w-5 text-amber-400" />
+                <p className="![animation:none] text-sm text-amber-100">{apiData.warning}</p>
               </div>
             </Card>
           </m.div>
@@ -249,15 +249,15 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 grid gap-4 md:grid-cols-4"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-4"
         >
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
+          <Card className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
                 <p className={`mb-1 text-sm ${apiData.breakEvenReached ? "text-emerald-200" : "text-rose-200"}`}>
                   Statut
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.breakEvenReached ? "✅ Atteint" : "❌ Non atteint"}
                 </p>
                 <p className={`text-xs mt-1 ${apiData.breakEvenReached ? "text-emerald-300" : "text-rose-300"}`}>
@@ -265,61 +265,61 @@ export default function BreakEvenReportPage() {
                 </p>
               </div>
               {apiData.breakEvenReached ? (
-                <CheckCircle2 className="h-8 w-8 text-emerald-300" />
+                <CheckCircle2 className="![animation:none] h-8 w-8 text-emerald-300" />
               ) : (
-                <AlertCircle className="h-8 w-8 text-rose-300" />
+                <AlertCircle className="![animation:none] h-8 w-8 text-rose-300" />
               )}
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
+          <Card className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">
                   CA Point Mort
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.breakEvenRevenue)}
                 </p>
-                <p className="text-xs text-indigo-300 mt-1">
+                <p className="![animation:none] text-xs text-indigo-300 mt-1">
                   CA requis
                 </p>
               </div>
-              <Target className="h-8 w-8 text-indigo-300" />
+              <Target className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
+          <Card className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">
                   CA Actuel
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.currentRevenue)}
                 </p>
-                <p className="text-xs text-emerald-300 mt-1">
+                <p className="![animation:none] text-xs text-emerald-300 mt-1">
                   Réalisé
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-emerald-300" />
+              <DollarSign className="![animation:none] h-8 w-8 text-emerald-300" />
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
+          <Card className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-purple-200">
+                <p className="![animation:none] mb-1 text-sm text-purple-200">
                   Marge de sécurité
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.safetyMargin >= 0 ? apiData.safetyMargin.toFixed(1) : "0"}%
                 </p>
-                <p className="text-xs text-purple-300 mt-1">
+                <p className="![animation:none] text-xs text-purple-300 mt-1">
                   {apiData.breakEvenReached ? "Cushion" : "Gap"}
                 </p>
               </div>
-              <Percent className="h-8 w-8 text-purple-300" />
+              <Percent className="![animation:none] h-8 w-8 text-purple-300" />
             </div>
           </Card>
         </m.div>
@@ -329,28 +329,28 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <Card className={`p-6 ${apiData.breakEvenReached ? "bg-emerald-500/5" : "bg-rose-500/5"}`}>
-            <div className="flex items-start gap-3">
+            <div className="![animation:none] flex items-start gap-3">
               {apiData.breakEvenReached ? (
-                <TrendingUp className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                <TrendingUp className="![animation:none] h-6 w-6 text-emerald-400 flex-shrink-0" />
               ) : (
-                <AlertCircle className="h-6 w-6 text-rose-400 flex-shrink-0" />
+                <AlertCircle className="![animation:none] h-6 w-6 text-rose-400 flex-shrink-0" />
               )}
-              <div className="flex-1">
-                <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
+              <div className="![animation:none] flex-1">
+                <h3 className="![animation:none] mb-1 font-semibold text-gray-900 dark:text-white">
                   {apiData.breakEvenReached ? "✅ Point mort atteint" : "❌ Point mort non atteint"}
                 </h3>
-                <p className="text-sm text-slate-300">
+                <p className="![animation:none] text-sm text-slate-300">
                   {apiData.breakEvenReached
                     ? `Votre CA actuel (${formatAmount(apiData.currentRevenue)}) dépasse le seuil de rentabilité (${formatAmount(apiData.breakEvenRevenue)}). Vous avez une marge de sécurité de ${apiData.safetyMargin.toFixed(1)}%.`
                     : `Il vous manque ${formatAmount(Math.abs(apiData.revenueGap))} de CA pour atteindre le point mort. Vous devez générer ${formatAmount(apiData.breakEvenRevenue)} de CA pour couvrir vos charges fixes.`}
                 </p>
                 {apiData.breakEvenReached && (
-                  <div className="mt-3 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
+                  <div className="![animation:none] mt-3 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
+                      className="![animation:none] h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
                       style={{ width: `${Math.min((apiData.currentRevenue / (apiData.breakEvenRevenue * 1.5)) * 100, 100)}%` }}
                     />
                   </div>
@@ -366,7 +366,7 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <TrendChart
             title="Évolution du Point Mort"
@@ -404,35 +404,35 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <Card className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <Card className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Structure des coûts
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-lg bg-indigo-500/10 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <PieChart className="h-5 w-5 text-indigo-400" />
-                  <span className="font-semibold text-gray-900 dark:text-white">Coûts fixes</span>
+            <div className="![animation:none] grid gap-4 md:grid-cols-2">
+              <div className="![animation:none] rounded-lg bg-indigo-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-2 mb-2">
+                  <PieChart className="![animation:none] h-5 w-5 text-indigo-400" />
+                  <span className="![animation:none] font-semibold text-gray-900 dark:text-white">Coûts fixes</span>
                 </div>
-                <p className="text-3xl font-bold text-indigo-400 mb-1">
+                <p className="![animation:none] text-3xl font-bold text-indigo-400 mb-1">
                   {formatAmount(apiData.fixedCosts)}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="![animation:none] text-xs text-slate-400">
                   {apiData.categoriesBreakdown?.fixed?.length || 0} catégories
                 </p>
               </div>
 
-              <div className="rounded-lg bg-emerald-500/10 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-5 w-5 text-emerald-400" />
-                  <span className="font-semibold text-gray-900 dark:text-white">Coûts variables</span>
+              <div className="![animation:none] rounded-lg bg-emerald-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-2 mb-2">
+                  <TrendingUp className="![animation:none] h-5 w-5 text-emerald-400" />
+                  <span className="![animation:none] font-semibold text-gray-900 dark:text-white">Coûts variables</span>
                 </div>
-                <p className="text-3xl font-bold text-emerald-400 mb-1">
+                <p className="![animation:none] text-3xl font-bold text-emerald-400 mb-1">
                   {formatAmount(apiData.variableCosts)}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="![animation:none] text-xs text-slate-400">
                   {apiData.categoriesBreakdown?.variable?.length || 0} catégories
                 </p>
               </div>
@@ -445,42 +445,42 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <Card className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <Card className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Calcul du point mort
             </h2>
-            <div className="space-y-4">
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-                <p className="text-sm text-slate-400 mb-2">1. Marge sur coûts variables</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-4">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
+                <p className="![animation:none] text-sm text-slate-400 mb-2">1. Marge sur coûts variables</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {(apiData.contributionMargin * 100).toFixed(1)}%
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="![animation:none] text-xs text-slate-400 mt-1">
                   = (CA - Coûts variables) / CA
                 </p>
               </div>
 
-              <div className="rounded-lg bg-purple-500/10 p-4 border border-purple-500/30">
-                <p className="text-sm text-purple-200 mb-2">2. Point mort (CA)</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <div className="![animation:none] rounded-lg bg-purple-500/10 p-4 border border-purple-500/30">
+                <p className="![animation:none] text-sm text-purple-200 mb-2">2. Point mort (CA)</p>
+                <p className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {formatAmount(apiData.breakEvenRevenue)}
                 </p>
-                <p className="text-sm text-slate-300">
+                <p className="![animation:none] text-sm text-slate-300">
                   = Charges fixes / Marge sur coûts variables
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="![animation:none] text-xs text-slate-400 mt-1">
                   = {formatAmount(apiData.fixedCosts)} / {(apiData.contributionMargin * 100).toFixed(1)}%
                 </p>
               </div>
 
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-                <p className="text-sm text-slate-400 mb-2">3. Marge de sécurité</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
+                <p className="![animation:none] text-sm text-slate-400 mb-2">3. Marge de sécurité</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.safetyMargin >= 0 ? apiData.safetyMargin.toFixed(1) : "0"}%
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="![animation:none] text-xs text-slate-400 mt-1">
                   = (CA actuel - CA point mort) / CA actuel
                 </p>
               </div>
@@ -493,21 +493,21 @@ export default function BreakEvenReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="mb-6 grid gap-6 lg:grid-cols-2"
+          className="![animation:none] mb-6 grid gap-6 lg:grid-cols-2"
         >
           {/* Fixed Costs */}
-          <Card className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <Card className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts fixes (FIXED)
             </h2>
             {!apiData.categoriesBreakdown?.fixed || apiData.categoriesBreakdown.fixed.length === 0 ? (
-              <p className="text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût fixe</p>
+              <p className="![animation:none] text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût fixe</p>
             ) : (
-              <div className="space-y-2">
+              <div className="![animation:none] space-y-2">
                 {apiData.categoriesBreakdown.fixed.slice(0, 10).map((cat) => (
-                  <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-indigo-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
-                    <span className="text-sm font-semibold text-indigo-400">
+                  <div key={cat.categoryId} className="![animation:none] flex items-center justify-between rounded-lg bg-indigo-500/10 p-3">
+                    <span className="![animation:none] text-sm text-gray-900 dark:text-white">{cat.name}</span>
+                    <span className="![animation:none] text-sm font-semibold text-indigo-400">
                       {formatAmount(cat.total)}
                     </span>
                   </div>
@@ -517,18 +517,18 @@ export default function BreakEvenReportPage() {
           </Card>
 
           {/* Variable Costs */}
-          <Card className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <Card className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Coûts variables (VARIABLE)
             </h2>
             {!apiData.categoriesBreakdown?.variable || apiData.categoriesBreakdown.variable.length === 0 ? (
-              <p className="text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût variable</p>
+              <p className="![animation:none] text-center text-slate-400 py-4">Aucune catégorie classifiée comme coût variable</p>
             ) : (
-              <div className="space-y-2">
+              <div className="![animation:none] space-y-2">
                 {apiData.categoriesBreakdown.variable.slice(0, 10).map((cat) => (
-                  <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-emerald-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
-                    <span className="text-sm font-semibold text-emerald-400">
+                  <div key={cat.categoryId} className="![animation:none] flex items-center justify-between rounded-lg bg-emerald-500/10 p-3">
+                    <span className="![animation:none] text-sm text-gray-900 dark:text-white">{cat.name}</span>
+                    <span className="![animation:none] text-sm font-semibold text-emerald-400">
                       {formatAmount(cat.total)}
                     </span>
                   </div>
@@ -544,23 +544,23 @@ export default function BreakEvenReportPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <Card className="p-6 border-amber-500/30">
-              <div className="flex items-center gap-2 mb-4">
-                <AlertCircle className="h-5 w-5 text-amber-400" />
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Card className="![animation:none] p-6 border-amber-500/30">
+              <div className="![animation:none] flex items-center gap-2 mb-4">
+                <AlertCircle className="![animation:none] h-5 w-5 text-amber-400" />
+                <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
                   Coûts non classifiés ({apiData.categoriesBreakdown.unclassified.length})
                 </h2>
               </div>
-              <p className="text-sm text-slate-400 mb-4">
+              <p className="![animation:none] text-sm text-slate-400 mb-4">
                 Classifiez ces catégories en FIXED ou VARIABLE pour améliorer la précision du calcul du point mort.
               </p>
-              <div className="space-y-2">
+              <div className="![animation:none] space-y-2">
                 {apiData.categoriesBreakdown.unclassified.slice(0, 10).map((cat) => (
-                  <div key={cat.categoryId} className="flex items-center justify-between rounded-lg bg-amber-500/10 p-3">
-                    <span className="text-sm text-gray-900 dark:text-white">{cat.name}</span>
-                    <span className="text-sm font-semibold text-amber-400">
+                  <div key={cat.categoryId} className="![animation:none] flex items-center justify-between rounded-lg bg-amber-500/10 p-3">
+                    <span className="![animation:none] text-sm text-gray-900 dark:text-white">{cat.name}</span>
+                    <span className="![animation:none] text-sm font-semibold text-amber-400">
                       {formatAmount(cat.total)}
                     </span>
                   </div>
@@ -576,28 +576,28 @@ export default function BreakEvenReportPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
         >
-          <Card className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <Card className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               💡 Recommandations
             </h2>
-            <div className="space-y-3">
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-3">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>1. Classifier les catégories</strong> - Allez dans les paramètres pour classifier chaque catégorie de dépense en FIXED ou VARIABLE.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>2. Réduire les coûts fixes</strong> - Les coûts fixes pèsent sur le point mort. Privilégiez les charges variables quand c&apos;est possible.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>3. Améliorer la marge sur coûts variables</strong> - Augmentez vos prix ou réduisez les coûts variables pour atteindre le point mort plus facilement.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>4. Marge de sécurité cible</strong> - Visez au moins 20% de marge de sécurité pour absorber les variations d&apos;activité.
                 </p>
               </div>

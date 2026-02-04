@@ -84,9 +84,9 @@ export default function IncomesPage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
           <SkeletonTable rows={8} columns={5} />
         </div>
       </Layout>
@@ -95,7 +95,7 @@ export default function IncomesPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -104,41 +104,41 @@ export default function IncomesPage() {
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="![animation:none] flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
               Revenus
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="![animation:none] text-gray-600 dark:text-gray-400 mt-2">
               Suivez et gérez tous vos revenus d'entreprise
             </p>
           </div>
           <Button
             variant="primary"
-            icon={<Plus className="w-4 h-4" />}
+            icon={<Plus className="![animation:none] w-4 h-4" />}
             onClick={() => navigate('/finance/incomes/new')}
           >
             Nouveau Revenu
           </Button>
         </div>
 
-        <PageNotice config={financeNotices.incomes} />
+        <PageNotice config={financeNotices.incomes} className="![animation:none]" />
 
         {/* Error state */}
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 {error}
               </p>
               <Button
                 variant="ghost"
                 size="sm"
-                icon={<RefreshCw className="w-4 h-4" />}
+                icon={<RefreshCw className="![animation:none] w-4 h-4" />}
                 onClick={fetchData}
               >
                 Réessayer
@@ -150,14 +150,14 @@ export default function IncomesPage() {
 
         {/* Stats */}
         {
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                <ArrowUpCircle className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+          <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                <ArrowUpCircle className="![animation:none] h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenus</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">Total Revenus</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(totalIncomes)}
                 </p>
               </div>
@@ -166,30 +166,30 @@ export default function IncomesPage() {
         }
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="![animation:none] relative">
+              <Search className="![animation:none] absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Rechercher un revenu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="![animation:none] w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="![animation:none] absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                  <X className="![animation:none] h-5 w-5 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="all">Toutes les catégories</option>
               {categories.map((cat) => (
@@ -205,8 +205,8 @@ export default function IncomesPage() {
         {isLoading ? (
           <SkeletonTable rows={15} columns={5} />
         ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
-            <p className="text-red-800 dark:text-red-200 mb-4">
+          <div className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+            <p className="![animation:none] text-red-800 dark:text-red-200 mb-4">
               {error}
             </p>
             <Button variant="secondary" onClick={fetchData}>
@@ -214,58 +214,58 @@ export default function IncomesPage() {
             </Button>
           </div>
         ) : filteredTransactions.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
-            <ArrowUpCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+            <ArrowUpCircle className="![animation:none] h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Aucun revenu trouvé
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="![animation:none] text-gray-600 dark:text-gray-400 mb-6">
               Commencez par enregistrer votre premier revenu
             </p>
             <Link to="/finance/incomes/new">
-              <Button variant="primary" icon={<Plus className="w-4 h-4" />}>
+              <Button variant="primary" icon={<Plus className="![animation:none] w-4 h-4" />}>
                 Nouveau Revenu
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Description
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Catégorie
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Compte
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Montant
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="![animation:none] bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredTransactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <tr key={tx.id} className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="![animation:none] px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       {new Date(tx.date).toLocaleDateString('fr-FR')}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-6 py-4 text-sm text-gray-900 dark:text-white">
                       {tx.description}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="![animation:none] px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {tx.categoryName || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="![animation:none] px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {tx.accountName || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                    <td className="![animation:none] px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-emerald-600 dark:text-emerald-400">
                       +{formatAmount(tx.amount)}
                     </td>
                   </tr>

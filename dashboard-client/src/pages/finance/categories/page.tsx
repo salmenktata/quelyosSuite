@@ -164,7 +164,7 @@ export default function CategoriesPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: "Finance", href: "/finance" },
@@ -173,25 +173,25 @@ export default function CategoriesPage() {
         />
 
         {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-emerald-100 dark:bg-emerald-900/30 p-3">
-              <Tag className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+        <div className="![animation:none] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="![animation:none] flex items-start gap-4">
+            <div className="![animation:none] rounded-lg bg-emerald-100 dark:bg-emerald-900/30 p-3">
+              <Tag className="![animation:none] h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 Catégories
               </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p className="![animation:none] mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Organisez vos transactions par catégories pour un suivi clair
               </p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="![animation:none] flex gap-3">
             {categories.length === 0 && !loading && (
               <Button
                 variant="secondary"
-                icon={<RefreshCw className="h-4 w-4" />}
+                icon={<RefreshCw className="![animation:none] h-4 w-4" />}
                 onClick={seedDefaultCategories}
                 loading={seedingDefaults}
               >
@@ -200,7 +200,7 @@ export default function CategoriesPage() {
             )}
             <Button
               variant="primary"
-              icon={<Plus className="h-4 w-4" />}
+              icon={<Plus className="![animation:none] h-4 w-4" />}
               onClick={() => setShowForm(!showForm)}
             >
               {showForm ? "Annuler" : "Nouvelle catégorie"}
@@ -208,42 +208,42 @@ export default function CategoriesPage() {
           </div>
         </div>
 
-        <PageNotice config={financeNotices["categories"]} />
+        <PageNotice config={financeNotices["categories"]} className="![animation:none]" />
 
         {/* Formulaire de création */}
         {showForm && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <form onSubmit={createCategory} className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <form onSubmit={createCategory} className="![animation:none] space-y-4">
+              <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
                 Créer une catégorie
               </h2>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
-                    Nom <span className="text-rose-600 dark:text-rose-400">*</span>
+              <div className="![animation:none] grid gap-4 md:grid-cols-3">
+                <div className="![animation:none] space-y-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-900 dark:text-white">
+                    Nom <span className="![animation:none] text-rose-600 dark:text-rose-400">*</span>
                   </label>
                   <input
                     type="text"
                     placeholder="Ex: Charges fixes"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="![animation:none] w-full px-3 py-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
-                    Type <span className="text-rose-600 dark:text-rose-400">*</span>
+                <div className="![animation:none] space-y-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-900 dark:text-white">
+                    Type <span className="![animation:none] text-rose-600 dark:text-rose-400">*</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="![animation:none] grid grid-cols-2 gap-2">
                     <Button
                       type="button"
                       variant={kind === "EXPENSE" ? "danger" : "secondary"}
                       size="sm"
                       onClick={() => setKind("EXPENSE")}
-                      icon={<TrendingDown className="h-4 w-4" />}
+                      icon={<TrendingDown className="![animation:none] h-4 w-4" />}
                     >
                       Dépense
                     </Button>
@@ -252,7 +252,7 @@ export default function CategoriesPage() {
                       variant={kind === "INCOME" ? "primary" : "secondary"}
                       size="sm"
                       onClick={() => setKind("INCOME")}
-                      icon={<TrendingUp className="h-4 w-4" />}
+                      icon={<TrendingUp className="![animation:none] h-4 w-4" />}
                       className={kind === "INCOME" ? "bg-emerald-600 hover:bg-emerald-500" : ""}
                     >
                       Revenu
@@ -260,11 +260,11 @@ export default function CategoriesPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
+                <div className="![animation:none] space-y-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-900 dark:text-white">
                     Couleur
                   </label>
-                  <div className="grid grid-cols-7 gap-1.5">
+                  <div className="![animation:none] grid grid-cols-7 gap-1.5">
                     {DEFAULT_COLORS.map(c => (
                       <button
                         key={c}
@@ -283,7 +283,7 @@ export default function CategoriesPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="![animation:none] flex justify-end gap-3">
                 <Button type="submit" variant="primary" loading={creating}>
                   Créer la catégorie
                 </Button>
@@ -294,10 +294,10 @@ export default function CategoriesPage() {
 
         {/* Messages d'erreur */}
         {error && (
-          <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchCategories}>
+          <div role="alert" className="![animation:none] rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3">
+            <div className="![animation:none] flex items-center justify-between gap-4">
+              <p className="![animation:none] text-sm text-red-700 dark:text-red-300">{error}</p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="![animation:none] w-4 h-4" />} onClick={fetchCategories}>
                 Réessayer
               </Button>
             </div>
@@ -306,55 +306,55 @@ export default function CategoriesPage() {
 
         {/* Liste des catégories */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+          <div className="![animation:none] flex items-center justify-center py-12">
+            <Loader2 className="![animation:none] h-8 w-8 animate-spin text-emerald-500" />
           </div>
         ) : categories.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <Tag className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-600 dark:text-gray-400 mb-2">Aucune catégorie pour le moment</p>
-            <p className="text-xs text-gray-500 dark:text-gray-500 mb-4">
+          <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <Tag className="![animation:none] h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+            <p className="![animation:none] text-gray-600 dark:text-gray-400 mb-2">Aucune catégorie pour le moment</p>
+            <p className="![animation:none] text-xs text-gray-500 dark:text-gray-500 mb-4">
               Cliquez sur &quot;Catégories par défaut&quot; pour commencer rapidement
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="![animation:none] grid gap-6 md:grid-cols-2">
             {/* Catégories de dépenses */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <TrendingDown className="h-5 w-5 text-red-500" />
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Dépenses</h2>
-                  <span className="ml-auto rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-300">
+            <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="![animation:none] border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <div className="![animation:none] flex items-center gap-2">
+                  <TrendingDown className="![animation:none] h-5 w-5 text-red-500" />
+                  <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">Dépenses</h2>
+                  <span className="![animation:none] ml-auto rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-300">
                     {expenseCategories.length}
                   </span>
                 </div>
               </div>
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {expenseCategories.length === 0 ? (
-                  <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <div className="![animation:none] px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                     Aucune catégorie de dépenses
                   </div>
                 ) : (
                   expenseCategories.map(cat => (
                     <div
                       key={cat.id}
-                      className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
+                      className="![animation:none] px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="![animation:none] flex items-center gap-3">
                         <div
-                          className="h-4 w-4 rounded-full shrink-0"
+                          className="![animation:none] h-4 w-4 rounded-full shrink-0"
                           style={{ backgroundColor: cat.color || "#ef4444" }}
                         />
-                        <span className="font-medium text-gray-900 dark:text-white">{cat.name}</span>
+                        <span className="![animation:none] font-medium text-gray-900 dark:text-white">{cat.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => deleteCategory(cat.id)}
                         loading={deleting === cat.id}
-                        icon={deleting !== cat.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        icon={deleting !== cat.id && <Trash2 className="![animation:none] h-3.5 w-3.5 text-red-500" />}
+                        className="![animation:none] opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         {''}
                       </Button>
@@ -365,41 +365,41 @@ export default function CategoriesPage() {
             </div>
 
             {/* Catégories de revenus */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-emerald-500" />
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Revenus</h2>
-                  <span className="ml-auto rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+            <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="![animation:none] border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <div className="![animation:none] flex items-center gap-2">
+                  <TrendingUp className="![animation:none] h-5 w-5 text-emerald-500" />
+                  <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">Revenus</h2>
+                  <span className="![animation:none] ml-auto rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
                     {incomeCategories.length}
                   </span>
                 </div>
               </div>
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {incomeCategories.length === 0 ? (
-                  <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <div className="![animation:none] px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                     Aucune catégorie de revenus
                   </div>
                 ) : (
                   incomeCategories.map(cat => (
                     <div
                       key={cat.id}
-                      className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
+                      className="![animation:none] px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="![animation:none] flex items-center gap-3">
                         <div
-                          className="h-4 w-4 rounded-full shrink-0"
+                          className="![animation:none] h-4 w-4 rounded-full shrink-0"
                           style={{ backgroundColor: cat.color || "#22c55e" }}
                         />
-                        <span className="font-medium text-gray-900 dark:text-white">{cat.name}</span>
+                        <span className="![animation:none] font-medium text-gray-900 dark:text-white">{cat.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => deleteCategory(cat.id)}
                         loading={deleting === cat.id}
-                        icon={deleting !== cat.id && <Trash2 className="h-3.5 w-3.5 text-red-500" />}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        icon={deleting !== cat.id && <Trash2 className="![animation:none] h-3.5 w-3.5 text-red-500" />}
+                        className="![animation:none] opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         {''}
                       </Button>

@@ -153,7 +153,7 @@ export default function DashboardPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -161,21 +161,21 @@ export default function DashboardPage() {
           ]}
         />
 
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="![animation:none] flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Tableau de bord Finance
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400 mt-1">
               Vue d&apos;ensemble de votre activité financière
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="![animation:none] flex gap-2">
             <Button
               variant="secondary"
               size="sm"
-              icon={<Plus className="w-4 h-4" />}
+              icon={<Plus className="![animation:none] w-4 h-4" />}
               onClick={() => navigate('/finance/incomes/new')}
             >
               Revenu
@@ -183,7 +183,7 @@ export default function DashboardPage() {
             <Button
               variant="secondary"
               size="sm"
-              icon={<Minus className="w-4 h-4" />}
+              icon={<Minus className="![animation:none] w-4 h-4" />}
               onClick={() => navigate('/finance/expenses/new')}
             >
               Dépense
@@ -191,22 +191,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <PageNotice config={financeNotices.dashboard} />
+        <PageNotice config={financeNotices.dashboard} className="![animation:none]" />
 
         {dashboardError && user && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Erreur lors du chargement du tableau de bord
               </p>
               <Button
                 variant="ghost"
                 size="sm"
-                icon={<RefreshCw className="w-4 h-4" />}
+                icon={<RefreshCw className="![animation:none] w-4 h-4" />}
                 onClick={() => refetch()}
               >
                 Réessayer
@@ -220,7 +220,7 @@ export default function DashboardPage() {
         ) : (
           kpiData && (
             <>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="![animation:none] grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <KPICard
                   title="Solde Actuel"
                   value={money0(kpiData.currentBalance)}
@@ -255,8 +255,8 @@ export default function DashboardPage() {
                 formatAmount={money0}
               />
 
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="![animation:none] bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Activité Récente
                 </h2>
                 <SimpleTransactionList
@@ -265,7 +265,7 @@ export default function DashboardPage() {
                 />
                 <Button
                   variant="ghost"
-                  className="w-full mt-4"
+                  className="![animation:none] w-full mt-4"
                   onClick={() => navigate('/finance/transactions')}
                 >
                   Voir toutes les transactions

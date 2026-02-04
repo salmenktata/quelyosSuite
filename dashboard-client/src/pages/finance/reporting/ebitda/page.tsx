@@ -78,7 +78,7 @@ export default function EBITDAReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -92,15 +92,15 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
-              <TrendingUp className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
+              <TrendingUp className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 EBITDA - Rentabilité Opérationnelle
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Earnings Before Interest, Taxes, Depreciation & Amortization
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function EBITDAReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.ebitda} className="mb-6" />
+        <PageNotice config={financeNotices.ebitda} className="![animation:none] mb-6" />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
@@ -116,7 +116,7 @@ export default function EBITDAReportPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
             <ReliabilityBadge
               reliability={apiData.reliability}
@@ -131,11 +131,11 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex gap-2">
+          <GlassPanel className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between gap-4">
+              <div className="![animation:none] flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
                   <button
                     key={range}
@@ -187,11 +187,11 @@ export default function EBITDAReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <GlassCard className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
@@ -203,17 +203,17 @@ export default function EBITDAReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-red-400" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertCircle className="![animation:none] h-5 w-5 text-red-400" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -229,54 +229,54 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 grid gap-4 md:grid-cols-3"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-3"
         >
-          <GlassCard className="p-4" gradient="emerald">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="emerald">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">EBITDA</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">EBITDA</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.ebitda)}
                 </p>
-                <p className="text-xs text-emerald-300 mt-1">
+                <p className="![animation:none] text-xs text-emerald-300 mt-1">
                   Marge {apiData.ebitdaMargin.toFixed(1)}%
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-emerald-300" />
+              <TrendingUp className="![animation:none] h-8 w-8 text-emerald-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="indigo">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="indigo">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">
                   Résultat opérationnel
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.operatingProfit)}
                 </p>
-                <p className="text-xs text-indigo-300 mt-1">
+                <p className="![animation:none] text-xs text-indigo-300 mt-1">
                   Marge {apiData.operatingMargin.toFixed(1)}%
                 </p>
               </div>
-              <Percent className="h-8 w-8 text-indigo-300" />
+              <Percent className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="amber">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="amber">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-amber-200">
+                <p className="![animation:none] mb-1 text-sm text-amber-200">
                   Dotations (D&A)
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.depreciationAndAmortization)}
                 </p>
-                <p className="text-xs text-amber-300 mt-1">
+                <p className="![animation:none] text-xs text-amber-300 mt-1">
                   Amortissements
                 </p>
               </div>
-              <Minus className="h-8 w-8 text-amber-300" />
+              <Minus className="![animation:none] h-8 w-8 text-amber-300" />
             </div>
           </GlassCard>
         </m.div>
@@ -287,7 +287,7 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <TrendChart
             title="Évolution de l'EBITDA"
@@ -319,24 +319,24 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <GlassPanel className={`p-6 ${apiData.ebitdaMargin >= benchmarks.ebitdaMargin ? "bg-emerald-500/5" : apiData.ebitdaMargin >= 5 ? "bg-amber-500/5" : "bg-rose-500/5"}`}>
-            <div className="flex items-start gap-3">
+            <div className="![animation:none] flex items-start gap-3">
               {apiData.ebitdaMargin >= benchmarks.ebitdaMargin ? (
-                <TrendingUp className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                <TrendingUp className="![animation:none] h-6 w-6 text-emerald-400 flex-shrink-0" />
               ) : (
-                <AlertCircle className="h-6 w-6 text-amber-400 flex-shrink-0" />
+                <AlertCircle className="![animation:none] h-6 w-6 text-amber-400 flex-shrink-0" />
               )}
               <div>
-                <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
+                <h3 className="![animation:none] mb-1 font-semibold text-gray-900 dark:text-white">
                   {apiData.ebitdaMargin >= benchmarks.ebitdaMargin
                     ? "✅ EBITDA Excellent"
                     : apiData.ebitdaMargin >= 5
                     ? "⚠️ EBITDA Correct"
                     : "❌ EBITDA Faible"}
                 </h3>
-                <p className="text-sm text-slate-300">
+                <p className="![animation:none] text-sm text-slate-300">
                   {apiData.ebitdaMargin >= benchmarks.ebitdaMargin
                     ? `Votre marge EBITDA (${apiData.ebitdaMargin.toFixed(1)}%) est supérieure au benchmark TPE/PME (${benchmarks.ebitdaMargin}%). Excellente performance opérationnelle.`
                     : apiData.ebitdaMargin >= 5
@@ -353,86 +353,86 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Réconciliation EBITDA
             </h2>
-            <div className="space-y-4">
+            <div className="![animation:none] space-y-4">
               {/* Revenue */}
-              <div className="flex items-center justify-between rounded-lg bg-emerald-500/10 p-4">
-                <div className="flex items-center gap-3">
-                  <DollarSign className="h-5 w-5 text-emerald-400" />
-                  <span className="font-medium text-gray-900 dark:text-white">
+              <div className="![animation:none] flex items-center justify-between rounded-lg bg-emerald-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-3">
+                  <DollarSign className="![animation:none] h-5 w-5 text-emerald-400" />
+                  <span className="![animation:none] font-medium text-gray-900 dark:text-white">
                     Chiffre d&apos;affaires
                   </span>
                 </div>
-                <span className="text-xl font-bold text-emerald-400">
+                <span className="![animation:none] text-xl font-bold text-emerald-400">
                   {formatAmount(apiData.revenue)}
                 </span>
               </div>
 
               {/* COGS */}
-              <div className="ml-4 flex items-center justify-between rounded-lg bg-rose-500/10 p-4">
-                <div className="flex items-center gap-2">
-                  <Minus className="h-4 w-4 text-rose-400" />
-                  <span className="text-gray-900 dark:text-white">Coût des ventes</span>
+              <div className="![animation:none] ml-4 flex items-center justify-between rounded-lg bg-rose-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-2">
+                  <Minus className="![animation:none] h-4 w-4 text-rose-400" />
+                  <span className="![animation:none] text-gray-900 dark:text-white">Coût des ventes</span>
                 </div>
-                <span className="font-semibold text-rose-400">
+                <span className="![animation:none] font-semibold text-rose-400">
                   -{formatAmount(apiData.cogs)}
                 </span>
               </div>
 
               {/* Gross Profit */}
-              <div className="ml-4 flex items-center justify-between rounded-lg bg-emerald-500/10 p-4 border-l-4 border-emerald-500">
-                <span className="font-semibold text-gray-900 dark:text-white">Marge brute</span>
-                <span className="text-lg font-bold text-emerald-400">
+              <div className="![animation:none] ml-4 flex items-center justify-between rounded-lg bg-emerald-500/10 p-4 border-l-4 border-emerald-500">
+                <span className="![animation:none] font-semibold text-gray-900 dark:text-white">Marge brute</span>
+                <span className="![animation:none] text-lg font-bold text-emerald-400">
                   {formatAmount(apiData.grossProfit)}
                 </span>
               </div>
 
               {/* Operating Expenses */}
-              <div className="ml-4 flex items-center justify-between rounded-lg bg-rose-500/10 p-4">
-                <div className="flex items-center gap-2">
-                  <Minus className="h-4 w-4 text-rose-400" />
-                  <span className="text-gray-900 dark:text-white">Charges opérationnelles</span>
+              <div className="![animation:none] ml-4 flex items-center justify-between rounded-lg bg-rose-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-2">
+                  <Minus className="![animation:none] h-4 w-4 text-rose-400" />
+                  <span className="![animation:none] text-gray-900 dark:text-white">Charges opérationnelles</span>
                 </div>
-                <span className="font-semibold text-rose-400">
+                <span className="![animation:none] font-semibold text-rose-400">
                   -{formatAmount(apiData.operatingExpenses)}
                 </span>
               </div>
 
               {/* Operating Profit (EBIT) */}
-              <div className="ml-4 flex items-center justify-between rounded-lg bg-indigo-500/10 p-4 border-l-4 border-indigo-500">
-                <span className="font-semibold text-gray-900 dark:text-white">
+              <div className="![animation:none] ml-4 flex items-center justify-between rounded-lg bg-indigo-500/10 p-4 border-l-4 border-indigo-500">
+                <span className="![animation:none] font-semibold text-gray-900 dark:text-white">
                   Résultat opérationnel (EBIT)
                 </span>
-                <span className="text-lg font-bold text-indigo-400">
+                <span className="![animation:none] text-lg font-bold text-indigo-400">
                   {formatAmount(apiData.operatingProfit)}
                 </span>
               </div>
 
               {/* Add back D&A */}
-              <div className="ml-4 flex items-center justify-between rounded-lg bg-emerald-500/10 p-4">
-                <div className="flex items-center gap-2">
-                  <Plus className="h-4 w-4 text-emerald-400" />
-                  <span className="text-gray-900 dark:text-white">
+              <div className="![animation:none] ml-4 flex items-center justify-between rounded-lg bg-emerald-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-2">
+                  <Plus className="![animation:none] h-4 w-4 text-emerald-400" />
+                  <span className="![animation:none] text-gray-900 dark:text-white">
                     Dotations aux amortissements (D&A)
                   </span>
                 </div>
-                <span className="font-semibold text-emerald-400">
+                <span className="![animation:none] font-semibold text-emerald-400">
                   +{formatAmount(apiData.depreciationAndAmortization)}
                 </span>
               </div>
 
               {/* EBITDA */}
-              <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 p-5 border-2 border-emerald-500/50">
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="h-6 w-6 text-emerald-400" />
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">EBITDA</span>
+              <div className="![animation:none] flex items-center justify-between rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 p-5 border-2 border-emerald-500/50">
+                <div className="![animation:none] flex items-center gap-3">
+                  <TrendingUp className="![animation:none] h-6 w-6 text-emerald-400" />
+                  <span className="![animation:none] text-lg font-bold text-gray-900 dark:text-white">EBITDA</span>
                 </div>
-                <span className="text-2xl font-bold text-emerald-400">
+                <span className="![animation:none] text-2xl font-bold text-emerald-400">
                   {formatAmount(apiData.ebitda)}
                 </span>
               </div>
@@ -445,47 +445,47 @@ export default function EBITDAReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Comparaison des marges
             </h2>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-                <p className="mb-2 text-sm text-slate-400">Marge brute</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="![animation:none] grid gap-4 md:grid-cols-3">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
+                <p className="![animation:none] mb-2 text-sm text-slate-400">Marge brute</p>
+                <p className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                   {apiData.grossMargin.toFixed(1)}%
                 </p>
-                <div className="mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
+                <div className="![animation:none] mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
+                    className="![animation:none] h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
                     style={{ width: `${Math.min(apiData.grossMargin, 100)}%` }}
                   />
                 </div>
               </div>
 
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-                <p className="mb-2 text-sm text-slate-400">Marge opérationnelle</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
+                <p className="![animation:none] mb-2 text-sm text-slate-400">Marge opérationnelle</p>
+                <p className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                   {apiData.operatingMargin.toFixed(1)}%
                 </p>
-                <div className="mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
+                <div className="![animation:none] mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400"
+                    className="![animation:none] h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400"
                     style={{ width: `${Math.min(Math.max(apiData.operatingMargin, 0), 100)}%` }}
                   />
                 </div>
               </div>
 
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
-                <p className="mb-2 text-sm text-slate-400">Marge EBITDA</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-4">
+                <p className="![animation:none] mb-2 text-sm text-slate-400">Marge EBITDA</p>
+                <p className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                   {apiData.ebitdaMargin.toFixed(1)}%
                 </p>
-                <div className="mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
+                <div className="![animation:none] mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-700">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"
+                    className="![animation:none] h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"
                     style={{ width: `${Math.min(Math.max(apiData.ebitdaMargin, 0), 100)}%` }}
                   />
                 </div>
@@ -500,28 +500,28 @@ export default function EBITDAReportPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <GlassPanel className="p-6" gradient="violet">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6" gradient="violet">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               💡 Recommandations
             </h2>
-            <div className="space-y-3">
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-3">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>1. EBITDA vs EBIT</strong> - L&apos;EBITDA mesure la performance opérationnelle pure avant les impacts comptables (amortissements) et financiers.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>2. Cible TPE/PME</strong> - Visez une marge EBITDA &gt; 15% pour assurer une rentabilité solide et financer la croissance.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>3. Optimisation</strong> - Pour améliorer l&apos;EBITDA: augmenter les prix, réduire les coûts variables, automatiser les processus.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>4. Valorisation</strong> - L&apos;EBITDA est souvent utilisé pour valoriser les entreprises (multiple d&apos;EBITDA).
                 </p>
               </div>

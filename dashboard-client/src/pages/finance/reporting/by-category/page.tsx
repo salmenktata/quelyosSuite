@@ -188,7 +188,7 @@ export default function ByCategoryReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -202,13 +202,13 @@ export default function ByCategoryReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-amber-500 to-orange-600 p-3 shadow-lg shadow-amber-500/30 dark:shadow-amber-500/20">
-              <PieChart className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-amber-500 to-orange-600 p-3 shadow-lg shadow-amber-500/30 dark:shadow-amber-500/20">
+              <PieChart className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analyse par catégorie</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">Analyse par catégorie</h1>
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Répartition détaillée des revenus et dépenses par catégorie
               </p>
             </div>
@@ -216,18 +216,18 @@ export default function ByCategoryReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.byCategory} />
+        <PageNotice config={financeNotices.byCategory} className="![animation:none]" />
 
         {/* Controls */}
         <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex gap-2">
+          <GlassPanel className="![animation:none] p-4">
+            <div className="![animation:none] flex flex-wrap items-center gap-4">
+              <div className="![animation:none] flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
                   <button
                     key={range}
@@ -244,9 +244,9 @@ export default function ByCategoryReportPage() {
                 ))}
               </div>
 
-              <div className="h-8 w-px bg-gray-100 dark:bg-gray-700" />
+              <div className="![animation:none] h-8 w-px bg-gray-100 dark:bg-gray-700" />
 
-              <div className="flex gap-2">
+              <div className="![animation:none] flex gap-2">
                 <button
                   onClick={() => setViewType("all")}
                   className={`rounded-lg px-3 py-1 text-sm font-medium transition-all ${
@@ -287,11 +287,11 @@ export default function ByCategoryReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <GlassCard className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
@@ -303,17 +303,17 @@ export default function ByCategoryReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4" role="alert">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-400" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4" role="alert">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertTriangle className="![animation:none] h-5 w-5 text-red-400" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -329,41 +329,41 @@ export default function ByCategoryReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 grid gap-4 md:grid-cols-3"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-3"
         >
-          <GlassCard className="p-4" gradient="emerald">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="emerald">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">Total revenus</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">Total revenus</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(totalIncome)}
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-emerald-300" />
+              <TrendingUp className="![animation:none] h-8 w-8 text-emerald-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="rose">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="rose">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-rose-200">Total dépenses</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-rose-200">Total dépenses</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(totalExpense)}
                 </p>
               </div>
-              <TrendingDown className="h-8 w-8 text-rose-300" />
+              <TrendingDown className="![animation:none] h-8 w-8 text-rose-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="indigo">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="indigo">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">Solde net</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">Solde net</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(totalIncome - totalExpense)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-indigo-300" />
+              <DollarSign className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
         </m.div>
@@ -373,15 +373,15 @@ export default function ByCategoryReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-6 text-lg font-semibold text-gray-900 dark:text-white">
               Répartition par catégorie
             </h2>
-            <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-around">
+            <div className="![animation:none] flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-around">
               {/* Donut SVG */}
-              <svg viewBox="0 0 200 200" className="h-64 w-64">
+              <svg viewBox="0 0 200 200" className="![animation:none] h-64 w-64">
                 <circle
                   cx="100"
                   cy="100"
@@ -423,7 +423,7 @@ export default function ByCategoryReportPage() {
                         d={`M 100 100 L ${x1} ${y1} A 70 70 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
                         fill={colorMap[cat.color] || "rgb(148, 163, 184)"}
                         opacity="0.8"
-                        className="transition-opacity hover:opacity-100"
+                        className="![animation:none] transition-opacity hover:opacity-100"
                       />
                     );
 
@@ -455,9 +455,9 @@ export default function ByCategoryReportPage() {
               </svg>
 
               {/* Legend */}
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="![animation:none] grid gap-3 md:grid-cols-2">
                 {filteredData.slice(0, 8).map((cat) => (
-                  <div key={cat.name} className="flex items-center gap-3">
+                  <div key={cat.name} className="![animation:none] flex items-center gap-3">
                     <div
                       className={`h-3 w-3 rounded-full bg-${cat.color}-500`}
                       style={{
@@ -481,13 +481,13 @@ export default function ByCategoryReportPage() {
                             : "rgb(148, 163, 184)",
                       }}
                     />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{cat.name}</p>
-                      <p className="text-xs text-slate-400">
+                    <div className="![animation:none] flex-1">
+                      <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">{cat.name}</p>
+                      <p className="![animation:none] text-xs text-slate-400">
                         {cat.percentage.toFixed(1)}%
                       </p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <p className="![animation:none] text-sm font-semibold text-gray-900 dark:text-white">
                       {formatAmount(cat.total)}
                     </p>
                   </div>
@@ -503,11 +503,11 @@ export default function ByCategoryReportPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Détail par catégorie
             </h2>
-            <div className="space-y-3">
+            <div className="![animation:none] space-y-3">
               {filteredData.map((cat) => {
                 const catId = cat.categoryId || 0;
                 const txs = categoryTransactions[catId] || [];
@@ -517,12 +517,12 @@ export default function ByCategoryReportPage() {
                 <div key={`${cat.name}-${catId}`}>
                   <button
                     onClick={() => toggleCategory(cat.categoryId)}
-                    className="w-full"
+                    className="![animation:none] w-full"
                   >
-                    <div className="flex items-center justify-between rounded-lg bg-gray-100 dark:bg-gray-800 p-4 transition-all hover:bg-gray-100 dark:bg-gray-700">
-                      <div className="flex items-center gap-3">
+                    <div className="![animation:none] flex items-center justify-between rounded-lg bg-gray-100 dark:bg-gray-800 p-4 transition-all hover:bg-gray-100 dark:bg-gray-700">
+                      <div className="![animation:none] flex items-center gap-3">
                         <div
-                          className="h-4 w-4 rounded-full"
+                          className="![animation:none] h-4 w-4 rounded-full"
                           style={{
                             backgroundColor:
                               cat.color === "emerald"
@@ -548,28 +548,28 @@ export default function ByCategoryReportPage() {
                                 : "rgb(148, 163, 184)",
                           }}
                         />
-                        <div className="text-left">
-                          <p className="font-medium text-gray-900 dark:text-white">{cat.name}</p>
+                        <div className="![animation:none] text-left">
+                          <p className="![animation:none] font-medium text-gray-900 dark:text-white">{cat.name}</p>
                           {cat.count !== undefined && (
-                            <p className="text-xs text-slate-400">
+                            <p className="![animation:none] text-xs text-slate-400">
                               {cat.count} transaction{cat.count > 1 ? "s" : ""}
                             </p>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900 dark:text-white">
+                      <div className="![animation:none] flex items-center gap-4">
+                        <div className="![animation:none] text-right">
+                          <p className="![animation:none] font-semibold text-gray-900 dark:text-white">
                             {formatAmount(cat.total)}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="![animation:none] text-xs text-slate-400">
                             {cat.percentage.toFixed(1)}%
                           </p>
                         </div>
                         {expandedCategory === catId ? (
-                          <ChevronUp className="h-5 w-5 text-slate-400" />
+                          <ChevronUp className="![animation:none] h-5 w-5 text-slate-400" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-slate-400" />
+                          <ChevronDown className="![animation:none] h-5 w-5 text-slate-400" />
                         )}
                       </div>
                     </div>
@@ -581,39 +581,39 @@ export default function ByCategoryReportPage() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="ml-8 mt-2 space-y-2 overflow-hidden"
+                        className="![animation:none] ml-8 mt-2 space-y-2 overflow-hidden"
                       >
                         {isLoading && (
-                          <div className="flex items-center justify-center gap-2 py-4 text-slate-400">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span className="text-sm">Chargement des transactions...</span>
+                          <div className="![animation:none] flex items-center justify-center gap-2 py-4 text-slate-400">
+                            <Loader2 className="![animation:none] h-4 w-4 animate-spin" />
+                            <span className="![animation:none] text-sm">Chargement des transactions...</span>
                           </div>
                         )}
                         {!isLoading && txs.length === 0 && (
-                          <p className="text-center text-sm text-slate-400 py-4">
+                          <p className="![animation:none] text-center text-sm text-slate-400 py-4">
                             Aucune transaction pour cette catégorie
                           </p>
                         )}
                         {!isLoading && txs.slice(0, 10).map((tx) => (
                           <div
                             key={tx.id}
-                            className="flex items-center justify-between rounded-lg bg-gray-100 dark:bg-gray-800 p-3"
+                            className="![animation:none] flex items-center justify-between rounded-lg bg-gray-100 dark:bg-gray-800 p-3"
                           >
                             <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">
                                 {tx.description || "Sans description"}
                               </p>
-                              <p className="text-xs text-slate-400">
+                              <p className="![animation:none] text-xs text-slate-400">
                                 {new Date(tx.occurredAt).toLocaleDateString('fr-FR')}
                               </p>
                             </div>
-                            <p className="font-semibold text-gray-900 dark:text-white">
+                            <p className="![animation:none] font-semibold text-gray-900 dark:text-white">
                               {formatAmount(tx.amount)}
                             </p>
                           </div>
                         ))}
                         {!isLoading && txs.length > 10 && (
-                          <p className="text-center text-xs text-slate-400">
+                          <p className="![animation:none] text-center text-xs text-slate-400">
                             + {txs.length - 10} transactions
                           </p>
                         )}

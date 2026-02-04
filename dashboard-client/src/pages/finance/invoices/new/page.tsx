@@ -124,7 +124,7 @@ export default function NewInvoicePage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -133,28 +133,28 @@ export default function NewInvoicePage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.invoicesNew} />
+        <PageNotice config={financeNotices.invoicesNew} className="![animation:none]" />
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="![animation:none] mb-6">
+          <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
             Nouvelle Facture Client
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="![animation:none] mt-1 text-sm text-gray-500 dark:text-gray-400">
             Créez une nouvelle facture de vente
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="![animation:none] bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         {/* En-tête facture */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="![animation:none] grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Client *
             </label>
             <select
               value={customerId || ''}
               onChange={(e) => setCustomerId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
             >
               <option value="">Sélectionner un client</option>
@@ -165,7 +165,7 @@ export default function NewInvoicePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Référence
             </label>
             <input
@@ -173,40 +173,40 @@ export default function NewInvoicePage() {
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="Ex: DEVIS-2026-001"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Date Facture *
             </label>
             <input
               type="date"
               value={invoiceDate}
               onChange={(e) => setInvoiceDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Date Échéance
             </label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
         </div>
 
         {/* Lignes facture */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+        <div className="![animation:none] mb-6">
+          <div className="![animation:none] flex items-center justify-between mb-3">
+            <h3 className="![animation:none] text-lg font-medium text-gray-900 dark:text-white">
               Lignes de Facture
             </h3>
             <Button variant="secondary" size="sm" icon={<Plus />} onClick={addLine}>
@@ -214,82 +214,82 @@ export default function NewInvoicePage() {
             </Button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] overflow-x-auto">
+            <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Description *
                   </th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Quantité
                   </th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Prix Unitaire
                   </th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Sous-total
                   </th>
-                  <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                  <th className="![animation:none] px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {lines.map((line, index) => (
                   <tr key={index}>
-                    <td className="px-3 py-2">
+                    <td className="![animation:none] px-3 py-2">
                       <input
                         type="text"
                         value={line.description}
                         onChange={(e) => updateLine(index, 'description', e.target.value)}
                         placeholder="Description du produit/service"
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        className="![animation:none] w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                         required
                       />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="![animation:none] px-3 py-2">
                       <input
                         type="number"
                         value={line.quantity}
                         onChange={(e) => updateLine(index, 'quantity', parseFloat(e.target.value) || 0)}
                         min="0"
                         step="0.01"
-                        className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm text-right"
+                        className="![animation:none] w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm text-right"
                       />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="![animation:none] px-3 py-2">
                       <input
                         type="number"
                         value={line.unitPrice}
                         onChange={(e) => updateLine(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                         min="0"
                         step="0.01"
-                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm text-right"
+                        className="![animation:none] w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm text-right"
                       />
                     </td>
-                    <td className="px-3 py-2 text-right text-sm font-medium text-gray-900 dark:text-white">
+                    <td className="![animation:none] px-3 py-2 text-right text-sm font-medium text-gray-900 dark:text-white">
                       {(line.quantity * line.unitPrice).toFixed(2)} €
                     </td>
-                    <td className="px-3 py-2 text-center">
+                    <td className="![animation:none] px-3 py-2 text-center">
                       <button
                         onClick={() => removeLine(index)}
                         disabled={lines.length === 1}
-                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="![animation:none] text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Supprimer ligne"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="![animation:none] w-4 h-4" />
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-gray-50 dark:bg-gray-900">
+              <tfoot className="![animation:none] bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <td colSpan={3} className="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">
+                  <td colSpan={3} className="![animation:none] px-3 py-2 text-right font-medium text-gray-900 dark:text-white">
                     Total HT
                   </td>
-                  <td className="px-3 py-2 text-right font-bold text-gray-900 dark:text-white">
+                  <td className="![animation:none] px-3 py-2 text-right font-bold text-gray-900 dark:text-white">
                     {calculateTotal().toFixed(2)} €
                   </td>
                   <td></td>
@@ -300,8 +300,8 @@ export default function NewInvoicePage() {
         </div>
 
         {/* Note */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div className="![animation:none] mb-6">
+          <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Note / Conditions
           </label>
           <textarea
@@ -309,12 +309,12 @@ export default function NewInvoicePage() {
             onChange={(e) => setNote(e.target.value)}
             rows={3}
             placeholder="Merci pour votre confiance..."
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-3">
+        <div className="![animation:none] flex items-center justify-end gap-3">
           <Button
             variant="secondary"
             onClick={() => navigate('/invoicing/invoices')}

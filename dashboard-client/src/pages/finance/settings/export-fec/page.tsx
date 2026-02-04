@@ -99,7 +99,7 @@ export default function ExportFECPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -108,105 +108,105 @@ export default function ExportFECPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.exportFec} />
+        <PageNotice config={financeNotices.exportFec} className="![animation:none]" />
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
             Export FEC Comptable
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="![animation:none] mt-1 text-sm text-gray-500 dark:text-gray-400">
             Fichier des Écritures Comptables conforme DGFIP pour audit fiscal
           </p>
         </div>
 
         {/* Formulaire */}
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <div className="![animation:none] flex items-center gap-2 mb-4">
+            <Calendar className="![animation:none] h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
               Sélection Période
             </h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="![animation:none] space-y-4">
             {/* Périodes prédéfinies */}
-            <div className="space-y-2">
-              <label className="flex items-center space-x-3 cursor-pointer">
+            <div className="![animation:none] space-y-2">
+              <label className="![animation:none] flex items-center space-x-3 cursor-pointer">
                 <input
                   type="radio"
                   name="period"
                   value="current_year"
                   checked={period === 'current_year'}
                   onChange={(e) => setPeriod(e.target.value as 'current_year')}
-                  className="text-indigo-600"
+                  className="![animation:none] text-indigo-600"
                 />
-                <span className="text-gray-700 dark:text-gray-300">
+                <span className="![animation:none] text-gray-700 dark:text-gray-300">
                   Année en cours ({new Date().getFullYear()})
                 </span>
               </label>
 
-              <label className="flex items-center space-x-3 cursor-pointer">
+              <label className="![animation:none] flex items-center space-x-3 cursor-pointer">
                 <input
                   type="radio"
                   name="period"
                   value="last_year"
                   checked={period === 'last_year'}
                   onChange={(e) => setPeriod(e.target.value as 'last_year')}
-                  className="text-indigo-600"
+                  className="![animation:none] text-indigo-600"
                 />
-                <span className="text-gray-700 dark:text-gray-300">
+                <span className="![animation:none] text-gray-700 dark:text-gray-300">
                   Année précédente ({new Date().getFullYear() - 1})
                 </span>
               </label>
 
-              <label className="flex items-center space-x-3 cursor-pointer">
+              <label className="![animation:none] flex items-center space-x-3 cursor-pointer">
                 <input
                   type="radio"
                   name="period"
                   value="custom"
                   checked={period === 'custom'}
                   onChange={(e) => setPeriod(e.target.value as 'custom')}
-                  className="text-indigo-600"
+                  className="![animation:none] text-indigo-600"
                 />
-                <span className="text-gray-700 dark:text-gray-300">Période personnalisée</span>
+                <span className="![animation:none] text-gray-700 dark:text-gray-300">Période personnalisée</span>
               </label>
             </div>
 
             {/* Dates personnalisées */}
             {period === 'custom' && (
-              <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="![animation:none] grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Date début
                   </label>
                   <input
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Date fin
                   </label>
                   <input
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
             )}
 
             {/* Informations FEC */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+            <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <h3 className="![animation:none] text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
                 Format FEC
               </h3>
-              <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+              <ul className="![animation:none] text-xs text-blue-800 dark:text-blue-400 space-y-1">
                 <li>• Format: Texte délimité par pipes (|)</li>
                 <li>• Encodage: UTF-8</li>
                 <li>• Nom fichier: {'{SIREN}'}FEC{'{YYYYMMDD}'}.txt</li>
@@ -216,13 +216,13 @@ export default function ExportFECPage() {
             </div>
 
             {/* Bouton export */}
-            <div className="pt-4">
+            <div className="![animation:none] pt-4">
               <Button
                 variant="primary"
                 icon={<FileDown />}
                 onClick={handleExport}
                 disabled={loading || (period === 'custom' && (!dateFrom || !dateTo))}
-                className="w-full"
+                className="![animation:none] w-full"
               >
                 {loading ? 'Génération en cours...' : 'Générer et Télécharger FEC'}
               </Button>
@@ -231,11 +231,11 @@ export default function ExportFECPage() {
         </div>
 
         {/* Aide */}
-        <div className="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+        <div className="![animation:none] p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <h3 className="![animation:none] text-sm font-medium text-gray-900 dark:text-white mb-2">
             À quoi sert le FEC ?
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
             Le Fichier des Écritures Comptables (FEC) est obligatoire en France pour toute
             entreprise tenant sa comptabilité au moyen de systèmes informatisés. Il doit être
             fourni lors d&apos;un contrôle fiscal et contient l&apos;ensemble des écritures

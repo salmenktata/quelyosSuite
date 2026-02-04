@@ -336,7 +336,7 @@ export default function AccountsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -346,33 +346,33 @@ export default function AccountsPage() {
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="![animation:none] flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
               Comptes
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="![animation:none] text-gray-600 dark:text-gray-400 mt-2">
               Gérez vos comptes bancaires, caisses et portefeuilles
             </p>
           </div>
           <Link to={ROUTES.FINANCE.DASHBOARD.ACCOUNTS.NEW}>
-            <Button variant="primary" icon={<Plus className="h-5 w-5" />}>
+            <Button variant="primary" icon={<Plus className="![animation:none] h-5 w-5" />}>
               Nouveau Compte
             </Button>
           </Link>
         </div>
 
-        <PageNotice config={financeNotices.accounts} className="mb-6" />
+        <PageNotice config={financeNotices.accounts} className="![animation:none] mb-6" />
 
         {/* Error Message */}
         {accountsError && (
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+          <div role="alert" className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Une erreur est survenue lors du chargement des comptes.
               </p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetchAccounts()}>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="![animation:none] w-4 h-4" />} onClick={() => refetchAccounts()}>
                 Réessayer
               </Button>
             </div>
@@ -380,10 +380,10 @@ export default function AccountsPage() {
         )}
 
         {/* Filtres */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 md:p-6">
-          <div className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-4">
-            <div className="col-span-2 md:col-span-1 space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 md:p-6">
+          <div className="![animation:none] grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-4">
+            <div className="![animation:none] col-span-2 md:col-span-1 space-y-2">
+              <label className="![animation:none] text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Rechercher
               </label>
               <input
@@ -391,18 +391,18 @@ export default function AccountsPage() {
                 placeholder="Nom, établissement"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="![animation:none] w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <div className="![animation:none] space-y-2">
+              <label className="![animation:none] text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Type
               </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as AccountType | 'all')}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="![animation:none] w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">Tous</option>
                 {accountTypes.map((t) => (
@@ -413,12 +413,12 @@ export default function AccountsPage() {
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <div className="![animation:none] space-y-2">
+              <label className="![animation:none] text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Portefeuille
               </label>
               <select
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="![animation:none] w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">Tous</option>
                 {portfolios.map((p) => (
@@ -429,12 +429,12 @@ export default function AccountsPage() {
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <div className="![animation:none] space-y-2">
+              <label className="![animation:none] text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Devise
               </label>
               <select
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="![animation:none] w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">Toutes</option>
                 {currencies.map((c) => (
@@ -451,8 +451,8 @@ export default function AccountsPage() {
         {loading ? (
           <SkeletonTable rows={10} columns={9} />
         ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
-            <p className="text-red-800 dark:text-red-200 mb-4">
+          <div className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6" role="alert">
+            <p className="![animation:none] text-red-800 dark:text-red-200 mb-4">
               {error}
             </p>
             <Button variant="secondary" onClick={refetchAccounts}>
@@ -462,21 +462,21 @@ export default function AccountsPage() {
         ) : (
           <>
             {/* Tableau des comptes - Desktop */}
-            <div className="hidden md:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4 md:p-6">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tableau des comptes</h2>
-                  <span className="rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+            <div className="![animation:none] hidden md:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <div className="![animation:none] flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4 md:p-6">
+                <div className="![animation:none] flex items-center gap-3">
+                  <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">Tableau des comptes</h2>
+                  <span className="![animation:none] rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
                     {sortedAndFiltered.length} lignes
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="![animation:none] flex gap-2">
                   {selectedIds.length > 0 && (
                     <>
-                      <Button variant="secondary" icon={<Archive className="h-4 w-4" />}>
+                      <Button variant="secondary" icon={<Archive className="![animation:none] h-4 w-4" />}>
                         Archiver
                       </Button>
-                      <Button variant="danger" icon={<Trash2 className="h-4 w-4" />}>
+                      <Button variant="danger" icon={<Trash2 className="![animation:none] h-4 w-4" />}>
                         Supprimer
                       </Button>
                     </>
@@ -484,71 +484,71 @@ export default function AccountsPage() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="![animation:none] overflow-x-auto">
+                <table className="![animation:none] w-full">
                   <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      <th className="p-4">
+                    <tr className="![animation:none] border-b border-gray-200 dark:border-gray-700 text-left text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      <th className="![animation:none] p-4">
                         <input
                           type="checkbox"
                           checked={selectedIds.length === sortedAndFiltered.length && sortedAndFiltered.length > 0}
                           onChange={toggleSelectAll}
-                          className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
+                          className="![animation:none] h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                         />
                       </th>
-                      <th className="cursor-pointer p-4 hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('name')}>
-                        <div className="flex items-center gap-2">
+                      <th className="![animation:none] cursor-pointer p-4 hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('name')}>
+                        <div className="![animation:none] flex items-center gap-2">
                           Compte
-                          <ArrowUpDown className="h-3.5 w-3.5" />
+                          <ArrowUpDown className="![animation:none] h-3.5 w-3.5" />
                         </div>
                       </th>
-                      <th className="cursor-pointer p-4 hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('balance')}>
-                        <div className="flex items-center gap-2">
+                      <th className="![animation:none] cursor-pointer p-4 hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('balance')}>
+                        <div className="![animation:none] flex items-center gap-2">
                           Montant
-                          <ArrowUpDown className="h-3.5 w-3.5" />
+                          <ArrowUpDown className="![animation:none] h-3.5 w-3.5" />
                         </div>
                       </th>
-                      <th className="p-4">Type</th>
-                      <th className="p-4">Statut</th>
-                      <th className="p-4">Portefeuilles</th>
-                      <th className="p-4">Établissement</th>
-                      <th className="p-4">Notes</th>
-                      <th className="p-4 text-right">Actions</th>
+                      <th className="![animation:none] p-4">Type</th>
+                      <th className="![animation:none] p-4">Statut</th>
+                      <th className="![animation:none] p-4">Portefeuilles</th>
+                      <th className="![animation:none] p-4">Établissement</th>
+                      <th className="![animation:none] p-4">Notes</th>
+                      <th className="![animation:none] p-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                     {sortedAndFiltered.map((acc) => {
                       return (
                         <tr
                           key={acc.id}
-                          className="group transition hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          className="![animation:none] group transition hover:bg-gray-50 dark:hover:bg-gray-700/50"
                         >
-                          <td className="p-4">
+                          <td className="![animation:none] p-4">
                             <input
                               type="checkbox"
                               checked={selectedIds.includes(acc.id)}
                               onChange={() => toggleSelect(acc.id)}
-                              className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
+                              className="![animation:none] h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                             />
                           </td>
-                          <td className="p-4">
-                            <div className="space-y-1">
-                              <div className="font-medium text-gray-900 dark:text-white">{acc.name}</div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">ID {acc.id}</div>
+                          <td className="![animation:none] p-4">
+                            <div className="![animation:none] space-y-1">
+                              <div className="![animation:none] font-medium text-gray-900 dark:text-white">{acc.name}</div>
+                              <div className="![animation:none] text-xs text-gray-500 dark:text-gray-400">ID {acc.id}</div>
                             </div>
                           </td>
-                          <td className="p-4">
+                          <td className="![animation:none] p-4">
                             <div className={`font-semibold ${(acc.balance ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                               {(acc.balance ?? 0) >= 0 ? '+' : ''}
                               {(acc.balance ?? 0).toFixed(2)} {globalCurrency}
                             </div>
                           </td>
-                          <td className="p-4">
-                            <span className="rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                          <td className="![animation:none] p-4">
+                            <span className="![animation:none] rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
                               {accountTypes.find((t) => t.value === acc.type)?.label ?? 'Banque'}
                             </span>
                           </td>
-                          <td className="p-4">
+                          <td className="![animation:none] p-4">
                             <span
                               className={`rounded-full px-3 py-1 text-xs font-medium ${
                                 acc.status === 'INACTIVE'
@@ -559,50 +559,50 @@ export default function AccountsPage() {
                               {acc.status === 'INACTIVE' ? 'Inactif' : 'Actif'}
                             </span>
                           </td>
-                          <td className="p-4">
+                          <td className="![animation:none] p-4">
                             {acc.portfolios && acc.portfolios.length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
+                              <div className="![animation:none] flex flex-wrap gap-1">
                                 {acc.portfolios.map((p) => (
                                   <span
                                     key={p.portfolio.id}
-                                    className="text-xs rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-gray-600 dark:text-gray-300"
+                                    className="![animation:none] text-xs rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-gray-600 dark:text-gray-300"
                                   >
                                     {p.portfolio.name}
                                   </span>
                                 ))}
                               </div>
                             ) : (
-                              <span className="text-sm text-gray-500 dark:text-gray-400">Tous les portefeuilles</span>
+                              <span className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Tous les portefeuilles</span>
                             )}
                           </td>
-                          <td className="p-4">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                          <td className="![animation:none] p-4">
+                            <span className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
                               {acc.institution || '—'}
                             </span>
                           </td>
-                          <td className="p-4 max-w-xs">
-                            <span className="text-sm text-gray-600 dark:text-gray-400 truncate block">
+                          <td className="![animation:none] p-4 max-w-xs">
+                            <span className="![animation:none] text-sm text-gray-600 dark:text-gray-400 truncate block">
                               {acc.notes || '—'}
                             </span>
                           </td>
-                          <td className="p-4">
-                            <div className="flex justify-end gap-2">
+                          <td className="![animation:none] p-4">
+                            <div className="![animation:none] flex justify-end gap-2">
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => startEdit(acc)}
-                                icon={<Pencil className="h-4 w-4" />}
+                                icon={<Pencil className="![animation:none] h-4 w-4" />}
                               >
-                                <span className="sr-only">Modifier</span>
+                                <span className="![animation:none] sr-only">Modifier</span>
                               </Button>
                               <Button
                                 variant="danger"
                                 size="sm"
                                 onClick={() => deleteAccount(acc.id)}
                                 disabled={deletingId === acc.id}
-                                icon={<Trash2 className="h-4 w-4" />}
+                                icon={<Trash2 className="![animation:none] h-4 w-4" />}
                               >
-                                <span className="sr-only">Supprimer</span>
+                                <span className="![animation:none] sr-only">Supprimer</span>
                               </Button>
                             </div>
                           </td>
@@ -613,54 +613,54 @@ export default function AccountsPage() {
                 </table>
 
                 {sortedAndFiltered.length === 0 && (
-                  <div className="p-12 text-center">
-                    <Wallet className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 dark:text-gray-400">Aucun compte trouvé.</p>
+                  <div className="![animation:none] p-12 text-center">
+                    <Wallet className="![animation:none] h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="![animation:none] text-gray-500 dark:text-gray-400">Aucun compte trouvé.</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Liste mobile en cartes */}
-            <div className="md:hidden space-y-3">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{sortedAndFiltered.length} compte(s)</span>
+            <div className="![animation:none] md:hidden space-y-3">
+              <div className="![animation:none] flex items-center justify-between px-1">
+                <span className="![animation:none] text-sm font-medium text-gray-600 dark:text-gray-400">{sortedAndFiltered.length} compte(s)</span>
                 {selectedIds.length > 0 && (
-                  <Button variant="danger" size="sm" icon={<Trash2 className="h-3.5 w-3.5" />}>
+                  <Button variant="danger" size="sm" icon={<Trash2 className="![animation:none] h-3.5 w-3.5" />}>
                     Suppr. ({selectedIds.length})
                   </Button>
                 )}
               </div>
 
               {sortedAndFiltered.length === 0 && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
-                  <Wallet className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">Aucun compte trouvé.</p>
+                <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+                  <Wallet className="![animation:none] h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <p className="![animation:none] text-gray-500 dark:text-gray-400">Aucun compte trouvé.</p>
                 </div>
               )}
 
               {sortedAndFiltered.map((acc) => {
                 return (
-                  <div key={acc.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                  <div key={acc.id} className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
+                    <div className="![animation:none] flex items-start justify-between gap-3">
+                      <div className="![animation:none] flex-1 min-w-0">
+                        <div className="![animation:none] flex items-center gap-2 mb-1">
                           <input
                             type="checkbox"
                             checked={selectedIds.includes(acc.id)}
                             onChange={() => toggleSelect(acc.id)}
-                            className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
+                            className="![animation:none] h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-indigo-600"
                           />
-                          <h3 className="font-semibold text-gray-900 dark:text-white truncate">{acc.name}</h3>
+                          <h3 className="![animation:none] font-semibold text-gray-900 dark:text-white truncate">{acc.name}</h3>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{acc.institution || 'Sans établissement'}</p>
+                        <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">{acc.institution || 'Sans établissement'}</p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                      <span className="![animation:none] shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
                         {accountTypes.find((t) => t.value === acc.type)?.label ?? 'Banque'}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="![animation:none] flex items-center justify-between">
                       <span className={`text-lg font-bold ${(acc.balance ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                         {(acc.balance ?? 0) >= 0 ? '+' : ''}{(acc.balance ?? 0).toFixed(2)} {globalCurrency}
                       </span>
@@ -674,36 +674,36 @@ export default function AccountsPage() {
                     </div>
 
                     {acc.portfolios && acc.portfolios.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="![animation:none] flex flex-wrap gap-1">
                         {acc.portfolios.slice(0, 3).map((p) => (
                           <span
                             key={p.portfolio.id}
-                            className="text-xs rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-gray-600 dark:text-gray-300"
+                            className="![animation:none] text-xs rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-gray-600 dark:text-gray-300"
                           >
                             {p.portfolio.name}
                           </span>
                         ))}
                         {acc.portfolios.length > 3 && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">+{acc.portfolios.length - 3}</span>
+                          <span className="![animation:none] text-xs text-gray-500 dark:text-gray-400">+{acc.portfolios.length - 3}</span>
                         )}
                       </div>
                     )}
 
-                    <div className="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <div className="![animation:none] flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                       <Button
                         variant="secondary"
-                        className="flex-1"
+                        className="![animation:none] flex-1"
                         onClick={() => startEdit(acc)}
-                        icon={<Pencil className="h-3.5 w-3.5" />}
+                        icon={<Pencil className="![animation:none] h-3.5 w-3.5" />}
                       >
                         Modifier
                       </Button>
                       <Button
                         variant="danger"
-                        className="flex-1"
+                        className="![animation:none] flex-1"
                         onClick={() => deleteAccount(acc.id)}
                         disabled={deletingId === acc.id}
-                        icon={<Trash2 className="h-3.5 w-3.5" />}
+                        icon={<Trash2 className="![animation:none] h-3.5 w-3.5" />}
                       >
                         Supprimer
                       </Button>

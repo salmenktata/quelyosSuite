@@ -207,7 +207,7 @@ export default function QuickInvoicePage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -216,12 +216,12 @@ export default function QuickInvoicePage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.invoicesQuick} />
+        <PageNotice config={financeNotices.invoicesQuick} className="![animation:none]" />
 
         {/* Stepper */}
-        <div className="flex items-center justify-center space-x-4 mb-8">
+        <div className="![animation:none] flex items-center justify-center space-x-4 mb-8">
           {[1, 2, 3].map((step) => (
-            <div key={step} className="flex items-center">
+            <div key={step} className="![animation:none] flex items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                   step === currentStep
@@ -231,7 +231,7 @@ export default function QuickInvoicePage() {
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                 }`}
               >
-                {step < currentStep ? <Check className="h-5 w-5" /> : step}
+                {step < currentStep ? <Check className="![animation:none] h-5 w-5" /> : step}
               </div>
               {step < 3 && (
                 <div
@@ -244,15 +244,15 @@ export default function QuickInvoicePage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
           {/* Étape 1: Client */}
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-6">
+              <h2 className="![animation:none] text-xl font-semibold text-gray-900 dark:text-white">
                 Étape 1 : Sélection Client
               </h2>
 
-              <div className="flex items-center space-x-4 mb-4">
+              <div className="![animation:none] flex items-center space-x-4 mb-4">
                 <button
                   onClick={() => setCreateNew(false)}
                   className={`px-4 py-2 rounded-lg ${
@@ -277,7 +277,7 @@ export default function QuickInvoicePage() {
 
               {!createNew ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Rechercher un client
                   </label>
                   <input
@@ -285,11 +285,11 @@ export default function QuickInvoicePage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Nom ou email..."
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
 
                   {customers.length > 0 && (
-                    <div className="mt-4 space-y-2">
+                    <div className="![animation:none] mt-4 space-y-2">
                       {customers.map((customer) => (
                         <div
                           key={customer.id}
@@ -300,46 +300,46 @@ export default function QuickInvoicePage() {
                               : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                           }`}
                         >
-                          <p className="font-medium text-gray-900 dark:text-white">{customer.name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{customer.email}</p>
+                          <p className="![animation:none] font-medium text-gray-900 dark:text-white">{customer.name}</p>
+                          <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">{customer.email}</p>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="![animation:none] space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Nom <span className="text-red-500">*</span>
+                    <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nom <span className="![animation:none] text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={newCustomer.name}
                       onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Email <span className="text-red-500">*</span>
+                    <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Email <span className="![animation:none] text-red-500">*</span>
                     </label>
                     <input
                       type="email"
                       value={newCustomer.email}
                       onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Téléphone
                     </label>
                     <input
                       type="tel"
                       value={newCustomer.phone}
                       onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -349,9 +349,9 @@ export default function QuickInvoicePage() {
 
           {/* Étape 2: Lignes */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-6">
+              <div className="![animation:none] flex items-center justify-between">
+                <h2 className="![animation:none] text-xl font-semibold text-gray-900 dark:text-white">
                   Étape 2 : Lignes de Facture
                 </h2>
                 <Button variant="secondary" onClick={addLine}>
@@ -359,17 +359,17 @@ export default function QuickInvoicePage() {
                 </Button>
               </div>
 
-              <div className="space-y-3">
+              <div className="![animation:none] space-y-3">
                 {lines.map((line, index) => (
-                  <div key={line.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div key={line.id} className="![animation:none] p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-3">
+                    <div className="![animation:none] flex items-center justify-between">
+                      <span className="![animation:none] text-sm font-medium text-gray-700 dark:text-gray-300">
                         Ligne {index + 1}
                       </span>
                       {lines.length > 1 && (
                         <button
                           onClick={() => removeLine(line.id)}
-                          className="text-red-600 hover:text-red-700 text-sm"
+                          className="![animation:none] text-red-600 hover:text-red-700 text-sm"
                         >
                           Supprimer
                         </button>
@@ -381,43 +381,43 @@ export default function QuickInvoicePage() {
                       value={line.description}
                       onChange={(e) => updateLine(line.id, 'description', e.target.value)}
                       placeholder="Description"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="![animation:none] grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Quantité</label>
+                        <label className="![animation:none] block text-xs text-gray-500 dark:text-gray-400 mb-1">Quantité</label>
                         <input
                           type="number"
                           value={line.quantity}
                           onChange={(e) => updateLine(line.id, 'quantity', e.target.value)}
                           min="1"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Prix unitaire €</label>
+                        <label className="![animation:none] block text-xs text-gray-500 dark:text-gray-400 mb-1">Prix unitaire €</label>
                         <input
                           type="number"
                           value={line.unitPrice}
                           onChange={(e) => updateLine(line.id, 'unitPrice', e.target.value)}
                           min="0"
                           step="0.01"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
 
-                    <div className="text-right text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="![animation:none] text-right text-sm font-medium text-gray-700 dark:text-gray-300">
                       Total : {(line.quantity * line.unitPrice).toFixed(2)} €
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="text-right">
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">
+              <div className="![animation:none] pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="![animation:none] text-right">
+                  <span className="![animation:none] text-lg font-bold text-gray-900 dark:text-white">
                     Total général : {calculateTotal().toFixed(2)} €
                   </span>
                 </div>
@@ -427,51 +427,51 @@ export default function QuickInvoicePage() {
 
           {/* Étape 3: Validation */}
           {currentStep === 3 && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-6">
+              <h2 className="![animation:none] text-xl font-semibold text-gray-900 dark:text-white">
                 Étape 3 : Validation et Options
               </h2>
 
-              <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-2">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Client :</span>{' '}
+              <div className="![animation:none] p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-2">
+                <p className="![animation:none] text-sm text-gray-700 dark:text-gray-300">
+                  <span className="![animation:none] font-medium">Client :</span>{' '}
                   {selectedCustomer?.name || newCustomer.name}
                 </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Lignes :</span> {lines.length}
+                <p className="![animation:none] text-sm text-gray-700 dark:text-gray-300">
+                  <span className="![animation:none] font-medium">Lignes :</span> {lines.length}
                 </p>
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-lg font-bold text-gray-900 dark:text-white">
                   Total : {calculateTotal().toFixed(2)} €
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="![animation:none] grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Date facture
                   </label>
                   <input
                     type="date"
                     value={invoiceDate}
                     onChange={(e) => setInvoiceDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Date échéance
                   </label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Référence
                 </label>
                 <input
@@ -479,12 +479,12 @@ export default function QuickInvoicePage() {
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
                   placeholder="REF-001"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Note
                 </label>
                 <textarea
@@ -492,18 +492,18 @@ export default function QuickInvoicePage() {
                   onChange={(e) => setNote(e.target.value)}
                   rows={3}
                   placeholder="Merci pour votre confiance..."
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="![animation:none] w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
-              <label className="flex items-center space-x-2 cursor-pointer">
+              <label className="![animation:none] flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={validateNow}
                   onChange={(e) => setValidateNow(e.target.checked)}
-                  className="rounded"
+                  className="![animation:none] rounded"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="![animation:none] text-sm text-gray-700 dark:text-gray-300">
                   Valider la facture immédiatement (sinon brouillon)
                 </span>
               </label>
@@ -511,7 +511,7 @@ export default function QuickInvoicePage() {
           )}
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="![animation:none] flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <Button
               variant="secondary"
               icon={<ChevronLeft />}

@@ -84,12 +84,12 @@ export default function PaymentRiskPage() {
     const Icon = config.icon
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="![animation:none] flex items-center gap-2">
         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium border ${config.bg} ${config.text} ${config.border}`}>
-          <Icon className="h-3 w-3" />
+          <Icon className="![animation:none] h-3 w-3" />
           {config.label}
         </span>
-        <span className="text-xs font-bold text-gray-500 dark:text-gray-400">
+        <span className="![animation:none] text-xs font-bold text-gray-500 dark:text-gray-400">
           {score}/100
         </span>
       </div>
@@ -103,7 +103,7 @@ export default function PaymentRiskPage() {
     else if (score >= 30) colorClass = 'bg-yellow-500'
 
     return (
-      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="![animation:none] w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
         <div
           className={`h-full ${colorClass} transition-all duration-300`}
           style={{ width: `${score}%` }}
@@ -115,9 +115,9 @@ export default function PaymentRiskPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
           <SkeletonTable rows={10} columns={5} />
         </div>
       </Layout>
@@ -129,7 +129,7 @@ export default function PaymentRiskPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -137,15 +137,15 @@ export default function PaymentRiskPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.paymentRisk} />
+        <PageNotice config={financeNotices.paymentRisk} className="![animation:none]" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="![animation:none] flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
               Prédiction Risques Paiement (ML)
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400 mt-1">
               Scoring prédictif retards basé sur historique comportemental client
             </p>
           </div>
@@ -159,43 +159,43 @@ export default function PaymentRiskPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
-                <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+        <div className="![animation:none] grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
+                <AlertTriangle className="![animation:none] h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Clients à Risque Élevé</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Clients à Risque Élevé</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {highRiskCount}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <TrendingUp className="![animation:none] h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Score Moyen Portefeuille</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Score Moyen Portefeuille</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {avgScore.toFixed(1)}/100
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
-                <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <div className="![animation:none] p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+                <Shield className="![animation:none] h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Clients Analysés</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Clients Analysés</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {predictions.length}
                 </p>
               </div>
@@ -204,15 +204,15 @@ export default function PaymentRiskPage() {
         </div>
 
         {/* Filtres */}
-        <div className="flex gap-4 items-center">
+        <div className="![animation:none] flex gap-4 items-center">
           <div>
-            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm text-gray-700 dark:text-gray-300 mb-2">
               Niveau Minimum
             </label>
             <select
               value={filterLevel}
               onChange={(e) => setFilterLevel(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="![animation:none] px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="minimal">Tous (Minimal+)</option>
               <option value="low">Faible+</option>
@@ -223,13 +223,13 @@ export default function PaymentRiskPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm text-gray-700 dark:text-gray-300 mb-2">
               TOP N
             </label>
             <select
               value={topN}
               onChange={(e) => setTopN(parseInt(e.target.value))}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="![animation:none] px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="10">10</option>
               <option value="20">20</option>
@@ -243,49 +243,49 @@ export default function PaymentRiskPage() {
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="flex-1 text-red-800 dark:text-red-200">{error}</p>
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">{error}</p>
             </div>
           </div>
         )}
 
         {/* Table */}
         {!error && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            <div className="![animation:none] overflow-x-auto">
+              <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Rang
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Client
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Score Risque
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Niveau
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Taux Retards
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Délai Moyen
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Impayés
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                   {predictions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                      <td colSpan={7} className="![animation:none] px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                         Aucune prédiction disponible
                       </td>
                     </tr>
@@ -293,29 +293,29 @@ export default function PaymentRiskPage() {
                     predictions.map((pred, index) => (
                       <tr
                         key={pred.customerId}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
+                        className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
                         onClick={() => window.location.href = `/crm/customers/${pred.customerId}`}
                       >
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
+                        <td className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                           #{index + 1}
                         </td>
-                        <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <td className="![animation:none] px-4 py-3">
+                          <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">
                             {pred.customerName}
                           </p>
                         </td>
-                        <td className="px-4 py-3">
-                          <div className="space-y-1">
+                        <td className="![animation:none] px-4 py-3">
+                          <div className="![animation:none] space-y-1">
                             {getProgressBar(pred.riskScore)}
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">
                               {pred.riskScore.toFixed(0)}/100
                             </p>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           {getRiskBadge(pred.riskLevel, pred.riskScore)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-right">
+                        <td className="![animation:none] px-4 py-3 text-sm text-right">
                           <span className={`font-medium ${
                             pred.latePaymentRate >= 50
                               ? 'text-red-600 dark:text-red-400'
@@ -326,10 +326,10 @@ export default function PaymentRiskPage() {
                             {pred.latePaymentRate.toFixed(1)}%
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-right text-gray-900 dark:text-white">
+                        <td className="![animation:none] px-4 py-3 text-sm text-right text-gray-900 dark:text-white">
                           {pred.avgDelayDays.toFixed(0)}j
                         </td>
-                        <td className="px-4 py-3 text-sm text-right font-medium text-red-600 dark:text-red-400">
+                        <td className="![animation:none] px-4 py-3 text-sm text-right font-medium text-red-600 dark:text-red-400">
                           {formatCurrency(pred.overdueAmount, '€')}
                         </td>
                       </tr>
@@ -342,11 +342,11 @@ export default function PaymentRiskPage() {
         )}
 
         {/* Info ML */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+        <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <h3 className="![animation:none] text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
             Algorithme ML Scoring
           </h3>
-          <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+          <ul className="![animation:none] text-xs text-blue-800 dark:text-blue-400 space-y-1">
             <li>• <strong>Features</strong> : Taux retards (35%), Délai moyen (25%), Impayés (20%), Montant impayé (15%), Ancienneté (5%)</li>
             <li>• <strong>Classification</strong> : Minimal (0-14), Faible (15-29), Moyen (30-49), Élevé (50-69), Critique (70-100)</li>
             <li>• <strong>Confiance</strong> : High (10+ factures), Medium (5-9), Low (&lt;5) - Nouveaux clients plus risqués</li>

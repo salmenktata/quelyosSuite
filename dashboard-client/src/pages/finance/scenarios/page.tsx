@@ -283,7 +283,7 @@ export default function ScenariosPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: "Accueil", href: "/" },
@@ -293,42 +293,42 @@ export default function ScenariosPage() {
         />
 
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="![animation:none] flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <GitBranch className="h-6 w-6 text-emerald-600" />
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <GitBranch className="![animation:none] h-6 w-6 text-emerald-600" />
               Scénarios de trésorerie
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-gray-600 dark:text-gray-400 mt-1">
               Comparez différents scénarios d'évolution et identifiez les risques
             </p>
           </div>
 
-          <div className="flex gap-2 flex-wrap">
+          <div className="![animation:none] flex gap-2 flex-wrap">
             {/* Load button */}
-            <div className="relative">
+            <div className="![animation:none] relative">
               <Button
                 variant="secondary"
                 onClick={() => setShowLoadMenu(!showLoadMenu)}
-                icon={<ChevronDown className="h-4 w-4" />}
+                icon={<ChevronDown className="![animation:none] h-4 w-4" />}
               >
                 Charger
               </Button>
               {showLoadMenu && savedScenarios.length > 0 && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2">
+                <div className="![animation:none] absolute right-0 top-full z-50 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2">
                   {savedScenarios.map((saved) => (
                     <div
                       key={saved.id}
-                      className="flex items-center justify-between rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="![animation:none] flex items-center justify-between rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       <Button
                         onClick={() => loadSavedScenario(saved)}
                         variant="ghost"
                         size="sm"
-                        className="flex-1 justify-start text-left text-sm text-gray-900 dark:text-white"
+                        className="![animation:none] flex-1 justify-start text-left text-sm text-gray-900 dark:text-white"
                       >
                         {saved.name}
-                        <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                        <span className="![animation:none] ml-2 text-xs text-gray-500 dark:text-gray-400">
                           {saved.horizon}j
                         </span>
                       </Button>
@@ -336,9 +336,9 @@ export default function ScenariosPage() {
                         onClick={() => deleteSavedScenario(saved.id)}
                         variant="ghost"
                         size="sm"
-                        className="p-1 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="![animation:none] p-1 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="![animation:none] h-3 w-3" />
                       </Button>
                     </div>
                   ))}
@@ -349,7 +349,7 @@ export default function ScenariosPage() {
             <Button
               variant="primary"
               onClick={() => setShowSaveModal(true)}
-              icon={<Save className="h-4 w-4" />}
+              icon={<Save className="![animation:none] h-4 w-4" />}
             >
               Sauvegarder
             </Button>
@@ -357,24 +357,24 @@ export default function ScenariosPage() {
             <Button
               variant="secondary"
               onClick={exportCSV}
-              icon={<Download className="h-4 w-4" />}
+              icon={<Download className="![animation:none] h-4 w-4" />}
             >
               CSV
             </Button>
           </div>
         </div>
 
-        <PageNotice config={financeNotices['scenarios']} className="mb-2" />
+        <PageNotice config={financeNotices['scenarios']} className="![animation:none] mb-2" />
 
         {/* Horizon selector */}
-        <div className="flex gap-2 flex-wrap">
+        <div className="![animation:none] flex gap-2 flex-wrap">
           {HORIZONS.map((h) => (
             <Button
               key={h}
               onClick={() => setHorizon(h)}
               variant={horizon === h ? "primary" : "secondary"}
               size="sm"
-              className="rounded-full"
+              className="![animation:none] rounded-full"
             >
               {h} jours
             </Button>
@@ -382,31 +382,31 @@ export default function ScenariosPage() {
         </div>
 
         {/* Scenarios config */}
-        <GlassCard className="p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <GlassCard className="![animation:none] p-4">
+          <div className="![animation:none] mb-4 flex items-center justify-between">
+            <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
               Configuration des scénarios
             </h2>
-            <Button variant="secondary" size="sm" onClick={addScenario} icon={<Plus className="h-4 w-4" />}>
+            <Button variant="secondary" size="sm" onClick={addScenario} icon={<Plus className="![animation:none] h-4 w-4" />}>
               Ajouter
             </Button>
           </div>
 
-          <div className="space-y-3">
+          <div className="![animation:none] space-y-3">
             {scenarios.map((scenario) => (
               <div
                 key={scenario.id}
-                className="flex flex-wrap items-center gap-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg"
+                className="![animation:none] flex flex-wrap items-center gap-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg"
               >
                 <input
                   type="checkbox"
                   checked={scenario.visible}
                   onChange={(e) => updateScenario(scenario.id, { visible: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600"
+                  className="![animation:none] h-4 w-4 rounded border-gray-300 dark:border-gray-600"
                 />
 
                 <div
-                  className="h-3 w-3 rounded-full flex-shrink-0"
+                  className="![animation:none] h-3 w-3 rounded-full flex-shrink-0"
                   style={{ backgroundColor: scenario.color }}
                 />
 
@@ -414,24 +414,24 @@ export default function ScenariosPage() {
                   type="text"
                   value={scenario.name}
                   onChange={(e) => updateScenario(scenario.id, { name: e.target.value })}
-                  className="w-40 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-white"
+                  className="![animation:none] w-40 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-white"
                 />
 
-                <div className="flex gap-1 flex-wrap">
+                <div className="![animation:none] flex gap-1 flex-wrap">
                   {ADJUSTMENT_PRESETS.map((preset) => (
                     <Button
                       key={preset.value}
                       onClick={() => updateScenario(scenario.id, { adjustment: preset.value })}
                       variant={scenario.adjustment === preset.value ? "primary" : "secondary"}
                       size="sm"
-                      className="px-2 py-1 text-xs"
+                      className="![animation:none] px-2 py-1 text-xs"
                     >
                       {preset.label}
                     </Button>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="![animation:none] flex items-center gap-2">
                   <input
                     type="range"
                     min={-30}
@@ -439,9 +439,9 @@ export default function ScenariosPage() {
                     step={5}
                     value={scenario.adjustment}
                     onChange={(e) => updateScenario(scenario.id, { adjustment: parseInt(e.target.value) })}
-                    className="h-1 w-24 cursor-pointer"
+                    className="![animation:none] h-1 w-24 cursor-pointer"
                   />
-                  <span className="w-12 text-right text-sm font-medium text-gray-900 dark:text-white">
+                  <span className="![animation:none] w-12 text-right text-sm font-medium text-gray-900 dark:text-white">
                     {scenario.adjustment >= 0 ? "+" : ""}{scenario.adjustment}%
                   </span>
                 </div>
@@ -451,9 +451,9 @@ export default function ScenariosPage() {
                     onClick={() => removeScenario(scenario.id)}
                     variant="ghost"
                     size="sm"
-                    className="ml-auto text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="![animation:none] ml-auto text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="![animation:none] h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -462,7 +462,7 @@ export default function ScenariosPage() {
         </GlassCard>
 
         {/* KPIs */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="![animation:none] grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {scenarioKPIs.map((kpi) => (
             <div
               key={kpi.id}
@@ -472,31 +472,31 @@ export default function ScenariosPage() {
                   : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
               }`}
             >
-              <div className="mb-3 flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: kpi.color }} />
-                <span className="font-medium text-gray-900 dark:text-white">{kpi.name}</span>
-                {kpi.isRisky && <AlertTriangle className="ml-auto h-4 w-4 text-red-500" />}
+              <div className="![animation:none] mb-3 flex items-center gap-2">
+                <div className="![animation:none] h-3 w-3 rounded-full" style={{ backgroundColor: kpi.color }} />
+                <span className="![animation:none] font-medium text-gray-900 dark:text-white">{kpi.name}</span>
+                {kpi.isRisky && <AlertTriangle className="![animation:none] ml-auto h-4 w-4 text-red-500" />}
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="![animation:none] grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Solde final</p>
+                  <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Solde final</p>
                   <p className={`text-lg font-semibold ${kpi.finalBalance >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                     {money.format(kpi.finalBalance)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Solde min</p>
+                  <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Solde min</p>
                   <p className={`text-lg font-semibold ${kpi.minBalance >= 0 ? "text-gray-900 dark:text-white" : "text-red-500"}`}>
                     {money.format(kpi.minBalance)}
                   </p>
                   {kpi.minDate && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">le {kpi.minDate}</p>
+                    <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">le {kpi.minDate}</p>
                   )}
                 </div>
                 {kpi.daysNegative > 0 && (
-                  <div className="col-span-2">
-                    <p className="text-xs text-red-500">{kpi.daysNegative} jour(s) en découvert</p>
+                  <div className="![animation:none] col-span-2">
+                    <p className="![animation:none] text-xs text-red-500">{kpi.daysNegative} jour(s) en découvert</p>
                   </div>
                 )}
               </div>
@@ -508,23 +508,23 @@ export default function ScenariosPage() {
         {loading ? (
           <SkeletonTable rows={5} columns={4} />
         ) : error ? (
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+          <div role="alert" className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Une erreur est survenue lors du chargement des prévisions.
               </p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchForecast}>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="![animation:none] w-4 h-4" />} onClick={fetchForecast}>
                 Réessayer
               </Button>
             </div>
           </div>
         ) : (
-          <GlassCard className="p-4">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassCard className="![animation:none] p-4">
+            <h3 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Comparaison sur {horizon} jours
             </h3>
-            <div className="h-80">
+            <div className="![animation:none] h-80">
               <ResponsiveContainer width="100%" height="100%" minHeight={320}>
                 <AreaChart data={chartData}>
                   <defs>
@@ -569,15 +569,15 @@ export default function ScenariosPage() {
 
         {/* Data table */}
         {chartData.length > 0 && (
-          <GlassCard className="p-4">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Données détaillées</h3>
-            <div className="max-h-64 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-gray-50 dark:bg-gray-900">
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="px-3 py-2 text-left text-gray-600 dark:text-gray-400">Date</th>
+          <GlassCard className="![animation:none] p-4">
+            <h3 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">Données détaillées</h3>
+            <div className="![animation:none] max-h-64 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              <table className="![animation:none] w-full text-sm">
+                <thead className="![animation:none] sticky top-0 bg-gray-50 dark:bg-gray-900">
+                  <tr className="![animation:none] border-b border-gray-200 dark:border-gray-700">
+                    <th className="![animation:none] px-3 py-2 text-left text-gray-600 dark:text-gray-400">Date</th>
                     {scenarios.filter((s) => s.visible).map((s) => (
-                      <th key={s.id} className="px-3 py-2 text-right" style={{ color: s.color }}>
+                      <th key={s.id} className="![animation:none] px-3 py-2 text-right" style={{ color: s.color }}>
                         {s.name}
                       </th>
                     ))}
@@ -585,8 +585,8 @@ export default function ScenariosPage() {
                 </thead>
                 <tbody>
                   {chartData.slice(0, 30).map((row, i) => (
-                    <tr key={i} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-3 py-2 text-gray-900 dark:text-white">{row.dateFormatted}</td>
+                    <tr key={i} className="![animation:none] border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="![animation:none] px-3 py-2 text-gray-900 dark:text-white">{row.dateFormatted}</td>
                       {scenarios.filter((s) => s.visible).map((s) => (
                         <td
                           key={s.id}
@@ -605,9 +605,9 @@ export default function ScenariosPage() {
 
         {/* Save modal */}
         {showSaveModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl">
-              <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="![animation:none] fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="![animation:none] w-full max-w-md bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl">
+              <h3 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                 Sauvegarder les scénarios
               </h3>
               <input
@@ -615,10 +615,10 @@ export default function ScenariosPage() {
                 value={saveName}
                 onChange={(e) => setSaveName(e.target.value)}
                 placeholder="Nom de la configuration..."
-                className="mb-4 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400"
+                className="![animation:none] mb-4 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400"
                 autoFocus
               />
-              <div className="flex justify-end gap-2">
+              <div className="![animation:none] flex justify-end gap-2">
                 <Button variant="secondary" onClick={() => setShowSaveModal(false)}>
                   Annuler
                 </Button>

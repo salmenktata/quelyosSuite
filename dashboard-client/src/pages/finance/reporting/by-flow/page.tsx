@@ -23,17 +23,17 @@ import { financeNotices } from '@/lib/notices/finance-notices'
 
 // Icônes par type de flux (FlowType inclut PaymentMethod + TransactionCategory)
 const FLOW_ICONS: Record<string, React.ReactNode> = {
-  CASH: <Banknote className="h-5 w-5" />,
-  CARD: <CreditCard className="h-5 w-5" />,
-  CHECK: <FileText className="h-5 w-5" />,
-  TRANSFER: <ArrowLeftRight className="h-5 w-5" />,
-  DIRECT_DEBIT: <Landmark className="h-5 w-5" />,
-  BILL_OF_EXCHANGE: <Receipt className="h-5 w-5" />,
-  PROMISSORY_NOTE: <Briefcase className="h-5 w-5" />,
-  BANK_CHARGE: <AlertCircle className="h-5 w-5" />,
-  MOBILE: <CreditCard className="h-5 w-5" />,
-  WIRE_TRANSFER: <ArrowLeftRight className="h-5 w-5" />,
-  OTHER: <MoreHorizontal className="h-5 w-5" />,
+  CASH: <Banknote className="![animation:none] h-5 w-5" />,
+  CARD: <CreditCard className="![animation:none] h-5 w-5" />,
+  CHECK: <FileText className="![animation:none] h-5 w-5" />,
+  TRANSFER: <ArrowLeftRight className="![animation:none] h-5 w-5" />,
+  DIRECT_DEBIT: <Landmark className="![animation:none] h-5 w-5" />,
+  BILL_OF_EXCHANGE: <Receipt className="![animation:none] h-5 w-5" />,
+  PROMISSORY_NOTE: <Briefcase className="![animation:none] h-5 w-5" />,
+  BANK_CHARGE: <AlertCircle className="![animation:none] h-5 w-5" />,
+  MOBILE: <CreditCard className="![animation:none] h-5 w-5" />,
+  WIRE_TRANSFER: <ArrowLeftRight className="![animation:none] h-5 w-5" />,
+  OTHER: <MoreHorizontal className="![animation:none] h-5 w-5" />,
 };
 
 // Couleurs pour le graphique
@@ -61,16 +61,16 @@ function CustomTooltip({ active, payload, label, formatter }: CustomTooltipProps
   if (!active || !payload?.length) return null;
   
   return (
-    <div className="rounded-lg border border-gray-300 dark:border-gray-600 bg-slate-900/95 px-3 py-2 text-sm shadow-xl backdrop-blur-sm">
-      {label && <p className="mb-1 font-medium text-gray-900 dark:text-white">{label}</p>}
+    <div className="![animation:none] rounded-lg border border-gray-300 dark:border-gray-600 bg-slate-900/95 px-3 py-2 text-sm shadow-xl backdrop-blur-sm">
+      {label && <p className="![animation:none] mb-1 font-medium text-gray-900 dark:text-white">{label}</p>}
       {payload.map((item, idx) => (
-        <p key={idx} className="flex items-center gap-2 text-indigo-100">
+        <p key={idx} className="![animation:none] flex items-center gap-2 text-indigo-100">
           <span
-            className="h-2 w-2 rounded-full"
+            className="![animation:none] h-2 w-2 rounded-full"
             style={{ backgroundColor: item.color || "#6366f1" }}
           />
           <span>{item.name || item.dataKey}:</span>
-          <span className="font-semibold">
+          <span className="![animation:none] font-semibold">
             {formatter ? formatter(item.value) : item.value}
           </span>
         </p>
@@ -137,7 +137,7 @@ export default function ReportingByFlowPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -148,28 +148,28 @@ export default function ReportingByFlowPage() {
 
         {/* Header */}
         <div>
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
-              <TrendingUp className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
+              <TrendingUp className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analyse par flux de paiement</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Répartition par type de flux (CB, virement, chèque, etc.)</p>
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">Analyse par flux de paiement</h1>
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Répartition par type de flux (CB, virement, chèque, etc.)</p>
             </div>
           </div>
         </div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.byFlow} />
+        <PageNotice config={financeNotices.byFlow} className="![animation:none]" />
 
-        <div className="space-y-6">
+        <div className="![animation:none] space-y-6">
           {error && (
-            <GlassCard variant="subtle" className="flex items-center gap-2 border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-              <AlertCircle className="h-4 w-4" />
+            <GlassCard variant="subtle" className="![animation:none] flex items-center gap-2 border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+              <AlertCircle className="![animation:none] h-4 w-4" />
               <span>{error}</span>
               <button
                 onClick={refetch}
-                className="ml-auto rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-semibold text-gray-900 dark:text-white hover:bg-gray-200 dark:bg-gray-700 transition"
+                className="![animation:none] ml-auto rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-semibold text-gray-900 dark:text-white hover:bg-gray-200 dark:bg-gray-700 transition"
               >
                 Réessayer
               </button>
@@ -177,11 +177,11 @@ export default function ReportingByFlowPage() {
           )}
 
           {/* Filtres */}
-          <div className="relative flex items-center gap-3">
+          <div className="![animation:none] relative flex items-center gap-3">
         <select
           value={days}
           onChange={(e) => setDays(Number(e.target.value))}
-          className="rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white backdrop-blur-sm focus:border-indigo-400 focus:outline-none"
+          className="![animation:none] rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white backdrop-blur-sm focus:border-indigo-400 focus:outline-none"
         >
           <option value={7}>7 jours</option>
           <option value={30}>30 jours</option>
@@ -194,53 +194,53 @@ export default function ReportingByFlowPage() {
         <button
           onClick={refetch}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-100 dark:bg-gray-700 hover:shadow-lg disabled:opacity-50"
+          className="![animation:none] inline-flex items-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-100 dark:bg-gray-700 hover:shadow-lg disabled:opacity-50"
         >
-          {loading ? <Loader2 size={16} className="animate-spin" /> : <Filter size={16} />}
+          {loading ? <Loader2 size={16} className="![animation:none] animate-spin" /> : <Filter size={16} />}
           Actualiser
             </button>
           </div>
 
           {loading && (
-            <GlassCard className="grid gap-4 p-4">
-              <div className="h-6 w-40 animate-pulse rounded bg-gray-100 dark:bg-gray-700" />
-              <div className="h-32 w-full animate-pulse rounded bg-gray-100 dark:bg-gray-700" />
+            <GlassCard className="![animation:none] grid gap-4 p-4">
+              <div className="![animation:none] h-6 w-40 animate-pulse rounded bg-gray-100 dark:bg-gray-700" />
+              <div className="![animation:none] h-32 w-full animate-pulse rounded bg-gray-100 dark:bg-gray-700" />
             </GlassCard>
           )}
 
           {!loading && data && (
             <>
               {/* KPIs globaux */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="![animation:none] grid grid-cols-1 md:grid-cols-4 gap-4">
                 <GlassStatCard
                   label="Total crédits"
                   value={money0(data.totalCredit)}
-                  icon={<ArrowUpRight className="h-5 w-5 text-emerald-400" />}
+                  icon={<ArrowUpRight className="![animation:none] h-5 w-5 text-emerald-400" />}
                 />
                 <GlassStatCard
                   label="Total débits"
                   value={money0(data.totalDebit)}
-                  icon={<ArrowDownRight className="h-5 w-5 text-red-400" />}
+                  icon={<ArrowDownRight className="![animation:none] h-5 w-5 text-red-400" />}
                 />
                 <GlassStatCard
                   label="Solde net"
                   value={money0(data.net)}
-                  icon={data.net >= 0 ? <TrendingUp className="h-5 w-5 text-emerald-400" /> : <TrendingDown className="h-5 w-5 text-red-400" />}
+                  icon={data.net >= 0 ? <TrendingUp className="![animation:none] h-5 w-5 text-emerald-400" /> : <TrendingDown className="![animation:none] h-5 w-5 text-red-400" />}
                 />
                 <GlassStatCard
                   label="Transactions"
                   value={data.totalCount.toString()}
-                  icon={<CreditCard className="h-5 w-5 text-indigo-400" />}
+                  icon={<CreditCard className="![animation:none] h-5 w-5 text-indigo-400" />}
                 />
               </div>
 
               {/* Graphiques */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="![animation:none] grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Bar chart */}
-                <GlassCard className="p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Crédits vs Débits par flux</h2>
+                <GlassCard className="![animation:none] p-6">
+                  <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4">Crédits vs Débits par flux</h2>
                   {barChartData.length > 0 ? (
-                    <div className="h-80">
+                    <div className="![animation:none] h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={barChartData} layout="vertical">
                           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -253,17 +253,17 @@ export default function ReportingByFlowPage() {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <div className="h-80 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                    <div className="![animation:none] h-80 flex items-center justify-center text-gray-500 dark:text-gray-500">
                       Aucune donnée disponible
                     </div>
                   )}
                 </GlassCard>
 
                 {/* Pie chart */}
-                <GlassCard className="p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Répartition par volume</h2>
+                <GlassCard className="![animation:none] p-6">
+                  <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4">Répartition par volume</h2>
                   {pieChartData.length > 0 ? (
-                    <div className="h-80">
+                    <div className="![animation:none] h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -285,7 +285,7 @@ export default function ReportingByFlowPage() {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <div className="h-80 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                    <div className="![animation:none] h-80 flex items-center justify-center text-gray-500 dark:text-gray-500">
                       Aucune donnée disponible
                     </div>
                   )}
@@ -293,37 +293,37 @@ export default function ReportingByFlowPage() {
               </div>
 
               {/* Liste détaillée des flux */}
-              <GlassCard className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Détail par flux</h2>
-                <div className="space-y-3">
+              <GlassCard className="![animation:none] p-6">
+                <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4">Détail par flux</h2>
+                <div className="![animation:none] space-y-3">
                   {data.flows.length === 0 && data.noFlow.count === 0 ? (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-500">
+                    <div className="![animation:none] text-center py-8 text-gray-500 dark:text-gray-500">
                       Aucune transaction avec flux assigné
                     </div>
                   ) : (
                     <>
                       {data.flows.map((flow, idx) => (
-                        <GlassListItem key={flow.flowId} className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
+                        <GlassListItem key={flow.flowId} className="![animation:none] p-4">
+                          <div className="![animation:none] flex items-center justify-between">
+                            <div className="![animation:none] flex items-center gap-4">
                               <div 
-                                className="p-2 rounded-lg"
+                                className="![animation:none] p-2 rounded-lg"
                                 style={{ backgroundColor: `${FLOW_COLORS[idx % FLOW_COLORS.length]}20` }}
                               >
                                 <span style={{ color: FLOW_COLORS[idx % FLOW_COLORS.length] }}>
-                                  {FLOW_ICONS[flow.flowType as FlowType] || <MoreHorizontal className="h-5 w-5" />}
+                                  {FLOW_ICONS[flow.flowType as FlowType] || <MoreHorizontal className="![animation:none] h-5 w-5" />}
                                 </span>
                               </div>
                               <div>
-                                <p className="font-medium text-gray-900 dark:text-white">{flow.flowName}</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{flow.count} transaction{flow.count > 1 ? 's' : ''}</p>
+                                <p className="![animation:none] font-medium text-gray-900 dark:text-white">{flow.flowName}</p>
+                                <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">{flow.count} transaction{flow.count > 1 ? 's' : ''}</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-4">
+                            <div className="![animation:none] text-right">
+                              <div className="![animation:none] flex items-center gap-4">
                                 <div>
-                                  <p className="text-sm text-emerald-400">+{money0(flow.totalCredit)}</p>
-                                  <p className="text-sm text-red-400">-{money0(flow.totalDebit)}</p>
+                                  <p className="![animation:none] text-sm text-emerald-400">+{money0(flow.totalCredit)}</p>
+                                  <p className="![animation:none] text-sm text-red-400">-{money0(flow.totalDebit)}</p>
                                 </div>
                                 <div className={`text-lg font-semibold ${flow.net >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                                   {flow.net >= 0 ? '+' : ''}{money0(flow.net)}
@@ -334,12 +334,12 @@ export default function ReportingByFlowPage() {
                           
                           {/* Mini aperçu des transactions */}
                           {flow.transactions.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                              <p className="text-xs text-white/50 mb-2">Dernières transactions</p>
-                              <div className="space-y-1">
+                            <div className="![animation:none] mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="![animation:none] text-xs text-white/50 mb-2">Dernières transactions</p>
+                              <div className="![animation:none] space-y-1">
                                 {flow.transactions.slice(0, 3).map((tx) => (
-                                  <div key={tx.id} className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400 truncate max-w-[200px]">{tx.description || 'Sans description'}</span>
+                                  <div key={tx.id} className="![animation:none] flex items-center justify-between text-sm">
+                                    <span className="![animation:none] text-gray-600 dark:text-gray-400 truncate max-w-[200px]">{tx.description || 'Sans description'}</span>
                                     <span className={tx.type === 'credit' ? 'text-emerald-400' : 'text-red-400'}>
                                       {tx.type === 'credit' ? '+' : '-'}{money0(tx.amount)}
                                     </span>
@@ -353,22 +353,22 @@ export default function ReportingByFlowPage() {
                       
                       {/* Transactions sans flux */}
                       {data.noFlow.count > 0 && (
-                        <GlassListItem className="p-4 border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="p-2 rounded-lg bg-slate-500/20">
-                                <MoreHorizontal className="h-5 w-5 text-slate-400" />
+                        <GlassListItem className="![animation:none] p-4 border-gray-200 dark:border-gray-700">
+                          <div className="![animation:none] flex items-center justify-between">
+                            <div className="![animation:none] flex items-center gap-4">
+                              <div className="![animation:none] p-2 rounded-lg bg-slate-500/20">
+                                <MoreHorizontal className="![animation:none] h-5 w-5 text-slate-400" />
                               </div>
                               <div>
-                                <p className="font-medium text-gray-600 dark:text-gray-400">Non assigné</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-500">{data.noFlow.count} transaction{data.noFlow.count > 1 ? 's' : ''}</p>
+                                <p className="![animation:none] font-medium text-gray-600 dark:text-gray-400">Non assigné</p>
+                                <p className="![animation:none] text-sm text-gray-500 dark:text-gray-500">{data.noFlow.count} transaction{data.noFlow.count > 1 ? 's' : ''}</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-4">
+                            <div className="![animation:none] text-right">
+                              <div className="![animation:none] flex items-center gap-4">
                                 <div>
-                                  <p className="text-sm text-emerald-400/70">+{money0(data.noFlow.totalCredit)}</p>
-                                  <p className="text-sm text-red-400/70">-{money0(data.noFlow.totalDebit)}</p>
+                                  <p className="![animation:none] text-sm text-emerald-400/70">+{money0(data.noFlow.totalCredit)}</p>
+                                  <p className="![animation:none] text-sm text-red-400/70">-{money0(data.noFlow.totalDebit)}</p>
                                 </div>
                                 <div className={`text-lg font-semibold ${data.noFlow.net >= 0 ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
                                   {data.noFlow.net >= 0 ? '+' : ''}{money0(data.noFlow.net)}
@@ -384,11 +384,11 @@ export default function ReportingByFlowPage() {
               </GlassCard>
 
               {/* Info */}
-              <GlassPanel className="p-4 border-indigo-500/30 bg-indigo-500/10">
-                <div className="flex gap-3">
-                  <AlertCircle className="h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
-                    <p className="font-medium text-indigo-300 mb-1">Astuce</p>
+              <GlassPanel className="![animation:none] p-4 border-indigo-500/30 bg-indigo-500/10">
+                <div className="![animation:none] flex gap-3">
+                  <AlertCircle className="![animation:none] h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                  <div className="![animation:none] text-sm text-gray-700 dark:text-gray-300">
+                    <p className="![animation:none] font-medium text-indigo-300 mb-1">Astuce</p>
                     <p>
                       Pour assigner un flux à vos transactions, modifiez vos dépenses ou revenus 
                       et sélectionnez le flux de paiement approprié. Vous pouvez gérer vos flux 

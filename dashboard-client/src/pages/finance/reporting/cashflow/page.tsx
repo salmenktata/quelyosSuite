@@ -100,9 +100,9 @@ export default function CashflowReportPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
           <SkeletonTable rows={5} columns={4} />
         </div>
       </Layout>
@@ -111,7 +111,7 @@ export default function CashflowReportPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -122,14 +122,14 @@ export default function CashflowReportPage() {
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-emerald-100 dark:bg-emerald-900/20 p-3">
-              <DollarSign className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+        <div className="![animation:none] flex items-center justify-between">
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-lg bg-emerald-100 dark:bg-emerald-900/20 p-3">
+              <DollarSign className="![animation:none] h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Trésorerie</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">Trésorerie</h1>
+              <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
                 Analyse des flux, balance et prévisions sur 90 jours
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function CashflowReportPage() {
           <button
             onClick={refetch}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            className="![animation:none] inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Actualiser
@@ -146,22 +146,22 @@ export default function CashflowReportPage() {
         </div>
 
         {/* Notice */}
-        <PageNotice config={financeNotices.cashflow} />
+        <PageNotice config={financeNotices.cashflow} className="![animation:none]" />
 
         {/* Error State */}
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-              <div className="flex-1">
-                <p className="font-semibold text-red-900 dark:text-red-100">{error}</p>
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertTriangle className="![animation:none] h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="![animation:none] flex-1">
+                <p className="![animation:none] font-semibold text-red-900 dark:text-red-100">{error}</p>
               </div>
               <button
                 onClick={refetch}
-                className="px-3 py-1 text-sm bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
+                className="![animation:none] px-3 py-1 text-sm bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
               >
                 Réessayer
               </button>
@@ -170,10 +170,10 @@ export default function CashflowReportPage() {
         )}
 
         {/* Controls */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex items-center gap-4">
-            <Calendar className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <div className="flex gap-2">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] flex items-center gap-4">
+            <Calendar className="![animation:none] h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <div className="![animation:none] flex gap-2">
               {(['7', '30', '60', '90'] as TimeRange[]).map((range) => (
                 <button
                   key={range}
@@ -195,63 +195,63 @@ export default function CashflowReportPage() {
         {/* KPIs */}
         {!loading && !error && apiData && (
           <>
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+            <div className="![animation:none] grid gap-4 md:grid-cols-4">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Revenus</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Revenus</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(totalIncome)}
                     </p>
                   </div>
-                  <ArrowUpCircle className="h-8 w-8 text-emerald-500" />
+                  <ArrowUpCircle className="![animation:none] h-8 w-8 text-emerald-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Dépenses</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Dépenses</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(totalExpense)}
                     </p>
                   </div>
-                  <ArrowDownCircle className="h-8 w-8 text-rose-500" />
+                  <ArrowDownCircle className="![animation:none] h-8 w-8 text-rose-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Flux net</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Flux net</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(netFlow)}
                     </p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-cyan-500" />
+                  <TrendingUp className="![animation:none] h-8 w-8 text-cyan-500" />
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+              <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="![animation:none] flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Solde actuel</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="![animation:none] mb-1 text-sm text-gray-600 dark:text-gray-400">Solde actuel</p>
+                    <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                       {formatAmount(currentBalance)}
                     </p>
                   </div>
-                  <DollarSign className="h-8 w-8 text-indigo-500" />
+                  <DollarSign className="![animation:none] h-8 w-8 text-indigo-500" />
                 </div>
               </div>
             </div>
 
             {/* Waterfall Chart */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                 Évolution de la trésorerie (réel + prévisions 30j)
               </h2>
-              <div className="h-96">
-                <svg viewBox="0 0 1000 400" className="h-full w-full">
+              <div className="![animation:none] h-96">
+                <svg viewBox="0 0 1000 400" className="![animation:none] h-full w-full">
                   <defs>
                     <linearGradient id="balanceGrad" x1="0" x2="0" y1="0" y2="1">
                       <stop offset="0%" stopColor="rgb(99, 102, 241)" stopOpacity="0.3" />
@@ -270,7 +270,7 @@ export default function CashflowReportPage() {
                         x2="950"
                         y2={y}
                         stroke="currentColor"
-                        className="text-gray-300 dark:text-gray-600"
+                        className="![animation:none] text-gray-300 dark:text-gray-600"
                         strokeWidth="1"
                         strokeDasharray="4 4"
                       />
@@ -352,10 +352,10 @@ export default function CashflowReportPage() {
                   {/* Axis labels */}
                   {data.length > 0 && (
                     <>
-                      <text x="10" y="30" className="fill-gray-600 dark:fill-gray-400" fontSize="12">
+                      <text x="10" y="30" className="![animation:none] fill-gray-600 dark:fill-gray-400" fontSize="12">
                         {formatAmount(Math.max(...data.map((d) => d.balance), 0))}
                       </text>
-                      <text x="10" y="380" className="fill-gray-600 dark:fill-gray-400" fontSize="12">
+                      <text x="10" y="380" className="![animation:none] fill-gray-600 dark:fill-gray-400" fontSize="12">
                         {formatAmount(Math.min(...data.map((d) => d.balance), 0))}
                       </text>
                     </>
@@ -364,17 +364,17 @@ export default function CashflowReportPage() {
                   {/* Legend */}
                   <g transform="translate(750, 15)">
                     <rect x="0" y="0" width="15" height="15" fill="rgb(99, 102, 241)" />
-                    <text x="20" y="12" className="fill-gray-900 dark:fill-white" fontSize="12">
+                    <text x="20" y="12" className="![animation:none] fill-gray-900 dark:fill-white" fontSize="12">
                       Solde
                     </text>
 
                     <rect x="0" y="20" width="15" height="15" fill="rgb(16, 185, 129)" />
-                    <text x="20" y="32" className="fill-gray-900 dark:fill-white" fontSize="12">
+                    <text x="20" y="32" className="![animation:none] fill-gray-900 dark:fill-white" fontSize="12">
                       Revenus
                     </text>
 
                     <rect x="0" y="40" width="15" height="15" fill="rgb(244, 63, 94)" />
-                    <text x="20" y="52" className="fill-gray-900 dark:fill-white" fontSize="12">
+                    <text x="20" y="52" className="![animation:none] fill-gray-900 dark:fill-white" fontSize="12">
                       Dépenses
                     </text>
                   </g>
@@ -384,14 +384,14 @@ export default function CashflowReportPage() {
 
             {/* Forecast Alert */}
             {forecastedBalance < currentBalance * 0.7 && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="![animation:none] bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <div className="![animation:none] flex items-center gap-3">
+                  <AlertTriangle className="![animation:none] h-5 w-5 text-amber-600 dark:text-amber-400" />
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="![animation:none] font-semibold text-gray-900 dark:text-white">
                       Alerte prévision trésorerie
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
                       Votre solde prévisionnel à 30j ({formatAmount(forecastedBalance)}) est inférieur de{' '}
                       {((1 - forecastedBalance / currentBalance) * 100).toFixed(0)}% à votre solde actuel.
                       Anticipez vos flux entrants.
@@ -402,35 +402,35 @@ export default function CashflowReportPage() {
             )}
 
             {/* Daily breakdown */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                 Détail par jour (derniers 10 jours)
               </h2>
-              <div className="space-y-3">
+              <div className="![animation:none] space-y-3">
                 {realData
                   .slice(-10)
                   .reverse()
                   .map((d, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4"
+                      className="![animation:none] flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-700/50 p-4"
                     >
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">{d.dateLabel}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className="![animation:none] font-medium text-gray-900 dark:text-white">{d.dateLabel}</p>
+                        <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">
                           Solde: {formatAmount(d.balance)}
                         </p>
                       </div>
-                      <div className="flex gap-6 text-sm">
-                        <div className="text-right">
-                          <p className="text-emerald-600 dark:text-emerald-400">+{formatAmount(d.income)}</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">Revenus</p>
+                      <div className="![animation:none] flex gap-6 text-sm">
+                        <div className="![animation:none] text-right">
+                          <p className="![animation:none] text-emerald-600 dark:text-emerald-400">+{formatAmount(d.income)}</p>
+                          <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">Revenus</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-rose-600 dark:text-rose-400">-{formatAmount(d.expense)}</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">Dépenses</p>
+                        <div className="![animation:none] text-right">
+                          <p className="![animation:none] text-rose-600 dark:text-rose-400">-{formatAmount(d.expense)}</p>
+                          <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">Dépenses</p>
                         </div>
-                        <div className="text-right">
+                        <div className="![animation:none] text-right">
                           <p
                             className={`font-semibold ${
                               d.net >= 0
@@ -441,7 +441,7 @@ export default function CashflowReportPage() {
                             {d.net >= 0 ? '+' : ''}
                             {formatAmount(d.net)}
                           </p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">Net</p>
+                          <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400">Net</p>
                         </div>
                       </div>
                     </div>

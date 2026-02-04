@@ -61,7 +61,7 @@ export default function ForecastReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -75,15 +75,15 @@ export default function ForecastReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
-              <TrendingUp className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
+              <TrendingUp className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 Prévisions de trésorerie
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Projection basée sur les tendances historiques et transactions planifiées
               </p>
             </div>
@@ -91,19 +91,19 @@ export default function ForecastReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.forecast} />
+        <PageNotice config={financeNotices.forecast} className="![animation:none]" />
 
         {/* Controls */}
         <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-400">Horizon de projection :</span>
-              <div className="flex gap-2">
+          <GlassPanel className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center gap-4">
+              <span className="![animation:none] text-sm text-slate-400">Horizon de projection :</span>
+              <div className="![animation:none] flex gap-2">
                 {(["30", "60", "90", "180"] as TimeHorizon[]).map((h) => (
                   <button
                     key={h}
@@ -128,11 +128,11 @@ export default function ForecastReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <GlassCard className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Calcul des prévisions...</span>
               </div>
             </GlassCard>
@@ -144,17 +144,17 @@ export default function ForecastReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-400" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertTriangle className="![animation:none] h-5 w-5 text-red-400" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -172,15 +172,15 @@ export default function ForecastReportPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
             {apiData.alerts?.negativeBalance && (
-              <GlassCard className="border-red-400/40 bg-red-500/10 p-4 mb-3">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-red-400" />
+              <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4 mb-3">
+                <div className="![animation:none] flex items-center gap-3">
+                  <AlertCircle className="![animation:none] h-5 w-5 text-red-400" />
                   <div>
-                    <p className="font-semibold text-red-100">Alerte : Solde négatif prévu</p>
-                    <p className="text-sm text-red-200/80">
+                    <p className="![animation:none] font-semibold text-red-100">Alerte : Solde négatif prévu</p>
+                    <p className="![animation:none] text-sm text-red-200/80">
                       Votre solde descendra en dessous de zéro dans les {horizon} prochains jours.
                       {apiData.minBalance !== undefined && ` Minimum projeté : ${formatAmount(apiData.minBalance)}`}
                     </p>
@@ -190,12 +190,12 @@ export default function ForecastReportPage() {
             )}
 
             {apiData.alerts?.lowCash && apiData.alerts?.runwayDays !== null && (
-              <GlassCard className="border-amber-400/40 bg-amber-500/10 p-4">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="h-5 w-5 text-amber-400" />
+              <GlassCard className="![animation:none] border-amber-400/40 bg-amber-500/10 p-4">
+                <div className="![animation:none] flex items-center gap-3">
+                  <AlertTriangle className="![animation:none] h-5 w-5 text-amber-400" />
                   <div>
-                    <p className="font-semibold text-amber-100">Trésorerie faible</p>
-                    <p className="text-sm text-amber-200/80">
+                    <p className="![animation:none] font-semibold text-amber-100">Trésorerie faible</p>
+                    <p className="![animation:none] text-sm text-amber-200/80">
                       À ce rythme, votre trésorerie sera épuisée dans environ {apiData.alerts?.runwayDays} jours.
                     </p>
                   </div>
@@ -210,58 +210,58 @@ export default function ForecastReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-6 grid gap-4 md:grid-cols-4"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-4"
         >
-          <GlassCard className="p-4" gradient="purple">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="purple">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-purple-200">Solde actuel</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-purple-200">Solde actuel</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.currentBalance ?? 0)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-purple-300" />
+              <DollarSign className="![animation:none] h-8 w-8 text-purple-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="indigo">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="indigo">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">Solde projeté</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">Solde projeté</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.projectedBalance)}
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-indigo-300" />
+              <TrendingUp className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient={apiData.futureImpact >= 0 ? "emerald" : "rose"}>
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient={apiData.futureImpact >= 0 ? "emerald" : "rose"}>
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">Impact futur</p>
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">Impact futur</p>
                 <p className={`text-2xl font-bold ${apiData.futureImpact >= 0 ? 'text-white' : 'text-red-100'}`}>
                   {apiData.futureImpact >= 0 ? '+' : ''}{formatAmount(apiData.futureImpact)}
                 </p>
               </div>
               {apiData.futureImpact >= 0 ? (
-                <TrendingUp className="h-8 w-8 text-emerald-300" />
+                <TrendingUp className="![animation:none] h-8 w-8 text-emerald-300" />
               ) : (
-                <TrendingDown className="h-8 w-8 text-rose-300" />
+                <TrendingDown className="![animation:none] h-8 w-8 text-rose-300" />
               )}
             </div>
           </GlassCard>
 
           {apiData.runwayDays !== null && apiData.runwayDays !== undefined && (
-            <GlassCard className="p-4" gradient="amber">
-              <div className="flex items-center justify-between">
+            <GlassCard className="![animation:none] p-4" gradient="amber">
+              <div className="![animation:none] flex items-center justify-between">
                 <div>
-                  <p className="mb-1 text-sm text-amber-200">Runway</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="![animation:none] mb-1 text-sm text-amber-200">Runway</p>
+                  <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                     {apiData.runwayDays} jours
                   </p>
                 </div>
-                <Clock className="h-8 w-8 text-amber-300" />
+                <Clock className="![animation:none] h-8 w-8 text-amber-300" />
               </div>
             </GlassCard>
           )}
@@ -273,23 +273,23 @@ export default function ForecastReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <Calendar className="![animation:none] h-5 w-5" />
               Tendances historiques ({apiData.trends?.historicalDays} derniers jours)
             </h2>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-lg bg-emerald-500/10 p-4">
-                <p className="text-sm text-emerald-200 mb-1">Revenus moyens / jour</p>
-                <p className="text-xl font-bold text-emerald-400">
+            <div className="![animation:none] grid gap-4 md:grid-cols-3">
+              <div className="![animation:none] rounded-lg bg-emerald-500/10 p-4">
+                <p className="![animation:none] text-sm text-emerald-200 mb-1">Revenus moyens / jour</p>
+                <p className="![animation:none] text-xl font-bold text-emerald-400">
                   {formatAmount(apiData.trends?.avgDailyIncome)}
                 </p>
               </div>
-              <div className="rounded-lg bg-rose-500/10 p-4">
-                <p className="text-sm text-rose-200 mb-1">Dépenses moyennes / jour</p>
-                <p className="text-xl font-bold text-rose-400">
+              <div className="![animation:none] rounded-lg bg-rose-500/10 p-4">
+                <p className="![animation:none] text-sm text-rose-200 mb-1">Dépenses moyennes / jour</p>
+                <p className="![animation:none] text-xl font-bold text-rose-400">
                   {formatAmount(apiData.trends?.avgDailyExpense)}
                 </p>
               </div>
@@ -311,13 +311,13 @@ export default function ForecastReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Projection de trésorerie
             </h2>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="![animation:none] space-y-2 max-h-96 overflow-y-auto">
               {(apiData.forecast ?? []).slice(0, 30).map((day, idx) => (
                 <div
                   key={day.date}
@@ -327,20 +327,20 @@ export default function ForecastReportPage() {
                     'bg-gray-100 dark:bg-gray-800'
                   }`}
                 >
-                  <div className="flex-1">
-                    <p className="text-sm text-slate-400">
+                  <div className="![animation:none] flex-1">
+                    <p className="![animation:none] text-sm text-slate-400">
                       Jour {idx + 1} • {new Date(day.date).toLocaleDateString("fr-FR", { weekday: 'short', month: 'short', day: 'numeric' })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-xs text-slate-400">Solde projeté</p>
+                  <div className="![animation:none] flex items-center gap-4">
+                    <div className="![animation:none] text-right">
+                      <p className="![animation:none] text-xs text-slate-400">Solde projeté</p>
                       <p className={`text-sm font-bold ${day.projectedBalance < 0 ? 'text-red-400' : 'text-white'}`}>
                         {formatAmount(day.projectedBalance)}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-slate-400">Variation</p>
+                    <div className="![animation:none] text-right">
+                      <p className="![animation:none] text-xs text-slate-400">Variation</p>
                       <p className={`text-sm font-medium ${day.netChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {day.netChange >= 0 ? '+' : ''}{formatAmount(day.netChange)}
                       </p>

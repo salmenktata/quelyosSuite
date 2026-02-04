@@ -69,7 +69,7 @@ export default function KPIForecastsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -80,30 +80,30 @@ export default function KPIForecastsPage() {
         />
 
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-purple-100 dark:bg-purple-900/20 p-3">
-            <Zap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+        <div className="![animation:none] flex items-center gap-3">
+          <div className="![animation:none] rounded-lg bg-purple-100 dark:bg-purple-900/20 p-3">
+            <Zap className="![animation:none] h-6 w-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Prédictions ML des KPIs</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">Prédictions ML des KPIs</h1>
+            <p className="![animation:none] text-sm text-gray-600 dark:text-gray-400">
               Prévisions intelligentes utilisant Prophet (Machine Learning)
             </p>
           </div>
         </div>
 
         {/* Notice */}
-        <PageNotice config={financeNotices.forecasts} />
+        <PageNotice config={financeNotices.forecasts} className="![animation:none]" />
 
         {/* Error Message */}
         {hasError && (
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+          <div role="alert" className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Une erreur est survenue lors du chargement des prédictions.
               </p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={handleRefetchAll}>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="![animation:none] w-4 h-4" />} onClick={handleRefetchAll}>
                 Réessayer
               </Button>
             </div>
@@ -111,12 +111,12 @@ export default function KPIForecastsPage() {
         )}
 
         {/* Info Box */}
-        <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">À propos des prédictions</p>
-              <p className="text-gray-700 dark:text-gray-300">
+        <div className="![animation:none] bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="![animation:none] flex items-start gap-3">
+            <Info className="![animation:none] h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="![animation:none] text-sm">
+              <p className="![animation:none] font-semibold text-blue-900 dark:text-blue-100 mb-1">À propos des prédictions</p>
+              <p className="![animation:none] text-gray-700 dark:text-gray-300">
                 Ces prédictions utilisent <strong>Prophet</strong>, un algorithme de Machine Learning
                 développé par Facebook.
               </p>
@@ -125,10 +125,10 @@ export default function KPIForecastsPage() {
         </div>
 
         {/* Horizon Controls */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Horizon de prédiction:</span>
-            <div className="flex gap-2">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] flex items-center justify-between gap-4">
+            <span className="![animation:none] text-sm text-gray-600 dark:text-gray-400">Horizon de prédiction:</span>
+            <div className="![animation:none] flex gap-2">
               {([30, 60, 90, 180] as HorizonDays[]).map((days) => (
                 <button
                   key={days}

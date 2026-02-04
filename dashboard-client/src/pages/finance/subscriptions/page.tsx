@@ -123,22 +123,22 @@ export default function SubscriptionsPage() {
   const getStatusBadge = (status: string, stageName: string) => {
     if (status === 'progress') {
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium border bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
-          <CheckCircle className="h-3 w-3" />
+        <span className="![animation:none] inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium border bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+          <CheckCircle className="![animation:none] h-3 w-3" />
           Actif
         </span>
       )
     }
     if (status === 'closed') {
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
-          <X className="h-3 w-3" />
+        <span className="![animation:none] inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
+          <X className="![animation:none] h-3 w-3" />
           Fermé
         </span>
       )
     }
     return (
-      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium border bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800">
+      <span className="![animation:none] inline-flex items-center rounded-full px-2 py-1 text-xs font-medium border bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800">
         {stageName}
       </span>
     )
@@ -158,9 +158,9 @@ export default function SubscriptionsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-4 md:p-8 space-y-6">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
+        <div className="![animation:none] p-4 md:p-8 space-y-6">
+          <div className="![animation:none] h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="![animation:none] h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse" />
           <SkeletonTable rows={8} columns={6} />
         </div>
       </Layout>
@@ -169,7 +169,7 @@ export default function SubscriptionsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -177,15 +177,15 @@ export default function SubscriptionsPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.subscriptions} />
+        <PageNotice config={financeNotices.subscriptions} className="![animation:none]" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="![animation:none] flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
               Abonnements Récurrents
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400 mt-1">
               Gestion des abonnements clients avec facturation automatique
             </p>
           </div>
@@ -199,7 +199,7 @@ export default function SubscriptionsPage() {
         </div>
 
         {/* Filtres */}
-        <div className="flex gap-2">
+        <div className="![animation:none] flex gap-2">
           {['all', 'active', 'closed'].map((status) => (
             <button
               key={status}
@@ -221,16 +221,16 @@ export default function SubscriptionsPage() {
         {error && (
           <div
             role="alert"
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="flex-1 text-red-800 dark:text-red-200">{error}</p>
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">{error}</p>
               <button
                 onClick={() => fetchSubscriptions()}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
+                className="![animation:none] inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="![animation:none] w-4 h-4" />
                 Réessayer
               </button>
             </div>
@@ -239,38 +239,38 @@ export default function SubscriptionsPage() {
 
         {/* Table */}
         {!error && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            <div className="![animation:none] overflow-x-auto">
+              <table className="![animation:none] min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="![animation:none] bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Abonnement
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Client
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Récurrence
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Montant
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Prochain Renouvellement
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Statut
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                    <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                   {subscriptions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                      <td colSpan={7} className="![animation:none] px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                         Aucun abonnement trouvé
                       </td>
                     </tr>
@@ -278,61 +278,61 @@ export default function SubscriptionsPage() {
                     subscriptions.map((sub) => (
                       <tr
                         key={sub.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
+                        className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer"
                         onClick={() => window.location.href = `/finance/subscriptions/${sub.id}`}
                       >
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">
                               {sub.name}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{sub.code}</p>
+                            <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">{sub.code}</p>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           <div>
-                            <p className="text-sm text-gray-900 dark:text-white">{sub.customer.name}</p>
+                            <p className="![animation:none] text-sm text-gray-900 dark:text-white">{sub.customer.name}</p>
                             {sub.customer.email && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{sub.customer.email}</p>
+                              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">{sub.customer.email}</p>
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="![animation:none] px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                           {getRecurrenceLabel(sub.recurringRule, sub.recurringInterval)}
                         </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
+                        <td className="![animation:none] px-4 py-3 text-sm font-medium text-gray-900 dark:text-white text-right">
                           {formatCurrency(sub.recurringAmount, '€')}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           {sub.nextRenewal ? (
-                            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                              <Calendar className="h-4 w-4 text-gray-400" />
+                            <div className="![animation:none] flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                              <Calendar className="![animation:none] h-4 w-4 text-gray-400" />
                               {formatDate(sub.nextRenewal)}
                             </div>
                           ) : (
-                            <span className="text-sm text-gray-400">-</span>
+                            <span className="![animation:none] text-sm text-gray-400">-</span>
                           )}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="![animation:none] px-4 py-3">
                           {getStatusBadge(sub.status, sub.stageName)}
                         </td>
-                        <td className="px-4 py-3 text-right">
-                          <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                        <td className="![animation:none] px-4 py-3 text-right">
+                          <div className="![animation:none] flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                             {sub.status === 'progress' && (
                               <>
                                 <button
                                   onClick={() => handleRenewNow(sub.id, sub.name)}
-                                  className="p-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded"
+                                  className="![animation:none] p-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded"
                                   title="Renouveler maintenant"
                                 >
-                                  <RefreshCw className="h-4 w-4" />
+                                  <RefreshCw className="![animation:none] h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => handleCancel(sub.id, sub.name)}
-                                  className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                                  className="![animation:none] p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                                   title="Annuler"
                                 >
-                                  <X className="h-4 w-4" />
+                                  <X className="![animation:none] h-4 w-4" />
                                 </button>
                               </>
                             )}
@@ -348,14 +348,14 @@ export default function SubscriptionsPage() {
         )}
 
         {/* Info */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <div className="flex items-start gap-3">
-            <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+        <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="![animation:none] flex items-start gap-3">
+            <DollarSign className="![animation:none] h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">
+              <h3 className="![animation:none] text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">
                 Facturation Automatique
               </h3>
-              <p className="text-xs text-blue-800 dark:text-blue-400">
+              <p className="![animation:none] text-xs text-blue-800 dark:text-blue-400">
                 Les abonnements actifs génèrent automatiquement des factures à chaque échéance (cron quotidien).
                 Vous pouvez aussi renouveler manuellement avec le bouton "Renouveler maintenant".
               </p>

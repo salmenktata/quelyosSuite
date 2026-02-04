@@ -119,9 +119,9 @@ export default function RevenueForecastPage() {
   }
 
   const getTrendIcon = (trend: string) => {
-    if (trend === 'up') return <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-    if (trend === 'down') return <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-    return <Minus className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+    if (trend === 'up') return <TrendingUp className="![animation:none] h-4 w-4 text-green-600 dark:text-green-400" />
+    if (trend === 'down') return <TrendingDown className="![animation:none] h-4 w-4 text-red-600 dark:text-red-400" />
+    return <Minus className="![animation:none] h-4 w-4 text-gray-600 dark:text-gray-400" />
   }
 
   const getReliabilityColor = (score: number) => {
@@ -142,9 +142,9 @@ export default function RevenueForecastPage() {
         />
         <div
           role="alert"
-          className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
+          className="![animation:none] p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
         >
-          <p className="text-red-800 dark:text-red-200">{error}</p>
+          <p className="![animation:none] text-red-800 dark:text-red-200">{error}</p>
         </div>
       </Layout>
     )
@@ -167,7 +167,7 @@ export default function RevenueForecastPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -176,15 +176,15 @@ export default function RevenueForecastPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.forecastAnalytics} />
+        <PageNotice config={financeNotices.forecastAnalytics} className="![animation:none]" />
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="![animation:none] flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
               Prévisionnel CA par Client
             </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="![animation:none] mt-1 text-sm text-gray-500 dark:text-gray-400">
               Prédictions basées sur l&apos;historique des {periodMonths} derniers mois
             </p>
           </div>
@@ -194,15 +194,15 @@ export default function RevenueForecastPage() {
         </div>
 
         {/* Filtres */}
-        <div className="flex gap-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div className="![animation:none] flex gap-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Période historique
             </label>
             <select
               value={periodMonths}
               onChange={(e) => setPeriodMonths(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value={3}>3 mois</option>
               <option value={6}>6 mois</option>
@@ -211,13 +211,13 @@ export default function RevenueForecastPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="![animation:none] block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Nombre de clients
             </label>
             <select
               value={topN}
               onChange={(e) => setTopN(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="![animation:none] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value={10}>Top 10</option>
               <option value={20}>Top 20</option>
@@ -228,10 +228,10 @@ export default function RevenueForecastPage() {
         </div>
 
         {/* Info */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+        <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
+          <AlertCircle className="![animation:none] h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
           <div>
-            <p className="text-sm text-blue-900 dark:text-blue-300">
+            <p className="![animation:none] text-sm text-blue-900 dark:text-blue-300">
               <strong>Algorithme :</strong> Moyenne mobile simple sur la période sélectionnée.
               La tendance compare la première moitié avec la seconde moitié de la période.
               Le score de fiabilité est basé sur le taux de paiement des factures.
@@ -240,41 +240,41 @@ export default function RevenueForecastPage() {
         </div>
 
         {/* Tableau */}
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+          <div className="![animation:none] overflow-x-auto">
+            <table className="![animation:none] w-full">
+              <thead className="![animation:none] bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Client
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     CA Historique
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Moy. Mensuelle
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Prévu Mois
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Prévu Trimestre
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Prévu Année
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Tendance
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="![animation:none] px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Fiabilité
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
                 {forecasts.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={8} className="![animation:none] px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                       Aucune donnée disponible pour générer des prévisions
                     </td>
                   </tr>
@@ -282,42 +282,42 @@ export default function RevenueForecastPage() {
                   forecasts.map((forecast) => (
                     <tr
                       key={forecast.customerId}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
-                      <td className="px-4 py-4">
+                      <td className="![animation:none] px-4 py-4">
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white">
+                          <p className="![animation:none] font-medium text-gray-900 dark:text-white">
                             {forecast.customerName}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">
                             {forecast.invoiceCount} facture{forecast.invoiceCount > 1 ? 's' : ''}
                           </p>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-right font-semibold text-gray-900 dark:text-white">
+                      <td className="![animation:none] px-4 py-4 text-right font-semibold text-gray-900 dark:text-white">
                         {formatCurrency(forecast.historicalRevenue)}
                       </td>
-                      <td className="px-4 py-4 text-right text-gray-700 dark:text-gray-300">
+                      <td className="![animation:none] px-4 py-4 text-right text-gray-700 dark:text-gray-300">
                         {formatCurrency(forecast.avgMonthly)}
                       </td>
-                      <td className="px-4 py-4 text-right text-gray-700 dark:text-gray-300">
+                      <td className="![animation:none] px-4 py-4 text-right text-gray-700 dark:text-gray-300">
                         {formatCurrency(forecast.forecastNextMonth)}
                       </td>
-                      <td className="px-4 py-4 text-right text-gray-700 dark:text-gray-300">
+                      <td className="![animation:none] px-4 py-4 text-right text-gray-700 dark:text-gray-300">
                         {formatCurrency(forecast.forecastQuarter)}
                       </td>
-                      <td className="px-4 py-4 text-right text-gray-700 dark:text-gray-300">
+                      <td className="![animation:none] px-4 py-4 text-right text-gray-700 dark:text-gray-300">
                         {formatCurrency(forecast.forecastYear)}
                       </td>
-                      <td className="px-4 py-4 text-center">
-                        <div className="flex items-center justify-center gap-1">
+                      <td className="![animation:none] px-4 py-4 text-center">
+                        <div className="![animation:none] flex items-center justify-center gap-1">
                           {getTrendIcon(forecast.trend)}
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="![animation:none] text-sm text-gray-700 dark:text-gray-300">
                             {forecast.trendLabel}
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-center">
+                      <td className="![animation:none] px-4 py-4 text-center">
                         <span
                           className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getReliabilityColor(
                             forecast.reliabilityScore

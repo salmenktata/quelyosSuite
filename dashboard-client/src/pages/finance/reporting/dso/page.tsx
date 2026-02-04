@@ -74,7 +74,7 @@ export default function DSOReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -88,15 +88,15 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
-              <Clock className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/30 dark:shadow-cyan-500/20">
+              <Clock className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 DSO - Délai d&apos;Encaissement Client
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Days Sales Outstanding - Analyse des délais de paiement clients
               </p>
             </div>
@@ -104,7 +104,7 @@ export default function DSOReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.dso} />
+        <PageNotice config={financeNotices.dso} className="![animation:none]" />
 
         {/* Reliability Badge */}
         {apiData?.reliability && (
@@ -112,7 +112,7 @@ export default function DSOReportPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
             <ReliabilityBadge
               reliability={apiData.reliability}
@@ -127,11 +127,11 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex gap-2">
+          <GlassPanel className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center justify-between gap-4">
+              <div className="![animation:none] flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
                   <button
                     key={range}
@@ -189,11 +189,11 @@ export default function DSOReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <GlassCard className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
@@ -205,17 +205,17 @@ export default function DSOReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-red-400" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertCircle className="![animation:none] h-5 w-5 text-red-400" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -231,71 +231,71 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 grid gap-4 md:grid-cols-4"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-4"
         >
-          <GlassCard className="p-4" gradient="cyan">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="cyan">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-cyan-200">DSO Moyen</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-cyan-200">DSO Moyen</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.dso} jours
                 </p>
-                <p className="text-xs text-cyan-300 mt-1">
+                <p className="![animation:none] text-xs text-cyan-300 mt-1">
                   {apiData.trend === "improving" ? "↑ En amélioration" : apiData.trend === "worsening" ? "↓ En dégradation" : "→ Stable"}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-cyan-300" />
+              <Clock className="![animation:none] h-8 w-8 text-cyan-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="emerald">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="emerald">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">
                   Créances en cours
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(apiData.totalReceivables)}
                 </p>
-                <p className="text-xs text-emerald-300 mt-1">
+                <p className="![animation:none] text-xs text-emerald-300 mt-1">
                   À encaisser
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-emerald-300" />
+              <DollarSign className="![animation:none] h-8 w-8 text-emerald-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="amber">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="amber">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-amber-200">
+                <p className="![animation:none] mb-1 text-sm text-amber-200">
                   Factures en retard
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.invoices.overdue}
                 </p>
-                <p className="text-xs text-amber-300 mt-1">
+                <p className="![animation:none] text-xs text-amber-300 mt-1">
                   Nécessite action
                 </p>
               </div>
-              <AlertCircle className="h-8 w-8 text-amber-300" />
+              <AlertCircle className="![animation:none] h-8 w-8 text-amber-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="indigo">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="indigo">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">
                   Délai moy. paiement
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {apiData.avgPaymentDelay} jours
                 </p>
-                <p className="text-xs text-indigo-300 mt-1">
+                <p className="![animation:none] text-xs text-indigo-300 mt-1">
                   Réel constaté
                 </p>
               </div>
-              <FileText className="h-8 w-8 text-indigo-300" />
+              <FileText className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
         </m.div>
@@ -305,20 +305,20 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <GlassPanel className={`p-6 ${apiData.dso <= 45 ? "bg-emerald-500/5" : apiData.dso <= 60 ? "bg-amber-500/5" : "bg-rose-500/5"}`}>
-            <div className="flex items-start gap-3">
+            <div className="![animation:none] flex items-start gap-3">
               {apiData.dso <= 45 ? (
-                <TrendingUp className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                <TrendingUp className="![animation:none] h-6 w-6 text-emerald-400 flex-shrink-0" />
               ) : (
-                <TrendingDown className="h-6 w-6 text-rose-400 flex-shrink-0" />
+                <TrendingDown className="![animation:none] h-6 w-6 text-rose-400 flex-shrink-0" />
               )}
               <div>
-                <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
+                <h3 className="![animation:none] mb-1 font-semibold text-gray-900 dark:text-white">
                   {apiData.dso <= 45 ? "✅ DSO Sain" : apiData.dso <= 60 ? "⚠️ DSO Modéré" : "❌ DSO Élevé"}
                 </h3>
-                <p className="text-sm text-slate-300">
+                <p className="![animation:none] text-sm text-slate-300">
                   {apiData.dso <= 45
                     ? "Vos délais d'encaissement sont dans la norme TPE/PME (< 45 jours). Continuez à surveiller et relancer les retards rapidement."
                     : apiData.dso <= 60
@@ -336,7 +336,7 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
           <TrendChart
             title="Évolution du DSO"
@@ -364,38 +364,38 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Users className="h-5 w-5 text-indigo-400" />
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <div className="![animation:none] mb-4 flex items-center gap-2">
+              <Users className="![animation:none] h-5 w-5 text-indigo-400" />
+              <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
                 Top 10 Clients - Créances en cours
               </h2>
             </div>
 
             {!apiData.byCustomer || apiData.byCustomer.length === 0 ? (
-              <div className="py-8 text-center">
-                <p className="text-slate-400">Aucune créance client en cours</p>
+              <div className="![animation:none] py-8 text-center">
+                <p className="![animation:none] text-slate-400">Aucune créance client en cours</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="![animation:none] overflow-x-auto">
+                <table className="![animation:none] w-full">
                   <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="pb-3 text-left text-sm font-medium text-slate-400">Client</th>
-                      <th className="pb-3 text-right text-sm font-medium text-slate-400">Créances</th>
-                      <th className="pb-3 text-right text-sm font-medium text-slate-400">Factures</th>
+                    <tr className="![animation:none] border-b border-gray-200 dark:border-gray-700">
+                      <th className="![animation:none] pb-3 text-left text-sm font-medium text-slate-400">Client</th>
+                      <th className="![animation:none] pb-3 text-right text-sm font-medium text-slate-400">Créances</th>
+                      <th className="![animation:none] pb-3 text-right text-sm font-medium text-slate-400">Factures</th>
                     </tr>
                   </thead>
                   <tbody>
                     {apiData.byCustomer?.map((customer, _idx) => (
-                      <tr key={customer.customerId} className="border-b border-gray-200 dark:border-gray-700">
-                        <td className="py-3 text-gray-900 dark:text-white">{customer.customerName}</td>
-                        <td className="py-3 text-right font-semibold text-gray-900 dark:text-white">
+                      <tr key={customer.customerId} className="![animation:none] border-b border-gray-200 dark:border-gray-700">
+                        <td className="![animation:none] py-3 text-gray-900 dark:text-white">{customer.customerName}</td>
+                        <td className="![animation:none] py-3 text-right font-semibold text-gray-900 dark:text-white">
                           {formatAmount(customer.receivables)}
                         </td>
-                        <td className="py-3 text-right text-slate-400">
+                        <td className="![animation:none] py-3 text-right text-slate-400">
                           {customer.invoiceCount}
                         </td>
                       </tr>
@@ -414,28 +414,28 @@ export default function DSOReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Répartition des factures
             </h2>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-lg bg-emerald-500/10 p-4">
-                <p className="mb-1 text-sm text-emerald-200">Payées</p>
-                <p className="text-3xl font-bold text-emerald-400">
+            <div className="![animation:none] grid gap-4 md:grid-cols-3">
+              <div className="![animation:none] rounded-lg bg-emerald-500/10 p-4">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">Payées</p>
+                <p className="![animation:none] text-3xl font-bold text-emerald-400">
                   {apiData.invoices.paid}
                 </p>
               </div>
-              <div className="rounded-lg bg-amber-500/10 p-4">
-                <p className="mb-1 text-sm text-amber-200">En attente</p>
-                <p className="text-3xl font-bold text-amber-400">
+              <div className="![animation:none] rounded-lg bg-amber-500/10 p-4">
+                <p className="![animation:none] mb-1 text-sm text-amber-200">En attente</p>
+                <p className="![animation:none] text-3xl font-bold text-amber-400">
                   {apiData.invoices.pending}
                 </p>
               </div>
-              <div className="rounded-lg bg-rose-500/10 p-4">
-                <p className="mb-1 text-sm text-rose-200">En retard</p>
-                <p className="text-3xl font-bold text-rose-400">
+              <div className="![animation:none] rounded-lg bg-rose-500/10 p-4">
+                <p className="![animation:none] mb-1 text-sm text-rose-200">En retard</p>
+                <p className="![animation:none] text-3xl font-bold text-rose-400">
                   {apiData.invoices.overdue}
                 </p>
               </div>
@@ -450,28 +450,28 @@ export default function DSOReportPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <GlassPanel className="p-6" gradient="violet">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+          <GlassPanel className="![animation:none] p-6" gradient="violet">
+            <h2 className="![animation:none] mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               💡 Recommandations
             </h2>
-            <div className="space-y-3">
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+            <div className="![animation:none] space-y-3">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>1. Relances automatiques</strong> - Mettez en place des relances automatiques à J+15, J+30 et J+45.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>2. Pénalités de retard</strong> - Appliquez systématiquement les pénalités de retard prévues par la loi.
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>3. Conditions de paiement</strong> - Négociez des conditions plus courtes (Net 30 au lieu de Net 45).
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
-                <p className="text-sm text-gray-900 dark:text-white">
+              <div className="![animation:none] rounded-lg bg-gray-100 dark:bg-gray-800 p-3">
+                <p className="![animation:none] text-sm text-gray-900 dark:text-white">
                   <strong>4. Affacturage</strong> - Pour les gros clients, envisagez l&apos;affacturage pour améliorer la trésorerie.
                 </p>
               </div>

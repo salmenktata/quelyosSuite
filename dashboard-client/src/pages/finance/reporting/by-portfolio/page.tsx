@@ -115,7 +115,7 @@ export default function ByPortfolioReportPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -129,15 +129,15 @@ export default function ByPortfolioReportPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 p-3 shadow-lg shadow-violet-500/30 dark:shadow-violet-500/20">
-              <Briefcase className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 p-3 shadow-lg shadow-violet-500/30 dark:shadow-violet-500/20">
+              <Briefcase className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 Analyse par portefeuille
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">
                 Vue consolidée par groupes de comptes et performance globale
               </p>
             </div>
@@ -145,18 +145,18 @@ export default function ByPortfolioReportPage() {
         </m.div>
 
         {/* Report Notice */}
-        <PageNotice config={financeNotices.byPortfolio} className="mb-6" />
+        <PageNotice config={financeNotices.byPortfolio} className="![animation:none] mb-6" />
 
         {/* Controls */}
         <m.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6"
+          className="![animation:none] mb-6"
         >
-          <GlassPanel className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="flex gap-2">
+          <GlassPanel className="![animation:none] p-4">
+            <div className="![animation:none] flex items-center gap-4">
+              <div className="![animation:none] flex gap-2">
                 {(["7", "30", "60", "90"] as TimeRange[]).map((range) => (
                   <button
                     key={range}
@@ -181,11 +181,11 @@ export default function ByPortfolioReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
           >
-            <GlassCard className="p-8">
-              <div className="flex items-center justify-center gap-3 text-indigo-300">
-                <Loader2 className="h-5 w-5 animate-spin" />
+            <GlassCard className="![animation:none] p-8">
+              <div className="![animation:none] flex items-center justify-center gap-3 text-indigo-300">
+                <Loader2 className="![animation:none] h-5 w-5 animate-spin" />
                 <span>Chargement des données...</span>
               </div>
             </GlassCard>
@@ -197,18 +197,18 @@ export default function ByPortfolioReportPage() {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-6"
+            className="![animation:none] mb-6"
             role="alert"
           >
-            <GlassCard className="border-red-400/40 bg-red-500/10 p-4">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-100">{error}</p>
+            <GlassCard className="![animation:none] border-red-400/40 bg-red-500/10 p-4">
+              <div className="![animation:none] flex items-center gap-3">
+                <AlertTriangle className="![animation:none] h-5 w-5 text-red-400" aria-hidden="true" />
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] font-semibold text-red-100">{error}</p>
                 </div>
                 <button
                   onClick={refetch}
-                  className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
+                  className="![animation:none] rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-100 hover:bg-red-500/30 transition-colors"
                 >
                   Réessayer
                 </button>
@@ -224,39 +224,39 @@ export default function ByPortfolioReportPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 grid gap-4 md:grid-cols-3"
+          className="![animation:none] mb-6 grid gap-4 md:grid-cols-3"
         >
-          <GlassCard className="p-4" gradient="purple">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="purple">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-purple-200">Balance totale</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-purple-200">Balance totale</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {formatAmount(totalBalance)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-purple-300" />
+              <DollarSign className="![animation:none] h-8 w-8 text-purple-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="indigo">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="indigo">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-indigo-200">Comptes totaux</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalAccounts}</p>
+                <p className="![animation:none] mb-1 text-sm text-indigo-200">Comptes totaux</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">{totalAccounts}</p>
               </div>
-              <Briefcase className="h-8 w-8 text-indigo-300" />
+              <Briefcase className="![animation:none] h-8 w-8 text-indigo-300" />
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4" gradient="emerald">
-            <div className="flex items-center justify-between">
+          <GlassCard className="![animation:none] p-4" gradient="emerald">
+            <div className="![animation:none] flex items-center justify-between">
               <div>
-                <p className="mb-1 text-sm text-emerald-200">Mouvements</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="![animation:none] mb-1 text-sm text-emerald-200">Mouvements</p>
+                <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
                   {totalMovements}
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-emerald-300" />
+              <TrendingUp className="![animation:none] h-8 w-8 text-emerald-300" />
             </div>
           </GlassCard>
         </m.div>
@@ -266,7 +266,7 @@ export default function ByPortfolioReportPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-4"
+          className="![animation:none] space-y-4"
         >
           {portfolios.map((portfolio, idx) => (
             <m.div
@@ -276,28 +276,28 @@ export default function ByPortfolioReportPage() {
               transition={{ delay: 0.1 * idx }}
             >
               <div
-                className="cursor-pointer"
+                className="![animation:none] cursor-pointer"
                 onClick={() =>
                   setSelectedPortfolio(
                     selectedPortfolio === portfolio.id ? null : portfolio.id
                   )
                 }
               >
-                <GlassCard className="p-6 transition-all hover:scale-[1.01]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                <GlassCard className="![animation:none] p-6 transition-all hover:scale-[1.01]">
+                  <div className="![animation:none] flex items-center justify-between">
+                    <div className="![animation:none] flex items-center gap-4">
                       <div
                         className={`rounded-full p-3 shadow-lg ${
                           colorClasses[portfolio.color]
                         }`}
                       >
-                        <Briefcase className="h-6 w-6 text-gray-900 dark:text-white" />
+                        <Briefcase className="![animation:none] h-6 w-6 text-gray-900 dark:text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                        <h3 className="![animation:none] text-xl font-bold text-gray-900 dark:text-white">
                           {portfolio.name}
                         </h3>
-                        <p className="text-sm text-slate-400">
+                        <p className="![animation:none] text-sm text-slate-400">
                           {portfolio.accountsCount} compte
                           {portfolio.accountsCount > 1 ? "s" : ""} •{" "}
                           {portfolio.movements} mouvements
@@ -305,8 +305,8 @@ export default function ByPortfolioReportPage() {
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <div className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    <div className="![animation:none] text-right">
+                      <div className="![animation:none] mb-2 text-2xl font-bold text-gray-900 dark:text-white">
                         {formatAmount(portfolio.balance)}
                       </div>
                       <div
@@ -317,9 +317,9 @@ export default function ByPortfolioReportPage() {
                         }`}
                       >
                         {portfolio.evolution >= 0 ? (
-                          <TrendingUp className="h-4 w-4" />
+                          <TrendingUp className="![animation:none] h-4 w-4" />
                         ) : (
-                          <TrendingDown className="h-4 w-4" />
+                          <TrendingDown className="![animation:none] h-4 w-4" />
                         )}
                         {portfolio.evolution >= 0 ? "+" : ""}
                         {portfolio.evolution.toFixed(1)}%
@@ -333,32 +333,32 @@ export default function ByPortfolioReportPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6"
+                      className="![animation:none] mt-6 border-t border-gray-200 dark:border-gray-700 pt-6"
                     >
-                      <div className="grid gap-4 md:grid-cols-2">
+                      <div className="![animation:none] grid gap-4 md:grid-cols-2">
                         <div>
-                          <p className="mb-1 text-sm text-slate-400">
+                          <p className="![animation:none] mb-1 text-sm text-slate-400">
                             Revenus moyens
                           </p>
-                          <p className="text-lg font-semibold text-emerald-400">
+                          <p className="![animation:none] text-lg font-semibold text-emerald-400">
                             {formatAmount(portfolio.avgIncome)}
                           </p>
                         </div>
                         <div>
-                          <p className="mb-1 text-sm text-slate-400">
+                          <p className="![animation:none] mb-1 text-sm text-slate-400">
                             Dépenses moyennes
                           </p>
-                          <p className="text-lg font-semibold text-red-400">
+                          <p className="![animation:none] text-lg font-semibold text-red-400">
                             {formatAmount(portfolio.avgExpense)}
                           </p>
                         </div>
                         <div>
-                          <p className="mb-1 text-sm text-slate-400">
+                          <p className="![animation:none] mb-1 text-sm text-slate-400">
                             Taux d&apos;épargne
                           </p>
-                          <div className="flex items-center gap-2">
-                            <Percent className="h-4 w-4 text-indigo-400" />
-                            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <div className="![animation:none] flex items-center gap-2">
+                            <Percent className="![animation:none] h-4 w-4 text-indigo-400" />
+                            <p className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white">
                               {(
                                 ((portfolio.avgIncome - portfolio.avgExpense) /
                                   portfolio.avgIncome) *
@@ -369,7 +369,7 @@ export default function ByPortfolioReportPage() {
                           </div>
                         </div>
                         <div>
-                          <p className="mb-1 text-sm text-slate-400">
+                          <p className="![animation:none] mb-1 text-sm text-slate-400">
                             Solde net mensuel
                           </p>
                           <p

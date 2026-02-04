@@ -59,7 +59,7 @@ export default function ChartsPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -67,52 +67,52 @@ export default function ChartsPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.charts} className="mb-6" />
+        <PageNotice config={financeNotices.charts} className="![animation:none] mb-6" />
 
         {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3">
-              <Coins className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+        <div className="![animation:none] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="![animation:none] flex items-start gap-4">
+            <div className="![animation:none] rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3">
+              <Coins className="![animation:none] h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">
                 Plan Comptable
               </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p className="![animation:none] mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Gérez vos comptes comptables et leur hiérarchie
               </p>
             </div>
           </div>
-          <Button icon={<Plus className="h-4 w-4" />} variant="default">
+          <Button icon={<Plus className="![animation:none] h-4 w-4" />} variant="default">
             Nouveau compte
           </Button>
         </div>
 
         {/* Filtres */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] flex flex-col md:flex-row gap-4">
             {/* Recherche */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="![animation:none] flex-1">
+              <div className="![animation:none] relative">
+                <Search className="![animation:none] absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Rechercher par code ou nom..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 focus:border-transparent"
+                  className="![animation:none] w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Filtre par classe */}
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <div className="![animation:none] flex items-center gap-2">
+              <Filter className="![animation:none] h-5 w-5 text-gray-500 dark:text-gray-400" />
               <select
                 value={selectedClass ?? ''}
                 onChange={(e) => setSelectedClass(e.target.value ? Number(e.target.value) : null)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 focus:border-transparent"
+                className="![animation:none] px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 focus:border-transparent"
               >
                 <option value="">Toutes les classes</option>
                 {accountClasses.map(cls => (
@@ -124,7 +124,7 @@ export default function ChartsPage() {
         </div>
 
         {/* Classes badges */}
-        <div className="flex flex-wrap gap-2">
+        <div className="![animation:none] flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedClass(null)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
@@ -155,31 +155,31 @@ export default function ChartsPage() {
         </div>
 
         {/* Table des comptes */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+        <div className="![animation:none] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <table className="![animation:none] w-full">
+            <thead className="![animation:none] bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                <th className="![animation:none] px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   Code
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                <th className="![animation:none] px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   Nom du compte
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                <th className="![animation:none] px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   Classe
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                <th className="![animation:none] px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   Statut
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                <th className="![animation:none] px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="![animation:none] divide-y divide-gray-200 dark:divide-gray-700">
               {filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="![animation:none] px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                     Aucun compte trouvé
                   </td>
                 </tr>
@@ -187,35 +187,35 @@ export default function ChartsPage() {
                 filteredAccounts.map((account) => {
                   const accountClass = accountClasses.find(c => c.id === account.class)
                   return (
-                    <tr key={account.code} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-mono font-semibold text-gray-900 dark:text-white">
+                    <tr key={account.code} className="![animation:none] hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="![animation:none] px-6 py-4 whitespace-nowrap">
+                        <span className="![animation:none] font-mono font-semibold text-gray-900 dark:text-white">
                           {account.code}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-gray-900 dark:text-white">
+                      <td className="![animation:none] px-6 py-4">
+                        <span className="![animation:none] text-sm text-gray-900 dark:text-white">
                           {account.name}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="![animation:none] px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${accountClass?.color}-100 dark:bg-${accountClass?.color}-900/30 text-${accountClass?.color}-800 dark:text-${accountClass?.color}-300`}>
                           Classe {account.class}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="![animation:none] px-6 py-4 whitespace-nowrap">
                         {account.active ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                          <span className="![animation:none] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
                             Actif
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                          <span className="![animation:none] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
                             Inactif
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <button className="text-amber-600 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 font-medium">
+                      <td className="![animation:none] px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <button className="![animation:none] text-amber-600 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 font-medium">
                           Modifier
                         </button>
                       </td>
@@ -228,25 +228,25 @@ export default function ChartsPage() {
         </div>
 
         {/* Stats footer */}
-        <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{filteredAccounts.length}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Comptes affichés</p>
+        <div className="![animation:none] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="![animation:none] grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="![animation:none] text-center">
+              <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">{filteredAccounts.length}</p>
+              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Comptes affichés</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{sampleAccounts.length}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total comptes</p>
+            <div className="![animation:none] text-center">
+              <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">{sampleAccounts.length}</p>
+              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Total comptes</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{accountClasses.length}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Classes</p>
+            <div className="![animation:none] text-center">
+              <p className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">{accountClasses.length}</p>
+              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Classes</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div className="![animation:none] text-center">
+              <p className="![animation:none] text-2xl font-bold text-green-600 dark:text-green-400">
                 {sampleAccounts.filter(a => a.active).length}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Comptes actifs</p>
+              <p className="![animation:none] text-xs text-gray-500 dark:text-gray-400">Comptes actifs</p>
             </div>
           </div>
         </div>

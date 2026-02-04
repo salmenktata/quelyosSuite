@@ -65,7 +65,7 @@ export default function DataQualityPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Finance', href: '/finance' },
@@ -75,26 +75,26 @@ export default function DataQualityPage() {
         />
 
         <m.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
-              <ShieldCheck className="h-6 w-6 text-white" />
+          <div className="![animation:none] flex items-center gap-3">
+            <div className="![animation:none] rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 p-3 shadow-lg shadow-emerald-500/30 dark:shadow-emerald-500/20">
+              <ShieldCheck className="![animation:none] h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Qualité des Données KPIs</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Fiabilité et prérequis des indicateurs financiers</p>
+              <h1 className="![animation:none] text-3xl font-bold text-gray-900 dark:text-white">Qualité des Données KPIs</h1>
+              <p className="![animation:none] text-sm text-gray-500 dark:text-gray-400">Fiabilité et prérequis des indicateurs financiers</p>
             </div>
           </div>
         </m.div>
 
-        <PageNotice config={financeNotices.dataQuality} />
+        <PageNotice config={financeNotices.dataQuality} className="![animation:none]" />
 
         {/* Global Score */}
-        <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-          <GlassPanel gradient="emerald" className="p-6">
-            <div className="text-center">
-              <p className="text-sm text-emerald-200 mb-2">Score de Fiabilité Global</p>
-              <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2">{globalScore}%</div>
-              <p className="text-sm text-emerald-100">
+        <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="![animation:none] mb-6">
+          <GlassPanel gradient="emerald" className="![animation:none] p-6">
+            <div className="![animation:none] text-center">
+              <p className="![animation:none] text-sm text-emerald-200 mb-2">Score de Fiabilité Global</p>
+              <div className="![animation:none] text-5xl font-bold text-gray-900 dark:text-white mb-2">{globalScore}%</div>
+              <p className="![animation:none] text-sm text-emerald-100">
                 {globalScore >= 80 && "Données de très bonne qualité"}
                 {globalScore >= 60 && globalScore < 80 && "Données fiables - améliorations possibles"}
                 {globalScore >= 40 && globalScore < 60 && "Qualité modérée"}
@@ -106,24 +106,24 @@ export default function DataQualityPage() {
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent"></div>
-            <p className="mt-4 text-slate-400">Chargement des données de fiabilité...</p>
+          <div className="![animation:none] text-center py-12">
+            <div className="![animation:none] inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent"></div>
+            <p className="![animation:none] mt-4 text-slate-400">Chargement des données de fiabilité...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="rounded-lg bg-rose-500/10 border border-rose-500/20 p-4 text-center">
-            <p className="text-rose-300">Erreur: {error.error?.message || "Une erreur est survenue"}</p>
+          <div className="![animation:none] rounded-lg bg-rose-500/10 border border-rose-500/20 p-4 text-center">
+            <p className="![animation:none] text-rose-300">Erreur: {error.error?.message || "Une erreur est survenue"}</p>
           </div>
         )}
 
         {/* KPIs Grid */}
         {!loading && !error && (
-          <div className="grid gap-6 md:grid-cols-2">
-            <GlassPanel className="p-5">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">DSO - Délai d&apos;Encaissement</h3>
+          <div className="![animation:none] grid gap-6 md:grid-cols-2">
+            <GlassPanel className="![animation:none] p-5">
+              <h3 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-3">DSO - Délai d&apos;Encaissement</h3>
               {dsoQuery.data?.reliability && (
                 <ReliabilityBadge
                   reliability={dsoQuery.data.reliability}
@@ -133,8 +133,8 @@ export default function DataQualityPage() {
               )}
             </GlassPanel>
 
-            <GlassPanel className="p-5">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">EBITDA - Rentabilité Opérationnelle</h3>
+            <GlassPanel className="![animation:none] p-5">
+              <h3 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-3">EBITDA - Rentabilité Opérationnelle</h3>
               {ebitdaQuery.data?.reliability && (
                 <ReliabilityBadge
                   reliability={ebitdaQuery.data.reliability}
@@ -144,8 +144,8 @@ export default function DataQualityPage() {
               )}
             </GlassPanel>
 
-            <GlassPanel className="p-5">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">BFR - Besoin en Fonds de Roulement</h3>
+            <GlassPanel className="![animation:none] p-5">
+              <h3 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-3">BFR - Besoin en Fonds de Roulement</h3>
               {bfrQuery.data?.reliability && (
                 <ReliabilityBadge
                   reliability={bfrQuery.data.reliability}
@@ -155,8 +155,8 @@ export default function DataQualityPage() {
               )}
             </GlassPanel>
 
-            <GlassPanel className="p-5">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Point Mort - Seuil de Rentabilité</h3>
+            <GlassPanel className="![animation:none] p-5">
+              <h3 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-3">Point Mort - Seuil de Rentabilité</h3>
               {breakevenQuery.data?.reliability && (
                 <ReliabilityBadge
                   reliability={breakevenQuery.data.reliability}

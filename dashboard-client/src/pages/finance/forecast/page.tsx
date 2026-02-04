@@ -78,7 +78,7 @@ export default function ForecastPage() {
   return (
     <LazyMotion features={domAnimation}>
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Tableau de bord', href: '/dashboard' },
@@ -95,7 +95,7 @@ export default function ForecastPage() {
           forecast={forecast}
         />
 
-        <PageNotice config={financeNotices.forecast} className="mb-6" />
+        <PageNotice config={financeNotices.forecast} className="![animation:none] mb-6" />
 
         <HorizonSelector selectedDays={selectedDays} onSelect={setSelectedDays} />
 
@@ -103,11 +103,11 @@ export default function ForecastPage() {
           <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 rounded-lg border border-indigo-500/30 bg-indigo-100 dark:bg-indigo-500/10 px-4 py-3"
+            className="![animation:none] flex items-center gap-3 rounded-lg border border-indigo-500/30 bg-indigo-100 dark:bg-indigo-500/10 px-4 py-3"
           >
-            <Sparkles size={16} className="text-indigo-600 dark:text-indigo-400" />
-            <div className="flex-1">
-              <p className="text-sm text-indigo-700 dark:text-indigo-200">
+            <Sparkles size={16} className="![animation:none] text-indigo-600 dark:text-indigo-400" />
+            <div className="![animation:none] flex-1">
+              <p className="![animation:none] text-sm text-indigo-700 dark:text-indigo-200">
                 {forecast.model.type === "prophet" ? (
                   <>
                     Modèle Prophet IA entraîné sur <strong>{forecast.model.trainedOn}</strong> jours
@@ -119,7 +119,7 @@ export default function ForecastPage() {
               </p>
             </div>
             {forecast.model.last_trained && (
-              <span className="text-xs text-indigo-500 dark:text-indigo-300/70">
+              <span className="![animation:none] text-xs text-indigo-500 dark:text-indigo-300/70">
                 Entraîné: {new Date(forecast.model.last_trained).toLocaleDateString("fr-FR")}
               </span>
             )}
@@ -129,13 +129,13 @@ export default function ForecastPage() {
         {loading && <SkeletonTable rows={5} columns={4} />}
 
         {error && (
-          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="flex-1 text-red-800 dark:text-red-200">
+          <div role="alert" className="![animation:none] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="![animation:none] flex items-center gap-3">
+              <AlertCircle className="![animation:none] w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="![animation:none] flex-1 text-red-800 dark:text-red-200">
                 Une erreur est survenue lors du chargement des prévisions.
               </p>
-              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="![animation:none] w-4 h-4" />} onClick={() => refetch()}>
                 Réessayer
               </Button>
             </div>
@@ -143,7 +143,7 @@ export default function ForecastPage() {
         )}
 
         {forecast && (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="![animation:none] grid gap-4 sm:grid-cols-3">
             {cards.map((card) => {
               const Icon = card.icon;
               return (
@@ -175,13 +175,13 @@ export default function ForecastPage() {
         )}
 
         {confidenceZones.length > 0 && (
-          <GlassPanel gradient="purple" className="p-6" data-guide="forecast-chart">
-            <div className="mb-4 flex items-center justify-between">
+          <GlassPanel gradient="purple" className="![animation:none] p-6" data-guide="forecast-chart">
+            <div className="![animation:none] mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h2 className="![animation:none] text-xl font-semibold text-gray-900 dark:text-white">
                   Évolution sur {selectedDays} jours
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-indigo-100/80">
+                <p className="![animation:none] text-sm text-gray-600 dark:text-indigo-100/80">
                   Graphique interactif avec zone de confiance ML
                 </p>
               </div>
@@ -196,7 +196,7 @@ export default function ForecastPage() {
         )}
 
         {forecast && forecast.events !== undefined && (
-          <GlassPanel gradient="emerald" className="p-6">
+          <GlassPanel gradient="emerald" className="![animation:none] p-6">
             <EventMarkers
               events={forecast.events || []}
               onAdd={handleAddEvent}

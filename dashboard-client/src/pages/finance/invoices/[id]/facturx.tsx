@@ -113,7 +113,7 @@ export default function FacturXPage() {
 
   return (
     <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="![animation:none] p-4 md:p-8 space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Facturation', href: '/invoicing' },
@@ -123,24 +123,24 @@ export default function FacturXPage() {
           ]}
         />
 
-        <PageNotice config={financeNotices.facturx} />
+        <PageNotice config={financeNotices.facturx} className="![animation:none]" />
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="![animation:none] text-2xl font-bold text-gray-900 dark:text-white">
             Export Factur-X (ZUGFeRD)
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="![animation:none] mt-1 text-sm text-gray-500 dark:text-gray-400">
             Génération facture électronique conforme norme européenne EN 16931
           </p>
         </div>
 
         {/* Validation Status */}
         {validating ? (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <Loader className="h-5 w-5 text-indigo-600 dark:text-indigo-400 animate-spin" />
-              <p className="text-gray-700 dark:text-gray-300">
+          <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+            <div className="![animation:none] flex items-center gap-3">
+              <Loader className="![animation:none] h-5 w-5 text-indigo-600 dark:text-indigo-400 animate-spin" />
+              <p className="![animation:none] text-gray-700 dark:text-gray-300">
                 Validation conformité EN 16931 en cours...
               </p>
             </div>
@@ -151,13 +151,13 @@ export default function FacturXPage() {
               ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
               : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
           }`}>
-            <div className="flex items-start gap-3 mb-4">
+            <div className="![animation:none] flex items-start gap-3 mb-4">
               {validation.valid ? (
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400 mt-0.5" />
+                <CheckCircle className="![animation:none] h-6 w-6 text-green-600 dark:text-green-400 mt-0.5" />
               ) : (
-                <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 mt-0.5" />
+                <AlertCircle className="![animation:none] h-6 w-6 text-red-600 dark:text-red-400 mt-0.5" />
               )}
-              <div className="flex-1">
+              <div className="![animation:none] flex-1">
                 <h2 className={`text-lg font-semibold ${
                   validation.valid
                     ? 'text-green-900 dark:text-green-300'
@@ -177,14 +177,14 @@ export default function FacturXPage() {
 
             {/* Erreurs */}
             {validation.errors.length > 0 && (
-              <div className="mb-4">
-                <h3 className="text-sm font-medium text-red-900 dark:text-red-300 mb-2">
+              <div className="![animation:none] mb-4">
+                <h3 className="![animation:none] text-sm font-medium text-red-900 dark:text-red-300 mb-2">
                   Erreurs Bloquantes ({validation.errors.length})
                 </h3>
-                <ul className="space-y-1">
+                <ul className="![animation:none] space-y-1">
                   {validation.errors.map((error, index) => (
-                    <li key={index} className="text-sm text-red-800 dark:text-red-400 flex items-start gap-2">
-                      <span className="text-red-600 dark:text-red-400">•</span>
+                    <li key={index} className="![animation:none] text-sm text-red-800 dark:text-red-400 flex items-start gap-2">
+                      <span className="![animation:none] text-red-600 dark:text-red-400">•</span>
                       {error}
                     </li>
                   ))}
@@ -195,13 +195,13 @@ export default function FacturXPage() {
             {/* Avertissements */}
             {validation.warnings.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-yellow-900 dark:text-yellow-300 mb-2">
+                <h3 className="![animation:none] text-sm font-medium text-yellow-900 dark:text-yellow-300 mb-2">
                   Avertissements ({validation.warnings.length})
                 </h3>
-                <ul className="space-y-1">
+                <ul className="![animation:none] space-y-1">
                   {validation.warnings.map((warning, index) => (
-                    <li key={index} className="text-sm text-yellow-800 dark:text-yellow-400 flex items-start gap-2">
-                      <span className="text-yellow-600 dark:text-yellow-400">⚠</span>
+                    <li key={index} className="![animation:none] text-sm text-yellow-800 dark:text-yellow-400 flex items-start gap-2">
+                      <span className="![animation:none] text-yellow-600 dark:text-yellow-400">⚠</span>
                       {warning}
                     </li>
                   ))}
@@ -212,12 +212,12 @@ export default function FacturXPage() {
         ) : null}
 
         {/* Profil Factur-X */}
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="![animation:none] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <h2 className="![animation:none] text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Profil Factur-X
           </h2>
 
-          <div className="space-y-3">
+          <div className="![animation:none] space-y-3">
             {[
               { id: 'BASIC', name: 'BASIC', desc: 'Minimum légal - Champs essentiels uniquement (factures simples)' },
               { id: 'COMFORT', name: 'COMFORT', desc: 'Standard - Données étendues pour comptabilité (recommandé)' },
@@ -237,13 +237,13 @@ export default function FacturXPage() {
                   value={profile.id}
                   checked={selectedProfile === profile.id}
                   onChange={(e) => setSelectedProfile(e.target.value as any)}
-                  className="mt-1"
+                  className="![animation:none] mt-1"
                 />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="![animation:none] flex-1">
+                  <p className="![animation:none] text-sm font-medium text-gray-900 dark:text-white">
                     {profile.name}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="![animation:none] text-xs text-gray-600 dark:text-gray-400 mt-1">
                     {profile.desc}
                   </p>
                 </div>
@@ -253,7 +253,7 @@ export default function FacturXPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div className="![animation:none] flex gap-3">
           <Button
             variant="secondary"
             icon={<FileText />}
@@ -264,21 +264,21 @@ export default function FacturXPage() {
           </Button>
           <Button
             variant="primary"
-            icon={downloading ? <Loader className="animate-spin" /> : <Download />}
+            icon={downloading ? <Loader className="![animation:none] animate-spin" /> : <Download />}
             onClick={handleDownload}
             disabled={downloading || (validation && !validation.valid)}
-            className="flex-1"
+            className="![animation:none] flex-1"
           >
             {downloading ? 'Génération en cours...' : 'Télécharger Factur-X (PDF/A-3 + XML)'}
           </Button>
         </div>
 
         {/* Info */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+        <div className="![animation:none] p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <h3 className="![animation:none] text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
             Qu&apos;est-ce que Factur-X ?
           </h3>
-          <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+          <ul className="![animation:none] text-xs text-blue-800 dark:text-blue-400 space-y-1">
             <li>• Format hybride : PDF lisible humain + XML machine-readable embarqué</li>
             <li>• Norme EN 16931 (directive UE 2014/55/UE) obligatoire B2G depuis 2020</li>
             <li>• Interopérable avec ZUGFeRD (Allemagne), FatturaPA (Italie)</li>
