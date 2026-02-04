@@ -8,9 +8,15 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/subscribers', type='json', auth='public', methods=['POST'], csrf=False)
     def get_subscribers(self, **kwargs):
         """Récupérer la liste des abonnés newsletter"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Subscriber = request.env['quelyos.newsletter.subscriber'].sudo()
 
@@ -18,7 +24,7 @@ class NewsletterController(BaseController):
         segment = kwargs.get('segment')
         status = kwargs.get('status', 'subscribed')
 
-        domain = [('tenant_id', '=', tenant_id), ('status', '=', status)]
+        domain = [('tenant_id', '=', tenant.id), ('status', '=', status)]
         if segment:
             domain.append(('segment', '=', segment))
 
@@ -43,12 +49,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns', type='json', auth='public', methods=['POST'], csrf=False)
     def get_campaigns(self, **kwargs):
         """Récupérer la liste des campagnes newsletter"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaigns = Campaign.search([('tenant_id', '=', tenant_id)])
+        campaigns = Campaign.search([('tenant_id', '=', tenant.id)])
 
         return {
             'success': True,
@@ -71,12 +83,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>', type='json', auth='public', methods=['POST'], csrf=False)
     def get_campaign_detail(self, campaign_id, **kwargs):
         """Récupérer le détail d'une campagne"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant.id)], limit=1)
 
         if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
@@ -112,9 +130,15 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/create', type='json', auth='public', methods=['POST'], csrf=False)
     def create_campaign(self, **kwargs):
         """Créer une nouvelle campagne"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
 
@@ -127,14 +151,14 @@ class NewsletterController(BaseController):
             'from_email': kwargs.get('from_email', 'noreply@votreboutique.com'),
             'reply_to': kwargs.get('reply_to', ''),
             'state': 'draft',
-            'tenant_id': tenant_id,
+            'tenant_id': tenant.id,
         }
 
         # Segment optionnel
         segment = kwargs.get('segment')
         if segment and segment != 'all':
             Segment = request.env['quelyos.newsletter.segment'].sudo()
-            segment_rec = Segment.search([('segment_type', '=', segment), ('tenant_id', '=', tenant_id)], limit=1)
+            segment_rec = Segment.search([('segment_type', '=', segment), ('tenant_id', '=', tenant.id)], limit=1)
             if segment_rec:
                 data['segment_id'] = segment_rec.id
 
@@ -144,12 +168,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/save-draft', type='json', auth='public', methods=['POST'], csrf=False)
     def save_campaign_draft(self, campaign_id, **kwargs):
         """Sauvegarder le brouillon d'une campagne"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant.id)], limit=1)
 
         if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
@@ -176,12 +206,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/send', type='json', auth='public', methods=['POST'], csrf=False)
     def send_campaign(self, campaign_id, **kwargs):
         """Envoyer une campagne immédiatement"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant.id)], limit=1)
 
         if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
@@ -195,12 +231,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/send-test', type='json', auth='public', methods=['POST'], csrf=False)
     def send_test_campaign(self, campaign_id, **kwargs):
         """Envoyer un email de test"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant.id)], limit=1)
 
         if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
@@ -218,12 +260,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/schedule', type='json', auth='public', methods=['POST'], csrf=False)
     def schedule_campaign(self, campaign_id, **kwargs):
         """Programmer l'envoi d'une campagne"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant.id)], limit=1)
 
         if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
@@ -241,16 +289,22 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/subscribers/export', type='json', auth='public', methods=['POST'], csrf=False)
     def export_subscribers(self, **kwargs):
         """Exporter la liste des abonnés en CSV"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         import csv
         import base64
         from io import StringIO
 
         Subscriber = request.env['quelyos.newsletter.subscriber'].sudo()
-        subscribers = Subscriber.search([('tenant_id', '=', tenant_id)])
+        subscribers = Subscriber.search([('tenant_id', '=', tenant.id)])
 
         # Créer CSV en mémoire
         output = StringIO()
@@ -275,15 +329,21 @@ class NewsletterController(BaseController):
         return {
             'success': True,
             'csv_data': csv_base64,
-            'filename': f'subscribers_{tenant_id}.csv'
+            'filename': f'subscribers_{tenant.id}.csv'
         }
 
     @http.route('/api/admin/newsletter/campaigns/send-test-preview', type='json', auth='public', methods=['POST'], csrf=False)
     def send_test_preview(self, **kwargs):
         """Envoyer un email de test avec preview HTML"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         test_email = kwargs.get('test_email')
         subject = kwargs.get('subject', 'Test Newsletter')
@@ -346,12 +406,18 @@ class NewsletterController(BaseController):
     @http.route('/api/admin/newsletter/segments', type='json', auth='public', methods=['POST'], csrf=False)
     def get_segments(self, **kwargs):
         """Récupérer la liste des segments"""
-        tenant_id = self._authenticate_and_get_tenant()
-        if not tenant_id:
-            return {'success': False, 'error': 'Non authentifié'}
+        # Authentifier l'utilisateur backoffice
+        auth_error = self._require_backoffice_auth()
+        if auth_error:
+            return auth_error
+
+        # Récupérer le tenant depuis le header
+        tenant = self._get_tenant()
+        if not tenant:
+            return {'success': False, 'error': 'Tenant invalide ou manquant'}
 
         Segment = request.env['quelyos.newsletter.segment'].sudo()
-        segments = Segment.search([('tenant_id', '=', tenant_id)])
+        segments = Segment.search([('tenant_id', '=', tenant.id)])
 
         return {
             'success': True,

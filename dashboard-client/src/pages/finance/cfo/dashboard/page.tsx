@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from '@/components/common'
 import { apiClient } from '@/lib/api'
+import { CashFlowWidget } from '@/components/finance/CashFlowWidget'
+import { RiskCustomersWidget } from '@/components/finance/RiskCustomersWidget'
 
 interface KpiEntry {
   value: number | string
@@ -94,6 +96,16 @@ export default function CFODashboardPage() {
           <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Net Profit Margin</h3>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">{kpis?.netProfitMargin?.value}%</p>
         </div>
+      </div>
+
+      {/* Widget Clients à Risque */}
+      <div className="mt-8">
+        <RiskCustomersWidget minScore={60} limit={5} />
+      </div>
+
+      {/* Widget Prévisions Cash Flow ML + DSO */}
+      <div className="mt-8">
+        <CashFlowWidget />
       </div>
     </Layout>
   )

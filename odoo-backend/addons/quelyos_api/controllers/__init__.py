@@ -9,6 +9,8 @@ from . import customers_ctrl
 from . import inventory_ctrl
 from . import finance_ctrl
 from . import invoices_ctrl
+from . import cash_flow_ctrl
+from . import customer_risk_ctrl
 from . import bills_ctrl
 from . import chart_of_accounts_ctrl
 from . import payments_ctrl

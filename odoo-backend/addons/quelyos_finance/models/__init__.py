@@ -3,5 +3,8 @@ from . import portfolio
 from . import payment_flow
 from . import budget
 from . import cash_alert
+from . import cash_flow_forecast
+from . import customer_risk_score
+from . import payment_reminder_sequence
 from . import account_account
 from . import res_partner
