@@ -38,6 +38,7 @@ from . import crm_ctrl
 from . import health
 from . import cms
 from . import static_pages_ctrl
+from . import checkout_config_ctrl
 from . import checkout
 from . import wishlist
 from . import search

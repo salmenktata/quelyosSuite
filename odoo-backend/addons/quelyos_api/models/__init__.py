@@ -29,6 +29,7 @@ from . import menu
 from . import seo_metadata
 from . import marketing_popup
 from . import static_page
+from . import checkout_config
 from . import api_settings
 from . import cycle_count
 from . import country_state
