@@ -636,8 +636,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={homeActiveTab}
-                    onTabChange={handleHomeTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
@@ -667,8 +667,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={storeActiveTab}
-                    onTabChange={handleStoreTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
@@ -698,8 +698,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={stockActiveTab}
-                    onTabChange={handleStockTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
@@ -729,8 +729,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={crmActiveTab}
-                    onTabChange={handleCrmTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
@@ -760,8 +760,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={marketingActiveTab}
-                    onTabChange={handleMarketingTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}
@@ -791,8 +791,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={hrActiveTab}
-                    onTabChange={handleHrTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {!isNavbarVisible && (
@@ -821,8 +821,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={supportActiveTab}
-                    onTabChange={handleSupportTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {!isNavbarVisible && (
@@ -851,8 +851,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={posActiveTab}
-                    onTabChange={handlePosTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {!isNavbarVisible && (
@@ -881,8 +881,8 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     isSidebarCollapsed={isSidebarCollapsed}
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
-                    activeTab={maintenanceActiveTab}
-                    onTabChange={handleMaintenanceTabChange}
+                    activeTab={location.pathname}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {!isNavbarVisible && (
@@ -912,7 +912,7 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
                     onModuleClick={() => setIsAppLauncherOpen(!isAppLauncherOpen)}
                     tabs={currentModuleTabs}
                     activeTab={activeTab}
-                    onTabChange={handleFinanceTabChange}
+                    onTabChange={handleTabChange}
                   />
                 </div>
                 {/* Bouton pour réafficher la navbar (visible quand navbar cachée) */}

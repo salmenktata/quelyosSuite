@@ -46,7 +46,7 @@ export class LongPollingAdapter {
     this._readyState = WebSocket.CONNECTING
 
     try {
-      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN as string)
       if (!token) {
         throw new Error('No auth token')
       }
@@ -114,7 +114,7 @@ export class LongPollingAdapter {
     }
 
     try {
-      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN as string)
       if (!token) {
         return
       }
@@ -198,7 +198,7 @@ export class LongPollingAdapter {
 
     if (this.connectionId) {
       try {
-        const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+        const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN as string)
         if (token) {
           await fetch(`${BACKEND_URL}/websocket/disconnect`, {
             method: 'POST',
