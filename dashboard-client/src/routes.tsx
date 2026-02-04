@@ -88,9 +88,11 @@ const StoreSettingsCheckoutConfig = lazy(() => import('./pages/store/settings/Ch
 const StoreSettingsDeliveryMethods = lazy(() => import('./pages/store/settings/DeliveryMethods'))
 
 // Support
+const SupportDashboard = lazy(() => import('./pages/support/SupportDashboard'))
 const SupportTickets = lazy(() => import('./pages/support/Tickets'))
 const NewTicket = lazy(() => import('./pages/support/NewTicket'))
 const TicketDetail = lazy(() => import('./pages/support/TicketDetail'))
+const SupportFAQ = lazy(() => import('./pages/support/FAQ'))
 const SatisfactionPublic = lazy(() => import('./pages/SatisfactionPublic'))
 
 // Maintenance (GMAO)
@@ -109,6 +111,7 @@ const MaintenanceCategories = lazy(() => import('./pages/maintenance/Categories'
 const MaintenanceSettings = lazy(() => import('./pages/maintenance/Settings'))
 
 // CRM
+const CRMDashboard = lazy(() => import('./pages/crm/CRMDashboard'))
 const Customers = lazy(() => import('./pages/crm/Customers'))
 const CustomerDetail = lazy(() => import('./pages/crm/CustomerDetail'))
 const CustomerSegmentation = lazy(() => import('./pages/crm/CustomerSegmentation'))
@@ -203,6 +206,7 @@ const MarketingCampaignDetail = lazy(() => import('./pages/marketing/campaigns/[
 const MarketingEmail = lazy(() => import('./pages/marketing/email/page'))
 const MarketingEmailTemplates = lazy(() => import('./pages/marketing/email/templates/page'))
 const MarketingSMS = lazy(() => import('./pages/marketing/sms/page'))
+const MarketingSMSTemplates = lazy(() => import('./pages/marketing/sms/templates/page'))
 const MarketingContacts = lazy(() => import('./pages/marketing/contacts/page'))
 const MarketingContactDetail = lazy(() => import('./pages/marketing/contacts/[id]/page'))
 const MarketingSettingsLayoutWrapper = lazy(() => import('./pages/marketing/settings/SettingsLayoutWrapper'))
@@ -458,9 +462,11 @@ export default function AppRoutes() {
         </Route>
 
         {/* ---- Support ---- */}
+        <Route path="/support" element={<P><Module name="Support"><SupportDashboard /></Module></P>} />
         <Route path="/support/tickets" element={<P><SupportTickets /></P>} />
         <Route path="/support/tickets/new" element={<P><NewTicket /></P>} />
         <Route path="/support/tickets/:id" element={<P><TicketDetail /></P>} />
+        <Route path="/support/faq" element={<P><SupportFAQ /></P>} />
 
         {/* ---- Maintenance (GMAO) ---- */}
         <Route path="/maintenance" element={<P><MaintenanceDashboard /></P>} />
@@ -478,7 +484,7 @@ export default function AppRoutes() {
         <Route path="/maintenance/settings" element={<P><MaintenanceSettings /></P>} />
 
         {/* ---- CRM ---- */}
-        <Route path="/crm" element={<Navigate to="/crm/customers" replace />} />
+        <Route path="/crm" element={<P><Module name="CRM"><CRMDashboard /></Module></P>} />
         <Route path="/crm/customers" element={<P><Module name="CRM"><Customers /></Module></P>} />
         <Route path="/crm/customers/:id" element={<P><CustomerDetail /></P>} />
         <Route path="/crm/customer-segmentation" element={<P><CustomerSegmentation /></P>} />
@@ -499,6 +505,7 @@ export default function AppRoutes() {
         {/* ---- Stock ---- */}
         <Route path="/stock" element={<P><Module name="Stock"><Stock /></Module></P>} />
         <Route path="/inventory" element={<P><Inventory /></P>} />
+        <Route path="/stock/inventory" element={<Navigate to="/inventory" replace />} />
         <Route path="/stock/moves" element={<P><StockMoves /></P>} />
         <Route path="/stock/transfers" element={<P><StockTransfers /></P>} />
         <Route path="/stock/locations" element={<P><StockLocations /></P>} />
@@ -617,7 +624,9 @@ export default function AppRoutes() {
         <Route path="/marketing/email" element={<P><MarketingEmail /></P>} />
         <Route path="/marketing/email/templates" element={<P><MarketingEmailTemplates /></P>} />
         <Route path="/marketing/sms" element={<P><MarketingSMS /></P>} />
+        <Route path="/marketing/sms/templates" element={<P><MarketingSMSTemplates /></P>} />
         <Route path="/marketing/contacts" element={<P><MarketingContacts /></P>} />
+        <Route path="/marketing/lists" element={<Navigate to="/marketing/contacts" replace />} />
         <Route path="/marketing/contacts/:id" element={<P><MarketingContactDetail /></P>} />
 
         {/* Marketing Settings */}
