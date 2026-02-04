@@ -9,7 +9,7 @@
  * - Configuration des modes de création de variantes
  */
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Palette, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Palette, Tag, AlertCircle, RefreshCw } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Breadcrumbs, Button, SkeletonTable, PageNotice } from '@/components/common';
 import { storeNotices } from '@/lib/notices';
@@ -141,10 +141,13 @@ export default function Attributes() {
       <Layout>
         <Breadcrumbs items={breadcrumbItems} />
         <div role="alert" className="mt-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
-          <p className="text-red-800 dark:text-red-200">{error}</p>
-          <Button variant="secondary" onClick={fetchAttributes} className="mt-3">
-            Réessayer
-          </Button>
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">{error}</p>
+            <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchAttributes}>
+              Réessayer
+            </Button>
+          </div>
         </div>
       </Layout>
     );
