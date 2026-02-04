@@ -14,7 +14,7 @@ DB_USER="${QUELYOS_DB_USER:-quelyos}"
 DB_PASSWORD="${QUELYOS_DB_PASSWORD:-quelyos2026}"
 DB_NAME="${QUELYOS_DB_NAME:-quelyos}"
 ADMIN_EMAIL="${QUELYOS_ADMIN_EMAIL:-admin@quelyos.local}"
-ADMIN_PASSWORD="${QUELYOS_ADMIN_PASSWORD:-admin}"
+ADMIN_PASSWORD="${QUELYOS_ADMIN_PASSWORD:-724@Lnb.13}"
 
 # ============================================================================
 # Créer utilisateur PostgreSQL

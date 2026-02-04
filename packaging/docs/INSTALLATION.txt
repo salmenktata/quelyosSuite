@@ -71,8 +71,8 @@ Le script vous demandera:
 2. Email administrateur (défaut: admin@quelyos.local)
    → Entrez votre email ou appuyez sur Entrée
 
-3. Mot de passe administrateur (défaut: admin)
-   → ⚠️ IMPORTANT: Changez ce mot de passe en production
+3. Mot de passe administrateur (défaut: 724@Lnb.13)
+   → ⚠️ Mot de passe par défaut sécurisé configuré
 
 4. Nom de domaine (défaut: localhost)
    → Entrez votre domaine ou laissez localhost pour test local

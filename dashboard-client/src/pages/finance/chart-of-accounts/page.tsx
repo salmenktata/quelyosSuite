@@ -4,10 +4,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Layout } from '@/components/Layout'
-import { Breadcrumbs, Button } from '@/components/common'
+import { Breadcrumbs, Button, PageNotice } from '@/components/common'
 import { Plus } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
+import { financeNotices } from '@/lib/notices/finance-notices'
 
 interface Account {
   id: number
@@ -54,6 +55,8 @@ export default function ChartOfAccountsPage() {
           Nouveau Compte
         </Button>
       </div>
+
+      <PageNotice config={financeNotices.charts} className="![animation:none] mb-6" />
 
       {loading ? (
         <div>Chargement...</div>

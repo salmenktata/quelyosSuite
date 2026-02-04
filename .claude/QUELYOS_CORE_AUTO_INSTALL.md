@@ -156,7 +156,7 @@ docker exec quelyos-odoo odoo-bin -d quelyos_fresh --db_host=db --db_user=odoo -
 http://localhost:8069/web/database/manager
 # Nom DB : test_auto
 # Login : admin
-# Password : admin
+# Password : 724@Lnb.13
 
 # Attendre 90s
 

@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Layout } from '../../components/Layout'
 import { useCustomers } from '../../hooks/useCustomers'
 import { useExportCustomers } from '../../hooks/useExportCustomers'
-import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
+import { Button, AlertCircle, RefreshCw, Breadcrumbs, SkeletonTable, PageNotice } from '../../components/common'
 import { crmNotices } from '@/lib/notices'
 import { CustomerStats } from '../../components/customers/CustomerStats'
 import { CustomerFilters } from '../../components/customers/CustomerFilters'
@@ -32,7 +32,7 @@ export default function Customers() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const limit = 20
 
-  const { data, isLoading, error } = useCustomers({
+  const { data, isLoading, error, refetch } = useCustomers({
     limit,
     offset: page * limit,
     search: search || undefined,
@@ -167,6 +167,21 @@ export default function Customers() {
         </div>
 
         <PageNotice config={crmNotices.customers} className="mb-6" />
+
+        {/* Error Message */}
+        {error && (
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des clients.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* KPI Cards */}
         {!isLoading && data?.data && (

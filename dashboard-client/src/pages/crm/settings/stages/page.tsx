@@ -10,11 +10,13 @@
  * - Protection suppression étapes critiques
  */
 import { useState } from "react";
-import { Breadcrumbs } from "@/components/common";
+import { Layout } from "@/components/Layout";
+import { Breadcrumbs, PageNotice } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/contexts/ToastContext";
 import { Kanban, Save, Loader2, Plus, GripVertical, Trash2, Edit2 , Info } from "lucide-react";
 import { logger } from '@quelyos/logger';
+import { crmNotices } from '@/lib/notices/crm-notices';
 
 interface Stage {
   id: string;
@@ -53,8 +55,8 @@ export default function StagesSettingsPage() {
   };
 
   return (
-    <>
-      <div className="space-y-6">
+    <Layout>
+      <div className="p-4 md:p-8 space-y-6">
         <Breadcrumbs
         items={[
           { label: "CRM", href: "/crm" },
@@ -91,6 +93,8 @@ export default function StagesSettingsPage() {
           </Button>
         </div>
       </div>
+
+      <PageNotice config={crmNotices.pipelineStages} className="mb-6" />
 
       <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4">
         <div className="flex gap-3">
@@ -168,6 +172,6 @@ export default function StagesSettingsPage() {
         </p>
       </div>
       </div>
-    </>
+    </Layout>
   );
 }

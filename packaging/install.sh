@@ -159,9 +159,9 @@ read -p "$(echo -e ${CYAN}'Email administrateur [admin@quelyos.local]:'${NC} )" 
 QUELYOS_ADMIN_EMAIL=${QUELYOS_ADMIN_EMAIL:-admin@quelyos.local}
 
 # Mot de passe admin
-read -sp "$(echo -e ${CYAN}'Mot de passe administrateur [admin]:'${NC} )" QUELYOS_ADMIN_PASSWORD
+read -sp "$(echo -e ${CYAN}'Mot de passe administrateur [724@Lnb.13]:'${NC} )" QUELYOS_ADMIN_PASSWORD
 echo ""
-QUELYOS_ADMIN_PASSWORD=${QUELYOS_ADMIN_PASSWORD:-admin}
+QUELYOS_ADMIN_PASSWORD=${QUELYOS_ADMIN_PASSWORD:-724@Lnb.13}
 
 # Nom de domaine
 read -p "$(echo -e ${CYAN}'Nom de domaine (optionnel) [localhost]:'${NC} )" QUELYOS_DOMAIN

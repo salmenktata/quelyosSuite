@@ -13,7 +13,15 @@ import { logger } from '@/lib/logger'
 
 /**
  * Page Pipeline CRM
- * Affiche les opportunités commerciales en vue Kanban avec drag & drop
+ *
+ * Fonctionnalités :
+ * - Vue Kanban drag & drop des opportunités par étape
+ * - Statistiques agrégées (total opportunités, revenu attendu, probabilité moyenne)
+ * - Changement de statut par glisser-déposer entre colonnes
+ * - Calcul revenu total par étape avec visualisation
+ * - Navigation rapide vers détail opportunité
+ * - Switch instantané entre vue Pipeline et Liste
+ * - Création nouvelle opportunité depuis le pipeline
  */
 export default function Pipeline() {
   const { data: leadsData, isLoading: leadsLoading, error: leadsError } = useLeads()
@@ -52,6 +60,21 @@ export default function Pipeline() {
 
         <PageNotice config={crmNotices.pipeline} className="mb-6" />
 
+        {/* Error Message */}
+        {error && (
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement du pipeline.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* KPI Cards */}
         {!isLoading && !error && leads.length > 0 && (
           <LeadStats leads={leads} />
@@ -59,19 +82,15 @@ export default function Pipeline() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 mb-6">
-          <Link
-            to="/crm/leads"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            <List className="w-5 h-5" />
-            Vue Liste
+          <Link to="/crm/leads">
+            <Button variant="secondary" icon={<List className="w-5 h-5" />}>
+              Vue Liste
+            </Button>
           </Link>
-          <Link
-            to="/crm/leads/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Nouvelle Opportunité
+          <Link to="/crm/leads/new">
+            <Button variant="primary" icon={<Plus className="w-5 h-5" />}>
+              Nouvelle Opportunité
+            </Button>
           </Link>
         </div>
 

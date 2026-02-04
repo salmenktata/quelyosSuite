@@ -26,7 +26,7 @@ export QUELYOS_DB_USER="${QUELYOS_DB_USER:-quelyos}"
 export QUELYOS_DB_PASSWORD="${QUELYOS_DB_PASSWORD:-quelyos2026}"
 export QUELYOS_DB_NAME="${QUELYOS_DB_NAME:-quelyos}"
 export QUELYOS_ADMIN_EMAIL="${QUELYOS_ADMIN_EMAIL:-admin@quelyos.local}"
-export QUELYOS_ADMIN_PASSWORD="${QUELYOS_ADMIN_PASSWORD:-admin}"
+export QUELYOS_ADMIN_PASSWORD="${QUELYOS_ADMIN_PASSWORD:-724@Lnb.13}"
 export QUELYOS_PORT="${QUELYOS_PORT:-80}"
 
 # ============================================================================

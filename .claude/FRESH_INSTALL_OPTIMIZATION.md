@@ -172,7 +172,7 @@ curl http://localhost:8069/api/health
 
 **Dashboard (http://localhost:5175)** :
 - Login : `admin`
-- Password : `admin`
+- Password : `724@Lnb.13`
 - Modules : **9 modules accessibles** immédiatement
 - Services : Brevo + Groq opérationnels
 

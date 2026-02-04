@@ -1,4 +1,4 @@
-import { Receipt, BarChart3, Lightbulb, UserCircle, Tag, DollarSign, ClipboardList, Target } from 'lucide-react';
+import { Receipt, BarChart3, Lightbulb, UserCircle, Tag, DollarSign, ClipboardList, Target, Kanban } from 'lucide-react';
 import type { PageNoticeConfig } from './types';
 
 /**
@@ -155,6 +155,26 @@ export const crmNotices: Record<string, PageNoticeConfig> = {
         `Assignez responsable : chaque lead doit avoir un commercial référent pour suivi personnalisé et accountability`,
         `Planifiez échéances : date limite rappel automatique pour relancer au bon moment sans oublier opportunités`,
         `Documentez interactions : notes sur chaque appel/email pour historique complet et passation si changement commercial`,
+      ]
+    }]
+  },
+
+  pipelineStages: {
+    pageId: 'crm-pipeline-stages',
+    title: 'Étapes Pipeline',
+    purpose: "Configurez les étapes de votre funnel de vente CRM : nom, ordre, probabilités de conversion et couleurs. Structure le parcours commercial de la prospection à la signature.",
+    icon: Kanban,
+    moduleColor: 'violet',
+    sections: [{
+      title: 'Bonnes pratiques',
+      icon: Lightbulb,
+      items: [
+        `Limitez à 4-6 étapes : pipeline trop complexe ralentit vente, trop simple perd visibilité. Idéal : Nouveau → Qualifié → Proposition → Négociation → Gagné/Perdu`,
+        `Définissez probabilités réalistes : basées sur historique conversion (ex: Qualifié 25%, Proposition 50%, Négociation 75%) pour prévisions précises`,
+        `Assignez couleurs distinctes : facilite lecture visuelle rapide du pipeline et identification immédiate de l'étape en cours`,
+        `Marquez étapes terminales : "Gagné" (100%) et "Perdu" (0%) pour clôturer automatiquement les opportunités et calculer taux de conversion`,
+        `Réorganisez par drag & drop : ordre des colonnes reflète le parcours chronologique de votre cycle de vente`,
+        `Protégez étapes critiques : empêchez suppression accidentelle des étapes Gagné/Perdu qui contiennent des données historiques importantes`,
       ]
     }]
   },

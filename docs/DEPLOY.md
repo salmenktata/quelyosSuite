@@ -27,7 +27,7 @@ pip install requests
 export ODOO_URL="http://localhost:8069"
 export ODOO_DB="quelyos"
 export ODOO_ADMIN_USER="admin"
-export ODOO_ADMIN_PASSWORD="admin"
+export ODOO_ADMIN_PASSWORD="724@Lnb.13"
 
 # Générer les configs
 python nginx/generate-tenant-configs.py

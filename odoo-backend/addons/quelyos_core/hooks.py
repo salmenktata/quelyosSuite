@@ -50,11 +50,11 @@ def post_init_hook(env):
                 admin.sudo().write({
                     'company_id': tenant.company_id.id,
                     'company_ids': [(6, 0, [tenant.company_id.id])],
-                    'password': '6187',  # Password par défaut
+                    'password': '724@Lnb.13',  # Password par défaut
                 })
                 env.cr.commit()  # Commit immédiat
                 _logger.info(f"   ✓ Utilisateur admin associé au tenant '{tenant.name}' (company_id={tenant.company_id.id})")
-                _logger.info("   ✓ Password par défaut défini : 6187")
+                _logger.info("   ✓ Password par défaut défini : 724@Lnb.13")
             except Exception as e:
                 _logger.error(f"   ❌ Erreur association admin : {e}")
 

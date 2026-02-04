@@ -170,7 +170,7 @@ AND NOT EXISTS (
 
 **Connexion** :
 - Login : `admin`
-- Password : `admin`
+- Password : `724@Lnb.13`
 
 **Modules visibles** (9 modules) :
 ```

@@ -209,7 +209,7 @@ docker-compose exec odoo cat /etc/odoo/odoo.conf | grep -E 'addons_path|db_name|
 ```bash
 curl -X POST http://localhost:8069/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"login": "admin", "password": "admin"}' \
+  -d '{"login": "admin", "password": "724@Lnb.13"}' \
   | jq '.'
 ```
 
