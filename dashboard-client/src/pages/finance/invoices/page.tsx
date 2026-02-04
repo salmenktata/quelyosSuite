@@ -584,41 +584,47 @@ export default function InvoicesPage() {
                       {getStatusBadge(invoice)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1">
                       {invoice.state === 'draft' && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
                             validate(invoice.id)
                           }}
-                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
+                          className="!p-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
                           aria-label="Valider la facture"
                         >
                           <CheckCircle className="w-4 h-4" />
-                        </button>
+                        </Button>
                       )}
                       {invoice.state === 'posted' && (
                         <>
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={(e) => {
                               e.stopPropagation()
                               sendEmail(invoice.id)
                             }}
-                            className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
+                            className="!p-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                             aria-label="Envoyer par email"
                           >
                             <Mail className="w-4 h-4" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={(e) => {
                               e.stopPropagation()
                               downloadPDF(invoice.id)
                             }}
-                            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+                            className="!p-2 text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                             aria-label="Télécharger PDF"
                           >
                             <Download className="w-4 h-4" />
-                          </button>
+                          </Button>
                         </>
                       )}
                     </div>
