@@ -11,7 +11,7 @@
  * @module store/homepage-builder
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -32,7 +32,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, Badge } from '@/components/common'
-import { GripVertical, Eye, EyeOff, ExternalLink, Save, AlertCircle, RefreshCw } from 'lucide-react'
+import { GripVertical, Eye, EyeOff, ExternalLink, Save } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useNavigate } from 'react-router-dom'
 
@@ -143,7 +143,6 @@ function SortableItem({ section, onToggleVisibility, onNavigate }: SortableItemP
 export default function HomepageBuilder() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [sections, setSections] = useState<Section[]>([])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -160,12 +159,24 @@ export default function HomepageBuilder() {
     }
   })
 
-  // Sync sections avec data
+  // Derive sections depuis data (évite setState dans useEffect)
+  const serverSections = useMemo(
+    () => data?.config?.sections_order ?? [],
+    [data?.config?.sections_order]
+  )
+
+  // Local state uniquement pour modifications (drag & drop, visibility)
+  const [localSections, setLocalSections] = useState<Section[]>([])
+
+  // Sync local state UNIQUEMENT si serveur change (après save/reset)
   useEffect(() => {
-    if (data?.success && data?.config?.sections_order) {
-      setSections(data.config.sections_order)
-    }
-  }, [data])
+     
+    setLocalSections(serverSections)
+  }, [serverSections])
+
+  // Utiliser local state si modifié, sinon serveur
+  const sections = localSections.length > 0 ? localSections : serverSections
+  const setSections = setLocalSections
 
   const saveMutation = useMutation({
     mutationFn: async (updatedSections: Section[]) => {
