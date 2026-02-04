@@ -20,9 +20,9 @@ class StaticPagesController(BaseController):
                 'id': p.id,
                 'name': p.name,
                 'slug': p.slug,
-                'content_html': p.content_html,
-                'meta_title': p.meta_title,
-                'meta_description': p.meta_description,
+                'content_html': p.content_html or '',
+                'meta_title': p.meta_title or '',
+                'meta_description': p.meta_description or '',
                 'state': p.state,
                 'sequence': p.sequence,
                 'active': p.active,
@@ -75,13 +75,23 @@ class StaticPagesController(BaseController):
         if not page:
             return {'success': False, 'error': 'Page non trouvée'}
         
+        # Mapping depuis le modèle vers le format attendu par le frontend
+        # Note: La table DB a un schéma plus complexe avec JSONB, mais notre modèle simple utilise des champs basiques
         return {
             'success': True,
             'page': {
-                'name': page.name,
-                'slug': page.slug,
-                'content_html': page.content_html,
-                'meta_title': page.meta_title,
-                'meta_description': page.meta_description,
+                'id': page.id,
+                'title': page.name,  # Mapping name → title
+                'subtitle': '',  # Non géré dans le modèle simple
+                'content': page.content_html or '',  # Mapping content_html → content
+                'layout': 'default',  # Valeur par défaut
+                'show_sidebar': False,
+                'sidebar_content': '',
+                'header_image_url': '',
+                'show_header_image': False,
+                'meta_title': page.meta_title or '',
+                'meta_description': page.meta_description or '',
+                'published_date': page.create_date.isoformat() if page.create_date else None,
+                'updated_date': page.write_date.isoformat() if page.write_date else None,
             }
         }
