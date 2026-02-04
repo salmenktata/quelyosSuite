@@ -85,6 +85,7 @@ const StoreSettingsSeo = lazy(() => import('./pages/store/settings/seo/page'))
 const StoreSettingsPaymentMethods = lazy(() => import('./pages/store/settings/payment-methods/page'))
 const StoreSettingsNotifications = lazy(() => import('./pages/store/settings/notifications/page'))
 const StoreSettingsCheckoutConfig = lazy(() => import('./pages/store/settings/CheckoutConfig'))
+const StoreSettingsDeliveryMethods = lazy(() => import('./pages/store/settings/DeliveryMethods'))
 
 // Support
 const SupportTickets = lazy(() => import('./pages/support/Tickets'))
@@ -451,6 +452,7 @@ export default function AppRoutes() {
           <Route path="payment-methods" element={<StoreSettingsPaymentMethods />} />
           <Route path="notifications" element={<StoreSettingsNotifications />} />
           <Route path="checkout-config" element={<StoreSettingsCheckoutConfig />} />
+          <Route path="delivery-methods" element={<StoreSettingsDeliveryMethods />} />
         </Route>
 
         {/* ---- Support ---- */}

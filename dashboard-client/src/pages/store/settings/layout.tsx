@@ -6,6 +6,7 @@ const navItems = [
   { href: "/store/settings/contact", label: "Contact & Support" },
   { href: "/store/settings/shipping", label: "Livraison" },
   { href: "/store/settings/shipping-zones", label: "Zones de livraison" },
+  { href: "/store/settings/delivery-methods", label: "Méthodes de livraison" },
   { href: "/store/settings/payment-methods", label: "Moyens de paiement" },
   { href: "/store/settings/checkout-config", label: "Configuration Checkout" },
   { href: "/store/settings/notifications", label: "Notifications" },

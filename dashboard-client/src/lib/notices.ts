@@ -40,6 +40,7 @@ export const storeNotices: Record<string, Notice[]> = {
   promoMessages: [{ type: 'info' as const, message: 'Configurez vos messages promotionnels.' }],
   staticPages: [{ type: 'info' as const, message: 'Gérez vos pages statiques.' }],
   checkoutConfig: [{ type: 'info' as const, message: 'Personnalisez le processus de commande : étapes, messages, options.' }],
+  deliveryMethods: [{ type: 'info' as const, message: 'Configurez les tarifs de livraison par zone géographique avec délais estimés.' }],
   stockAlerts: [{ type: 'info' as const, message: 'Configurez les alertes de stock.' }],
   trendingProducts: [{ type: 'info' as const, message: 'Gérez les produits tendance.' }],
   tickets: [{ type: 'info' as const, message: 'Support client e-commerce.' }],

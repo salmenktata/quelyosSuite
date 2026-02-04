@@ -20,12 +20,11 @@
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button, PageNotice, Badge, Modal } from '@/components/common'
 import { RichTextEditor } from '@/components/editor'
-import { Plus, Edit, Eye, Trash2, Save } from 'lucide-react'
+import { Plus, Edit, Eye, Save } from 'lucide-react'
 import { storeNotices } from '@/lib/notices'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import DOMPurify from 'dompurify'
 
 interface StaticPage {
   id: number
