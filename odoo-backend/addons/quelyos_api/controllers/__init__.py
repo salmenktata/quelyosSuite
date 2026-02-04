@@ -123,3 +123,5 @@ from . import user_billing_ctrl
 from . import user_permissions_ctrl
 # WebSocket Notifications Temps Réel
 from . import websocket_ctrl
+# Subscription Analytics MRR/ARR/Churn
+from . import subscription_analytics_ctrl

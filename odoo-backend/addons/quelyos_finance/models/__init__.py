@@ -16,3 +16,4 @@ from . import accountant_comment
 from . import account_account
 from . import res_partner
 from . import account_move_websocket
+from . import subscription_analytics
