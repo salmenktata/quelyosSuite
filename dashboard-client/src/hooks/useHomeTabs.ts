@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { MenuSection } from '@/config/modules'
 
 // Fonction utilitaire pour détecter le tab depuis un path
-export function detectHomeTab(pathname: string): string {
+export function detectHomeTab(_pathname: string): string {
   if (pathname === '/dashboard' || pathname === '/analytics') {
     return '__ALL__'
   } else if (pathname === '/settings') {
@@ -11,7 +11,7 @@ export function detectHomeTab(pathname: string): string {
   return '__ALL__' // Default
 }
 
-export function useHomeTabs(sections: MenuSection[], pathname: string) {
+export function useHomeTabs(sections: MenuSection[], _pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('home_active_tab') || '__ALL__'

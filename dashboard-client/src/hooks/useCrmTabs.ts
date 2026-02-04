@@ -44,11 +44,6 @@ export function detectCrmTab(_pathname: string): string {
 export function useCrmTabs(sections: MenuSection[], pathname: string) {
   const [activeTab, setActiveTab] = useState<string>(() => detectCrmTab(pathname))
 
-  // Auto-détection tab selon URL (sans localStorage)
-  useEffect(() => {
-    setActiveTab(detectCrmTab(pathname))
-  }, [pathname])
-
   // Filtrer sections visibles : si __ALL__, afficher toutes les sections
   const visibleSections = useMemo(() => {
     if (activeTab === '__ALL__') {

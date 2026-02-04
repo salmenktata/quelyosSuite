@@ -367,8 +367,17 @@ export function ModularLayout({ children }: { children: React.ReactNode }) {
 
   // Mémoriser les tabs pour éviter régénération inutile
   const currentModuleTabs = useMemo(() => {
-    return generateTabsFromSections(currentModule.sections)
-  }, [currentModule.sections])
+    const tabs = generateTabsFromSections(currentModule.sections)
+    // Ajouter un premier tab "Tout afficher" avec le nom du module
+    return [
+      {
+        id: '__ALL__',
+        label: currentModule.name,
+        count: currentModule.sections.reduce((acc, section) => acc + section.items.length, 0)
+      },
+      ...tabs
+    ]
+  }, [currentModule.sections, currentModule.name])
 
   // Navigation history & favorites
   const { recentPages, favorites, toggleFavorite, isFavorite } = useNavigationHistory()
