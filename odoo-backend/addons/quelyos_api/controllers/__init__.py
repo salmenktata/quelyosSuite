@@ -20,6 +20,7 @@ from . import journals_ctrl
 from . import tax_report_ctrl
 from . import bank_statements_ctrl
 from . import bank_reconciliation_ctrl
+from . import bank_reconciliation_api_ctrl
 from . import financial_reports_ctrl
 from . import oca_reports_ctrl
 from . import ml_forecasting_ctrl

@@ -6,5 +6,7 @@ from . import cash_alert
 from . import cash_flow_forecast
 from . import customer_risk_score
 from . import payment_reminder_sequence
+from . import bank_transaction
+from . import bank_connection
 from . import account_account
 from . import res_partner
