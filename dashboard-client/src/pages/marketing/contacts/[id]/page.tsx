@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Badge, Skeleton, ConfirmModal } from '@/components/common';
+import { Breadcrumbs, Badge, Skeleton, ConfirmModal, Button } from '@/components/common';
 import { useContactList, useDeleteContactList } from '@/hooks/useContactLists';
 import { useToast } from '@/contexts/ToastContext';
 import { useState } from 'react';
@@ -14,6 +14,8 @@ import {
   Send,
   Calendar,
   Filter,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 export default function ContactListDetailPage() {
@@ -23,8 +25,36 @@ export default function ContactListDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const listId = id ? parseInt(id, 10) : null;
-  const { data: list, isLoading } = useContactList(listId);
+  const { data: list, isLoading, error, refetch } = useContactList(listId);
   const deleteMutation = useDeleteContactList();
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Accueil', href: '/dashboard' },
+              { label: 'Marketing', href: '/marketing' },
+              { label: 'Listes de contacts', href: '/marketing/contacts' },
+              { label: 'Détail' },
+            ]}
+          />
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement de la liste de contacts.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const handleDelete = async () => {
     if (!listId) return;

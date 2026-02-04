@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Badge, Skeleton, ConfirmModal } from '@/components/common';
+import { Breadcrumbs, Badge, Skeleton, ConfirmModal, Button } from '@/components/common';
 import { useCampaign, useSendCampaign, useDeleteCampaign } from '@/hooks/useMarketingCampaigns';
 import { useToast } from '@/contexts/ToastContext';
 import { useState } from 'react';
@@ -16,6 +16,8 @@ import {
   ArrowLeft,
   Trash2,
   BarChart3,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 const getStatusBadge = (status: string) => {
@@ -37,9 +39,37 @@ export default function CampaignDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
 
-  const { data: campaign, isLoading } = useCampaign(id ? parseInt(id) : 0);
+  const { data: campaign, isLoading, error, refetch } = useCampaign(id ? parseInt(id) : 0);
   const sendMutation = useSendCampaign();
   const deleteMutation = useDeleteCampaign();
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Accueil', href: '/dashboard' },
+              { label: 'Marketing', href: '/marketing' },
+              { label: 'Campagnes', href: '/marketing/campaigns' },
+              { label: 'Détail' },
+            ]}
+          />
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement de la campagne.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const handleSend = async () => {
     if (!campaign) return;

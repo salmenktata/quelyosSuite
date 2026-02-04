@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { Layout } from '@/components/Layout';
-import { Breadcrumbs, Badge, Skeleton } from '@/components/common';
+import { Breadcrumbs, Badge, Skeleton, Button } from '@/components/common';
 import { useEmailTemplates, TEMPLATE_CATEGORIES, type TemplateCategory } from '@/hooks/useEmailTemplates';
-import { FileText, Eye, Search } from 'lucide-react';
+import { FileText, Eye, Search, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function EmailTemplatesPage() {
   const [selectedCategory, setSelectedCategory] = useState<TemplateCategory | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [previewTemplate, setPreviewTemplate] = useState<number | null>(null);
 
-  const { data: templates, isLoading } = useEmailTemplates();
+  const { data: templates, isLoading, error, refetch } = useEmailTemplates();
 
   const filteredTemplates = (templates || []).filter((t) => {
     const matchCategory = selectedCategory === 'all' || t.category === selectedCategory;
@@ -21,6 +21,34 @@ export default function EmailTemplatesPage() {
   const selectedTemplateData = previewTemplate
     ? templates?.find((t) => t.id === previewTemplate)
     : null;
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 md:p-8 space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: 'Accueil', href: '/dashboard' },
+              { label: 'Marketing', href: '/marketing' },
+              { label: 'Email', href: '/marketing/email' },
+              { label: 'Templates' },
+            ]}
+          />
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des templates email.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
