@@ -241,15 +241,37 @@ export type StockTransferInput = z.infer<typeof stockTransferSchema>
 // =============================================================================
 
 export const invoiceLineSchema = z.object({
+  productId: z.number().int().positive().nullable().optional(),
   description: z.string().min(1, errorMessages.required),
   quantity: z.number().min(0.01, 'La quantité doit être supérieure à 0'),
   unitPrice: z.number().min(0, errorMessages.positive),
-  taxRate: z.number().min(0).max(100).default(20),
-  discount: z.number().min(0).max(100).default(0),
+  taxIds: z.array(z.number().int().positive()).default([]),
+  taxRate: z.number().min(0).max(100).default(20).optional(),
+  discount: z.number().min(0).max(100).default(0).optional(),
 })
 
 export type InvoiceLineInput = z.infer<typeof invoiceLineSchema>
 
+export const invoiceCreateSchema = z.object({
+  customerId: z.number().int().positive('Veuillez sélectionner un client'),
+  invoiceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, errorMessages.date),
+  dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, errorMessages.date).optional().or(z.literal('')),
+  reference: z.string().max(50, errorMessages.max(50)).optional(),
+  note: z.string().max(500, errorMessages.max(500)).optional(),
+  lines: z.array(invoiceLineSchema).min(1, 'La facture doit contenir au moins une ligne'),
+})
+
+export type InvoiceCreateInput = z.infer<typeof invoiceCreateSchema>
+
+// Schéma pour édition (plus permissif)
+export const invoiceEditSchema = invoiceCreateSchema.extend({
+  id: z.number().int().positive(),
+  state: z.enum(['draft', 'posted', 'cancel']).optional(),
+})
+
+export type InvoiceEditInput = z.infer<typeof invoiceEditSchema>
+
+// Schéma legacy pour compatibilité
 export const invoiceSchema = z.object({
   customerId: z.number().int().positive(),
   orderId: z.number().int().positive().optional(),
