@@ -26,6 +26,8 @@ import {
   X,
   Settings,
   List,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import { useSiteConfig, useUpdateSiteConfig } from "@/hooks/useSiteConfig";
@@ -42,11 +44,11 @@ type FormTab = "meta" | "og" | "advanced";
 
 export default function SeoSettingsPage() {
   const toast = useToast();
-  const { data: config, isLoading: configLoading } = useSiteConfig();
+  const { data: config, isLoading: configLoading, error: configError, refetch: refetchConfig } = useSiteConfig();
   const updateConfigMutation = useUpdateSiteConfig();
 
   // SEO Metadata (par page)
-  const { data: metadataList, isLoading: metadataLoading } = useSeoMetadataList();
+  const { data: metadataList, isLoading: metadataLoading, error: metadataError, refetch: refetchMetadata } = useSeoMetadataList();
   const createMutation = useCreateSeoMetadata();
   const updateMutation = useUpdateSeoMetadata();
   const deleteMutation = useDeleteSeoMetadata();
@@ -94,6 +96,38 @@ export default function SeoSettingsPage() {
       });
     }
   }, [config]);
+
+  const error = configError || metadataError;
+  const handleRefetch = () => {
+    refetchConfig();
+    refetchMetadata();
+  };
+
+  if (error) {
+    return (
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Accueil", href: "/dashboard" },
+            { label: "Boutique", href: "/store" },
+            { label: "Paramètres", href: "/store/settings" },
+            { label: "SEO" },
+          ]}
+        />
+        <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">
+              Une erreur est survenue lors du chargement de la configuration SEO.
+            </p>
+            <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={handleRefetch}>
+              Réessayer
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSaveGlobal = async () => {
     try {

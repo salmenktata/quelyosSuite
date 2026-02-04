@@ -20,6 +20,8 @@ import {
   Truck,
   Settings,
   ExternalLink,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import { Link } from "react-router-dom";
@@ -54,7 +56,7 @@ const NOTIFICATION_TYPES = [
 
 export default function NotificationsPage() {
   const toast = useToast();
-  const { data: preferences } = useSMSPreferences();
+  const { data: preferences, error, refetch } = useSMSPreferences();
   const updatePreferencesMutation = useUpdateSMSPreferences();
 
   const mockPreferences = preferences || {
@@ -66,6 +68,35 @@ export default function NotificationsPage() {
     shippingUpdateEmailEnabled: true,
     shippingUpdateSmsEnabled: false,
   };
+
+  if (error) {
+    return (
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Accueil", href: "/dashboard" },
+            { label: "Boutique", href: "/store" },
+            { label: "Paramètres", href: "/store/settings" },
+            { label: "Notifications" },
+          ]}
+        />
+        <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">
+              Une erreur est survenue lors du chargement des préférences notifications.
+            </p>
+            <button
+              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+              onClick={() => refetch()}
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleTogglePreference = async (key: string, value: boolean | number) => {
     try {
