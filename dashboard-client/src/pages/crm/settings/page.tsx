@@ -1,3 +1,14 @@
+/**
+ * Paramètres CRM - Hub central de configuration
+ *
+ * Fonctionnalités :
+ * - Navigation vers toutes les sections de configuration CRM
+ * - Organisation par groupe thématique (Pipeline, Clients & Tarification)
+ * - Accès rapide aux étapes du pipeline de vente
+ * - Gestion du scoring automatique des leads
+ * - Configuration des listes de prix et segments clients
+ * - Interface visuelle avec icônes et descriptions
+ */
 import { Link } from "react-router-dom";
 import { Breadcrumbs } from "@/components/common";
 import {

@@ -1,3 +1,14 @@
+/**
+ * Étapes Pipeline (Settings) - Configuration funnel de vente
+ *
+ * Fonctionnalités :
+ * - Création/édition/suppression des étapes du pipeline
+ * - Réorganisation par glisser-déposer
+ * - Attribution probabilités de conversion (0-100%)
+ * - Identification couleur par étape
+ * - Marquage étapes finales (Gagné/Perdu)
+ * - Protection suppression étapes critiques
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

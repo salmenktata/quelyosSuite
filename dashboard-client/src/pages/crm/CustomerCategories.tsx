@@ -1,3 +1,14 @@
+/**
+ * Catégories Clients - Gestion des segments clients
+ *
+ * Fonctionnalités :
+ * - Création/édition/suppression de catégories
+ * - Palette de 9 couleurs pour identification visuelle
+ * - Compteur de clients par catégorie
+ * - Recherche et filtrage par couleur
+ * - Tri par nom ou nombre de clients
+ * - Actions groupées sur catégories sélectionnées
+ */
 import { useState, useEffect, useMemo } from 'react';
 import { Layout } from '../../components/Layout';
 import {

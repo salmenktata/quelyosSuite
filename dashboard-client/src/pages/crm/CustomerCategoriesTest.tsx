@@ -1,3 +1,13 @@
+/**
+ * Test - Catégories Clients (Page de test)
+ *
+ * Fonctionnalités :
+ * - Vérification fonctionnement du composant Layout
+ * - Test rendu basique de page CRM
+ * - Validation import et intégration des composants communs
+ * - Page temporaire pour tests de développement
+ * - Affichage message de confirmation Layout actif
+ */
 import { Layout } from '@/components/Layout';
 
 export default function CustomerCategoriesTest() {

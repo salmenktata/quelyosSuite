@@ -1,3 +1,14 @@
+/**
+ * Catégories Clients (Settings) - Segmentation clients avancée
+ *
+ * Fonctionnalités :
+ * - Création/édition/suppression de segments clients
+ * - Attribution de couleurs pour identification visuelle
+ * - Compteur de clients assignés par catégorie
+ * - Descriptions personnalisées par segment
+ * - Protection suppression si clients assignés
+ * - Interface de gestion avec actions inline
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

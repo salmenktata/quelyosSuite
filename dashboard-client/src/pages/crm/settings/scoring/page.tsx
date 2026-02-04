@@ -1,3 +1,14 @@
+/**
+ * Scoring Leads (Settings) - Qualification automatique prospects
+ *
+ * Fonctionnalités :
+ * - Création/édition de règles de notation (critères + points)
+ * - Configuration seuils (leads chaud, tiède, auto-qualification)
+ * - Activation/désactivation du scoring automatique
+ * - Calcul score maximum possible
+ * - Critères multiples (taille, budget, secteur, source, engagement)
+ * - Interface visuelle avec indicateurs colorés
+ */
 import { useState } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

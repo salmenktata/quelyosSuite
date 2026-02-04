@@ -14,8 +14,15 @@ type SortField = 'name' | 'email' | 'orders_count' | 'total_spent' | 'create_dat
 type SortOrder = 'asc' | 'desc'
 
 /**
- * Page de gestion des clients
- * Affiche la liste paginée des clients avec recherche, tri et export CSV
+ * Clients - Gestion complète de la base clients
+ *
+ * Fonctionnalités :
+ * - Liste paginée avec recherche temps réel
+ * - Tri multi-colonnes (nom, email, commandes, CA, date)
+ * - Statistiques clients (total, nouveau, actifs, inactifs)
+ * - Export CSV de la liste filtrée
+ * - Filtres avancés (statut, catégorie, date)
+ * - Navigation vers fiches clients détaillées
  */
 export default function Customers() {
   const [page, setPage] = useState(0)

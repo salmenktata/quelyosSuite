@@ -1,3 +1,14 @@
+/**
+ * Détail Lead - Opportunité commerciale détaillée
+ *
+ * Fonctionnalités :
+ * - Vue complète de l'opportunité (contact, montant, probabilité)
+ * - Édition inline des informations lead
+ * - Calcul du revenu espéré (montant × probabilité)
+ * - Date d'échéance avec alerte visuelle
+ * - Historique des interactions et activités
+ * - Actions rapides (conversion client, archivage)
+ */
 import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, DollarSign, Percent, Calendar } from 'lucide-react'

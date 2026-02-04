@@ -1,3 +1,14 @@
+/**
+ * Listes de Prix (Settings) - Gestion grilles tarifaires
+ *
+ * Fonctionnalités :
+ * - Création/édition/suppression de listes de prix
+ * - Configuration remises par segment (Revendeurs, VIP, Grossistes)
+ * - Gestion multi-devise (TND, EUR, USD)
+ * - Statut actif/inactif des listes
+ * - Compteur clients assignés par liste
+ * - Lien vers module complet de gestion des prix
+ */
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Breadcrumbs } from "@/components/common";

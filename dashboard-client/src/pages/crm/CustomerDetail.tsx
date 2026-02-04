@@ -1,3 +1,14 @@
+/**
+ * Fiche Client - Vue détaillée et édition client
+ *
+ * Fonctionnalités :
+ * - Informations complètes (identité, contact, adresse)
+ * - Édition inline des données client
+ * - Historique des commandes avec CA total
+ * - Statistiques d'achat (fréquence, panier moyen)
+ * - Notes et commentaires internes
+ * - Actions rapides (email, téléphone, WhatsApp)
+ */
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Layout } from '../../components/Layout'
