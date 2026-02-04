@@ -10,6 +10,8 @@ import {
   Key,
   Send,
   Clock,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { logger } from '@quelyos/logger';
 import {
@@ -22,7 +24,7 @@ import {
 
 export default function MarketingSMSSettingsPage() {
   const toast = useToast();
-  const { data: config, isLoading } = useSMSConfig();
+  const { data: config, isLoading, error, refetch } = useSMSConfig();
   const { data: history } = useSMSHistory();
   const { data: quota } = useSMSQuota();
   const updateMutation = useUpdateSMSConfig();
@@ -52,6 +54,32 @@ export default function MarketingSMSSettingsPage() {
       });
     }
   }, [config]);
+
+  if (error) {
+    return (
+      <div className="p-4 md:p-8 space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Accueil", href: "/dashboard" },
+            { label: "Marketing", href: "/marketing" },
+            { label: "Paramètres", href: "/marketing/settings" },
+            { label: "Configuration SMS" },
+          ]}
+        />
+        <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+            <p className="flex-1 text-red-800 dark:text-red-200">
+              Une erreur est survenue lors du chargement de la configuration SMS.
+            </p>
+            <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+              Réessayer
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSave = async () => {
     try {
