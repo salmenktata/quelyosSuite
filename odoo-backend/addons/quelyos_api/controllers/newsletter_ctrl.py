@@ -109,15 +109,14 @@ class NewsletterController(BaseController):
             }
         }
 
-    @http.route('/api/admin/newsletter/campaigns/save', type='json', auth='public', methods=['POST'], csrf=False)
-    def save_campaign(self, **kwargs):
-        """Créer ou modifier une campagne"""
+    @http.route('/api/admin/newsletter/campaigns/create', type='json', auth='public', methods=['POST'], csrf=False)
+    def create_campaign(self, **kwargs):
+        """Créer une nouvelle campagne"""
         tenant_id = self._authenticate_and_get_tenant()
         if not tenant_id:
             return {'success': False, 'error': 'Non authentifié'}
 
         Campaign = request.env['quelyos.newsletter.campaign'].sudo()
-        campaign_id = kwargs.get('id')
 
         data = {
             'name': kwargs.get('name'),
@@ -127,23 +126,52 @@ class NewsletterController(BaseController):
             'from_name': kwargs.get('from_name', 'Notre boutique'),
             'from_email': kwargs.get('from_email', 'noreply@votreboutique.com'),
             'reply_to': kwargs.get('reply_to', ''),
+            'state': 'draft',
             'tenant_id': tenant_id,
         }
 
         # Segment optionnel
-        segment_id = kwargs.get('segment_id')
-        if segment_id:
-            data['segment_id'] = segment_id
+        segment = kwargs.get('segment')
+        if segment and segment != 'all':
+            Segment = request.env['quelyos.newsletter.segment'].sudo()
+            segment_rec = Segment.search([('segment_type', '=', segment), ('tenant_id', '=', tenant_id)], limit=1)
+            if segment_rec:
+                data['segment_id'] = segment_rec.id
 
-        if campaign_id:
-            campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
-            if campaign:
-                campaign.write(data)
-                return {'success': True, 'campaign_id': campaign.id}
+        campaign = Campaign.create(data)
+        return {'success': True, 'campaign': {'id': campaign.id}}
+
+    @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/save-draft', type='json', auth='public', methods=['POST'], csrf=False)
+    def save_campaign_draft(self, campaign_id, **kwargs):
+        """Sauvegarder le brouillon d'une campagne"""
+        tenant_id = self._authenticate_and_get_tenant()
+        if not tenant_id:
+            return {'success': False, 'error': 'Non authentifié'}
+
+        Campaign = request.env['quelyos.newsletter.campaign'].sudo()
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+
+        if not campaign:
             return {'success': False, 'error': 'Campagne non trouvée'}
-        else:
-            campaign = Campaign.create(data)
-            return {'success': True, 'campaign_id': campaign.id}
+
+        data = {}
+        if 'name' in kwargs:
+            data['name'] = kwargs['name']
+        if 'subject' in kwargs:
+            data['subject'] = kwargs['subject']
+        if 'preview_text' in kwargs:
+            data['preview_text'] = kwargs['preview_text']
+        if 'html_body' in kwargs:
+            data['html_body'] = kwargs['html_body']
+        if 'from_name' in kwargs:
+            data['from_name'] = kwargs['from_name']
+        if 'from_email' in kwargs:
+            data['from_email'] = kwargs['from_email']
+        if 'reply_to' in kwargs:
+            data['reply_to'] = kwargs['reply_to']
+
+        campaign.write(data)
+        return {'success': True, 'campaign_id': campaign.id}
 
     @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/send', type='json', auth='public', methods=['POST'], csrf=False)
     def send_campaign(self, campaign_id, **kwargs):
@@ -187,6 +215,134 @@ class NewsletterController(BaseController):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
+    @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/schedule', type='json', auth='public', methods=['POST'], csrf=False)
+    def schedule_campaign(self, campaign_id, **kwargs):
+        """Programmer l'envoi d'une campagne"""
+        tenant_id = self._authenticate_and_get_tenant()
+        if not tenant_id:
+            return {'success': False, 'error': 'Non authentifié'}
+
+        Campaign = request.env['quelyos.newsletter.campaign'].sudo()
+        campaign = Campaign.search([('id', '=', campaign_id), ('tenant_id', '=', tenant_id)], limit=1)
+
+        if not campaign:
+            return {'success': False, 'error': 'Campagne non trouvée'}
+
+        scheduled_date = kwargs.get('scheduled_date')
+        if not scheduled_date:
+            return {'success': False, 'error': 'Date de programmation requise'}
+
+        try:
+            campaign.action_schedule(scheduled_date)
+            return {'success': True, 'message': 'Campagne programmée avec succès'}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/admin/newsletter/subscribers/export', type='json', auth='public', methods=['POST'], csrf=False)
+    def export_subscribers(self, **kwargs):
+        """Exporter la liste des abonnés en CSV"""
+        tenant_id = self._authenticate_and_get_tenant()
+        if not tenant_id:
+            return {'success': False, 'error': 'Non authentifié'}
+
+        import csv
+        import base64
+        from io import StringIO
+
+        Subscriber = request.env['quelyos.newsletter.subscriber'].sudo()
+        subscribers = Subscriber.search([('tenant_id', '=', tenant_id)])
+
+        # Créer CSV en mémoire
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['Email', 'Nom', 'Statut', 'Segment', 'Taux ouverture', 'Taux clic', 'Campagnes reçues', 'Date inscription'])
+
+        for s in subscribers:
+            writer.writerow([
+                s.email,
+                s.name or '',
+                s.status,
+                s.segment or '',
+                f"{s.stats_open_rate:.1f}%",
+                f"{s.stats_click_rate:.1f}%",
+                s.stats_campaigns_received,
+                s.subscribed_date.strftime('%Y-%m-%d') if s.subscribed_date else ''
+            ])
+
+        csv_content = output.getvalue()
+        csv_base64 = base64.b64encode(csv_content.encode('utf-8')).decode('utf-8')
+
+        return {
+            'success': True,
+            'csv_data': csv_base64,
+            'filename': f'subscribers_{tenant_id}.csv'
+        }
+
+    @http.route('/api/admin/newsletter/campaigns/send-test-preview', type='json', auth='public', methods=['POST'], csrf=False)
+    def send_test_preview(self, **kwargs):
+        """Envoyer un email de test avec preview HTML"""
+        tenant_id = self._authenticate_and_get_tenant()
+        if not tenant_id:
+            return {'success': False, 'error': 'Non authentifié'}
+
+        test_email = kwargs.get('test_email')
+        subject = kwargs.get('subject', 'Test Newsletter')
+        html_body = kwargs.get('html_body', '')
+
+        if not test_email or not html_body:
+            return {'success': False, 'error': 'Email et contenu requis'}
+
+        try:
+            # Envoyer email de test via mail.mail
+            mail = request.env['mail.mail'].sudo().create({
+                'email_from': 'noreply@quelyos.com',
+                'email_to': test_email,
+                'subject': f'[TEST] {subject}',
+                'body_html': html_body,
+            })
+            mail.send()
+            return {'success': True, 'message': f'Email de test envoyé à {test_email}'}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/admin/newsletter/upload-image', type='http', auth='public', methods=['POST'], csrf=False)
+    def upload_image(self, **kwargs):
+        """Upload image pour l'éditeur de newsletter"""
+        import json
+
+        tenant_id = self._authenticate_and_get_tenant()
+        if not tenant_id:
+            return json.dumps({'success': False, 'error': 'Non authentifié'})
+
+        uploaded_file = request.httprequest.files.get('file')
+        if not uploaded_file:
+            return json.dumps({'success': False, 'error': 'Aucun fichier'})
+
+        try:
+            import base64
+            file_data = base64.b64encode(uploaded_file.read())
+
+            # Créer attachment
+            Attachment = request.env['ir.attachment'].sudo()
+            attachment = Attachment.create({
+                'name': uploaded_file.filename,
+                'type': 'binary',
+                'datas': file_data,
+                'res_model': 'quelyos.newsletter.campaign',
+                'mimetype': uploaded_file.content_type,
+            })
+
+            # Retourner URL d'accès
+            url = f'/web/image/{attachment.id}'
+
+            return json.dumps({
+                'success': True,
+                'url': url,
+                'attachment_id': attachment.id
+            })
+        except Exception as e:
+            return json.dumps({'success': False, 'error': str(e)})
+
     @http.route('/api/admin/newsletter/segments', type='json', auth='public', methods=['POST'], csrf=False)
     def get_segments(self, **kwargs):
         """Récupérer la liste des segments"""
@@ -200,9 +356,7 @@ class NewsletterController(BaseController):
         return {
             'success': True,
             'segments': [{
-                'id': s.id,
-                'name': s.name,
-                'description': s.description or '',
-                'segment_type': s.segment_type,
+                'value': s.segment_type,
+                'label': s.name,
             } for s in segments]
         }
