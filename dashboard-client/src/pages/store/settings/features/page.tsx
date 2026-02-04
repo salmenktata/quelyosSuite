@@ -1,3 +1,14 @@
+/**
+ * Fonctionnalités - Activation/désactivation modules e-commerce
+ *
+ * Fonctionnalités :
+ * - Toggle Wishlist (liste de souhaits produits)
+ * - Toggle Avis clients avec modération
+ * - Toggle Comparateur produits
+ * - Toggle Newsletter inscription
+ * - Toggle Compte client requis pour commande
+ */
+
 import { useState, useEffect } from "react";
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";

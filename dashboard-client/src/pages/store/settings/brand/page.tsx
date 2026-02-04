@@ -1,3 +1,16 @@
+/**
+ * Marque & Identité - Configuration complète identité visuelle boutique
+ *
+ * Fonctionnalités :
+ * - Thèmes prédéfinis applicables en 1 clic (8 thèmes disponibles)
+ * - Personnalisation palette complète (13 couleurs : primary, secondary, accent, muted, border, etc.)
+ * - Upload logo et favicon avec prévisualisation instantanée
+ * - Configuration typographie (police principale avec aperçu en temps réel)
+ * - Sauvegarde automatique avec indicateur de modifications
+ * - Prévisualisation live des couleurs et typographie
+ * - Reset valeurs par défaut
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";

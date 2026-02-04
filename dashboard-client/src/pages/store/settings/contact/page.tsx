@@ -1,3 +1,14 @@
+/**
+ * Contact & Support - Configuration coordonnées assistance client
+ *
+ * Fonctionnalités :
+ * - Email support principal
+ * - Téléphone et horaires d'ouverture
+ * - WhatsApp Business avec lien direct
+ * - Temps de réponse moyen estimé
+ * - Adresse physique pour courrier/retours
+ */
+
 import { useState, useEffect } from "react";
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";

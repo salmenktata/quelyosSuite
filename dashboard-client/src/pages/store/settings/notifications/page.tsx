@@ -1,3 +1,14 @@
+/**
+ * Notifications - Configuration alertes emails automatiques
+ *
+ * Fonctionnalités :
+ * - Email notifications nouvelles commandes (admin)
+ * - Email de confirmation client (nouveau compte, commande)
+ * - Email expédition avec numéro suivi
+ * - Email promotionnel et newsletter
+ * - Templates personnalisables par type
+ */
+
 import { Breadcrumbs } from "@/components/common";
 import { useToast } from "@/contexts/ToastContext";
 import {

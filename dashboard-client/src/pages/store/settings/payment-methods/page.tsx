@@ -1,3 +1,14 @@
+/**
+ * Moyens de Paiement - Configuration passerelles et méthodes
+ *
+ * Fonctionnalités :
+ * - Activation/désactivation moyens (CB, PayPal, virement, espèces)
+ * - Configuration clés API Stripe/PayPal
+ * - Frais et commissions par méthode
+ * - Ordre d'affichage au checkout
+ * - Paiement test vs production
+ */
+
 import { useState } from "react";
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";

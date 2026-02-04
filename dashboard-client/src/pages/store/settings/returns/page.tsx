@@ -1,3 +1,14 @@
+/**
+ * Retours & Garantie - Configuration politique retours et garanties
+ *
+ * Fonctionnalités :
+ * - Délai de rétractation légal (14-30 jours)
+ * - Conditions d'éligibilité retours (neuf, emballage, étiquettes)
+ * - Processus de remboursement (délai, mode de paiement)
+ * - Durée garantie constructeur
+ * - Adresse retour et instructions
+ */
+
 import { useState, useEffect } from "react";
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs } from "@/components/common";

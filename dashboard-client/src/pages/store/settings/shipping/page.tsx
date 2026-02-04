@@ -1,3 +1,14 @@
+/**
+ * Livraison - Configuration délais et options expédition
+ *
+ * Fonctionnalités :
+ * - Délai livraison standard (jours ouvrés)
+ * - Seuil livraison gratuite (montant minimum)
+ * - Options livraison express/prioritaire
+ * - Tarifs fixes ou calculés par poids
+ * - Transporteurs disponibles et tracking
+ */
+
 import { useState, useEffect } from "react";
 import { Breadcrumbs, Badge, Button, Modal, SkeletonTable, PageNotice } from "@/components/common";
 import { useToast } from "@/contexts/ToastContext";

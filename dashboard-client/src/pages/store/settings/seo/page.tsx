@@ -1,3 +1,14 @@
+/**
+ * SEO - Configuration référencement naturel
+ *
+ * Fonctionnalités :
+ * - Meta title et description globale
+ * - Keywords ciblés (mots-clés SEO)
+ * - Open Graph (partage réseaux sociaux)
+ * - Robots.txt et sitemap.xml automatiques
+ * - Schema.org structured data (e-commerce)
+ */
+
 import { useState, useEffect } from "react";
 import { Breadcrumbs, SkeletonTable } from "@/components/common";
 import { Button } from "@/components/common/Button";

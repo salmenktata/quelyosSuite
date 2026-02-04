@@ -1,3 +1,14 @@
+/**
+ * Zones de Livraison - Gestion zones géographiques et tarifs
+ *
+ * Fonctionnalités :
+ * - Définition zones géographiques (pays, régions)
+ * - Tarifs différenciés par zone
+ * - Délais de livraison estimés par zone
+ * - Seuil livraison gratuite par zone
+ * - Restrictions produits par zone
+ */
+
 import { useState, useEffect } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";

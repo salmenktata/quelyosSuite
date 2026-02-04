@@ -1,3 +1,14 @@
+/**
+ * Paramètres Boutique - Vue d'ensemble configuration e-commerce
+ *
+ * Fonctionnalités :
+ * - Navigation organisée par groupes (Identité, Logistique, Expérience UX)
+ * - Accès rapide aux 8 rubriques de configuration
+ * - Cartes interactives avec descriptions et icônes
+ * - Layout responsive adaptatif mobile/desktop
+ * - Breadcrumbs et PageNotice intégrés
+ */
+
 import { Link } from "react-router-dom";
 import { Breadcrumbs, PageNotice } from "@/components/common";
 import {

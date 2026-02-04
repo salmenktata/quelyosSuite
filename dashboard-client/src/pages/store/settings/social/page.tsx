@@ -1,3 +1,14 @@
+/**
+ * Réseaux Sociaux - Configuration liens réseaux sociaux
+ *
+ * Fonctionnalités :
+ * - Configuration URLs 6 réseaux (Facebook, Instagram, Twitter, YouTube, LinkedIn, TikTok)
+ * - Validation format URLs automatique
+ * - Prévisualisation icônes avec styles personnalisés
+ * - Sauvegarde automatique avec notification
+ * - Affichage conditionnel liens actifs sur le frontend
+ */
+
 import { useState, useEffect } from "react";
 import { Breadcrumbs } from "@/components/common";
 import { Button } from "@/components/common/Button";
