@@ -20,7 +20,7 @@ import {
 } from '@/hooks/useAbandonedCarts'
 import { Button, Breadcrumbs, SkeletonTable, PageNotice } from '@/components/common'
 import { ecommerceNotices } from '@/lib/notices'
-import { Mail as EnvelopeIcon, ShoppingCart as ShoppingCartIcon } from 'lucide-react'
+import { Mail as EnvelopeIcon, ShoppingCart as ShoppingCartIcon, AlertCircle, RefreshCw } from 'lucide-react'
 import type { AbandonedCart } from '@/types'
 import { logger } from '@quelyos/logger';
 
@@ -32,7 +32,7 @@ export default function AbandonedCarts() {
   const [statsPeriod, setStatsPeriod] = useState('30d')
   const limit = 20
 
-  const { data, isLoading, error } = useAbandonedCarts({
+  const { data, isLoading, error, refetch } = useAbandonedCarts({
     limit,
     offset: page * limit,
     search: search || undefined,
@@ -259,8 +259,16 @@ export default function AbandonedCarts() {
           </div>
 
           {error ? (
-            <div className="p-6 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des paniers abandonnés
+            <div role="alert" className="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-3 justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-red-800 dark:text-red-200 text-center">
+                  Une erreur est survenue lors du chargement des paniers abandonnés.
+                </p>
+                <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                  Réessayer
+                </Button>
+              </div>
             </div>
           ) : isLoading ? (
             <SkeletonTable rows={10} columns={7} />

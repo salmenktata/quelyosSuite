@@ -17,7 +17,7 @@ import { useOrders } from '@/hooks/useOrders'
 import { Badge, Button, Breadcrumbs, SkeletonTable, PageNotice } from '@/components/common'
 import { ecommerceNotices } from '@/lib/notices'
 import { OrdersKanban } from '@/components/OrdersKanban'
-import { LayoutGrid as Squares2X2Icon, Table as TableCellsIcon } from 'lucide-react'
+import { LayoutGrid as Squares2X2Icon, Table as TableCellsIcon, AlertCircle, RefreshCw } from 'lucide-react'
 import type { Order } from '@/types'
 
 export default function Orders() {
@@ -30,7 +30,7 @@ export default function Orders() {
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list')
   const limit = 20
 
-  const { data, isLoading, error } = useOrders({
+  const { data, isLoading, error, refetch } = useOrders({
     limit,
     offset: page * limit,
     status: statusFilter || undefined,
@@ -430,8 +430,18 @@ export default function Orders() {
               <SkeletonTable rows={5} columns={5} />
             </div>
           ) : error ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des commandes
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
+              <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                  <p className="flex-1 text-red-800 dark:text-red-200">
+                    Une erreur est survenue lors du chargement des commandes.
+                  </p>
+                  <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                    Réessayer
+                  </Button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
@@ -450,8 +460,16 @@ export default function Orders() {
             {isLoading ? (
               <SkeletonTable rows={5} columns={6} />
             ) : error ? (
-              <div className="p-8 text-center text-red-600 dark:text-red-400">
-                Erreur lors du chargement des commandes
+              <div role="alert" className="p-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <div className="flex items-center gap-3 justify-center">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                  <p className="flex-1 text-red-800 dark:text-red-200 text-center">
+                    Une erreur est survenue lors du chargement des commandes.
+                  </p>
+                  <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                    Réessayer
+                  </Button>
+                </div>
               </div>
             ) : orders.length > 0 ? (
               <>

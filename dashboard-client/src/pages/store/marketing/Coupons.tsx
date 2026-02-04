@@ -19,6 +19,7 @@ import { ecommerceNotices } from '@/lib/notices'
 import { useToast } from '@/hooks/useToast'
 import type { Coupon as BaseCoupon } from '@/types'
 import { logger } from '@quelyos/logger';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
 interface CouponReward {
   discount: number
@@ -44,7 +45,7 @@ export default function Coupons() {
   const [activeOnly, setActiveOnly] = useState(false)
   const limit = 20
 
-  const { data, isLoading, error } = useCoupons({
+  const { data, isLoading, error, refetch } = useCoupons({
     limit,
     offset: page * limit,
     active_only: activeOnly,
@@ -215,8 +216,16 @@ export default function Coupons() {
           {isLoading ? (
             <SkeletonTable rows={5} columns={6} />
           ) : error ? (
-            <div className="p-8 text-center text-red-600 dark:text-red-400">
-              Erreur lors du chargement des coupons
+            <div role="alert" className="p-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-3 justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-red-800 dark:text-red-200 text-center">
+                  Une erreur est survenue lors du chargement des coupons.
+                </p>
+                <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()}>
+                  Réessayer
+                </Button>
+              </div>
             </div>
           ) : data && (Array.isArray(data) ? data : []).length > 0 ? (
             <>
