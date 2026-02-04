@@ -15,7 +15,7 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
 import { useMarketingLists, useCreateMailingList, useDeleteMailingList } from '@/hooks/useMarketingLists';
-import { Users, Plus, Trash2, UserPlus, RefreshCw, Mail } from 'lucide-react';
+import { Users, Plus, Trash2, UserPlus, RefreshCw, Mail ,RefreshCw} from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
 const breadcrumbItems = [
@@ -25,7 +25,7 @@ const breadcrumbItems = [
 ];
 
 export default function MailingLists() {
-  const { data, isLoading, error, refetch } = useMarketingLists({ limit: 100 });
+  const { data, isLoading, error,refetch, refetch } = useMarketingLists({ limit: 100 });
   const createMailingListMutation = useCreateMailingList();
   const deleteMailingListMutation = useDeleteMailingList();
 

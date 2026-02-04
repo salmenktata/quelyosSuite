@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/useToast'
 
 export default function RequestForm() {
   const navigate = useNavigate()
-  const { success: showSuccess, error: showError } = useToast()
+  const { success: showSuccess, error,refetch: showError } = useToast()
   const [searchParams] = useSearchParams()
   const equipmentIdParam = searchParams.get('equipment')
 

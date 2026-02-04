@@ -55,7 +55,7 @@ export default function EmailCampaignDetailPage() {
   const toast = useToast();
   const campaignId = parseInt(id || '0', 10);
 
-  const { data: campaign, isLoading, error, refetch } = useMarketingCampaign(campaignId);
+  const { data: campaign, isLoading, error,refetch, refetch } = useMarketingCampaign(campaignId);
   const { data: stats } = useCampaignStats(campaignId);
   const { mutate: sendCampaign, isPending: isSending } = useSendCampaign();
   const { mutate: deleteCampaign, isPending: isDeleting } = useDeleteCampaign();

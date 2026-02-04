@@ -94,7 +94,7 @@ const getChannelBadge = (channel: string) => {
 };
 
 export default function MarketingDashboard() {
-  const { data, isLoading, error, refetch } = useMarketingDashboard();
+  const { data, isLoading, error,refetch, refetch } = useMarketingDashboard();
   const { data: smsQuota } = useSMSQuota();
 
   const stats = data?.stats;

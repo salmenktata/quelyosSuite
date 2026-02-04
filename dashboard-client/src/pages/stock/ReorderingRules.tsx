@@ -26,7 +26,7 @@ export default function ReorderingRules() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<ReorderingRule | undefined>()
 
-  const { data, isLoading, error, refetch } = useReorderingRules({
+  const { data, isLoading, error,refetch, refetch } = useReorderingRules({
     warehouse_id: warehouseFilter,
     triggered: statusFilter === 'triggered' ? true : undefined,
     active: statusFilter === 'active' ? true : undefined

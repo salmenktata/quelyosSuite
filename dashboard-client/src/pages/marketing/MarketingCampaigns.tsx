@@ -15,7 +15,7 @@ import { Layout } from '@/components/Layout';
 import { Breadcrumbs, PageNotice, Button, SkeletonTable } from '@/components/common';
 import { marketingNotices } from '@/lib/notices';
 import { useMarketingCampaigns, useSendCampaign, useDeleteCampaign } from '@/hooks/useMarketingCampaigns';
-import { Mail, Plus, Send, Trash2, BarChart3, RefreshCw } from 'lucide-react';
+import { Mail, Plus, Send, Trash2, BarChart3, RefreshCw ,RefreshCw} from 'lucide-react';
 import { logger } from '@quelyos/logger';
 
 const breadcrumbItems = [
@@ -41,7 +41,7 @@ const stateColors: Record<string, string> = {
 export default function MarketingCampaigns() {
   const [stateFilter, setStateFilter] = useState<string>('');
 
-  const { data, isLoading, error, refetch } = useMarketingCampaigns({
+  const { data, isLoading, error,refetch, refetch } = useMarketingCampaigns({
     state: stateFilter || undefined,
     limit: 100
   });

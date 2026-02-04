@@ -46,7 +46,7 @@ export default function StockValuationPage() {
   const [selectedWarehouse, _setSelectedWarehouse] = useState<number | undefined>()
   const [selectedCategory, _setSelectedCategory] = useState<number | undefined>()
 
-  const { data, isLoading, error, refetch } = useStockValuation({
+  const { data, isLoading, error,refetch, refetch } = useStockValuation({
     warehouse_id: selectedWarehouse,
     category_id: selectedCategory,
     date: selectedDate

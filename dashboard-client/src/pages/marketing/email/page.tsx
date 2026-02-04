@@ -25,7 +25,7 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function EmailCampaignsPage() {
-  const { data, isLoading, error, refetch } = useMarketingCampaigns();
+  const { data, isLoading, error,refetch, refetch } = useMarketingCampaigns();
 
   const campaigns = data?.campaigns || [];
   const sentCampaigns = campaigns.filter((c) => c.state === 'done');

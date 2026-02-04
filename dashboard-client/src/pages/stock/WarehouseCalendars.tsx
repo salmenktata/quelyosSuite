@@ -29,8 +29,8 @@ export default function WarehouseCalendars() {
   const [_showCreateCalendar, _setShowCreateCalendar] = useState(false)
   const [_showDeliverySimulator, _setShowDeliverySimulator] = useState(false)
 
-  const { warehouses, loading: loadingWarehouses, error: errorWarehouses, refetch: refetchWarehouses } = useWarehouses()
-  const { calendars, loading: loadingCalendars, error: errorCalendars, refetch: refetchCalendars } = useCalendars()
+  const { warehouses, loading: loadingWarehouses, error,refetch: errorWarehouses, refetch: refetchWarehouses } = useWarehouses()
+  const { calendars, loading: loadingCalendars, error,refetch: errorCalendars, refetch: refetchCalendars } = useCalendars()
   const { setCalendar, setting } = useSetWarehouseCalendar()
   const { createCalendar, creating } = useCreateCalendar()
   const { planDelivery, planning } = usePlanDeliveryDate()

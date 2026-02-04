@@ -30,8 +30,8 @@ import { usePOSDashboard, usePOSActiveSessions } from '../../hooks/pos/usePOSDas
 import { usePOSConfigs } from '../../hooks/pos/usePOSConfigs'
 
 export default function POSDashboard() {
-  const { data: dashboard, isLoading: dashboardLoading, error: dashboardError, refetch: refetchDashboard } = usePOSDashboard()
-  const { data: activeSessions = [], isLoading: sessionsLoading, error: sessionsError, refetch: refetchSessions } = usePOSActiveSessions()
+  const { data: dashboard, isLoading: dashboardLoading, error,refetch: dashboardError, refetch: refetchDashboard } = usePOSDashboard()
+  const { data: activeSessions = [], isLoading: sessionsLoading, error,refetch: sessionsError, refetch: refetchSessions } = usePOSActiveSessions()
   const { data: configs = [] } = usePOSConfigs()
 
   const hasError = dashboardError || sessionsError

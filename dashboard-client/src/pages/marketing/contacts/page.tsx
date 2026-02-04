@@ -67,7 +67,7 @@ const PREDEFINED_SEGMENTS = [
 
 export default function ContactListsPage() {
   const toast = useToast();
-  const { data, isLoading, error, refetch } = useContactLists();
+  const { data, isLoading, error,refetch, refetch } = useContactLists();
   const createMutation = useCreateContactList();
   const deleteMutation = useDeleteContactList();
 

@@ -25,7 +25,7 @@ export default function ContactListDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const listId = id ? parseInt(id, 10) : null;
-  const { data: list, isLoading, error, refetch } = useContactList(listId);
+  const { data: list, isLoading, error,refetch, refetch } = useContactList(listId);
   const deleteMutation = useDeleteContactList();
 
   if (error) {

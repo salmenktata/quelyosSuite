@@ -39,7 +39,7 @@ export default function CampaignDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
 
-  const { data: campaign, isLoading, error, refetch } = useCampaign(id ? parseInt(id) : 0);
+  const { data: campaign, isLoading, error,refetch, refetch } = useCampaign(id ? parseInt(id) : 0);
   const sendMutation = useSendCampaign();
   const deleteMutation = useDeleteCampaign();
 

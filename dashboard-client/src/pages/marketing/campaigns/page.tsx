@@ -46,7 +46,7 @@ export default function CampaignsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState<number | null>(null);
 
-  const { data, isLoading, error, refetch } = useMarketingCampaigns({
+  const { data, isLoading, error,refetch, refetch } = useMarketingCampaigns({
     channel: channelFilter === 'all' ? undefined : channelFilter,
     state: statusFilter || undefined,
   });

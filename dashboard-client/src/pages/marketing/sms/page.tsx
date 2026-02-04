@@ -26,7 +26,7 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function SMSCampaignsPage() {
-  const { data, isLoading, error, refetch } = useMarketingCampaigns({ channel: 'sms' });
+  const { data, isLoading, error,refetch, refetch } = useMarketingCampaigns({ channel: 'sms' });
   const { data: smsQuota } = useSMSQuota();
 
   const campaigns = data?.campaigns || [];

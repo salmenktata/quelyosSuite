@@ -31,7 +31,7 @@ export default function InventoryGroups() {
   const [_isCreateModalOpen, _setIsCreateModalOpen] = useState(false)
   const [_selectedGroupId, _setSelectedGroupId] = useState<number | null>(null)
 
-  const { inventoryGroups, totalCount, loading, error, refetch } = useInventoryGroups({
+  const { inventoryGroups, totalCount, loading, error,refetch, refetch } = useInventoryGroups({
     state: stateFilter === 'all' ? undefined : stateFilter,
   })
 

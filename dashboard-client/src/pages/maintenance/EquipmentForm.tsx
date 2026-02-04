@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/useToast'
 
 export default function EquipmentForm() {
   const navigate = useNavigate()
-  const { success: showSuccess, error: showError } = useToast()
+  const { success: showSuccess, error,refetch: showError } = useToast()
   const createEquipment = useCreateMaintenanceEquipment()
 
   const [formData, setFormData] = useState({

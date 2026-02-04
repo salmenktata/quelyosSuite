@@ -29,7 +29,7 @@ export default function TicketDetail() {
   const queryClient = useQueryClient()
 
   const ticketId = id ? parseInt(id, 10) : null
-  const { data, isLoading, error } = useTicketDetail(ticketId)
+  const { data, isLoading, error,refetch } = useTicketDetail(ticketId)
   const { data: attachmentsData } = useTicketAttachments(ticketId)
   const { data: templatesData } = useTemplates()
   const replyMutation = useReplyTicket(ticketId || 0)

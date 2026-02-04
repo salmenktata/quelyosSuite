@@ -34,7 +34,7 @@ export default function Tickets() {
     search: '',
   })
 
-  const { data, isLoading, error } = useTickets(filters)
+  const { data, isLoading, error,refetch } = useTickets(filters)
 
   // Stats calculées
   const stats = useMemo(() => {
