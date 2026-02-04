@@ -18,8 +18,7 @@ import {
   useDeleteCustomerCategory,
   type CustomerCategory,
 } from '../../hooks/useCustomerCategories';
-import { SkeletonGrid } from '../../components/common/Skeleton';
-import { PageNotice } from '../../components/common';
+import { SkeletonTable, PageNotice } from '../../components/common';
 import { crmNotices } from '@/lib/notices';
 import { useToast } from '../../contexts/ToastContext';
 import { logger } from '@quelyos/logger';
@@ -215,13 +214,9 @@ export default function CustomerCategories() {
     return (
       <Layout>
         <div className="space-y-6 p-4 md:p-8">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <div className="h-8 w-64 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
-              <div className="h-4 w-96 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
-            </div>
-          </div>
-          <SkeletonGrid count={8} columns={4} />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 animate-pulse" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96 animate-pulse mb-6" />
+          <SkeletonTable rows={10} columns={4} />
         </div>
       </Layout>
     );

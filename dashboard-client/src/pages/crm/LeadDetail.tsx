@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, DollarSign, Percent, Calendar } from 'lucide-react'
 import { Layout } from '@/components/Layout'
+import { SkeletonTable } from '@/components/common'
 import { useLead } from '@/hooks/useLead'
 import { useUpdateLead } from '@/hooks/useUpdateLead'
 import { toast } from 'sonner'
@@ -84,8 +85,10 @@ export default function LeadDetail() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="p-4 md:p-8 space-y-6">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 animate-pulse" />
+          <SkeletonTable rows={6} columns={2} />
         </div>
       </Layout>
     )
