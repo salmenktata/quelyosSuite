@@ -37,6 +37,8 @@ import {
   ChevronDown,
   Download,
   GitBranch,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react"
 import { GlassCard } from '@/components/ui/glass'
 
@@ -506,9 +508,16 @@ export default function ScenariosPage() {
         {loading ? (
           <SkeletonTable rows={5} columns={4} />
         ) : error ? (
-          <div role="alert" className="p-6 text-center bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-            <Button variant="secondary" onClick={fetchForecast}>Réessayer</Button>
+          <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="flex-1 text-red-800 dark:text-red-200">
+                Une erreur est survenue lors du chargement des prévisions.
+              </p>
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />} onClick={fetchForecast}>
+                Réessayer
+              </Button>
+            </div>
           </div>
         ) : (
           <GlassCard className="p-4">
