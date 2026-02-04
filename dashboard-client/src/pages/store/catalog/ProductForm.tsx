@@ -38,6 +38,7 @@ import {
 import { api } from '@/lib/api'
 import { logger } from '@quelyos/logger'
 import { storeNotices } from '@/lib/notices/store-notices'
+import { ProductPreview } from '@/components/store/ProductPreview'
 
 export default function ProductForm() {
   const navigate = useNavigate()
@@ -347,8 +348,14 @@ export default function ProductForm() {
               <div
                 className="absolute bottom-0 h-0.5 bg-indigo-500 transition-all duration-300 ease-out"
                 style={{
-                  left: activeTab === 'general' ? '0%' : activeTab === 'variants' ? '33.33%' : '66.66%',
-                  width: activeTab === 'general' ? '160px' : activeTab === 'variants' ? '90px' : '50px',
+                  left:
+                    activeTab === 'general' ? '0%' :
+                    activeTab === 'variants' ? '25%' :
+                    activeTab === 'stock' ? '50%' : '75%',
+                  width:
+                    activeTab === 'general' ? '160px' :
+                    activeTab === 'variants' ? '90px' :
+                    activeTab === 'stock' ? '50px' : '80px',
                 }}
               />
               <Button
@@ -382,6 +389,15 @@ export default function ProductForm() {
                 className="transition-all duration-200"
               >
                 Stock
+              </Button>
+              <Button
+                type="button"
+                variant={activeTab === 'preview' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('preview')}
+                className="transition-all duration-200"
+              >
+                Preview
               </Button>
             </nav>
           </div>
@@ -1138,6 +1154,16 @@ export default function ProductForm() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Onglet Preview (seulement en édition) */}
+          {isEditing && activeTab === 'preview' && (
+            <ProductPreview
+              formData={formData}
+              images={imagesData?.data?.images || []}
+              stockQty={stockQty}
+              selectedTaxIds={selectedTaxIds}
+            />
           )}
         </div>
 
