@@ -33,7 +33,7 @@ export function useMaintenanceTabs(sections: MenuSection[], currentPath: string)
       setActiveTab('__ALL__')
     } else {
       const newTab = detectMaintenanceTab(location.pathname)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setActiveTab(newTab)
     }
   }, [location.pathname])
