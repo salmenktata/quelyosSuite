@@ -12,13 +12,20 @@
  * @module store/marketing/newsletter/compose
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import { Layout } from '@/components/Layout'
 import { Breadcrumbs, Button } from '@/components/common'
 import { EmailEditor, EmailPreview, SendTestModal, ScheduleModal } from '@/components/newsletter'
-import { Save, Send, Clock, Eye } from 'lucide-react'
+import { Save, Send, Clock, Eye, Check } from 'lucide-react'
+import { api } from '@/lib/api'
 
 export default function NewsletterCompose() {
+  const [searchParams] = useSearchParams()
+  const campaignIdParam = searchParams.get('campaignId')
+  const campaignId = campaignIdParam ? parseInt(campaignIdParam, 10) : null
+
   const [subject, setSubject] = useState('Bienvenue chez Quelyos !')
   const [fromName, setFromName] = useState('Équipe Quelyos')
   const [fromEmail, setFromEmail] = useState('noreply@quelyos.com')
@@ -38,6 +45,7 @@ export default function NewsletterCompose() {
   const [showPreview, setShowPreview] = useState(true)
   const [showSendTestModal, setShowSendTestModal] = useState(false)
   const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
   const breadcrumbItems = [
     { label: 'Tableau de bord', path: '/store' },
@@ -46,10 +54,41 @@ export default function NewsletterCompose() {
     { label: 'Composer' }
   ]
 
+  const saveDraftMutation = useMutation({
+    mutationFn: async () => {
+      if (!campaignId) return { success: false }
+      const response = await api.post(`/api/admin/newsletter/campaigns/${campaignId}/save-draft`, {
+        subject,
+        html_body: htmlBody,
+        from_name: fromName,
+        from_email: fromEmail,
+        preview_text: previewText
+      })
+      return response.data as { success: boolean; saved_at?: string }
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        setLastSaved(new Date())
+      }
+    }
+  })
+
   const handleSaveDraft = () => {
-    // TODO: API call to save draft
-    // logger.info('Sauvegarde brouillon', { subject, fromName, fromEmail, previewText })
+    if (campaignId) {
+      saveDraftMutation.mutate()
+    }
   }
+
+  // Autosave toutes les 30 secondes
+  useEffect(() => {
+    if (!campaignId) return
+
+    const interval = setInterval(() => {
+      saveDraftMutation.mutate()
+    }, 30000) // 30 secondes
+
+    return () => clearInterval(interval)
+  }, [campaignId, subject, htmlBody, fromName, fromEmail, previewText])
 
   const handleSendTest = () => {
     setShowSendTestModal(true)
@@ -69,9 +108,19 @@ export default function NewsletterCompose() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Composer un email
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Créez et prévisualisez votre campagne newsletter
-          </p>
+          <div className="mt-1 flex items-center gap-3">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Créez et prévisualisez votre campagne newsletter
+            </p>
+            {lastSaved && campaignId && (
+              <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                <Check className="h-3.5 w-3.5" />
+                <span>
+                  Sauvegardé à {lastSaved.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => setShowPreview(!showPreview)}>

@@ -13,6 +13,7 @@ Endpoints :
 - POST /api/admin/newsletter/campaigns - Créer une campagne
 - PUT /api/admin/newsletter/campaigns/<id> - Mettre à jour une campagne
 - DELETE /api/admin/newsletter/campaigns/<id> - Supprimer une campagne
+- POST /api/admin/newsletter/campaigns/<id>/save-draft - Sauvegarder brouillon (autosave)
 - POST /api/admin/newsletter/campaigns/<id>/send - Envoyer la campagne
 - POST /api/admin/newsletter/campaigns/<id>/send-test - Envoyer un test
 
@@ -24,7 +25,7 @@ import json
 import csv
 import base64
 from io import StringIO
-from odoo import http
+from odoo import http, fields
 from odoo.http import request, Response
 from odoo.exceptions import AccessDenied
 
@@ -282,6 +283,51 @@ class NewsletterController(http.Controller):
                     'state': campaign.state
                 }
             }
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/api/admin/newsletter/campaigns/<int:campaign_id>/save-draft', type='json', auth='public', methods=['POST'], csrf=False)
+    def save_draft(self, campaign_id, **kwargs):
+        """Sauvegarder brouillon campagne (autosave)"""
+        try:
+            self._check_admin_auth()
+            tenant_id = request.env.user.x_tenant_id.id if hasattr(request.env.user, 'x_tenant_id') and request.env.user.x_tenant_id else None
+            if not tenant_id:
+                return {'success': False, 'error': 'Tenant non trouvé'}
+
+            Campaign = request.env['quelyos.newsletter.campaign'].sudo()
+            campaign = Campaign.search([
+                ('id', '=', campaign_id),
+                ('tenant_id', '=', tenant_id),
+                ('state', '=', 'draft')
+            ], limit=1)
+
+            if not campaign:
+                return {'success': False, 'error': 'Campagne brouillon non trouvée'}
+
+            # Mise à jour des champs éditables
+            update_data = {}
+            if 'subject' in kwargs:
+                update_data['subject'] = kwargs['subject']
+            if 'html_body' in kwargs:
+                update_data['html_body'] = kwargs['html_body']
+            if 'from_name' in kwargs:
+                update_data['from_name'] = kwargs['from_name']
+            if 'from_email' in kwargs:
+                update_data['from_email'] = kwargs['from_email']
+            if 'preview_text' in kwargs:
+                update_data['preview_text'] = kwargs['preview_text']
+
+            if update_data:
+                campaign.write(update_data)
+
+            return {
+                'success': True,
+                'message': 'Brouillon sauvegardé',
+                'saved_at': fields.Datetime.now().isoformat()
+            }
+        except AccessDenied:
+            return {'success': False, 'error': 'Accès non autorisé'}
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
